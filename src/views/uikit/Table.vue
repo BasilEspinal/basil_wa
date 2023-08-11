@@ -4,7 +4,7 @@ import { FilterMatchMode, FilterOperator } from 'primevue/api';
 import CustomerService from '@/service/CustomerService';
 import ProductService from '@/service/ProductService';
 import CutService from '@/service/CutService';
-import { ref, onBeforeMount } from 'vue';
+import { ref, onBeforeMount, defineComponent } from 'vue';
 
 var idCheck = ref(false)
 console.log("Rehola")
@@ -378,10 +378,8 @@ const checked7 = ref(true);
 const checked8 = ref(true);
 const checked9 = ref(true);
 
-///********************************************
-// Array for cut process columns
-console.log("Array for cut process columns");
 
+//Array of name of columns
 const columns = [
     { field: 'id', header: 'id',function: onClickEnableId, enabled: true },
     { field: 'fecharegistro', header: 'Fecha de registro', function: onClickEnableDate, enabled: true },
@@ -397,10 +395,15 @@ const columns = [
     { field: 'updated_at', header: 'updated_at', function: '', enabled: true },
 
 ];
-const column = ref(columns.map((col) => col)); // Initialize with an array of all field values
-const stateColumns = [idEnabled,dateEnabled, cutterEnabled, batchEnabled, packageEnabled, productEnabled,true, BagQuantityEnabled,bagWeightEnabled,totalWeightEnabled,true,true]
 
+// Initialize with an array of all field values, this has to be ref().
+const column = ref(columns.map((col) => col)); 
+const stateColumns = [idEnabled,dateEnabled, cutterEnabled, batchEnabled, packageEnabled, productEnabled,true, BagQuantityEnabled,bagWeightEnabled,totalWeightEnabled,true,true]
 const stateColumn =ref(stateColumns.map((col) => col));
+const onColumnsChange = (newColumn) => {
+   
+}
+
 ///********************************************
 
 const multiselectValues = ref([
@@ -419,6 +422,7 @@ const multiselectValue = ref(null);
 </script>
 
 <template>
+    
     <h5>Tabla de registro de corte</h5>
 
 
@@ -461,47 +465,45 @@ const multiselectValue = ref(null);
             <Checkbox v-model="checked9" id="checkbox" binary class="mr-2" checked @change="onClickEnableTotalWeight"></Checkbox>
             <!--<input type="checkbox" id="totalWeight" value="totalWeight" checked @change="onClickEnableTotalWeight">-->
             <label for="totalWeight">Peso total</label>
-<h3>El valor de column es </h3>
-<h3>{{ column }}</h3>
 
-<h3>El valor de idEnabled es </h3>
-<h3>{{ idEnabled }}</h3>
 
 
             <h5>Seleccione las columnas que quiere ver</h5>
+
+
                 <MultiSelect 
-                
                 v-model="column" 
                 :options="columns" 
                 optionLabel="field" 
                 placeholder="Seleccione columnas" 
                 :filter="true" 
                 display="chip" 
-                class="w-full md:w-20rem"
-                @change="onClickEnableId"
+                class="w-full md:w-50rem"
+                @change="onColumnsChange"
                 >
-                    <template #value="slotProps" v-model="stateColumns" >
+                    <template #value="slotProps"  >
                         <div
-                        
-                        class="inline-flex align-items-center py-1 px-2 bg-primary text-primary border-round mr-2" 
+                        class="inline-flex align-items-center py-1 px-2 bg-primary text-primary border-round mr-4" 
                         v-for="option of slotProps.value" 
                         :key="option.header" 
-                        
                         >
                             <div>{{ stateColumns[option] }}</div>
                             <div>{{ option.field }}</div>
                         </div>
-                        <template v-if="!slotProps.value || slotProps.value.length === 0" > 
-                            <div class="p-1">Seleccione columnas</div>
-                        </template>
                     </template>
+            
+            
                     <template #option="slotProps" >
                         <div class="flex align-items-center" >
+                            
                             <!--<span :class="'mr-2 flag flag-' + slotProps.option.field.toLowerCase()" style="width: 18px; height: 12px" />-->
                             <!--<span :class=" slotProps.option.header.toLowerCase()" style="width: 18px; height: 12px" />-->
+                            
                             <div>{{ slotProps.option.header }}</div>
                         </div>
                     </template>
+
+
                 </MultiSelect>
 
         </div>
@@ -531,21 +533,8 @@ const multiselectValue = ref(null);
         <template #empty> No customers found. </template>
         <template #loading> Loading customers data. Please wait. </template>
 
-
-
-        <Column field="id" header="ID" style="min-width: 12rem">
-            <template #body="{ data }">
-
-                {{ data.id }}
-            </template>
-            <template #filter="{ filterModel }">
-                <InputText type="text" v-model="filterModel.value" class="p-column-filter" placeholder="Search by name" />
-            </template>
-        </Column>
-
-        
     
-        <Column v-for="col of columns" 
+        <Column v-for="col of column" 
         :key="col.field" 
         :field="col.field" 
         :header="col.header"
