@@ -378,10 +378,6 @@ const checked7 = ref(true);
 const checked8 = ref(true);
 const checked9 = ref(true);
 
-///********************************************
-// Array for cut process columns
-console.log("Array for cut process columns");
-
 
 //Array of name of columns
 const columns = [
@@ -403,12 +399,8 @@ const columns = [
 // Initialize with an array of all field values, this has to be ref().
 const column = ref(columns.map((col) => col)); 
 const stateColumns = [idEnabled,dateEnabled, cutterEnabled, batchEnabled, packageEnabled, productEnabled,true, BagQuantityEnabled,bagWeightEnabled,totalWeightEnabled,true,true]
-
 const stateColumn =ref(stateColumns.map((col) => col));
-
-
 const onColumnsChange = (newColumn) => {
-  
    
 }
 
@@ -473,13 +465,7 @@ const multiselectValue = ref(null);
             <Checkbox v-model="checked9" id="checkbox" binary class="mr-2" checked @change="onClickEnableTotalWeight"></Checkbox>
             <!--<input type="checkbox" id="totalWeight" value="totalWeight" checked @change="onClickEnableTotalWeight">-->
             <label for="totalWeight">Peso total</label>
-<h3>El valor de column es </h3>
-<h3>{{ column }}</h3>
 
-<h3>El valor de columns es </h3>
-<h3>{{ columns }}</h3>
-<h3>El valor de idEnabled es </h3>
-<h3>{{ idEnabled }}</h3>
 
 
             <h5>Seleccione las columnas que quiere ver</h5>
@@ -494,29 +480,19 @@ const multiselectValue = ref(null);
                 display="chip" 
                 class="w-full md:w-50rem"
                 @change="onColumnsChange"
-                
                 >
                     <template #value="slotProps"  >
                         <div
-                        
                         class="inline-flex align-items-center py-1 px-2 bg-primary text-primary border-round mr-4" 
                         v-for="option of slotProps.value" 
                         :key="option.header" 
-                        
                         >
                             <div>{{ stateColumns[option] }}</div>
                             <div>{{ option.field }}</div>
                         </div>
-                        <!--
-                        <template v-if="!slotProps.value || slotProps.value.length === 0" > 
-                            <div class="p-1">Seleccione columnas.</div>
-                        </template>
-                        -->
                     </template>
-                    <template>
-                        
-                    </template>
-           
+            
+            
                     <template #option="slotProps" >
                         <div class="flex align-items-center" >
                             
