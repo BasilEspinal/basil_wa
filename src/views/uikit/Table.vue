@@ -423,6 +423,9 @@ const multiselectValue = ref(null);
 
 <template>
    
+
+
+   
     <h5>Tabla de registro de corte</h5>
 
 
@@ -492,7 +495,7 @@ const multiselectValue = ref(null);
                         :key="option.header" 
                         >
                         
-                            <div>{{ stateColumns[option] }}</div>
+                            <!--<div>{{ stateColumns[option] }}</div>-->
                             <div>{{ option.field }}</div>
                         </div>
                     </template>
