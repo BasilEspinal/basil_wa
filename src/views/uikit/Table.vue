@@ -467,7 +467,10 @@ const multiselectValue = ref(null);
             <label for="totalWeight">Peso total</label>
 
         
-
+<h5>Column</h5>
+<h5>{{ column }}</h5>
+<h5>Columns</h5>
+<h5>{{ columns }}</h5>
             <h5>¿Cuales columnas quieres ver?</h5>
 
 
@@ -481,12 +484,14 @@ const multiselectValue = ref(null);
                 class="w-full md:w-50rem"
                 @change="onColumnsChange"
                 >
+                
                     <template #value="slotProps"  >
                         <div
                         class="inline-flex align-items-center py-1 px-2 bg-primary text-primary border-round mr-2" 
                         v-for="option of slotProps.value" 
                         :key="option.header" 
                         >
+                        
                             <div>{{ stateColumns[option] }}</div>
                             <div>{{ option.field }}</div>
                         </div>
