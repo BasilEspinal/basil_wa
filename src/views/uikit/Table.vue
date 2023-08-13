@@ -422,7 +422,7 @@ const multiselectValue = ref(null);
 </script>
 
 <template>
-    
+   
     <h5>Tabla de registro de corte</h5>
 
 
@@ -466,9 +466,9 @@ const multiselectValue = ref(null);
             <!--<input type="checkbox" id="totalWeight" value="totalWeight" checked @change="onClickEnableTotalWeight">-->
             <label for="totalWeight">Peso total</label>
 
+        
 
-
-            <h5>Seleccione las columnas que quiere ver</h5>
+            <h5>¿Cuales columnas quieres ver?</h5>
 
 
                 <MultiSelect 
@@ -483,7 +483,7 @@ const multiselectValue = ref(null);
                 >
                     <template #value="slotProps"  >
                         <div
-                        class="inline-flex align-items-center py-1 px-2 bg-primary text-primary border-round mr-4" 
+                        class="inline-flex align-items-center py-1 px-2 bg-primary text-primary border-round mr-2" 
                         v-for="option of slotProps.value" 
                         :key="option.header" 
                         >
@@ -539,7 +539,7 @@ const multiselectValue = ref(null);
         :field="col.field" 
         :header="col.header"
         :enable="col.enabled" 
-        style="min-width: 12rem"
+        style="min-width: 1rem"
         
         >
             <template #body="{ data }" >
