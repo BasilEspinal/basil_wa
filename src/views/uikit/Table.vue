@@ -381,29 +381,34 @@ const checked9 = ref(true);
 
 //Array of name of columns
 const columns = [
-    { field: 'id', header: 'id',function: onClickEnableId, enabled: true },
-    { field: 'fecharegistro', header: 'Fecha de registro', function: onClickEnableDate, enabled: true },
-    { field: 'cortador', header: 'Cortador',funtcion: onClickEnableCutter, enabled: true },
-    { field: 'lote', header: 'Lote',function: onClickEnableBatch, enabled: true },
-    { field: 'empaque', header: 'Empaque', function: onClickEnablePackage, enabled: true },
-    { field: 'product', header: 'Producto', function: onClickEnableProduct, enabled: true },
-    { field: 'qtyempaque', header: 'Cantidad de empaque', function: '', enabled: true },
-    { field: 'qtybolsa', header: 'Cantidad de bolsas', function: onClickEnableBagQty, enabled: true },
-    { field: 'peso_bolsa', header: 'Peso de bolsa(gr)', function: onClickEnableBagWeight, enabled: true },
-    { field: 'total_peso', header: 'Total peso (kg)', function: onClickEnableTotalWeight, enabled: true },
-    { field: 'created_at', header: 'created_at', function: '', enabled: true },
-    { field: 'updated_at', header: 'updated_at', function: '', enabled: true },
+    { field: 'id', header: 'id',function: onClickEnableId, enabled: true, position:0 },
+    { field: 'fecharegistro', header: 'Fecha de registro', function: onClickEnableDate, enabled: true, position:1 },
+    { field: 'cortador', header: 'Cortador',funtcion: onClickEnableCutter, enabled: true, position:2 },
+    { field: 'lote', header: 'Lote',function: onClickEnableBatch, enabled: true, position:3 },
+    { field: 'empaque', header: 'Empaque', function: onClickEnablePackage, enabled: true, position:4 },
+    { field: 'product', header: 'Producto', function: onClickEnableProduct, enabled: true, position:5 },
+    { field: 'qtyempaque', header: 'Cantidad de empaque', function: '', enabled: true, position:6 },
+    { field: 'qtybolsa', header: 'Cantidad de bolsas', function: onClickEnableBagQty, enabled: true, position:7 },
+    { field: 'peso_bolsa', header: 'Peso de bolsa(gr)', function: onClickEnableBagWeight, enabled: true, position:8 },
+    { field: 'total_peso', header: 'Total peso (kg)', function: onClickEnableTotalWeight, enabled: true, position:9 },
+    { field: 'created_at', header: 'created_at', function: '', enabled: true, position:10 },
+    { field: 'updated_at', header: 'updated_at', function: '', enabled: true, position:11 },
 
 ];
 
 // Initialize with an array of all field values, this has to be ref().
-const column = ref(columns.map((col) => col)); 
+const column = ref(columns.map((col) => col));
+//const column = ref();
+const headerNames = ref(columns.map((col) => col.field)) 
 const stateColumns = [idEnabled,dateEnabled, cutterEnabled, batchEnabled, packageEnabled, productEnabled,true, BagQuantityEnabled,bagWeightEnabled,totalWeightEnabled,true,true]
 const stateColumn =ref(stateColumns.map((col) => col));
-const onColumnsChange = (newColumn) => {
-   
-}
+const initialColumns = columns.slice(); // Copy the columns array
 
+
+const onColumnsChange = (column) => {
+  
+  column.sort((a, b) => a.position - b.position);
+};
 ///********************************************
 
 const multiselectValues = ref([
@@ -474,6 +479,8 @@ const multiselectValue = ref(null);
 <h5>{{ column }}</h5>
 <h5>Columns</h5>
 <h5>{{ columns }}</h5>
+<h5>Now names</h5>
+<h5>{{ headerNames }}</h5>
             <h5>¿Cuales columnas quieres ver?</h5>
 
 
@@ -485,10 +492,10 @@ const multiselectValue = ref(null);
                 :filter="true" 
                 display="chip" 
                 class="w-full md:w-50rem"
-                @change="onColumnsChange"
+                @change="onColumnsChange(column)"
                 >
                 
-                    <template #value="slotProps"  >
+                    <template #value="slotProps" >
                         <div
                         class="inline-flex align-items-center py-1 px-2 bg-primary text-primary border-round mr-2" 
                         v-for="option of slotProps.value" 
@@ -527,7 +534,7 @@ const multiselectValue = ref(null);
         :loading="loadingCut" 
         :filters="filtersCut"
         responsiveLayout="scroll" ref="dt"
-        :globalFilterFields="['id', 'fecharegistro', 'cortador', 'lote', 'empaque', 'product', 'qtyempaque', 'qtybolsa', 'peso_bolsa', 'total_peso']">
+        :globalFilterFields="headerNames">
         <template #header>
             <div class="flex justify-content-between flex-column sm:flex-row">
                 <Button type="button" icon="pi pi-filter-slash" label="Limpiar" class="p-button-outlined mb-2"
@@ -554,7 +561,7 @@ const multiselectValue = ref(null);
                 {{ data[col.field] }}
             </template>
             <template #filter="{ filterModel }">
-                <InputText type="text" v-model="filterModel.value" class="p-column-filter" placeholder="Search by name" />
+                <InputText type="text" v-model="filterModel.value" class="p-column-filter" placeholder="Buscar por nombre" />
             </template>
 
         </Column>
