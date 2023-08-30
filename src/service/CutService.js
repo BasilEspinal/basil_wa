@@ -3,7 +3,7 @@ export default class CutService {
         console.log("Jolaaa ")
     }
         getCutInfo() {
-            return fetch('http://127.0.0.1:8000/api/v1/cutcontrols')
+            return fetch('http://localhost:8050/api/v1/cutcontrols')
                 .then((res) => res.json())
                 .then((d) => d.data);
                 console.log("Prueba")
@@ -19,4 +19,4 @@ export default class CutService {
         }
         
     }
-    
+        
