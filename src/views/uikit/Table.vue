@@ -6,6 +6,9 @@ import ProductService from '@/service/ProductService';
 import CutService from '@/service/CutService';
 import { ref, onBeforeMount, defineComponent } from 'vue';
 
+let counterNames;
+let columnsD = ref([])
+
 const customer1 = ref(null);
 const customer2 = ref(null);
 const customer3 = ref(null);
@@ -43,20 +46,21 @@ onBeforeMount(() => {
     customerService.getCustomersMedium().then((data) => (customer3.value = data));
     customerService.getCustomersMedium().then((data) => (customer3.value = data));
 
-    cutService.getCutInfo('http://localhost:8050/api/v1/cutcontrols').then((data) => {
-        cut.value = data;
-        console.log('Búsqueda del cut')
-        console.log(data)
-        console.log(cut)
-        console.log(cut.value)
+     //cutService.getCutInfo('http://localhost:8050/api/v1/cutcontrols').then((data) => {
+       // cut.value = data;
 
-    });
-
+   
+   // });
+    
+    fetchCutInfoAndUpdateCutValue();
+    console.log('Hello this is tha fucking headerNames')
+    console.log(columnsD)
     loading2.value = false;
-
     initFilters1();
     initFiltersCut();
 });
+
+
 
 const initFilters1 = () => {
     filters1.value = {
@@ -95,6 +99,7 @@ const initFiltersCut = () => {
 };
 
 
+
 const clearFilter1 = () => {
     initFilters1();
 };
@@ -128,27 +133,73 @@ const formatDate = (value) => {
 };
 
 
+async function fetchCutInfoAndUpdateCutValue() {
+  try {
+    const data = await cutService.getCutInfo('http://localhost:8000/api/v1/cutcontrols');
+    console.log('Hello this is fetchaaa')
+    cut.value = data;
+    console.log('Búsqueda del cut');
+    console.log(data);
+    console.log(cut.value);
+   
+    const mappedArray = data.map((item) => {
+    const keys = Object.keys(item);
+    return {
+        field: keys.join(', '),
+        header: keys.join(', ') // Join keys into a comma-separated string
+        
+    };
 
+    });
 
+    const columnNames = mappedArray[0]
+    console.log('mappedArray')
+    console.log(mappedArray)
+    console.log('columnNames')
+    console.log(columnNames)
+    console.log(columnNames.length)
+    // Split the comma-separated strings into arrays of keys
+    const fieldKeys = columnNames.field.split(', ');
+    const headerKeys = columnNames.header.split(', ');
 
+    // Create an array of objects based on the keys
+     columnsD = fieldKeys.map((field, index) => ({
+        field,
+        header: headerKeys[index]
+    }));
+
+    console.log('columnsD')
+    console.log(columnsD)
+
+    console.log('columns')
+    console.log(columns)
+
+  
+
+  } catch (error) {
+    console.error('Error fetching cut data:', error);
+  }
+}
 
 
 //Array of name of columns
+
 const columns = [
-    { field: 'id', header: 'id'},
-    { field: 'fecharegistro', header: 'Fecha de registro'},
-    { field: 'cortador', header: 'Cortador'},
-    { field: 'lote', header: 'Lote' },
-    { field: 'empaque', header: 'Empaque' },
-    { field: 'product', header: 'Producto'},
-    { field: 'qtyempaque', header: 'Cantidad de empaque' },
-    { field: 'qtybolsa', header: 'Cantidad de bolsas'},
-    { field: 'peso_bolsa', header: 'Peso de bolsa(gr)'},
-    { field: 'total_peso', header: 'Total peso (kg)' },
-    { field: 'created_at', header: 'created_at'},
-    { field: 'updated_at', header: 'updated_at'},
+    { field: 'id', header: 'id', position:0 },
+    { field: 'fecharegistro',header:'Fecha de registro', position:1 },
+    { field: 'cortador', header:'cortador',position:2 },
+    { field: 'lote',  header:'lote',position:3 },
+    { field: 'empaque', header: 'Empaque', position:4 },
+    { field: 'product', header: 'Producto', position:5 },
+    { field: 'qtyempaque', header: 'Cantidad de empaque', position:6 },
+    { field: 'qtybolsa', header: 'Cantidad de bolsas', position:7 },
+    { field: 'peso_bolsa', header: 'Peso de bolsa(gr)',  position:8 },
+    { field: 'total_peso', header: 'Total peso (kg)',  position:9 },
+    { field: 'created_at', header: 'created_at', position:10 },
+    { field: 'updated_at', header: 'updated_at',  position:11 },
 
 ];
+
 
 // Initialize with an array of all field values, this has to be ref().
 const column = ref(columns.map((col) => col));
@@ -158,6 +209,7 @@ const headerNames = ref(columns.map((col) => col.field))
 const onColumnsChange = (column) => {
   
   column.sort((a, b) => a.position - b.position);
+  
 };
 ///********************************************
 
@@ -167,7 +219,7 @@ const onColumnsChange = (column) => {
 <template>
    
 
-
+{{ column }}
    
     <h5>Tabla de registro de corte</h5>
 

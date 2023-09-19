@@ -95,12 +95,12 @@ stateDate.value = true;
 
 const onClickDateYes = () => {
     console.log('yes')
-    stateDate = true;
+    //stateDate = true;
     return stateDate
 }
 const onClickDateNo = () => {
     console.log('no')
-    stateDate = false;
+    //stateDate = false;
     return stateDate;
 }
 
