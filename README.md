@@ -3,6 +3,10 @@
 
 This is the frontend for basil farm 
 
+Firstly:
+
+$npm run install
+
 Development:
 
 $npm run dev
