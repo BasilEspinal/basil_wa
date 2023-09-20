@@ -135,7 +135,7 @@ const formatDate = (value) => {
 
 async function fetchCutInfoAndUpdateCutValue() {
   try {
-    const data = await cutService.getCutInfo('http://localhost:8000/api/v1/cutcontrols');
+    const data = await cutService.getCutInfo('https://basilespinal.github.io/api_v1/cutcontrols.json');
     console.log('Hello this is fetchaaa')
     cut.value = data;
     console.log('Búsqueda del cut');
