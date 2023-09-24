@@ -185,7 +185,9 @@ const confirm = (event) => {
             </div>
         </div>
         
-        <Table title="Ejemplo uno" path-api="https://basilespinal.github.io/api_v1/cutcontrols.json" />
-        <Table title="Ejemplo dos" path-api="https://basilespinal.github.io/api_v1/cutcontrols.json" />
+        <Table title="Control de corta" path-api="https://basilespinal.github.io/api_v1/cutcontrols.json" />
+        <Table title="Catalogo" path-api="https://basilespinal.github.io/api_v1/catalog_jack_2023.json" />
+        <!-- Ejemplo con datos en una ubicacion especifica -->
+        <Table title="Path" path-api="https://api.carbonintensity.org.uk/generation" json-data-path="data.generationmix"/>
     </div>
         </template>
