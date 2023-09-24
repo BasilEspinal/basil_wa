@@ -3,6 +3,7 @@ import ProductService from '@/service/ProductService';
 import { ref, onMounted } from 'vue';
 import { useToast } from 'primevue/usetoast';
 import { useConfirm } from 'primevue/useconfirm';
+import Table from './Table.vue';
 
 const display = ref(false);
 const displayConfirmation = ref(false);
@@ -183,5 +184,8 @@ const confirm = (event) => {
                 <Button ref="popup" @click="confirm($event)" icon="pi pi-check" label="Confirm" class="mr-2"></Button>
             </div>
         </div>
+        
+        <Table title="Ejemplo uno" path-api="https://basilespinal.github.io/api_v1/cutcontrols.json" />
+        <Table title="Ejemplo dos" path-api="https://basilespinal.github.io/api_v1/cutcontrols.json" />
     </div>
-</template>
+        </template>
