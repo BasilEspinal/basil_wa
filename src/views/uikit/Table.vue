@@ -93,8 +93,7 @@ const props = defineProps({
  */
 async function fetchInfoAndUpdateValue() {
     try {
-        //const data = await cutService.getCutInfo('http://localhost:8000/api/v1/cutcontrols');
-        const data = await tableService.getCutInfo(props.pathApi);
+        const data = await tableService.getInfo(props.pathApi);
         console.log(data);
         tableData.value = data;
         console.log('Búsqueda del cut');
