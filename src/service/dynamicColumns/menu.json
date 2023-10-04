@@ -3,9 +3,9 @@
     "rol": "admin",
     "subcategorias": []
   },
-  "Producto": {
+  "Product": {
     "rol": "admin",
-    "subcategorias": [
+    "subcategories": [
       "Productos",
       "Tipos de producto",
       "Productos Variantes",
@@ -14,18 +14,18 @@
       "Tipo de Empaques"
     ]
   },
-  "Comercial": {
+  "Commercial": {
     "rol": "admin",
-    "subcategorias": [
+    "subcategories": [
       "Ofertas",
       "Solicitud Cliente",
       "Clientes",
       "Despachos"
     ]
   },
-  "Administración": {
+  "Administration": {
     "rol": "admin",
-    "subcategorias": [
+    "subcategories": [
       "Compañia",
       "Finca",
       "Centros de Trabajo",
@@ -33,17 +33,17 @@
       "Empleados"
     ]
   },
-  "Produccion": {
+  "Production": {
     "rol": "admin",
-    "subcategorias": [
+    "subcategories": [
       "Lotes Cultivo",
       "Vehiculos",
       "Programación"
     ]
   },
-  "Pagos Nomina": {
+  "Payroll": {
     "rol": "admin",
-    "subcategorias": [
+    "subcategories": [
       "Calendarios",
       "Tarifas Tareas",
       "Tipos Tareas",
@@ -51,9 +51,9 @@
       "Periodos de Pago"
     ]
   },
-  "Liquidacion Nomina": {
+  "Payroll Settlement": {
     "rol": "admin",
-    "subcategorias": [
+    "subcategories": [
       "Corta",
       "Prefrio",
       "Seleccion",
@@ -61,9 +61,9 @@
       "Descuentos"
     ]
   },
-  "Sistema": {
+  "System": {
     "rol": "admin",
-    "subcategorias": [
+    "subcategories": [
       "Estado Registros",
       "Usuarios",
       "Roles",
@@ -71,4 +71,3 @@
     ]
   }
 }
-
