@@ -1,0 +1,74 @@
+{
+  "DashBoard": {
+    "rol": "admin",
+    "subcategorias": []
+  },
+  "Producto": {
+    "rol": "admin",
+    "subcategorias": [
+      "Productos",
+      "Tipos de producto",
+      "Productos Variantes",
+      "Variantes",
+      "Tipo de Unidades",
+      "Tipo de Empaques"
+    ]
+  },
+  "Comercial": {
+    "rol": "admin",
+    "subcategorias": [
+      "Ofertas",
+      "Solicitud Cliente",
+      "Clientes",
+      "Despachos"
+    ]
+  },
+  "Administración": {
+    "rol": "admin",
+    "subcategorias": [
+      "Compañia",
+      "Finca",
+      "Centros de Trabajo",
+      "Cargos",
+      "Empleados"
+    ]
+  },
+  "Produccion": {
+    "rol": "admin",
+    "subcategorias": [
+      "Lotes Cultivo",
+      "Vehiculos",
+      "Programación"
+    ]
+  },
+  "Pagos Nomina": {
+    "rol": "admin",
+    "subcategorias": [
+      "Calendarios",
+      "Tarifas Tareas",
+      "Tipos Tareas",
+      "Labores",
+      "Periodos de Pago"
+    ]
+  },
+  "Liquidacion Nomina": {
+    "rol": "admin",
+    "subcategorias": [
+      "Corta",
+      "Prefrio",
+      "Seleccion",
+      "Contratista",
+      "Descuentos"
+    ]
+  },
+  "Sistema": {
+    "rol": "admin",
+    "subcategorias": [
+      "Estado Registros",
+      "Usuarios",
+      "Roles",
+      "Permisos"
+    ]
+  }
+}
+
