@@ -1,0 +1,73 @@
+{
+  "DashBoard": {
+    "rol": "admin",
+    "subcategorias": []
+  },
+  "Product": {
+    "rol": "admin",
+    "subcategories": [
+      "Productos",
+      "Tipos de producto",
+      "Productos Variantes",
+      "Variantes",
+      "Tipo de Unidades",
+      "Tipo de Empaques"
+    ]
+  },
+  "Commercial": {
+    "rol": "admin",
+    "subcategories": [
+      "Ofertas",
+      "Solicitud Cliente",
+      "Clientes",
+      "Despachos"
+    ]
+  },
+  "Administration": {
+    "rol": "admin",
+    "subcategories": [
+      "Compañia",
+      "Finca",
+      "Centros de Trabajo",
+      "Cargos",
+      "Empleados"
+    ]
+  },
+  "Production": {
+    "rol": "admin",
+    "subcategories": [
+      "Lotes Cultivo",
+      "Vehiculos",
+      "Programación"
+    ]
+  },
+  "Payroll": {
+    "rol": "admin",
+    "subcategories": [
+      "Calendarios",
+      "Tarifas Tareas",
+      "Tipos Tareas",
+      "Labores",
+      "Periodos de Pago"
+    ]
+  },
+  "Payroll Settlement": {
+    "rol": "admin",
+    "subcategories": [
+      "Corta",
+      "Prefrio",
+      "Seleccion",
+      "Contratista",
+      "Descuentos"
+    ]
+  },
+  "System": {
+    "rol": "admin",
+    "subcategories": [
+      "Estado Registros",
+      "Usuarios",
+      "Roles",
+      "Permisos"
+    ]
+  }
+}

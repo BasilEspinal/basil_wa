@@ -3,6 +3,7 @@ import ProductService from '@/service/ProductService';
 import { ref, onMounted } from 'vue';
 import { useToast } from 'primevue/usetoast';
 import { useConfirm } from 'primevue/useconfirm';
+import Table from './Table.vue';
 
 const display = ref(false);
 const displayConfirmation = ref(false);
@@ -74,6 +75,14 @@ const confirm = (event) => {
 </script>
 
 <template>
+    <Table
+    path-api="https://basilespinal.github.io/api_v1/unit_types.json"
+    title="Packing Types"
+
+    >
+
+    </Table>
+
     <div class="grid">
         <div class="col-12 lg:col-6">
             <div class="card p-fluid">
@@ -183,5 +192,10 @@ const confirm = (event) => {
                 <Button ref="popup" @click="confirm($event)" icon="pi pi-check" label="Confirm" class="mr-2"></Button>
             </div>
         </div>
+        
+        <Table title="Control de corta" path-api="https://basilespinal.github.io/api_v1/cutcontrols.json" />
+        <Table title="Catalogo" path-api="https://basilespinal.github.io/api_v1/catalog_jack_2023.json" />
+        <!-- Ejemplo con datos en una ubicacion especifica -->
+        <Table title="Path" path-api="https://api.carbonintensity.org.uk/generation" json-data-path="data.generationmix"/>
     </div>
-</template>
+        </template>
