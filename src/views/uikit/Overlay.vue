@@ -75,6 +75,14 @@ const confirm = (event) => {
 </script>
 
 <template>
+    <Table
+    path-api="https://basilespinal.github.io/api_v1/unit_types.json"
+    title="Packing Types"
+
+    >
+
+    </Table>
+
     <div class="grid">
         <div class="col-12 lg:col-6">
             <div class="card p-fluid">
