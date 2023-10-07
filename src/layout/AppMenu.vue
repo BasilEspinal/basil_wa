@@ -1,12 +1,16 @@
 <script setup>
-import { ref } from 'vue';
+import { ref, onBeforeMount } from 'vue';
 
-import AppMenuItem from './AppMenuItem.vue';
+//import AppMenuItem from './AppMenuItem.vue';
+import MenuService from '@/service/MenuService';
 
-const model = ref([
+const menuService = new MenuService();
+
+const model = ref([]);
+const oldModel = ref([
     {
         label: 'Home',
-        items: [{ label: 'Dashboard', icon: 'pi pi-fw pi-home', to: '/' }]
+        items: [{ label: 'Dashboard', icon: 'pi pi-fw pi-home', to: '/applayout' }]
     },
     {
         label: 'UI Components',
@@ -162,20 +166,24 @@ const model = ref([
         ]
     }
 ]);
+
+onBeforeMount(() => {
+    fetchInfoAndUpdateValue();
+});
+
+
+
+async function fetchInfoAndUpdateValue() {
+    try {
+        model.value = await menuService.getMenu();
+    } catch (error) {
+        console.error('Error:', error);
+    }
+}
 </script>
 
 <template>
-    <ul class="layout-menu">
-        <template v-for="(item, i) in model" :key="item">
-            <app-menu-item v-if="!item.separator" :item="item" :index="i"></app-menu-item>
-            <li v-if="item.separator" class="menu-separator"></li>
-        </template>
-        <li>
-            <a href="https://www.primefaces.org/primeblocks-vue/#/" target="_blank">
-                <img src="/layout/images/banner-primeblocks.png" alt="Prime Blocks" class="w-full mt-3" />
-            </a>
-        </li>
-    </ul>
+    <PanelMenu :model="model" />
 </template>
 
 <style lang="scss" scoped></style>

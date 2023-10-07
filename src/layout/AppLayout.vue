@@ -1,7 +1,8 @@
 <script setup>
-import { computed, watch, ref } from 'vue';
+import { computed, watch, ref, onBeforeMount } from 'vue';
 import AppTopbar from './AppTopbar.vue';
 import AppFooter from './AppFooter.vue';
+import { useRouter } from 'vue-router';
 import AppSidebar from './AppSidebar.vue';
 import AppConfig from './AppConfig.vue';
 import { useLayout } from '@/layout/composables/layout';
@@ -9,12 +10,19 @@ import { useLayout } from '@/layout/composables/layout';
 const { layoutConfig, layoutState, isSidebarActive } = useLayout();
 
 const outsideClickListener = ref(null);
+const router = useRouter();
 
 watch(isSidebarActive, (newVal) => {
     if (newVal) {
         bindOutsideClickListener();
     } else {
         unbindOutsideClickListener();
+    }
+});
+
+onBeforeMount(() => {
+    if (!sessionStorage.getItem('JWT')) {
+        router.push('/auth/login');
     }
 });
 
