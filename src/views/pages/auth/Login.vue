@@ -2,7 +2,6 @@
 import { useLayout } from '@/layout/composables/layout';
 import { computed, ref } from 'vue';
 import { useRouter } from 'vue-router';
-import AppConfig from '@/layout/AppConfig.vue';
 import LoginService from '@/service/LoginService';
 import { useVuelidate } from '@vuelidate/core';
 import { required, email, minLength, maxLength } from '@vuelidate/validators';
@@ -76,10 +75,6 @@ export default {
                 console.error('Error:', error);
             }
         }
-    },
-
-    components: {
-        AppConfig
     }
 };
 </script>
@@ -89,7 +84,7 @@ export default {
         <div class="flex flex-column align-items-center justify-content-center">
             <router-link to="/" class="align-items-center mb-5">
                 <img :src="logoUrl" alt="Sakai logo" class="w-6rem flex-shrink-0" />
-                <span class="text-700 font-bold">BASIL FARM</span>
+                <span class="text-700 font-bold">AGRO-ONLINE</span>
             </router-link>
             <div style="border-radius: 56px; padding: 0.3rem; background: linear-gradient(160deg, var(--primary-color) 10%, var(--paleta-100) 60%, var(--primary-color) 100%)">
                 <div class="w-full py-8 px-6 sm:px-8" style="border-radius: 53px; background-color: var(--paleta-100)">
@@ -144,7 +139,6 @@ export default {
             </transition-group>
         </div>
     </div>
-    <AppConfig simple />
 </template>
 
 <style scoped>

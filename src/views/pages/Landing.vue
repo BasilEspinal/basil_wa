@@ -1,7 +1,6 @@
 <script setup>
 import { useLayout } from '@/layout/composables/layout';
 import { computed, ref } from 'vue';
-//import AppConfig from '@/layout/AppConfig.vue';
 
 const { layoutConfig, changeThemeSettings } = useLayout();
 
@@ -17,6 +16,7 @@ const logoUrl = computed(() => {
 });
 
 const onChangeTheme = (mode) => {
+    toggleValue.value = mode;
     const theme = mode ? 'lara-dark-teal' : 'lara-light-teal';
     const elementId = 'theme-css';
     const linkElement = document.getElementById(elementId);
@@ -39,7 +39,7 @@ const onChangeTheme = (mode) => {
             <div class="py-4 px-4 mx-0 md:mx-6 lg:mx-8 lg:px-8 flex align-items-center justify-content-between relative lg:static mb-3">
                 <a class="flex align-items-center" href="#">
                     <img :src="logoUrl" alt="Sakai Logo" height="80" class="mr-0 lg:mr-2" />
-                    <span class="text-900 font-medium font-bold text-3xl line-height-3 mr-8">BASIL FARM</span>
+                    <span class="text-900 font-medium font-bold text-3xl line-height-3 mr-8">AGRO-ONLINE</span>
                 </a>
                 <div class="align-items-center md:justify-content-end flex-grow-1 justify-content-between hidden lg:flex absolute lg:static w-full lg:px-0">
                     <div class="flex justify-content-between lg:block border-top-1 lg:border-top-none surface-border py-3 lg:py-0 mt-3 lg:mt-0">
@@ -47,7 +47,7 @@ const onChangeTheme = (mode) => {
                             <Button label="Login" class="p-button-text p-button-rounded border-none font-light text-green-800 line-height-4"></Button>
                         </router-link>
                         <Button label="Register" class="p-button-rounded border-none ml-4 font-light text-white line-height-4 bg-green-700"></Button>
-                        <ToggleButton class="p-button-rounded ml-5 text-green-600 line-height-4" v-model="toggleValue" @click="onChangeTheme(toggleValue)" onLabel="Dark" offLabel="Light" :style="{ width: '10em' }" />
+                        <Button @click="onChangeTheme(!toggleValue)" v-model="toggleValue" icon="pi pi-cog" outlined rounded class="button-icon ml-3 mr-2 mr-1" style="width: 3.5rem; height: 3.5rem;"/>
                     </div>
                 </div>
             </div>
@@ -58,7 +58,7 @@ const onChangeTheme = (mode) => {
                 style="background: linear-gradient(0deg, var(--paleta-300), rgba(255, 255, 255, 0.2)), radial-gradient(77.36% 256.97% at 77.36% 57.52%, var(--paleta-100) 0%, var(--paleta-200) 100%); clip-path: ellipse(150% 87% at 93% 13%)"
             >
                 <div class="flex-column col-12 lg:col-7 md:mx-6 md:mt-4">
-                    <h2 class="text-7xl font-bold text-gray-900">Basil Farm</h2>
+                    <h2 class="text-7xl font-bold text-gray-900">AgroOnline</h2>
                     <p class="font-normal text-3xl line-height-3 md:mt-3 text-gray-700">
                         Basil, scientifically known as Ocimum basilicum, is a fragrant herb often used in various culinary and medicinal applications. It's an integral part of Mediterranean cuisine, known for its distinctive aroma and flavor. Beyond
                         its culinary uses, basil possesses several properties that make it a remarkable plant.
@@ -74,7 +74,7 @@ const onChangeTheme = (mode) => {
                     <div class="col-12 md:col-2" style="margin-top: -1.5rem">
                         <a @click="smoothScroll('#home')" class="flex flex-wrap align-items-center justify-content-center md:justify-content-start md:mb-0 mb-3 cursor-pointer">
                             <img :src="logoUrl" alt="footer sections" width="50" height="50" class="mr-2" />
-                            <h4 class="font-medium text-3xl text-900">BASIL FARM</h4>
+                            <h4 class="font-medium text-3xl text-900">AGRO-ONLINE</h4>
                         </a>
                     </div>
 
