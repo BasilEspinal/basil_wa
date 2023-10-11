@@ -107,9 +107,13 @@ async function fetchInfoAndUpdateValue() {
 
         let mappedArray1 = [];
 
+        const types = ['string', 'number'];
+
         for (let key in data[0]) {
-            mappedArray1.push(key);
+            if (types.includes(typeof data[0][key]))
+                mappedArray1.push(key);
         }
+
         columnas.value = mappedArray1.map((item) => {
             return {
                 field: item,

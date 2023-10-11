@@ -3,11 +3,12 @@ import { ref, computed, onMounted, onBeforeUnmount } from 'vue';
 import { useLayout } from '@/layout/composables/layout';
 import { useRouter } from 'vue-router';
 
-const { layoutConfig, onMenuToggle } = useLayout();
+const { layoutConfig, onMenuToggle, changeThemeSettings } = useLayout();
 
 const outsideClickListener = ref(null);
 const topbarMenuActive = ref(false);
 const router = useRouter();
+const toggleValue = ref(layoutConfig.darkTheme.value);
 
 onMounted(() => {
     bindOutsideClickListener();
@@ -18,7 +19,7 @@ onBeforeUnmount(() => {
 });
 
 const logoUrl = computed(() => {
-    return `layout/images/${layoutConfig.darkTheme.value ? 'logo-white' : 'logo-dark'}.svg`;
+    return `layout/images/${layoutConfig.darkTheme.value ? 'logo-white' : 'logo-dark'}.png`;
 });
 
 const onTopBarMenuButton = () => {
@@ -33,6 +34,23 @@ const topbarMenuClasses = computed(() => {
         'layout-topbar-menu-mobile-active': topbarMenuActive.value
     };
 });
+
+const onChangeTheme = (mode) => {
+    toggleValue.value = mode;
+    const theme = mode ? 'lara-dark-teal' : 'lara-light-teal';
+    const elementId = 'theme-css';
+    const linkElement = document.getElementById(elementId);
+    const cloneLinkElement = linkElement.cloneNode(true);
+    const newThemeUrl = linkElement.getAttribute('href').replace(layoutConfig.theme.value, theme);
+    cloneLinkElement.setAttribute('id', elementId + '-clone');
+    cloneLinkElement.setAttribute('href', newThemeUrl);
+    cloneLinkElement.addEventListener('load', () => {
+        linkElement.remove();
+        cloneLinkElement.setAttribute('id', elementId);
+        changeThemeSettings(theme, mode);
+    });
+    linkElement.parentNode.insertBefore(cloneLinkElement, linkElement.nextSibling);
+};
 
 const bindOutsideClickListener = () => {
     if (!outsideClickListener.value) {
@@ -64,7 +82,7 @@ const isOutsideClicked = (event) => {
     <div class="layout-topbar">
         <router-link to="/" class="layout-topbar-logo">
             <img :src="logoUrl" alt="logo" />
-            <span>SAKAI</span>
+            <span>AgroOnline</span>
         </router-link>
 
         <button class="p-link layout-menu-button layout-topbar-button" @click="onMenuToggle()">
@@ -73,6 +91,7 @@ const isOutsideClicked = (event) => {
 
         <button class="p-link layout-topbar-menu-button layout-topbar-button" @click="onTopBarMenuButton()">
             <i class="pi pi-ellipsis-v"></i>
+            
         </button>
 
         <div class="layout-topbar-menu" :class="topbarMenuClasses">
@@ -88,6 +107,9 @@ const isOutsideClicked = (event) => {
                 <i class="pi pi-cog"></i>
                 <span>Settings</span>
             </button>
+            <Button @click="onChangeTheme(!toggleValue)" v-model="toggleValue" icon="pi pi-cog" rounded outlined class="p-link layout-topbar-button">
+                <i class="pi pi-cog"></i>
+            </Button>
         </div>
     </div>
 </template>

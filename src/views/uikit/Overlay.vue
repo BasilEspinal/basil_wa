@@ -3,7 +3,7 @@ import ProductService from '@/service/ProductService';
 import { ref, onMounted } from 'vue';
 import { useToast } from 'primevue/usetoast';
 import { useConfirm } from 'primevue/useconfirm';
-import Table from './Table.vue';
+import Table from '../../components/Table.vue';
 
 const display = ref(false);
 const displayConfirmation = ref(false);
