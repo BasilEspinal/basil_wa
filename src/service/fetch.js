@@ -1,13 +1,24 @@
-import {ref} from 'vue'
+export async function useFetch(url, options = {}, auth = true) {
+    if (!options['headers']) {
+        options['headers'] = {};
+    }
+    options['headers']['Content-Type'] = 'application/json';
+    if (auth) {
+        options['headers']['Authorization'] = 'Bearer ' + sessionStorage.getItem('JWT');
+    }
 
-export function useFetch(url){
-    const data = ref(null)
-    const error = ref(null)
+    let data = {};
+    let error = null;
+    try {
+        let res = await fetch(url, options);
+        if (res.ok) {
+            data = res.json();
+        } else {
+            error = await res.text();
+        }
+    } catch (e) {
+        error = e;
+    }
 
-    fetch(url)
-    .then((res) => res.json())
-    .then((json) => (data.value = json))
-    .catch((err) => (error.value = err))
-
-    return {data,error}
+    return { data, error };
 }
