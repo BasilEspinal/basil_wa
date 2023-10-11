@@ -1,7 +1,7 @@
 <script setup>
 import { FilterMatchMode, FilterOperator } from 'primevue/api';
 import TableService from '@/service/TableService';
-import { ref, onBeforeMount } from 'vue';
+import { ref, onBeforeMount, defineEmits } from 'vue';
 
 const columnas = ref([]);
 const column = ref(null);
@@ -12,6 +12,8 @@ const filters = ref(null);
 const loading = ref(null);
 const tableData = ref(null);
 const tableService = new TableService();
+const selectedProduct = ref([]);
+const emits = defineEmits([]);
 
 /**
  * The `onBeforeMount` function is a lifecycle hook in Vue that is called right before the component is
@@ -53,7 +55,7 @@ const initFilters = () => {
  * `null` value and a `FilterMatchMode.STARTS_WITH` match mode.
  */
 const clearFilter = () => {
-    initFilters();
+        initFilters();
 };
 
 // eslint-disable-next-line no-unused-vars
@@ -130,6 +132,14 @@ async function fetchInfoAndUpdateValue() {
     }
 }
 
+const onRowSelect = () => {
+    emits('onRowSelect', selectedProduct.value);
+};
+
+const onSelectAllChange = (event) => {
+    onRowSelect();
+};
+
 /**
  * The `onColumnsChange` function is a callback function that is called when the selected columns in
  * the MultiSelect component are changed. It takes the updated `column` array as a parameter.
@@ -159,6 +169,7 @@ const onColumnsChange = (column) => {
                 </MultiSelect>
             </div>
             <DataTable
+                v-model:selection="selectedProduct"
                 :value="tableData"
                 :paginator="true"
                 class="p-datatable-gridlines"
@@ -172,6 +183,9 @@ const onColumnsChange = (column) => {
                 responsiveLayout="scroll"
                 ref="dt"
                 :globalFilterFields="headerNames"
+                @row-select="onRowSelect"
+                @row-unselect="onRowSelect"
+                @select-all-change="onSelectAllChange"
             >
                 <template #header>
                     <div class="flex justify-content-between flex-column sm:flex-row">
@@ -184,6 +198,8 @@ const onColumnsChange = (column) => {
                 </template>
                 <template #empty> No se encontraron datos. </template>
                 <template #loading> Cargando los datos por favor espere. </template>
+
+                <Column selectionMode="multiple" headerStyle="width: 3rem"></Column>
 
                 <Column v-for="col of column" :key="col.field" :field="col.field" :header="col.header" :enable="col.enabled" :filterField="col.field" style="min-width: 1rem">
                     <template #body="{ data }">

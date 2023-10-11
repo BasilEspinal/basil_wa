@@ -15,6 +15,7 @@ const oldModel = ref([
     {
         label: 'UI Components',
         items: [
+            { label: 'Generic Table', icon: 'pi pi-fw pi-id-card', to: '/components/GenericComponet' },
             { label: 'Form Layout', icon: 'pi pi-fw pi-id-card', to: '/uikit/formlayout' },
             { label: 'Input', icon: 'pi pi-fw pi-check-square', to: '/uikit/input' },
             { label: 'Float Label', icon: 'pi pi-fw pi-bookmark', to: '/uikit/floatlabel' },
