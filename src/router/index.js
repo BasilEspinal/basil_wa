@@ -1,22 +1,39 @@
 import { createRouter, createWebHashHistory } from 'vue-router';
+
 import AppLayout from '@/layout/AppLayout.vue';
+
+import Landing from '@/views/pages/Landing.vue';
 
 const router = createRouter({
     history: createWebHashHistory(),
     routes: [
         {
             path: '/',
+            component: Landing,
+        },
+        {
+            path: '/applayout',
             component: AppLayout,
             children: [
                 {
-                    path: '/',
+                    path: '/applayout',
                     name: 'dashboard',
                     component: () => import('@/views/Dashboard.vue')
+                },
+                {
+                    path: '/landing',
+                    name: 'landing',
+                    component: () => import('@/views/pages/Landing.vue')
                 },
                 {
                     path: '/uikit/formlayout',
                     name: 'formlayout',
                     component: () => import('@/views/uikit/FormLayout.vue')
+                },
+                {
+                    path: '/components/GenericComponet/:title',
+                    name: 'generictable',
+                    component: () => import('@/components/GenericComponet.vue')
                 },
                 {
                     path: '/uikit/input',
@@ -142,11 +159,6 @@ const router = createRouter({
                     component: () => import('@/views/utilities/Documentation.vue')
                 }
             ]
-        },
-        {
-            path: '/landing',
-            name: 'landing',
-            component: () => import('@/views/pages/Landing.vue')
         },
         {
             path: '/pages/notfound',
