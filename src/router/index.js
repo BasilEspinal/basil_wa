@@ -55,11 +55,11 @@ const router = createRouter({
                     name: 'button',
                     component: () => import('@/views/uikit/Button.vue')
                 },
-                {
+                /*{
                     path: '/uikit/table',
                     name: 'table',
                     component: () => import('@/views/uikit/Table.vue')
-                },
+                },*/
                 {
                     path: '/uikit/list',
                     name: 'list',
