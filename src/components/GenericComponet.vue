@@ -1,7 +1,8 @@
 <script setup>
 import { ref } from 'vue';
-import Table from 'Table.vue';
-import ToolbarComponet from './ToolbarComponet.vue';
+import Table from '@/components/Table.vue';
+
+import ToolbarComponet from '@/components/ToolbarComponet.vue';
 
 const listRowSelect = ref([]);
 import { useRouter } from 'vue-router';
