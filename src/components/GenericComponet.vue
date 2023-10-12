@@ -1,6 +1,6 @@
 <script setup>
 import { ref } from 'vue';
-import Table from './Table.vue';
+import Table from 'Table.vue';
 import ToolbarComponet from './ToolbarComponet.vue';
 
 const listRowSelect = ref([]);
