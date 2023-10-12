@@ -16,7 +16,7 @@ const router = createRouter({
             component: AppLayout,
             children: [
                 {
-                    path: '/',
+                    path: '/applayout',
                     name: 'dashboard',
                     component: () => import('@/views/Dashboard.vue')
                 },
@@ -31,7 +31,7 @@ const router = createRouter({
                     component: () => import('@/views/uikit/FormLayout.vue')
                 },
                 {
-                    path: '/components/GenericComponet',
+                    path: '/components/GenericComponet/:title',
                     name: 'generictable',
                     component: () => import('@/components/GenericComponet.vue')
                 },
@@ -180,12 +180,7 @@ const router = createRouter({
             path: '/auth/error',
             name: 'error',
             component: () => import('@/views/pages/auth/Error.vue')
-        },
-        {
-            path: '/layout',
-            name: 'applayout',
-            component: () => import('@/layout/AppLayout.vue')
-        },
+        }
     ]
 });
 

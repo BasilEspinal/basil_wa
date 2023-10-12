@@ -69,7 +69,7 @@ export default {
                 sessionStorage.setItem('JWT', token);
                 this.message.push({ severity: 'success', detail: 'Success', content: 'Successful Login', id: count.value++ });
 
-                this.router.push('/layout');
+                this.router.push('/applayout');
             } catch (error) {
                 this.message.push({ severity: 'error', detail: 'Error Response', content: error, id: count.value++ });
                 console.error('Error:', error);

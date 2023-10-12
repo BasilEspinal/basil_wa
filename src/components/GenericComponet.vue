@@ -1,10 +1,15 @@
 <script setup>
 import { ref } from 'vue';
-import Table from '../views/uikit/Table.vue';
+import Table from './Table.vue';
 import ToolbarComponet from './ToolbarComponet.vue';
 
 const listRowSelect = ref([]);
+import { useRouter } from 'vue-router';
 
+const router = useRouter();
+const rutaCodificada = router.currentRoute.value.query.ruta
+const rutaDecodificada = ref(decodeURIComponent(rutaCodificada));
+/*
 const props = defineProps({
     pathApi: {
         type: String,
@@ -14,7 +19,7 @@ const props = defineProps({
         type: String,
         default: 'Generic Componet'
     }
-});
+});*/
 
 function RowSelect(data) {
     listRowSelect.value = data;
@@ -23,9 +28,9 @@ function RowSelect(data) {
 
 <template>
     <div class="card">
-        <h1 v-text="props.title"></h1>
+        <h1 v-text="$route.params.title"></h1>
         <ToolbarComponet :rowSelect="listRowSelect" />
-        <Table title="Control de corta" path-api="https://basilespinal.github.io/api_v1/cutcontrols.json" @onRowSelect="RowSelect" />
+        <Table title="Control de corta" :path-api="rutaDecodificada" @onRowSelect="RowSelect" />
     </div>
 </template>
 
