@@ -4,7 +4,7 @@ export async function useFetch(url, options = {}, auth = true) {
     }
     options['headers']['Content-Type'] = 'application/json';
     if (auth) {
-        options['headers']['Authorization'] = 'Bearer ' + sessionStorage.getItem('JWT');
+        options['headers']['Authorization'] = 'Bearer ' + sessionStorage.getItem('accessSessionToken');
     }
 
     let data = {};

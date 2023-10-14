@@ -66,7 +66,7 @@ export default {
                 let response = await loginService.login(data);
 
                 const token = response.token;
-                sessionStorage.setItem('JWT', token);
+                sessionStorage.setItem('accessSessionToken', token);
                 this.message.push({ severity: 'success', detail: 'Success', content: 'Successful Login', id: count.value++ });
 
                 this.router.push('/applayout');

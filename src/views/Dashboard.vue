@@ -3,8 +3,11 @@ import { onMounted, reactive, ref, watch } from 'vue';
 import ProductService from '@/service/ProductService';
 import { useLayout } from '@/layout/composables/layout';
 
-const { isDarkTheme } = useLayout();
 
+//=======================================================================
+
+//=======================================================================
+const { isDarkTheme } = useLayout();
 const products = ref(null);
 const lineData = reactive({
     labels: ['January', 'February', 'March', 'April', 'May', 'June', 'July'],
@@ -353,5 +356,18 @@ watch(
                 </div>
             </div>
         </div>
+        <div class="col-12 xl:col-6">
+            <div class="card">
+                <h5>Bar Chart</h5>
+                <Chart type="bar" :data="barData" :options="barOptions"></Chart>
+            </div>
+        </div>
+        <div class="col-12 xl:col-6">
+            <div class="card flex flex-column align-items-center">
+                <h5 class="text-left w-full">Pie Chart</h5>
+                <Chart type="pie" :data="pieData" :options="pieOptions"></Chart>
+            </div>
+        </div>
     </div>
+    
 </template>

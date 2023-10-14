@@ -1,34 +1,219 @@
 {
     "DashBoard": {
         "rol": "admin",
-        "subcategorias": []
+        "subcategorias": [],
+        "icons":["pi pi-bars"]
+        
     },
     "Product": {
         "rol": "admin",
-        "subcategories": ["Productos", "Tipos de producto", "Productos Variantes", "Variantes", "Tipo de Unidades", "Tipo de Empaques"]
-    },
+        "subcategories": [
+            
+            {
+            "label":"Productos",
+            "url":"",
+            "icon":""   
+            },
+            {
+                "label":"Tipos de producto",
+                "url":"http://164.90.146.196:81/api/v1/product_types",
+                "icon":""   
+                },
+                        {
+            "label":"Productos Variantes",
+            "url":"",
+            "icon":""   
+            },
+            {
+                "label":"Variantes",
+                "url":"",
+                "icon":""   
+                },
+                {
+                    "label":"Tipos de Unidades",
+                    "url":"",
+                    "icon":""   
+                    },
+                    {
+                    "label":"Tipos de Empaque",
+                    "url":"",
+                    "icon":""   
+                    }
+                
+
+        ],
+        "icons":["pi pi-bars"]
+        },
+        
+    
     "Commercial": {
         "rol": "admin",
-        "subcategories": ["Ofertas", "Solicitud Cliente", "Clientes", "Despachos"]
+        "subcategories": [
+            {
+                "Label": "Ofertas",
+                "url": "",
+                "icon": ""
+            },
+            {
+                "Label": "Solicitud Cliente",
+                "url": "",
+                "icon": ""
+            },
+            {
+                "Label": "Clientes",
+                "url": "",
+                "icon": ""
+            },
+            {
+                "Label": "Despachos",
+                "url": "",
+                "icon": ""
+            }
+        ],
+        
+        "icons":["pi pi-dollar"]
     },
     "Administration": {
         "rol": "admin",
-        "subcategories": ["Compañia", "Finca", "Centros de Trabajo", "Cargos", "Empleados"]
+        "subcategories": [
+            {
+                "Label": "Compañia",
+                "url": "",
+                "icon": ""
+            },
+            {
+                "Label": "Finca",
+                "url": "",
+                "icon": ""
+            },
+            {
+                "Label": "Centros de Trabajo",
+                "url": "",
+                "icon": ""
+            },
+            {
+                "Label": "Cargos",
+                "url": "",
+                "icon": ""
+            },
+            {
+                "Label": "Empleados",
+                "url": "",
+                "icon": ""
+            }
+        ],
+        
+        "icons":["pi pi-bars"]
     },
     "Production": {
         "rol": "admin",
-        "subcategories": ["Lotes Cultivo", "Vehiculos", "Programación"]
+        "subcategories":[
+            {
+                "Label": "Lotes Cultivo",
+                "url": "",
+                "icon": ""
+            },
+            {
+                "Label": "Vehiculos",
+                "url": "",
+                "icon": ""
+            },
+            {
+                "Label": "Programación",
+                "url": "",
+                "icon": ""
+            }
+        ],
+         
+        "icons":["pi pi-bars"]
     },
     "Payroll": {
         "rol": "admin",
-        "subcategories": ["Calendarios", "Tarifas Tareas", "Tipos Tareas", "Labores", "Periodos de Pago"]
+        "subcategories": [
+            {
+                "Label": "Calendarios",
+                "url": "",
+                "icon": ""
+            },
+            {
+                "Label": "Tarifas Tareas",
+                "url": "",
+                "icon": ""
+            },
+            {
+                "Label": "Tipos Tareas",
+                "url": "",
+                "icon": ""
+            },
+            {
+                "Label": "Labores",
+                "url": "",
+                "icon": ""
+            },
+            {
+                "Label": "Periodos de Pago",
+                "url": "",
+                "icon": ""
+            }
+        ],
+        "icons":["pi pi-bars"]
     },
     "Payroll Settlement": {
         "rol": "admin",
-        "subcategories": ["Corta", "Prefrio", "Seleccion", "Contratista", "Descuentos"]
+        "subcategories": [
+            {
+                "Label": "Corta",
+                "url": "",
+                "icon": ""
+            },
+            {
+                "Label": "Prefrio",
+                "url": "",
+                "icon": ""
+            },
+            {
+                "Label": "Seleccion",
+                "url": "",
+                "icon": ""
+            },
+            {
+                "Label": "Contratista",
+                "url": "",
+                "icon": ""
+            },
+            {
+                "Label": "Descuentos",
+                "url": "",
+                "icon": ""
+            }
+        ],
+        "icons":["pi pi-bars"]
     },
     "System": {
         "rol": "admin",
-        "subcategories": ["Estado Registros", "Usuarios", "Roles", "Permisos"]
+        "subcategories": [
+            {
+                "Label": "Estado Registros",
+                "url": "",
+                "icon": ""
+            },
+            {
+                "Label": "Usuarios",
+                "url": "",
+                "icon": ""
+            },
+            {
+                "Label": "Roles",
+                "url": "",
+                "icon": ""
+            },
+            {
+                "Label": "Permisos",
+                "url": "",
+                "icon": ""
+            }
+        ],
+       
+        "icons":["pi pi-bars"]
     }
 }

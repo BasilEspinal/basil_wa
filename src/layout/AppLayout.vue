@@ -20,8 +20,8 @@ watch(isSidebarActive, (newVal) => {
 });
 
 onBeforeMount(() => {
-    if (!sessionStorage.getItem('JWT')) {
-        //router.push('/auth/login');
+    if (!sessionStorage.getItem('accessSessionToken')) {
+        router.push('/auth/login');
         //router.push('/auth/login');
     }
 });

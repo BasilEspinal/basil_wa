@@ -7,7 +7,7 @@ export default class LoginService {
             body: JSON.stringify(user)
         };
 
-        let { data, error } = await useFetch('http://localhost:3030/server/login', options, false);
+        let { data, error } = await useFetch('http://164.90.146.196:81/api/v1/login', options, false);
         if (error) throw error;
         return data;
     }
