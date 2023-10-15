@@ -2,218 +2,213 @@
     "DashBoard": {
         "rol": "admin",
         "subcategorias": [],
-        "icons":["pi pi-bars"]
-        
+        "icons": "pi pi-home"
     },
     "Product": {
         "rol": "admin",
         "subcategories": [
-            
             {
-            "label":"Productos",
-            "url":"",
-            "icon":""   
+                "Label": "Productos",
+                "url": "http://localhost:3030/pisos/api/v1/cutcontrols",
+                "icon": "pi pi-bell"
             },
             {
-                "label":"Tipos de producto",
-                "url":"http://164.90.146.196:81/api/v1/product_types",
-                "icon":""   
-                },
-                        {
-            "label":"Productos Variantes",
-            "url":"",
-            "icon":""   
+                "Label": "Tipos de producto",
+                "url": "https://basilespinal.github.io/api_v1/catalog_jack_2023.json",
+                "icon": "pi pi-bookmark"
             },
             {
-                "label":"Variantes",
-                "url":"",
-                "icon":""   
-                },
-                {
-                    "label":"Tipos de Unidades",
-                    "url":"",
-                    "icon":""   
-                    },
-                    {
-                    "label":"Tipos de Empaque",
-                    "url":"",
-                    "icon":""   
-                    }
-                
-
+                "Label": "Productos Variantes",
+                "url": "https://basilespinal.github.io/api_v1/catalog_jack_2023.json",
+                "icon": "pi pi-bolt"
+            },
+            {
+                "Label": "Variantes",
+                "url": "http://localhost:3030/pisos/api/v1/cutcontrols",
+                "icon": "pi pi-calendar-plus"
+            },
+            {
+                "Label": "Tipos de Unidades",
+                "url": "https://basilespinal.github.io/api_v1/catalog_jack_2023.json",
+                "icon": "pi pi-bookmark"
+            },
+            {
+                "Label": "Tipos de Empaque",
+                "url": "https://basilespinal.github.io/api_v1/catalog_jack_2023.json",
+                "icon": "pi pi-database"
+            }
         ],
-        "icons":["pi pi-bars"]
-        },
-        
-    
+        "icons": "pi pi-bars"
+    },
+
     "Commercial": {
         "rol": "admin",
         "subcategories": [
             {
                 "Label": "Ofertas",
-                "url": "",
-                "icon": ""
+                "url": "http://localhost:3030/pisos/api/v1/cutcontrols",
+                "icon": "pi pi-bell"
             },
             {
                 "Label": "Solicitud Cliente",
-                "url": "",
-                "icon": ""
+                "url": "http://164.90.146.196:81/api/v1/product_types",
+                "icon": "pi pi-bookmark"
             },
             {
                 "Label": "Clientes",
-                "url": "",
-                "icon": ""
+                "url": "https://basilespinal.github.io/api_v1/catalog_jack_2023.json",
+                "icon": "pi pi-bolt"
             },
             {
                 "Label": "Despachos",
-                "url": "",
-                "icon": ""
+                "url": "http://164.90.146.196:81/api/v1/product_types",
+                "icon": "pi pi-calendar-plus"
             }
         ],
-        
-        "icons":["pi pi-dollar"]
+
+        "icons": "pi pi-dollar"
     },
     "Administration": {
         "rol": "admin",
         "subcategories": [
             {
                 "Label": "Compañia",
-                "url": "",
-                "icon": ""
+                "url": "http://164.90.146.196:81/api/v1/product_types",
+                "icon": "pi pi-bell"
             },
             {
                 "Label": "Finca",
-                "url": "",
-                "icon": ""
+                "url": "https://basilespinal.github.io/api_v1/catalog_jack_2023.json",
+                "icon": "pi pi-bookmark"
             },
             {
                 "Label": "Centros de Trabajo",
-                "url": "",
-                "icon": ""
+                "url": "http://localhost:3030/pisos/api/v1/cutcontrols",
+                "icon": "pi pi-bolt"
             },
             {
                 "Label": "Cargos",
-                "url": "",
-                "icon": ""
+                "url": "http://164.90.146.196:81/api/v1/product_types",
+                "icon": "pi pi-comments"
             },
             {
                 "Label": "Empleados",
-                "url": "",
-                "icon": ""
+                "url": "https://basilespinal.github.io/api_v1/catalog_jack_2023.json",
+                "icon": "pi pi-calendar-plus"
             }
         ],
-        
-        "icons":["pi pi-bars"]
+
+        "icons": "pi pi-bars"
     },
     "Production": {
         "rol": "admin",
-        "subcategories":[
+        "subcategories": [
             {
                 "Label": "Lotes Cultivo",
-                "url": "",
-                "icon": ""
+                "url": "http://localhost:3030/pisos/api/v1/cutcontrols",
+                "icon": "pi pi-bell"
             },
             {
                 "Label": "Vehiculos",
-                "url": "",
-                "icon": ""
+                "url": "http://164.90.146.196:81/api/v1/product_types",
+                "icon": "pi pi-bookmark"
             },
             {
                 "Label": "Programación",
-                "url": "",
-                "icon": ""
+                "url": "https://basilespinal.github.io/api_v1/catalog_jack_2023.json",
+                "icon": "pi pi-bolt"
             }
         ],
-         
-        "icons":["pi pi-bars"]
+
+        "icons": "pi pi-bars"
     },
     "Payroll": {
         "rol": "admin",
         "subcategories": [
             {
                 "Label": "Calendarios",
-                "url": "",
-                "icon": ""
+                "url": "https://basilespinal.github.io/api_v1/catalog_jack_2023.json",
+                "icon": "pi pi-bell"
             },
             {
                 "Label": "Tarifas Tareas",
-                "url": "",
-                "icon": ""
+                "url": "https://basilespinal.github.io/api_v1/cutcontrols.json",
+                "icon": "pi pi-bookmark"
             },
             {
                 "Label": "Tipos Tareas",
-                "url": "",
-                "icon": ""
+                "url": "https://basilespinal.github.io/api_v1/catalog_jack_2023.json",
+                "icon": "pi pi-bolt"
             },
             {
                 "Label": "Labores",
-                "url": "",
-                "icon": ""
+                "url": "https://basilespinal.github.io/api_v1/cutcontrols.json",
+                "icon": "pi pi-briefcase"
             },
             {
                 "Label": "Periodos de Pago",
-                "url": "",
-                "icon": ""
+                "url": "https://basilespinal.github.io/api_v1/catalog_jack_2023.json",
+                "icon": "pi pi-calendar-plus"
             }
         ],
-        "icons":["pi pi-bars"]
+        "icons": "pi pi-bars"
     },
     "Payroll Settlement": {
         "rol": "admin",
         "subcategories": [
             {
                 "Label": "Corta",
-                "url": "",
-                "icon": ""
+                "url": "https://basilespinal.github.io/api_v1/catalog_jack_2023.json",
+                "icon": "pi pi-bell"
             },
             {
                 "Label": "Prefrio",
-                "url": "",
-                "icon": ""
+                "url": "https://basilespinal.github.io/api_v1/cutcontrols.json",
+                "icon": "pi pi-bookmark"
             },
             {
                 "Label": "Seleccion",
-                "url": "",
-                "icon": ""
+                "url": "https://basilespinal.github.io/api_v1/catalog_jack_2023.json",
+                "icon": "pi pi-bolt"
             },
             {
                 "Label": "Contratista",
-                "url": "",
-                "icon": ""
+                "url": "https://basilespinal.github.io/api_v1/catalog_jack_2023.json",
+                "icon": "pi pi-briefcase"
             },
             {
                 "Label": "Descuentos",
-                "url": "",
-                "icon": ""
+                "url": "https://basilespinal.github.io/api_v1/catalog_jack_2023.json",
+                "icon": "pi pi-calendar-plus"
             }
         ],
-        "icons":["pi pi-bars"]
+        "icons": "pi pi-bars"
     },
     "System": {
         "rol": "admin",
         "subcategories": [
             {
                 "Label": "Estado Registros",
-                "url": "",
-                "icon": ""
+                "url": "https://basilespinal.github.io/api_v1/cutcontrols.json",
+                "icon": "pi pi-bell"
             },
             {
                 "Label": "Usuarios",
-                "url": "",
-                "icon": ""
+                "url": "https://basilespinal.github.io/api_v1/catalog_jack_2023.json",
+                "icon": "pi-bookmark"
             },
             {
                 "Label": "Roles",
-                "url": "",
-                "icon": ""
+                "url": "https://basilespinal.github.io/api_v1/catalog_jack_2023.json",
+                "icon": "pi pi-bolt"
             },
             {
                 "Label": "Permisos",
-                "url": "",
-                "icon": ""
+                "url": "https://basilespinal.github.io/api_v1/catalog_jack_2023.json",
+                "icon": "pi pi-briefcase"
             }
         ],
-       
-        "icons":["pi pi-bars"]
+
+        "icons": "pi pi-bars"
     }
 }

@@ -1,37 +1,31 @@
 export default class MenuModel {
-    constructor(label, items) {
+    constructor(label, items, icons) {
         this.label = label;
-        this.items = items['subcategories']?.map((subCategory) => {
-            //subCategory.label.map()
-  
+        this.icon = icons;
+        this.items = items['subcategories']?.map((subCategory) => { 
+            if (subCategory.label) return {};
             let rut =
                 '/components/GenericComponet/' +
-                subCategory;
-                    //.replaceAll(' ', '_')
-                    //.toLowerCase()
-                    //.replace(/[-_][a-z0-9]/g, (group) => group.slice(-1).toUpperCase());
-            
-            let pathApi = '?ruta=' + encodeURIComponent('https://basilespinal.github.io/api_v1/catalog_jack_2023.json');
-            
+                subCategory.Label
+                    .replaceAll(' ', '_')
+                    .toLowerCase()
+                    .replace(/[-_][a-z0-9]/g, (group) => group.slice(-1).toUpperCase());
+            //let pathApi = '?ruta=' + encodeURIComponent('https://basilespinal.github.io/api_v1/catalog_jack_2023.json');
+            let pathApi = '?ruta=' + encodeURIComponent(subCategory.url);
 
             return {
-                
-                label: subCategory.label,
-                icon: items['icons'],
-                to: rut+pathApi
+                label: subCategory.Label,
+                icon: subCategory.icon,
+                to: rut + pathApi
             };
-        
         });
-          
-        //alert(this.items)
     }
 
     static fromJson(data) {
         let items = [];
         for (let key in data) {
-            items.push(new MenuModel(key, data[key]));
+            items.push(new MenuModel(key, data[key], data[key].icons));
         }
-        console.log('ruta', items);
         return items;
     }
 }

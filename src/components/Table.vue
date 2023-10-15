@@ -1,7 +1,7 @@
 <script setup>
 import { FilterMatchMode, FilterOperator } from 'primevue/api';
 import TableService from '@/service/TableService';
-import { ref, onBeforeMount, defineEmits } from 'vue';
+import { ref, onBeforeMount, watch, defineEmits } from 'vue';
 
 const columnas = ref([]);
 const column = ref(null);
@@ -15,18 +15,22 @@ const tableService = new TableService();
 const selectedProduct = ref([]);
 const emits = defineEmits([]);
 
-/**
- * The `onBeforeMount` function is a lifecycle hook in Vue that is called right before the component is
- * mounted to the DOM. In this case, it is used to perform some initialization tasks before the
- * component is rendered.
- */
-onBeforeMount(() => {
+const loadingData = () => {
     loading.value = true;
     filters.value = {
         global: { value: null, matchMode: FilterMatchMode.CONTAINS }
     };
     fetchInfoAndUpdateValue();
-});
+};
+
+/**
+ * The `onBeforeMount` function is a lifecycle hook in Vue that is called right before the component is
+ * mounted to the DOM. In this case, it is used to perform some initialization tasks before the
+ * component is rendered.
+ */
+onBeforeMount(loadingData);
+
+watch(() => props.pathApi, loadingData);
 
 /**
  * The `initFilters` function is initializing the filters for each column in the table. It loops
@@ -55,7 +59,7 @@ const initFilters = () => {
  * `null` value and a `FilterMatchMode.STARTS_WITH` match mode.
  */
 const clearFilter = () => {
-        initFilters();
+    initFilters();
 };
 
 // eslint-disable-next-line no-unused-vars
@@ -112,8 +116,7 @@ async function fetchInfoAndUpdateValue() {
         const types = ['string', 'number'];
 
         for (let key in data[0]) {
-            if (types.includes(typeof data[0][key]))
-                mappedArray1.push(key);
+            if (types.includes(typeof data[0][key])) mappedArray1.push(key);
         }
 
         columnas.value = mappedArray1.map((item) => {
@@ -128,6 +131,9 @@ async function fetchInfoAndUpdateValue() {
         headerNames.value = column.value.map((col) => col.field);
         initFilters();
     } catch (error) {
+        tableData.value = ref([]);
+        headerNames.value = ref([]);
+        loading.value = false;
         console.error('Error fetching cut data:', error);
     }
 }

@@ -64,6 +64,7 @@ export default {
         async fetchInfoPostLogin(data) {
             try {
                 let response = await loginService.login(data);
+                if (response['error']) throw response.error;
 
                 const token = response.token;
                 sessionStorage.setItem('accessSessionToken', token);
