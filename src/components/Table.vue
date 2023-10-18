@@ -1,7 +1,7 @@
 <script setup>
 import { FilterMatchMode, FilterOperator } from 'primevue/api';
 import TableService from '@/service/TableService';
-import { ref, onBeforeMount, defineEmits } from 'vue';
+import { ref, onBeforeMount, defineEmits, watch } from 'vue';
 
 const columnas = ref([]);
 const column = ref(null);
@@ -14,6 +14,7 @@ const tableData = ref(null);
 const tableService = new TableService();
 const selectedProduct = ref([]);
 const emits = defineEmits([]);
+const dataMod = ref(props.dataMod);
 
 /**
  * The `onBeforeMount` function is a lifecycle hook in Vue that is called right before the component is
@@ -55,7 +56,7 @@ const initFilters = () => {
  * `null` value and a `FilterMatchMode.STARTS_WITH` match mode.
  */
 const clearFilter = () => {
-        initFilters();
+    initFilters();
 };
 
 // eslint-disable-next-line no-unused-vars
@@ -90,6 +91,9 @@ const props = defineProps({
     jsonDataPath: {
         type: String,
         default: 'data'
+    },
+    dataMod: {
+        type: Object
     }
 });
 
@@ -112,14 +116,15 @@ async function fetchInfoAndUpdateValue() {
         const types = ['string', 'number'];
 
         for (let key in data[0]) {
-            if (types.includes(typeof data[0][key]))
+            if (types.includes(typeof data[0][key])) {
                 mappedArray1.push(key);
+            }
         }
 
         columnas.value = mappedArray1.map((item) => {
             return {
                 field: item,
-                header: item.toUpperCase(),
+                header: item.replaceAll('_', ' ').toUpperCase(),
                 position: mappedArray1.indexOf(item)
             };
         });
@@ -127,18 +132,62 @@ async function fetchInfoAndUpdateValue() {
         column.value = columnas.value;
         headerNames.value = column.value.map((col) => col.field);
         initFilters();
+        emits('HeaderNames', data[0]);
     } catch (error) {
         console.error('Error fetching cut data:', error);
     }
 }
 
+/*
+headerNamesRow.map((col) => {
+                return {
+                    label: col.label
+                        .replaceAll('_', ' ')
+                        .toLowerCase()
+                        .replace(/[-_][a-z0-9]/g, (group) => group.slice(-1).toUpperCase()),
+                    type: col.type
+                };
+            })
+*/
+
 const onRowSelect = () => {
     emits('onRowSelect', selectedProduct.value);
 };
 
-const onSelectAllChange = (event) => {
+const onSelectAllChange = () => {
     onRowSelect();
 };
+
+watch(
+    () => props.dataMod,
+    () => {
+        dataMod.value = props.dataMod.data;
+/*
+        switch (props.dataMod.mode) {
+            case 'NEW':
+                //tableData.value.push(dataMod.value);
+                break;
+            case 'EDIT':
+                tableData.value.map((item) => {
+                    if (item.id == props.dataMod.id) {
+                        item = props.dataMod;
+                    }
+                });
+                break;
+            case 'CLONE':
+                tableData.value.push(dataMod.value);
+                break;
+            case 'DELETE':
+                tableData.value.map((item) => {
+                    if (props.dataMod.includes(item.id)) delete tableData.value[item];
+                });
+                break;
+            default:
+                return;
+        }
+        */
+    }
+);
 
 /**
  * The `onColumnsChange` function is a callback function that is called when the selected columns in
