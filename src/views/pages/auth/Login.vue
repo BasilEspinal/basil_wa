@@ -68,6 +68,7 @@ export default {
 
                 const token = response.token;
                 sessionStorage.setItem('accessSessionToken', token);
+                localStorage.setItem('accessSessionToken', token);
                 this.message.push({ severity: 'success', detail: 'Success', content: 'Successful Login', id: count.value++ });
 
                 this.router.push('/applayout');

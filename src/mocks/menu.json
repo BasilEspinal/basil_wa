@@ -9,12 +9,12 @@
         "subcategories": [
             {
                 "Label": "Productos",
-                "url": "http://localhost:3030/pisos/api/v1/cutcontrols",
+                "url": "http://164.90.146.196:81/api/v1/products",
                 "icon": "pi pi-bell"
             },
             {
                 "Label": "Tipos de producto",
-                "url": "https://basilespinal.github.io/api_v1/catalog_jack_2023.json",
+                "url": "http://164.90.146.196:81/api/v1/product_types",
                 "icon": "pi pi-bookmark"
             },
             {
@@ -24,17 +24,17 @@
             },
             {
                 "Label": "Variantes",
-                "url": "http://localhost:3030/pisos/api/v1/cutcontrols",
+                "url": "http://164.90.146.196:81/api/v1/variants",
                 "icon": "pi pi-calendar-plus"
             },
             {
                 "Label": "Tipos de Unidades",
-                "url": "https://basilespinal.github.io/api_v1/catalog_jack_2023.json",
+                "url": "http://164.90.146.196:81/api/v1/unit_types",
                 "icon": "pi pi-bookmark"
             },
             {
                 "Label": "Tipos de Empaque",
-                "url": "https://basilespinal.github.io/api_v1/catalog_jack_2023.json",
+                "url": "http://164.90.146.196/api/v1/packing_types",
                 "icon": "pi pi-database"
             }
         ],

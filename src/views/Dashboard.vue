@@ -386,13 +386,13 @@ watch(
         </div>
         <div class="col-12 xl:col-6">
             <div class="card">
-                <h5>Bar Chart</h5>
+                <h5>Icopores por mes</h5>
                 <Chart type="bar" :data="barData" :options="barOptions"></Chart>
             </div>
         </div>
         <div class="col-12 xl:col-6">
             <div class="card flex flex-column align-items-center">
-                <h5 class="text-left w-full">Pie Chart</h5>
+                <h5 class="text-left w-full">Icopores por persona</h5>
                 <Chart type="pie" :data="pieData" :options="pieOptions"></Chart>
             </div>
         </div>
