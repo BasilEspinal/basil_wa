@@ -33,6 +33,7 @@ export async function useFetch(url, options = {}, auth = true) {
         let res = await fetch(url, options);
         if (res.ok) {
             data = res.json();
+            
         } else {
             error = await res.text();
         }

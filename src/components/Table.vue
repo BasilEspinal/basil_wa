@@ -110,7 +110,7 @@ async function fetchInfoAndUpdateValue() {
             data = data[element];
         });
         tableData.value = data;
-
+        console.log(data.data)
         let mappedArray1 = [];
 
         const types = ['string', 'number'];

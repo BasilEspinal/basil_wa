@@ -19,7 +19,7 @@
             },
             {
                 "Label": "Productos Variantes",
-                "url": "https://basilespinal.github.io/api_v1/catalog_jack_2023.json",
+                "url": "http://164.90.146.196:81/api/v1/variants",
                 "icon": "pi pi-bolt"
             },
             {
@@ -34,7 +34,7 @@
             },
             {
                 "Label": "Tipos de Empaque",
-                "url": "http://164.90.146.196/api/v1/packing_types",
+                "url": "http://164.90.146.196:81/api/v1/packing_types",
                 "icon": "pi pi-database"
             }
         ],
@@ -46,54 +46,56 @@
         "subcategories": [
             {
                 "Label": "Ofertas",
-                "url": "http://localhost:3030/pisos/api/v1/cutcontrols",
+                "url": "https://basilespinal.github.io/api_v1/catalog_jack_2023.json",
                 "icon": "pi pi-bell"
             },
             {
                 "Label": "Solicitud Cliente",
-                "url": "http://164.90.146.196:81/api/v1/product_types",
+                "url": "https://basilespinal.github.io/api_v1/catalog_jack_2023.json",
                 "icon": "pi pi-bookmark"
             },
             {
+                
                 "Label": "Clientes",
-                "url": "https://basilespinal.github.io/api_v1/catalog_jack_2023.json",
+                "url": "http://164.90.146.196:81/api/v1/customers",
                 "icon": "pi pi-bolt"
             },
             {
                 "Label": "Despachos",
-                "url": "http://164.90.146.196:81/api/v1/product_types",
+                "url": "https://basilespinal.github.io/api_v1/catalog_jack_2023.json",
                 "icon": "pi pi-calendar-plus"
             }
         ],
 
-        "icons": "pi pi-dollar"
+        "icons": "pi pi-bars"
     },
     "Administration": {
         "rol": "admin",
         "subcategories": [
             {
                 "Label": "Compañia",
-                "url": "http://164.90.146.196:81/api/v1/product_types",
+                "url": "http://164.90.146.196:81/api/v1/companies",
                 "icon": "pi pi-bell"
             },
             {
                 "Label": "Finca",
-                "url": "https://basilespinal.github.io/api_v1/catalog_jack_2023.json",
+                "url": "http://164.90.146.196:81/api/v1/farms",
                 "icon": "pi pi-bookmark"
             },
             {
                 "Label": "Centros de Trabajo",
-                "url": "http://localhost:3030/pisos/api/v1/cutcontrols",
+                "url": "http://164.90.146.196:81//api/v1/work_centers",
                 "icon": "pi pi-bolt"
             },
             {
                 "Label": "Cargos",
-                "url": "http://164.90.146.196:81/api/v1/product_types",
+                "url": "http://164.90.146.196:81/api/v1/job_types",
                 "icon": "pi pi-comments"
             },
             {
+                
                 "Label": "Empleados",
-                "url": "https://basilespinal.github.io/api_v1/catalog_jack_2023.json",
+                "url": "http://164.90.146.196:81/api/v1/employees",
                 "icon": "pi pi-calendar-plus"
             }
         ],
@@ -105,12 +107,12 @@
         "subcategories": [
             {
                 "Label": "Lotes Cultivo",
-                "url": "http://localhost:3030/pisos/api/v1/cutcontrols",
+                "url": "http://localhost:3030/pisos/api/v1/lots",
                 "icon": "pi pi-bell"
             },
             {
                 "Label": "Vehiculos",
-                "url": "http://164.90.146.196:81/api/v1/product_types",
+                "url": "http://164.90.146.196:81/api/v1/vehicles",
                 "icon": "pi pi-bookmark"
             },
             {
@@ -127,7 +129,7 @@
         "subcategories": [
             {
                 "Label": "Calendarios",
-                "url": "https://basilespinal.github.io/api_v1/catalog_jack_2023.json",
+                "url": "http://164.90.146.196:81/api/v1/calendars",
                 "icon": "pi pi-bell"
             },
             {
@@ -147,7 +149,7 @@
             },
             {
                 "Label": "Periodos de Pago",
-                "url": "https://basilespinal.github.io/api_v1/catalog_jack_2023.json",
+                "url": "http://164.90.146.196:81/api/v1/pay_periods",
                 "icon": "pi pi-calendar-plus"
             }
         ],
@@ -189,22 +191,22 @@
         "subcategories": [
             {
                 "Label": "Estado Registros",
-                "url": "https://basilespinal.github.io/api_v1/cutcontrols.json",
+                "url": "http://164.90.146.196:81/api/v1/statuses",
                 "icon": "pi pi-bell"
             },
             {
                 "Label": "Usuarios",
-                "url": "https://basilespinal.github.io/api_v1/catalog_jack_2023.json",
+                "url": "http://164.90.146.196:81/api/v1/user",
                 "icon": "pi-bookmark"
             },
             {
                 "Label": "Roles",
-                "url": "https://basilespinal.github.io/api_v1/catalog_jack_2023.json",
+                "url": "http://164.90.146.196:81/api/v1/roles",
                 "icon": "pi pi-bolt"
             },
             {
                 "Label": "Permisos",
-                "url": "https://basilespinal.github.io/api_v1/catalog_jack_2023.json",
+                "url": "http://164.90.146.196:81/api/v1/permissions",
                 "icon": "pi pi-briefcase"
             }
         ],
