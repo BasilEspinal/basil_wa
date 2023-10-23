@@ -14,7 +14,8 @@ const tableData = ref(null);
 const tableService = new TableService();
 const selectedProduct = ref([]);
 const emits = defineEmits([]);
-const dataMod = ref(props.dataMod);
+//const dataMod = ref(props.dataMod);
+const dt = ref();
 
 /**
  * The `onBeforeMount` function is a lifecycle hook in Vue that is called right before the component is
@@ -138,18 +139,6 @@ async function fetchInfoAndUpdateValue() {
     }
 }
 
-/*
-headerNamesRow.map((col) => {
-                return {
-                    label: col.label
-                        .replaceAll('_', ' ')
-                        .toLowerCase()
-                        .replace(/[-_][a-z0-9]/g, (group) => group.slice(-1).toUpperCase()),
-                    type: col.type
-                };
-            })
-*/
-
 const onRowSelect = () => {
     emits('onRowSelect', selectedProduct.value);
 };
@@ -158,36 +147,77 @@ const onSelectAllChange = () => {
     onRowSelect();
 };
 
+const exportData = (data) => {
+    data.data ? exportTableToCSV(data.name) : exportExcel(data.name);
+};
+
 watch(
     () => props.dataMod,
     () => {
-        dataMod.value = props.dataMod.data;
-/*
         switch (props.dataMod.mode) {
             case 'NEW':
-                //tableData.value.push(dataMod.value);
                 break;
             case 'EDIT':
-                tableData.value.map((item) => {
-                    if (item.id == props.dataMod.id) {
-                        item = props.dataMod;
-                    }
-                });
                 break;
             case 'CLONE':
-                tableData.value.push(dataMod.value);
                 break;
             case 'DELETE':
-                tableData.value.map((item) => {
-                    if (props.dataMod.includes(item.id)) delete tableData.value[item];
-                });
+                break;
+            case 'EXPORT':
+                exportData(props.dataMod.data);
                 break;
             default:
                 return;
         }
-        */
     }
 );
+
+const exportExcel = (name) => {
+    const uri = 'data:application/vnd.ms-excel;base64,';
+    const template =
+        '<html xmlns:o="urn:schemas-microsoft-com:office:office" xmlns:x="urn:schemas-microsoft-com:office:excel" xmlns="http://www.w3.org/TR/REC-html40"><head><!--[if gte mso 9]><xml><x:ExcelWorkbook><x:ExcelWorksheets><x:ExcelWorksheet><x:Name>{worksheet}</x:Name><x:WorksheetOptions><x:DisplayGridlines/></x:WorksheetOptions></x:ExcelWorksheet></x:ExcelWorksheets></x:ExcelWorkbook></xml><![endif]--></head><body><table>{table}</table></body></html>';
+    const base64 = (s) => window.btoa(unescape(encodeURIComponent(s)));
+
+    const format = (s, c) => s.replace(/{(\w+)}/g, (m, p) => c[p]);
+
+    const htmls = document.getElementById('tblData').innerHTML;
+
+    const ctx = {
+        worksheet: 'Worksheet',
+        table: htmls
+    };
+
+    const link = document.createElement('a');
+    link.download = name;
+    link.href = uri + base64(format(template, ctx));
+    link.click();
+};
+
+function downloadCSV(csv, name) {
+    const csvFile = new Blob([csv], { type: 'text/csv' });
+    const downloadLink = document.createElement('a');
+    downloadLink.download = name;
+    downloadLink.href = window.URL.createObjectURL(csvFile);
+    downloadLink.style.display = 'none';
+    document.body.appendChild(downloadLink);
+    downloadLink.click();
+}
+
+function exportTableToCSV(name) {
+    let csv = [];
+    const rows = document.querySelectorAll('table tr');
+
+    for (let i = 0; i < rows.length; i++) {
+        let row = [],
+            cols = rows[i].querySelectorAll('td, th');
+
+        for (let j = 0; j < cols.length; j++) row.push(cols[j].innerText + '\t');
+
+        csv.push(row.join(','));
+    }
+
+    downloadCSV(csv.join('\n'), name);
+}
 
 /**
  * The `onColumnsChange` function is a callback function that is called when the selected columns in
@@ -218,6 +248,7 @@ const onColumnsChange = (column) => {
                 </MultiSelect>
             </div>
             <DataTable
+                id="tblData"
                 v-model:selection="selectedProduct"
                 :value="tableData"
                 :paginator="true"
@@ -230,7 +261,7 @@ const onColumnsChange = (column) => {
                 :loading="loading"
                 :filters="filters"
                 responsiveLayout="scroll"
-                ref="dt"
+                :ref="dt"
                 :globalFilterFields="headerNames"
                 @row-select="onRowSelect"
                 @row-unselect="onRowSelect"
@@ -250,7 +281,7 @@ const onColumnsChange = (column) => {
 
                 <Column selectionMode="multiple" headerStyle="width: 3rem"></Column>
 
-                <Column v-for="col of column" :key="col.field" :field="col.field" :header="col.header" :enable="col.enabled" :filterField="col.field" style="min-width: 1rem">
+                <Column id="col" v-for="col of column" :key="col.field" :field="col.field" :header="col.header" :enable="col.enabled" :filterField="col.field" style="min-width: 1rem">
                     <template #body="{ data }">
                         {{ data[col.field] }}
                     </template>

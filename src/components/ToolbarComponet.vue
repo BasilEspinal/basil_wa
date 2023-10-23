@@ -6,8 +6,21 @@ const emits = defineEmits([]);
 const toast = useToast();
 const productDialog = ref(false);
 const deleteProducts = ref(false);
+const exportDialog = ref(false);
 const mode = ref('');
+const filename = ref('table');
 const headerNamesRow = ref([]);
+const extenciones = ref([
+    {
+        name: 'CSV',
+        code: true
+    },
+    {
+        name: 'XLS',
+        code: false
+    }
+]);
+const format = ref('');
 
 const props = defineProps({
     rowSelect: {
@@ -62,6 +75,12 @@ const openClone = () => {
     productDialog.value = true;
 };
 
+const openExport = () => {
+    mode.value = 'EXPORT';
+    format.value = '';
+    exportDialog.value = true;
+};
+
 const openDelete = () => {
     mode.value = 'DELETE';
     headerNamesRow.value = [];
@@ -75,47 +94,56 @@ const openDelete = () => {
 };
 
 const hideDialog = () => {
-    mode.value = '';
     productDialog.value = false;
 };
 
 const saveProduct = () => {
     let data = [];
-    if (mode.value != 'DELETE') {
+    if (mode.value == 'DELETE') {
+        headerNamesRow.value.map((item) => {
+            if (item.selecti) data.push(item.id);
+        });
+    } else if (mode.value == 'EXPORT') {
+        if (format.value == '') {
+            toast.add({ severity: 'error', summary: 'Select Format', detail: 'Must select a format', life: 3000 });
+            return;
+        }
+        data = {
+            data: format.value.code,
+            name: filename.value + (format.value.code ? '.csv' : '.xls')
+        };
+    } else {
         data = headerNamesRow.value.map((heade) => {
             const data = {};
             data[heade.label] = heade.data;
             return data;
         });
-    } else {
-        headerNamesRow.value.map((item) => {
-            if (item.selecti) data.push(item.id);
-        });
     }
+    toast.add({ severity: 'success', summary: 'Successful', detail: 'Product Updated', life: 3000 });
     emits('modDataToolbar', { data: data, mode: mode.value });
 
-    toast.add({ severity: 'success', summary: 'Successful', detail: 'Product Updated', life: 3000 });
     productDialog.value = false;
     deleteProducts.value = false;
+    exportDialog.value = false;
 };
 </script>
 
 <template>
     <div class="grid">
         <div class="col-12">
-            <div class="card">
-                <h5>Toolbar</h5>
-                <Toolbar>
-                    <template v-slot:start>
-                        <Button label="New" icon="pi pi-plus" class="p-button-success mr-2" @click="openNew" />
-                        <i class="pi pi-bars p-toolbar-separator mr-2"></i>
-                        <Button :disabled="!(props.rowSelect.length > 0 && props.rowSelect.length < 2)" label="Edit" icon="pi pi-file-edit" class="p-button-help mr-2" @click="openEdit" />
-                        <Button :disabled="!(props.rowSelect.length > 0 && props.rowSelect.length < 2)" label="Clone" icon="pi pi-copy" class="p-button-secondary mr-2" @click="openClone" />
-                        <Button label="Export" icon="pi pi-file-import" class="p-button-warning mr-2" />
-                        <Button :disabled="!props.rowSelect.length > 0" label="Delete" icon="pi pi-trash" class="p-button-danger mr-2" @click="openDelete" />
-                    </template>
-                </Toolbar>
-            </div>
+            <h5>Toolbar</h5>
+            <Toolbar>
+                <template v-slot:start>
+                    <div>
+                        <Button :disabled="props.headerNames.length > 0" label="New" icon="pi pi-plus" class="p-button-success mr-2 ml-2 mb-2 mt-2" @click="openNew" size="large" />
+                        <i class="pi pi-bars p-toolbar-separator mr-2 ml-2 mb-2 mt-2"></i>
+                        <Button :disabled="!(props.rowSelect.length > 0 && props.rowSelect.length < 2)" label="Edit" icon="pi pi-file-edit" class="p-button-help mr-2 ml-2 mb-2 mt-2" @click="openEdit" size="large" />
+                        <Button :disabled="!(props.rowSelect.length > 0 && props.rowSelect.length < 2)" label="Clone" icon="pi pi-copy" class="p-button-secondary mr-2 ml-2 mb-2 mt-2" @click="openClone" size="large" />
+                        <Button :disabled="props.headerNames.length > 0" label="Export" icon="pi pi-file-import" class="p-button-warning mr-2 ml-2 mb-2 mt-2" @click="openExport" size="large" />
+                        <Button :disabled="!props.rowSelect.length > 0" label="Delete" icon="pi pi-trash" class="p-button-danger mr-2 ml-2 mb-2 mt-2" @click="openDelete" size="large" />
+                    </div>
+                </template>
+            </Toolbar>
         </div>
         <Dialog v-model:visible="productDialog" :style="{ width: '700px' }" header="Product Details" :modal="true" class="p-fluid">
             <div class="formgrid grid">
@@ -131,8 +159,25 @@ const saveProduct = () => {
                 </div>
             </div>
             <template #footer>
-                <Button label="Cancel" icon="pi pi-times" class="p-button-text" @click="hideDialog" />
-                <Button label="Save" icon="pi pi-check" class="p-button-text" @click="saveProduct" />
+                <div>
+                    <Button label="Cancel" icon="pi pi-times" class="p-button-text" @click="hideDialog" />
+                    <Button label="Save" icon="pi pi-check" class="p-button-text" @click="saveProduct" />
+                </div>
+            </template>
+        </Dialog>
+
+        <Dialog v-model:visible="exportDialog" :style="{ width: '280px' }" header="Product Details" :modal="true" class="p-fluid">
+            <div class="field col">
+                <label>File name</label>
+                <InputText id="name" v-model="filename" :required="true" integeronly />
+                <span class="p-float-label mt-5">
+                    <Dropdown v-model="format" :options="extenciones" optionLabel="name" :class="{ 'p-invalid w-full md:w-14rem': format == '', ' w-full md:w-14rem': format != '' }" />
+                    <label for="cs-city">Format</label>
+                </span>
+            </div>
+            <template #footer>
+                <Button label="Cancel" icon="pi pi-times" class="p-button-text" @click="exportDialog = false" />
+                <Button label="Export" icon="pi pi-check" class="p-button-text" @click="saveProduct" />
             </template>
         </Dialog>
 
