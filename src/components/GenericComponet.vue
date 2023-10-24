@@ -1,5 +1,5 @@
 <script setup>
-import { ref } from 'vue';
+import { ref, watch } from 'vue';
 import Table from './Table.vue';
 import ToolbarComponet from './ToolbarComponet.vue';
 
@@ -32,6 +32,14 @@ const onModDataToolbar = (data) => {
 };
 
 const onHeaderNames = (data) => (headerNames.value = data);
+
+watch(
+    () => router.currentRoute.value,
+    () => {
+        rutaDecodificada.value = decodeURIComponent(router.currentRoute.value.query.ruta);
+    }
+);
+
 </script>
 
 <template>
