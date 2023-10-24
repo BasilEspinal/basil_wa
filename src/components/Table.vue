@@ -1,7 +1,7 @@
 <script setup>
 import { FilterMatchMode, FilterOperator } from 'primevue/api';
 import TableService from '@/service/TableService';
-import { ref, onBeforeMount, defineEmits } from 'vue';
+import { ref, onBeforeMount, defineEmits, watch } from 'vue';
 
 const columnas = ref([]);
 const column = ref(null);
@@ -17,22 +17,18 @@ const emits = defineEmits([]);
 //const dataMod = ref(props.dataMod);
 const dt = ref();
 
-const loadingData = () => {
-    loading.value = true;
-    filters.value = {
-        global: { value: null, matchMode: FilterMatchMode.CONTAINS }
-    };
-    fetchInfoAndUpdateValue();
-};
-
 /**
  * The `onBeforeMount` function is a lifecycle hook in Vue that is called right before the component is
  * mounted to the DOM. In this case, it is used to perform some initialization tasks before the
  * component is rendered.
  */
-onBeforeMount(loadingData);
-
-watch(() => props.pathApi, loadingData);
+onBeforeMount(() => {
+    loading.value = true;
+    filters.value = {
+        global: { value: null, matchMode: FilterMatchMode.CONTAINS }
+    };
+    fetchInfoAndUpdateValue();
+});
 
 /**
  * The `initFilters` function is initializing the filters for each column in the table. It loops
@@ -115,14 +111,15 @@ async function fetchInfoAndUpdateValue() {
             data = data[element];
         });
         tableData.value = data;
-        console.log(data.data)
+
         let mappedArray1 = [];
 
         const types = ['string', 'number'];
 
         for (let key in data[0]) {
-            if (types.includes(typeof data[0][key]))
+            if (types.includes(typeof data[0][key])) {
                 mappedArray1.push(key);
+            }
         }
 
         columnas.value = mappedArray1.map((item) => {
@@ -138,9 +135,6 @@ async function fetchInfoAndUpdateValue() {
         initFilters();
         emits('HeaderNames', data[0]);
     } catch (error) {
-        tableData.value = ref([]);
-        headerNames.value = ref([]);
-        loading.value = false;
         console.error('Error fetching cut data:', error);
     }
 }

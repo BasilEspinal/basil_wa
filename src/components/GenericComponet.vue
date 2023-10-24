@@ -1,15 +1,16 @@
 <script setup>
-import { ref, watch } from 'vue';
-import Table from '@/components/Table.vue';
-
-import ToolbarComponet from '@/components/ToolbarComponet.vue';
+import { ref } from 'vue';
+import Table from './Table.vue';
+import ToolbarComponet from './ToolbarComponet.vue';
 
 const listRowSelect = ref([]);
 import { useRouter } from 'vue-router';
 
 const router = useRouter();
-const rutaCodificada = router.currentRoute.value.query.ruta
+const rutaCodificada = router.currentRoute.value.query.ruta;
 const rutaDecodificada = ref(decodeURIComponent(rutaCodificada));
+const dataMod = ref({});
+const headerNames = ref([]);
 /*
 const props = defineProps({
     pathApi: {
@@ -21,14 +22,6 @@ const props = defineProps({
         default: 'Generic Componet'
     }
 });*/
-
-watch(
-    () => router.currentRoute.value.query.ruta ,
-    () => {
-        console.log('cambia: ', router.currentRoute.value.query.ruta);
-        rutaDecodificada.value = decodeURIComponent(router.currentRoute.value.query.ruta);
-    }
-);
 
 function RowSelect(data) {
     listRowSelect.value = data;
