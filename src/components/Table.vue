@@ -1,7 +1,7 @@
 <script setup>
 import { FilterMatchMode, FilterOperator } from 'primevue/api';
 import TableService from '@/service/TableService';
-import { ref, onBeforeMount, defineEmits } from 'vue';
+import { ref, onBeforeMount, defineEmits,watch } from 'vue';
 
 const columnas = ref([]);
 const column = ref(null);
