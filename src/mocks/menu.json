@@ -1,10 +1,10 @@
 {
-    "DashBoard": {
+    "Centro de control": {
         "rol": "admin",
         "subcategorias": [],
         "icons": "pi pi-home"
     },
-    "Product": {
+    "Producto": {
         "rol": "admin",
         "subcategories": [
             {
@@ -41,7 +41,7 @@
         "icons": "pi pi-bars"
     },
 
-    "Commercial": {
+    "Comercial": {
         "rol": "admin",
         "subcategories": [
             {
@@ -69,7 +69,7 @@
 
         "icons": "pi pi-bars"
     },
-    "Administration": {
+    "Administración": {
         "rol": "admin",
         "subcategories": [
             {
@@ -102,7 +102,7 @@
 
         "icons": "pi pi-bars"
     },
-    "Production": {
+    "Producción": {
         "rol": "admin",
         "subcategories": [
             {
@@ -124,7 +124,7 @@
 
         "icons": "pi pi-bars"
     },
-    "Payroll": {
+    "Nómina": {
         "rol": "admin",
         "subcategories": [
             {
@@ -155,7 +155,7 @@
         ],
         "icons": "pi pi-bars"
     },
-    "Payroll Settlement": {
+    "Liquidacion de nómina": {
         "rol": "admin",
         "subcategories": [
             {
@@ -186,14 +186,14 @@
         ],
         "icons": "pi pi-bars"
     },
-    "System": {
+    "Sistema": {
         "rol": "admin",
         "subcategories": [
             {
                 "Label": "Estado Registros",
                 "url": "http://164.90.146.196:81/api/v1/statuses",
                 "icon": "pi pi-bell"
-            },
+            }, 
             {
                 "Label": "Usuarios",
                 "url": "http://164.90.146.196:81/api/v1/user",

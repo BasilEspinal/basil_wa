@@ -184,7 +184,7 @@ async function fetchInfoAndUpdateValue() {
 </script>
 
 <template>
-    <PanelMenu :model="model" />
+    <Menu :model="model" />
 </template>
 
 <style lang="scss" scoped></style>

@@ -131,7 +131,7 @@ const saveProduct = () => {
 <template>
     <div class="grid">
         <div class="col-12">
-            <h5>Toolbar</h5>
+            
             <Toolbar>
                 <template v-slot:start>
                     <div>
