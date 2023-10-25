@@ -103,10 +103,7 @@ const isOutsideClicked = (event) => {
                 <i class="pi pi-user"></i>
                 <span>Profile</span>
             </button>
-            <button @click="onSettingsClick()" class="p-link layout-topbar-button">
-                <i class="pi pi-cog"></i>
-                <span>Settings</span>
-            </button>
+            
             <Button @click="onChangeTheme(!toggleValue)" v-model="toggleValue" icon="pi pi-cog" rounded outlined class="p-link layout-topbar-button">
                 <i class="pi pi-cog"></i>
             </Button>

@@ -91,7 +91,7 @@ const formatDate = (value) => {
 const props = defineProps({
     pathApi: {
         type: String,
-        default: 'http://localhost:8000/api/v1/cutcontrols'
+        default: ''
     },
     title: {
         type: String,

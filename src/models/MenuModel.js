@@ -7,9 +7,9 @@ export default class MenuModel {
             let rut =
                 '/components/GenericComponet/' +
                 subCategory.Label
-                    .replaceAll(' ', '_')
-                    .toLowerCase()
-                    .replace(/[-_][a-z0-9]/g, (group) => group.slice(-1).toUpperCase());
+                    //.replaceAll(' ', '_')
+                    //.toLowerCase()
+                    //.replace(/[-_][a-z0-9]/g, (group) => group.slice(-1).toUpperCase());
             //let pathApi = '?ruta=' + encodeURIComponent('https://basilespinal.github.io/api_v1/catalog_jack_2023.json');
             let pathApi = '?ruta=' + encodeURIComponent(subCategory.url);
 

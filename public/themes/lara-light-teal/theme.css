@@ -3,7 +3,7 @@
     --paleta-200: #B6F9C9;
     --paleta-300: #96E8BC;
     --paleta-400: #7DD181;
-    --paleta-500: #4B7F52;
+    --paleta-500: #2e2f37;
     --surface-a: #ffffff;
     --surface-b: #f8f9fa;
     --surface-c: #e9ecef;
@@ -48,7 +48,7 @@
     --focus-ring: 0 0 0 0.2rem #99F6E4;
     --maskbg: rgba(0, 0, 0, 0.4);
     --highlight-bg: #F0FDFA;
-    --highlight-text-color: #0F766E;
+    --highlight-text-color: #5e5f5f;
     color-scheme: light;
 }
 

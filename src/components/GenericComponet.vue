@@ -46,7 +46,7 @@ watch(
     <div class="card">
         <h1 v-text="$route.params.title"></h1>
         <ToolbarComponet :rowSelect="listRowSelect" :headerNames="headerNames" @modDataToolbar="onModDataToolbar" />
-        <Table title="Control de corta" :path-api="rutaDecodificada" @HeaderNames="onHeaderNames" @onRowSelect="RowSelect" :dataMod="dataMod" />
+        <Table title="" :path-api="rutaDecodificada" @HeaderNames="onHeaderNames" @onRowSelect="RowSelect" :dataMod="dataMod" />
     </div>
 </template>
 

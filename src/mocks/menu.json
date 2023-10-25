@@ -1,8 +1,15 @@
 {
-    "Centro de control": {
+    "Principal": {
         "rol": "admin",
-        "subcategorias": [],
+        "subcategories": [
+            {
+                "Label": "Centro de control",
+                "url": "http://164.90.146.196:81/#/applayout",
+                "icon": "pi pi-chart-pie"
+            }
+        ],
         "icons": "pi pi-home"
+        
     },
     "Producto": {
         "rol": "admin",
@@ -10,7 +17,7 @@
             {
                 "Label": "Productos",
                 "url": "http://164.90.146.196:81/api/v1/products",
-                "icon": "pi pi-bell"
+                "icon": "pi pi-bars"
             },
             {
                 "Label": "Tipos de producto",
@@ -20,12 +27,12 @@
             {
                 "Label": "Productos Variantes",
                 "url": "http://164.90.146.196:81/api/v1/variants",
-                "icon": "pi pi-bolt"
+                "icon": "pi pi-list"
             },
             {
                 "Label": "Variantes",
                 "url": "http://164.90.146.196:81/api/v1/variants",
-                "icon": "pi pi-calendar-plus"
+                "icon": "pipi-th-large"
             },
             {
                 "Label": "Tipos de Unidades",
@@ -35,7 +42,7 @@
             {
                 "Label": "Tipos de Empaque",
                 "url": "http://164.90.146.196:81/api/v1/packing_types",
-                "icon": "pi pi-database"
+                "icon": "pi pi-bookmark"
             }
         ],
         "icons": "pi pi-bars"
@@ -52,22 +59,22 @@
             {
                 "Label": "Solicitud Cliente",
                 "url": "https://basilespinal.github.io/api_v1/catalog_jack_2023.json",
-                "icon": "pi pi-bookmark"
+                "icon": "pi pi-exclamation-triangle"
             },
             {
                 
                 "Label": "Clientes",
                 "url": "http://164.90.146.196:81/api/v1/customers",
-                "icon": "pi pi-bolt"
+                "icon": "pi pi-users"
             },
             {
                 "Label": "Despachos",
                 "url": "https://basilespinal.github.io/api_v1/catalog_jack_2023.json",
-                "icon": "pi pi-calendar-plus"
+                "icon": "pi pi-shopping-cart"
             }
         ],
 
-        "icons": "pi pi-bars"
+        "icons": "pi pi-sitemap"
     },
     "Administración": {
         "rol": "admin",
@@ -75,7 +82,7 @@
             {
                 "Label": "Compañia",
                 "url": "http://164.90.146.196:81/api/v1/companies",
-                "icon": "pi pi-bell"
+                "icon": "pi pi-folder"
             },
             {
                 "Label": "Finca",
@@ -85,22 +92,22 @@
             {
                 "Label": "Centros de Trabajo",
                 "url": "http://164.90.146.196:81//api/v1/work_centers",
-                "icon": "pi pi-bolt"
+                "icon": "pi pi-bookmark"
             },
             {
                 "Label": "Cargos",
                 "url": "http://164.90.146.196:81/api/v1/job_types",
-                "icon": "pi pi-comments"
+                "icon": "pi pi-bolt"
             },
             {
                 
                 "Label": "Empleados",
                 "url": "http://164.90.146.196:81/api/v1/employees",
-                "icon": "pi pi-calendar-plus"
+                "icon": "pi pi-users"
             }
         ],
 
-        "icons": "pi pi-bars"
+        "icons": "pi pi-prime"
     },
     "Producción": {
         "rol": "admin",
@@ -108,7 +115,7 @@
             {
                 "Label": "Lotes Cultivo",
                 "url": "http://localhost:3030/pisos/api/v1/lots",
-                "icon": "pi pi-bell"
+                "icon": "pi pi-bars"
             },
             {
                 "Label": "Vehiculos",
@@ -118,11 +125,11 @@
             {
                 "Label": "Programación",
                 "url": "https://basilespinal.github.io/api_v1/catalog_jack_2023.json",
-                "icon": "pi pi-bolt"
+                "icon": "pi pi-calendar-minus"
             }
         ],
 
-        "icons": "pi pi-bars"
+        "icons": "pi pi-shopping-cart"
     },
     "Nómina": {
         "rol": "admin",
@@ -130,7 +137,7 @@
             {
                 "Label": "Calendarios",
                 "url": "http://164.90.146.196:81/api/v1/calendars",
-                "icon": "pi pi-bell"
+                "icon": "pi pi-calendar-times"
             },
             {
                 "Label": "Tarifas Tareas",
@@ -140,7 +147,7 @@
             {
                 "Label": "Tipos Tareas",
                 "url": "https://basilespinal.github.io/api_v1/catalog_jack_2023.json",
-                "icon": "pi pi-bolt"
+                "icon": "pi pi-list"
             },
             {
                 "Label": "Labores",
@@ -153,7 +160,7 @@
                 "icon": "pi pi-calendar-plus"
             }
         ],
-        "icons": "pi pi-bars"
+        "icons": "pi pi-dollar"
     },
     "Liquidacion de nómina": {
         "rol": "admin",
@@ -161,7 +168,7 @@
             {
                 "Label": "Corta",
                 "url": "https://basilespinal.github.io/api_v1/catalog_jack_2023.json",
-                "icon": "pi pi-bell"
+                "icon": "pi pi-percentage"
             },
             {
                 "Label": "Prefrio",
@@ -171,20 +178,20 @@
             {
                 "Label": "Seleccion",
                 "url": "https://basilespinal.github.io/api_v1/catalog_jack_2023.json",
-                "icon": "pi pi-bolt"
+                "icon": "pi pi-tablet"
             },
             {
                 "Label": "Contratista",
                 "url": "https://basilespinal.github.io/api_v1/catalog_jack_2023.json",
-                "icon": "pi pi-briefcase"
+                "icon": "pi pi-share-alt"
             },
             {
                 "Label": "Descuentos",
                 "url": "https://basilespinal.github.io/api_v1/catalog_jack_2023.json",
-                "icon": "pi pi-calendar-plus"
+                "icon": "pi pi-ticket"
             }
         ],
-        "icons": "pi pi-bars"
+        "icons": "pi pi-money-bill"
     },
     "Sistema": {
         "rol": "admin",
@@ -197,20 +204,20 @@
             {
                 "Label": "Usuarios",
                 "url": "http://164.90.146.196:81/api/v1/user",
-                "icon": "pi-bookmark"
+                "icon": "pi pi-id-card"
             },
             {
                 "Label": "Roles",
                 "url": "http://164.90.146.196:81/api/v1/roles",
-                "icon": "pi pi-bolt"
+                "icon": "pi pi-user-plus"
             },
             {
                 "Label": "Permisos",
                 "url": "http://164.90.146.196:81/api/v1/permissions",
-                "icon": "pi pi-briefcase"
+                "icon": "pi pi-eye-slash"
             }
         ],
 
-        "icons": "pi pi-bars"
+        "icons": "pi pi-desktop"
     }
 }
