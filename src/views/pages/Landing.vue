@@ -1,8 +1,10 @@
 <script setup>
 import { useLayout } from '@/layout/composables/layout';
 import { computed, ref } from 'vue';
+import { useRouter } from 'vue-router';
 
 const { layoutConfig, changeThemeSettings } = useLayout();
+const router = useRouter();
 
 const smoothScroll = (id) => {
     document.querySelector(id).scrollIntoView({
@@ -31,6 +33,15 @@ const onChangeTheme = (mode) => {
     });
     linkElement.parentNode.insertBefore(cloneLinkElement, linkElement.nextSibling);
 };
+
+const route = () => {
+    console.log('token', sessionStorage.getItem('accessSessionToken'));
+    if (!sessionStorage.getItem('accessSessionToken')) {
+        router.push('/auth/login');
+    } else {
+        router.push('/applayout');
+    }
+};
 </script>
 
 <template>
@@ -43,11 +54,9 @@ const onChangeTheme = (mode) => {
                 </a>
                 <div class="align-items-center md:justify-content-end flex-grow-1 justify-content-between hidden lg:flex absolute lg:static w-full lg:px-0">
                     <div class="flex justify-content-between lg:block border-top-1 lg:border-top-none surface-border py-3 lg:py-0 mt-3 lg:mt-0">
-                        <router-link to="/auth/login">
-                            <Button label="Login" class="p-button-text p-button-rounded border-none font-light text-green-800 line-height-4"></Button>
-                        </router-link>
+                        <Button label="Login" class="p-button-text p-button-rounded border-none font-light text-green-800 line-height-4" @click="route"></Button>
                         <Button label="Register" class="p-button-rounded border-none ml-4 font-light text-white line-height-4 bg-green-700"></Button>
-                        <Button @click="onChangeTheme(!toggleValue)" v-model="toggleValue" icon="pi pi-cog" outlined rounded class="button-icon ml-3 mr-2 mr-1" style="width: 3.5rem; height: 3.5rem;"/>
+                        <Button @click="onChangeTheme(!toggleValue)" v-model="toggleValue" icon="pi pi-cog" outlined rounded class="button-icon ml-3 mr-2 mr-1" style="width: 3.5rem; height: 3.5rem" />
                     </div>
                 </div>
             </div>

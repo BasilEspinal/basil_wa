@@ -1,15 +1,7 @@
 {
     "Principal": {
         "rol": "admin",
-        "subcategories": [
-            {
-                "Label": "Centro de control",
-                "url": "http://164.90.146.196:81/#/applayout",
-                "icon": "pi pi-chart-pie"
-            }
-        ],
         "icons": "pi pi-home"
-        
     },
     "Producto": {
         "rol": "admin",

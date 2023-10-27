@@ -10,7 +10,6 @@ const { layoutConfig } = useLayout();
 const loginService = new LoginService();
 const count = ref(0);
 
-
 export default {
     setup() {
         return { v$: useVuelidate() };
@@ -83,13 +82,13 @@ export default {
 
 <template>
     <div class="surface-ground flex align-items-center justify-content-center min-h-screen min-w-screen overflow-hidden" style="background: linear-gradient(180deg, var(--paleta-400) 5%, var(--paleta-100) 15%)">
-        <div class="flex flex-column align-items-center justify-content-center">
+        <div class="flex flex-column align-items-center justify-content-center" @keyup.enter="onSubmit">
             <router-link to="/" class="align-items-center mb-5">
                 <img :src="logoUrl" alt="Sakai logo" class="w-6rem flex-shrink-0" />
                 <span class="text-700 font-bold">AGRO-ONLINE</span>
             </router-link>
             <div style="border-radius: 56px; padding: 0.3rem; background: linear-gradient(160deg, var(--primary-color) 10%, var(--paleta-100) 60%, var(--primary-color) 100%)">
-                <div class="w-full py-8 px-6 sm:px-8" style="border-radius: 53px; background-color: var(--paleta-100)">
+                <div class="w-full py-7 px-3 sm:px-6" style="border-radius: 53px; background-color: var(--paleta-100)">
                     <div class="text-center mb-5">
                         <div class="text-900 text-4xl font-bold mb-3">Welcome!</div>
                         <span class="text-600 font-medium">Sign in to continue</span>
@@ -102,8 +101,8 @@ export default {
                             type="text"
                             placeholder="Email address"
                             :class="{
-                                'p-invalid w-full md:w-30rem mb-5': v$.form.email.$invalid,
-                                'w-full md:w-30rem mb-5': !v$.form.email.$invalid
+                                'p-invalid w-full md:w-30rem mb-4': v$.form.email.$invalid,
+                                'w-full md:w-30rem mb-4': !v$.form.email.$invalid
                             }"
                             style="padding: 1rem"
                             v-model="v$.form.email.$model"
@@ -137,7 +136,7 @@ export default {
                 </div>
             </div>
             <transition-group name="p-message" tag="div" class="w-full">
-                <Message v-for="msg of message" :severity="msg.severity" :key="msg.content" :sticky= false :life="msg.life">{{ msg.content }}</Message>
+                <Message v-for="msg of message" :severity="msg.severity" :key="msg.content" :sticky="false" :life="msg.life">{{ msg.content }}</Message>
             </transition-group>
         </div>
     </div>

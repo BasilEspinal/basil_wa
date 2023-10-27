@@ -22,7 +22,6 @@ watch(isSidebarActive, (newVal) => {
 onBeforeMount(() => {
     if (!sessionStorage.getItem('accessSessionToken')) {
         router.push('/auth/login');
-        //router.push('/auth/login');
     }
 });
 

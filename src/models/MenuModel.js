@@ -2,14 +2,12 @@ export default class MenuModel {
     constructor(label, items, icons) {
         this.label = label;
         this.icon = icons;
-        this.items = items['subcategories']?.map((subCategory) => { 
+        this.items = items['subcategories']?.map((subCategory) => {
             if (subCategory.label) return {};
-            let rut =
-                '/components/GenericComponet/' +
-                subCategory.Label
-                    //.replaceAll(' ', '_')
-                    //.toLowerCase()
-                    //.replace(/[-_][a-z0-9]/g, (group) => group.slice(-1).toUpperCase());
+            let rut = '/components/GenericComponet/' + subCategory.Label;
+            //.replaceAll(' ', '_')
+            //.toLowerCase()
+            //.replace(/[-_][a-z0-9]/g, (group) => group.slice(-1).toUpperCase());
             //let pathApi = '?ruta=' + encodeURIComponent('https://basilespinal.github.io/api_v1/catalog_jack_2023.json');
             let pathApi = '?ruta=' + encodeURIComponent(subCategory.url);
 
@@ -19,6 +17,7 @@ export default class MenuModel {
                 to: rut + pathApi
             };
         });
+        this.to = !items['subcategories'] ? '/applayout' : '';
     }
 
     static fromJson(data) {
