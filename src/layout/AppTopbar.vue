@@ -7,10 +7,12 @@ const { layoutConfig, onMenuToggle, changeThemeSettings } = useLayout();
 
 const outsideClickListener = ref(null);
 const topbarMenuActive = ref(false);
+const dataUser = ref('');
 const router = useRouter();
 const toggleValue = ref(layoutConfig.darkTheme.value);
 
 onMounted(() => {
+    dataUser.value = sessionStorage.getItem('accessSessionUser');
     bindOutsideClickListener();
 });
 
@@ -76,6 +78,12 @@ const isOutsideClicked = (event) => {
 
     return !(sidebarEl.isSameNode(event.target) || sidebarEl.contains(event.target) || topbarEl.isSameNode(event.target) || topbarEl.contains(event.target));
 };
+
+const Exit = () => {
+    localStorage.clear();
+    sessionStorage.clear();
+    router.push('/auth/login');
+};
 </script>
 
 <template>
@@ -91,21 +99,20 @@ const isOutsideClicked = (event) => {
 
         <button class="p-link layout-topbar-menu-button layout-topbar-button" @click="onTopBarMenuButton()">
             <i class="pi pi-ellipsis-v"></i>
-            
         </button>
 
         <div class="layout-topbar-menu" :class="topbarMenuClasses">
-            <button @click="onTopBarMenuButton()" class="p-link layout-topbar-button">
-                <i class="pi pi-calendar"></i>
-                <span>Calendar</span>
-            </button>
-            <button @click="onTopBarMenuButton()" class="p-link layout-topbar-button">
-                <i class="pi pi-user"></i>
-                <span>Profile</span>
-            </button>
-            
-            <Button @click="onChangeTheme(!toggleValue)" v-model="toggleValue" icon="pi pi-cog" rounded outlined class="p-link layout-topbar-button">
-                <i class="pi pi-cog"></i>
+            <div class="flex flex-wrap align-items-center justify-content-center md:justify-content-start">
+                <i class="pi pi-user mr-2"></i>
+                <p>{{ dataUser }}</p>
+            </div>
+
+            <Button @click="onChangeTheme(!toggleValue)" v-model="toggleValue" rounded outlined class="p-link layout-topbar-button">
+                <i :class="{ 'pi pi-moon': !toggleValue, 'pi pi-sun': toggleValue }"></i>
+            </Button>
+
+            <Button @click="Exit()" rounded outlined class="p-link layout-topbar-button">
+                <i class="pi pi-sign-out"></i>
             </Button>
         </div>
     </div>

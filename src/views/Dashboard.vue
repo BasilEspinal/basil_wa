@@ -1,10 +1,7 @@
 <script setup>
-import { onMounted, reactive, ref, watch } from 'vue';
+import { onMounted, ref, watch } from 'vue';
 import ProductService from '@/service/ProductService';
 import { useLayout } from '@/layout/composables/layout';
-
-
-//=======================================================================
 
 const { layoutConfig } = useLayout();
 let documentStyle = getComputedStyle(document.documentElement);

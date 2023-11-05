@@ -64,9 +64,12 @@ export default {
             try {
                 let response = await loginService.login(data);
                 if (response['error']) throw response.error;
+                if (!response['user']) throw response.error;
 
                 const token = response.token;
+                const user = response.user.name;
                 sessionStorage.setItem('accessSessionToken', token);
+                sessionStorage.setItem('accessSessionUser', user);
                 localStorage.setItem('accessSessionToken', token);
                 this.message.push({ severity: 'success', detail: 'Success', content: 'Successful Login', id: count.value++ });
 

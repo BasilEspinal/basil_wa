@@ -8,8 +8,8 @@
         "subcategories": [
             {
                 "Label": "Productos",
-                "url": "http://164.90.146.196:81/api/v1/products",
-                "icon": "pi pi-bars"
+                "icon": "pi pi-bars",
+                "to": "/producto"
             },
             {
                 "Label": "Tipos de producto",

@@ -9,12 +9,13 @@ export default class MenuModel {
             //.toLowerCase()
             //.replace(/[-_][a-z0-9]/g, (group) => group.slice(-1).toUpperCase());
             //let pathApi = '?ruta=' + encodeURIComponent('https://basilespinal.github.io/api_v1/catalog_jack_2023.json');
-            let pathApi = '?ruta=' + encodeURIComponent(subCategory.url);
+            let pathApi = subCategory['url'] ? '?ruta=' + encodeURIComponent(subCategory.url) : '';
+            let Url = subCategory['to'] ? subCategory['to'] : rut + pathApi;
 
             return {
                 label: subCategory.Label,
                 icon: subCategory.icon,
-                to: rut + pathApi
+                to: Url
             };
         });
         this.to = !items['subcategories'] ? '/applayout' : '';
