@@ -36,12 +36,12 @@ const props = defineProps({
 const openEdit = () => {
     mode.value = 'EDIT';
     headerNamesRow.value = [];
-    for (let key in props.headerNames) {
+    for (let key in props.rowSelect[0]) {
         if (key == 'id') continue;
         headerNamesRow.value.push({
             label: key,
-            type: typeof props.headerNames[key] == 'number' ? 'number' : 'text',
-            data: props.headerNames[key]
+            type: typeof props.rowSelect[0][key] == 'number' ? 'number' : 'text',
+            data: props.rowSelect[0][key]
         });
     }
     productDialog.value = true;
@@ -131,7 +131,7 @@ const saveProduct = () => {
 <template>
     <div class="grid">
         <div class="col-12">
-            
+
             <Toolbar>
                 <template v-slot:start>
                     <div>
