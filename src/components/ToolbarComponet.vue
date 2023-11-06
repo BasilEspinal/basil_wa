@@ -44,7 +44,7 @@ const openEdit = () => {
             data: props.rowSelect[0][key]
         });
     }
-    alert(productDialog.value)
+    productDialog.value = true;
     
 };
 
