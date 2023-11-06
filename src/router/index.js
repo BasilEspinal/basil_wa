@@ -25,6 +25,7 @@ const router = createRouter({
                     name: 'landing',
                     component: () => import('@/views/pages/Landing.vue')
                 },
+                ///////////////////////////////////////////////////////////////////
                 {
                     path: '/products',
                     name: 'products',
@@ -35,6 +36,7 @@ const router = createRouter({
                     name: 'productTypes',
                     component: () => import('@/views/pages/product/ProductTypes.vue')
                 },
+                ///////////////////////////////////////////////////////////////////
                 {
                     path: '/uikit/formlayout',
                     name: 'formlayout',

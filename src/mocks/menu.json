@@ -10,32 +10,32 @@
         "rol": "admin",
         "subcategories": [
             {
-                "Label": "Productos",
+                "Label": "Información de Productos",
                 "icon": "pi pi-bars",
                 "to": "/products"
             },
             {
-                "Label": "Tipos de producto",
+                "Label": "Información de Tipos de producto",
                 "icon": "pi pi-bookmark",
                 "to": "/productTypes"
             },
             {
-                "Label": "Productos Variantes",
+                "Label": "Información de variedades por producto",
                 "url": "http://164.90.146.196:81/api/v1/variants",
                 "icon": "pi pi-list"
             },
             {
-                "Label": "Variantes",
+                "Label": "Información de variedades",
                 "url": "http://164.90.146.196:81/api/v1/variants",
                 "icon": "pi pi-th-large"
             },
             {
-                "Label": "Tipos de Unidades",
+                "Label": "Información de Tipos de Unidades",
                 "url": "http://164.90.146.196:81/api/v1/unit_types",
                 "icon": "pi pi-bookmark"
             },
             {
-                "Label": "Tipos de Empaque",
+                "Label": "Información de Tipos de Empaque",
                 "url": "http://164.90.146.196:81/api/v1/packing_types",
                 "icon": "pi pi-bookmark"
             }
@@ -47,23 +47,23 @@
         "rol": "admin",
         "subcategories": [
             {
-                "Label": "Ofertas",
+                "Label": "Información de Ofertas de Producto",
                 "url": "https://basilespinal.github.io/api_v1/catalog_jack_2023.json",
                 "icon": "pi pi-bell"
             },
             {
-                "Label": "Solicitud Cliente",
+                "Label": "Información de Solicitud Clientes",
                 "url": "https://basilespinal.github.io/api_v1/catalog_jack_2023.json",
                 "icon": "pi pi-exclamation-triangle"
             },
             {
                 
-                "Label": "Clientes",
+                "Label": "Información de Clientes",
                 "url": "http://164.90.146.196:81/api/v1/customers",
                 "icon": "pi pi-users"
             },
             {
-                "Label": "Despachos",
+                "Label": "Información de Despachos",
                 "url": "https://basilespinal.github.io/api_v1/catalog_jack_2023.json",
                 "icon": "pi pi-shopping-cart"
             }
@@ -75,28 +75,28 @@
         "rol": "admin",
         "subcategories": [
             {
-                "Label": "Compañia",
+                "Label": "Información de la empresa",
                 "url": "http://164.90.146.196:81/api/v1/companies",
                 "icon": "pi pi-folder"
             },
             {
-                "Label": "Finca",
+                "Label": "Información de Fincas",
                 "url": "http://164.90.146.196:81/api/v1/farms",
                 "icon": "pi pi-bookmark"
             },
             {
-                "Label": "Centros de Trabajo",
+                "Label": "Información de Centros de Trabajo",
                 "url": "http://164.90.146.196:81//api/v1/work_centers",
                 "icon": "pi pi-bookmark"
             },
             {
-                "Label": "Cargos",
+                "Label": "Información de Cargos",
                 "url": "http://164.90.146.196:81/api/v1/job_types",
                 "icon": "pi pi-bolt"
             },
             {
                 
-                "Label": "Empleados",
+                "Label": "Información de Empleados",
                 "url": "http://164.90.146.196:81/api/v1/employees",
                 "icon": "pi pi-users"
             }
@@ -108,17 +108,17 @@
         "rol": "admin",
         "subcategories": [
             {
-                "Label": "Lotes Cultivo",
+                "Label": "Información de Lotes de Terreno",
                 "url": "http://localhost:3030/pisos/api/v1/lots",
                 "icon": "pi pi-bars"
             },
             {
-                "Label": "Vehiculos",
+                "Label": "Información de Vehiculos",
                 "url": "http://164.90.146.196:81/api/v1/vehicles",
                 "icon": "pi pi-bookmark"
             },
             {
-                "Label": "Programación",
+                "Label": "Programación de Lotes",
                 "url": "https://basilespinal.github.io/api_v1/catalog_jack_2023.json",
                 "icon": "pi pi-calendar-minus"
             }
@@ -130,27 +130,27 @@
         "rol": "admin",
         "subcategories": [
             {
-                "Label": "Calendarios",
+                "Label": "Información-Calendarios",
                 "url": "http://164.90.146.196:81/api/v1/calendars",
                 "icon": "pi pi-calendar-times"
             },
             {
-                "Label": "Tarifas Tareas",
+                "Label": "Información de Tarifas por Tareas",
                 "url": "https://basilespinal.github.io/api_v1/cutcontrols.json",
                 "icon": "pi pi-bookmark"
             },
             {
-                "Label": "Tipos Tareas",
+                "Label": "Información de Tipos de Tareas",
                 "url": "https://basilespinal.github.io/api_v1/catalog_jack_2023.json",
                 "icon": "pi pi-list"
             },
             {
-                "Label": "Labores",
+                "Label": "Información Labores de Finca",
                 "url": "https://basilespinal.github.io/api_v1/cutcontrols.json",
                 "icon": "pi pi-briefcase"
             },
             {
-                "Label": "Periodos de Pago",
+                "Label": "Información de Periodos de Pago",
                 "url": "http://164.90.146.196:81/api/v1/pay_periods",
                 "icon": "pi pi-calendar-plus"
             }
@@ -161,27 +161,27 @@
         "rol": "admin",
         "subcategories": [
             {
-                "Label": "Corta",
+                "Label": "Registro de trabajos diarios",
                 "url": "https://basilespinal.github.io/api_v1/catalog_jack_2023.json",
                 "icon": "pi pi-percentage"
             },
             {
-                "Label": "Prefrio",
+                "Label": "Registro de traslado en áreas",
                 "url": "https://basilespinal.github.io/api_v1/cutcontrols.json",
                 "icon": "pi pi-bookmark"
             },
             {
-                "Label": "Seleccion",
+                "Label": "Registro de trabajos diarios",
                 "url": "https://basilespinal.github.io/api_v1/catalog_jack_2023.json",
                 "icon": "pi pi-tablet"
             },
             {
-                "Label": "Contratista",
+                "Label": "Registro de trabajos diarios del contratista",
                 "url": "https://basilespinal.github.io/api_v1/catalog_jack_2023.json",
                 "icon": "pi pi-share-alt"
             },
             {
-                "Label": "Descuentos",
+                "Label": "Registro de Descuentos de Nómina",
                 "url": "https://basilespinal.github.io/api_v1/catalog_jack_2023.json",
                 "icon": "pi pi-ticket"
             }
@@ -192,22 +192,22 @@
         "rol": "admin",
         "subcategories": [
             {
-                "Label": "Estado Registros",
+                "Label": "Información de Estado de Registros en la plataforma",
                 "url": "http://164.90.146.196:81/api/v1/statuses",
                 "icon": "pi pi-bell"
             }, 
             {
-                "Label": "Usuarios",
+                "Label": "Información de Usuarios en la plataforma",
                 "url": "http://164.90.146.196:81/api/v1/user",
                 "icon": "pi pi-id-card"
             },
             {
-                "Label": "Roles",
+                "Label": "Información de Roles",
                 "url": "http://164.90.146.196:81/api/v1/roles",
                 "icon": "pi pi-user-plus"
             },
             {
-                "Label": "Permisos",
+                "Label": "Información de Permisos",
                 "url": "http://164.90.146.196:81/api/v1/permissions",
                 "icon": "pi pi-eye-slash"
             }
