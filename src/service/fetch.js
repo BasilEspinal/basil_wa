@@ -1,13 +1,16 @@
-export async function useFetch(url, options = {}, auth = true) {
+export async function useFetch(Endpoint, options = {}, auth = true) {
     if (!options['headers']) {
         options['headers'] = {};
     }
     options['headers']['Content-Type'] = 'application/json';
     options['headers']['Accept'] = 'application/json';
     options['headers']['Access-Control-Allow-Origin'] = '*';
-    
-     
-      let token = document.head.querySelector('meta[name="csrf-token"]');
+
+    let base = `http://164.90.146.196:81`; 
+    let api = `/api/v1`; 
+    let baseUrl = `${base}${api}${Endpoint}`;
+    console.info(baseUrl) 
+      //let token = document.head.querySelector('meta[name="csrf-token"]');
       //alert(token)
       /* 
       if (token) {
@@ -30,7 +33,7 @@ export async function useFetch(url, options = {}, auth = true) {
     let data = {};
     let error = null;
     try {
-        let res = await fetch(url, options);
+        let res = await fetch(baseUrl, options);
         if (res.ok) {
             data = res.json();
             

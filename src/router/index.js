@@ -26,9 +26,14 @@ const router = createRouter({
                     component: () => import('@/views/pages/Landing.vue')
                 },
                 {
-                    path: '/producto',
-                    name: 'productos',
-                    component: () => import('@/layout/producto/Productos.vue')
+                    path: '/products',
+                    name: 'products',
+                    component: () => import('@/views/pages/product/Products.vue')
+                },
+                {
+                    path: '/productTypes',
+                    name: 'productTypes',
+                    component: () => import('@/views/pages/product/ProductTypes.vue')
                 },
                 {
                     path: '/uikit/formlayout',

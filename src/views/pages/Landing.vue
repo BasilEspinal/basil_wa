@@ -60,11 +60,15 @@ const route = () => {
                         <li>
                             <Button label="Login" class="p-button-text p-button-rounded border-none font-light text-green-800 line-height-4" @click="route"></Button>
                         </li>
+                        <!--
                         <li>
                             <Button label="Register" class="p-button-rounded border-none ml-4 font-light text-white line-height-4 bg-green-700"></Button>
                         </li>
+                        -->
                         <li>
-                            <Button @click="onChangeTheme(!toggleValue)" v-model="toggleValue" icon="pi pi-cog" outlined rounded class="button-icon ml-3 mr-2 mr-1" style="width: 3.5rem; height: 3.5rem" />
+                            
+                            <!-- <Button @click="onChangeTheme(!toggleValue)" v-model="toggleValue" icon="pi pi-cog" outlined rounded class="button-icon ml-3 mr-2 mr-1" style="width: 3.5rem; height: 3.5rem" /> -->
+                            
                         </li>
                     </ul>
                 </div>
@@ -182,3 +186,4 @@ const route = () => {
     }
 }
 </style> -->
+<style lang="scss" scoped></style>

@@ -44,7 +44,8 @@ const openEdit = () => {
             data: props.rowSelect[0][key]
         });
     }
-    productDialog.value = true;
+    alert(productDialog.value)
+    
 };
 
 const openNew = () => {

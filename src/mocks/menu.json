@@ -1,7 +1,10 @@
 {
     "Principal": {
         "rol": "admin",
-        "icons": "pi pi-home"
+        "icons": "pi pi-home",
+        "to": "/product"
+        
+        
     },
     "Producto": {
         "rol": "admin",
@@ -9,12 +12,12 @@
             {
                 "Label": "Productos",
                 "icon": "pi pi-bars",
-                "to": "/producto"
+                "to": "/products"
             },
             {
                 "Label": "Tipos de producto",
-                "url": "http://164.90.146.196:81/api/v1/product_types",
-                "icon": "pi pi-bookmark"
+                "icon": "pi pi-bookmark",
+                "to": "/productTypes"
             },
             {
                 "Label": "Productos Variantes",
