@@ -230,7 +230,7 @@ function exportTableToCSV(name) {
         let row = [],
             cols = rows[i].querySelectorAll('td, th');
 
-        for (let j = 0; j < cols.length; j++) row.push(cols[j].innerText + '\t');
+        for (let j = 0; j < cols.length; j++) row.push(cols[j].innerText);
 
         csv.push(row.join(','));
     }
