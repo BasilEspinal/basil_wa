@@ -325,45 +325,45 @@ watch(
             <div class="card mb-0">
                 <div class="flex justify-content-between mb-3">
                     <div>
-                        <span class="block text-500 font-medium mb-3">Icopores</span>
+                        <span class="block text-500 font-medium mb-3">Icopores Recogidos</span>
                         <div class="text-900 font-medium text-xl">152</div>
                     </div>
                     <div class="flex align-items-center justify-content-center bg-green-100 border-round" style="width: 2.5rem; height: 2.5rem">
                         <i class="pi pi-shopping-cart text-green-500 text-xl"></i>
                     </div>
                 </div>
-                <span class="text-green-500 font-medium">24 new </span>
-                <span class="text-500">since last visit</span>
+                <span class="text-green-500 font-medium">50 </span>
+                <span class="text-500">En Traslado</span>
             </div>
         </div>
         <div class="col-12 lg:col-6 xl:col-3">
             <div class="card mb-0">
                 <div class="flex justify-content-between mb-3">
                     <div>
-                        <span class="block text-500 font-medium mb-3">Tabacos</span>
-                        <div class="text-900 font-medium text-xl">$2.100</div>
+                        <span class="block text-500 font-medium mb-3">Tabacos Empacados</span>
+                        <div class="text-900 font-medium text-xl">2.100</div>
                     </div>
                     <div class="flex align-items-center justify-content-center bg-green-100 border-round" style="width: 2.5rem; height: 2.5rem">
                         <i class="pi pi-shopping-cart text-green-500 text-xl"></i>
                     </div>
                 </div>
                 <span class="text-green-500 font-medium">%52+ </span>
-                <span class="text-500">since last week</span>
+                <span class="text-500">Meta del dia</span>
             </div>
         </div>
         <div class="col-12 lg:col-6 xl:col-3">
             <div class="card mb-0">
                 <div class="flex justify-content-between mb-3">
                     <div>
-                        <span class="block text-500 font-medium mb-3">contratista</span>
-                        <div class="text-900 font-medium text-xl">28441</div>
+                        <span class="block text-500 font-medium mb-3">Labores Contratistas</span>
+                        <div class="text-900 font-medium text-xl">28</div>
                     </div>
                     <div class="flex align-items-center justify-content-center bg-green-100 border-round" style="width: 2.5rem; height: 2.5rem">
                         <i class="pi pi-inbox text-green-500 text-xl"></i>
                     </div>
                 </div>
                 <span class="text-green-500 font-medium">520 </span>
-                <span class="text-500">Tabacos empacados</span>
+                <span class="text-500">Pendientes</span>
             </div>
         </div>
         <div class="col-12 lg:col-6 xl:col-3">
@@ -371,14 +371,14 @@ watch(
                 <div class="flex justify-content-between mb-3">
                     <div>
                         <span class="block text-500 font-medium mb-3">Traslados</span>
-                        <div class="text-900 font-medium text-xl">152 confirmados</div>
+                        <div class="text-900 font-medium text-xl">152 Confirmados</div>
                     </div>
                     <div class="flex align-items-center justify-content-center bg-green-100 border-round" style="width: 2.5rem; height: 2.5rem">
                         <i class="pi pi-shopping-cart text-green-500 text-xl"></i>
                     </div>
                 </div>
                 <span class="text-green-500 font-medium">85 </span>
-                <span class="text-500">Reportados</span>
+                <span class="text-500">Pendientes</span>
             </div>
         </div>
         <div class="col-12 xl:col-6">
@@ -389,7 +389,7 @@ watch(
         </div>
         <div class="col-12 xl:col-6">
             <div class="card flex flex-column align-items-center">
-                <h5 class="text-left w-full">Valor mensual</h5>
+                <h5 class="text-left w-full">Productos Mensual</h5>
                 <Chart type="pie" :data="pieData" :options="pieOptions"></Chart>
             </div>
         </div>

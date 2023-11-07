@@ -8,267 +8,263 @@ const menuService = new MenuService();
 
 const oldModel = ref([]);
 const model2 = ref([
-    
+    {
+        label: 'Inicio',
 
-{
-        "label": "Inicio",
-        
-        "items": [{ "label": "Centro de control", "icon": "pi pi-fw pi-home", "to": "/applayout" }]
+        items: [{ label: 'Centro de control', icon: 'pi pi-fw pi-home', to: '/applayout' }]
     },
- 
-{
-    "items":[{
-        "rol": "admin",
-        "icon": "pi pi-bars",    
-        "label": "Producto",
-                "items": [
-                {
-                "icon": "pi pi-bars", 
-            
-                "label": "Información de Productos",
-                "icon": "pi pi-bars",
-                "to": "/products"
-       
-                
-            },
-            {
-                "label": "Información de Tipos de producto",
-                "icon": "pi pi-bookmark",
-                "to": "/productTypes"
-            },
-            {
-                "label": "Información de variedades por producto",
-                "to": "http://164.90.146.196:81/api/v1/variants",
-                "icon": "pi pi-list"
-            },
-            {
-                "label": "Información de variedades",
-                "to": "http://164.90.146.196:81/api/v1/variants",
-                "icon": "pi pi-th-large"
-            },
-            {
-                "label": "Información de Tipos de Unidades",
-                "to": "http://164.90.146.196:81/api/v1/unit_types",
-                "icon": "pi pi-bookmark"
-            },
-            {
-                "label": "Información de Tipos de Empaque",
-                "to": "http://164.90.146.196:81/api/v1/packing_types",
-                "icon": "pi pi-bookmark"
-            }]    
-}]
-}
-,
-{
-"items":[{
-   "label": "Comercial",
-   "rol": "admin",
-   "icon": "pi pi-sitemap",
-   "items": [
-            {
-                "label": "Información de ofertas de producto",
-                "to": "http://164.90.146.196:81/api/v1/companies",
-                "icon": "pi pi-folder"
-            },
-            {
-                "label": "Información de Solicitudes de Clientes",
-                "to": "http://164.90.146.196:81/api/v1/farms",
-                "icon": "pi pi-bookmark"
-            },
-            {
-                "label": "Información de Clientes",
-                "to": "http://164.90.146.196:81//api/v1/work_centers",
-                "icon": "pi pi-bookmark"
-            },
-            {
-                "label": "Información de Despachos",
-                "to": "http://164.90.146.196:81/api/v1/job_types",
-                "icon": "pi pi-bolt"
-            },
 
-        ], 
-}]
-},
-{
-    "items":[{
-    "label":"Administración",
-    "rol": "admin",
-    "icon": "pi pi-prime",
-    "items": [
+    {
+        items: [
             {
-                "label": "Información de la empresa",
-                "to": "http://164.90.146.196:81/api/v1/companies",
-                "icon": "pi pi-folder"
-            },
-            {
-                "label": "Información de Fincas",
-                "to": "http://164.90.146.196:81/api/v1/farms",
-                "icon": "pi pi-bookmark"
-            },
-            {
-                "label": "Información de Centros de Trabajo",
-                "to": "http://164.90.146.196:81//api/v1/work_centers",
-                "icon": "pi pi-bookmark"
-            },
-            {
-                "label": "Información de Cargos",
-                "to": "http://164.90.146.196:81/api/v1/job_types",
-                "icon": "pi pi-bolt"
-            },
-            {
-                
-                "label": "Información de Empleados",
-                "to": "http://164.90.146.196:81/api/v1/employees",
-                "icon": "pi pi-users"
-            }
-        ],
+                rol: 'admin',
+                icon: 'pi pi-bars',
+                label: 'Producto',
+                items: [
+                    {
+                        label: 'Variedades',
+                        to: '/variants',
+                        icon: 'pi pi-th-large'
+                    },
+                    {
+                        icon: 'pi pi-bars',
 
-
-    }]
-},
-{
-    "items":[{
-        "label": "Producción",
-        "rol": "admin",
-        "icon": "pi pi-shopping-cart",
-        "items": [
-            {
-                "label": "Información de Lotes de Terreno",
-                "to": "http://localhost:3030/pisos/api/v1/lots",
-                "icon": "pi pi-bars"
-            },
-            {
-                "label": "Información de Vehiculos",
-                "to": "http://164.90.146.196:81/api/v1/vehicles",
-                "icon": "pi pi-bookmark"
-            },
-            {
-                "label": "Programación de Lotes",
-                "to": "https://basilespinal.github.io/api_v1/catalog_jack_2023.json",
-                "icon": "pi pi-calendar-minus"
-            }
-        ],
-    }
-    ]
-},
-{
-    "items":[{
-        "label":"Nómina",
-        "rol": "admin",
-        "icon": "pi pi-dollar",
-        "items": [
-            {
-                "label": "Información-Calendarios",
-                "to": "http://164.90.146.196:81/api/v1/calendars",
-                "icon": "pi pi-calendar-times"
-            },
-            {
-                "label": "Información de Tarifas por Tareas",
-                "to": "https://basilespinal.github.io/api_v1/cutcontrols.json",
-                "icon": "pi pi-bookmark"
-            },
-            {
-                "label": "Información de Tipos de Tareas",
-                "to": "https://basilespinal.github.io/api_v1/catalog_jack_2023.json",
-                "icon": "pi pi-list"
-            },
-            {
-                "label": "Información Labores de Finca",
-                "to": "https://basilespinal.github.io/api_v1/cutcontrols.json",
-                "icon": "pi pi-briefcase"
-            },
-            {
-                "label": "Información de Periodos de Pago",
-                "to": "http://164.90.146.196:81/api/v1/pay_periods",
-                "icon": "pi pi-calendar-plus"
-            }
-        ],
-        
-
-
-
-    }]
-},
-{
-    "items":[{
-        "label":"Liquidacion de nómina",
-        "rol": "admin",
-        "icon": "pi pi-money-bill",
-        "items": [
-            {
-                "label": "Registro de trabajos diarios",
-                "to": "https://basilespinal.github.io/api_v1/catalog_jack_2023.json",
-                "icon": "pi pi-percentage"
-            },
-            {
-                "label": "Registro de traslado en áreas",
-                "to": "https://basilespinal.github.io/api_v1/cutcontrols.json",
-                "icon": "pi pi-bookmark"
-            },
-            {
-                "label": "Registro de trabajos diarios",
-                "to": "https://basilespinal.github.io/api_v1/catalog_jack_2023.json",
-                "icon": "pi pi-tablet"
-            },
-            {
-                "label": "Registro de trabajos diarios del contratista",
-                "to": "https://basilespinal.github.io/api_v1/catalog_jack_2023.json",
-                "icon": "pi pi-share-alt"
-            },
-            {
-                "label": "Registro de Descuentos de Nómina",
-                "to": "https://basilespinal.github.io/api_v1/catalog_jack_2023.json",
-                "icon": "pi pi-ticket"
+                        label: 'Productos',
+                        icon: 'pi pi-bars',
+                        to: '/products'
+                    },
+                    {
+                        label: 'Variedades de producto',
+                        to: '/productvarieties',
+                        icon: 'pi pi-list'
+                    },
+                    {
+                        label: 'Tipos de productos',
+                        icon: 'pi pi-bookmark',
+                        to: '/productTypes'
+                    },
+                    {
+                        label: 'Tipos de Unidades',
+                        to: '/unit_types',
+                        icon: 'pi pi-bookmark'
+                    },
+                    {
+                        label: 'Tipos de Empaque',
+                        to: '/packing_types',
+                        icon: 'pi pi-bookmark'
+                    }
+                ]
             }
         ]
-        
-
-    }]
-},
-{
-    "items":[{
-        "label":"Sistema",
-        "rol": "admin",
-        "icon": "pi pi-desktop",
-        "items": [
+    },
+    {
+        items: [
             {
-                "label": "Información de Estado de Registros en la plataforma",
-                "to": "http://164.90.146.196:81/api/v1/statuses",
-                "icon": "pi pi-bell"
-            }, 
-            {
-                "label": "Información de Usuarios en la plataforma",
-                "to": "http://164.90.146.196:81/api/v1/user",
-                "icon": "pi pi-id-card"
-            },
-            {
-                "label": "Información de Roles",
-                "to": "http://164.90.146.196:81/api/v1/roles",
-                "icon": "pi pi-user-plus"
-            },
-            {
-                "label": "Información de Permisos",
-                "to": "http://164.90.146.196:81/api/v1/permissions",
-                "icon": "pi pi-eye-slash"
+                label: 'Comercial',
+                rol: 'admin',
+                icon: 'pi pi-sitemap',
+                items: [
+                    {
+                        label: 'Ofertas de producto',
+                        to: '/access',
+                        icon: 'pi pi-folder'
+                    },
+                    {
+                        label: 'Solicitudes de Clientes',
+                        to: '/access',
+                        icon: 'pi pi-bookmark'
+                    },
+                    {
+                        label: 'Clientes',
+                        to: '/access',
+                        icon: 'pi pi-bookmark'
+                    },
+                    {
+                        label: 'Despachos',
+                        to: '/access',
+                        icon: 'pi pi-bolt'
+                    }
+                ]
             }
-        ],
-        
+        ]
+    },
+    {
+        items: [
+            {
+                label: 'Administración',
+                rol: 'admin',
+                icon: 'pi pi-prime',
+                items: [
+                    {
+                        label: 'Empresa',
+                        to: '/companies',
+                        icon: 'pi pi-folder'
+                    },
+                    {
+                        label: 'Fincas',
+                        to: '/farms',
+                        icon: 'pi pi-bookmark'
+                    },
+                    {
+                        label: 'Centros de Trabajo',
+                        to: '/Workcenters',
+                        icon: 'pi pi-bookmark'
+                    },
+                    {
+                        label: 'Cargos',
+                        to: '/Jobtypes',
+                        icon: 'pi pi-bolt'
+                    },
+                    {
+                        label: 'Empleados',
+                        to: '/Employees',
+                        icon: 'pi pi-users'
+                    }
+                ]
+            }
+        ]
+    },
+    {
+        items: [
+            {
+                label: 'Producción',
+                rol: 'admin',
+                icon: 'pi pi-shopping-cart',
+                items: [
+                    {
+                        label: 'Lotes de Terreno',
+                        to: '/croplots',
+                        icon: 'pi pi-bars'
+                    },
+                    {
+                        label: 'Vehiculos',
+                        to: '/vehicles',
+                        icon: 'pi pi-bookmark'
+                    },
+                    {
+                        label: 'Programación de Lotes',
+                        to: '/access',
+                        icon: 'pi pi-calendar-minus'
+                    }
+                ]
+            }
+        ]
+    },
+    {
+        items: [
+            {
+                label: 'Nómina',
+                rol: 'admin',
+                icon: 'pi pi-dollar',
+                items: [
+                    {
+                        label: 'Tarifas por Tareas',
+                        to: '/taskstarif',
+                        icon: 'pi pi-bookmark'
+                    },
+                    {
+                        label: 'Tipos de Tareas',
+                        to: '/taskstypes',
+                        icon: 'pi pi-list'
+                    },
 
+                    {
+                        label: 'Periodos de Pago',
+                        to: '/payperiods',
+                        icon: 'pi pi-calendar-plus'
+                    },
+                    {
+                        label: 'Calendarios',
+                        to: '/calendars',
+                        icon: 'pi pi-calendar-times'
+                    },
+                    {
+                        label: 'Labores de Finca',
+                        to: '/access',
+                        icon: 'pi pi-briefcase'
+                    }
+                ]
+            }
+        ]
+    },
+    {
+        items: [
+            {
+                label: 'Liquidacion de nómina',
+                rol: 'admin',
+                icon: 'pi pi-money-bill',
+                items: [
+                    {
+                        label: 'Planeación Diaria',
+                        to: '/DailyPlanner',
+                        icon: 'pi pi-tablet'
+                    },
+                    {
+                        label: 'Trabajos de Corta',
+                        to: '/WorkRegisterCorta',
+                        icon: 'pi pi-percentage'
+                    },
+                    {
+                        label: 'Traslado a Prefrio',
+                        to: '/TransferTasks',
+                        icon: 'pi pi-bookmark'
+                    },
+                    {
+                        label: 'Trabajos de Selección',
+                        to: '/WorkRegisterSelection',
+                        icon: 'pi pi-tablet'
+                    },
+                    {
+                        label: 'Labores de Contratistas',
+                        to: '/Contractors',
+                        icon: 'pi pi-share-alt'
+                    },
 
-    }]
-},
-
-    
-
-    
-
+                    {
+                        label: 'Descuentos de Nómina',
+                        to: '/DiscountRegistering',
+                        icon: 'pi pi-ticket'
+                    }
+                ]
+            }
+        ]
+    },
+    {
+        items: [
+            {
+                label: 'Sistema',
+                rol: 'admin',
+                icon: 'pi pi-desktop',
+                items: [
+                    {
+                        label: 'Usuarios',
+                        to: '/Users',
+                        icon: 'pi pi-id-card'
+                    },
+                    {
+                        label: 'Roles',
+                        to: '/roles',
+                        icon: 'pi pi-user-plus'
+                    },
+                    {
+                        label: 'Permisos',
+                        to: '/permissions',
+                        icon: 'pi pi-eye-slash'
+                    },
+                    {
+                        label: 'Estado de Registros',
+                        to: '/statuses',
+                        icon: 'pi pi-bell'
+                    }
+                ]
+            }
+        ]
+    }
 ]);
 
 onBeforeMount(() => {
     fetchInfoAndUpdateValue();
 });
-
-
 
 async function fetchInfoAndUpdateValue() {
     try {
@@ -288,7 +284,7 @@ async function fetchInfoAndUpdateValue() {
             <!--<div class="card">-->
             <app-menu-item v-if="!item.separator" :item="item" :index="i"></app-menu-item>
             <li v-if="item.separator" class="menu-separator"></li>
-        <!--</div>-->
+            <!--</div>-->
         </template>
     </ul>
 </template>
