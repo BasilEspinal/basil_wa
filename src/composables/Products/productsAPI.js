@@ -15,7 +15,8 @@ export default function useProducts(datos) {
     //}
     
     const options = {};
-;
+; 
+    console.log("This is data got",requestData)
     //const endPoint = "/products"
     let baseUrl = `${base}${api}${endPoint}`;
     const token = sessionStorage.getItem('accessSessionToken');

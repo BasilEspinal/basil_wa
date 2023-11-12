@@ -25,11 +25,15 @@ const format = ref('');
 import useProducts from '@/composables/Products/productsAPI.js'
 let dataTmp = ref()
 const { data, error, postProducts } = useProducts();
-const requestData = {
-      "name": "Juancho",
+let requestData = {}
+
+
+const requestData2 = {
+      "name": "Juanchoxx",
       "short_name": "JCY",
-      "slug": "909090"
+      "slug": "909090878787"
     };
+
 const newProduct = async () => {
       await postProducts(requestData,"/products");
       console.log('Datos:', data);
@@ -142,7 +146,23 @@ const saveProduct = () => {
             
             return data;
         });
-        console.log(data)
+        
+        
+        requestData = data.reduce((result, currentObject) => {
+        
+        const [key] = Object.keys(currentObject);
+        const value = currentObject[key];
+        
+        result[key] = value;
+
+        return result;
+        }, {});
+  
+        console.log(requestData)
+        
+        
+        newProduct(requestData)
+
     }
     toast.add({ severity: 'success', summary: 'Successful', detail: 'Product Updated', life: 3000 });
     emits('modDataToolbar', { data: data, mode: mode.value });
@@ -152,10 +172,7 @@ const saveProduct = () => {
     exportDialog.value = false;
     
 };
-const showConsole = ()=>{
 
-    console.log(dataTmp)
-}
 </script>
 
 <template>
