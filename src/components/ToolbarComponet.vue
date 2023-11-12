@@ -21,7 +21,21 @@ const extenciones = ref([
     }
 ]);
 const format = ref('');
-
+///*****************************/
+import useProducts from '@/composables/Products/productsAPI.js'
+let dataTmp = ref()
+const { data, error, postProducts } = useProducts();
+const requestData = {
+      "name": "Juancho",
+      "short_name": "JCY",
+      "slug": "909090"
+    };
+const newProduct = async () => {
+      await postProducts(requestData,"/products");
+      console.log('Datos:', data);
+      console.log('Error:', error);
+    };
+//***************************** */
 const props = defineProps({
     rowSelect: {
         type: Array,
@@ -45,12 +59,16 @@ const openEdit = () => {
         });
     }
     productDialog.value = true;
+
     
 };
 
 const openNew = () => {
+    //Title
     mode.value = 'NEW';
+    //Title fields
     headerNamesRow.value = [];
+    //make the structure
     for (let key in props.headerNames) {
         if (key == 'id') continue;
         headerNamesRow.value.push({
@@ -61,6 +79,7 @@ const openNew = () => {
     }
     productDialog.value = true;
     
+
 };
 
 const openClone = () => {
@@ -101,6 +120,7 @@ const hideDialog = () => {
 
 const saveProduct = () => {
     let data = [];
+
     if (mode.value == 'DELETE') {
         headerNamesRow.value.map((item) => {
             if (item.selecti) data.push(item.id);
@@ -118,8 +138,11 @@ const saveProduct = () => {
         data = headerNamesRow.value.map((heade) => {
             const data = {};
             data[heade.label] = heade.data;
+            dataTmp = data
+            
             return data;
         });
+        console.log(data)
     }
     toast.add({ severity: 'success', summary: 'Successful', detail: 'Product Updated', life: 3000 });
     emits('modDataToolbar', { data: data, mode: mode.value });
@@ -127,7 +150,12 @@ const saveProduct = () => {
     productDialog.value = false;
     deleteProducts.value = false;
     exportDialog.value = false;
+    
 };
+const showConsole = ()=>{
+
+    console.log(dataTmp)
+}
 </script>
 
 <template>
@@ -164,6 +192,7 @@ const saveProduct = () => {
                 <div>
                     <Button label="Cancel" icon="pi pi-times" class="p-button-text" @click="hideDialog" />
                     <Button label="Save" icon="pi pi-check" class="p-button-text" @click="saveProduct" />
+                    
                 </div>
             </template>
         </Dialog>

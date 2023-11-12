@@ -8,7 +8,7 @@ const { data, error, postProducts } = useProducts();
 const requestData = {
       "name": "Juancho",
       "short_name": "JCY",
-      "slug": "31313131"
+      "slug": "909090"
     };
 const newProduct = async () => {
       await postProducts(requestData,"/products");
