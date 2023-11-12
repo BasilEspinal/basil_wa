@@ -6,6 +6,7 @@ export default class LoginService {
             method: 'POST',
             body: JSON.stringify(user)
         };
+        //let stringError = "Error, por favor contacte al proveedor"
 
         let { data, error } = await useFetch('/login', options, false);
         if (error) throw error;

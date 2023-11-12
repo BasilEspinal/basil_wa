@@ -60,6 +60,7 @@ const openNew = () => {
         });
     }
     productDialog.value = true;
+    
 };
 
 const openClone = () => {
