@@ -28,14 +28,21 @@
         </div>
         <Dialog v-model:visible="productDialog" :style="{ width: '700px' }" header="Unit Types Details" :modal="true" class="p-fluid">
             <div class="formgrid grid">
+                
                 <div v-for="key in headerNamesRow" :key="key" class="field">
                     <div v-if="key.type == 'number'" class="field col">
+                        
                         <label v-text="key.label"></label>
                         <InputNumber id="price" v-model="key.data" :required="true" />
+                    
                     </div>
-                    <div v-if="key.type == 'text'" class="field col">
+                    
+                     <div v-if="key.type == 'text'" class="field col"> 
+                        <!-- <div v-if="key.type === 'text' && (key.label === 'name' || key.label === 'code')" class="field col"> -->
+                        
                         <label v-text="key.label"></label>
-                        <InputText id="name" v-model="key.data" :required="true" integeronly />
+                        <InputText id="name" v-model="key.data" :required="true" integeronly  />
+
                     </div>
                 </div>
             </div>
@@ -48,7 +55,7 @@
             </template>
         </Dialog>
 
-        <Dialog v-model:visible="exportDialog" :style="{ width: '280px' }" header="Product Details" :modal="true" class="p-fluid">
+        <Dialog v-model:visible="exportDialog" :style="{ width: '280px' }" header="Unit Types Details" :modal="true" class="p-fluid">
             <div class="field col">
                 <label>File name</label>
                 <InputText id="name" v-model="filename" :required="true" integeronly />
@@ -102,9 +109,17 @@ import ToolbarComponet from '@/components/ToolbarComponet.vue';
 import { ref,watch,onMounted } from 'vue';
 import { useToast } from 'primevue/usetoast';
 import useProducts from '@/composables/Products/productsAPI.js'
+import useRestrictionUnitTypes from '@/composables/Products/UnitType/restrictionsUnitType.js'
 
+const {conditionsUnitType } = useRestrictionUnitTypes();
 //========================================================
+////////////////////////////////////////////
+//Conditions
 
+//UnitsType
+
+//const conditionsUnitType = ["name","code"]
+////////////////////////////////////////////
 const toast = useToast();
 const productDialog = ref(false);
 const deleteProducts = ref(false);
@@ -129,6 +144,20 @@ let dataTmp = ref()
 const { data, error, postProducts } = useProducts();
 let requestData = {}
 
+function validarCampo(data) {
+  // Verificar que data no sea undefined
+  if (data && data.valor) {
+    // Expresión regular para permitir solo números
+    const regex = /^[0-9]+$/;
+
+    if (!regex.test(data.valor)) {
+      // Si el valor no coincide con la expresión regular, elimina el último carácter ingresado
+      // Asegúrate de que data.valor no sea undefined antes de acceder a slice
+      data.valor = data.valor.slice(0, -1);
+
+    }
+  }
+}
 
 const requestData2 = {
       "name": "Juanchoxx",
@@ -148,6 +177,7 @@ const openEdit = () => {
     
     for (let key in listRowSelect.value[0]) {
         if (key == 'id') continue;
+        else if(!(key ==conditionsUnitType[0].label || key ==conditionsUnitType[1].label)) continue
         headerNamesRow.value.push({
             label: key,
             type: typeof listRowSelect.value[0][key] == 'number' ? 'number' : 'text',
@@ -164,15 +194,22 @@ const openNew = () => {
     mode.value = 'NEW';
     //Title fields
     headerNamesRow.value = [];
+    
     //make the structure
     for (let key in headerNames.value) {
         if (key == 'id') continue;
+        else if(!(key ==conditionsUnitType[0].label || key ==conditionsUnitType[1].label)) {
+            
+            continue}
         headerNamesRow.value.push({
             label: key,
             type: typeof headerNames.value[key] == 'number' ? 'number' : 'text',
             data: ''
         });
+
     }
+    console.log("headerNames ",headerNamesRow.value)
+    console.log("headerNamesRow ",headerNamesRow.value[1])
     productDialog.value = true;
     
 
