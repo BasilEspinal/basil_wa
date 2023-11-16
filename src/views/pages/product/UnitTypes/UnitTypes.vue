@@ -96,7 +96,7 @@
 
 
 
-        <Table title="Tipos de unidades" path-api="/unit_types" @HeaderNames="onHeaderNames" @onRowSelect="RowSelect" :dataMod="dataMod"  />
+        <Table title="Tipos de unidades" path-api="/unit_types" @HeaderNames="onHeaderNames" @onRowSelect="RowSelect" :dataMod="modDataToolbar"  />
         
     </div>
 </template>
@@ -120,6 +120,8 @@ const {conditionsUnitType } = useRestrictionUnitTypes();
 
 //const conditionsUnitType = ["name","code"]
 ////////////////////////////////////////////
+const modDataToolbar = ref()
+
 const toast = useToast();
 const productDialog = ref(false);
 const deleteProducts = ref(false);
@@ -294,8 +296,8 @@ const saveProduct = () => {
 
     }
     toast.add({ severity: 'success', summary: 'Successful', detail: 'Product Updated', life: 3000 });
-    const modDataToolbar = { data: data, mode: mode.value };
-
+    //const modDataToolbar = { data: data, mode: mode.value };
+    modDataToolbar.value = { data: data, mode: mode.value };
     productDialog.value = false;
     deleteProducts.value = false;
     exportDialog.value = false;
