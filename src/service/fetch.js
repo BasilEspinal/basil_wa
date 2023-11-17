@@ -6,23 +6,20 @@ export async function useFetch(Endpoint, options = {}, auth = true) {
     options['headers']['Accept'] = 'application/json';
     options['headers']['Access-Control-Allow-Origin'] = '*';
 
-    let base = `http://164.90.146.196:81`; 
+    let base = `http://164.90.146.196:81`; // remote
+    //let base = `http://agroonline_end.test`;  //local
     let api = `/api/v1`; 
     let baseUrl = `${base}${api}${Endpoint}`;
-    console.info(baseUrl) 
-      //let token = document.head.querySelector('meta[name="csrf-token"]');
-      //alert(token)
-      /* 
-      if (token) {
-        options['headers']['X-CSRF-TOKEN'] = token.content;
-      } else {
-        console.log(options['headers'])
-        console.log(options[token.content])
-        console.info(
-          "CSRF token not found: https://laravel.com/docs/csrf#csrf-x-csrf-token"
-        );
-      }
-      */
+    console.info("Funcion Fetch : "+baseUrl) 
+    
+   
+//   let token = sessionStorage.getItem('accessSessionToken');
+
+//   if (token) {
+//     // headers["Authorization"] = `Bearer ${token}`;
+//     options['headers']['Authorization'] = 'Bearer ' + {token}
+//   }
+    
     if (auth) {
         
         options['headers']['Authorization'] = 'Bearer ' + sessionStorage.getItem('accessSessionToken');
@@ -33,15 +30,19 @@ export async function useFetch(Endpoint, options = {}, auth = true) {
     let data = {};
     let error = null;
     try {
+        
         let res = await fetch(baseUrl, options);
+        
         if (res.ok) {
-            data = res.json();
+
+            data = await res.json();
             
         } else {
-            error = await res.text();
+            error = await res.json();
         }
     } catch (e) {
-        error = e;
+        //error = e;
+        //alert("Error, por favor contacte al proveedor")
     }
 
     return { data, error };

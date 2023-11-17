@@ -5,16 +5,20 @@ import { useRouter } from 'vue-router';
 import LoginService from '@/service/LoginService';
 import { useVuelidate } from '@vuelidate/core';
 import { required, email, minLength, maxLength } from '@vuelidate/validators';
+import { useToast } from 'primevue/usetoast';
+import Toast from 'primevue/toast';
 
 const { layoutConfig } = useLayout();
+
 const loginService = new LoginService();
 const count = ref(0);
 
 export default {
     setup() {
+        const toast = useToast();
         return { v$: useVuelidate() };
+        
     },
-
     data() {
         return {
             form: {
@@ -29,7 +33,6 @@ export default {
             router: useRouter()
         };
     },
-
     validations() {
         return {
             form: {
@@ -45,45 +48,47 @@ export default {
             }
         };
     },
-
     methods: {
         onSubmit() {
             if (this.v$.form.email.$invalid) {
                 this.message.push({ severity: 'error', detail: 'Error E-Mail', content: 'E-Mail Invalid', id: count.value++, life: 3000 });
             }
-
             if (this.v$.form.password.$invalid) {
                 this.message.push({ severity: 'error', detail: 'Error Password', content: 'Password Invalid', id: count.value++ });
             }
-
-            if (this.v$.form.$invalid) return;
-
+            if (this.v$.form.$invalid)
+                return;
             this.fetchInfoPostLogin(this.form);
+            
         },
         async fetchInfoPostLogin(data) {
             try {
                 let response = await loginService.login(data);
-                if (response['error']) throw response.error;
-                if (!response['user']) throw response.error;
-
+                if (response['error'])
+                    throw response.error;
+                if (!response['user'])
+                    throw response.error;
+                    //Toast.add({ severity: 'Errorrrr', summary: 'Successful', detail: 'Product Created', life: 3000 });
                 const token = response.token;
                 const user = response.user.name;
                 sessionStorage.setItem('accessSessionToken', token);
                 sessionStorage.setItem('accessSessionUser', user);
                 localStorage.setItem('accessSessionToken', token);
                 this.message.push({ severity: 'success', detail: 'Success', content: 'Successful Login', id: count.value++ });
-
                 this.router.push('/applayout');
-            } catch (error) {
+            }
+            catch (error) {
                 this.message.push({ severity: 'error', detail: 'Error Response', content: error, id: count.value++ });
                 console.error('Error:', error);
             }
         }
-    }
+    },
+    components: { Toast }
 };
 </script>
 
 <template>
+    
     <div class="surface-ground flex align-items-center justify-content-center min-h-screen min-w-screen overflow-hidden" style="background: linear-gradient(180deg, var(--paleta-400) 5%, var(--paleta-100) 15%)">
         <div class="flex flex-column align-items-center justify-content-center" @keyup.enter="onSubmit">
             <router-link to="/" class="align-items-center mb-5">
@@ -96,7 +101,10 @@ export default {
                         <div class="text-900 text-4xl font-bold mb-3">Welcome!</div>
                         <span class="text-600 font-medium">Sign in to continue</span>
                     </div>
-
+                    <Toast/>
+                    <transition-group name="p-message" tag="div" class="w-full">
+                                <Message v-for="msg of message" :severity="msg.severity" :key="msg.content" :sticky="false" :life="msg.life">{{ msg.content }}</Message>
+                            </transition-group>
                     <div>
                         <label for="email1" class="block text-900 text-xl font-medium mb-2"> Email </label>
                         <InputText
@@ -133,14 +141,14 @@ export default {
                                 <label for="rememberme1">Remember me</label>
                             </div>
                             <a class="font-medium no-underline ml-2 text-right cursor-pointer" style="color: var(--primary-color)">Forgot password?</a>
+                            
                         </div>
+                        
                         <Button label="Sign In" class="w-full p-3 text-xl" @click="onSubmit"></Button>
                     </div>
                 </div>
             </div>
-            <transition-group name="p-message" tag="div" class="w-full">
-                <Message v-for="msg of message" :severity="msg.severity" :key="msg.content" :sticky="false" :life="msg.life">{{ msg.content }}</Message>
-            </transition-group>
+            
         </div>
     </div>
 </template>

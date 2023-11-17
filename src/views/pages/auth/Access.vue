@@ -5,7 +5,7 @@ import AppConfig from '@/layout/AppConfig.vue';
 <template>
     <div class="surface-ground flex align-items-center justify-content-center min-h-screen min-w-screen overflow-hidden">
         <div class="flex flex-column align-items-center justify-content-center">
-            <img src="/demo/images/access/logo-orange.svg" alt="Sakai logo" class="mb-5 w-6rem flex-shrink-0" />
+            <img src="/demo/images/access/logo-orange.svg" alt="AgroOnline" class="mb-5 w-6rem flex-shrink-0" />
             <div style="border-radius: 56px; padding: 0.3rem; background: linear-gradient(180deg, rgba(247, 149, 48, 0.4) 10%, rgba(247, 149, 48, 0) 30%)">
                 <div class="w-full surface-card py-8 px-5 sm:px-8 flex flex-column align-items-center" style="border-radius: 53px">
                     <div class="grid flex flex-column align-items-center">
@@ -17,7 +17,7 @@ import AppConfig from '@/layout/AppConfig.vue';
                         <img src="/demo/images/access/asset-access.svg" alt="Access denied" class="mb-5" width="80%" />
                         <div class="col-12 mt-5 text-center">
                             <i class="pi pi-fw pi-arrow-left text-blue-500 mr-2" style="vertical-align: center"></i>
-                            <router-link to="/" class="text-blue-500">Go to Dashboard</router-link>
+                            <router-link to="/applayout" class="text-blue-500">Go to Dashboard</router-link>
                         </div>
                     </div>
                 </div>

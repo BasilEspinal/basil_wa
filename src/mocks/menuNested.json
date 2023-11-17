@@ -14,7 +14,7 @@
                 {
                 "icon": "pi pi-bars", 
             
-                "label": "Información de Productos",
+                "label": "Productos",
                 "icon": "pi pi-bars",
                 "to": "/products"
        
@@ -26,7 +26,7 @@
                 "to": "/productTypes"
             },
             {
-                "label": "Información de variedades por producto",
+                "label": " de variedades por producto",
                 "to": "http://164.90.146.196:81/api/v1/variants",
                 "icon": "pi pi-list"
             },
