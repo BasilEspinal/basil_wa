@@ -4,6 +4,5 @@ export default function useRestrictionUnitTypes() {
         { label: "name", typeData: "text" },
         { label: "code", typeData: "number" }
       ];
-
     return{conditionsUnitType}
 }

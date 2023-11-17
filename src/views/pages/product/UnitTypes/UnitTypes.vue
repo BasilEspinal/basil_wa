@@ -17,7 +17,7 @@
                 <template v-slot:start>
                     <div>
                         <Button :disabled="headerNames.length > 0" label="New" icon="pi pi-plus" class="p-button-success mr-2 ml-2 mb-2 mt-2" @click="openNew" size="large" />
-                        <i class="pi pi-bars p-toolbar-separator mr-2 ml-2 mb-2 mt-2"></i>
+                        <!-- <i class="pi pi-bars p-toolbar-separator mr-2 ml-2 mb-2 mt-2"></i> -->
                         <Button :disabled="!(listRowSelect.length > 0 && listRowSelect.length < 2)" label="Edit" icon="pi pi-file-edit" class="p-button-help mr-2 ml-2 mb-2 mt-2" @click="openEdit" size="large" />
                         <Button :disabled="!(listRowSelect.length > 0 && listRowSelect.length < 2)" label="Clone" icon="pi pi-copy" class="p-button-secondary mr-2 ml-2 mb-2 mt-2" @click="openClone" size="large" />
                         <Button :disabled="headerNames.length > 0" label="Export" icon="pi pi-file-import" class="p-button-warning mr-2 ml-2 mb-2 mt-2" @click="openExport" size="large" />
@@ -97,6 +97,7 @@
 
 
         <Table title="Tipos de unidades" path-api="/unit_types" @HeaderNames="onHeaderNames" @onRowSelect="RowSelect" :dataMod="modDataToolbar"  />
+        <button @click="dropUnitTypes(13)">Realizar Delete</button>
         
     </div>
 </template>
@@ -111,6 +112,30 @@ import { useToast } from 'primevue/usetoast';
 import useProducts from '@/composables/Products/productsAPI.js'
 import useRestrictionUnitTypes from '@/composables/Products/UnitType/restrictionsUnitType.js'
 
+import useUnitTypes from '@/composables/Products/unitTypeAPI.js'
+
+const { dataUnitTypes, errorUnitTypes, postUnitTypes,putUnitTypes,deleteUnitTypes } = useUnitTypes();
+
+
+
+const requestDataUnitTypesDelete = {
+    
+}
+const newUnitTypes = async (requestDataUnitTypes) => {
+      await postUnitTypes(requestDataUnitTypes,"/unit_types");
+      console.log('Datos:', dataUnitTypes,);
+      console.log('Error:', errorUnitTypes);
+    };
+const updateUnitTypes = async (requestDataUnitTypes,id) => {
+      await putUnitTypes(requestDataUnitTypes,"/unit_types",id);
+      console.log('Datos:', dataUnitTypes,);
+      console.log('Error:', errorUnitTypes);
+    };
+const dropUnitTypes = async (id) => {
+      await deleteUnitTypes(requestDataUnitTypesDelete,"/unit_types",id);
+      console.log('Datos:', dataUnitTypes,);
+      console.log('Error:', errorUnitTypes);
+    };        
 const {conditionsUnitType } = useRestrictionUnitTypes();
 //========================================================
 ////////////////////////////////////////////
@@ -121,7 +146,7 @@ const {conditionsUnitType } = useRestrictionUnitTypes();
 //const conditionsUnitType = ["name","code"]
 ////////////////////////////////////////////
 const modDataToolbar = ref()
-
+const idEditUnitTypes = ref()
 const toast = useToast();
 const productDialog = ref(false);
 const deleteProducts = ref(false);
@@ -161,30 +186,28 @@ function validarCampo(data) {
   }
 }
 
-const requestData2 = {
-      "name": "Juanchoxx",
-      "short_name": "JCY",
-      "slug": "909090878787"
-    };
 
-const newProduct = async () => {
-      await postProducts(requestData,"/unit_types");
-      console.log('Datos:', data);
-      console.log('Error:', error);
-    };
 
 const openEdit = () => {
     mode.value = 'EDIT';
     headerNamesRow.value = [];
     
     for (let key in listRowSelect.value[0]) {
-        if (key == 'id') continue;
+        if (key == 'id') {
+            
+            idEditUnitTypes.value = listRowSelect.value[0][key]
+            console.log("El id es el siguiente: ",idEditUnitTypes.value)
+            continue;
+        }
         else if(!(key ==conditionsUnitType[0].label || key ==conditionsUnitType[1].label)) continue
         headerNamesRow.value.push({
             label: key,
             type: typeof listRowSelect.value[0][key] == 'number' ? 'number' : 'text',
-            data: listRowSelect.value[0][key]
+            data: listRowSelect.value[0][key],
+            id: idEditUnitTypes,
+            selecti: true
         });
+
     }
     productDialog.value = true;
 
@@ -200,6 +223,7 @@ const openNew = () => {
     //make the structure
     for (let key in headerNames.value) {
         if (key == 'id') continue;
+        
         else if(!(key ==conditionsUnitType[0].label || key ==conditionsUnitType[1].label)) {
             
             continue}
@@ -220,8 +244,12 @@ const openNew = () => {
 const openClone = () => {
     mode.value = 'CLONE';
     headerNamesRow.value = [];
+    
     for (let key in headerNames.value) {
         if (key == 'id') continue;
+        else if(!(key ==conditionsUnitType[0].label || key ==conditionsUnitType[1].label)) {
+            
+            continue}
         headerNamesRow.value.push({
             label: key,
             type: typeof headerNames.value[key] == 'number' ? 'number' : 'text',
@@ -258,7 +286,10 @@ const saveProduct = () => {
 
     if (mode.value == 'DELETE') {
         headerNamesRow.value.map((item) => {
-            if (item.selecti) data.push(item.id);
+            if (item.selecti) {
+                data.push(item.id);
+                dropUnitTypes(item.id)
+            }
         });
     } else if (mode.value == 'EXPORT') {
         if (format.value == '') {
@@ -269,7 +300,8 @@ const saveProduct = () => {
             data: format.value.code,
             name: filename.value + (format.value.code ? '.csv' : '.xls')
         };
-    } else {
+    }
+     else if (mode.value == 'NEW'){
         data = headerNamesRow.value.map((heade) => {
             const data = {};
             data[heade.label] = heade.data;
@@ -289,10 +321,71 @@ const saveProduct = () => {
         return result;
         }, {});
   
-        console.log(requestData)
+        console.log("Hola este es el request",requestData)
         
         
-        newProduct(requestData)
+        //newProduct(requestData)
+        newUnitTypes(requestData)
+
+    }
+    else if (mode.value == 'CLONE'){
+        data = headerNamesRow.value.map((heade) => {
+            const data = {};
+            data[heade.label] = heade.data;
+            dataTmp = data
+            
+            return data;
+        });
+        
+        
+        requestData = data.reduce((result, currentObject) => {
+        
+        const [key] = Object.keys(currentObject);
+        const value = currentObject[key];
+        
+        result[key] = value;
+
+        return result;
+        }, {});
+  
+        console.log("Hola este es el requestClone",requestData)
+        
+        
+        //newProduct(requestData)
+        newUnitTypes(requestData)
+
+    }
+    else if (mode.value == 'EDIT'){
+            let id = 0
+            data = headerNamesRow.value.map((heade) => {
+            const data = {};
+            
+            data[heade.label] = heade.data;
+            dataTmp = data
+            if (heade.selecti) 
+            console.log(heade.id);
+            id= heade.id
+            return data;
+
+        });
+        
+        
+        requestData = data.reduce((result, currentObject) => {
+        
+        const [key] = Object.keys(currentObject);
+        const value = currentObject[key];
+        
+        result[key] = value;
+
+        return result;
+        }, {});
+  
+        console.log("Hola este es el request",requestData)
+        console.log("Hola este es el request",data)
+        
+        
+        //newProduct(requestData)
+        updateUnitTypes(requestData,id)
 
     }
     toast.add({ severity: 'success', summary: 'Successful', detail: 'Product Updated', life: 3000 });

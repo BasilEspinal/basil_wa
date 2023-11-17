@@ -59,6 +59,9 @@ export default function useProducts(datos) {
         error = error;
     }
   }
+  
+
+
 
   // Retorna data, error y la función postProducts
   return {
