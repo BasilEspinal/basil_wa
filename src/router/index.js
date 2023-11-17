@@ -71,7 +71,7 @@ const router = createRouter({
                 {
                     path: '/farms',
                     name: 'farms',
-                    component: () => import('@/views/pages/Managment/farms/Farms.vue')
+                    component: () => import('@/views/pages/Managment/Farms/Farms.vue')
                 },
 
                 {
