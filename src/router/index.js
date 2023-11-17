@@ -40,7 +40,7 @@ const router = createRouter({
                 {
                     path: '/products',
                     name: 'products',
-                    component: () => import('@/views/pages/product/products/Products.vue')
+                    component: () => import('@/views/pages/product/Products/Products.vue')
                 },
 
                 {
@@ -191,11 +191,7 @@ const router = createRouter({
                     component: () => import('@/views/pages/System/PlatformStatuses/PlatformRegisteringStatus.vue')
                 },
 
-                {
-                    path: '/productsindex',
-                    name: 'products.index',
-                    component: () => import('@/views/pages/product/products/Index.vue')
-                }
+                
             ]
         },
         {
