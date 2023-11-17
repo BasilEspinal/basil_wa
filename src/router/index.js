@@ -197,7 +197,7 @@ const router = createRouter({
         {
             path: '/pages/crud',
             name: 'crud',
-            component: () => import('@/views/pages/Template/Crud.vue')
+            component: () => import('@/views/pages/template/Crud.vue')
         },
         {
             path: '/auth/login',
