@@ -182,7 +182,7 @@ const router = createRouter({
                 {
                     path: '/permissions',
                     name: 'permissions',
-                    component: () => import('@/views/pages/System/Permissions/permissions.vue')
+                    component: () => import('@/views/pages/System/Permissions/Permissions.vue')
                 },
 
                 {
