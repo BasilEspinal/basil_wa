@@ -1,15 +1,7 @@
 
 <template>
     <div class="card">
-        <h1>Información tipo de Unidades </h1>
-
-
-
-
-
-
-
-
+        <h1>Información de tipo de Unidades </h1>
         <div class="grid">
             <div class="col-12">
 
