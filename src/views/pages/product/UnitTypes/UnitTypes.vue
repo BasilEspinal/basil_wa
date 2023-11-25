@@ -149,6 +149,7 @@ const extenciones = ref([
     }
 ]);
 const format = ref('');
+let dataTmp = ref()
 let requestData = {}
 const hideDialog = () => {
     productDialog.value = false;
@@ -275,6 +276,7 @@ const saveProduct = () => {
         data = headerNamesRow.value.map((heade) => {
             const data = {};
             data[heade.label] = heade.data;
+            dataTmp = data
             return data;
         });
 
