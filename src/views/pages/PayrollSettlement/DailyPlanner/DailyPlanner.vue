@@ -12,19 +12,7 @@
 export default {
     name: 'AgroOnlineVueDailyPlanner',
 
-    data() {
-        return {
-            
-        };
-    },
-
-    mounted() {
-        
-    },
-
-    methods: {
-        
-    },
+    setup(){}
 };
 </script>
 

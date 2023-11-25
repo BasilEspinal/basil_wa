@@ -181,33 +181,33 @@ const model2 = ref([
         items: [
           {
             label: "Planeación Diaria",
-            to: "/DailyPlanner",
+            to: "/PayrollSettlement/DailyPlanner",
             icon: "pi pi-tablet",
           },
           {
             label: "Trabajos de Corta",
-            to: "/WorkRegisterCorta",
+            to: "/PayrollSettlement/WorkRegisterCorta",
             icon: "pi pi-percentage",
           },
           {
             label: "Traslado a Prefrio",
-            to: "/TransferTasks",
+            to: "/PayrollSettlement/TransferTasks",
             icon: "pi pi-bookmark",
           },
           {
             label: "Trabajos de Selección",
-            to: "/WorkRegisterSelection",
+            to: "/PayrollSettlement/WorkRegisterSelection",
             icon: "pi pi-tablet",
           },
           {
             label: "Labores de Contratistas",
-            to: "/Contractors",
+            to: "/PayrollSettlement/WorkRegisterDaily",
             icon: "pi pi-share-alt",
           },
 
           {
             label: "Descuentos de Nómina",
-            to: "/DiscountRegistering",
+            to: "/PayrollSettlement/DiscountRegistering",
             icon: "pi pi-ticket",
           },
         ],

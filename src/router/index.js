@@ -123,8 +123,6 @@ const router = createRouter({
                     name: 'vehicles',
                     component: () => import('@/views/pages/Production/Vehicles/Vehicles.vue')
                 },
-                
-
                 {
                     path: '/PayrollSettlement/DailyPlanner',
                     name: 'dailyplanner',
@@ -153,8 +151,11 @@ const router = createRouter({
                     name: 'DiscountRegistering',
                     component: () => import('@/views/pages/PayrollSettlement/DiscountRegistering/DiscountRegistering.vue')
                 },
-
-             
+                {
+                    path: '/PayrollSettlement/WorkRegisterDaily',
+                    name: 'WorkRegisterDaily',
+                    component: () => import('@/views/pages/PayrollSettlement/WorkRegisterDaily/EmployeeDailyWork.vue')
+                },
                 
                 {
                     path: '/comercial/customers_requests',
