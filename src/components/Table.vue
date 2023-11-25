@@ -1,12 +1,13 @@
 <script setup>
 import { FilterMatchMode, FilterOperator } from 'primevue/api';
 import TableService from '@/service/TableService';
-import { ref, onBeforeMount, defineEmits, watch } from 'vue';
-
+import { onMounted, ref, toRefs, onBeforeMount, defineEmits, watch, inject } from 'vue';
+import useRestrictionUnitTypes from '@/composables/Products/UnitType/restrictionsUnitType.js'
+import { useToast } from 'primevue/usetoast';
 const columnas = ref([]);
 const column = ref(null);
 const headerNames = ref(null);
-
+const { conditionsUnitType } = useRestrictionUnitTypes();
 // Filtro
 const filters = ref(null);
 const loading = ref(null);
@@ -14,7 +15,7 @@ const tableData = ref(null);
 const tableService = new TableService();
 const selectedProduct = ref([]);
 const emits = defineEmits([]);
-//const dataMod = ref(props.dataMod);
+const isChanging2 = inject('isChanging');
 const dt = ref();
 
 const loadingData = () => {
@@ -102,10 +103,10 @@ const props = defineProps({
         default: 'data'
     },
     dataMod: {
-        type: Object
+        type: String
     }
 });
-
+const { dataMod: dataMod } = toRefs(props);
 /**
  * The `fetchInfoAndUpdateValue` function is an asynchronous function that is responsible for fetching
  * data from an API and updating the `tableData` value, which is used to populate the table in the Table
@@ -114,12 +115,13 @@ const props = defineProps({
 async function fetchInfoAndUpdateValue() {
     try {
         let data = await tableService.getInfo(props.pathApi);
+
         const path = props.jsonDataPath.split('.');
         path.forEach((element) => {
             data = data[element];
         });
         tableData.value = data;
-        console.log(data)
+        //console.log(data)
         let mappedArray1 = [];
 
         const types = ['string', 'number'];
@@ -128,17 +130,27 @@ async function fetchInfoAndUpdateValue() {
             if (types.includes(typeof data[0][key]))
                 mappedArray1.push(key);
         }
-
-        columnas.value = mappedArray1.map((item) => {
-            return {
+        /*
+                columnas.value = mappedArray1.map((item) => {
+                    
+                    return {
+                        field: item,
+                        header: item.replaceAll('_', ' ').toUpperCase(),
+                        position: mappedArray1.indexOf(item)
+                    };
+                });
+        */
+        //Here the condition of columns is applied
+        columnas.value = mappedArray1
+            .filter(item => item === conditionsUnitType[0].label || item === conditionsUnitType[1].label)
+            .map((item, index) => ({
                 field: item,
                 header: item.replaceAll('_', ' ').toUpperCase(),
-                position: mappedArray1.indexOf(item)
-            };
-        });
-
+                position: index
+            }));
         column.value = columnas.value;
         headerNames.value = column.value.map((col) => col.field);
+        //console.log(columnas.value)
         initFilters();
         emits('HeaderNames', data[0]);
     } catch (error) {
@@ -161,27 +173,32 @@ const exportData = (data) => {
     data.data ? exportTableToCSV(data.name) : exportExcel(data.name);
 };
 
+onMounted(() => {
+    // Lógica que se ejecutará cuando el componente se monte
+    console.log('El componente se ha montado. Valor de la prop:', props.dataMod);
+});
+
+// watch(
+//     () => props.dataMod,
+//     () => {
+//         alert(props.dataMod)
+//         loadingData()
+//         console.log("Cambueeeeeeeeeeeeeeeeeee")
+
+
+//     }
+// );
 watch(
-    () => props.dataMod,
+    () => isChanging2.value,
     () => {
-        switch (props.dataMod.mode) {
-            case 'NEW':
-                break;
-            case 'EDIT':
-                break;
-            case 'CLONE':
-                break;
-            case 'DELETE':
-                break;
-            case 'EXPORT':
-                exportData(props.dataMod.data);
-                break;
-            default:
-                return;
-        }
+
+        loadingData()
+        console.log("CIsChanging" + isChanging2.value)
+        isChanging2.value = false
+
+
     }
 );
-
 watch(
     () => props.pathApi,
     (x, y) => {
@@ -252,9 +269,11 @@ const onColumnsChange = (column) => {
             <h4 v-text="props.title"></h4>
             <div class="card">
                 <h5>¿Cuales columnas quieres ver?</h5>
-                <MultiSelect v-model="column" :options="columnas" optionLabel="field" placeholder="Seleccione columnas" :filter="true" display="chip" class="w-full md:w-50rem" @change="onColumnsChange(column)">
+                <MultiSelect v-model="column" :options="columnas" optionLabel="field" placeholder="Seleccione columnas"
+                    :filter="true" display="chip" class="w-full md:w-50rem" @change="onColumnsChange(column)">
                     <template #value="slotProps">
-                        <div class="inline-flex align-items-center py-1 px-2 bg-primary text-primary border-round mr-2" v-for="option of slotProps.value" :key="option.header">
+                        <div class="inline-flex align-items-center py-1 px-2 bg-primary text-primary border-round mr-2"
+                            v-for="option of slotProps.value" :key="option.header">
                             <div>{{ option.header }}</div>
                         </div>
                     </template>
@@ -266,29 +285,15 @@ const onColumnsChange = (column) => {
                     </template>
                 </MultiSelect>
             </div>
-            <DataTable
-                id="tblData"
-                v-model:selection="selectedProduct"
-                :value="tableData"
-                :paginator="true"
-                class="p-datatable-gridlines"
-                :rows="10"
-                dataKey="id"
-                :rowHover="true"
-                v-model:filters="filters"
-                filterDisplay="menu"
-                :loading="loading"
-                :filters="filters"
-                responsiveLayout="scroll"
-                :ref="dt"
-                :globalFilterFields="headerNames"
-                @row-select="onRowSelect"
-                @row-unselect="onRowSelect"
-                @select-all-change="onSelectAllChange"
-            >
+            <DataTable id="tblData" v-model:selection="selectedProduct" :value="tableData" :paginator="true"
+                class="p-datatable-gridlines" :rows="10" dataKey="id" :rowHover="true" v-model:filters="filters"
+                filterDisplay="menu" :loading="loading" :filters="filters" responsiveLayout="scroll" :ref="dt"
+                :globalFilterFields="headerNames" @row-select="onRowSelect" @row-unselect="onRowSelect"
+                @select-all-change="onSelectAllChange">
                 <template #header>
                     <div class="flex justify-content-between flex-column sm:flex-row">
-                        <Button type="button" icon="pi pi-filter-slash" label="Limpiar" class="p-button-outlined mb-2" @click="clearFilter()" />
+                        <Button type="button" icon="pi pi-filter-slash" label="Limpiar" class="p-button-outlined mb-2"
+                            @click="clearFilter()" />
                         <span class="p-input-icon-left mb-2">
                             <i class="pi pi-search" />
                             <InputText v-model="filters['global'].value" placeholder="Buscar" style="width: 100%" />
@@ -300,12 +305,14 @@ const onColumnsChange = (column) => {
 
                 <Column selectionMode="multiple" headerStyle="width: 3rem"></Column>
 
-                <Column id="col" v-for="col of column" :key="col.field" :field="col.field" :header="col.header" :enable="col.enabled" :filterField="col.field" style="min-width: 1rem">
+                <Column id="col" v-for="col of column" :key="col.field" :field="col.field" :header="col.header"
+                    :enable="col.enabled" :filterField="col.field" style="min-width: 1rem">
                     <template #body="{ data }">
                         {{ data[col.field] }}
                     </template>
                     <template #filter="{ filterModel }">
-                        <InputText type="text" v-model="filterModel.value" class="p-column-filter" placeholder="Buscar por nombre" />
+                        <InputText type="text" v-model="filterModel.value" class="p-column-filter"
+                            placeholder="Buscar por nombre" />
                     </template>
                 </Column>
             </DataTable>
