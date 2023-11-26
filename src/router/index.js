@@ -27,166 +27,179 @@ const router = createRouter({
                     component: () => import('@/views/pages/Landing.vue')
                 },
                 {
-                    path: '/variants',
+                    path: '/product/varieties',
                     name: 'varieties',
                     component: () => import('@/views/pages/product/Varieties/Varieties.vue')
                 },
                 {
-                    path: '/productvarieties',
+                    path: '/product/productvarieties',
                     name: 'productvarieties',
                     component: () => import('@/views/pages/product/ProductVarieties/ProductVarieties.vue')
                 },
 
                 {
-                    path: '/products',
+                    path: '/product/products',
                     name: 'products',
                     component: () => import('@/views/pages/product/Products/Products.vue')
                 },
 
                 {
-                    path: '/productTypes',
+                    path: '/product/productTypes',
                     name: 'productTypes',
                     component: () => import('@/views/pages/product/ProductTypes/ProductTypes.vue')
                 },
 
                 {
-                    path: '/packing_types',
+                    path: '/product/packing_types',
                     name: 'packingtypes',
                     component: () => import('@/views/pages/product/PackingTypes/PackingTypes.vue')
                 },
 
                 {
-                    path: '/unit_types',
+                    path: '/product/unit_types',
                     name: 'unitTypes',
                     component: () => import('@/views/pages/product/UnitTypes/UnitTypes.vue')
                 },
+               
+                {
+                    path: '/payrollsettings/PaymentTypes',
+                    name: 'PaymentTypes',
+                    component: () => import('@/views/pages/PayrollSettings/PaymentType/PaymentType.vue')
+                },
+                {
+                    path: '/payrollsettings/taskstarif',
+                    name: 'taskstarif',
+                    component: () => import('@/views/pages/PayrollSettings/TasksTarif/TasksTarif.vue')
+                },
 
 
                 {
-                    path: '/companies',
-                    name: 'companies',
-                    component: () => import('@/views/pages/Managment/Company/Company.vue')
+                    path: '/payrollsettings/taskstypes',
+                    name: 'taskstypes',
+                    component: () => import('@/views/pages/PayrollSettings/TasksTypes/TasksTypes.vue')
                 },
 
                 {
-                    path: '/farms',
-                    name: 'farms',
-                    component: () => import('@/views/pages/Managment/Farms/Farms.vue')
+                    path: '/payrollsettings/payperiods',
+                    name: 'payperiods',
+                    component: () => import('@/views/pages/PayrollSettings/PaymentPeriods/PaymentPeriods.vue')
                 },
-
                 {
-                    path: '/JobTypes',
+                    path: '/payrollsettings/calendars',
+                    name: 'calendars',
+                    component: () => import('@/views/pages/PayrollSettings/Calendars/Calendars.vue')
+                },
+                {
+                    path: '/payrollsettings/JobTypes',
                     name: 'jobtypes',
-                    component: () => import('@/views/pages/Managment/JobTypes/JobTypes.vue')
+                    component: () => import('@/views/pages/PayrollSettings/JobTypes/JobTypes.vue')
                 },
-
                 {
-                    path: '/Workcenters',
+                    path: '/payrollsettings/workstarif',
+                    name: 'contractors',
+                    component: () => import('@/views/pages/PayrollSettings/WorksTarif/WorksTarif.vue')
+                },
+                {
+                    path: '/payrollsettings/Workcenters',
                     name: 'workcenters',
-                    component: () => import('@/views/pages/Managment/WorkCenters/WorkCenters.vue')
+                    component: () => import('@/views/pages/PayrollSettings/WorkCenters/WorkCenters.vue')
                 },
 
                 {
-                    path: '/Employees',
+                    path: '/payrollsettings/Employees',
                     name: 'employees',
-                    component: () => import('@/views/pages/Managment/Employees/Employees.vue')
+                    component: () => import('@/views/pages/PayrollSettings/Employees/Employees.vue')
                 },
 
                 {
-                    path: '/croplots',
+                    path: '/production/croplots',
                     name: 'cropslots',
                     component: () => import('@/views/pages/Production/CropLots/CropLots.vue')
                 },
 
 
                 {
-                    path: '/Vehicles',
+                    path: '/production/Vehicles',
                     name: 'vehicles',
                     component: () => import('@/views/pages/Production/Vehicles/Vehicles.vue')
                 },
-
                 {
-                    path: '/taskstarif',
-                    name: 'taskstarif',
-                    component: () => import('@/views/pages/Payroll/TasksTarif/TasksTarif.vue')
-                },
-
-
-                {
-                    path: '/taskstypes',
-                    name: 'taskstypes',
-                    component: () => import('@/views/pages/Payroll/TasksTypes/TasksTypes.vue')
-                },
-
-                {
-                    path: '/payperiods',
-                    name: 'payperiods',
-                    component: () => import('@/views/pages/Payroll/PaymentPeriods/PaymentPeriods.vue')
-                },
-                {
-                    path: '/calendars',
-                    name: 'calendars',
-                    component: () => import('@/views/pages/Payroll/Calendars/Calendars.vue')
-                },
-
-                {
-                    path: '/DailyPlanner',
+                    path: '/PayrollSettlement/DailyPlanner',
                     name: 'dailyplanner',
                     component: () => import('@/views/pages/PayrollSettlement/DailyPlanner/DailyPlanner.vue')
                 },
 
                 {
-                    path: '/WorkRegisterCorta',
+                    path: '/PayrollSettlement/WorkRegisterCorta',
                     name: 'workregistercorta',
                     component: () => import('@/views/pages/PayrollSettlement/WorkRegisterCorta/AreaMovementRegister.vue')
                 },
                 {
-                    path: '/WorkRegisterSelection',
+                    path: '/PayrollSettlement/WorkRegisterSelection',
                     name: 'WorkRegisterSelection',
                     component: () => import('@/views/pages/PayrollSettlement/WorkRegisterSelection/DailyWorkRegistering.vue')
                 },
 
                 {
-                    path: '/TransferTasks',
+                    path: '/PayrollSettlement/TransferTasks',
                     name: 'TransferTasks',
                     component: () => import('@/views/pages/PayrollSettlement/TransferTasks/TransfersTasks.vue')
                 },
 
                 {
-                    path: '/DiscountRegistering',
+                    path: '/PayrollSettlement/DiscountRegistering',
                     name: 'DiscountRegistering',
                     component: () => import('@/views/pages/PayrollSettlement/DiscountRegistering/DiscountRegistering.vue')
                 },
-
                 {
-                    path: '/Contractors',
-                    name: 'contractors',
-                    component: () => import('@/views/pages/PayrollSettlement/Contractors/EmployeeDailyWorkRegistering.vue')
+                    path: '/PayrollSettlement/WorkRegisterDaily',
+                    name: 'WorkRegisterDaily',
+                    component: () => import('@/views/pages/PayrollSettlement/WorkRegisterDaily/EmployeeDailyWork.vue')
+                },
+                
+                {
+                    path: '/comercial/customers_requests',
+                    name: '/comercial/customers_requests',
+                    component: () => import('@/views/pages/Comercial/Customers/CustomersRequests.vue')
                 },
 
-                
+                {
+                    path: '/comercial/customers',
+                    name: '/comercial/customers',
+                    component: () => import('@/views/pages/Comercial/Customers/Customers.vue')
+                },
+                {
+                    path: '/admon/companies',
+                    name: 'companies',
+                    component: () => import('@/views/pages/Managment/Company/Company.vue')
+                },
 
                 {
-                    path: '/users',
+                    path: '/admon/farms',
+                    name: 'farms',
+                    component: () => import('@/views/pages/Managment/Farms/Farms.vue')
+                },
+                {
+                    path: '/system/users',
                     name: 'users',
                     component: () => import('@/views/pages/System/Users/PlatformUsers.vue')
                 },
 
                 
                 {
-                    path: '/roles',
+                    path: '/system/roles',
                     name: 'roles',
                     component: () => import('@/views/pages/System/Roles/Roles.vue')
                 },
                 
                 {
-                    path: '/permissions',
+                    path: '/system/permissions',
                     name: 'permissions',
                     component: () => import('@/views/pages/System/Permissions/Permissions.vue')
                 },
 
                 {
-                    path: '/statuses',
+                    path: '/system/statuses',
                     name: 'statuses',
                     component: () => import('@/views/pages/System/PlatformStatuses/PlatformRegisteringStatus.vue')
                 },

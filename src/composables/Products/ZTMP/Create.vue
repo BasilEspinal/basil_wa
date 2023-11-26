@@ -60,13 +60,7 @@ export default {
             saveProducts,
         }
     },
-    // data() {
-    //     return {};
-    // },
 
-    // mounted() {},
-
-    // methods: {}
 };
 </script>
 

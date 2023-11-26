@@ -1,7 +1,7 @@
 <template>
  <div class="card">
     <div>
-        <h1>Informacion Variedades </h1>
+        <h1>Información de tipo de Variedades </h1>
     </div>
 </div>    
                                                                                              
