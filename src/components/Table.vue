@@ -2,7 +2,7 @@
 import { FilterMatchMode, FilterOperator } from 'primevue/api';
 import TableService from '@/service/TableService';
 import { onMounted, ref, toRefs, onBeforeMount, defineEmits, watch, inject } from 'vue';
-import useRestrictionUnitTypes from '@/composables/Products/UnitType/restrictionsUnitType.js'
+import useRestrictionUnitTypes from '@/composables/Product/UnitsType/restrictionsUnitType.js'
 import { useToast } from 'primevue/usetoast';
 const columnas = ref([]);
 const column = ref(null);

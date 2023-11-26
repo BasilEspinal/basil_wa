@@ -1,6 +1,10 @@
 <script setup>
-import { ref, defineEmits } from 'vue';
+import { ref, defineEmits,watch, onMounted, provide } from 'vue';
 import { useToast } from 'primevue/usetoast';
+
+
+import useRestrictionUnitTypes from '@/composables/Product/UnitsType/restrictionsUnitType.js'
+import useUnitTypes from '@/composables/Product/UnitsType/unitTypeAPI.js'
 
 const emits = defineEmits([]);
 const toast = useToast();
@@ -21,24 +25,22 @@ const extenciones = ref([
     }
 ]);
 const format = ref('');
-///*****************************/
-import useProducts from '@/composables/Products/productsAPI.js'
-let dataTmp = ref()
-const { data, error, postProducts } = useProducts();
 let requestData = {}
 
+const listRowSelect = ref([]);
+const RowSelect = (data) => {
+    listRowSelect.value = data;
 
-const requestData2 = {
-      "name": "Juanchoxx",
-      "short_name": "JCY",
-      "slug": "909090878787"
-    };
+};
+let headerNames = ref([]);
+const onHeaderNames = (data) => (
+    headerNames.value = data
 
-const newProduct = async () => {
-      await postProducts(requestData,"/products");
-      console.log('Datos:', data);
-      console.log('Error:', error);
-    };
+);
+
+const isChanging = ref(false);
+provide('isChanging', isChanging);
+watch(listRowSelect, RowSelect);
 //***************************** */
 const props = defineProps({
     rowSelect: {
@@ -54,47 +56,60 @@ const props = defineProps({
 const openEdit = () => {
     mode.value = 'EDIT';
     headerNamesRow.value = [];
-    for (let key in props.rowSelect[0]) {
-        if (key == 'id') continue;
+
+    for (let key in listRowSelect.value[0]) {
+        if (key == 'id') {
+            idEditUnitTypes.value = listRowSelect.value[0][key]
+            continue;
+        }
+        else if (!(key == conditionsUnitType[0].label || key == conditionsUnitType[1].label)) continue
         headerNamesRow.value.push({
             label: key,
-            type: typeof props.rowSelect[0][key] == 'number' ? 'number' : 'text',
-            data: props.rowSelect[0][key]
+            type: typeof listRowSelect.value[0][key] == 'number' ? 'number' : 'text',
+            data: listRowSelect.value[0][key],
+            id: idEditUnitTypes,
+            selecti: true
         });
+
     }
     productDialog.value = true;
-
     
 };
 
 const openNew = () => {
-    //Title
     mode.value = 'NEW';
-    //Title fields
     headerNamesRow.value = [];
-    //make the structure
-    for (let key in props.headerNames) {
+    for (let key in headerNamesRow.value) {
         if (key == 'id') continue;
+        else if (!(key == conditionsUnitType[0].label || key == conditionsUnitType[1].label)) {
+            continue
+        }
         headerNamesRow.value.push({
             label: key,
-            type: typeof props.headerNames[key] == 'number' ? 'number' : 'text',
+            type: typeof headerNamesRow.value[key] == 'number' ? 'number' : 'text',
             data: ''
         });
+
     }
+
     productDialog.value = true;
-    
 
 };
 
 const openClone = () => {
     mode.value = 'CLONE';
     headerNamesRow.value = [];
-    for (let key in props.headerNames) {
+
+    for (let key in headerNamesRow.value) {
         if (key == 'id') continue;
+        else if (!(key == conditionsUnitType[0].label || key == conditionsUnitType[1].label)) {
+
+            continue
+        }
         headerNamesRow.value.push({
             label: key,
-            type: typeof props.headerNames[key] == 'number' ? 'number' : 'text',
-            data: props.headerNames[key]
+            type: typeof Row.value[key] == 'number' ? 'number' : 'text',
+            data: headerNamesRow.value[key]
         });
     }
     productDialog.value = true;
@@ -109,9 +124,9 @@ const openExport = () => {
 const openDelete = () => {
     mode.value = 'DELETE';
     headerNamesRow.value = [];
-    for (let key in props.rowSelect) {
+    for (let key in listRowSelect.value) {
         headerNamesRow.value.push({
-            id: props.rowSelect[key].id,
+            id: listRowSelect.value[key].id,
             selecti: true
         });
     }
@@ -123,12 +138,16 @@ const hideDialog = () => {
 };
 
 const saveProduct = () => {
-    let data = [];
+  let data = [];
 
     if (mode.value == 'DELETE') {
         headerNamesRow.value.map((item) => {
-            if (item.selecti) data.push(item.id);
+            if (item.selecti) {
+                data.push(item.id);
+                dropUnitTypes(item.id)
+            }
         });
+        isChanging.value = true
     } else if (mode.value == 'EXPORT') {
         if (format.value == '') {
             toast.add({ severity: 'error', summary: 'Select Format', detail: 'Must select a format', life: 3000 });
@@ -138,38 +157,89 @@ const saveProduct = () => {
             data: format.value.code,
             name: filename.value + (format.value.code ? '.csv' : '.xls')
         };
-    } else {
+        isChanging.value = true
+    }
+    else if (mode.value == 'NEW') {
         data = headerNamesRow.value.map((heade) => {
             const data = {};
             data[heade.label] = heade.data;
             dataTmp = data
-            
             return data;
         });
-        
-        
-        requestData = data.reduce((result, currentObject) => {
-        
-        const [key] = Object.keys(currentObject);
-        const value = currentObject[key];
-        
-        result[key] = value;
 
-        return result;
+
+        requestData = data.reduce((result, currentObject) => {
+
+            const [key] = Object.keys(currentObject);
+            const value = currentObject[key];
+            result[key] = value;
+            return result;
         }, {});
-  
-        console.log(requestData)
-        
-        
-        newProduct(requestData)
+
+        newUnitTypes(requestData)
+        isChanging.value = true
+
+        toast.add({ severity: 'success', summary: 'Successful', detail: 'UnitTypes Updated', life: 3000 });
+        toast.add({ severity: 'error', summary: 'There are some errores', detail: 'Must correct those ones', life: 3000 });
+        if (errorUnitTypes) {
+            const keys = Object.keys(errorUnitTypes);
+            console.log("Lista de errores")
+            console.log(errorUnitTypes)
+            keys.forEach(key => {
+                console.log("Tengo un error")
+                console.log(`[${key}]:`, errorUnitTypes[key]);
+            });
+        }
+    }
+
+    else if (mode.value == 'CLONE') {
+        data = headerNamesRow.value.map((heade) => {
+            const data = {};
+            data[heade.label] = heade.data;
+            dataTmp = data
+
+            return data;
+        });
+
+
+        requestData = data.reduce((result, currentObject) => {
+            const [key] = Object.keys(currentObject);
+            const value = currentObject[key];
+            result[key] = value;
+            return result;
+        }, {});
+        newUnitTypes(requestData)
+        isChanging.value = true
+    }
+    else if (mode.value == 'EDIT') {
+        let id = 0
+        data = headerNamesRow.value.map((heade) => {
+            const data = {};
+            data[heade.label] = heade.data;
+            dataTmp = data
+            if (heade.selecti)
+                id = heade.id
+            return data;
+
+        });
+
+
+        requestData = data.reduce((result, currentObject) => {
+            const [key] = Object.keys(currentObject);
+            const value = currentObject[key];
+            result[key] = value;
+            return result;
+        }, {});
+
+        updateUnitTypes(requestData, id)
+        isChanging.value = true
 
     }
-    toast.add({ severity: 'success', summary: 'Successful', detail: 'Product Updated', life: 3000 });
-    emits('modDataToolbar', { data: data, mode: mode.value });
-
+    //toast.add({ severity: 'success', summary: 'Successful', detail: 'Product Updated', life: 3000 });
     productDialog.value = false;
     deleteProducts.value = false;
     exportDialog.value = false;
+
     
 };
 
@@ -182,7 +252,7 @@ const saveProduct = () => {
             <Toolbar>
                 <template v-slot:start>
                     <div>
-                        <Button :disabled="props.headerNames.length > 0" label="New" icon="pi pi-plus" class="p-button-success mr-2 ml-2 mb-2 mt-2" @click="openNew" size="large" />
+                        <Button :disabled="props.headerNameslength > 0" label="New" icon="pi pi-plus" class="p-button-success mr-2 ml-2 mb-2 mt-2" @click="openNew" size="large" />
                         <i class="pi pi-bars p-toolbar-separator mr-2 ml-2 mb-2 mt-2"></i>
                         <Button :disabled="!(props.rowSelect.length > 0 && props.rowSelect.length < 2)" label="Edit" icon="pi pi-file-edit" class="p-button-help mr-2 ml-2 mb-2 mt-2" @click="openEdit" size="large" />
                         <Button :disabled="!(props.rowSelect.length > 0 && props.rowSelect.length < 2)" label="Clone" icon="pi pi-copy" class="p-button-secondary mr-2 ml-2 mb-2 mt-2" @click="openClone" size="large" />

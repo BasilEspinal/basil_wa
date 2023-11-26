@@ -1,7 +1,8 @@
 
 <template>
+    
     <div class="card">
-        <h1>Información de tipo de Unidades </h1>
+         <h1>Información de tipo de Unidades </h1> 
         <div class="grid">
             <div class="col-12">
 
@@ -25,7 +26,7 @@
                     </template>
                 </Toolbar>
             </div>
-            <Dialog v-model:visible="productDialog" :style="{ width: '700px' }" header="Unit Types Details" :modal="true"
+            <Dialog v-model:visible="formDialog" :style="{ width: '700px' }" header="Unit Types Details" :modal="true"
                 class="p-fluid">
                 <div class="formgrid grid">
 
@@ -49,7 +50,7 @@
                 <template #footer>
                     <div>
                         <Button label="Cancel" icon="pi pi-times" class="p-button-text" @click="hideDialog" />
-                        <Button label="Save" icon="pi pi-check" class="p-button-text" @click="saveProduct" />
+                        <Button label="Save" icon="pi pi-check" class="p-button-text" @click="saveRecord" />
 
                     </div>
                 </template>
@@ -68,20 +69,23 @@
                 </div>
                 <template #footer>
                     <Button label="Cancel" icon="pi pi-times" class="p-button-text" @click="exportDialog = false" />
-                    <Button label="Export" icon="pi pi-check" class="p-button-text" @click="saveProduct" />
+                    <Button label="Export" icon="pi pi-check" class="p-button-text" @click="saveRecord" />
                 </template>
             </Dialog>
 
-            <Dialog v-model:visible="deleteProducts" :style="{ width: '250px' }" header="Confirm" :modal="true">
-                <div class="flex align-items-center justify-content-center" v-for="item in headerNamesRow" :key="item">
+            <Dialog v-model:visible="deleteRecords" :style="{ width: '450px' }" header="Confirm" :modal="true">
+                <div class="flex align-items-center " v-for="item in headerNamesRow" :key="item">
                     <Checkbox class="mr-2" v-model="item.selecti" :binary="true" />
-                    <label :for="item.id"> {{ item.id }} </label>
+                    <label :for="item.id"> {{ item.label }} </label>
                     <i class="pi pi-exclamation-triangle ml-3 mb-2" style="font-size: 2rem" />
-                    <span v-if="product">Are you sure you want to delete the selected products?</span>
+                    
+                    
                 </div>
+                <div class="flex align-items-center justify-content-center"><br><br><span>Are you sure you want to delete the selected ones?</span></div>
+                
                 <template #footer>
-                    <Button label="No" icon="pi pi-times" class="p-button-text" @click="deleteProducts = false" />
-                    <Button label="Yes" icon="pi pi-check" class="p-button-text" @click="saveProduct" />
+                    <Button label="No" icon="pi pi-times" class="p-button-text" @click="deleteRecords = false" />
+                    <Button label="Yes" icon="pi pi-check" class="p-button-text" @click="saveRecord" />
                 </template>
             </Dialog>
 
@@ -89,7 +93,7 @@
         </div>
 
 
-        <Table title="Tipos de unidades" path-api="/unit_types" @HeaderNames="onHeaderNames" @onRowSelect="RowSelect" />
+        <Table title="" path-api="/unit_types" @HeaderNames="onHeaderNames" @onRowSelect="RowSelect" />
         <!-- <button @click="dropUnitTypes(13)">Realizar Delete</button> -->
         <h1> errorUnitTypes </h1>
         <h1>{{ errorUnitTypes }}</h1>
@@ -101,15 +105,12 @@
 
 
 import Table from '@/components/Table.vue';
-import ToolbarComponet from '@/components/ToolbarComponet.vue';
 import { ref, reactive, toRefs, watch, onMounted, provide } from 'vue';
 import { useToast } from 'primevue/usetoast';
-import useProducts from '@/composables/Products/productsAPI.js'
-import useRestrictionUnitTypes from '@/composables/Products/UnitType/restrictionsUnitType.js'
-
-import useUnitTypes from '@/composables/Products/unitTypeAPI.js'
-
-const { dataUnitTypes, postUnitTypes, putUnitTypes, deleteUnitTypes, errorUnitTypes } = useUnitTypes();
+import useRestrictionUnitTypes from '@/composables/Product/UnitsType/restrictionsUnitType.js'
+import useUnitTypes from '@/composables/Product/UnitsType/unitTypeAPI.js'
+import ToolbarComponet from '@/components/ToolbarComponet.vue';
+const { postUnitTypes, putUnitTypes, deleteUnitTypes, errorUnitTypes } = useUnitTypes();
 const requestDataUnitTypesDelete = {}
 const newUnitTypes = async (requestDataUnitTypes) => {
     await postUnitTypes(requestDataUnitTypes, "/unit_types");
@@ -124,8 +125,8 @@ const dropUnitTypes = async (id) => {
 const { conditionsUnitType } = useRestrictionUnitTypes();
 const idEditUnitTypes = ref()
 const toast = useToast();
-const productDialog = ref(false);
-const deleteProducts = ref(false);
+const formDialog = ref(false);
+const deleteRecords = ref(false);
 const exportDialog = ref(false);
 const mode = ref('');
 const filename = ref('table');
@@ -144,12 +145,13 @@ const format = ref('');
 let dataTmp = ref()
 let requestData = {}
 const hideDialog = () => {
-    productDialog.value = false;
+    formDialog.value = false;
 };
 
 const listRowSelect = ref([]);
 const RowSelect = (data) => {
     listRowSelect.value = data;
+    
 
 };
 let headerNames = ref([]);
@@ -181,7 +183,7 @@ const openEdit = () => {
         });
 
     }
-    productDialog.value = true;
+    formDialog.value = true;
 };
 
 const openNew = () => {
@@ -200,7 +202,7 @@ const openNew = () => {
 
     }
 
-    productDialog.value = true;
+    formDialog.value = true;
 
 
 };
@@ -221,7 +223,7 @@ const openClone = () => {
             data: headerNames.value[key]
         });
     }
-    productDialog.value = true;
+    formDialog.value = true;
 };
 
 const openExport = () => {
@@ -233,16 +235,21 @@ const openExport = () => {
 const openDelete = () => {
     mode.value = 'DELETE';
     headerNamesRow.value = [];
+    
+    
     for (let key in listRowSelect.value) {
+        
         headerNamesRow.value.push({
+            label: listRowSelect.value[key].name,
             id: listRowSelect.value[key].id,
             selecti: true
         });
+    
     }
-    deleteProducts.value = true;
+    deleteRecords.value = true;
 };
 
-const saveProduct = () => {
+const saveRecord = () => {
     let data = [];
 
     if (mode.value == 'DELETE') {
@@ -341,8 +348,8 @@ const saveProduct = () => {
 
     }
     //toast.add({ severity: 'success', summary: 'Successful', detail: 'Product Updated', life: 3000 });
-    productDialog.value = false;
-    deleteProducts.value = false;
+    formDialog.value = false;
+    deleteRecords.value = false;
     exportDialog.value = false;
 
 };
