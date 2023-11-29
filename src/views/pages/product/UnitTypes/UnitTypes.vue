@@ -46,7 +46,7 @@
 
 
                             <!-- Mostrar errores si la variable errors es true -->
-                            <div v-if="serverError && conditionsUnitType[0].label == key.label" class="text-danger">
+                            <div v-if="isServerError && conditionsUnitType[0].label == key.label" class="text-danger">
                                 <div v-for="errorKey in Object.keys(serverError)" :key="errorKey" class="text-danger">
                                     <span class="text-danger" v-if="key.label == errorKey"
                                         v-text="`[${errorKey}]: ${serverError[errorKey].join(', ')}`"></span>
@@ -54,7 +54,7 @@
                                 </div>
                             </div>
 
-                            <div v-if="serverError && conditionsUnitType[1].label == key.label" class="text-danger">
+                            <div v-if="isServerError && conditionsUnitType[1].label == key.label" class="text-danger">
                                 <div v-for="errorKey in Object.keys(serverError)" :key="errorKey" class="text-danger">
                                     <span class="text-danger" v-if="key.label == errorKey"
                                         v-text="`${serverError[errorKey]}`"></span>
@@ -168,11 +168,16 @@ watch(
 );
 
 let serverError = ref();
-
+let isServerError = ref(false);
 const newUnitTypes = async (requestDataUnitTypes) => {
     await postResponseAPI(requestDataUnitTypes, "/unit_types");
+    //console.log(errorResponseAPI.value)
+    isServerError.value = false
     serverError.value = errorResponseAPI.value;
+    console.log(serverError.value)
+    
     if (serverError.value) {
+        isServerError.value = true
         const keys = Object.keys(serverError);
         
         // console.log("Lista de errores")
@@ -183,16 +188,19 @@ const newUnitTypes = async (requestDataUnitTypes) => {
         //     console.log(errorResponseAPI[key])
         // });
         // alert("Tengo un error")
-
-        toast.add({ severity: 'error', summary: 'There are some errores', detail: 'Must correct those ones', life: 3000 });
+        
+        toast.add({ severity: 'Error', summary: 'There are some errores', detail: 'Must correct those ones', life: 3000 });
+        
     }
     else {
 
         isChanging.value = true
+        isServerError.value = false
         hideDialog();
         toast.add({ severity: 'success', summary: 'Successful', detail: 'UnitTypes Updated', life: 3000 });
     }
-    ;
+    
+
 };
 
 const updateUnitTypes = async (requestDataUnitTypes, id) => {
@@ -362,6 +370,7 @@ const saveRecord = () => {
         }, {});
 
         newUnitTypes(requestData)
+        
 
     }
 

@@ -34,10 +34,12 @@ export default function useDataAPI(datos) {
         console.log(statusCode.value)
         if (data.errors) {
           errorResponseAPI.value = data.errors
+          
         }
         else {
           
           dataResponseAPI.value=data
+          errorResponseAPI.value = ref('')
           
         }
         
