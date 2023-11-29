@@ -1,5 +1,5 @@
 <script>
-import { ref, onMounted, onBeforeMount, defineProps, defineEmits, watch, inject } from 'vue';
+import { ref, onMounted, onBeforeMount, defineProps, watch, inject } from 'vue';
 import { FilterMatchMode, FilterOperator } from 'primevue/api';
 import TableService from '@/service/TableService';
 import useRestrictionUnitTypes from '@/composables/Product/UnitsType/restrictionsUnitType.js';
