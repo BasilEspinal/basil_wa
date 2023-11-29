@@ -1,13 +1,13 @@
 // api.js
 import { ref } from 'vue'
-import useSettingsAPI from "../../settings_API";
+import useSettingsAPI from "@/composables/DataAPI/settings_API";
 
-export default function useUnitTypes(datos) {
+export default function useDataAPI(datos) {
 
   const { pathAPI, APISettings } = useSettingsAPI();
   // Define data y error en el ámbito de useProducts
-  let dataUnitTypes = ref({})
-  let errorUnitTypes = ref('')
+  let dataResponseAPI = ref({})
+  let errorResponseAPI = ref('')
   let base = pathAPI().base
   let api = pathAPI().apiVer
   const statusCode = ref([])
@@ -16,7 +16,7 @@ export default function useUnitTypes(datos) {
   APISettings.headers.set('Access-Control-Allow-Origin', '*');
   APISettings.headers.set('Authorization', 'Bearer ' + token);
 
-  const getAllUnitTypes = async ( endPoint) => {
+  const getAllResponseAPI = async ( endPoint) => {
     
     let baseUrl = `${base}${api}${endPoint}`;
     const requestOptions = {
@@ -33,16 +33,14 @@ export default function useUnitTypes(datos) {
         // actions to data answer
         console.log(statusCode.value)
         if (data.errors) {
-          errorUnitTypes.value = data.errors
+          errorResponseAPI.value = data.errors
         }
         else {
-          //console.info( data)
-          dataUnitTypes.value=data
-          //console.log( "dataUnitTypes" )
-          //console.log( dataUnitTypes.value )
+          
+          dataResponseAPI.value=data
+          
         }
-        //console.log("data")
-        //console.log(data)
+        
       })
       .catch(error => {
         if (error.name === 'TypeError') {
@@ -57,7 +55,7 @@ export default function useUnitTypes(datos) {
 
   }
 
-  const postUnitTypes = async (requestData, endPoint) => {
+  const postResponseAPI = async (requestData, endPoint) => {
     console.log("This is data got", requestData)
     let baseUrl = `${base}${api}${endPoint}`;
     const requestOptions = {
@@ -74,7 +72,7 @@ export default function useUnitTypes(datos) {
         // actions to data answer
         console.log(statusCode.value)
         if (data.errors) {
-          errorUnitTypes.value = data.errors
+          errorResponseAPI.value = data.errors
         }
         else {
           console.log("Esta es la respuesta " + data)
@@ -95,7 +93,7 @@ export default function useUnitTypes(datos) {
 
   }
 
-  const putUnitTypes = async (requestData, endPoint, id) => {
+  const putResponseAPI = async (requestData, endPoint, id) => {
 
     let baseUrl = `${base}${api}${endPoint}${"/"}${id}`;
 
@@ -114,7 +112,7 @@ export default function useUnitTypes(datos) {
         // actions to data answer
         console.log(statusCode.value)
         if (data.errors) {
-          errorUnitTypes.value = data.errors
+          errorResponseAPI.value = data.errors
         }
         else {
           console.log("Esta es la respuesta " + data)
@@ -134,7 +132,7 @@ export default function useUnitTypes(datos) {
       });
   }
 
-  const deleteUnitTypes = async (requestData, endPoint, id) => {
+  const deleteResponseAPI = async (requestData, endPoint, id) => {
 
     let baseUrl = `${base}${api}${endPoint}${"/"}${id}`;
 
@@ -152,7 +150,7 @@ export default function useUnitTypes(datos) {
         // actions to data answer
         console.log(statusCode.value)
         if (data.errors) {
-          errorUnitTypes.value = data.errors
+          errorResponseAPI.value = data.errors
         }
         else {
           console.log("Esta es la respuesta " + data)
@@ -173,11 +171,11 @@ export default function useUnitTypes(datos) {
   }
 
   return {
-    errorUnitTypes,
-    dataUnitTypes,
-    getAllUnitTypes,
-    postUnitTypes,
-    putUnitTypes,
-    deleteUnitTypes
+    errorResponseAPI,
+    dataResponseAPI,
+    getAllResponseAPI,
+    postResponseAPI,
+    putResponseAPI,
+    deleteResponseAPI
   }
 }

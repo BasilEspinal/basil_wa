@@ -1,7 +1,7 @@
 <script setup>
 import { FilterMatchMode, FilterOperator } from 'primevue/api';
 import TableService from '@/service/TableService';
-import { ref, toRefs, onBeforeMount, defineEmits, watch, inject } from 'vue';
+import { ref, toRefs, onBeforeMount, watch, inject } from 'vue';
 import useRestrictionUnitTypes from '@/composables/Product/UnitsType/restrictionsUnitType.js'
 
 const columnas = ref([]);

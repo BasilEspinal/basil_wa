@@ -126,10 +126,10 @@ import Table from '@/components/Table.vue';
 import { ref, watch, provide, onBeforeMount } from 'vue';
 import { useToast } from 'primevue/usetoast';
 import useRestrictionUnitTypes from '@/composables/Product/UnitsType/restrictionsUnitType.js'
-import useUnitTypes from '@/composables/Product/UnitsType/unitTypeAPI.js'
+import useDataAPI from '@/composables/DataAPI/FetchDataAPI.js'
 import ToolbarComponet from '@/components/ToolbarComponet.vue';
 
-const { getAllUnitTypes, postUnitTypes, putUnitTypes, deleteUnitTypes, errorUnitTypes, dataUnitTypes } = useUnitTypes();
+const { getAllResponseAPI, postResponseAPI, putResponseAPI, deleteUnitTypes, errorResponseAPI, dataResponseAPI } = useDataAPI();
 const requestDataUnitTypesDelete = {}
 const dataFromComponent = ref();
 const { conditionsUnitType } = useRestrictionUnitTypes();
@@ -150,8 +150,8 @@ onBeforeMount(async () => {
 });
 
 const readAllUnitTypes = async () => {
-    await getAllUnitTypes("/unit_types");
-    dataFromComponent.value = dataUnitTypes.value;
+    await getAllResponseAPI("/unit_types");
+    dataFromComponent.value = dataResponseAPI.value;
     dataFromComponent.value = JSON.parse(JSON.stringify(dataFromComponent.value, null, 2));
 };
 watch(
@@ -170,19 +170,19 @@ watch(
 let serverError = ref();
 
 const newUnitTypes = async (requestDataUnitTypes) => {
-    await postUnitTypes(requestDataUnitTypes, "/unit_types");
-    serverError.value = errorUnitTypes.value;
+    await postResponseAPI(requestDataUnitTypes, "/unit_types");
+    serverError.value = errorResponseAPI.value;
     if (serverError.value) {
         const keys = Object.keys(serverError);
         
-        console.log("Lista de errores")
-        console.log(errorUnitTypes)
-        keys.forEach(key => {
-            if (key == conditionsUnitType[0].label || key == conditionsUnitType[1].label) return
-            console.log(`[${key}]:`, serverError[key]);
-            console.log(errorUnitTypes[key])
-        });
-        alert("Tengo un error")
+        // console.log("Lista de errores")
+        // // console.log(errorResponseAPI)
+        // keys.forEach(key => {
+        //     if (key == conditionsUnitType[0].label || key == conditionsUnitType[1].label) return
+        //     console.log(`[${key}]:`, serverError[key]);
+        //     console.log(errorResponseAPI[key])
+        // });
+        // alert("Tengo un error")
 
         toast.add({ severity: 'error', summary: 'There are some errores', detail: 'Must correct those ones', life: 3000 });
     }
@@ -196,7 +196,7 @@ const newUnitTypes = async (requestDataUnitTypes) => {
 };
 
 const updateUnitTypes = async (requestDataUnitTypes, id) => {
-    await putUnitTypes(requestDataUnitTypes, "/unit_types", id);
+    await putResponseAPI(requestDataUnitTypes, "/unit_types", id);
 };
 const dropUnitTypes = async (id) => {
     await deleteUnitTypes(requestDataUnitTypesDelete, "/unit_types", id);
