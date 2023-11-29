@@ -57,7 +57,7 @@
                             <div v-if="serverError && conditionsUnitType[1].label == key.label" class="text-danger">
                                 <div v-for="errorKey in Object.keys(serverError)" :key="errorKey" class="text-danger">
                                     <span class="text-danger" v-if="key.label == errorKey"
-                                        v-text="`[${errorKey}]: ${serverError[errorKey].join(', ')}`"></span>
+                                        v-text="`${serverError[errorKey]}`"></span>
 
                                 </div>
                             </div>
@@ -142,11 +142,11 @@ const mode = ref('');
 const filename = ref('table');
 const headerNamesRow = ref([]);
 const isChanging = ref(false);
+let dataTmp = ref({});
 /////////////////////////////////////////////////////////////////
 //Functions for dataAPI
 onBeforeMount(async () => {
     readAllUnitTypes();
-
 });
 
 const readAllUnitTypes = async () => {
@@ -168,19 +168,21 @@ watch(
 );
 
 let serverError = ref();
+
 const newUnitTypes = async (requestDataUnitTypes) => {
     await postUnitTypes(requestDataUnitTypes, "/unit_types");
     serverError.value = errorUnitTypes.value;
     if (serverError.value) {
         const keys = Object.keys(serverError);
-        // console.log("Lista de errores")
-        // console.log(errorUnitTypes)
-        // keys.forEach(key => {
-        //     if (key == conditionsUnitType[0].label || key == conditionsUnitType[1].label) return
-        //     console.log(`[${key}]:`, serverError[key]);
-        //     console.log(errorUnitTypes[key])
-        // });
-        //alert("Tengo un error")
+        
+        console.log("Lista de errores")
+        console.log(errorUnitTypes)
+        keys.forEach(key => {
+            if (key == conditionsUnitType[0].label || key == conditionsUnitType[1].label) return
+            console.log(`[${key}]:`, serverError[key]);
+            console.log(errorUnitTypes[key])
+        });
+        alert("Tengo un error")
 
         toast.add({ severity: 'error', summary: 'There are some errores', detail: 'Must correct those ones', life: 3000 });
     }

@@ -16,7 +16,7 @@ const tableService = new TableService();
 const selectedProduct = ref([]);
 const emits = defineEmits([]);
 const isChanging2 = inject('isChanging');
-const dt = ref();
+//const dt = ref();
 let dataFromComponent = ref();
 
 
@@ -91,15 +91,12 @@ const formatDate = (value) => {
 
 /**
  * The `const props = defineProps({ ... })` statement is defining the props for the Table component.
- * @param pathApi the path to the API
+ 
  * @param title main component title
  * @param jsonDataPath the path to the JSON data
  */
 const props = defineProps({
-    pathApi: {
-        type: String,
-        default: ''
-    },
+    
     title: {
         type: String,
         default: 'Tabla de registro de corte'
@@ -108,16 +105,11 @@ const props = defineProps({
         type: String,
         default: 'data'
     },
-    dataMod: {
-        type: String
-    },
-
     dataGot: {
         type: Object
     }
-
 });
-const { dataMod: dataMod } = toRefs(props);
+
 
 /**
  * The `fetchInfoAndUpdateValue` function is an asynchronous function that is responsible for fetching
@@ -208,14 +200,6 @@ watch(
     },
     { immediate: true }
 );
-watch(
-    () => props.pathApi,
-    (oldValue, newValue) => {
-        
-        loadingData();
-    },
-    { immediate: true }
-);
 
 const exportExcel = (name) => {
     const uri = 'data:application/vnd.ms-excel;base64,';
@@ -296,7 +280,7 @@ const onColumnsChange = (column) => {
             </div>
             <DataTable id="tblData" v-model:selection="selectedProduct" :value="tableData" :paginator="true"
                 class="p-datatable-gridlines" :rows="10" dataKey="id" :rowHover="true" v-model:filters="filters"
-                filterDisplay="menu" :loading="loading" :filters="filters" responsiveLayout="scroll" :ref="dt"
+                filterDisplay="menu" :loading="loading" :filters="filters" responsiveLayout="scroll" 
                 :globalFilterFields="headerNames" @row-select="onRowSelect" @row-unselect="onRowSelect"
                 @select-all-change="onSelectAllChange">
                 <template #header>
