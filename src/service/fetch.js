@@ -4,7 +4,8 @@ export async function useFetch(Endpoint, options = {}, auth = true) {
     }
     options['headers']['Content-Type'] = 'application/json';
     options['headers']['Accept'] = 'application/json';
-    options['headers']['Access-Control-Allow-Origin'] = '*';
+    options['headers']['Access-Control-Allow-Origin'] = 'http://localhost:5173';
+    options['headers']['Access-Control-Allow-Methods'] = 'GET, POST, PUT, DELETE';
 
     let base = `http://164.90.146.196:81`; // remote
     //let base = `http://agroonline_end.test`;  //local

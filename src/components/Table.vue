@@ -1,9 +1,9 @@
 <script setup>
 import { FilterMatchMode, FilterOperator } from 'primevue/api';
 import TableService from '@/service/TableService';
-import { onMounted, ref, toRefs, onBeforeMount, defineEmits, watch, inject } from 'vue';
+import { ref, toRefs, onBeforeMount, defineEmits, watch, inject } from 'vue';
 import useRestrictionUnitTypes from '@/composables/Product/UnitsType/restrictionsUnitType.js'
-import { useToast } from 'primevue/usetoast';
+
 const columnas = ref([]);
 const column = ref(null);
 const headerNames = ref(null);
@@ -17,8 +17,11 @@ const selectedProduct = ref([]);
 const emits = defineEmits([]);
 const isChanging2 = inject('isChanging');
 const dt = ref();
+let dataFromComponent = ref();
+
 
 const loadingData = () => {
+
     columnas.value = [];
     column.value = null;
     headerNames.value = null;
@@ -28,7 +31,8 @@ const loadingData = () => {
     filters.value = {
         global: { value: null, matchMode: FilterMatchMode.CONTAINS }
     };
-    console.log("reloading data");
+    
+
     fetchInfoAndUpdateValue();
 };
 
@@ -37,7 +41,9 @@ const loadingData = () => {
  * mounted to the DOM. In this case, it is used to perform some initialization tasks before the
  * component is rendered.
  */
-onBeforeMount(loadingData);
+onBeforeMount(
+    loadingData
+);
 
 /**
  * The `initFilters` function is initializing the filters for each column in the table. It loops
@@ -104,55 +110,55 @@ const props = defineProps({
     },
     dataMod: {
         type: String
+    },
+
+    dataGot: {
+        type: Object
     }
+
 });
 const { dataMod: dataMod } = toRefs(props);
+
 /**
  * The `fetchInfoAndUpdateValue` function is an asynchronous function that is responsible for fetching
  * data from an API and updating the `tableData` value, which is used to populate the table in the Table
  * component.
  */
-async function fetchInfoAndUpdateValue() {
-    try {
-        let data = await tableService.getInfo(props.pathApi);
 
-        const path = props.jsonDataPath.split('.');
-        path.forEach((element) => {
-            data = data[element];
-        });
-        tableData.value = data;
-        //console.log(data)
+function fetchInfoAndUpdateValue() {
+    try {
+
+        if (!props.dataGot) {
+            return
+        }
+        else {
+            dataFromComponent = JSON.parse(JSON.stringify(props.dataGot))
+        }
+        
+        tableData.value = dataFromComponent['data'];
         let mappedArray1 = [];
 
         const types = ['string', 'number'];
+        if (dataFromComponent['data']) {
+            for (let key in dataFromComponent['data'][0]) {
+                if (types.includes(typeof dataFromComponent['data'][0][key]))
+                    mappedArray1.push(key);
+            }
 
-        for (let key in data[0]) {
-            if (types.includes(typeof data[0][key]))
-                mappedArray1.push(key);
-        }
-        /*
-                columnas.value = mappedArray1.map((item) => {
-                    
-                    return {
-                        field: item,
-                        header: item.replaceAll('_', ' ').toUpperCase(),
-                        position: mappedArray1.indexOf(item)
-                    };
-                });
-        */
-        //Here the condition of columns is applied
-        columnas.value = mappedArray1
-            .filter(item => item === conditionsUnitType[0].label || item === conditionsUnitType[1].label)
-            .map((item, index) => ({
-                field: item,
-                header: item.replaceAll('_', ' ').toUpperCase(),
-                position: index
-            }));
-        column.value = columnas.value;
-        headerNames.value = column.value.map((col) => col.field);
-        //console.log(columnas.value)
-        initFilters();
-        emits('HeaderNames', data[0]);
+            //Here the condition of columns is applied
+            columnas.value = mappedArray1
+                .filter(item => item === conditionsUnitType[0].label || item === conditionsUnitType[1].label)
+                .map((item, index) => ({
+                    field: item,
+                    header: item.replaceAll('_', ' ').toUpperCase(),
+                    position: index
+                }));
+            column.value = columnas.value;
+            headerNames.value = column.value.map((col) => col.field);
+            
+            initFilters();
+            emits('HeaderNames', dataFromComponent['data'][0]);
+        } else { }
     } catch (error) {
         tableData.value = ref([]);
         headerNames.value = ref([]);
@@ -173,25 +179,10 @@ const exportData = (data) => {
     data.data ? exportTableToCSV(data.name) : exportExcel(data.name);
 };
 
-onMounted(() => {
-    // Lógica que se ejecutará cuando el componente se monte
-    console.log('El componente se ha montado. Valor de la prop:', props.dataMod);
-});
 
-// watch(
-//     () => props.dataMod,
-//     () => {
-//         alert(props.dataMod)
-//         loadingData()
-//         console.log("Cambueeeeeeeeeeeeeeeeeee")
-
-
-//     }
-// );
 watch(
     () => isChanging2.value,
     () => {
-
         loadingData()
         console.log("CIsChanging" + isChanging2.value)
         isChanging2.value = false
@@ -199,10 +190,28 @@ watch(
 
     }
 );
+
+watch(
+    () => props.dataGot,
+    (x, y) => {
+
+        loadingData();
+    },
+    { immediate: true }
+);
+
+watch(
+    () => dataFromComponent,
+    (x, y) => {
+
+        loadingData();
+    },
+    { immediate: true }
+);
 watch(
     () => props.pathApi,
-    (x, y) => {
-        console.log(x, y);
+    (oldValue, newValue) => {
+        
         loadingData();
     },
     { immediate: true }

@@ -1,8 +1,7 @@
 
 <template>
-    
     <div class="card">
-         <h1>Información de tipo de Unidades </h1> 
+        <h1>Información de tipo de Unidades </h1>
         <div class="grid">
             <div class="col-12">
 
@@ -26,6 +25,7 @@
                     </template>
                 </Toolbar>
             </div>
+
             <Dialog v-model:visible="formDialog" :style="{ width: '700px' }" header="Unit Types Details" :modal="true"
                 class="p-fluid">
                 <div class="formgrid grid">
@@ -43,6 +43,24 @@
 
                             <label v-text="key.label"></label>
                             <InputText id="name" v-model="key.data" :required="true" integeronly />
+
+
+                            <!-- Mostrar errores si la variable errors es true -->
+                            <div v-if="serverError && conditionsUnitType[0].label == key.label" class="text-danger">
+                                <div v-for="errorKey in Object.keys(serverError)" :key="errorKey" class="text-danger">
+                                    <span class="text-danger" v-if="key.label == errorKey"
+                                        v-text="`[${errorKey}]: ${serverError[errorKey].join(', ')}`"></span>
+
+                                </div>
+                            </div>
+
+                            <div v-if="serverError && conditionsUnitType[1].label == key.label" class="text-danger">
+                                <div v-for="errorKey in Object.keys(serverError)" :key="errorKey" class="text-danger">
+                                    <span class="text-danger" v-if="key.label == errorKey"
+                                        v-text="`[${errorKey}]: ${serverError[errorKey].join(', ')}`"></span>
+
+                                </div>
+                            </div>
 
                         </div>
                     </div>
@@ -73,16 +91,18 @@
                 </template>
             </Dialog>
 
+
             <Dialog v-model:visible="deleteRecords" :style="{ width: '450px' }" header="Confirm" :modal="true">
                 <div class="flex align-items-center " v-for="item in headerNamesRow" :key="item">
                     <Checkbox class="mr-2" v-model="item.selecti" :binary="true" />
                     <label :for="item.id"> {{ item.label }} </label>
                     <i class="pi pi-exclamation-triangle ml-3 mb-2" style="font-size: 2rem" />
-                    
-                    
+
+
                 </div>
-                <div class="flex align-items-center justify-content-center"><br><br><span>Are you sure you want to delete the selected ones?</span></div>
-                
+                <div class="flex align-items-center justify-content-center"><br><br><span>Are you sure you want to delete
+                        the selected ones?</span></div>
+
                 <template #footer>
                     <Button label="No" icon="pi pi-times" class="p-button-text" @click="deleteRecords = false" />
                     <Button label="Yes" icon="pi pi-check" class="p-button-text" @click="saveRecord" />
@@ -93,10 +113,8 @@
         </div>
 
 
-        <Table title="" path-api="/unit_types" @HeaderNames="onHeaderNames" @onRowSelect="RowSelect" />
-        <!-- <button @click="dropUnitTypes(13)">Realizar Delete</button> -->
-        <h1> errorUnitTypes </h1>
-        <h1>{{ errorUnitTypes }}</h1>
+        <Table title="" path-api="/unit_types" @HeaderNames="onHeaderNames" @onRowSelect="RowSelect"
+            :dataGot="dataFromComponent" />
 
     </div>
 </template>
@@ -105,23 +123,15 @@
 
 
 import Table from '@/components/Table.vue';
-import { ref, reactive, toRefs, watch, onMounted, provide } from 'vue';
+import { ref, watch, provide, onBeforeMount } from 'vue';
 import { useToast } from 'primevue/usetoast';
 import useRestrictionUnitTypes from '@/composables/Product/UnitsType/restrictionsUnitType.js'
 import useUnitTypes from '@/composables/Product/UnitsType/unitTypeAPI.js'
 import ToolbarComponet from '@/components/ToolbarComponet.vue';
-const { postUnitTypes, putUnitTypes, deleteUnitTypes, errorUnitTypes } = useUnitTypes();
-const requestDataUnitTypesDelete = {}
-const newUnitTypes = async (requestDataUnitTypes) => {
-    await postUnitTypes(requestDataUnitTypes, "/unit_types");
-};
 
-const updateUnitTypes = async (requestDataUnitTypes, id) => {
-    await putUnitTypes(requestDataUnitTypes, "/unit_types", id);
-};
-const dropUnitTypes = async (id) => {
-    await deleteUnitTypes(requestDataUnitTypesDelete, "/unit_types", id);
-};
+const { getAllUnitTypes, postUnitTypes, putUnitTypes, deleteUnitTypes, errorUnitTypes, dataUnitTypes } = useUnitTypes();
+const requestDataUnitTypesDelete = {}
+const dataFromComponent = ref();
 const { conditionsUnitType } = useRestrictionUnitTypes();
 const idEditUnitTypes = ref()
 const toast = useToast();
@@ -131,6 +141,66 @@ const exportDialog = ref(false);
 const mode = ref('');
 const filename = ref('table');
 const headerNamesRow = ref([]);
+const isChanging = ref(false);
+/////////////////////////////////////////////////////////////////
+//Functions for dataAPI
+onBeforeMount(async () => {
+    readAllUnitTypes();
+
+});
+
+const readAllUnitTypes = async () => {
+    await getAllUnitTypes("/unit_types");
+    dataFromComponent.value = dataUnitTypes.value;
+    dataFromComponent.value = JSON.parse(JSON.stringify(dataFromComponent.value, null, 2));
+};
+watch(
+    () => dataFromComponent.value,
+    (newValue, oldValue) => {
+
+    }
+);
+watch(
+    () => isChanging.value,
+    (newValue, oldValue) => {
+        readAllUnitTypes();
+    }
+);
+
+let serverError = ref();
+const newUnitTypes = async (requestDataUnitTypes) => {
+    await postUnitTypes(requestDataUnitTypes, "/unit_types");
+    serverError.value = errorUnitTypes.value;
+    if (serverError.value) {
+        const keys = Object.keys(serverError);
+        // console.log("Lista de errores")
+        // console.log(errorUnitTypes)
+        // keys.forEach(key => {
+        //     if (key == conditionsUnitType[0].label || key == conditionsUnitType[1].label) return
+        //     console.log(`[${key}]:`, serverError[key]);
+        //     console.log(errorUnitTypes[key])
+        // });
+        //alert("Tengo un error")
+
+        toast.add({ severity: 'error', summary: 'There are some errores', detail: 'Must correct those ones', life: 3000 });
+    }
+    else {
+
+        isChanging.value = true
+        hideDialog();
+        toast.add({ severity: 'success', summary: 'Successful', detail: 'UnitTypes Updated', life: 3000 });
+    }
+    ;
+};
+
+const updateUnitTypes = async (requestDataUnitTypes, id) => {
+    await putUnitTypes(requestDataUnitTypes, "/unit_types", id);
+};
+const dropUnitTypes = async (id) => {
+    await deleteUnitTypes(requestDataUnitTypesDelete, "/unit_types", id);
+};
+//////////////////////////////////////////////////////////////////////
+//Datafor table
 const extenciones = ref([
     {
         name: 'CSV',
@@ -142,7 +212,7 @@ const extenciones = ref([
     }
 ]);
 const format = ref('');
-let dataTmp = ref()
+
 let requestData = {}
 const hideDialog = () => {
     formDialog.value = false;
@@ -151,7 +221,7 @@ const hideDialog = () => {
 const listRowSelect = ref([]);
 const RowSelect = (data) => {
     listRowSelect.value = data;
-    
+
 
 };
 let headerNames = ref([]);
@@ -160,10 +230,11 @@ const onHeaderNames = (data) => (
 
 );
 
-const isChanging = ref(false);
+
 provide('isChanging', isChanging);
 watch(listRowSelect, RowSelect);
-
+//////////////////////////////////////////////////////////////////////
+//Functions for toolbar
 const openEdit = () => {
     mode.value = 'EDIT';
     headerNamesRow.value = [];
@@ -235,16 +306,16 @@ const openExport = () => {
 const openDelete = () => {
     mode.value = 'DELETE';
     headerNamesRow.value = [];
-    
-    
+
+
     for (let key in listRowSelect.value) {
-        
+
         headerNamesRow.value.push({
             label: listRowSelect.value[key].name,
             id: listRowSelect.value[key].id,
             selecti: true
         });
-    
+
     }
     deleteRecords.value = true;
 };
@@ -289,19 +360,7 @@ const saveRecord = () => {
         }, {});
 
         newUnitTypes(requestData)
-        isChanging.value = true
 
-        toast.add({ severity: 'success', summary: 'Successful', detail: 'UnitTypes Updated', life: 3000 });
-        toast.add({ severity: 'error', summary: 'There are some errores', detail: 'Must correct those ones', life: 3000 });
-        if (errorUnitTypes) {
-            const keys = Object.keys(errorUnitTypes);
-            console.log("Lista de errores")
-            console.log(errorUnitTypes)
-            keys.forEach(key => {
-                console.log("Tengo un error")
-                console.log(`[${key}]:`, errorUnitTypes[key]);
-            });
-        }
     }
 
     else if (mode.value == 'CLONE') {
@@ -312,8 +371,6 @@ const saveRecord = () => {
 
             return data;
         });
-
-
         requestData = data.reduce((result, currentObject) => {
             const [key] = Object.keys(currentObject);
             const value = currentObject[key];
@@ -334,21 +391,16 @@ const saveRecord = () => {
             return data;
 
         });
-
-
         requestData = data.reduce((result, currentObject) => {
             const [key] = Object.keys(currentObject);
             const value = currentObject[key];
             result[key] = value;
             return result;
         }, {});
-
         updateUnitTypes(requestData, id)
         isChanging.value = true
-
     }
-    //toast.add({ severity: 'success', summary: 'Successful', detail: 'Product Updated', life: 3000 });
-    formDialog.value = false;
+
     deleteRecords.value = false;
     exportDialog.value = false;
 
@@ -358,4 +410,9 @@ const saveRecord = () => {
 
 </script>
 
-<style lang="scss" scoped></style>
+<style lang="scss" scoped>
+.text-danger {
+    color: red;
+    /* O el color que desees */
+}
+</style>

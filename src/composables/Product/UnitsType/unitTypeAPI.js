@@ -6,7 +6,7 @@ export default function useUnitTypes(datos) {
 
   const { pathAPI, APISettings } = useSettingsAPI();
   // Define data y error en el ámbito de useProducts
-  let data = null;
+  let dataUnitTypes = ref({})
   let errorUnitTypes = ref('')
   let base = pathAPI().base
   let api = pathAPI().apiVer
@@ -15,6 +15,47 @@ export default function useUnitTypes(datos) {
   APISettings.headers.set('Content-Type', 'application/json');
   APISettings.headers.set('Access-Control-Allow-Origin', '*');
   APISettings.headers.set('Authorization', 'Bearer ' + token);
+
+  const getAllUnitTypes = async ( endPoint) => {
+    
+    let baseUrl = `${base}${api}${endPoint}`;
+    const requestOptions = {
+      method: 'GET',
+      headers: APISettings.headers,
+    };
+    await fetch(baseUrl, requestOptions)
+      .then(response => {
+        
+        statusCode.value = response.status
+        return response.json()
+      })
+      .then(async (data) => {
+        // actions to data answer
+        console.log(statusCode.value)
+        if (data.errors) {
+          errorUnitTypes.value = data.errors
+        }
+        else {
+          //console.info( data)
+          dataUnitTypes.value=data
+          //console.log( "dataUnitTypes" )
+          //console.log( dataUnitTypes.value )
+        }
+        //console.log("data")
+        //console.log(data)
+      })
+      .catch(error => {
+        if (error.name === 'TypeError') {
+          // Error de red
+          console.error('Error de red:', error.message);
+        } else {
+          // Error en la respuesta
+          console.error('Error en la respuesta:', error.message);
+        }
+        console.error('Error :', error);
+      });
+
+  }
 
   const postUnitTypes = async (requestData, endPoint) => {
     console.log("This is data got", requestData)
@@ -133,7 +174,8 @@ export default function useUnitTypes(datos) {
 
   return {
     errorUnitTypes,
-    data,
+    dataUnitTypes,
+    getAllUnitTypes,
     postUnitTypes,
     putUnitTypes,
     deleteUnitTypes
