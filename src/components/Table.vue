@@ -139,7 +139,7 @@ function fetchInfoAndUpdateValue() {
 
             //Here the condition of columns is applied
             columnas.value = mappedArray1
-                .filter(item => item === conditionsUnitType[0].label || item === conditionsUnitType[1].label)
+                .filter(item => item === conditionsUnitType.name.label || item === conditionsUnitType.code.label)
                 .map((item, index) => ({
                     field: item,
                     header: item.replaceAll('_', ' ').toUpperCase(),

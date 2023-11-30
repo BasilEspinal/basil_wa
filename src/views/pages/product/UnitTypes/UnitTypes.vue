@@ -24,6 +24,7 @@
                         </div>
                     </template>
                 </Toolbar>
+
             </div>
 
             <Dialog v-model:visible="formDialog" :style="{ width: '700px' }" header="Unit Types Details" :modal="true"
@@ -46,7 +47,7 @@
 
 
                             <!-- Mostrar errores si la variable errors es true -->
-                            <div v-if="isServerError && conditionsUnitType[0].label == key.label" class="text-danger">
+                            <div v-if="isServerError && conditionsUnitType.name.label == key.label" class="text-danger">
                                 <div v-for="errorKey in Object.keys(serverError)" :key="errorKey" class="text-danger">
                                     <span class="text-danger" v-if="key.label == errorKey"
                                         v-text="`[${errorKey}]: ${serverError[errorKey].join(', ')}`"></span>
@@ -54,7 +55,7 @@
                                 </div>
                             </div>
 
-                            <div v-if="isServerError && conditionsUnitType[1].label == key.label" class="text-danger">
+                            <div v-if="isServerError && conditionsUnitType.code.label == key.label" class="text-danger">
                                 <div v-for="errorKey in Object.keys(serverError)" :key="errorKey" class="text-danger">
                                     <span class="text-danger" v-if="key.label == errorKey"
                                         v-text="`${serverError[errorKey]}`"></span>
@@ -143,13 +144,14 @@ const filename = ref('table');
 const headerNamesRow = ref([]);
 const isChanging = ref(false);
 let dataTmp = ref({});
+let endpoint= "/unit_types"
 /////////////////////////////////////////////////////////////////
 //Functions for dataAPI
 onBeforeMount(async () => {
-    readAllUnitTypes();
+    readAll();
 });
 
-const readAllUnitTypes = async () => {
+const readAll = async () => {
     await getAllResponseAPI("/unit_types");
     dataFromComponent.value = dataResponseAPI.value;
     dataFromComponent.value = JSON.parse(JSON.stringify(dataFromComponent.value, null, 2));
@@ -163,14 +165,16 @@ watch(
 watch(
     () => isChanging.value,
     (newValue, oldValue) => {
-        readAllUnitTypes();
+        readAll();
+        console.log(newValue)
+        console.log(oldValue)
     }
 );
 
 let serverError = ref();
 let isServerError = ref(false);
-const newUnitTypes = async (requestDataUnitTypes) => {
-    await postResponseAPI(requestDataUnitTypes, "/unit_types");
+const newRecord = async (requestDataUnitTypes,endpoint) => {
+    await postResponseAPI(requestDataUnitTypes, endpoint);
     //console.log(errorResponseAPI.value)
     isServerError.value = false
     serverError.value = errorResponseAPI.value;
@@ -203,11 +207,11 @@ const newUnitTypes = async (requestDataUnitTypes) => {
 
 };
 
-const updateUnitTypes = async (requestDataUnitTypes, id) => {
+const updateRecord = async (requestDataUnitTypes, id) => {
     await putResponseAPI(requestDataUnitTypes, "/unit_types", id);
 };
-const dropUnitTypes = async (id) => {
-    await deleteUnitTypes(requestDataUnitTypesDelete, "/unit_types", id);
+const dropRecord = async (id) => {
+    await deleteResponseAPI(requestDataUnitTypesDelete, "/unit_types", id);
 };
 //////////////////////////////////////////////////////////////////////
 //Datafor table
@@ -254,7 +258,7 @@ const openEdit = () => {
             idEditUnitTypes.value = listRowSelect.value[0][key]
             continue;
         }
-        else if (!(key == conditionsUnitType[0].label || key == conditionsUnitType[1].label)) continue
+        else if (!(key == conditionsUnitType.name.label || key == conditionsUnitType.code.label)) continue
         headerNamesRow.value.push({
             label: key,
             type: typeof listRowSelect.value[0][key] == 'number' ? 'number' : 'text',
@@ -268,11 +272,12 @@ const openEdit = () => {
 };
 
 const openNew = () => {
+    alert(conditionsUnitType.name.label)
     mode.value = 'NEW';
     headerNamesRow.value = [];
     for (let key in headerNames.value) {
         if (key == 'id') continue;
-        else if (!(key == conditionsUnitType[0].label || key == conditionsUnitType[1].label)) {
+        else if (!(key == conditionsUnitType.name.label || key == conditionsUnitType.code.label)) {
             continue
         }
         headerNamesRow.value.push({
@@ -294,7 +299,7 @@ const openClone = () => {
 
     for (let key in headerNames.value) {
         if (key == 'id') continue;
-        else if (!(key == conditionsUnitType[0].label || key == conditionsUnitType[1].label)) {
+        else if (!(key == conditionsUnitType.name.label || key == conditionsUnitType.code.label)) {
 
             continue
         }
@@ -337,7 +342,7 @@ const saveRecord = () => {
         headerNamesRow.value.map((item) => {
             if (item.selecti) {
                 data.push(item.id);
-                dropUnitTypes(item.id)
+                dropRecord(item.id)
             }
         });
         isChanging.value = true
@@ -369,7 +374,7 @@ const saveRecord = () => {
             return result;
         }, {});
 
-        newUnitTypes(requestData)
+        newRecord(requestData,endpoint)
         
 
     }
@@ -388,7 +393,7 @@ const saveRecord = () => {
             result[key] = value;
             return result;
         }, {});
-        newUnitTypes(requestData)
+        newRecord(requestData,endpoint)
         isChanging.value = true
     }
     else if (mode.value == 'EDIT') {
@@ -408,7 +413,7 @@ const saveRecord = () => {
             result[key] = value;
             return result;
         }, {});
-        updateUnitTypes(requestData, id)
+        updateRecord(requestData, id)
         isChanging.value = true
     }
 
