@@ -8,6 +8,9 @@ const columnas = ref([]);
 const column = ref(null);
 const headerNames = ref(null);
 const { conditionsUnitType } = useRestrictionUnitTypes();
+const allLabels = ref([])
+allLabels.value = Object.values(conditionsUnitType).map(condition => condition.label);
+console.log(allLabels)
 // Filtro
 const filters = ref(null);
 const loading = ref(null);
@@ -139,7 +142,7 @@ function fetchInfoAndUpdateValue() {
 
             //Here the condition of columns is applied
             columnas.value = mappedArray1
-                .filter(item => item === conditionsUnitType.name.label || item === conditionsUnitType.code.label)
+            .filter(item => allLabels.value.includes(item))
                 .map((item, index) => ({
                     field: item,
                     header: item.replaceAll('_', ' ').toUpperCase(),

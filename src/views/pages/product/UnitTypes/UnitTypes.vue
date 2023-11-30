@@ -1,11 +1,16 @@
 
 <template>
+    <h1>Información de tipo de Unidades </h1>
     <div class="card">
-        <h1>Información de tipo de Unidades </h1>
-        <div class="grid">
-            <div class="col-12">
 
-                <Toolbar>
+
+
+        <div class="grid">
+
+            <div class="col-xs-12 col-sm-6 col-md-4 mb-2 text-center mx-auto">
+
+                <Toolbar class="bg-gray-900 shadow-2"
+                    style="border-radius: 3rem; background-image: linear-gradient(to right, var(--green-100), var(--green-200))">
                     <template v-slot:start>
                         <div>
                             <Button :disabled="headerNames.length > 0" label="New" icon="pi pi-plus"
@@ -21,6 +26,7 @@
                                 class="p-button-warning mr-2 ml-2 mb-2 mt-2" @click="openExport" size="large" />
                             <Button :disabled="!listRowSelect.length > 0" label="Delete" icon="pi pi-trash"
                                 class="p-button-danger mr-2 ml-2 mb-2 mt-2" @click="openDelete" size="large" />
+
                         </div>
                     </template>
                 </Toolbar>
@@ -31,37 +37,40 @@
                 class="p-fluid">
                 <div class="formgrid grid">
 
-                    <div v-for="key in headerNamesRow" :key="key" class="field">
-                        <div v-if="key.type == 'number'" class="field col">
+                    <div v-for="key in conditionsUnitType" :key="key" class="field">
 
-                            <label v-text="key.label"></label>
-                            <InputNumber id="price" v-model="key.data" :required="true" />
 
-                        </div>
-
-                        <div v-if="key.type == 'text'" class="field col">
+                        <div class="field col">
                             <!-- <div v-if="key.type === 'text' && (key.label === 'name' || key.label === 'code')" class="field col"> -->
 
-                            <label v-text="key.label"></label>
-                            <InputText id="name" v-model="key.data" :required="true" integeronly />
+                            <!-- <label v-text="key.label"></label> -->
+                            <!-- <pre>{{conditionsUnitType}}</pre> -->
+                            
+                                <!-- <label :for="key.label" class="ml-2"> {{ key.label }} </label> -->
+                                <component :is='key.typeDataForm' :label="key.label" :inputId="key.label" :options="options" aria-labelledby="basic" :placeholder="key.label" />
+                            
+                            
 
 
-                            <!-- Mostrar errores si la variable errors es true -->
-                            <div v-if="isServerError && conditionsUnitType.name.label == key.label" class="text-danger">
+                            <!-- <InputText id="name" v-model="key.data" :required="true" integeronly /> -->
+
+                                <pre>{{ allLabels }}</pre>
+                            <div v-if="isServerError && allLabels.includes(key.fieldName)" class="text-danger">
                                 <div v-for="errorKey in Object.keys(serverError)" :key="errorKey" class="text-danger">
-                                    <span class="text-danger" v-if="key.label == errorKey"
-                                        v-text="`[${errorKey}]: ${serverError[errorKey].join(', ')}`"></span>
+                                    <span class="text-danger" v-if="key.fieldName == errorKey"
+                                        v-text="`${serverError[errorKey]}`"></span>
 
                                 </div>
                             </div>
 
-                            <div v-if="isServerError && conditionsUnitType.code.label == key.label" class="text-danger">
+                            <!-- <div v-if="isServerError && conditionsUnitType.code.label == key.label" class="text-danger">
                                 <div v-for="errorKey in Object.keys(serverError)" :key="errorKey" class="text-danger">
                                     <span class="text-danger" v-if="key.label == errorKey"
                                         v-text="`${serverError[errorKey]}`"></span>
 
                                 </div>
-                            </div>
+                            </div> -->
+
 
                         </div>
                     </div>
@@ -98,9 +107,8 @@
                     <Checkbox class="mr-2" v-model="item.selecti" :binary="true" />
                     <label :for="item.id"> {{ item.label }} </label>
                     <i class="pi pi-exclamation-triangle ml-3 mb-2" style="font-size: 2rem" />
-
-
                 </div>
+
                 <div class="flex align-items-center justify-content-center"><br><br><span>Are you sure you want to delete
                         the selected ones?</span></div>
 
@@ -134,6 +142,8 @@ const { getAllResponseAPI, postResponseAPI, putResponseAPI, deleteUnitTypes, err
 const requestDataUnitTypesDelete = {}
 const dataFromComponent = ref();
 const { conditionsUnitType } = useRestrictionUnitTypes();
+const allLabels = ref([])
+allLabels.value = Object.values(conditionsUnitType).map(condition => condition.fieldName);
 const idEditUnitTypes = ref()
 const toast = useToast();
 const formDialog = ref(false);
@@ -144,7 +154,9 @@ const filename = ref('table');
 const headerNamesRow = ref([]);
 const isChanging = ref(false);
 let dataTmp = ref({});
-let endpoint= "/unit_types"
+let endpoint = "/unit_types"
+const value = ref('Off');
+const options = ref(['Off', 'On']);
 /////////////////////////////////////////////////////////////////
 //Functions for dataAPI
 onBeforeMount(async () => {
@@ -173,17 +185,17 @@ watch(
 
 let serverError = ref();
 let isServerError = ref(false);
-const newRecord = async (requestDataUnitTypes,endpoint) => {
+const newRecord = async (requestDataUnitTypes, endpoint) => {
     await postResponseAPI(requestDataUnitTypes, endpoint);
     //console.log(errorResponseAPI.value)
     isServerError.value = false
     serverError.value = errorResponseAPI.value;
     console.log(serverError.value)
-    
+
     if (serverError.value) {
         isServerError.value = true
         const keys = Object.keys(serverError);
-        
+
         // console.log("Lista de errores")
         // // console.log(errorResponseAPI)
         // keys.forEach(key => {
@@ -192,9 +204,9 @@ const newRecord = async (requestDataUnitTypes,endpoint) => {
         //     console.log(errorResponseAPI[key])
         // });
         // alert("Tengo un error")
-        
+
         toast.add({ severity: 'Error', summary: 'There are some errores', detail: 'Must correct those ones', life: 3000 });
-        
+
     }
     else {
 
@@ -203,7 +215,7 @@ const newRecord = async (requestDataUnitTypes,endpoint) => {
         hideDialog();
         toast.add({ severity: 'success', summary: 'Successful', detail: 'UnitTypes Updated', life: 3000 });
     }
-    
+
 
 };
 
@@ -258,7 +270,7 @@ const openEdit = () => {
             idEditUnitTypes.value = listRowSelect.value[0][key]
             continue;
         }
-        else if (!(key == conditionsUnitType.name.label || key == conditionsUnitType.code.label)) continue
+        else if (!allLabels.value.includes(key)) continue
         headerNamesRow.value.push({
             label: key,
             type: typeof listRowSelect.value[0][key] == 'number' ? 'number' : 'text',
@@ -272,12 +284,12 @@ const openEdit = () => {
 };
 
 const openNew = () => {
-    alert(conditionsUnitType.name.label)
+
     mode.value = 'NEW';
     headerNamesRow.value = [];
     for (let key in headerNames.value) {
         if (key == 'id') continue;
-        else if (!(key == conditionsUnitType.name.label || key == conditionsUnitType.code.label)) {
+        else if (!allLabels.value.includes(key)) {
             continue
         }
         headerNamesRow.value.push({
@@ -299,7 +311,7 @@ const openClone = () => {
 
     for (let key in headerNames.value) {
         if (key == 'id') continue;
-        else if (!(key == conditionsUnitType.name.label || key == conditionsUnitType.code.label)) {
+        else if (!allLabels.value.includes(key)) {
 
             continue
         }
@@ -374,8 +386,8 @@ const saveRecord = () => {
             return result;
         }, {});
 
-        newRecord(requestData,endpoint)
-        
+        newRecord(requestData, endpoint)
+
 
     }
 
@@ -393,7 +405,7 @@ const saveRecord = () => {
             result[key] = value;
             return result;
         }, {});
-        newRecord(requestData,endpoint)
+        newRecord(requestData, endpoint)
         isChanging.value = true
     }
     else if (mode.value == 'EDIT') {
