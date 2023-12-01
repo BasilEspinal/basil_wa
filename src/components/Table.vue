@@ -10,12 +10,10 @@ const headerNames = ref(null);
 const { conditionsUnitType } = useRestrictionUnitTypes();
 const allLabels = ref([])
 allLabels.value = Object.values(conditionsUnitType).map(condition => condition.fieldName);
-console.log(allLabels)
 // Filtro
 const filters = ref(null);
 const loading = ref(null);
 const tableData = ref(null);
-const tableService = new TableService();
 const selectedProduct = ref([]);
 const emits = defineEmits([]);
 const isChanging2 = inject('isChanging');

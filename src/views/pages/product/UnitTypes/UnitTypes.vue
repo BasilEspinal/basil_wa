@@ -144,7 +144,7 @@ const dataFromComponent = ref();
 const { conditionsUnitType } = useRestrictionUnitTypes();
 const allLabels = ref([])
 allLabels.value = Object.values(conditionsUnitType).map(condition => condition.fieldName);
-const idEditUnitTypes = ref()
+const idEditRecord = ref()
 const toast = useToast();
 const formDialog = ref(false);
 const deleteRecords = ref(false);
@@ -160,11 +160,11 @@ const options = ref(['Off', 'On']);
 /////////////////////////////////////////////////////////////////
 //Functions for dataAPI
 onBeforeMount(async () => {
-    readAll();
+    readAll(endpoint);
 });
 
-const readAll = async () => {
-    await getAllResponseAPI("/unit_types");
+const readAll = async (endpoint) => {
+    await getAllResponseAPI(endpoint);
     dataFromComponent.value = dataResponseAPI.value;
     dataFromComponent.value = JSON.parse(JSON.stringify(dataFromComponent.value, null, 2));
 };
@@ -267,7 +267,7 @@ const openEdit = () => {
 
     for (let key in listRowSelect.value[0]) {
         if (key == 'id') {
-            idEditUnitTypes.value = listRowSelect.value[0][key]
+            idEditRecord.value = listRowSelect.value[0][key]
             continue;
         }
         else if (!allLabels.value.includes(key)) continue
@@ -275,7 +275,7 @@ const openEdit = () => {
             label: key,
             type: typeof listRowSelect.value[0][key] == 'number' ? 'number' : 'text',
             data: listRowSelect.value[0][key],
-            id: idEditUnitTypes,
+            id: idEditRecord,
             selecti: true
         });
 
