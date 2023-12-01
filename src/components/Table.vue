@@ -9,7 +9,7 @@ const column = ref(null);
 const headerNames = ref(null);
 const { conditionsUnitType } = useRestrictionUnitTypes();
 const allLabels = ref([])
-allLabels.value = Object.values(conditionsUnitType).map(condition => condition.label);
+allLabels.value = Object.values(conditionsUnitType).map(condition => condition.fieldName);
 console.log(allLabels)
 // Filtro
 const filters = ref(null);
