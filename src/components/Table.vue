@@ -1,15 +1,14 @@
 <script setup>
 import { FilterMatchMode, FilterOperator } from 'primevue/api';
-import TableService from '@/service/TableService';
-import { ref, toRefs, onBeforeMount, watch, inject } from 'vue';
-import useRestrictionUnitTypes from '@/composables/Product/UnitsType/restrictionsUnitType.js'
+import { ref, onBeforeMount, watch, inject } from 'vue';
+
 
 const columnas = ref([]);
 const column = ref(null);
 const headerNames = ref(null);
-const { conditionsUnitType } = useRestrictionUnitTypes();
 const allLabels = ref([])
-allLabels.value = Object.values(conditionsUnitType).map(condition => condition.fieldName);
+
+
 // Filtro
 const filters = ref(null);
 const loading = ref(null);
@@ -22,7 +21,7 @@ let dataFromComponent = ref();
 
 
 const loadingData = () => {
-
+    allLabels.value = props.allLabels;
     columnas.value = [];
     column.value = null;
     headerNames.value = null;
@@ -108,6 +107,10 @@ const props = defineProps({
     },
     dataGot: {
         type: Object
+    },
+    allLabels:{
+        type: Array
+    
     }
 });
 
@@ -137,7 +140,8 @@ function fetchInfoAndUpdateValue() {
                 if (types.includes(typeof dataFromComponent['data'][0][key]))
                     mappedArray1.push(key);
             }
-
+            //alert(allLabels.value)
+            //alert(mappedArray1)
             //Here the condition of columns is applied
             columnas.value = mappedArray1
             .filter(item => allLabels.value.includes(item))

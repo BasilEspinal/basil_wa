@@ -27,10 +27,12 @@ export default function useDataAPI(datos) {
       .then(response => {
         
         statusCode.value = response.status
+        errorResponseAPI.value = ref('')
         return response.json()
       })
       .then(async (data) => {
         // actions to data answer
+        errorResponseAPI.value = ref('')
         console.log(statusCode.value)
         if (data.errors) {
           errorResponseAPI.value = data.errors
@@ -68,6 +70,7 @@ export default function useDataAPI(datos) {
     await fetch(baseUrl, requestOptions)
       .then(response => {
         statusCode.value = response.status
+        errorResponseAPI.value = ref('')
         return response.json()
       })
       .then(data => {
@@ -78,6 +81,7 @@ export default function useDataAPI(datos) {
         }
         else {
           console.log("Esta es la respuesta " + data)
+          
         }
         // console.log(errors)
         console.log(data)

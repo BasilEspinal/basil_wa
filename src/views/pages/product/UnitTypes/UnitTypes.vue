@@ -6,9 +6,7 @@
 
 
         <div class="grid">
-
             <div class="col-xs-12 col-sm-6 col-md-4 mb-2 text-center mx-auto">
-
                 <Toolbar class="bg-gray-900 shadow-2"
                     style="border-radius: 3rem; background-image: linear-gradient(to right, var(--green-100), var(--green-200))">
                     <template v-slot:start>
@@ -32,29 +30,47 @@
                 </Toolbar>
 
             </div>
-
+            
+            
             <Dialog v-model:visible="formDialog" :style="{ width: '700px' }" header="Unit Types Details" :modal="true"
                 class="p-fluid">
                 <div class="formgrid grid">
-
-                    <div v-for="key in conditionsUnitType" :key="key" class="field">
+                    <!-- <pre>{{ listRowSelect}}</pre> -->
+                    
+                    
+                    <div v-for="key in conditionsUnitType " :key="key" class="field">
 
 
                         <div class="field col">
                             <!-- <div v-if="key.type === 'text' && (key.label === 'name' || key.label === 'code')" class="field col"> -->
 
                             <!-- <label v-text="key.label"></label> -->
-                            <!-- <pre>{{conditionsUnitType}}</pre> -->
+                            <!-- <pre>{{conditionsProducts }}</pre> -->
+
+                            <label :for="key.label" class="ml-2"> {{ key.label }} </label>
+                            <!-- <pre>{{ listRowSelect.length}}</pre> -->
+
+                            <!-- <pre>{{ headerNamesRow }}</pre> -->
                             
-                                <!-- <label :for="key.label" class="ml-2"> {{ key.label }} </label> -->
-                                <component :is='key.typeDataForm' :label="key.label" :inputId="key.label" :options="options" aria-labelledby="basic" :placeholder="key.label" />
-                            
-                            
+                            <div v-if="listRowSelect.length == 0">
+                                <component v-model="headerNamesRow[getIndexByLabel(key.fieldName)].data" 
+                                :is='key.typeDataForm' 
+                                :label="key.label"
+                                    :inputId="key.label" :options="options" aria-labelledby="basic"
+                                    :placeholder="key.label" />
+                            </div>
+                            <div v-else>
+                                <component
+                                    v-model="headerNamesRow[getIndexByLabel(key.fieldName)].data"
+                                    :is="key.typeDataForm" :label="key.label" :inputId="key.label" :options="options"
+                                    aria-labelledby="basic" :placeholder="key.label" />
+
+                            </div>
 
 
                             <!-- <InputText id="name" v-model="key.data" :required="true" integeronly /> -->
 
-                                <pre>{{ allLabels }}</pre>
+
                             <div v-if="isServerError && allLabels.includes(key.fieldName)" class="text-danger">
                                 <div v-for="errorKey in Object.keys(serverError)" :key="errorKey" class="text-danger">
                                     <span class="text-danger" v-if="key.fieldName == errorKey"
@@ -63,7 +79,7 @@
                                 </div>
                             </div>
 
-                            <!-- <div v-if="isServerError && conditionsUnitType.code.label == key.label" class="text-danger">
+                            <!-- <div v-if="isServerError && conditionsProducts .code.label == key.label" class="text-danger">
                                 <div v-for="errorKey in Object.keys(serverError)" :key="errorKey" class="text-danger">
                                     <span class="text-danger" v-if="key.label == errorKey"
                                         v-text="`${serverError[errorKey]}`"></span>
@@ -123,7 +139,7 @@
 
 
         <Table title="" path-api="/unit_types" @HeaderNames="onHeaderNames" @onRowSelect="RowSelect"
-            :dataGot="dataFromComponent" />
+            :dataGot="dataFromComponent" :allLabels="allLabels" />
 
     </div>
 </template>
@@ -135,13 +151,15 @@ import Table from '@/components/Table.vue';
 import { ref, watch, provide, onBeforeMount } from 'vue';
 import { useToast } from 'primevue/usetoast';
 import useRestrictionUnitTypes from '@/composables/Product/UnitsType/restrictionsUnitType.js'
+import useRestrictionProducts from '@/composables/Product/Products/restrictionsProducts';
 import useDataAPI from '@/composables/DataAPI/FetchDataAPI.js'
 import ToolbarComponet from '@/components/ToolbarComponet.vue';
 
-const { getAllResponseAPI, postResponseAPI, putResponseAPI, deleteUnitTypes, errorResponseAPI, dataResponseAPI } = useDataAPI();
+const { getAllResponseAPI, postResponseAPI, putResponseAPI, deleteResponseAPI, errorResponseAPI, dataResponseAPI } = useDataAPI();
 const requestDataUnitTypesDelete = {}
 const dataFromComponent = ref();
 const { conditionsUnitType } = useRestrictionUnitTypes();
+const { conditionsProducts } = useRestrictionProducts();
 const allLabels = ref([])
 allLabels.value = Object.values(conditionsUnitType).map(condition => condition.fieldName);
 const idEditRecord = ref()
@@ -154,19 +172,26 @@ const filename = ref('table');
 const headerNamesRow = ref([]);
 const isChanging = ref(false);
 let dataTmp = ref({});
-let endpoint = "/unit_types"
+let endpoint = ref("/unit_types")
 const value = ref('Off');
 const options = ref(['Off', 'On']);
 /////////////////////////////////////////////////////////////////
 //Functions for dataAPI
+const getIndexByLabel = (fieldName) => {
+  const index = headerNamesRow.value.findIndex(objeto => objeto.label === fieldName);
+  return index !== -1 ? index : null;
+};
 onBeforeMount(async () => {
-    readAll(endpoint);
+    readAll(endpoint.value);
 });
 
 const readAll = async (endpoint) => {
+
     await getAllResponseAPI(endpoint);
     dataFromComponent.value = dataResponseAPI.value;
     dataFromComponent.value = JSON.parse(JSON.stringify(dataFromComponent.value, null, 2));
+
+
 };
 watch(
     () => dataFromComponent.value,
@@ -177,53 +202,110 @@ watch(
 watch(
     () => isChanging.value,
     (newValue, oldValue) => {
-        readAll();
+        readAll(endpoint.value);
         console.log(newValue)
         console.log(oldValue)
     }
 );
 
-let serverError = ref();
+let serverError = ref(null);
 let isServerError = ref(false);
 const newRecord = async (requestDataUnitTypes, endpoint) => {
+    
     await postResponseAPI(requestDataUnitTypes, endpoint);
-    //console.log(errorResponseAPI.value)
-    isServerError.value = false
+    //console.log(errorResponseAPI.value)    
     serverError.value = errorResponseAPI.value;
-    console.log(serverError.value)
-
-    if (serverError.value) {
+    //console.log(serverError.value)
+    
+    
+    if (serverError.value._rawValue != "") {
         isServerError.value = true
-        const keys = Object.keys(serverError);
-
-        // console.log("Lista de errores")
-        // // console.log(errorResponseAPI)
+        //console.log("Entre a posterror")
+        
+        //console.log("Lista de errores")
+        //console.log(errorResponseAPI)
         // keys.forEach(key => {
-        //     if (key == conditionsUnitType[0].label || key == conditionsUnitType[1].label) return
+        //     if (key == conditionsProducts [0].label || key == conditionsProducts [1].label) return
         //     console.log(`[${key}]:`, serverError[key]);
         //     console.log(errorResponseAPI[key])
         // });
         // alert("Tengo un error")
-
-        toast.add({ severity: 'Error', summary: 'There are some errores', detail: 'Must correct those ones', life: 3000 });
-
+            
+        toast.add({ severity: 'Error', summary: 'There are some errores', detail: 'Must correct some mistakes', life: 3000 });
+                    
     }
     else {
-
+        //console.log("Hice un post bien")
         isChanging.value = true
         isServerError.value = false
         hideDialog();
-        toast.add({ severity: 'success', summary: 'Successful', detail: 'UnitTypes Updated', life: 3000 });
+        toast.add({ severity: 'success', summary: 'Successful', detail: 'Done', life: 3000 });
     }
 
 
 };
 
-const updateRecord = async (requestDataUnitTypes, id) => {
-    await putResponseAPI(requestDataUnitTypes, "/unit_types", id);
+const updateRecord = async (requestDataUnitTypes, id, endpoint) => {
+    await putResponseAPI(requestDataUnitTypes, endpoint, id);
+        //console.log(errorResponseAPI.value)    
+        serverError.value = errorResponseAPI.value;
+    //console.log(serverError.value)
+    
+    
+    if (serverError.value._rawValue != "") {
+        isServerError.value = true
+        //console.log("Entre a posterror")
+        
+        //console.log("Lista de errores")
+        //console.log(errorResponseAPI)
+        // keys.forEach(key => {
+        //     if (key == conditionsProducts [0].label || key == conditionsProducts [1].label) return
+        //     console.log(`[${key}]:`, serverError[key]);
+        //     console.log(errorResponseAPI[key])
+        // });
+        // alert("Tengo un error")
+            
+        toast.add({ severity: 'Error', summary: 'There are some errores', detail: 'Must correct some mistakes', life: 3000 });
+                    
+    }
+    else {
+        //console.log("Hice un post bien")
+        isChanging.value = true
+        isServerError.value = false
+        hideDialog();
+        toast.add({ severity: 'success', summary: 'Successful', detail: 'Done', life: 3000 });
+    }
 };
-const dropRecord = async (id) => {
-    await deleteResponseAPI(requestDataUnitTypesDelete, "/unit_types", id);
+const dropRecord = async (id, endpoint) => {
+    await deleteResponseAPI(requestDataUnitTypesDelete, endpoint, id);
+        //console.log(errorResponseAPI.value)    
+        serverError.value = errorResponseAPI.value;
+    //console.log(serverError.value)
+    
+    
+    if (serverError.value._rawValue != "") {
+        isServerError.value = true
+        //console.log("Entre a posterror")
+        
+        //console.log("Lista de errores")
+        //console.log(errorResponseAPI)
+        // keys.forEach(key => {
+        //     if (key == conditionsProducts [0].label || key == conditionsProducts [1].label) return
+        //     console.log(`[${key}]:`, serverError[key]);
+        //     console.log(errorResponseAPI[key])
+        // });
+        // alert("Tengo un error")
+            
+        toast.add({ severity: 'Error', summary: 'There are some errores', detail: 'Must correct some mistakes', life: 3000 });
+                    
+    }
+    else {
+        //console.log("Hice un post bien")
+        isChanging.value = true
+        isServerError.value = false
+        hideDialog();
+        toast.add({ severity: 'success', summary: 'Successful', detail: 'Done', life: 3000 });
+    }
 };
 //////////////////////////////////////////////////////////////////////
 //Datafor table
@@ -247,8 +329,6 @@ const hideDialog = () => {
 const listRowSelect = ref([]);
 const RowSelect = (data) => {
     listRowSelect.value = data;
-
-
 };
 let headerNames = ref([]);
 const onHeaderNames = (data) => (
@@ -264,7 +344,7 @@ watch(listRowSelect, RowSelect);
 const openEdit = () => {
     mode.value = 'EDIT';
     headerNamesRow.value = [];
-
+    console.log("Entré al edit")
     for (let key in listRowSelect.value[0]) {
         if (key == 'id') {
             idEditRecord.value = listRowSelect.value[0][key]
@@ -273,7 +353,6 @@ const openEdit = () => {
         else if (!allLabels.value.includes(key)) continue
         headerNamesRow.value.push({
             label: key,
-            type: typeof listRowSelect.value[0][key] == 'number' ? 'number' : 'text',
             data: listRowSelect.value[0][key],
             id: idEditRecord,
             selecti: true
@@ -294,7 +373,6 @@ const openNew = () => {
         }
         headerNamesRow.value.push({
             label: key,
-            type: typeof headerNames.value[key] == 'number' ? 'number' : 'text',
             data: ''
         });
 
@@ -317,7 +395,6 @@ const openClone = () => {
         }
         headerNamesRow.value.push({
             label: key,
-            type: typeof headerNames.value[key] == 'number' ? 'number' : 'text',
             data: headerNames.value[key]
         });
     }
@@ -354,7 +431,8 @@ const saveRecord = () => {
         headerNamesRow.value.map((item) => {
             if (item.selecti) {
                 data.push(item.id);
-                dropRecord(item.id)
+
+                dropRecord(item.id, endpoint.value)
             }
         });
         isChanging.value = true
@@ -373,7 +451,9 @@ const saveRecord = () => {
         data = headerNamesRow.value.map((heade) => {
             const data = {};
             data[heade.label] = heade.data;
+
             dataTmp = data
+            console.log(data)
             return data;
         });
 
@@ -386,7 +466,7 @@ const saveRecord = () => {
             return result;
         }, {});
 
-        newRecord(requestData, endpoint)
+        newRecord(requestData, endpoint.value)
 
 
     }
@@ -405,17 +485,20 @@ const saveRecord = () => {
             result[key] = value;
             return result;
         }, {});
-        newRecord(requestData, endpoint)
+        newRecord(requestData, endpoint.value)
         isChanging.value = true
     }
     else if (mode.value == 'EDIT') {
+        console.log("Guardé al edit")
         let id = 0
         data = headerNamesRow.value.map((heade) => {
             const data = {};
             data[heade.label] = heade.data;
             dataTmp = data
+            
             if (heade.selecti)
                 id = heade.id
+            console.log(id)
             return data;
 
         });
@@ -425,7 +508,7 @@ const saveRecord = () => {
             result[key] = value;
             return result;
         }, {});
-        updateRecord(requestData, id)
+        updateRecord(requestData, id, endpoint.value)
         isChanging.value = true
     }
 
