@@ -134,14 +134,15 @@ function fetchInfoAndUpdateValue() {
         tableData.value = dataFromComponent['data'];
         let mappedArray1 = [];
 
-        const types = ['string', 'number'];
+        const types = ['string', 'number','boolean'];
         if (dataFromComponent['data']) {
             for (let key in dataFromComponent['data'][0]) {
                 if (types.includes(typeof dataFromComponent['data'][0][key]))
                     mappedArray1.push(key);
             }
-            //alert(allLabels.value)
-            //alert(mappedArray1)
+            console.log(tableData.value)
+            console.log(allLabels.value)
+            console.log(mappedArray1)
             //Here the condition of columns is applied
             columnas.value = mappedArray1
             .filter(item => allLabels.value.includes(item))

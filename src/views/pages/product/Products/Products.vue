@@ -1,6 +1,6 @@
 
 <template>
-    <h1>Información de tipo de Productos </h1>
+    <h1>Información de productos </h1>
     <div class="card">
 
 
@@ -30,14 +30,14 @@
                 </Toolbar>
 
             </div>
-            <h1>Hola</h1>
-            <pre>{{ headerNamesRow[0] }}</pre>
+            
+            
             <Dialog v-model:visible="formDialog" :style="{ width: '700px' }" header="Unit Types Details" :modal="true"
                 class="p-fluid">
                 <div class="formgrid grid">
                     <!-- <pre>{{ listRowSelect}}</pre> -->
                     
-                    <pre>{{  }}</pre>
+                    
                     <div v-for="key in conditionsProducts " :key="key" class="field">
 
 
@@ -46,12 +46,12 @@
 
                             <!-- <label v-text="key.label"></label> -->
                             <!-- <pre>{{conditionsProducts }}</pre> -->
-
+                            
                             <label :for="key.label" class="ml-2"> {{ key.label }} </label>
                             <!-- <pre>{{ listRowSelect.length}}</pre> -->
 
                             <!-- <pre>{{ headerNamesRow }}</pre> -->
-                            <pre>{{ serverError }}</pre>
+                            
                             <div v-if="listRowSelect.length == 0">
                                 <component v-model="headerNamesRow[getIndexByLabel(key.fieldName)].data" 
                                 :is='key.typeDataForm' 
@@ -158,7 +158,6 @@ import ToolbarComponet from '@/components/ToolbarComponet.vue';
 const { getAllResponseAPI, postResponseAPI, putResponseAPI, deleteResponseAPI, errorResponseAPI, dataResponseAPI } = useDataAPI();
 const requestDataUnitTypesDelete = {}
 const dataFromComponent = ref();
-const { conditionsUnitType } = useRestrictionUnitTypes();
 const { conditionsProducts } = useRestrictionProducts();
 const allLabels = ref([])
 allLabels.value = Object.values(conditionsProducts).map(condition => condition.fieldName);
@@ -175,6 +174,7 @@ let dataTmp = ref({});
 let endpoint = ref("/products")
 const value = ref('Off');
 const options = ref(['Off', 'On']);
+
 /////////////////////////////////////////////////////////////////
 //Functions for dataAPI
 const getIndexByLabel = (fieldName) => {
@@ -213,14 +213,14 @@ let isServerError = ref(false);
 const newRecord = async (requestDataUnitTypes, endpoint) => {
     
     await postResponseAPI(requestDataUnitTypes, endpoint);
-    console.log(errorResponseAPI.value)    
+    //console.log(errorResponseAPI.value)    
     serverError.value = errorResponseAPI.value;
-    console.log(serverError.value)
+    //console.log(serverError.value)
     
     
     if (serverError.value._rawValue != "") {
         isServerError.value = true
-        console.log("Entre a posterror")
+        //console.log("Entre a posterror")
         
         //console.log("Lista de errores")
         //console.log(errorResponseAPI)
@@ -231,15 +231,15 @@ const newRecord = async (requestDataUnitTypes, endpoint) => {
         // });
         // alert("Tengo un error")
             
-        toast.add({ severity: 'Error', summary: 'There are some errores', detail: 'Must correct those ones', life: 3000 });
+        toast.add({ severity: 'Error', summary: 'There are some errores', detail: 'Must correct some mistakes', life: 3000 });
                     
     }
     else {
-        console.log("Hice un post bien")
+        //console.log("Hice un post bien")
         isChanging.value = true
         isServerError.value = false
         hideDialog();
-        toast.add({ severity: 'success', summary: 'Successful', detail: 'UnitTypes Updated', life: 3000 });
+        toast.add({ severity: 'success', summary: 'Successful', detail: 'Done', life: 3000 });
     }
 
 
@@ -247,9 +247,65 @@ const newRecord = async (requestDataUnitTypes, endpoint) => {
 
 const updateRecord = async (requestDataUnitTypes, id, endpoint) => {
     await putResponseAPI(requestDataUnitTypes, endpoint, id);
+        //console.log(errorResponseAPI.value)    
+        serverError.value = errorResponseAPI.value;
+    //console.log(serverError.value)
+    
+    
+    if (serverError.value._rawValue != "") {
+        isServerError.value = true
+        //console.log("Entre a posterror")
+        
+        //console.log("Lista de errores")
+        //console.log(errorResponseAPI)
+        // keys.forEach(key => {
+        //     if (key == conditionsProducts [0].label || key == conditionsProducts [1].label) return
+        //     console.log(`[${key}]:`, serverError[key]);
+        //     console.log(errorResponseAPI[key])
+        // });
+        // alert("Tengo un error")
+            
+        toast.add({ severity: 'Error', summary: 'There are some errores', detail: 'Must correct some mistakes', life: 3000 });
+                    
+    }
+    else {
+        //console.log("Hice un post bien")
+        isChanging.value = true
+        isServerError.value = false
+        hideDialog();
+        toast.add({ severity: 'success', summary: 'Successful', detail: 'Done', life: 3000 });
+    }
 };
 const dropRecord = async (id, endpoint) => {
     await deleteResponseAPI(requestDataUnitTypesDelete, endpoint, id);
+        //console.log(errorResponseAPI.value)    
+        serverError.value = errorResponseAPI.value;
+    //console.log(serverError.value)
+    
+    
+    if (serverError.value._rawValue != "") {
+        isServerError.value = true
+        //console.log("Entre a posterror")
+        
+        //console.log("Lista de errores")
+        //console.log(errorResponseAPI)
+        // keys.forEach(key => {
+        //     if (key == conditionsProducts [0].label || key == conditionsProducts [1].label) return
+        //     console.log(`[${key}]:`, serverError[key]);
+        //     console.log(errorResponseAPI[key])
+        // });
+        // alert("Tengo un error")
+            
+        toast.add({ severity: 'Error', summary: 'There are some errores', detail: 'Must correct some mistakes', life: 3000 });
+                    
+    }
+    else {
+        //console.log("Hice un post bien")
+        isChanging.value = true
+        isServerError.value = false
+        hideDialog();
+        toast.add({ severity: 'success', summary: 'Successful', detail: 'Done', life: 3000 });
+    }
 };
 //////////////////////////////////////////////////////////////////////
 //Datafor table

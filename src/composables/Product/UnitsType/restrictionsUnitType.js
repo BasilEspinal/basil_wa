@@ -17,14 +17,22 @@ export default function useRestrictionUnitTypes() {
     fieldName: "code" 
   
   },
+  
     created_at: { 
     label: "Fecha de creación", 
     typeData: "text", 
     validation: "capitalcase", 
     typeDataForm: "Calendar", 
-    fieldName: "created_at" },
-    
-  };
+    fieldName: "created_at" 
+  },
+
+
+
+
+  }
+
+
+
 
   return { conditionsUnitType };
 }

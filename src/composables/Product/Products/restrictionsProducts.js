@@ -32,7 +32,7 @@ export default function useRestrictionProducts() {
       label: "cultivated",
       typeData: "boolean",
       validation: "capitalcase",
-      typeDataForm: "InputText",
+      typeDataForm: "InputSwitch",
       fieldName: "cultivated",
       
     },
