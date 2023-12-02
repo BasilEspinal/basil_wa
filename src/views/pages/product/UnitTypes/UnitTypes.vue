@@ -151,7 +151,6 @@ import Table from '@/components/Table.vue';
 import { ref, watch, provide, onBeforeMount } from 'vue';
 import { useToast } from 'primevue/usetoast';
 import useRestrictionUnitTypes from '@/composables/Product/UnitsType/restrictionsUnitType.js'
-import useRestrictionProducts from '@/composables/Product/Products/restrictionsProducts';
 import useDataAPI from '@/composables/DataAPI/FetchDataAPI.js'
 import ToolbarComponet from '@/components/ToolbarComponet.vue';
 
@@ -159,7 +158,7 @@ const { getAllResponseAPI, postResponseAPI, putResponseAPI, deleteResponseAPI, e
 const requestDataUnitTypesDelete = {}
 const dataFromComponent = ref();
 const { conditionsUnitType } = useRestrictionUnitTypes();
-const { conditionsProducts } = useRestrictionProducts();
+
 const allLabels = ref([])
 allLabels.value = Object.values(conditionsUnitType).map(condition => condition.fieldName);
 const idEditRecord = ref()
