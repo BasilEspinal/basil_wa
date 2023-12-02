@@ -39,8 +39,8 @@ export default function useDataAPI(datos) {
           
         }
         else {
-          
-          dataResponseAPI.value=data
+          // dataResponseAPI.value=data 
+          dataResponseAPI.value=JSON.parse(JSON.stringify(data, null, 2));
           errorResponseAPI.value = ref('')
           
         }

@@ -185,7 +185,7 @@ const readAll = async (endpoint) => {
 
     await getAllResponseAPI(endpoint);
     dataFromComponent.value = dataResponseAPI.value;
-    dataFromComponent.value = JSON.parse(JSON.stringify(dataFromComponent.value, null, 2));
+    // dataFromComponent.value = JSON.parse(JSON.stringify(dataFromComponent.value, null, 2));
 
 
 };
