@@ -158,9 +158,10 @@ import ToolbarComponet from '@/components/ToolbarComponet.vue';
 const { getAllResponseAPI, postResponseAPI, putResponseAPI, deleteResponseAPI, errorResponseAPI, dataResponseAPI } = useDataAPI();
 const requestDataUnitTypesDelete = {}
 const dataFromComponent = ref();
-const { conditionsProducts } = useRestrictionProducts();
 const allLabels = ref([])
+const { conditionsProducts } = useRestrictionProducts();
 allLabels.value = Object.values(conditionsProducts).map(condition => condition.fieldName);
+let endpoint = ref("/products")
 const idEditRecord = ref()
 const toast = useToast();
 const formDialog = ref(false);
@@ -171,7 +172,6 @@ const filename = ref('table');
 const headerNamesRow = ref([]);
 const isChanging = ref(false);
 let dataTmp = ref({});
-let endpoint = ref("/products")
 const value = ref('Off');
 const options = ref(['Off', 'On']);
 
