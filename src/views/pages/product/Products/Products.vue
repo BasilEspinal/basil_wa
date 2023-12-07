@@ -32,7 +32,7 @@
             </div>
             
             
-            <Dialog v-model:visible="formDialog" :style="{ width: '700px' }" header="Unit Types Details" :modal="true"
+            <Dialog v-model:visible="formDialog" :style="{ width: '700px' }" header="Products Details" :modal="true"
                 class="p-fluid">
                 <div class="formgrid grid">
                     <!-- <pre>{{ listRowSelect}}</pre> -->
@@ -100,7 +100,7 @@
                 </template>
             </Dialog>
 
-            <Dialog v-model:visible="exportDialog" :style="{ width: '280px' }" header="Unit Types Details" :modal="true"
+            <Dialog v-model:visible="exportDialog" :style="{ width: '280px' }" header="Products Details" :modal="true"
                 class="p-fluid">
                 <div class="field col">
                     <label>File name</label>
@@ -138,7 +138,7 @@
         </div>
 
 
-        <Table title="" path-api="/unit_types" @HeaderNames="onHeaderNames" @onRowSelect="RowSelect"
+        <Table title="" path-api="" @HeaderNames="onHeaderNames" @onRowSelect="RowSelect"
             :dataGot="dataFromComponent" :allLabels="allLabels" />
 
     </div>
@@ -246,6 +246,7 @@ const newRecord = async (requestDataUnitTypes, endpoint) => {
 };
 
 const updateRecord = async (requestDataUnitTypes, id, endpoint) => {
+    console.info("id Post",id)
     await putResponseAPI(requestDataUnitTypes, endpoint, id);
         //console.log(errorResponseAPI.value)    
         serverError.value = errorResponseAPI.value;
@@ -254,15 +255,7 @@ const updateRecord = async (requestDataUnitTypes, id, endpoint) => {
     
     if (serverError.value._rawValue != "") {
         isServerError.value = true
-        //console.log("Entre a posterror")
-        
-        //console.log("Lista de errores")
-        //console.log(errorResponseAPI)
-        // keys.forEach(key => {
-        //     if (key == conditionsProducts [0].label || key == conditionsProducts [1].label) return
-        //     console.log(`[${key}]:`, serverError[key]);
-        //     console.log(errorResponseAPI[key])
-        // });
+    
         // alert("Tengo un error")
             
         toast.add({ severity: 'Error', summary: 'There are some errores', detail: 'Must correct some mistakes', life: 3000 });
@@ -346,7 +339,7 @@ const openEdit = () => {
     headerNamesRow.value = [];
     console.log("Entré al edit")
     for (let key in listRowSelect.value[0]) {
-        if (key == 'id') {
+        if (key == 'uuid') {
             idEditRecord.value = listRowSelect.value[0][key]
             continue;
         }

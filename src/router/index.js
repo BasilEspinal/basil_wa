@@ -18,9 +18,13 @@ const router = createRouter({
                 {
                     path: '/applayout',
                     name: 'dashboard',
-                    component: () => import('@/views/Dashboard.vue')
+                    component: () => import('@/views/Dashboard/Dashboard.vue')
                 },
-
+                {
+                    path: '/corta',
+                    name: 'corta',
+                    component: () => import('@/views/Dashboard/Dashboard_Daily.vue')
+                },
                 {
                     path: '/landing',
                     name: 'landing',

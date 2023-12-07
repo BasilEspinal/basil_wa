@@ -13,7 +13,19 @@ const model2 = ref([
 
     items: [{ label: "Centro de control", icon: "pi pi-fw pi-home", to: "/applayout" }],
   },
-
+  
+  {
+    items: [
+      {
+        rol: "admin",
+        icon: "pi-desktop",
+        label: "Monitor Online",
+        items: [
+          { label: "Corta", icon: "pi pi-fw pi-table", to: "/corta" }
+        ],
+      },
+    ],
+  },
   {
     items: [
       {

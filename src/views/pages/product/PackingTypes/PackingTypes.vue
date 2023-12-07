@@ -32,7 +32,7 @@
             </div>
 
 
-            <Dialog v-model:visible="formDialog" :style="{ width: '700px' }" header="Unit Types Details" :modal="true"
+            <Dialog v-model:visible="formDialog" :style="{ width: '700px' }" header="Packing Types Details" :modal="true"
                 class="p-fluid">
                 <div class="formgrid grid">
                     <!-- <pre>{{ listRowSelect}}</pre> -->

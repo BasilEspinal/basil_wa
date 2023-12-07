@@ -285,7 +285,7 @@ const onColumnsChange = (column) => {
                 </MultiSelect>
             </div>
             <DataTable id="tblData" v-model:selection="selectedProduct" :value="tableData" :paginator="true"
-                class="p-datatable-gridlines" :rows="10" dataKey="id" :rowHover="true" v-model:filters="filters"
+                class="p-datatable-gridlines" :rows="10" dataKey="uuid" :rowHover="true" v-model:filters="filters"
                 filterDisplay="menu" :loading="loading" :filters="filters" responsiveLayout="scroll" 
                 :globalFilterFields="headerNames" @row-select="onRowSelect" @row-unselect="onRowSelect"
                 @select-all-change="onSelectAllChange">

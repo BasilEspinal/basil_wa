@@ -18,7 +18,13 @@ import {
         typeDataForm: "inputText",
         fieldName: "name",
       },
-     
+      weight_tare: {
+        label: "Tara",
+        typeData: "number",
+        validation: "uppercase",
+        typeDataForm: "InputNumber",
+        fieldName: "weight_tare",
+      },
     }
     return { conditionsPackingTypes };
   };
