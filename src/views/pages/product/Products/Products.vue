@@ -2,9 +2,6 @@
 <template>
     <h1>Información de productos </h1>
     <div class="card">
-
-
-
         <div class="grid">
             <div class="col-xs-12 col-sm-6 col-md-4 mb-2 text-center mx-auto">
                 <Toolbar class="bg-gray-900 shadow-2"
@@ -32,7 +29,7 @@
             </div>
             
             
-            <Dialog v-model:visible="formDialog" :style="{ width: '700px' }" header="Unit Types Details" :modal="true"
+            <Dialog v-model:visible="formDialog" :style="{ width: '700px' }" header="Products Details" :modal="true"
                 class="p-fluid">
                 <div class="formgrid grid">
                     <!-- <pre>{{ listRowSelect}}</pre> -->
@@ -100,7 +97,7 @@
                 </template>
             </Dialog>
 
-            <Dialog v-model:visible="exportDialog" :style="{ width: '280px' }" header="Unit Types Details" :modal="true"
+            <Dialog v-model:visible="exportDialog" :style="{ width: '280px' }" header="Products Details" :modal="true"
                 class="p-fluid">
                 <div class="field col">
                     <label>File name</label>
@@ -121,7 +118,7 @@
             <Dialog v-model:visible="deleteRecords" :style="{ width: '450px' }" header="Confirm" :modal="true">
                 <div class="flex align-items-center " v-for="item in headerNamesRow" :key="item">
                     <Checkbox class="mr-2" v-model="item.selecti" :binary="true" />
-                    <label :for="item.id"> {{ item.label }} </label>
+                    <label :for="item.uuid"> {{ item.label }} </label>
                     <i class="pi pi-exclamation-triangle ml-3 mb-2" style="font-size: 2rem" />
                 </div>
 
@@ -138,7 +135,7 @@
         </div>
 
 
-        <Table title="" path-api="/unit_types" @HeaderNames="onHeaderNames" @onRowSelect="RowSelect"
+        <Table title="" path-api="" @HeaderNames="onHeaderNames" @onRowSelect="RowSelect"
             :dataGot="dataFromComponent" :allLabels="allLabels" />
 
     </div>
@@ -246,6 +243,7 @@ const newRecord = async (requestDataUnitTypes, endpoint) => {
 };
 
 const updateRecord = async (requestDataUnitTypes, id, endpoint) => {
+    
     await putResponseAPI(requestDataUnitTypes, endpoint, id);
         //console.log(errorResponseAPI.value)    
         serverError.value = errorResponseAPI.value;
@@ -254,15 +252,7 @@ const updateRecord = async (requestDataUnitTypes, id, endpoint) => {
     
     if (serverError.value._rawValue != "") {
         isServerError.value = true
-        //console.log("Entre a posterror")
-        
-        //console.log("Lista de errores")
-        //console.log(errorResponseAPI)
-        // keys.forEach(key => {
-        //     if (key == conditionsProducts [0].label || key == conditionsProducts [1].label) return
-        //     console.log(`[${key}]:`, serverError[key]);
-        //     console.log(errorResponseAPI[key])
-        // });
+    
         // alert("Tengo un error")
             
         toast.add({ severity: 'Error', summary: 'There are some errores', detail: 'Must correct some mistakes', life: 3000 });
@@ -278,26 +268,12 @@ const updateRecord = async (requestDataUnitTypes, id, endpoint) => {
 };
 const dropRecord = async (id, endpoint) => {
     await deleteResponseAPI(requestDataUnitTypesDelete, endpoint, id);
-        //console.log(errorResponseAPI.value)    
-        serverError.value = errorResponseAPI.value;
-    //console.log(serverError.value)
-    
-    
+    // console.log(errorResponseAPI.value)    
+    serverError.value = errorResponseAPI.value;
+    // console.log(serverError.value)
     if (serverError.value._rawValue != "") {
         isServerError.value = true
-        //console.log("Entre a posterror")
-        
-        //console.log("Lista de errores")
-        //console.log(errorResponseAPI)
-        // keys.forEach(key => {
-        //     if (key == conditionsProducts [0].label || key == conditionsProducts [1].label) return
-        //     console.log(`[${key}]:`, serverError[key]);
-        //     console.log(errorResponseAPI[key])
-        // });
-        // alert("Tengo un error")
-            
         toast.add({ severity: 'Error', summary: 'There are some errores', detail: 'Must correct some mistakes', life: 3000 });
-                    
     }
     else {
         //console.log("Hice un post bien")
@@ -346,7 +322,7 @@ const openEdit = () => {
     headerNamesRow.value = [];
     console.log("Entré al edit")
     for (let key in listRowSelect.value[0]) {
-        if (key == 'id') {
+        if (key == 'uuid') {
             idEditRecord.value = listRowSelect.value[0][key]
             continue;
         }
@@ -367,7 +343,7 @@ const openNew = () => {
     mode.value = 'NEW';
     headerNamesRow.value = [];
     for (let key in headerNames.value) {
-        if (key == 'id') continue;
+        if (key == 'uuid') continue;
         else if (!allLabels.value.includes(key)) {
             continue
         }
@@ -388,7 +364,7 @@ const openClone = () => {
     headerNamesRow.value = [];
 
     for (let key in headerNames.value) {
-        if (key == 'id') continue;
+        if (key == 'uuid') continue;
         else if (!allLabels.value.includes(key)) {
 
             continue
@@ -416,7 +392,7 @@ const openDelete = () => {
 
         headerNamesRow.value.push({
             label: listRowSelect.value[key].name,
-            id: listRowSelect.value[key].id,
+            id: listRowSelect.value[key].uuid,
             selecti: true
         });
 
@@ -428,10 +404,10 @@ const saveRecord = () => {
     let data = [];
 
     if (mode.value == 'DELETE') {
+        
         headerNamesRow.value.map((item) => {
             if (item.selecti) {
                 data.push(item.id);
-
                 dropRecord(item.id, endpoint.value)
             }
         });

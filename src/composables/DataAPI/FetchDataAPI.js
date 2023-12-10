@@ -33,7 +33,7 @@ export default function useDataAPI(datos) {
       .then(async (data) => {
         // actions to data answer
         errorResponseAPI.value = ref('')
-        console.log(statusCode.value)
+        // console.log(statusCode.value)
         if (data.errors) {
           errorResponseAPI.value = data.errors
           
@@ -42,7 +42,6 @@ export default function useDataAPI(datos) {
           // dataResponseAPI.value=data 
           dataResponseAPI.value=JSON.parse(JSON.stringify(data, null, 2));
           errorResponseAPI.value = ref('')
-          
         }
         
       })

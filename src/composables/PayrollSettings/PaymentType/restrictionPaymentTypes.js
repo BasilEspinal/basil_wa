@@ -18,7 +18,8 @@ import {
         typeDataForm: "inputText",
         fieldName: "name",
       },
-     
+      
+      
      
     }
     return { conditionsPaymentTypes };

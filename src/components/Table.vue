@@ -140,9 +140,9 @@ function fetchInfoAndUpdateValue() {
                 if (types.includes(typeof dataFromComponent['data'][0][key]))
                     mappedArray1.push(key);
             }
-            console.log(tableData.value)
-            console.log(allLabels.value)
-            console.log(mappedArray1)
+            // console.log(tableData.value)
+            // console.log(allLabels.value)
+            // console.log(mappedArray1)
             //Here the condition of columns is applied
             columnas.value = mappedArray1
             .filter(item => allLabels.value.includes(item))
@@ -285,7 +285,7 @@ const onColumnsChange = (column) => {
                 </MultiSelect>
             </div>
             <DataTable id="tblData" v-model:selection="selectedProduct" :value="tableData" :paginator="true"
-                class="p-datatable-gridlines" :rows="10" dataKey="id" :rowHover="true" v-model:filters="filters"
+                class="p-datatable-gridlines" :rows="10" dataKey="uuid" :rowHover="true" v-model:filters="filters"
                 filterDisplay="menu" :loading="loading" :filters="filters" responsiveLayout="scroll" 
                 :globalFilterFields="headerNames" @row-select="onRowSelect" @row-unselect="onRowSelect"
                 @select-all-change="onSelectAllChange">
