@@ -140,9 +140,9 @@ function fetchInfoAndUpdateValue() {
                 if (types.includes(typeof dataFromComponent['data'][0][key]))
                     mappedArray1.push(key);
             }
-            console.log(tableData.value)
-            console.log(allLabels.value)
-            console.log(mappedArray1)
+            // console.log(tableData.value)
+            // console.log(allLabels.value)
+            // console.log(mappedArray1)
             //Here the condition of columns is applied
             columnas.value = mappedArray1
             .filter(item => allLabels.value.includes(item))
