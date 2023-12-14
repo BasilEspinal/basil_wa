@@ -2,78 +2,92 @@
     <div class="card">
         <div>
             <h1>Información de Empleados </h1>
-            <pre>{{ selectedRegisters }}</pre>
+
         </div>
 
-
+<pre>{{ columnas }}</pre>
     </div>
 
 
     <div class="card">
-        <div class="flex justify-content-center mb-4">
-            <SelectButton v-model="size" :options="sizeOptions" optionLabel="label" dataKey="label" />
-        </div>
-        <!--:class="`p-datatable-${size.class}`" this is for the size of table -->
-        <DataTable :rowHover="true" responsiveLayout="scroll" 
-         v-model:selection="selectedRegisters" 
-            @row-select="onRowSelect(selectedRegisters)" 
-            @row-unselect="onRowSelect(selectedRegisters)"
-            v-model:filters="filters" 
-            :class="`p-datatable-${size.class}`"
-            :value="dataResponseAPI.data"
-            showGridlines :rows="20" 
-            tableStyle="min-width: 75rem" 
-            dataKey="uuid" 
-            :totalRecords="totalRecordsResponseAPI"
-            @page="onPage($event)" 
-            @sort="onSort($event)" 
-            ref="dt" 
-            lazy 
-            :first="first" 
-            paginator 
-            :loading="loading"
-            @select-all-change="onSelectAllChange">
+        <div class="card">
+                <h5>¿Cuales columnas quieres ver?</h5>
+                <MultiSelect v-model="column" :options="columnas" optionLabel="field" placeholder="Seleccione columnas"
+                    :filter="true" display="chip" class="w-full md:w-50rem" @change="onColumnsChange(column)">
+                    <template #value="slotProps">
+                        <div class="inline-flex align-items-center py-1 px-2 bg-primary text-primary border-round mr-2"
+                            v-for="option of slotProps.value" :key="option.header">
+                            <div>{{ option.header }}</div>
+                        </div>
+                    </template>
 
-            <template #header>
+                    <template #option="slotProps">
+                        <div class="flex align-items-center">
+                            <div>{{ slotProps.option.header }}</div>
+                        </div>
+                    </template>
+                </MultiSelect>
+            </div>
+        <DataTable  responsiveLayout="scroll" v-model:selection="selectedRegisters"
+            @row-select="onRowSelect(selectedRegisters)" @row-unselect="onRowSelect(selectedRegisters)"
+            v-model:filters="filters" :class="`p-datatable-${size.class}`" :value="dataResponseAPI.data" showGridlines
+            :rows="20" tableStyle="min-width: 75rem" dataKey="uuid" :totalRecords="totalRecordsResponseAPI"
+            @page="onPage($event)" @sort="onSort($event)" ref="dt" lazy :first="first" paginator :loading="loading"
+            @select-all-change="onSelectAllChange"     
+            scrollable
+            scrollHeight="600px"
+            resizableColumns 
+            columnResizeMode="expand">
+            
+            <template #header >
                 <div class="flex justify-content-between">
-
+                    <div class="flex justify-content-center mb-4">
+                        <SelectButton v-model="size" :options="sizeOptions" optionLabel="label" dataKey="label">
+                        </SelectButton>
+                    </div>
                 </div>
+
+                
             </template>
+
             <template #empty> No customers found. </template>
             <template #loading> Loading customers data. Please wait. </template>
+            
             <Column selectionMode="multiple" headerStyle="width: 3rem"></Column>
-
-            <Column field="document" header="Document" style="min-width: 12rem">
+            
+            <!-- <Column field="document" header="Document" style="min-width: 2rem"> -->
+            <!-- Line above uses a set min width as minimum, if that is does not placed is automatically -->
+                <Column field="document" header="Document" >
                 <template #body="{ data }">
                     {{ data.document }}
                 </template>
             </Column>
 
-            <Column field="typeDocument" header="Type of Document" style="min-width: 12rem">
+            <Column field="typeDocument" header="Type of Document" >
                 <template #body="{ data }">
                     {{ data.document_type }}
                 </template>
             </Column>
 
-            <Column field="name" header="Name" style="min-width: 12rem">
+            <Column field="name" header="Name" >
                 <template #body="{ data }">
                     {{ data.first_name }}
                 </template>
             </Column>
 
-            <Column field="name" header="Name" style="min-width: 12rem">
+            <Column field="name" header="Name" >
                 <template #body="{ data }">
                     {{ data.last_name }}
                 </template>
             </Column>
 
-            <Column field="gender" header="Gender" style="min-width: 12rem">
+            <Column field="gender" header="Gender">
                 <template #body="{ data }">
                     {{ data.gender_id }}
                 </template>
             </Column>
 
-            <Column field="prueba" header="ColumnaPrueba" style="min-width: 12rem">
+            <Column field="prueba" header="ColumnaPrueba" >
                 <template #body="{ data }">
                     <div class="flex align-items-center gap-2">
                         <Avatar :image="'demo/images/avatar/amyelsner.png'" size="large" shape="circle"></Avatar>
@@ -82,43 +96,47 @@
                 </template>
             </Column>
 
-            <Column field="status" header="Status" style="min-width: 12rem">
+            <Column field="status" header="Status" >
                 <template #body="{ data }">
                     <Tag :value="data.status.name" :severity="'#EFC88B'" />
                 </template>
             </Column>
 
-            <Column field="email" header="Email" style="min-width: 12rem">
+            <Column field="email" header="Email" >
                 <template #body="{ data }">
                     {{ data.email }}
                 </template>
             </Column>
 
-            <Column field="workCenterName" header="Work Center Name" style="min-width: 12rem">
+            <Column field="workCenterName" header="Work Center Name" >
                 <template #body="{ data }">
                     {{ data.workCenter.name }}
                 </template>
             </Column>
 
-            <Column field="bankAccountNumber" header="Bank Account Number" style="min-width: 12rem">
+            <Column field="bankAccountNumber" header="Bank Account Number" >
                 <template #body="{ data }">
                     {{ data.bank_account_number }}
                 </template>
             </Column>
 
-            <Column field="farmName" header="Farm Name" style="min-width: 12rem">
+            <Column field="farmName" header="Farm Name" >
                 <template #body="{ data }">
                     {{ data.farm.name }}
                 </template>
             </Column>
 
-            <Column field="companyName" header="Company Name" style="min-width: 12rem">
+            <Column field="companyName" header="Company Name" >
                 <template #body="{ data }">
                     {{ data.company.name }}
                 </template>
             </Column>
-            <template #footer> In total there are {{ dataResponseAPI.data ? dataResponseAPI.data.length : 0 }} products.
+
+            <template #footer>
+                Currently this page has got {{ dataResponseAPI.data ? dataResponseAPI.data.length : 0 }} registers. //
+                In total there are {{ totalRecordsResponseAPI ? totalRecordsResponseAPI : 0 }} registers.
             </template>
+            >
         </DataTable>
     </div>
 </template>
@@ -128,13 +146,14 @@
 
 import { ref, watch, provide, onBeforeMount, onMounted } from 'vue';
 import { useToast } from 'primevue/usetoast';
-import useRestrictionProducts from '@/composables/Product/Products/restrictionsProducts';
 import useDataAPI from '@/composables/DataAPI/FetchDataAPI.js'
 import { FilterMatchMode, FilterOperator } from 'primevue/api';
 
-const { getAllResponseAPI,totalRecordsResponseAPI,currentPageResponseAPI, linksResponseAPI, postResponseAPI, putResponseAPI, deleteResponseAPI, errorResponseAPI, dataResponseAPI } = useDataAPI();
+const { getAllResponseAPI, totalRecordsResponseAPI, currentPageResponseAPI, linksResponseAPI, postResponseAPI, putResponseAPI, deleteResponseAPI, errorResponseAPI, dataResponseAPI } = useDataAPI();
 
-let endpoint = ref("/employees?page="+"1")
+let endpoint = ref("/employees?page=" + "1")
+const columnas = ref([]);
+const column = ref(null);
 const selectedRegisters = ref([]);
 const listRowSelect = ref([]);
 const onRowSelect = (data) => {
@@ -142,13 +161,15 @@ const onRowSelect = (data) => {
 };
 watch(listRowSelect, onRowSelect);
 
+
+
 onBeforeMount(() => {
     initFilters();
 })
 //let endpointDocumentType = ref("/document-types")
 onMounted(async () => {
 
-    
+
     loading.value = true;
     lazyParams.value = {
         first: dt.value.first,
@@ -157,38 +178,58 @@ onMounted(async () => {
         sortOrder: null,
         filters: filters.value
     };
-    
+
     loadLazyData();
+    fillHeaderCustom();
     selectedRegisters.value = [];
+    columnas.value = [];
+    column.value = null;
 
-    
-    
+
+
+
 })
-
+const allLabels = ref([])
+//allLabels.value = Object.values(dataResponseAPI.value.data).map(condition => condition.fieldName);
+const fillHeaderCustom = () =>{
+    let mappedArray1 = [];
+    columnas.value = mappedArray1
+            .filter(item => allLabels.value.includes(item))
+                .map((item, index) => ({
+                    field: item,
+                    header: item.replaceAll('_', ' ').toUpperCase(),
+                    position: index
+                }));
+                
+    column.value = columnas.value;
+}
+const onColumnsChange = (column) => {
+    column.sort((a, b) => a.position - b.position);
+};
 const dt = ref();
 const loading = ref(false);
 const lazyParams = ref({});
 const first = ref(0);
 
-const loadLazyData =async (event) => {
-        
-        lazyParams.value = { ...lazyParams.value, first: event?.first || first.value };
-        endpoint.value = "/employees?page="+(lazyParams.value.page+1);
-        await getAllResponseAPI(endpoint.value)
-        loading.value = false;
-        
+const loadLazyData = async (event) => {
+
+    lazyParams.value = { ...lazyParams.value, first: event?.first || first.value };
+    endpoint.value = "/employees?page=" + (lazyParams.value.page + 1);
+    await getAllResponseAPI(endpoint.value)
+    loading.value = false;
+
 };
 const onPage = async (event) => {
     loading.value = true;
     lazyParams.value = event;
     loadLazyData(event);
-    
-    
+
+
 };
 const onSort = (event) => {
     lazyParams.value = event;
     loadLazyData(event);
-    
+
 };
 
 const clearFilter = () => {
