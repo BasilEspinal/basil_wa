@@ -7,7 +7,11 @@ export default function useDataAPI(datos) {
   const { pathAPI, APISettings } = useSettingsAPI();
   // Define data y error en el ámbito de useProducts
   let dataResponseAPI = ref({})
+  let totalRecordsResponseAPI = ref(0)
+  let currentPageResponseAPI = ref(0)
+  let linksResponseAPI = ref({})
   let errorResponseAPI = ref('')
+
   let base = pathAPI().base
   let api = pathAPI().apiVer
   const statusCode = ref([])
@@ -41,6 +45,11 @@ export default function useDataAPI(datos) {
         else {
           // dataResponseAPI.value=data 
           dataResponseAPI.value=JSON.parse(JSON.stringify(data, null, 2));
+          totalRecordsResponseAPI.value = dataResponseAPI.value.meta.total;
+          linksResponseAPI.value = dataResponseAPI.value.links;
+          currentPageResponseAPI.value = dataResponseAPI.value.meta.current_page;
+          console.log("totalRecordsResponseAPI.value")
+          console.log(totalRecordsResponseAPI.value)
           errorResponseAPI.value = ref('')
         }
         
@@ -178,6 +187,9 @@ export default function useDataAPI(datos) {
   return {
     errorResponseAPI,
     dataResponseAPI,
+    totalRecordsResponseAPI,
+    currentPageResponseAPI,
+    linksResponseAPI,
     getAllResponseAPI,
     postResponseAPI,
     putResponseAPI,
