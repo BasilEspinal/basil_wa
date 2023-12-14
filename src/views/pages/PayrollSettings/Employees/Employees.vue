@@ -5,41 +5,38 @@
 
         </div>
 
-<pre>{{ columnas }}</pre>
+        <pre>{{ columnas }}</pre>
     </div>
 
 
     <div class="card">
         <div class="card">
-                <h5>¿Cuales columnas quieres ver?</h5>
-                <MultiSelect v-model="column" :options="columnas" optionLabel="field" placeholder="Seleccione columnas"
-                    :filter="true" display="chip" class="w-full md:w-50rem" @change="onColumnsChange(column)">
-                    <template #value="slotProps">
-                        <div class="inline-flex align-items-center py-1 px-2 bg-primary text-primary border-round mr-2"
-                            v-for="option of slotProps.value" :key="option.header">
-                            <div>{{ option.header }}</div>
-                        </div>
-                    </template>
+            <h5>¿Cuales columnas quieres ver?</h5>
+            <MultiSelect v-model="column" :options="columnas" optionLabel="field" placeholder="Seleccione columnas"
+                :filter="true" display="chip" class="w-full md:w-50rem" @change="onColumnsChange(column)">
+                <template #value="slotProps">
+                    <div class="inline-flex align-items-center py-1 px-2 bg-primary text-primary border-round mr-2"
+                        v-for="option of slotProps.value" :key="option.header">
+                        <div>{{ option.header }}</div>
+                    </div>
+                </template>
 
-                    <template #option="slotProps">
-                        <div class="flex align-items-center">
-                            <div>{{ slotProps.option.header }}</div>
-                        </div>
-                    </template>
-                </MultiSelect>
-            </div>
-        <DataTable  responsiveLayout="scroll" v-model:selection="selectedRegisters"
+                <template #option="slotProps">
+                    <div class="flex align-items-center">
+                        <div>{{ slotProps.option.header }}</div>
+                    </div>
+                </template>
+            </MultiSelect>
+        </div>
+        <DataTable responsiveLayout="scroll" v-model:selection="selectedRegisters"
             @row-select="onRowSelect(selectedRegisters)" @row-unselect="onRowSelect(selectedRegisters)"
             v-model:filters="filters" :class="`p-datatable-${size.class}`" :value="dataResponseAPI.data" showGridlines
             :rows="20" tableStyle="min-width: 75rem" dataKey="uuid" :totalRecords="totalRecordsResponseAPI"
             @page="onPage($event)" @sort="onSort($event)" ref="dt" lazy :first="first" paginator :loading="loading"
-            @select-all-change="onSelectAllChange"     
-            scrollable
-            scrollHeight="600px"
-            resizableColumns 
+            @select-all-change="onSelectAllChange" scrollable scrollHeight="600px" resizableColumns
             columnResizeMode="expand">
-            
-            <template #header >
+
+            <template #header>
                 <div class="flex justify-content-between">
                     <div class="flex justify-content-center mb-4">
                         <SelectButton v-model="size" :options="sizeOptions" optionLabel="label" dataKey="label">
@@ -47,35 +44,35 @@
                     </div>
                 </div>
 
-                
+
             </template>
 
             <template #empty> No customers found. </template>
             <template #loading> Loading customers data. Please wait. </template>
-            
+
             <Column selectionMode="multiple" headerStyle="width: 3rem"></Column>
-            
+
             <!-- <Column field="document" header="Document" style="min-width: 2rem"> -->
             <!-- Line above uses a set min width as minimum, if that is does not placed is automatically -->
-                <Column field="document" header="Document" >
+            <Column field="document" header="Document">
                 <template #body="{ data }">
                     {{ data.document }}
                 </template>
             </Column>
 
-            <Column field="typeDocument" header="Type of Document" >
+            <Column field="typeDocument" header="Type of Document">
                 <template #body="{ data }">
                     {{ data.document_type }}
                 </template>
             </Column>
 
-            <Column field="name" header="Name" >
+            <Column field="name" header="Name">
                 <template #body="{ data }">
                     {{ data.first_name }}
                 </template>
             </Column>
 
-            <Column field="name" header="Name" >
+            <Column field="name" header="Name">
                 <template #body="{ data }">
                     {{ data.last_name }}
                 </template>
@@ -87,7 +84,7 @@
                 </template>
             </Column>
 
-            <Column field="prueba" header="ColumnaPrueba" >
+            <Column field="prueba" header="ColumnaPrueba">
                 <template #body="{ data }">
                     <div class="flex align-items-center gap-2">
                         <Avatar :image="'demo/images/avatar/amyelsner.png'" size="large" shape="circle"></Avatar>
@@ -96,37 +93,37 @@
                 </template>
             </Column>
 
-            <Column field="status" header="Status" >
+            <Column field="status" header="Status">
                 <template #body="{ data }">
                     <Tag :value="data.status.name" :severity="'#EFC88B'" />
                 </template>
             </Column>
 
-            <Column field="email" header="Email" >
+            <Column field="email" header="Email">
                 <template #body="{ data }">
                     {{ data.email }}
                 </template>
             </Column>
 
-            <Column field="workCenterName" header="Work Center Name" >
+            <Column field="workCenterName" header="Work Center Name">
                 <template #body="{ data }">
                     {{ data.workCenter.name }}
                 </template>
             </Column>
 
-            <Column field="bankAccountNumber" header="Bank Account Number" >
+            <Column field="bankAccountNumber" header="Bank Account Number">
                 <template #body="{ data }">
                     {{ data.bank_account_number }}
                 </template>
             </Column>
 
-            <Column field="farmName" header="Farm Name" >
+            <Column field="farmName" header="Farm Name">
                 <template #body="{ data }">
                     {{ data.farm.name }}
                 </template>
             </Column>
 
-            <Column field="companyName" header="Company Name" >
+            <Column field="companyName" header="Company Name">
                 <template #body="{ data }">
                     {{ data.company.name }}
                 </template>
@@ -136,7 +133,7 @@
                 Currently this page has got {{ dataResponseAPI.data ? dataResponseAPI.data.length : 0 }} registers. //
                 In total there are {{ totalRecordsResponseAPI ? totalRecordsResponseAPI : 0 }} registers.
             </template>
-            >
+            
         </DataTable>
     </div>
 </template>
@@ -191,16 +188,16 @@ onMounted(async () => {
 })
 const allLabels = ref([])
 //allLabels.value = Object.values(dataResponseAPI.value.data).map(condition => condition.fieldName);
-const fillHeaderCustom = () =>{
+const fillHeaderCustom = () => {
     let mappedArray1 = [];
     columnas.value = mappedArray1
-            .filter(item => allLabels.value.includes(item))
-                .map((item, index) => ({
-                    field: item,
-                    header: item.replaceAll('_', ' ').toUpperCase(),
-                    position: index
-                }));
-                
+        .filter(item => allLabels.value.includes(item))
+        .map((item, index) => ({
+            field: item,
+            header: item.replaceAll('_', ' ').toUpperCase(),
+            position: index
+        }));
+
     column.value = columnas.value;
 }
 const onColumnsChange = (column) => {
