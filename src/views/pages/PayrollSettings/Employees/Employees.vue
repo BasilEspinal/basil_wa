@@ -17,7 +17,7 @@
                         </SelectButton>
                     </div>
         <div class="card"  v-if="valueCustomTable.status">
-            <h5>¿Cuales columnas quieres ver?</h5>
+            <h5>¿Which columns do you want to watch?</h5>
             <MultiSelect v-model="column" :options="columnas" optionLabel="field" placeholder="Seleccione columnas"
                 :filter="true" display="chip" class="w-full md:w-50rem" @change="onColumnsChange(column)">
                 <template #value="slotProps">
