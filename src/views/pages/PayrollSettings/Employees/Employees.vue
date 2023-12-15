@@ -3,14 +3,16 @@
         <div>
             <h1>Información de Empleados </h1>
 
-        </div>
-
-        <pre>{{ columnas }}</pre>
+</div>
+        
     </div>
 
-
+    
+                        
     <div class="card">
-        <div class="card">
+        
+        <Button type="button" :icon="valueCustomTable.icon" label="Custom Table" class="p-button-outlined mb-2" @click="customTable()" />
+        <div class="card"  v-if="valueCustomTable.status">
             <h5>¿Cuales columnas quieres ver?</h5>
             <MultiSelect v-model="column" :options="columnas" optionLabel="field" placeholder="Seleccione columnas"
                 :filter="true" display="chip" class="w-full md:w-50rem" @change="onColumnsChange(column)">
@@ -28,6 +30,10 @@
                 </template>
             </MultiSelect>
         </div>
+        <div  v-if="valueCustomTable.status" class="flex justify-content-center mb-4">
+                        <SelectButton v-model="size" :options="sizeOptions" optionLabel="label" dataKey="label">
+                        </SelectButton>
+                    </div>
         <DataTable responsiveLayout="scroll" v-model:selection="selectedRegisters"
             @row-select="onRowSelect(selectedRegisters)" @row-unselect="onRowSelect(selectedRegisters)"
             v-model:filters="filters" :class="`p-datatable-${size.class}`" :value="dataResponseAPI.data" showGridlines
@@ -38,10 +44,7 @@
 
             <template #header>
                 <div class="flex justify-content-between">
-                    <div class="flex justify-content-center mb-4">
-                        <SelectButton v-model="size" :options="sizeOptions" optionLabel="label" dataKey="label">
-                        </SelectButton>
-                    </div>
+                    
                 </div>
 
 
@@ -54,31 +57,36 @@
 
             <!-- <Column field="document" header="Document" style="min-width: 2rem"> -->
             <!-- Line above uses a set min width as minimum, if that is does not placed is automatically -->
-            <Column field="document" header="Document">
+            <Column v-if="column?.some(obj => obj.field === 'document')" field="document" header="Document">
                 <template #body="{ data }">
                     {{ data.document }}
                 </template>
             </Column>
 
-            <Column field="typeDocument" header="Type of Document">
+            <Column v-if="column?.some(obj => obj.field === 'document_type')"
+                header="Type of Document">
                 <template #body="{ data }">
                     {{ data.document_type }}
                 </template>
             </Column>
 
-            <Column field="name" header="Name">
+
+            <Column v-if="column?.some(obj => obj.field === 'first_name')"
+            field="name" header="Name">
                 <template #body="{ data }">
                     {{ data.first_name }}
                 </template>
             </Column>
 
-            <Column field="name" header="Name">
+            <Column v-if="column?.some(obj => obj.field === 'last_name')"
+            field="name" header="Name">
                 <template #body="{ data }">
                     {{ data.last_name }}
                 </template>
             </Column>
 
-            <Column field="gender" header="Gender">
+            <Column v-if="column?.some(obj => obj.field === 'gender_id')"
+            field="gender" header="Gender">
                 <template #body="{ data }">
                     {{ data.gender_id }}
                 </template>
@@ -93,25 +101,29 @@
                 </template>
             </Column>
 
-            <Column field="status" header="Status">
+            <Column 
+            field="status" header="Status">
                 <template #body="{ data }">
                     <Tag :value="data.status.name" :severity="'#EFC88B'" />
                 </template>
             </Column>
 
-            <Column field="email" header="Email">
+            <Column v-if="column?.some(obj => obj.field === 'email')"
+            field="email" header="Email">
                 <template #body="{ data }">
                     {{ data.email }}
                 </template>
             </Column>
 
-            <Column field="workCenterName" header="Work Center Name">
+            <Column 
+            field="workCenterName" header="Work Center Name">
                 <template #body="{ data }">
                     {{ data.workCenter.name }}
                 </template>
             </Column>
 
-            <Column field="bankAccountNumber" header="Bank Account Number">
+            <Column v-if="column?.some(obj => obj.field === 'bank_account_number')"
+            field="bankAccountNumber" header="Bank Account Number">
                 <template #body="{ data }">
                     {{ data.bank_account_number }}
                 </template>
@@ -133,7 +145,7 @@
                 Currently this page has got {{ dataResponseAPI.data ? dataResponseAPI.data.length : 0 }} registers. //
                 In total there are {{ totalRecordsResponseAPI ? totalRecordsResponseAPI : 0 }} registers.
             </template>
-            
+
         </DataTable>
     </div>
 </template>
@@ -145,19 +157,45 @@ import { ref, watch, provide, onBeforeMount, onMounted } from 'vue';
 import { useToast } from 'primevue/usetoast';
 import useDataAPI from '@/composables/DataAPI/FetchDataAPI.js'
 import { FilterMatchMode, FilterOperator } from 'primevue/api';
-
+import useEmployeesParameters from '@/composables/PayrollSettings/Employees/EmployeesParameters.js'
+import SelectButton from 'primevue/selectbutton';
 const { getAllResponseAPI, totalRecordsResponseAPI, currentPageResponseAPI, linksResponseAPI, postResponseAPI, putResponseAPI, deleteResponseAPI, errorResponseAPI, dataResponseAPI } = useDataAPI();
-
+const { conditionalColumns } = useEmployeesParameters();
 let endpoint = ref("/employees?page=" + "1")
 const columnas = ref([]);
-const column = ref(null);
+const column = ref([]);
+const valueCustomTable = ref({status: false,icon: 'pi pi-lock',label: 'Custom Table'});
+const customTable = ()=>
+{
+    if(valueCustomTable.value.status)
+    {valueCustomTable.value.status = false;
+    valueCustomTable.value.icon = 'pi pi-lock';} 
+    else {
+        valueCustomTable.value.status = true;
+        valueCustomTable.value.icon = 'pi pi-lock-open';
+    
+    }
+}
+
 const selectedRegisters = ref([]);
 const listRowSelect = ref([]);
 const onRowSelect = (data) => {
     listRowSelect.value = data;
 };
+
+watch(
+    () => dataResponseAPI.value,
+    (x, y) => {
+
+
+    },
+    { immediate: true }
+);
 watch(listRowSelect, onRowSelect);
 
+const onSelectAllChange = () => {
+    onRowSelect();
+};
 
 
 onBeforeMount(() => {
@@ -176,29 +214,46 @@ onMounted(async () => {
         filters: filters.value
     };
 
-    loadLazyData();
-    fillHeaderCustom();
+    await loadLazyData();
+
     selectedRegisters.value = [];
-    columnas.value = [];
+
     column.value = null;
+    fillHeaderCustom();
 
 
 
 
 })
-const allLabels = ref([])
-//allLabels.value = Object.values(dataResponseAPI.value.data).map(condition => condition.fieldName);
+
+
+
 const fillHeaderCustom = () => {
+
+    console.log(dataResponseAPI.value.data[0])
     let mappedArray1 = [];
-    columnas.value = mappedArray1
-        .filter(item => allLabels.value.includes(item))
-        .map((item, index) => ({
+
+    const types = ['string', 'number'];
+
+    for (let key in dataResponseAPI.value.data[0]) {
+        if (types.includes(typeof dataResponseAPI.value.data[0][key]))
+            mappedArray1.push(key);
+    }
+    console.log(mappedArray1)
+
+    columnas.value = mappedArray1.map((item) => {
+        return {
             field: item,
             header: item.replaceAll('_', ' ').toUpperCase(),
-            position: index
-        }));
+            position: mappedArray1.indexOf(item)
+        };
+    });
 
     column.value = columnas.value;
+    
+
+
+
 }
 const onColumnsChange = (column) => {
     column.sort((a, b) => a.position - b.position);
@@ -214,6 +269,7 @@ const loadLazyData = async (event) => {
     endpoint.value = "/employees?page=" + (lazyParams.value.page + 1);
     await getAllResponseAPI(endpoint.value)
     loading.value = false;
+
 
 };
 const onPage = async (event) => {

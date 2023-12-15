@@ -133,24 +133,26 @@ function fetchInfoAndUpdateValue() {
         
         tableData.value = dataFromComponent['data'];
         let mappedArray1 = [];
-
+        console.log(dataFromComponent['data'][0])
         const types = ['string', 'number','boolean'];
         if (dataFromComponent['data']) {
             for (let key in dataFromComponent['data'][0]) {
                 if (types.includes(typeof dataFromComponent['data'][0][key]))
                     mappedArray1.push(key);
+                
             }
             // console.log(tableData.value)
             // console.log(allLabels.value)
             // console.log(mappedArray1)
             //Here the condition of columns is applied
             columnas.value = mappedArray1
-            .filter(item => allLabels.value.includes(item))
+            // .filter(item => allLabels.value.includes(item))
                 .map((item, index) => ({
                     field: item,
                     header: item.replaceAll('_', ' ').toUpperCase(),
                     position: index
                 }));
+                console.log(columnas.value)
             column.value = columnas.value;
             headerNames.value = column.value.map((col) => col.field);
             
