@@ -12,6 +12,10 @@
     <div class="card">
         
         <Button type="button" :icon="valueCustomTable.icon" label="Custom Table" class="p-button-outlined mb-2" @click="customTable()" />
+        <div  v-if="valueCustomTable.status" class="flex justify-content-center mb-4">
+                        <SelectButton v-model="size" :options="sizeOptions" optionLabel="label" dataKey="label">
+                        </SelectButton>
+                    </div>
         <div class="card"  v-if="valueCustomTable.status">
             <h5>¿Cuales columnas quieres ver?</h5>
             <MultiSelect v-model="column" :options="columnas" optionLabel="field" placeholder="Seleccione columnas"
@@ -30,10 +34,7 @@
                 </template>
             </MultiSelect>
         </div>
-        <div  v-if="valueCustomTable.status" class="flex justify-content-center mb-4">
-                        <SelectButton v-model="size" :options="sizeOptions" optionLabel="label" dataKey="label">
-                        </SelectButton>
-                    </div>
+        
         <DataTable responsiveLayout="scroll" v-model:selection="selectedRegisters"
             @row-select="onRowSelect(selectedRegisters)" @row-unselect="onRowSelect(selectedRegisters)"
             v-model:filters="filters" :class="`p-datatable-${size.class}`" :value="dataResponseAPI.data" showGridlines
