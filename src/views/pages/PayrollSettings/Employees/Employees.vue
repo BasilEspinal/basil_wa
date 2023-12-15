@@ -82,15 +82,15 @@
             </Column>
 
 
-            <Column v-if="column?.some(obj => obj.field === 'first_name')"
-            field="name" header="Name">
+            <Column v-if="column?.some(obj => obj.field === 'first_name')" sortable
+            field="first_name" header="Name">
                 <template #body="{ data }">
                     {{ data.first_name }}
                 </template>
             </Column>
 
             <Column v-if="column?.some(obj => obj.field === 'last_name')"
-            field="name" header="Name">
+            field="last_name" header="Name">
                 <template #body="{ data }">
                     {{ data.last_name }}
                 </template>

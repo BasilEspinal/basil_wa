@@ -7,7 +7,8 @@ import { useVuelidate } from '@vuelidate/core';
 import { required, email, minLength, maxLength } from '@vuelidate/validators';
 import { useToast } from 'primevue/usetoast';
 import Toast from 'primevue/toast';
-
+import useDataAPI from '@/composables/DataAPI/FetchDataAPI.js'
+const { getAllResponseAPI, totalRecordsResponseAPI, currentPageResponseAPI, linksResponseAPI, postResponseAPI, putResponseAPI, deleteResponseAPI, errorResponseAPI, dataResponseAPI } = useDataAPI();
 const { layoutConfig } = useLayout();
 
 const loginService = new LoginService();
@@ -18,12 +19,13 @@ export default {
         const toast = useToast();
         return { v$: useVuelidate() };
         
+        
     },
     data() {
         return {
             form: {
-                email: '',
-                password: ''
+                email: 'admin@admin.com',
+                password: 'password'
             },
             logoUrl: computed(() => {
                 return `layout/images/${layoutConfig.darkTheme.value ? 'logo-white' : 'logo-dark'}.png`;
@@ -63,7 +65,10 @@ export default {
         },
         async fetchInfoPostLogin(data) {
             try {
-                let response = await loginService.login(data);
+                //let response = await loginService.login(data);
+                await postResponseAPI({email:"admin@admin.com",password:"password"},"/login")
+                let response = dataResponseAPI.value
+                console.log(dataResponseAPI.value)
                 if (response['error'])
                     throw response.error;
                 if (!response['user'])
@@ -118,7 +123,7 @@ export default {
                             style="padding: 1rem"
                             v-model="v$.form.email.$model"
                         />
-
+                            
                         <label for="password1" class="block text-900 font-medium text-xl mb-2">Password</label>
                         <Password
                             id="password1"
@@ -145,6 +150,7 @@ export default {
                         </div>
                         
                         <Button label="Sign In" class="w-full p-3 text-xl" @click="onSubmit"></Button>
+                        
                     </div>
                 </div>
             </div>

@@ -89,6 +89,7 @@ export default function useDataAPI(datos) {
         }
         else {
           console.log("Esta es la respuesta " + data)
+          dataResponseAPI.value=JSON.parse(JSON.stringify(data, null, 2));
           
         }
         // console.log(errors)
