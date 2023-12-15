@@ -36,16 +36,17 @@
         </div>
         
         <DataTable responsiveLayout="scroll" v-model:selection="selectedRegisters"
+        
             @row-select="onRowSelect(selectedRegisters)" @row-unselect="onRowSelect(selectedRegisters)"
             v-model:filters="filters" :class="`p-datatable-${size.class}`" :value="dataResponseAPI.data" showGridlines
             :rows="20" tableStyle="min-width: 75rem" dataKey="uuid" :totalRecords="totalRecordsResponseAPI"
             @page="onPage($event)" @sort="onSort($event)" ref="dt" lazy :first="first" paginator :loading="loading"
             @select-all-change="onSelectAllChange" scrollable scrollHeight="600px" resizableColumns
             columnResizeMode="expand">
-
+            
             <template #header>
                 <div class="flex justify-content-between">
-                    
+                         
                 </div>
 
 
@@ -53,15 +54,24 @@
 
             <template #empty> No customers found. </template>
             <template #loading> Loading customers data. Please wait. </template>
-
+            
             <Column selectionMode="multiple" headerStyle="width: 3rem"></Column>
 
             <!-- <Column field="document" header="Document" style="min-width: 2rem"> -->
             <!-- Line above uses a set min width as minimum, if that is does not placed is automatically -->
-            <Column v-if="column?.some(obj => obj.field === 'document')" field="document" header="Document">
+            
+            <Column v-if="column?.some(obj => obj.field === 'document')" field="document" header=" Document" :frozen="documentFrozen">
+                <template #header>
+                    <ToggleButton v-model="documentFrozen" onIcon="pi pi-lock" offIcon="pi pi-lock-open" onLabel="" offLabel="" />
+                    <div>&nbsp; </div>
+                </template>
+                
+
                 <template #body="{ data }">
+                    
                     {{ data.document }}
                 </template>
+                
             </Column>
 
             <Column v-if="column?.some(obj => obj.field === 'document_type')"
@@ -177,6 +187,7 @@ const customTable = ()=>
     
     }
 }
+const documentFrozen = ref(false);
 
 const selectedRegisters = ref([]);
 const listRowSelect = ref([]);
