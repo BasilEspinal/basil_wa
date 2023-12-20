@@ -122,7 +122,7 @@
                 </template>
             </Column>
 
-            <Column v-if="column?.some(obj => obj.field === 'last_name')" field="last_name" header="Name">
+            <Column v-if="column?.some(obj => obj.field === 'last_name')" field="last_name" header="Last Name">
                 <template #body="{ data }">
                     {{ data.last_name }}
                 </template>
@@ -188,36 +188,82 @@
         </DataTable>
 
 
-        
-        <Dialog v-model:visible="formDialog" :style="{ width: '700px' }" header="Products Details" :modal="true" class="p-fluid">
-    <div>
-      <label for="document_id" class="p-d-block">Document</label>
 
-      <div>
-        <component v-model="v$.$model" is="inputNumber" inputId="document_id" aria-labelledby="basic" placeholder="Type your document here" />
+        <Dialog v-model:visible="formDialog" :style="{ width: '700px' }" header="Products Details" :modal="true"
+            class="p-fluid text-center mx-auto">
+            <div class="p-grid">
+                <div class="p-col-12 p-md-4 mb-2">
+                    <label for="document_id" class="p-d-block">Document</label>
+                    <InputNumber v-model="documentDialog" inputId="document_id" aria-labelledby="basic"
+                        placeholder="Type your document here" />
+                </div>
 
-        <!-- Display validation errors for documentDialog -->
-        <div v-if="!v$.$pending.documentDialog && v$.$error.documentDialog">
-          <ul>
-            <li v-for="(message, key) in validationMessages" :key="key">{{ message }}</li>
-          </ul>
-        </div>
+                <div class="p-col-12 p-md-4 mb-2">
+                    <label for="typeDocument" class="p-d-block">Type of Document</label>
+                    <Dropdown v-model="selectedTypeDocument" :options="typesDocument" optionLabel="name"
+                        inputId="typeDocument" aria-labelledby="basic" placeholder="Select a type" />
+                </div>
 
-        <!-- Submit button -->
-        <div class="formgrid grid">
-          <Button :disabled="v$.$pending" label="Cancel" icon="pi pi-times" class="p-button-text" @click="hideDialog" />
-          <Button :disabled="v$.$pending" label="Save" icon="pi pi-check" class="p-button-text" @click="submitForm" />
-        </div>
-      </div>
-    </div>
-  </Dialog>
+                <div class="p-col-12 p-md-4 mb-2">
+                    <label for="name" class="p-d-block">Name</label>
+                    <InputText v-model="nameDialog" inputId="name" aria-labelledby="basic"
+                        placeholder="Type your name here" />
+                </div>
+
+                <div class="p-col-12 p-md-4 mb-2">
+                    <label for="lastName" class="p-d-block">Last Name</label>
+                    <InputText v-model="lastNameDialog" inputId="lastName" aria-labelledby="basic"
+                        placeholder="Type your last name here" />
+                </div>
+
+                <!---->
+                <label for="lastName" class="p-d-block">Select gender</label>
+                <div class="flex-container">
+
+                    <div class="flex flex-wrap gap-3 align">
+                        <div class="flex align-items-center">
+                            <RadioButton v-model="genderDialog" inputId="gender1" name="gender" value="Masculino" />
+                            <label for="gender1" class="ml-2">Masculino</label>
+                        </div>
+                        <div class="flex align-items-center">
+                            <RadioButton v-model="genderDialog" inputId="gender2" name="gender" value="Femenino" />
+                            <label for="gender2" class="ml-2">Femenino</label>
+                        </div>
+                        <div class="flex align-items-center">
+                            <RadioButton v-model="genderDialog" inputId="gender3" name="gender" value="Otro" />
+                            <label for="gender3" class="ml-2">Otro</label>
+                        </div>
+
+
+                    </div>
+                </div>
+                <!---->
+                <label for="lastName" class="p-d-block">Status</label>
+                <div class="card flex justify-content-center">
+                    <SelectButton v-model="statusDialog" :options="optionsStatus" aria-labelledby="basic" class="p-invalid" />
+                </div>
+                <!---->
+
+
+                <div class="p-col-12 text-center">
+                    <div v-if="!v$.$pending.documentDialog && v$.$error.documentDialog">
+                        <ul>
+                            <li v-for="(message, key) in validationMessages" :key="key">{{ message }}</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </Dialog>
+
+
+
     </div>
 </template>
 
 <script setup>
 
 
-import { ref, watch, provide, onBeforeMount, onMounted,computed } from 'vue';
+import { ref, watch, provide, onBeforeMount, onMounted, computed } from 'vue';
 import { useToast } from 'primevue/usetoast';
 import useDataAPI from '@/composables/DataAPI/FetchDataAPI.js'
 import { FilterMatchMode, FilterOperator } from 'primevue/api';
@@ -225,6 +271,7 @@ import useEmployeesParameters from '@/composables/PayrollSettings/Employees/Empl
 import SelectButton from 'primevue/selectbutton';
 import useVuelidate from '@vuelidate/core';
 import { required, email, numeric } from '@vuelidate/validators';
+import { plugin, defaultConfig } from '@formkit/vue'
 
 const { getAllResponseAPI, totalRecordsResponseAPI, currentPageResponseAPI, linksResponseAPI, postResponseAPI, putResponseAPI, deleteResponseAPI, errorResponseAPI, dataResponseAPI } = useDataAPI();
 const { conditionalColumns } = useEmployeesParameters();
@@ -233,39 +280,53 @@ const columnas = ref([]);
 const column = ref([]);
 const valueCustomTable = ref({ status: false, icon: 'pi pi-lock', label: 'Custom Table' });
 const mode = ref('');
+const selectedTypeDocument = ref();
+const typesDocument = ref([
+    { name: 'New York', code: 'NY' },
+    { name: 'Rome', code: 'RM' },
+    { name: 'London', code: 'LDN' },
+    { name: 'Istanbul', code: 'IST' },
+    { name: 'Paris', code: 'PRS' }
+]);
+const documentDialog = ref();
+const nameDialog = ref('');
+const lastNameDialog = ref('');
+const genderDialog = ref('');
+const statusDialog = ref('Inactive');
+const optionsStatus = ref(['Inactive', 'Active']);
 ////////////////////////////////////////////////////////////////////////////////
 const formDialog = ref(false);
-const documentDialog = ref(0);
-const validations = { documentDialog: { $model: { required, numeric } } };
+
+const validations = { documentDialog: { required, numeric } };
 const v$ = useVuelidate(validations, { documentDialog });
 
 const validationMessages = computed(() => {
-  const messages = [];
-  if (!v$.$pending.documentDialog && v$.$error.documentDialog) {
-    if (v$.$errors.documentDialog.required) {
-      messages.push('Document is required.');
+    const messages = [];
+    if (!v$.documentDialog.$invalid || v$.$error.documentDialog) {
+        if (v$.$errors.documentDialog.required) {
+            messages.push('Document is required.');
+        }
+        if (v$.$errors.documentDialog.numeric) {
+            messages.push('Document must be a valid number.');
+        }
     }
-    if (v$.$errors.documentDialog.numeric) {
-      messages.push('Document must be a valid number.');
-    }
-  }
-  return messages;
+    return messages;
 });
-
 const submitForm = () => {
-  if (v$.$pending) {
-    console.log('Form is still validating');
-    return;
-  }
+    if (v$.$pending) {
+        console.log('Form is still validating');
+        return;
+    }
 
-  if (v$.$error) {
-    console.log('Form has validation errors. Please correct them.');
-    return;
-  }
+    if (v$.$error) {
+        console.log('Form has validation errors. Please correct them.');
+        return;
+    }
 
-  formDialog.value = false;
-  console.log(documentDialog.value)
-  console.log('Form is valid. formDialog.value set to false.');
+    console.log(documentDialog.value);
+
+    // Perform other actions on form submission
+    console.log('Form is valid. formDialog.value set to false.');
 };
 ////////////////////////////////////////////////////////////////////////////////
 //For opening the dialog
@@ -426,4 +487,9 @@ const sizeOptions = ref([
 
 </script>
 
-<style lang="scss" scoped></style>
+<style lang="scss" scoped>
+.flex-container {
+    display: flex;
+    justify-content: center;
+}
+</style>
