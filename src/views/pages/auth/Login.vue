@@ -2,7 +2,6 @@
 import { useLayout } from '@/layout/composables/layout';
 import { computed, ref } from 'vue';
 import { useRouter } from 'vue-router';
-import LoginService from '@/service/LoginService';
 import { useVuelidate } from '@vuelidate/core';
 import { required, email, minLength, maxLength } from '@vuelidate/validators';
 import { useToast } from 'primevue/usetoast';
@@ -11,7 +10,7 @@ import useDataAPI from '@/composables/DataAPI/FetchDataAPI.js'
 const { getAllResponseAPI, totalRecordsResponseAPI, currentPageResponseAPI, linksResponseAPI, postResponseAPI, putResponseAPI, deleteResponseAPI, errorResponseAPI, dataResponseAPI } = useDataAPI();
 const { layoutConfig } = useLayout();
 
-const loginService = new LoginService();
+
 const count = ref(0);
 
 export default {

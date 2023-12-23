@@ -146,7 +146,7 @@ function fetchInfoAndUpdateValue() {
             // console.log(mappedArray1)
             //Here the condition of columns is applied
             columnas.value = mappedArray1
-            // .filter(item => allLabels.value.includes(item))
+            .filter(item => allLabels.value.includes(item))
                 .map((item, index) => ({
                     field: item,
                     header: item.replaceAll('_', ' ').toUpperCase(),
@@ -157,6 +157,7 @@ function fetchInfoAndUpdateValue() {
             headerNames.value = column.value.map((col) => col.field);
             
             initFilters();
+            
             emits('HeaderNames', dataFromComponent['data'][0]);
         } else { }
     } catch (error) {

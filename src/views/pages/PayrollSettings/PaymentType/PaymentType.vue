@@ -375,7 +375,7 @@ const saveRecord = () => {
           const data = {};
           data[heade.label] = heade.data;
 
-          dataTmp = data
+          //dataTmp = data
           console.log(data)
           return data;
       });
@@ -398,7 +398,7 @@ const saveRecord = () => {
       data = headerNamesRow.value.map((heade) => {
           const data = {};
           data[heade.label] = heade.data;
-          dataTmp = data
+          //dataTmp = data
 
           return data;
       });
@@ -417,7 +417,7 @@ const saveRecord = () => {
       data = headerNamesRow.value.map((heade) => {
           const data = {};
           data[heade.label] = heade.data;
-          dataTmp = data
+          //dataTmp = data
 
           if (heade.selecti)
               id = heade.id
