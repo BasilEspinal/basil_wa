@@ -104,13 +104,28 @@ import BlockViewer from '@/components/BlockViewer.vue';
 
 import '@/assets/styles.scss';
 
+import SideBar from './layout/SidebarPlugin/SideBar.vue';
+import SidebarLayout from './layout/SidebarPlugin/SidebarLayout.vue';
+import SidebarLink from './layout/SidebarPlugin/SidebarLink.vue';
+import SidebarItemGroup from './layout/SidebarPlugin/ItemGroup.vue';
+import SidebarItemSubGroup from './layout/SidebarPlugin/ItemSubGroup.vue';
+
+import { abilitiesPlugin } from '@casl/vue';
+import ability from './service/ability';
+
 const app = createApp(App);
 
+app.use(abilitiesPlugin, ability, { useGlobalProperties: true });
 app.use(router);
 app.use(PrimeVue, { ripple: true });
 app.use(ToastService);
 app.use(DialogService);
 app.use(ConfirmationService);
+app.component('SideBar', SideBar);
+app.component('SidebarLayout', SidebarLayout);
+app.component('SidebarLink', SidebarLink);
+app.component('SidebarItemGroup', SidebarItemGroup);
+app.component('SidebarItemSubGroup', SidebarItemSubGroup);
 
 app.directive('tooltip', Tooltip);
 app.directive('badge', BadgeDirective);
