@@ -2,14 +2,18 @@
 import { ref, computed, onMounted, onBeforeUnmount } from 'vue';
 import { useLayout } from '@/layout/composables/layout';
 import { useRouter } from 'vue-router';
-
+import useDataAPI from '@/composables/DataAPI/FetchDataAPI.js'
 const { layoutConfig, onMenuToggle, changeThemeSettings } = useLayout();
-
+const { getAllResponseAPI, totalRecordsResponseAPI, currentPageResponseAPI, linksResponseAPI, postResponseAPI, putResponseAPI, deleteResponseAPI, errorResponseAPI, dataResponseAPI } = useDataAPI();
 const outsideClickListener = ref(null);
 const topbarMenuActive = ref(false);
 const dataUser = ref('');
 const router = useRouter();
 const toggleValue = ref(layoutConfig.darkTheme.value);
+
+const logout = async () => {    
+    await postResponseAPI({}, "/logout");
+};
 
 onMounted(() => {
     dataUser.value = sessionStorage.getItem('accessSessionUser');
@@ -82,7 +86,10 @@ const isOutsideClicked = (event) => {
 const Exit = () => {
     localStorage.clear();
     sessionStorage.clear();
-    router.push('/auth/login');
+    logout();
+    router.push('/#');
+    
+
 };
 </script>
 

@@ -1,6 +1,7 @@
 
 <template>
     <h1>Información de productos </h1>
+    
     <div class="card">
         <div class="grid">
             <div class="col-xs-12 col-sm-6 col-md-4 mb-2 text-center mx-auto">
@@ -25,7 +26,6 @@
                         </div>
                     </template>
                 </Toolbar>
-
             </div>
             
             

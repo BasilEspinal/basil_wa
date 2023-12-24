@@ -71,22 +71,18 @@
 
         <DataTable responsiveLayout="scroll" v-model:selection="selectedRegisters"
             @row-select="onRowSelect(selectedRegisters)" @row-unselect="onRowSelect(selectedRegisters)"
-            v-model:filters="filters" :filters="filters" :class="`p-datatable-${size.class}`" :value="dataResponseAPI.data"
-            showGridlines :globalFilterFields="['workCenter.name', 'last_name', 'company.name']" :rows="20"
-            tableStyle="min-width: 75rem" dataKey="uuid" :totalRecords="totalRecordsResponseAPI" ref="dt" :paginator="true"
-            :loading="loading" :rowsPerPageOptions="[5, 10, 20, 50]" filterDisplay="menu"
+            v-model:filters="filters" :class="`p-datatable-${size.class}`" :value="dataResponseAPI.data" showGridlines
+            :rows="20" tableStyle="min-width: 75rem" dataKey="uuid" :totalRecords="totalRecordsResponseAPI"
+            @page="onPage($event)" @sort="onSort($event)" ref="dt" lazy :first="first" paginator :loading="loading"
             @select-all-change="onSelectAllChange" scrollable scrollHeight="600px" resizableColumns
             columnResizeMode="expand">
 
             <template #header>
-                <div class="flex justify-content-between flex-column sm:flex-row">
-                    <Button type="button" icon="pi pi-filter-slash" label="Limpiar" class="p-button-outlined mb-2"
-                        @click="clearFilter()" />
-                    <span class="p-input-icon-left mb-2">
-                        <i class="pi pi-search" />
-                        <InputText v-model="filters['global'].value" placeholder="Buscar" style="width: 100%" />
-                    </span>
+                <div class="flex justify-content-between">
+
                 </div>
+
+
             </template>
 
             <template #empty> No customers found. </template>
@@ -97,7 +93,7 @@
             <!-- <Column field="document" header="Document" style="min-width: 2rem"> -->
             <!-- Line above uses a set min width as minimum, if that is does not placed is automatically -->
 
-            <Column v-if="column?.some(obj => obj.field === 'document')" field="document" header=" Document" sortable
+            <Column v-if="column?.some(obj => obj.field === 'document')" field="document" header=" Document"
                 :frozen="documentFrozen">
                 <template #header>
                     <ToggleButton v-model="documentFrozen" onIcon="pi pi-lock" offIcon="pi pi-lock-open" onLabel=""
@@ -113,22 +109,10 @@
 
             </Column>
 
-            <Column v-if="column?.some(obj => obj.field === 'document_type')" header="Type of Document" sortable>
+            <Column v-if="column?.some(obj => obj.field === 'document_type')" header="Type of Document">
                 <template #body="{ data }">
                     {{ data.document_type }}
                 </template>
-
-                
-                <template #filter="{ filterModel }">
-              <InputText
-                type="text"
-                v-model="filterModel.value"
-                class="p-column-filter"
-                placeholder="Search by name"
-              />
-            </template>
-                
-                
             </Column>
 
 
@@ -256,8 +240,7 @@
                 <!---->
                 <label for="lastName" class="p-d-block">Status</label>
                 <div class="card flex justify-content-center">
-                    <SelectButton v-model="statusDialog" :options="optionsStatus" aria-labelledby="basic"
-                        class="p-invalid" />
+                    <SelectButton v-model="statusDialog" :options="optionsStatus" aria-labelledby="basic" class="p-invalid" />
                 </div>
                 <!---->
 
@@ -286,11 +269,13 @@ import useDataAPI from '@/composables/DataAPI/FetchDataAPI.js'
 import { FilterMatchMode, FilterOperator } from 'primevue/api';
 import useEmployeesParameters from '@/composables/PayrollSettings/Employees/EmployeesParameters.js'
 import SelectButton from 'primevue/selectbutton';
-
+import useVuelidate from '@vuelidate/core';
+import { required, email, numeric } from '@vuelidate/validators';
+import { plugin, defaultConfig } from '@formkit/vue'
 
 const { getAllResponseAPI, totalRecordsResponseAPI, currentPageResponseAPI, linksResponseAPI, postResponseAPI, putResponseAPI, deleteResponseAPI, errorResponseAPI, dataResponseAPI } = useDataAPI();
 const { conditionalColumns } = useEmployeesParameters();
-let endpoint = ref("/employees")
+let endpoint = ref("/employees?page=" + "1")
 const columnas = ref([]);
 const column = ref([]);
 const valueCustomTable = ref({ status: false, icon: 'pi pi-lock', label: 'Custom Table' });
@@ -309,7 +294,41 @@ const lastNameDialog = ref('');
 const genderDialog = ref('');
 const statusDialog = ref('Inactive');
 const optionsStatus = ref(['Inactive', 'Active']);
+////////////////////////////////////////////////////////////////////////////////
+const formDialog = ref(false);
 
+const validations = { documentDialog: { required, numeric } };
+const v$ = useVuelidate(validations, { documentDialog });
+
+const validationMessages = computed(() => {
+    const messages = [];
+    if (!v$.documentDialog.$invalid || v$.$error.documentDialog) {
+        if (v$.$errors.documentDialog.required) {
+            messages.push('Document is required.');
+        }
+        if (v$.$errors.documentDialog.numeric) {
+            messages.push('Document must be a valid number.');
+        }
+    }
+    return messages;
+});
+const submitForm = () => {
+    if (v$.$pending) {
+        console.log('Form is still validating');
+        return;
+    }
+
+    if (v$.$error) {
+        console.log('Form has validation errors. Please correct them.');
+        return;
+    }
+
+    console.log(documentDialog.value);
+
+    // Perform other actions on form submission
+    console.log('Form is valid. formDialog.value set to false.');
+};
+////////////////////////////////////////////////////////////////////////////////
 //For opening the dialog
 
 const hideDialog = () => {
@@ -427,13 +446,19 @@ const first = ref(0);
 const loadLazyData = async (event) => {
 
     lazyParams.value = { ...lazyParams.value, first: event?.first || first.value };
-    endpoint.value = "/employees"
+    endpoint.value = "/employees?page=" + (lazyParams.value.page + 1);
     await getAllResponseAPI(endpoint.value)
     loading.value = false;
 
 
 };
+const onPage = async (event) => {
+    loading.value = true;
+    lazyParams.value = event;
+    loadLazyData(event);
 
+
+};
 const onSort = (event) => {
     lazyParams.value = event;
     loadLazyData(event);
@@ -448,8 +473,6 @@ const initFilters = () => {
     filters.value = {
         global: { value: null, matchMode: FilterMatchMode.CONTAINS },
         name: { operator: FilterOperator.AND, constraints: [{ value: null, matchMode: FilterMatchMode.STARTS_WITH }] },
-        document_type: { operator: FilterOperator.AND, constraints: [{ value: null, matchMode: FilterMatchMode.STARTS_WITH }] },
-
 
     };
 };
