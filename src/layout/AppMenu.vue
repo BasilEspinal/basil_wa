@@ -4,10 +4,20 @@ import { ref, onBeforeMount } from 'vue';
 import AppMenuItem from './AppMenuItem.vue';
 
 const model2 = ref([
+    
     {
+        items:[
+            {
         label: 'Inicio',
-
-        items: [{ label: 'Centro de control', icon: 'pi pi-fw pi-home', to: '/applayout' }]
+        gate: '',
+        items: [{ 
+            label: 'Centro de control', 
+            icon: 'pi pi-fw pi-home', 
+            to: '/applayout',
+            gate: 'centroControl_ver_IcoporesRecogidos'
+        }]
+    }
+        ]
     },
     {
         items: [
@@ -15,6 +25,7 @@ const model2 = ref([
                 rol: 'admin',
                 icon: 'pi pi-desktop',
                 label: 'Monitor Online',
+                gate: '',
                 items: [{ label: 'Corta', icon: 'pi pi-fw pi-table', to: '/corta' }]
             }
         ]
@@ -29,13 +40,15 @@ const model2 = ref([
                     {
                         label: 'Variedades',
                         to: '/product/varieties',
-                        icon: 'pi pi-th-large'
+                        icon: 'pi pi-th-large',
+                        gate: 'variante_listado'
                     },
                     {
                         icon: 'pi pi-bars',
                         label: 'Productos',
                         to: '/product/products',
-                        gate: 'producto_listado'
+                        gate: 'producto_listado',
+                        
                     },
                     {
                         label: 'Variedades de producto',
@@ -51,7 +64,8 @@ const model2 = ref([
                     {
                         label: 'Tipos de Unidades',
                         to: '/product/unit_types',
-                        icon: 'pi pi-bookmark'
+                        icon: 'pi pi-bookmark',
+                        gate: 'unidad_medida_listado'
                     },
                     {
                         label: 'Tipos de Empaque',
@@ -291,10 +305,10 @@ async function fetchInfoAndUpdateValue() {
 <template>
     <ul class="layout-menu">
         <template v-for="(item, i) in model2" :key="item">
-            <!--<div class="card">-->
+            <!-- <div class="card"> -->
             <app-menu-item v-if="!item.separator" :item="item" :index="i"></app-menu-item>
             <li v-if="item.separator" class="menu-separator"></li>
-            <!--</div>-->
+            <!-- </div> -->
         </template>
     </ul>
 </template>

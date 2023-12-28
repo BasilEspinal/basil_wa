@@ -91,7 +91,7 @@ export default {
         updateAbility(user, token) {
             const bearer = 'Bearer ' + token;
 
-            fetch('http://alirio.test/api/v1/abilities', {
+            fetch('http://164.90.146.196:81/api/v1/abilities', {
                 headers: {
                     Authorization: bearer,
                     accept: 'application/json'
