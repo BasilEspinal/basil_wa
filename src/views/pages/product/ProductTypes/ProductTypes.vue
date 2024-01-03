@@ -11,10 +11,10 @@
                     style="border-radius: 3rem; background-image: linear-gradient(to right, var(--green-100), var(--green-200))">
                     <template v-slot:start>
                         <div>
-                            <Button :disabled="headerNames.length > 0" label="New" icon="pi pi-plus"
+                            <Button v-if ="$can('tipo_producto_crear')" :disabled="headerNames.length > 0" label="New" icon="pi pi-plus"
                                 class="p-button-success mr-2 ml-2 mb-2 mt-2" @click="openNew" size="large" />
                             <!-- <i class="pi pi-bars p-toolbar-separator mr-2 ml-2 mb-2 mt-2"></i> -->
-                            <Button :disabled="!(listRowSelect.length > 0 && listRowSelect.length < 2)" label="Edit"
+                            <Button v-if ="$can('tipo_producto_editar')" :disabled="!(listRowSelect.length > 0 && listRowSelect.length < 2)" label="Edit"
                                 icon="pi pi-file-edit" class="p-button-help mr-2 ml-2 mb-2 mt-2" @click="openEdit"
                                 size="large" />
                             <Button :disabled="!(listRowSelect.length > 0 && listRowSelect.length < 2)" label="Clone"
@@ -22,7 +22,7 @@
                                 size="large" />
                             <Button :disabled="headerNames.length > 0" label="Export" icon="pi pi-file-import"
                                 class="p-button-warning mr-2 ml-2 mb-2 mt-2" @click="openExport" size="large" />
-                            <Button :disabled="!listRowSelect.length > 0" label="Delete" icon="pi pi-trash"
+                            <Button v-if ="$can('tipo_producto_eliminar')" :disabled="!listRowSelect.length > 0" label="Delete" icon="pi pi-trash"
                                 class="p-button-danger mr-2 ml-2 mb-2 mt-2" @click="openDelete" size="large" />
 
                         </div>
@@ -135,7 +135,7 @@
         </div>
 
 
-        <Table title="" path-api="/unit_types" @HeaderNames="onHeaderNames" @onRowSelect="RowSelect"
+        <Table v-if ="$can('tipo_producto_listado')" title="" path-api="/unit_types" @HeaderNames="onHeaderNames" @onRowSelect="RowSelect"
             :dataGot="dataFromComponent" :allLabels="allLabels" />
 
     </div>

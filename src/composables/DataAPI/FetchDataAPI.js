@@ -45,9 +45,9 @@ export default function useDataAPI(datos) {
         else {
           // dataResponseAPI.value=data 
           dataResponseAPI.value=JSON.parse(JSON.stringify(data, null, 2));
-          totalRecordsResponseAPI.value = dataResponseAPI.value.meta.total;
-          linksResponseAPI.value = dataResponseAPI.value.links;
-          currentPageResponseAPI.value = dataResponseAPI.value.meta.current_page;
+          //totalRecordsResponseAPI.value = dataResponseAPI.value.meta.total;
+          //linksResponseAPI.value = dataResponseAPI.value.links;
+          //currentPageResponseAPI.value = dataResponseAPI.value.meta.current_page;
           console.log("totalRecordsResponseAPI.value")
           console.log(totalRecordsResponseAPI.value)
           errorResponseAPI.value = ref('')
@@ -188,9 +188,9 @@ export default function useDataAPI(datos) {
   return {
     errorResponseAPI,
     dataResponseAPI,
-    totalRecordsResponseAPI,
-    currentPageResponseAPI,
-    linksResponseAPI,
+    //totalRecordsResponseAPI,
+    //currentPageResponseAPI,
+    //linksResponseAPI,
     getAllResponseAPI,
     postResponseAPI,
     putResponseAPI,

@@ -16,6 +16,7 @@ const { layoutConfig } = useLayout();
 
 const count = ref(0);
 
+
 export default {
     setup() {
         const toast = useToast();
@@ -27,8 +28,8 @@ export default {
     data() {
         return {
             form: {
-                email: '',
-                password: ''
+                email: 'admin@admin.com',
+                password: 'password'
             },
             logoUrl: computed(() => {
                 return `layout/images/${layoutConfig.darkTheme.value ? 'logo-white' : 'logo-dark'}.png`;
@@ -91,7 +92,7 @@ export default {
         updateAbility(user, token) {
             const bearer = 'Bearer ' + token;
 
-            fetch('http://alirio.test/api/v1/abilities', {
+            fetch('http://164.90.146.196:81/api/v1/abilities', {
                 headers: {
                     Authorization: bearer,
                     accept: 'application/json'
