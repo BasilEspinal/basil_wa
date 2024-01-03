@@ -67,7 +67,6 @@ export default {
                 <ul class="nav">
                     <template v-for="(child, i) in item.children">
                         <sidebar-item-sub-group v-if="child.children" :key="`sub-group-${i}`" :item="child"> </sidebar-item-sub-group>
-
                         <sidebar-link v-else :key="`sub-item-${i}`" :item="child" text> </sidebar-link>
                     </template>
                 </ul>

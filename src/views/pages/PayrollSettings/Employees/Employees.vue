@@ -63,7 +63,9 @@
             </div>
         </div>
 
-        <DataTable responsiveLayout="scroll" v-model:selection="selectedRegisters"
+        <!-- <template v-if="$can('producto_listado')">  -->
+            
+            <DataTable  responsiveLayout="scroll" v-model:selection="selectedRegisters"
             @row-select="onRowSelect(selectedRegisters)" @row-unselect="onRowSelect(selectedRegisters)"
             v-model:filters="filters" :filters="filters" :class="`p-datatable-${size.class}`" :value="dataResponseAPI.data"
             showGridlines :globalFilterFields="['workCenter.name', 'last_name', 'company.name']" :rows="20"
@@ -227,6 +229,14 @@
                 registers. // In total there are {{ totalRecordsResponseAPI ? totalRecordsResponseAPI : 0 }} registers.
             </template>
         </DataTable>
+
+        
+        <template >
+
+            <h1>No tienes permisos</h1>
+        </template>
+        
+
 
         <Dialog v-model:visible="formDialog" :style="{ width: '700px' }" header="Products Details" :modal="true"
             class="p-fluid text-center mx-auto">
@@ -455,10 +465,10 @@ onBeforeMount(() => {
 onMounted(async () => {
     loading.value = true;
     lazyParams.value = {
-        //  first: dt.value.first,
-        //  rows: dt.value.rows,
-        //  sortField: null,
-        //  sortOrder: null,
+        ////  first: dt.value.first,
+        ////  rows: dt.value.rows,
+        ////  sortField: null,
+        ////  sortOrder: null,
         filters: filters.value
     };
 
@@ -471,7 +481,7 @@ onMounted(async () => {
 });
 
 const fillHeaderCustom = () => {
-    console.log(dataResponseAPI.value.data[0]);
+    //console.log(dataResponseAPI.value.data[0]);
     let mappedArray1 = [];
 
     const types = ['string', 'number'];

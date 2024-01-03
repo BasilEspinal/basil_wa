@@ -2,7 +2,8 @@
 import { onMounted, ref, watch } from 'vue';
 import ProductService from '@/service/ProductService';
 import { useLayout } from '@/layout/composables/layout';
-
+import { AbilityBuilder, Ability } from '@casl/ability';
+import { ABILITY_TOKEN } from '@casl/vue';
 const { layoutConfig } = useLayout();
 let documentStyle = getComputedStyle(document.documentElement);
 let textColor = documentStyle.getPropertyValue('--text-color');
@@ -321,7 +322,7 @@ watch(
 
 <template>
     <div class="grid">
-        <div class="col-12 lg:col-6 xl:col-3">
+        <div class="col-12 lg:col-6 xl:col-3" v-if="$can('usuario_listado')">
             <div class="card mb-0">
                 <div class="flex justify-content-between mb-3">
                     <div>
@@ -336,7 +337,8 @@ watch(
                 <span class="text-500">En Traslado</span>
             </div>
         </div>
-        <div class="col-12 lg:col-6 xl:col-3">
+        
+        <div class="col-12 lg:col-6 xl:col-3" v-if="$can('usuario_listado')">
             <div class="card mb-0">
                 <div class="flex justify-content-between mb-3">
                     <div>
