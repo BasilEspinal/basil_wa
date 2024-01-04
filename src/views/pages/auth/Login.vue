@@ -7,10 +7,9 @@ import { required, email, minLength, maxLength } from '@vuelidate/validators';
 import { useToast } from 'primevue/usetoast';
 import Toast from 'primevue/toast';
 import useDataAPI from '@/composables/DataAPI/FetchDataAPI.js';
-
 import { AbilityBuilder, Ability } from '@casl/ability';
 import { ABILITY_TOKEN } from '@casl/vue';
-
+import { useAbility } from '@casl/vue';
 const { postResponseAPI, dataResponseAPI } = useDataAPI();
 const { layoutConfig } = useLayout();
 
@@ -20,7 +19,7 @@ const count = ref(0);
 export default {
     setup() {
         const toast = useToast();
-        return { v$: useVuelidate() };
+        return { v$: useVuelidate()};
     },
     inject: {
         $ability: { from: ABILITY_TOKEN }
@@ -101,9 +100,8 @@ export default {
                 .then((response) => response.json())
                 .then((permissions) => {
                     const { can, rules } = new AbilityBuilder(Ability);
-
                     can(permissions);
-
+                    console.log(permissions)
                     this.$ability.update(rules);
                 });
         }
