@@ -241,12 +241,12 @@ const model2 = ref([
                 items: [
                     {
                         label: 'Empresa',
-                        to: '/admin/companies',
+                        to: '/admon/companies',
                         icon: 'pi pi-folder'
                     },
                     {
                         label: 'Fincas',
-                        to: '/admin/farms',
+                        to: '/admon/farms',
                         icon: 'pi pi-bookmark'
                     }
                 ]

@@ -35,6 +35,7 @@
                     <!-- <pre>{{ listRowSelect}}</pre> -->
                     
                     
+                    
                     <div v-for="key in conditionsProducts " :key="key" class="field">
 
 
@@ -116,6 +117,7 @@
 
 
             <Dialog v-model:visible="deleteRecords" :style="{ width: '450px' }" header="Confirm" :modal="true">
+                
                 <div class="flex align-items-center " v-for="item in headerNamesRow" :key="item">
                     <Checkbox class="mr-2" v-model="item.selecti" :binary="true" />
                     <label :for="item.uuid"> {{ item.label }} </label>

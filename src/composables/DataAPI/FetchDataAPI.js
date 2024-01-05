@@ -48,8 +48,7 @@ export default function useDataAPI(datos) {
           //totalRecordsResponseAPI.value = dataResponseAPI.value.meta.total;
           //linksResponseAPI.value = dataResponseAPI.value.links;
           //currentPageResponseAPI.value = dataResponseAPI.value.meta.current_page;
-          console.log("totalRecordsResponseAPI.value")
-          console.log(totalRecordsResponseAPI.value)
+          
           errorResponseAPI.value = ref('')
         }
         
@@ -68,7 +67,7 @@ export default function useDataAPI(datos) {
   }
 
   const postResponseAPI = async (requestData, endPoint) => {
-    console.log("This is data got", requestData)
+    
     let baseUrl = `${base}${api}${endPoint}`;
     const requestOptions = {
       method: 'POST',
@@ -83,27 +82,28 @@ export default function useDataAPI(datos) {
       })
       .then(data => {
         // actions to data answer
-        console.log(statusCode.value)
+        // console.log(statusCode.value)
         if (data.errors) {
           errorResponseAPI.value = data.errors
         }
         else {
-          console.log("Esta es la respuesta " + data)
+          //console.log("Esta es la respuesta " + data)
           dataResponseAPI.value=JSON.parse(JSON.stringify(data, null, 2));
+
           
         }
         // console.log(errors)
-        console.log(data)
+        //console.log(data)
       })
       .catch(error => {
         if (error.name === 'TypeError') {
           // Error de red
-          console.error('Error de red:', error.message);
+          //console.error('Error de red:', error.message);
         } else {
           // Error en la respuesta
-          console.error('Error en la respuesta:', error.message);
+          //console.error('Error en la respuesta:', error.message);
         }
-        console.error('Error :', error);
+        //console.error('Error :', error);
       });
 
   }
@@ -174,20 +174,21 @@ export default function useDataAPI(datos) {
         console.log(data)
       })
       .catch(error => {
-        if (error.name === 'TypeError') {
-          // Error de red
-          console.error('Error de red:', error.message);
-        } else {
-          // Error en la respuesta
-          console.error('Error en la respuesta:', error.message);
-        }
-        console.error('Error :', error);
+        // if (error.name === 'TypeError') {
+        //   // Error de red
+        //   //console.error('Error de red:', error.message);
+        // } else {
+        //   // Error en la respuesta
+        //   //console.info('Error en la respuesta:', error.message);
+        // }
+        //console.error('Error :', error);
       });
   }
 
   return {
     errorResponseAPI,
     dataResponseAPI,
+    statusCode,
     //totalRecordsResponseAPI,
     //currentPageResponseAPI,
     //linksResponseAPI,

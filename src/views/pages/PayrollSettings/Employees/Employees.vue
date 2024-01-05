@@ -1,10 +1,9 @@
 <template>
     <div class="card">
         <div>
-            <pre>{{ listRowSelect[0] }}</pre>
-            <pre>{{ dataPost }}</pre>
+            <pre>{{ listRowSelect }}</pre>
+
             
-            <!-- <pre>{{rules}}</pre> -->
             <h1>Información de Empleados</h1>
         </div>
     </div>
@@ -60,10 +59,8 @@
         </template>
 
         <DataTable
-            responsiveLayout="scroll"
+            
             v-model:selection="selectedRegisters"
-            @row-select="onRowSelect(selectedRegisters)"
-            @row-unselect="onRowSelect(selectedRegisters)"
             v-model:filters="filters"
             :filters="filters"
             :class="`p-datatable-${size.class}`"
@@ -78,12 +75,14 @@
             :loading="loading"
             :rowsPerPageOptions="[5, 10, 20, 50]"
             filterDisplay="menu"
-            @select-all-change="onSelectAllChange"
             scrollable
             scrollHeight="600px"
             resizableColumns
             columnResizeMode="expand"
             sortMode="multiple"
+            @row-select="onRowSelect(selectedRegisters)"
+            @row-unselect="onRowSelect(selectedRegisters)"
+            @select-all-change="onSelectAllChange"
         >
             <template #header>
                 <div class="flex justify-content-between flex-column sm:flex-row">
@@ -113,7 +112,7 @@
                 </template>
             </Column>
 
-            <Column v-if="column?.some((obj) => obj.field === 'document_type')" header="Type of Document" sortable>
+            <!-- <Column v-if="column?.some((obj) => obj.field === 'document_type')" header="Type of Document" sortable>
                 <template #body="{ data }">
                     {{ data.document_type }}
                 </template>
@@ -121,219 +120,202 @@
                 <template #filter="{ filterModel }">
                     <InputText type="text" v-model="filterModel.value" class="p-column-filter" placeholder="Search by name" />
                 </template>
-            </Column>
+            </Column> -->
             <Column v-if="column?.some((obj) => obj.field === 'first_name')" field="first_name" header="Name" sortable>
                 <template #body="{ data }">
                     {{ data.first_name }}
                 </template>
                 <template #filter="{ filterModel }">
-                    <InputText v-model="filterModel.value" type="text" class="p-column-filter" placeholder="Search by country" />
+                    <InputText v-model="filterModel.value" type="text" class="p-column-filter" placeholder="Search by name" />
                 </template>
             </Column>
-            <!-- v-if="column?.some((obj) => obj.field === 'last_name')" -->
+            
             <Column field="last_name" header="Last Name" sortable>
                 <template #body="{ data }">
                     {{ data.last_name }}
                 </template>
                 <template #filter="{ filterModel }">
-                    <InputText v-model="filterModel.value" type="text" class="p-column-filter" placeholder="Search by country" />
+                    <InputText v-model="filterModel.value" type="text" class="p-column-filter" placeholder="Search by last name" />
                 </template>
             </Column>
-            <!-- v-if="column?.some((obj) => obj.field === 'gender_id')" -->
-            <Column field="gender" header="Gender" sortable>
+            
+            <!-- <Column field="gender" header="Gender" sortable>
                 <template #body="{ data }">
                     {{ data.gender_id }}
                 </template>
                 <template #filter="{ filterModel }">
                     <InputText v-model="filterModel.value" type="text" class="p-column-filter" placeholder="Search by country" />
                 </template>
+            </Column> -->
+
+            
+            
+            <Column field="email" header="Email" sortable>
+                <template #body="{ data }">
+                    {{ data.email }}
+                </template>
+
+                <template #filter="{ filterModel }">
+                    <InputText v-model="filterModel.value" type="text" class="p-column-filter" placeholder="Search by email" />
+                </template>
             </Column>
 
+            <!-- <Column field="workCenterName" header="Work Center Name" sortable>
+                <template #body="{ data }">
+                    {{ data.workCenter.name }}
+                </template>
+                <template #filter="{ filterModel }">
+                    <InputText v-model="filterModel.value" type="text" class="p-column-filter" placeholder="Search by workcenter" />
+                </template>
+            </Column>
+            
+            <Column field="bankAccountNumber" header="Bank Account Number" sortable>
+                <template #body="{ data }">
+                    {{ data.bank_account_number }}
+                </template>
+                <template #filter="{ filterModel }">
+                    <InputText v-model="filterModel.value" type="text" class="p-column-filter" placeholder="Search by Bank Account number" />
+                </template>
+            </Column>
+            <Column field="bankAccountDoc" header="Bank Account Document" sortable>
+                <template #body="{ data }">
+                    {{ data.bank_account_doc }}
+                </template>
+                <template #filter="{ filterModel }">
+                    <InputText v-model="filterModel.value" type="text" class="p-column-filter" placeholder="Search by Bank Account Document" />
+                </template>
+            </Column> -->
+
+            <Column field="paymentType" filterField="payment_type.name" header="Payment Type" sortable>
+                <template #body="{ data }">
+                    {{ data.payment_type.name }}
+                </template>
+                <template #filter="{ filterModel }">
+                    <InputText v-model="filterModel.value" type="text" class="p-column-filter" placeholder="Search by payment type" />
+                </template>
+            </Column>
+<!-- 
+            <Column field="farmName" header="Farm Name" sortable>
+                <template #body="{ data }">
+                    {{ data.farm.name }}
+                </template>
+                <template #filter="{ filterModel }">
+                    <InputText v-model="filterModel.value" type="text" class="p-column-filter" placeholder="Search by country" />
+                </template>
+            </Column>
+
+            <Column field="companyName" header="Company Name" sortable>
+                <template #body="{ data }">
+                    {{ data.company.name }}
+                </template>
+                <template #filter="{ filterModel }">
+                    <InputText v-model="filterModel.value" type="text" class="p-column-filter" placeholder="Search by country" />
+                </template>
+            </Column>
             <Column field="status" header="Status" sortable>
                 <template #body="{ data }">
                     <Tag :value="data.status.name" :severity="'EFC88B'" />
                 </template>
                 <template #filter="{ filterModel }">
-                    <InputText v-model="filterModel.value" type="text" class="p-column-filter" placeholder="Search by country" />
+                    <InputText v-model="filterModel.value" type="text" class="p-column-filter" placeholder="Search by status" />
                 </template>
-            </Column>
-            <!-- v-if="column?.some((obj) => obj.field === 'email')" -->
-            <Column field="email" header="Email" sortable>
-                <template #body="{ data }">
-                    {{ data.email }}
-                </template>
-
-                <template #filter="{ filterModel }">
-                    <InputText v-model="filterModel.value" type="text" class="p-column-filter" placeholder="Search by country" />
-                </template>
-            </Column>
-
-            <Column field="workCenterName" header="Work Center Name" sortable>
-                <template #body="{ data }">
-                    {{ data.workCenter.name }}
-                </template>
-                <template #filter="{ filterModel }">
-                    <InputText v-model="filterModel.value" type="text" class="p-column-filter" placeholder="Search by country" />
-                </template>
-            </Column>
-            <!-- v-if="column?.some((obj) => obj.field === 'bank_account_number')" -->
-            <Column field="bankAccountNumber" header="Bank Account Number" sortable>
-                <template #body="{ data }">
-                    {{ data.bank_account_number }}
-                </template>
-                <template #filter="{ filterModel }">
-                    <InputText v-model="filterModel.value" type="text" class="p-column-filter" placeholder="Search by Bank Account" />
-                </template>
-            </Column>
-
-            <Column field="farmName" header="Farm Name" sortable>
-                <template #body="{ data }">
-                    {{ data.farm.name }}
-                </template>
-                <template #filter="{ filterModel }">
-                    <InputText v-model="filterModel.value" type="text" class="p-column-filter" placeholder="Search by country" />
-                </template>
-            </Column>
-
-            <Column field="companyName" header="Company Name" sortable>
-                <template #body="{ data }">
-                    {{ data.company.name }}
-                </template>
-                <template #filter="{ filterModel }">
-                    <InputText v-model="filterModel.value" type="text" class="p-column-filter" placeholder="Search by country" />
-                </template>
-            </Column>
-
-            <Column field="email" header="Email" sortable>
-                <template #body="{ data }">
-                    {{ data.email }}
-                </template>
-
-                <template #filter="{ filterModel }">
-                    <InputText v-model="filterModel.value" type="text" class="p-column-filter" placeholder="Search by country" />
-                </template>
-            </Column>
-
-            <Column field="workCenterName" header="Work Center Name" sortable>
-                <template #body="{ data }">
-                    {{ data.workCenter.name }}
-                </template>
-                <template #filter="{ filterModel }">
-                    <InputText v-model="filterModel.value" type="text" class="p-column-filter" placeholder="Search by country" />
-                </template>
-            </Column>
-            <!-- v-if="column?.some((obj) => obj.field === 'bank_account_number')" -->
-            <Column field="bankAccountNumber" header="Bank Account Number" sortable>
-                <template #body="{ data }">
-                    {{ data.bank_account_number }}
-                </template>
-                <template #filter="{ filterModel }">
-                    <InputText v-model="filterModel.value" type="text" class="p-column-filter" placeholder="Search by Bank Account" />
-                </template>
-            </Column>
-
-            <Column field="farmName" header="Farm Name" sortable>
-                <template #body="{ data }">
-                    {{ data.farm.name }}
-                </template>
-                <template #filter="{ filterModel }">
-                    <InputText v-model="filterModel.value" type="text" class="p-column-filter" placeholder="Search by country" />
-                </template>
-            </Column>
-
-            <Column field="companyName" header="Company Name" sortable>
-                <template #body="{ data }">
-                    {{ data.company.name }}
-                </template>
-                <template #filter="{ filterModel }">
-                    <InputText v-model="filterModel.value" type="text" class="p-column-filter" placeholder="Search by country" />
-                </template>
-            </Column>
+            </Column> -->
+            
         </DataTable>
-
-        
-        <Dialog v-model:visible="formDialog" :style="{ width: '700px' }" header="Products Details" :modal="true" class="p-fluid text-center mx-auto">
-            <div class="p-grid"> 
-
-<pre>{{ dataPost }}</pre>
+        <pre>{{ dataResponseAPI.data }}</pre>
+        <Dialog v-model:visible="formDialog" :style="{ width: '700px' }" :header="headerDialog" :modal="true" class="p-fluid text-center mx-auto">
+            <div class="p-grid">
+                <pre>{{ dataPost }}</pre>
+                <pre>{{ mode }}</pre>
+                <div class="p-col-6 p-md-4 mb-2">
+                    <label for="typeDocument" class="p-d-block">Type of documents</label>
+                    <Dropdown v-model="selectedDocumentType" :options="typesDocument" optionLabel="label" inputId="typeOfDocumentId" aria-labelledby="basic" :placeholder="selectedDocumentType.id" />
+                </div>
+                <div class="p-col-6 p-md-4 mb-2">
+                    <label for="document_id" class="p-d-block">Document</label>
+                    <InputText v-model="dataPost.document" inputId="document" aria-labelledby="basic" placeholder="Type your document here" />
+                </div>
 
                 <div class="p-col-6 p-md-4 mb-2">
-            <label for="farmsId" class="p-d-block">Type of documents</label>
-            <Dropdown v-model="listRowSelect[0].document_type" :options="typesDocument" optionLabel="id" inputId="typeOfDocumentId" aria-labelledby="basic" placeholder="Select a Type of document" />
-        </div>
-        <div class="p-col-6 p-md-4 mb-2">
-    <label for="document_id" class="p-d-block">Document</label>
-    <InputText v-model="listRowSelect[0].document" inputId="document" aria-labelledby="basic" placeholder="Type your document here" />
-</div>
+                    <label for="name" class="p-d-block">Name</label>
+                    <InputText v-model="dataPost.first_name" inputId="name" aria-labelledby="basic" placeholder="Type your name here" />
+                </div>
 
+                <div class="p-col-6 p-md-4 mb-2">
+                    <label for="lastName" class="p-d-block">Last Name</label>
+                    <InputText v-model="dataPost.last_name" inputId="lastName" aria-labelledby="basic" placeholder="Type your last name here" />
+                </div>
 
-        <div class="p-col-6 p-md-4 mb-2">
-            <label for="name" class="p-d-block">Name</label>
-            <InputText v-model="listRowSelect[0].first_name" inputId="name" aria-labelledby="basic" placeholder="Type your name here" />
-        </div>
+                <div class="p-col-6 p-md-4 mb-2">
+                    <label for="email" class="p-d-block">Email</label>
+                    <InputText v-model="dataPost.email" inputId="email" aria-labelledby="basic" placeholder="Type your email here" />
+                </div>
 
-        <div class="p-col-6 p-md-4 mb-2">
-            <label for="lastName" class="p-d-block">Last Name</label>
-            <InputText v-model="listRowSelect[0].last_name" inputId="lastName" aria-labelledby="basic" placeholder="Type your last name here" />
-        </div>
+                <div class="p-col-6 p-md-4 mb-2">
+                    <label for="bankAccountNumber" class="p-d-block">Account number</label>
+                    <InputText v-model="dataPost.bank_account_number" inputId="bankAccountNumber" aria-labelledby="basic" placeholder="Type your account here" />
+                </div>
 
-        <div class="p-col-6 p-md-4 mb-2">
-            <label for="email" class="p-d-block">Email</label>
-            <InputText v-model="listRowSelect[0].email" inputId="email" aria-labelledby="basic" placeholder="Type your last email here" />
-        </div>
+                <div class="p-col-6 p-md-4 mb-2">
+                    <label for="bankAccountDoc" class="p-d-block">Account Document</label>
+                    <InputText v-model="dataPost.bank_account_doc" inputId="bankAccountDoc" aria-labelledby="basic" placeholder="Type your account document here" />
+                </div>
 
-        <div class="p-col-6 p-md-4 mb-2">
-            <label for="bankAccountNumber" class="p-d-block">Account number</label>
-            <InputText v-model="listRowSelect[0].bank_account_number" inputId="bankAccountNumber" aria-labelledby="basic" placeholder="Type your last email here" />
-        </div>
+                <div class="p-col-6 p-md-4 mb-2">
+                    <label for="paymentTypes" class="p-d-block">Payment types</label>
+                    <Dropdown v-model="selectedPaymentType" :options="paymentTypes" optionLabel="name" inputId="paymentType" aria-labelledby="basic" :placeholder="selectedPaymentType.name" />
+                </div>
 
-        <div class="p-col-6 p-md-4 mb-2">
-            <label for="bankAccountDoc" class="p-d-block">Account Document</label>
-            <InputText v-model="listRowSelect[0].bank_account_doc" inputId="bankAccountDoc" aria-labelledby="basic" placeholder="Type your account document here" />
-        </div>
+                <div class="p-col-6 p-md-4 mb-2">
+                    <label for="workCenter" class="p-d-block">Work Center</label>
+                    <Dropdown v-model="selectedWorkCenters" :options="workCenters" optionLabel="name" inputId="workCenter" aria-labelledby="basic" :placeholder="selectedWorkCenters.name" />
+                </div>
 
-        <div class="p-col-6 p-md-4 mb-2">
-            <label for="workCenter" class="p-d-block">Work Center</label>
-            <Dropdown v-model="listRowSelect[0].work_center_id" :options="workCenters" optionLabel="id" inputId="workCenter" aria-labelledby="basic" placeholder="Select a work center" />
-        </div>
+                <div class="p-col-6 p-md-4 mb-2">
+                    <label for="genderType" class="p-d-block">Select gender</label>
+                    <Dropdown v-model="selectedGenderType" :options="genderTypes" optionLabel="label" inputId="genderType" aria-labelledby="basic" :placeholder="selectedGenderType.id" />
+                </div>
 
-        <div class="p-col-6 p-md-4 mb-2">
-            <label for="genderType" class="p-d-block">Select gender</label>
-            <Dropdown v-model="listRowSelect[0].gender" :options="genderTypes" optionLabel="id" inputId="genderType" aria-labelledby="basic" placeholder="Select a type" />
-        </div>
+                <div class="p-col-6 p-md-4 mb-2" >
+                    <label for="farmsId" class="p-d-block">Farms</label>
+                    <Dropdown v-model="selectedFarm" :options="farms" optionLabel="name" inputId="farmsId" aria-labelledby="basic" :placeholder="selectedFarm.id" />
+                </div>
 
-        <div class="p-col-6 p-md-4 mb-2">
-            <label for="companyId" class="p-d-block">Company</label>
-            <Dropdown v-model="listRowSelect[0].company_id" :options="companies" optionLabel="id" inputId="companyId" aria-labelledby="basic" placeholder="Select a company" />
-        </div>
-
-        <div class="p-col-6 p-md-4 mb-2">
-            <label for="farmsId" class="p-d-block">Farms</label>
-            <Dropdown v-model="listRowSelect[0].farm.id" :options="farms" optionLabel="id" inputId="companyId" aria-labelledby="basic" placeholder="Select a company" />
-        </div>
-
-        <div class="p-col-6 text-center">
-            <label for="status" class="p-d-block">Status</label>
-            <div class="card flex justify-content-center">
-                <SelectButton v-model="statusDialog" :options="optionsStatus" aria-labelledby="basic" class="p-invalid" />
             </div>
 
-            <div>
-                <ul>
-                    <li v-for="(message, key) in validationMessages" :key="key">{{ message }}</li>
-                </ul>
+            <template #footer>
+                <div>
+                    <Button label="Cancel" icon="pi pi-times" class="p-button-text" @click="hideDialog" />
+                    <Button label="Save" icon="pi pi-check" class="p-button-text" @click="saveRecord" />
+                </div>
+            </template>
+        </Dialog>
+        <Toast />
+
+        <Dialog v-model:visible="deleteDialog" :style="{ width: '700px' }" :header="headerDialog" :modal="true" class="p-fluid text-center mx-auto">
+            <div class="flex align-items-center">
+                <div class="p-grid">
+                    <div class="p-col-6 p-md-4 mb-2">
+                        <label> {{ recordsDelete[0].document }} </label>
+                    </div>
+                    <div>
+                        <label> {{ recordsDelete[0].first_name }} </label>
+                    </div>
+                    <div>
+                        <label> {{ recordsDelete[0].last_name }} </label>
+                    </div>
+                </div>
+
+                <i class="pi pi-exclamation-triangle ml-3 mb-2" style="font-size: 2rem" />
             </div>
-        </div>
-    </div> -->
-
-    <template #footer>
-        <div>
-            <Button label="Cancel" icon="pi pi-times" class="p-button-text" @click="hideDialog" />
-            <Button label="Save" icon="pi pi-check" class="p-button-text" @click="saveRecord" />
-        </div>
-    </template>
-</Dialog>
-
+            <template #footer>
+                <div>
+                    <Button label="Cancel" icon="pi pi-times" class="p-button-text" @click="hideDialog" />
+                    <Button label="Save" icon="pi pi-check" class="p-button-text" @click="saveRecord" />
+                </div>
+            </template>
+        </Dialog>
+        <Toast />
     </div>
 </template>
 
@@ -345,17 +327,30 @@ import { FilterMatchMode, FilterOperator } from 'primevue/api';
 import useEmployeesParameters from '@/composables/PayrollSettings/Employees/EmployeesParameters.js';
 import SelectButton from 'primevue/selectbutton';
 import { useAbility } from '@casl/vue';
+import { useRouter } from 'vue-router';
+const router = useRouter();
 const { can, rules } = useAbility();
-const { getAllResponseAPI, totalRecordsResponseAPI, currentPageResponseAPI, linksResponseAPI, postResponseAPI, putResponseAPI, deleteResponseAPI, errorResponseAPI, dataResponseAPI } = useDataAPI();
+const { getAllResponseAPI, totalRecordsResponseAPI, currentPageResponseAPI, linksResponseAPI, postResponseAPI, putResponseAPI, deleteResponseAPI, errorResponseAPI, dataResponseAPI, statusCode } = useDataAPI();
 const { conditionalColumns } = useEmployeesParameters();
 let endpoint = ref('/employees');
 const toast = useToast();
 const columnas = ref([]);
 const column = ref([]);
 const valueCustomTable = ref({ status: false, icon: 'pi pi-lock', label: 'Custom Table' });
-const mode = ref('');
-const selectedTypeDocument = ref();
-const selectedGenderType = ref();
+const mode = ref();
+const selectedFarm = ref({ id: null });
+const selectedGenderType = ref({ id: null });
+const selectedDocumentType = ref({ id: 1 });
+const selectedPaymentType = ref({
+			uuid: "",
+			code: "",
+			name: "",
+			company_id: null,
+			farm_id: null,
+			status_id: null
+		});
+const selectedWorkCenters = ref({ id: 1, uuid: '',name: '' });
+const headerDialog = ref('');
 const typesDocument = ref([
     { label: 'Cedula de ciudadania', id: 'CEDCIUD' },
     { label: 'Cedula de extranjería', id: 'CEDEXTR' }
@@ -378,6 +373,32 @@ const genderTypes = ref([
         label: 'Otro'
     }
 ]);
+const paymentTypes = ref([
+		{
+			"uuid": "5adbd1ff-8eb6-40de-9e61-e888de339606",
+			"code": "BBVA",
+			"name": "Banco BBVA",
+			"company_id": 1,
+			"farm_id": 1,
+			"status_id": 1
+		},
+		{
+			"uuid": "a63235f4-f43b-47a4-b78c-896c96d79f7b",
+			"code": "DALE!",
+			"name": "DALE!",
+			"company_id": 1,
+			"farm_id": 1,
+			"status_id": 1
+		},
+		{
+			"uuid": "c31b8d07-6fa3-4a95-b3bb-ec8f15458933",
+			"code": "EFECTIVO",
+			"name": "EFECTIVO",
+			"company_id": 1,
+			"farm_id": 1,
+			"status_id": 1
+		}
+	])
 const workCenters = ref([
     {
         id: 1,
@@ -397,133 +418,294 @@ const companies = ref([
 
 const farms = ref([
     {
-        id: 1,
         uuid: 'c86883a4-9334-4519-96df-3a9416a293f6',
+        id: 0,
+        name: 'Otra',
+        code: 'FIN00'
+    },
+    {
+        uuid: 'c86883a4-9334-4519-96df-3a9416a293f6',
+        id: 1,
         name: 'Retoño',
-        code: 'fin01'
+        code: 'FIN01'
+    },
+    {
+        id: 2,
+        uuid: '21eb9f91-25df-458a-81fa-68e5a91eed69',
+        name: 'La consentida',
+        code: 'FIN02'
     }
 ]);
 
-
 const statusDialog = ref('Active');
 const optionsStatus = ref(['Inactive', 'Active']);
-
 const formDialog = ref(false);
-//For opening the dialog
-const headerNamesRow = ref([]);
+const deleteDialog = ref(false);
 const hideDialog = () => {
-    
     formDialog.value = false;
+    deleteDialog.value = false;
+    recordsDelete.value = [];
+    resetValues();
 };
-const isChanging = ref(false);
-watch(
-    () => isChanging.value,
-    (newValue, oldValue) => {
-        //readAll(endpoint.value);
-    }
-);
+
 const listRowSelect = ref([]);
 let dataPost = ref({
-    document: "",
-    first_name: "",
-    last_name: "",
-    last_name_b: "",
-    gender_id: "",
-    email: "",
-    document_type: "",
-    bank_account_number: "",
-    bank_account_doc: "",
-    bank_type_buy: "",
-    work_center_id: null,
-    company_id: null,
-    farm_id: null,
-    status_id: null
+    document_type: selectedDocumentType.value.id,
+    document: '',
+    first_name: '',
+    last_name: '',
+    last_name_b: '',
+    gender_id: selectedGenderType.value.id,
+    email: '',
+    bank_account_number: '',
+    bank_account_doc: '',
+    bank_type_buy: '',
+    work_center_id: selectedWorkCenters.value.id,
+    payment_type_id: selectedPaymentType.value.uuid,
+    // company_id: null,
+    farm_id: selectedFarm.value.id
+    
+    // status_id: null
 });
 
-
-
-
 const resetValues = () => {
-    dataPost.value.document = "";
-    dataPost.value.first_name = "";
-    dataPost.value.last_name = "";
-    dataPost.value.last_name_b = "";
-    dataPost.value.gender_id = "";
-    dataPost.value.email = "";
-    dataPost.value.document_type = "";
-    dataPost.value.bank_account_number = "";
-    dataPost.value.bank_account_doc = "";
-    dataPost.value.bank_type_buy = "";
+    dataPost.value.document = '';
+    dataPost.value.first_name = '';
+    dataPost.value.last_name = '';
+    dataPost.value.last_name_b = '';
+    dataPost.value.gender_id = '';
+    dataPost.value.email = '';
+    dataPost.value.document_type = '';
+    dataPost.value.bank_account_number = '';
+    dataPost.value.bank_account_doc = '';
+    dataPost.value.bank_type_buy = '';
     dataPost.value.work_center_id = null;
-    dataPost.value.company_id = null;
+    // dataPost.value.company_id = null;
     dataPost.value.farm_id = null;
-    dataPost.value.status_id = null;
+    dataPost.value.payment_type_id = null;
+    // dataPost.value.status_id = null;
 };
 
-const assignValues = () => {
-    if(mode.value ="EDIT"){
-        dataPost.value.document = listRowSelect.value[0].document;
-dataPost.value.first_name = listRowSelect.value[0].first_name;
-dataPost.value.last_name = listRowSelect.value[0].last_name;
-dataPost.value.last_name_b = listRowSelect.value[0].last_name_b;
-dataPost.value.gender_id = listRowSelect.value[0].gender_id;
-dataPost.value.email = listRowSelect.value[0].email;
-dataPost.value.document_type = listRowSelect.value[0].document_type;
-dataPost.value.bank_account_number = listRowSelect.value[0].bank_account_number;
-dataPost.value.bank_account_doc = listRowSelect.value[0].bank_account_doc;
-dataPost.value.bank_type_buy = listRowSelect.value[0].bank_type_buy;
-if(listRowSelect.value[0].work_center_id){dataPost.value.work_center_id = null}
-else{ dataPost.value.work_center_id = listRowSelect.value[0].work_center_id;}
-dataPost.value.company_id = listRowSelect.value[0].company_id;
-dataPost.value.farm_id = listRowSelect.value[0].farm_id;
-dataPost.value.status_id = listRowSelect.value[0].status_id;
+const assignValues = (modex) => {
+    alert(modex)
+    if ((modex ==='EDIT')) {
+        
+        
+        selectedDocumentType.value.id = listRowSelect.value[0].document_type;
+        dataPost.value.document_type = listRowSelect.value[0].document_type;
+        //dataPost.value.document = listRowSelect.value[0].document;
+        dataPost.value.document = "";
+        dataPost.value.first_name = listRowSelect.value[0].first_name;
+        dataPost.value.last_name = listRowSelect.value[0].last_name;
+        dataPost.value.last_name_b = listRowSelect.value[0].last_name_b;
+        selectedGenderType.value.id = listRowSelect.value[0].gender_id;
+        dataPost.value.gender_id = listRowSelect.value[0].gender_id;
+        dataPost.value.email = listRowSelect.value[0].email;
+        dataPost.value.bank_account_number = listRowSelect.value[0].bank_account_number;
+        dataPost.value.bank_account_doc = listRowSelect.value[0].bank_account_doc;
+        dataPost.value.bank_type_buy = listRowSelect.value[0].bank_type_buy;
+        selectedWorkCenters.value.id = listRowSelect.value[0].workCenter.id;
+        selectedWorkCenters.value.name = listRowSelect.value[0].workCenter.name;
+        dataPost.value.work_center_id = listRowSelect.value[0].workCenter.id;
+        // dataPost.value.company_id = listRowSelect.value[0].company_id;
+        selectedFarm.value.id = listRowSelect.value[0].farm.id;
+        dataPost.value.farm_id = listRowSelect.value[0].farm.id;
+        selectedPaymentType.value.id = listRowSelect.value[0].payment_type.id;
+        selectedPaymentType.value.name = listRowSelect.value[0].payment_type.name;
+        dataPost.value.payment_type_id = listRowSelect.value[0].payment_type.uuid;
+
+        // dataPost.value.status_id = listRowSelect.value[0].status_id;
+    }
+    if ((modex=== 'CLONE' )) {
+        
+        dataPost.value.document_type = listRowSelect.value[0].document_type;
+        dataPost.value.document = "";
+        dataPost.value.first_name = listRowSelect.value[0].first_name;
+        dataPost.value.last_name = listRowSelect.value[0].last_name;
+        dataPost.value.last_name_b = listRowSelect.value[0].last_name_b;
+        dataPost.value.gender_id = listRowSelect.value[0].gender_id;
+        dataPost.value.email = listRowSelect.value[0].email;
+        dataPost.value.bank_account_number = listRowSelect.value[0].bank_account_number;
+        dataPost.value.bank_account_doc = listRowSelect.value[0].bank_account_doc;
+        dataPost.value.bank_type_buy = listRowSelect.value[0].bank_type_buy;
+        dataPost.value.work_center_id = listRowSelect.value[0].workCenter.id;
+        // dataPost.value.company_id = listRowSelect.value[0].company_id;
+        dataPost.value.farm_id = listRowSelect.value[0].farm.id;
+
+        // // dataPost.value.status_id = listRowSelect.value[0].status_id;
     }
 };
-watch(listRowSelect, () => {
-  assignValues();
-}, { deep: true });
 
+watch(
+    selectedFarm,
+    () => {
+        dataPost.value.farm_id = selectedFarm.value.id;
+    },
+    { deep: true }
+);
+watch(
+    selectedDocumentType,
+    () => {
+        dataPost.value.document_type = selectedDocumentType.value.id;
+    },
+    { deep: true }
+);
+
+watch(
+    selectedWorkCenters,
+    () => {
+        dataPost.value.work_center_id = selectedWorkCenters.value.id;
+    },
+    { deep: true }
+);
+watch(
+    selectedGenderType,
+    () => {
+        dataPost.value.gender_id = selectedGenderType.value.id;
+    },
+    { deep: true }
+);
 const openNew = () => {
     mode.value = 'NEW';
+    resetValues();
     formDialog.value = true;
+    headerDialog.value = 'New employee record';
 };
-let serverError = ref(null);
-let isServerError = ref(false);
-const newRecord = async (requestDataUnitTypes, endpoint) => {
-    await postResponseAPI(requestDataUnitTypes, endpoint);
-    serverError.value = errorResponseAPI.value;
-    if (serverError.value._rawValue != '') {
-        isServerError.value = true;
-        toast.add({ severity: 'Error', summary: 'There are some errores', detail: 'Must correct some mistakes', life: 3000 });
-    } else {
-        isChanging.value = true;
-        isServerError.value = false;
-        hideDialog();
-        toast.add({ severity: 'success', summary: 'Successful', detail: 'Done', life: 3000 });
-    }
-};
-
 const openEdit = () => {
     mode.value = 'EDIT';
-
-
     formDialog.value = true;
-    
-
-    
+    headerDialog.value = 'Edit a employee record';
+    assignValues(mode.value)
 };
 
-const saveRecord = () => {
-    if (mode.value == 'NEW') {
-        newRecord(dataPost.value, endpoint.value);
+const openClone = () => {
+    mode.value = 'CLONE';
+    headerDialog.value = 'Clone a employee record';
+    formDialog.value = true;
+    assignValues(mode.value)
+};
+let recordsDelete = ref([]);
+const openDelete = () => {
+    mode.value = 'DELETE';
+    headerDialog.value = 'Delete a employee record';
+    resetValues();
+    deleteDialog.value = true;
 
-    }
-    if (mode.value == 'EDIT') {
-        newRecord(dataPost.value, endpoint.value);
-        
-
+    for (let key in listRowSelect.value) {
+        recordsDelete.value.push({
+            uuid: listRowSelect.value[key].uuid,
+            document: listRowSelect.value[key].document,
+            first_name: listRowSelect.value[key].first_name,
+            last_name: listRowSelect.value[key].last_name
+        });
     }
 };
+
+const openExport = () => {
+    mode.value = 'EXPORT';
+    headerDialog.value = 'Export a employee record';
+    resetValues();
+    formDialog.value = true;
+};
+
+const newRecord = async (requestDataUnitTypes, endpoint) => {
+    await postResponseAPI(requestDataUnitTypes, endpoint);
+    recordsDelete.value = [];
+    
+
+    switch (statusCode.value) {
+        case 201:
+            toast.add({ severity: 'success', summary: 'Successful', detail: 'Done', life: 3000 });
+            formDialog.value = false;
+            hideDialog();
+            router.go();
+            break;
+
+        case 422:
+            toast.add({ severity: 'error', summary: 'Validation Error', detail: 'There are validation errors', life: 3000 });
+            // Puedes agregar más casos según sea necesario
+            break;
+        case 200:
+            toast.add({ severity: 'warn', summary: 'xxxxxr', detail: 'There are validation errors', life: 3000 });
+            // Puedes agregar más casos según sea necesario
+            break;
+        default:
+            toast.add({ severity: 'error', summary: 'Error Message', detail: 'There was an error', life: 3000 });
+    }
+};
+const updateRecord = async (requestDataUnitTypes, id, endpoint) => {
+    await putResponseAPI(requestDataUnitTypes, endpoint, id);
+    recordsDelete.value = [];
+
+
+    switch (statusCode.value) {
+        case 202:
+            toast.add({ severity: 'success', summary: 'Successful', detail: 'Done', life: 3000 });
+
+            hideDialog();
+            router.go();
+            break;
+
+        case 422:
+            toast.add({ severity: 'error', summary: 'Validation Error', detail: 'There are validation errors', life: 3000 });
+            // Puedes agregar más casos según sea necesario
+            break;
+        case 200:
+            toast.add({ severity: 'warn', summary: 'xxxxxr', detail: 'There are validation errors', life: 3000 });
+            // Puedes agregar más casos según sea necesario
+            break;
+        default:
+            toast.add({ severity: 'error', summary: 'Error Message', detail: 'There was an error', life: 3000 });
+    }
+};
+const dropRecord = async (id, endpoint) => {
+    await deleteResponseAPI({}, endpoint, id);
+
+    
+
+    switch (statusCode.value) {
+        case 204:
+            toast.add({ severity: 'success', summary: 'Successful', detail: 'Done', life: 3000 });
+            router.go();
+            hideDialog();
+            break;
+
+        case 422:
+            toast.add({ severity: 'error', summary: 'Validation Error', detail: 'There are validation errors', life: 3000 });
+            // Puedes agregar más casos según sea necesario
+            break;
+        case 200:
+            toast.add({ severity: 'warn', summary: 'xxxxxr', detail: 'There are validation errors', life: 3000 });
+            // Puedes agregar más casos según sea necesario
+            break;
+        default:
+            toast.add({ severity: 'error', summary: 'Error Message', detail: 'There was an error', life: 3000 });
+    }
+};
+const saveRecord = async () => {
+    switch (mode.value) {
+        case 'NEW':
+            await newRecord(dataPost.value, endpoint.value, statusCode.value);
+            break;
+        case 'EDIT':
+            
+            await updateRecord(dataPost.value, listRowSelect.value[0].uuid, endpoint.value);
+            break;
+        case 'DELETE':
+            if (recordsDelete.value.length > 0 && recordsDelete.value.length < 2) await dropRecord(recordsDelete.value[0].uuid, endpoint.value);
+            else {
+                toast.add({ severity: 'error', summary: 'Error Message', detail: 'No puedes eliminar mas de un registro', life: 3000 });
+                
+            }
+            break;
+        case 'CLONE':
+            
+        await newRecord(dataPost.value, endpoint.value, statusCode.value);
+        break;    
+    }
+    mode.value = '';
+};
+
 ////////////////////////////////////////////////////////////////
 const customTable = () => {
     if (valueCustomTable.value.status) {
@@ -539,7 +721,10 @@ const documentFrozen = ref(false);
 const selectedRegisters = ref([]);
 
 const onRowSelect = (data) => {
+    
     listRowSelect.value = data;
+    //assignValues(mode.value)
+    
 };
 
 watch(
@@ -582,7 +767,7 @@ onMounted(async () => {
 });
 
 const fillHeaderCustom = () => {
-    //console.log(dataResponseAPI.value.data[0]);
+    
     let mappedArray1 = [];
 
     const types = ['string', 'number'];
@@ -590,7 +775,7 @@ const fillHeaderCustom = () => {
     for (let key in dataResponseAPI.value.data[0]) {
         if (types.includes(typeof dataResponseAPI.value.data[0][key])) mappedArray1.push(key);
     }
-    console.log(mappedArray1);
+    
 
     columnas.value = mappedArray1.map((item) => {
         return {
@@ -624,15 +809,16 @@ const initFilters = () => {
     filters.value = {
         global: { value: null, matchMode: FilterMatchMode.CONTAINS },
         document: { operator: FilterOperator.AND, constraints: [{ value: null, matchMode: FilterMatchMode.STARTS_WITH }] },
-        document_type: { operator: FilterOperator.AND, constraints: [{ value: null, matchMode: FilterMatchMode.STARTS_WITH }] },
+        //document_type: { operator: FilterOperator.AND, constraints: [{ value: null, matchMode: FilterMatchMode.STARTS_WITH }] },
         first_name: { operator: FilterOperator.AND, constraints: [{ value: null, matchMode: FilterMatchMode.STARTS_WITH }] },
         last_name: { operator: FilterOperator.AND, constraints: [{ value: null, matchMode: FilterMatchMode.STARTS_WITH }] },
         'status.name': { operator: FilterOperator.AND, constraints: [{ value: null, matchMode: FilterMatchMode.STARTS_WITH }] },
         email: { operator: FilterOperator.AND, constraints: [{ value: null, matchMode: FilterMatchMode.STARTS_WITH }] },
-        'workCenter.name': { operator: FilterOperator.AND, constraints: [{ value: null, matchMode: FilterMatchMode.STARTS_WITH }] },
-        bank_account_number: { operator: FilterOperator.AND, constraints: [{ value: null, matchMode: FilterMatchMode.STARTS_WITH }] },
-        'farm.name': { operator: FilterOperator.AND, constraints: [{ value: null, matchMode: FilterMatchMode.STARTS_WITH }] },
-        'company.name': { operator: FilterOperator.AND, constraints: [{ value: null, matchMode: FilterMatchMode.STARTS_WITH }] }
+        //'workCenter.name': { operator: FilterOperator.AND, constraints: [{ value: null, matchMode: FilterMatchMode.STARTS_WITH }] },
+        //bank_account_number: { operator: FilterOperator.AND, constraints: [{ value: null, matchMode: FilterMatchMode.STARTS_WITH }] },
+        //'farm.name': { operator: FilterOperator.AND, constraints: [{ value: null, matchMode: FilterMatchMode.STARTS_WITH }] },
+        //'company.name': { operator: FilterOperator.AND, constraints: [{ value: null, matchMode: FilterMatchMode.STARTS_WITH }] },
+        'payment_type.name': { operator: FilterOperator.AND, constraints: [{ value: null, matchMode: FilterMatchMode.STARTS_WITH }] }
     };
 };
 // sizeOptionsButton

@@ -97,6 +97,107 @@
 
 
 
+            <!-- <Column field="status" header="Status" sortable>
+                <template #body="{ data }">
+                    <Tag :value="data.status.name" :severity="'EFC88B'" />
+                </template>
+                <template #filter="{ filterModel }">
+                    <InputText v-model="filterModel.value" type="text" class="p-column-filter" placeholder="Search by country" />
+                </template>
+            </Column> -->
+            <!-- v-if="column?.some((obj) => obj.field === 'email')" -->
+            <Column field="email" header="Email" sortable>
+                <template #body="{ data }">
+                    {{ data.email }}
+                </template>
+
+                <template #filter="{ filterModel }">
+                    <InputText v-model="filterModel.value" type="text" class="p-column-filter" placeholder="Search by country" />
+                </template>
+            </Column>
+
+            <Column field="workCenterName" header="Work Center Name" sortable>
+                <template #body="{ data }">
+                    {{ data.workCenter.name }}
+                </template>
+                <template #filter="{ filterModel }">
+                    <InputText v-model="filterModel.value" type="text" class="p-column-filter" placeholder="Search by country" />
+                </template>
+            </Column>
+            <!-- v-if="column?.some((obj) => obj.field === 'bank_account_number')" -->
+            <Column field="bankAccountNumber" header="Bank Account Number" sortable>
+                <template #body="{ data }">
+                    {{ data.bank_account_number }}
+                </template>
+                <template #filter="{ filterModel }">
+                    <InputText v-model="filterModel.value" type="text" class="p-column-filter" placeholder="Search by Bank Account" />
+                </template>
+            </Column>
+
+            <Column field="farmName" header="Farm Name" sortable>
+                <template #body="{ data }">
+                    {{ data.farm.name }}
+                </template>
+                <template #filter="{ filterModel }">
+                    <InputText v-model="filterModel.value" type="text" class="p-column-filter" placeholder="Search by country" />
+                </template>
+            </Column>
+
+            <Column field="companyName" header="Company Name" sortable>
+                <template #body="{ data }">
+                    {{ data.company.name }}
+                </template>
+                <template #filter="{ filterModel }">
+                    <InputText v-model="filterModel.value" type="text" class="p-column-filter" placeholder="Search by country" />
+                </template>
+            </Column>
+
+            <Column field="email" header="Email" sortable>
+                <template #body="{ data }">
+                    {{ data.email }}
+                </template>
+
+                <template #filter="{ filterModel }">
+                    <InputText v-model="filterModel.value" type="text" class="p-column-filter" placeholder="Search by country" />
+                </template>
+            </Column>
+
+            <Column field="workCenterName" header="Work Center Name" sortable>
+                <template #body="{ data }">
+                    {{ data.workCenter.name }}
+                </template>
+                <template #filter="{ filterModel }">
+                    <InputText v-model="filterModel.value" type="text" class="p-column-filter" placeholder="Search by country" />
+                </template>
+            </Column>
+            <!-- v-if="column?.some((obj) => obj.field === 'bank_account_number')" -->
+            <Column field="bankAccountNumber" header="Bank Account Number" sortable>
+                <template #body="{ data }">
+                    {{ data.bank_account_number }}
+                </template>
+                <template #filter="{ filterModel }">
+                    <InputText v-model="filterModel.value" type="text" class="p-column-filter" placeholder="Search by Bank Account" />
+                </template>
+            </Column>
+
+            <Column field="farmName" header="Farm Name" sortable>
+                <template #body="{ data }">
+                    {{ data.farm.name }}
+                </template>
+                <template #filter="{ filterModel }">
+                    <InputText v-model="filterModel.value" type="text" class="p-column-filter" placeholder="Search by country" />
+                </template>
+            </Column>
+
+            <Column field="companyName" header="Company Name" sortable>
+                <template #body="{ data }">
+                    {{ data.company.name }}
+                </template>
+                <template #filter="{ filterModel }">
+                    <InputText v-model="filterModel.value" type="text" class="p-column-filter" placeholder="Search by country" />
+                </template>
+            </Column>
+
             <template #footer> Currently this page has got {{ dataResponseAPI.data ? dataResponseAPI.data.length : 0 }} registers. // In total there are {{ totalRecordsResponseAPI ? totalRecordsResponseAPI : 0 }} registers. </template>
         </DataTable>
     
