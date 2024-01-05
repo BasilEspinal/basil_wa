@@ -112,7 +112,7 @@
                 </template>
             </Column>
 
-            <!-- <Column v-if="column?.some((obj) => obj.field === 'document_type')" header="Type of Document" sortable>
+            <Column v-if="column?.some((obj) => obj.field === 'document_type')" filterField = "document_type" header="Type of Document" sortable>
                 <template #body="{ data }">
                     {{ data.document_type }}
                 </template>
@@ -120,7 +120,7 @@
                 <template #filter="{ filterModel }">
                     <InputText type="text" v-model="filterModel.value" class="p-column-filter" placeholder="Search by name" />
                 </template>
-            </Column> -->
+            </Column>
             <Column v-if="column?.some((obj) => obj.field === 'first_name')" field="first_name" header="Name" sortable>
                 <template #body="{ data }">
                     {{ data.first_name }}
@@ -139,14 +139,14 @@
                 </template>
             </Column>
             
-            <!-- <Column field="gender" header="Gender" sortable>
+            <Column field="gender" filterField="gender_id" header="Gender" sortable>
                 <template #body="{ data }">
                     {{ data.gender_id }}
                 </template>
                 <template #filter="{ filterModel }">
-                    <InputText v-model="filterModel.value" type="text" class="p-column-filter" placeholder="Search by country" />
+                    <InputText v-model="filterModel.value" type="text" class="p-column-filter" placeholder="Search by gender" />
                 </template>
-            </Column> -->
+            </Column>
 
             
             
@@ -160,7 +160,7 @@
                 </template>
             </Column>
 
-            <!-- <Column field="workCenterName" header="Work Center Name" sortable>
+            <Column field="workCenterName" filterField="workCenter.name" header="Work Center Name" sortable>
                 <template #body="{ data }">
                     {{ data.workCenter.name }}
                 </template>
@@ -169,7 +169,7 @@
                 </template>
             </Column>
             
-            <Column field="bankAccountNumber" header="Bank Account Number" sortable>
+            <Column field="bankAccountNumber" filterField="bank_account_number" header="Bank Account Number" sortable>
                 <template #body="{ data }">
                     {{ data.bank_account_number }}
                 </template>
@@ -184,7 +184,7 @@
                 <template #filter="{ filterModel }">
                     <InputText v-model="filterModel.value" type="text" class="p-column-filter" placeholder="Search by Bank Account Document" />
                 </template>
-            </Column> -->
+            </Column>
 
             <Column field="paymentType" filterField="payment_type.name" header="Payment Type" sortable>
                 <template #body="{ data }">
@@ -194,13 +194,13 @@
                     <InputText v-model="filterModel.value" type="text" class="p-column-filter" placeholder="Search by payment type" />
                 </template>
             </Column>
-<!-- 
-            <Column field="farmName" header="Farm Name" sortable>
+
+            <Column field="farmName" filterField="farm.name" header="Farm Name" sortable>
                 <template #body="{ data }">
                     {{ data.farm.name }}
                 </template>
                 <template #filter="{ filterModel }">
-                    <InputText v-model="filterModel.value" type="text" class="p-column-filter" placeholder="Search by country" />
+                    <InputText v-model="filterModel.value" type="text" class="p-column-filter" placeholder="Search by farm" />
                 </template>
             </Column>
 
@@ -208,18 +208,16 @@
                 <template #body="{ data }">
                     {{ data.company.name }}
                 </template>
-                <template #filter="{ filterModel }">
-                    <InputText v-model="filterModel.value" type="text" class="p-column-filter" placeholder="Search by country" />
-                </template>
             </Column>
-            <Column field="status" header="Status" sortable>
+
+            <Column field="status" filterField="status.name" header="Status" sortable>
                 <template #body="{ data }">
                     <Tag :value="data.status.name" :severity="'EFC88B'" />
                 </template>
                 <template #filter="{ filterModel }">
                     <InputText v-model="filterModel.value" type="text" class="p-column-filter" placeholder="Search by status" />
                 </template>
-            </Column> -->
+            </Column>
             
         </DataTable>
         <pre>{{ dataResponseAPI.data }}</pre>
@@ -809,14 +807,15 @@ const initFilters = () => {
     filters.value = {
         global: { value: null, matchMode: FilterMatchMode.CONTAINS },
         document: { operator: FilterOperator.AND, constraints: [{ value: null, matchMode: FilterMatchMode.STARTS_WITH }] },
-        //document_type: { operator: FilterOperator.AND, constraints: [{ value: null, matchMode: FilterMatchMode.STARTS_WITH }] },
+        document_type: { operator: FilterOperator.AND, constraints: [{ value: null, matchMode: FilterMatchMode.STARTS_WITH }] },
         first_name: { operator: FilterOperator.AND, constraints: [{ value: null, matchMode: FilterMatchMode.STARTS_WITH }] },
         last_name: { operator: FilterOperator.AND, constraints: [{ value: null, matchMode: FilterMatchMode.STARTS_WITH }] },
         'status.name': { operator: FilterOperator.AND, constraints: [{ value: null, matchMode: FilterMatchMode.STARTS_WITH }] },
         email: { operator: FilterOperator.AND, constraints: [{ value: null, matchMode: FilterMatchMode.STARTS_WITH }] },
-        //'workCenter.name': { operator: FilterOperator.AND, constraints: [{ value: null, matchMode: FilterMatchMode.STARTS_WITH }] },
-        //bank_account_number: { operator: FilterOperator.AND, constraints: [{ value: null, matchMode: FilterMatchMode.STARTS_WITH }] },
-        //'farm.name': { operator: FilterOperator.AND, constraints: [{ value: null, matchMode: FilterMatchMode.STARTS_WITH }] },
+        gender_id: { operator: FilterOperator.AND, constraints: [{ value: null, matchMode: FilterMatchMode.STARTS_WITH }] },
+        'workCenter.name': { operator: FilterOperator.AND, constraints: [{ value: null, matchMode: FilterMatchMode.STARTS_WITH }] },
+        bank_account_number: { operator: FilterOperator.AND, constraints: [{ value: null, matchMode: FilterMatchMode.STARTS_WITH }] },
+        'farm.name': { operator: FilterOperator.AND, constraints: [{ value: null, matchMode: FilterMatchMode.STARTS_WITH }] },
         //'company.name': { operator: FilterOperator.AND, constraints: [{ value: null, matchMode: FilterMatchMode.STARTS_WITH }] },
         'payment_type.name': { operator: FilterOperator.AND, constraints: [{ value: null, matchMode: FilterMatchMode.STARTS_WITH }] }
     };
