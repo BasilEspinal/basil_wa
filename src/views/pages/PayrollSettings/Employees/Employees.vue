@@ -84,7 +84,7 @@
             @row-unselect="onRowSelect(selectedRegisters)"
             @select-all-change="onSelectAllChange"
         >
-            <template #header>
+            <!-- <template #header>
                 <div class="flex justify-content-between flex-column sm:flex-row">
                     <Button type="button" icon="pi pi-filter-slash" label="Limpiar" class="p-button-outlined mb-2" @click="clearFilter()" />
                     <span class="p-input-icon-left mb-2">
@@ -92,7 +92,26 @@
                         <InputText v-model="filters['global'].value" placeholder="Buscar" style="width: 100%" />
                     </span>
                 </div>
+            </template> -->
+            <template #header>
+                <Toolbar class = "mb-2">
+                    <template v-slot:start>
+                        <Button type="button" icon="pi pi-filter-slash" label="Limpiar" class="p-button-outlined mb-2" @click="clearFilter()" />
+                    </template>
+                    <template v-slot:end>
+                        <span class="p-input-icon-left mb-2">
+                        <i class="pi pi-search" />
+                        <InputText v-model="filters['global'].value" placeholder="Buscar" style="width: 100%" />
+                    </span>
+                    </template>
+                    <template v-slot:center>
+                        
+                        <SelectButton v-model="size" :options="sizeOptions" optionLabel="label" dataKey="label"> </SelectButton>
+                        
+                    </template>       
+                </Toolbar>
             </template>
+            
 
             <template #empty> No customers found. </template>
             <template #loading> Loading customers data. Please wait. </template>
