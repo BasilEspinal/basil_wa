@@ -98,7 +98,7 @@
 
         <!--Here add other columns-->
 
-        <Column field="farmName" filterField="farm.name" header="Farm Name" sortable>
+        <!-- <Column field="farmName" filterField="farm.name" header="Farm Name" sortable>
                 <template #body="{ data }">
                     {{ data.farm.name }}
                 </template>
@@ -138,7 +138,7 @@
                 <template #filter="{ filterModel }">
                     <InputText v-model="filterModel.value" type="text" class="p-column-filter" placeholder="Search by status" />
                 </template>
-            </Column>
+            </Column> -->
 
         </DataTable>
         <Dialog v-model:visible="formDialog" :style="{ width: '700px' }" :header="headerDialog" :modal="true" class="p-fluid text-center mx-auto">
