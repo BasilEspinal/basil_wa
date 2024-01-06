@@ -186,7 +186,7 @@ const { getAllResponseAPI, totalRecordsResponseAPI, currentPageResponseAPI, link
 let endpoint = ref('/lots');
 const loading = ref(false);
 const codeFrozen = ref(false);
-const filters = ref();
+
 const size = ref({ label: 'Normal', value: 'normal' });
 const sizeOptions = ref([
     { label: 'Small', value: 'small', class: 'sm' },
@@ -197,6 +197,7 @@ onMounted(async () => {
     loading.value = true
     await loadLazyData();
 });
+const filters = ref();
 onBeforeMount(() => {
     initFilters();
 });

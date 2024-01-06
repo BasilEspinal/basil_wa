@@ -8,7 +8,22 @@
     <div class="card">
         <div class="grid">
             <div class="col-xs-12 col-sm-6 col-md-4 mb-2 text-center mx-auto">
-                <!--Here you have to paste toolbar-->
+                <!--Uncomment when table is done-->
+                
+                <!-- <div class="col-xs-12 col-sm-6 col-md-4 mb-2 text-center mx-auto">
+                <Toolbar class="bg-gray-900 shadow-2" style="border-radius: 3rem; background-image: linear-gradient(to right, var(--green-100), var(--green-200))">
+                    <template v-slot:start>
+                        <div>
+                            <Button label="New" icon="pi pi-plus" class="p-button-success mr-2 ml-2 mb-2 mt-2" @click="openNew" size="large" />
+                            <Button :disabled="!(listRowSelect.length > 0 && listRowSelect.length < 2)" label="Edit" icon="pi pi-file-edit" class="p-button-help mr-2 ml-2 mb-2 mt-2" @click="openEdit" size="large" />
+                            <Button :disabled="!(listRowSelect.length > 0 && listRowSelect.length < 2)" label="Clone" icon="pi pi-copy" class="p-button-secondary mr-2 ml-2 mb-2 mt-2" @click="openClone" size="large" />
+                            <Button label="Export" icon="pi pi-file-import" class="p-button-warning mr-2 ml-2 mb-2 mt-2" @click="openExport" size="large" />
+                            <Button :disabled="!listRowSelect.length > 0" label="Delete" icon="pi pi-trash" class="p-button-danger mr-2 ml-2 mb-2 mt-2" @click="openDelete" size="large" />
+                        </div>
+                    </template>
+                </Toolbar>
+            </div> -->
+
             </div>
         </div>
         <!-- <pre>{{ dataResponseAPI }}</pre> -->
@@ -34,13 +49,30 @@
          
         >
         <template #header>
+            <!--Uncomment when filters are done-->
 
+            <!-- <Toolbar class = "mb-2">
+                    <template v-slot:start>
+                        <Button type="button" icon="pi pi-filter-slash" label="Limpiar" class="p-button-outlined mb-2" @click="clearFilter()" />
+                    </template>
+                    <template v-slot:end>
+                        <span class="p-input-icon-left mb-2">
+                        <i class="pi pi-search" />
+                        <InputText v-model="filters['global'].value" placeholder="Buscar" style="width: 100%" />
+                    </span>
+                    </template>
+                    <template v-slot:center>
+                        
+                        <SelectButton v-model="size" :options="sizeOptions" optionLabel="label" dataKey="label"> </SelectButton>
+                        
+                    </template>       
+                </Toolbar> -->
         </template>
 
         <template #empty> No customers found. </template>
         <template #loading> Loading customers data. Please wait. </template>
         <Column selectionMode="multiple" headerStyle="width: 3rem"></Column>
-        <Column field="" filterField="" header=" " sortable frozen=""> <!--Replace :frozen with the model-->
+        <Column field="xxxxxx" filterField="xxxxxx" header="xxxxxx " sortable frozen=""> <!--Replace :frozen with the model-->
             <template #header>
                     <ToggleButton v-model="documentFrozen" onIcon="pi pi-lock" offIcon="pi pi-lock-open" onLabel="" offLabel="" />
                     <div>&nbsp;</div>
@@ -110,8 +142,10 @@
 
         </DataTable>
         <Dialog v-model:visible="formDialog" :style="{ width: '700px' }" :header="headerDialog" :modal="true" class="p-fluid text-center mx-auto">
+            <pre>{{ selectedRegisters }}</pre>
         </Dialog>
         <Dialog v-model:visible="deleteDialog" :style="{ width: '700px' }" :header="headerDialog" :modal="true" class="p-fluid text-center mx-auto">
+            <pre>{{ selectedRegisters }}</pre>
         </Dialog> 
     </div>
 </div>
@@ -121,6 +155,7 @@
 <script setup>
 import { ref, watch, provide, onBeforeMount, onMounted } from 'vue';
 import useDataAPI from '@/composables/DataAPI/FetchDataAPI.js';
+import { FilterMatchMode, FilterOperator } from 'primevue/api';
 const { getAllResponseAPI, totalRecordsResponseAPI, currentPageResponseAPI, linksResponseAPI, postResponseAPI, putResponseAPI, deleteResponseAPI, errorResponseAPI, dataResponseAPI, statusCode } = useDataAPI();
 let endpoint = ref('/endpoint'); //replace endpoint with your endpoint
 const loading = ref(false);
@@ -137,6 +172,25 @@ onMounted(async () => {
     await loadLazyData();
 });
 
+const filters = ref();
+onBeforeMount(() => {
+    initFilters();
+});
+
+const clearFilter = () => {
+    initFilters();
+};
+const initFilters = () => {
+    filters.value = {
+        global: { value: null, matchMode: FilterMatchMode.CONTAINS },
+        //xxxx: { operator: FilterOperator.AND, constraints: [{ value: null, matchMode: FilterMatchMode.STARTS_WITH }] },
+        // 'status.name': { operator: FilterOperator.AND, constraints: [{ value: null, matchMode: FilterMatchMode.STARTS_WITH }] },
+        // 'farm.name': { operator: FilterOperator.AND, constraints: [{ value: null, matchMode: FilterMatchMode.STARTS_WITH }] },
+        // created_at: { operator: FilterOperator.AND, constraints: [{ value: null, matchMode: FilterMatchMode.STARTS_WITH }] },
+        // updated_at: { operator: FilterOperator.AND, constraints: [{ value: null, matchMode: FilterMatchMode.STARTS_WITH }] },
+    };
+};
+
 const loadLazyData = async (event) => {
     //lazyParams.value = { ...lazyParams.value, first: event?.first || first.value };
     
@@ -144,6 +198,7 @@ const loadLazyData = async (event) => {
     loading.value = false;
     
 };
+
 
 const listRowSelect = ref([]);
 const selectedRegisters = ref([]);
