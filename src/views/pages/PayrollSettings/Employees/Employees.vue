@@ -1,7 +1,8 @@
 <template>
+    <div>
     <div class="card">
         <div>
-            <pre>{{ listRowSelect }}</pre>
+            <!-- <pre>{{ listRowSelect }}</pre> -->
 
             
             <h1>Información de Empleados</h1>
@@ -25,16 +26,31 @@
                 </Toolbar>
             </div>
         </div>
-        <div class="card"><Button type="button" :icon="valueCustomTable.icon" label="Custom Table" class="p-button-outlined mb-2" @click="customTable()" /></div>
+        <div class="card"><Button type="button" icon="pi pi-table" label="" class="p-button-outlined mb-2" @click="customTable"/>
+            <h5 v-if="valueCustomTable.status">¿Which columns do you want to watch?</h5>
+                <MultiSelect v-if="valueCustomTable.status" v-model="column" :options="columnas" optionLabel="field" placeholder="Seleccione columnas" :filter="true" display="chip" class="w-full md:w-20rem" @change="onColumnsChange(column)">
+                    <template #value="slotProps">
+                        <div class="inline-flex align-items-center py-1 px-2 bg-primary text-primary border-round mr-2" v-for="option of slotProps.value" :key="option.header">
+                            <div>{{ option.header }}</div>
+                        </div>
+                    </template>
 
-        <div class="card" v-if="valueCustomTable.status">
-            <div class="card">
+                    <template #option="slotProps">
+                        <div class="flex align-items-center">
+                            <div>{{ slotProps.option.header }}</div>
+                        </div>
+                    </template>
+                </MultiSelect>
+        </div>
+        
+        
+            <!-- <div class="card">
                 <div v-if="valueCustomTable.status" class="flex justify-content-center mb-4">
                     <SelectButton v-model="size" :options="sizeOptions" optionLabel="label" dataKey="label"> </SelectButton>
                 </div>
-            </div>
+            </div> -->
 
-            <div class="card" v-if="valueCustomTable.status">
+            <!-- <div class="card" v-if="valueCustomTable.status">
                 <h5>¿Which columns do you want to watch?</h5>
                 <MultiSelect v-model="column" :options="columnas" optionLabel="field" placeholder="Seleccione columnas" :filter="true" display="chip" class="w-full md:w-50rem" @change="onColumnsChange(column)">
                     <template #value="slotProps">
@@ -49,8 +65,8 @@
                         </div>
                     </template>
                 </MultiSelect>
-            </div>
-        </div>
+            </div> -->
+        
 
         <!-- <template v-if="$can('producto_listado')">  -->
 
@@ -62,17 +78,16 @@
             
             v-model:selection="selectedRegisters"
             v-model:filters="filters"
-            :filters="filters"
             :class="`p-datatable-${size.class}`"
             :value="dataResponseAPI.data"
             showGridlines
             :globalFilterFields="['workCenter.name', 'last_name', 'company.name']"
-            :rows="20"
             tableStyle="min-width: 75rem"
             dataKey="uuid"
             ref="dt"
             :paginator="true"
             :loading="loading"
+            :rows="20"
             :rowsPerPageOptions="[5, 10, 20, 50]"
             filterDisplay="menu"
             scrollable
@@ -127,7 +142,7 @@
                     {{ data.document }}
                 </template>
                 <template #filter="{ filterModel }">
-                    <InputText v-model="filterModel.value" type="text" class="p-column-filter" placeholder="Search by country" />
+                    <InputText v-model="filterModel.value" type="text" class="p-column-filter" placeholder="Search by document" />
                 </template>
             </Column>
 
@@ -196,7 +211,8 @@
                     <InputText v-model="filterModel.value" type="text" class="p-column-filter" placeholder="Search by Bank Account number" />
                 </template>
             </Column>
-            <Column field="bankAccountDoc" header="Bank Account Document" sortable>
+
+            <Column field="bankAccountDoc" filterField="bank_account_doc" header="Bank Account Document" sortable>
                 <template #body="{ data }">
                     {{ data.bank_account_doc }}
                 </template>
@@ -229,6 +245,24 @@
                 </template>
             </Column>
 
+            <Column field="createdAt" filterField="created_at" header="Creation date" sortable>
+                <template #body="{ data }">
+                    {{ data.created_at }}
+                </template>
+                <template #filter="{ filterModel }">
+                    <InputText v-model="filterModel.value" type="text" class="p-column-filter" placeholder="Search by creation date" />
+                </template>
+            </Column>
+
+            <Column field="updatedAt" filterField="updated_at" header="Modification date" sortable>
+                <template #body="{ data }">
+                    {{ data.updated_at }}
+                </template>
+                <template #filter="{ filterModel }">
+                    <InputText v-model="filterModel.value" type="text" class="p-column-filter" placeholder="Search by modification date" />
+                </template>
+            </Column>
+
             <Column field="status" filterField="status.name" header="Status" sortable>
                 <template #body="{ data }">
                     <Tag :value="data.status.name" :severity="'EFC88B'" />
@@ -239,11 +273,11 @@
             </Column>
             
         </DataTable>
-        <pre>{{ dataResponseAPI.data }}</pre>
+        <!-- <pre>{{ dataResponseAPI.data }}</pre> -->
         <Dialog v-model:visible="formDialog" :style="{ width: '700px' }" :header="headerDialog" :modal="true" class="p-fluid text-center mx-auto">
             <div class="p-grid">
-                <pre>{{ dataPost }}</pre>
-                <pre>{{ mode }}</pre>
+                <!-- <pre>{{ dataPost }}</pre>
+                <pre>{{ mode }}</pre> -->
                 <div class="p-col-6 p-md-4 mb-2">
                     <label for="typeDocument" class="p-d-block">Type of documents</label>
                     <Dropdown v-model="selectedDocumentType" :options="typesDocument" optionLabel="label" inputId="typeOfDocumentId" aria-labelledby="basic" :placeholder="selectedDocumentType.id" />
@@ -334,10 +368,11 @@
         </Dialog>
         <Toast />
     </div>
+</div>
 </template>
 
 <script setup>
-import { ref, watch, provide, onBeforeMount, onMounted, computed } from 'vue';
+import { ref, watch, provide, onBeforeMount, onMounted } from 'vue';
 import { useToast } from 'primevue/usetoast';
 import useDataAPI from '@/composables/DataAPI/FetchDataAPI.js';
 import { FilterMatchMode, FilterOperator } from 'primevue/api';
@@ -353,7 +388,7 @@ let endpoint = ref('/employees');
 const toast = useToast();
 const columnas = ref([]);
 const column = ref([]);
-const valueCustomTable = ref({ status: false, icon: 'pi pi-lock', label: 'Custom Table' });
+const valueCustomTable = ref({ status: false, icon: 'pi pi-table', label: '' });
 const mode = ref();
 const selectedFarm = ref({ id: null });
 const selectedGenderType = ref({ id: null });
@@ -504,7 +539,7 @@ const resetValues = () => {
 };
 
 const assignValues = (modex) => {
-    alert(modex)
+    
     if ((modex ==='EDIT')) {
         
         
@@ -567,7 +602,6 @@ watch(
     },
     { deep: true }
 );
-
 watch(
     selectedWorkCenters,
     () => {
@@ -727,10 +761,10 @@ const saveRecord = async () => {
 const customTable = () => {
     if (valueCustomTable.value.status) {
         valueCustomTable.value.status = false;
-        valueCustomTable.value.icon = 'pi pi-lock';
+        //valueCustomTable.value.icon = 'pi pi-lock';
     } else {
         valueCustomTable.value.status = true;
-        valueCustomTable.value.icon = 'pi pi-lock-open';
+        //valueCustomTable.value.icon = 'pi pi-lock-open';
     }
 };
 const documentFrozen = ref(false);
@@ -834,9 +868,13 @@ const initFilters = () => {
         gender_id: { operator: FilterOperator.AND, constraints: [{ value: null, matchMode: FilterMatchMode.STARTS_WITH }] },
         'workCenter.name': { operator: FilterOperator.AND, constraints: [{ value: null, matchMode: FilterMatchMode.STARTS_WITH }] },
         bank_account_number: { operator: FilterOperator.AND, constraints: [{ value: null, matchMode: FilterMatchMode.STARTS_WITH }] },
+        bank_account_doc: { operator: FilterOperator.AND, constraints: [{ value: null, matchMode: FilterMatchMode.STARTS_WITH }] },
         'farm.name': { operator: FilterOperator.AND, constraints: [{ value: null, matchMode: FilterMatchMode.STARTS_WITH }] },
         //'company.name': { operator: FilterOperator.AND, constraints: [{ value: null, matchMode: FilterMatchMode.STARTS_WITH }] },
-        'payment_type.name': { operator: FilterOperator.AND, constraints: [{ value: null, matchMode: FilterMatchMode.STARTS_WITH }] }
+        'payment_type.name': { operator: FilterOperator.AND, constraints: [{ value: null, matchMode: FilterMatchMode.STARTS_WITH }] },
+        created_at: { operator: FilterOperator.AND, constraints: [{ value: null, matchMode: FilterMatchMode.STARTS_WITH }] },
+        updated_at: { operator: FilterOperator.AND, constraints: [{ value: null, matchMode: FilterMatchMode.STARTS_WITH }] },
+
     };
 };
 // sizeOptionsButton

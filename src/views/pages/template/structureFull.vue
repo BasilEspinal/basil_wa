@@ -8,8 +8,9 @@
     <div class="card">
         <div class="grid">
             <div class="col-xs-12 col-sm-6 col-md-4 mb-2 text-center mx-auto">
-                <!--Here you have to paste toolbar-->
-                <div class="col-xs-12 col-sm-6 col-md-4 mb-2 text-center mx-auto">
+                <!--Uncomment when table is done-->
+                
+                <!-- <div class="col-xs-12 col-sm-6 col-md-4 mb-2 text-center mx-auto">
                 <Toolbar class="bg-gray-900 shadow-2" style="border-radius: 3rem; background-image: linear-gradient(to right, var(--green-100), var(--green-200))">
                     <template v-slot:start>
                         <div>
@@ -21,7 +22,8 @@
                         </div>
                     </template>
                 </Toolbar>
-            </div>
+            </div> -->
+
             </div>
         </div>
         <!-- <pre>{{ dataResponseAPI }}</pre> -->
@@ -29,7 +31,6 @@
         :value="dataResponseAPI.data"
         dataKey="uuid"
         tableStyle="min-width: 75rem"
-        :class="`p-datatable-${size.class}`"
         showGridlines
         :loading="loading"
         scrollable
@@ -40,18 +41,17 @@
         :paginator="true"
         :rows="50"
         :rowsPerPageOptions="[5, 10, 20, 50]"
-        filterDisplay="menu"
-        :globalFilterFields="['code', 'vehicle_type']"
-        v-model:filters="filters"
+        :class="`p-datatable-${size.class}`"
         @row-select="onRowSelect(selectedRegisters)"
         @row-unselect="onRowSelect(selectedRegisters)"
         @select-all-change="onSelectAllChange"
         v-model:selection="selectedRegisters"
          
         >
-
         <template #header>
-            <Toolbar class = "mb-2">
+            <!--Uncomment when filters are done-->
+
+            <!-- <Toolbar class = "mb-2">
                     <template v-slot:start>
                         <Button type="button" icon="pi pi-filter-slash" label="Limpiar" class="p-button-outlined mb-2" @click="clearFilter()" />
                     </template>
@@ -66,57 +66,52 @@
                         <SelectButton v-model="size" :options="sizeOptions" optionLabel="label" dataKey="label"> </SelectButton>
                         
                     </template>       
-                </Toolbar>
+                </Toolbar> -->
         </template>
 
         <template #empty> No customers found. </template>
         <template #loading> Loading customers data. Please wait. </template>
         <Column selectionMode="multiple" headerStyle="width: 3rem"></Column>
-        <Column field="code" filterField="code" header="Code" sortable :frozen="codeFrozen"> <!--Replace :frozen with the model-->
+        <Column field="xxxxxx" filterField="xxxxxx" header="xxxxxx " sortable frozen=""> <!--Replace :frozen with the model-->
             <template #header>
-                    <ToggleButton v-model="codeFrozen" onIcon="pi pi-lock" offIcon="pi pi-lock-open" onLabel="" offLabel="" />
+                    <ToggleButton v-model="documentFrozen" onIcon="pi pi-lock" offIcon="pi pi-lock-open" onLabel="" offLabel="" />
                     <div>&nbsp;</div>
                 </template>
 
                 <template #body="{ data }">
-                    {{ data.code }} 
+                    <!-- {{ data.document }} replace with the object key-->
                 </template>
                 <template #filter="{ filterModel }">
-                    <InputText v-model="filterModel.value" type="text" class="p-column-filter" placeholder="Search by code" />
+                    <InputText v-model="filterModel.value" type="text" class="p-column-filter" placeholder="Search by " />
                 </template>
         </Column>
 
-        <Column field="vehicle_type" filterField="vehicle_type" header="Vehicle type" sortable> 
+        <Column field="" filterField="" header=" " sortable> 
             
                 <template #body="{ data }">
-                    {{ data.vehicle_type }} 
+                    <!-- {{ data.document }} replace with the object key-->
                 </template>
                 <template #filter="{ filterModel }">
-                    <InputText v-model="filterModel.value" type="text" class="p-column-filter" placeholder="Search by vehicle type " />
+                    <InputText v-model="filterModel.value" type="text" class="p-column-filter" placeholder="Search by " />
                 </template>
         </Column>
 
-        <Column field="quantity_available" filterField="quantity_available" header="Quantity available" sortable> 
-            
-            <template #body="{ data }">
-                {{ data.quantity_available }} 
-            </template>
-            <template #filter="{ filterModel }">
-                <InputText v-model="filterModel.value" type="text" class="p-column-filter" placeholder="Search by quantity available" />
-            </template>
-    </Column>
+        <!--Here add other columns-->
 
-    <Column field="weight_packing_type" filterField="weight_packing_type" header="Weight" sortable> 
-            
-            <template #body="{ data }">
-                {{ data.weight_packing_type }} 
-            </template>
-            <template #filter="{ filterModel }">
-                <InputText v-model="filterModel.value" type="text" class="p-column-filter" placeholder="Search by weight" />
-            </template>
-    </Column>
+        <!-- <Column field="farmName" filterField="farm.name" header="Farm Name" sortable>
+                <template #body="{ data }">
+                    {{ data.farm.name }}
+                </template>
+                <template #filter="{ filterModel }">
+                    <InputText v-model="filterModel.value" type="text" class="p-column-filter" placeholder="Search by farm" />
+                </template>
+            </Column>
 
-        
+            <Column field="companyName" header="Company Name" sortable>
+                <template #body="{ data }">
+                    {{ data.company.name }}
+                </template>
+            </Column>
 
             <Column field="createdAt" filterField="created_at" header="Creation date" sortable>
                 <template #body="{ data }">
@@ -136,7 +131,14 @@
                 </template>
             </Column>
 
-            
+            <Column field="status" filterField="status.name" header="Status" sortable>
+                <template #body="{ data }">
+                    <Tag :value="data.status.name" :severity="'EFC88B'" />
+                </template>
+                <template #filter="{ filterModel }">
+                    <InputText v-model="filterModel.value" type="text" class="p-column-filter" placeholder="Search by status" />
+                </template>
+            </Column> -->
 
         </DataTable>
         <Dialog v-model:visible="formDialog" :style="{ width: '700px' }" :header="headerDialog" :modal="true" class="p-fluid text-center mx-auto">
@@ -155,9 +157,9 @@ import { ref, watch, provide, onBeforeMount, onMounted } from 'vue';
 import useDataAPI from '@/composables/DataAPI/FetchDataAPI.js';
 import { FilterMatchMode, FilterOperator } from 'primevue/api';
 const { getAllResponseAPI, totalRecordsResponseAPI, currentPageResponseAPI, linksResponseAPI, postResponseAPI, putResponseAPI, deleteResponseAPI, errorResponseAPI, dataResponseAPI, statusCode } = useDataAPI();
-let endpoint = ref('/vehicles'); //replace endpoint with your endpoint
+let endpoint = ref('/endpoint'); //replace endpoint with your endpoint
 const loading = ref(false);
-const codeFrozen = ref(false);
+
 const size = ref({ label: 'Normal', value: 'normal' });
 const sizeOptions = ref([
     { label: 'Small', value: 'small', class: 'sm' },
@@ -169,6 +171,7 @@ const sizeOptions = ref([
 onMounted(async () => {
     await loadLazyData();
 });
+
 const filters = ref();
 onBeforeMount(() => {
     initFilters();
@@ -180,12 +183,11 @@ const clearFilter = () => {
 const initFilters = () => {
     filters.value = {
         global: { value: null, matchMode: FilterMatchMode.CONTAINS },
-        code: { operator: FilterOperator.AND, constraints: [{ value: null, matchMode: FilterMatchMode.STARTS_WITH }] },
-        vehicle_type: { operator: FilterOperator.AND, constraints: [{ value: null, matchMode: FilterMatchMode.STARTS_WITH }] },
-        quantity_available: { operator: FilterOperator.AND, constraints: [{ value: null, matchMode: FilterMatchMode.STARTS_WITH }] },
-        weight_packing_type: { operator: FilterOperator.AND, constraints: [{ value: null, matchMode: FilterMatchMode.STARTS_WITH }] },
-        created_at: { operator: FilterOperator.AND, constraints: [{ value: null, matchMode: FilterMatchMode.STARTS_WITH }] },
-        updated_at: { operator: FilterOperator.AND, constraints: [{ value: null, matchMode: FilterMatchMode.STARTS_WITH }] },
+        //xxxx: { operator: FilterOperator.AND, constraints: [{ value: null, matchMode: FilterMatchMode.STARTS_WITH }] },
+        // 'status.name': { operator: FilterOperator.AND, constraints: [{ value: null, matchMode: FilterMatchMode.STARTS_WITH }] },
+        // 'farm.name': { operator: FilterOperator.AND, constraints: [{ value: null, matchMode: FilterMatchMode.STARTS_WITH }] },
+        // created_at: { operator: FilterOperator.AND, constraints: [{ value: null, matchMode: FilterMatchMode.STARTS_WITH }] },
+        // updated_at: { operator: FilterOperator.AND, constraints: [{ value: null, matchMode: FilterMatchMode.STARTS_WITH }] },
     };
 };
 
@@ -196,6 +198,7 @@ const loadLazyData = async (event) => {
     loading.value = false;
     
 };
+
 
 const listRowSelect = ref([]);
 const selectedRegisters = ref([]);
