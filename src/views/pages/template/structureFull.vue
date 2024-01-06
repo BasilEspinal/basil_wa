@@ -2,7 +2,7 @@
     <div>
     <div class="card">
         <div>
-            <h1>Información de lotes para Cultivo</h1> 
+            <h1>Información de xxxxx</h1> 
         </div>
     </div>
     <div class="card">
