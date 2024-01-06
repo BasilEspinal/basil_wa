@@ -1,4 +1,5 @@
 <template>
+    <div>
     <div class="card">
         <div>
             <!-- <pre>{{ listRowSelect }}</pre> -->
@@ -77,17 +78,16 @@
             
             v-model:selection="selectedRegisters"
             v-model:filters="filters"
-            :filters="filters"
             :class="`p-datatable-${size.class}`"
             :value="dataResponseAPI.data"
             showGridlines
             :globalFilterFields="['workCenter.name', 'last_name', 'company.name']"
-            :rows="20"
             tableStyle="min-width: 75rem"
             dataKey="uuid"
             ref="dt"
             :paginator="true"
             :loading="loading"
+            :rows="20"
             :rowsPerPageOptions="[5, 10, 20, 50]"
             filterDisplay="menu"
             scrollable
@@ -142,7 +142,7 @@
                     {{ data.document }}
                 </template>
                 <template #filter="{ filterModel }">
-                    <InputText v-model="filterModel.value" type="text" class="p-column-filter" placeholder="Search by country" />
+                    <InputText v-model="filterModel.value" type="text" class="p-column-filter" placeholder="Search by document" />
                 </template>
             </Column>
 
@@ -368,10 +368,11 @@
         </Dialog>
         <Toast />
     </div>
+</div>
 </template>
 
 <script setup>
-import { ref, watch, provide, onBeforeMount, onMounted, computed } from 'vue';
+import { ref, watch, provide, onBeforeMount, onMounted } from 'vue';
 import { useToast } from 'primevue/usetoast';
 import useDataAPI from '@/composables/DataAPI/FetchDataAPI.js';
 import { FilterMatchMode, FilterOperator } from 'primevue/api';
@@ -538,7 +539,7 @@ const resetValues = () => {
 };
 
 const assignValues = (modex) => {
-    alert(modex)
+    
     if ((modex ==='EDIT')) {
         
         
@@ -601,7 +602,6 @@ watch(
     },
     { deep: true }
 );
-
 watch(
     selectedWorkCenters,
     () => {
