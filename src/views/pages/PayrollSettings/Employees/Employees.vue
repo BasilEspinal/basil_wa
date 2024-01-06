@@ -1,61 +1,44 @@
 <template>
     <div class="card">
         <div>
-            <h1>Información de Empleados </h1>
+            <pre>{{ listRowSelect }}</pre>
 
+            
+            <h1>Información de Empleados</h1>
         </div>
-
     </div>
 
-
-
     <div class="card">
-
-
         <div class="grid">
             <div class="col-xs-12 col-sm-6 col-md-4 mb-2 text-center mx-auto">
-                <Toolbar class="bg-gray-900 shadow-2"
-                    style="border-radius: 3rem; background-image: linear-gradient(to right, var(--green-100), var(--green-200))">
+                <Toolbar class="bg-gray-900 shadow-2" style="border-radius: 3rem; background-image: linear-gradient(to right, var(--green-100), var(--green-200))">
                     <template v-slot:start>
                         <div>
-                            <Button label="New" icon="pi pi-plus" class="p-button-success mr-2 ml-2 mb-2 mt-2"
-                                @click="openNew" size="large" />
+                            <Button label="New" icon="pi pi-plus" class="p-button-success mr-2 ml-2 mb-2 mt-2" @click="openNew" size="large" />
                             <!-- <i class="pi pi-bars p-toolbar-separator mr-2 ml-2 mb-2 mt-2"></i> -->
-                            <Button :disabled="!(listRowSelect.length > 0 && listRowSelect.length < 2)" label="Edit"
-                                icon="pi pi-file-edit" class="p-button-help mr-2 ml-2 mb-2 mt-2" @click="openEdit"
-                                size="large" />
-                            <Button :disabled="!(listRowSelect.length > 0 && listRowSelect.length < 2)" label="Clone"
-                                icon="pi pi-copy" class="p-button-secondary mr-2 ml-2 mb-2 mt-2" @click="openClone"
-                                size="large" />
-                            <Button label="Export" icon="pi pi-file-import" class="p-button-warning mr-2 ml-2 mb-2 mt-2"
-                                @click="openExport" size="large" />
-                            <Button :disabled="!listRowSelect.length > 0" label="Delete" icon="pi pi-trash"
-                                class="p-button-danger mr-2 ml-2 mb-2 mt-2" @click="openDelete" size="large" />
-
+                            <Button :disabled="!(listRowSelect.length > 0 && listRowSelect.length < 2)" label="Edit" icon="pi pi-file-edit" class="p-button-help mr-2 ml-2 mb-2 mt-2" @click="openEdit" size="large" />
+                            <Button :disabled="!(listRowSelect.length > 0 && listRowSelect.length < 2)" label="Clone" icon="pi pi-copy" class="p-button-secondary mr-2 ml-2 mb-2 mt-2" @click="openClone" size="large" />
+                            <Button label="Export" icon="pi pi-file-import" class="p-button-warning mr-2 ml-2 mb-2 mt-2" @click="openExport" size="large" />
+                            <Button :disabled="!listRowSelect.length > 0" label="Delete" icon="pi pi-trash" class="p-button-danger mr-2 ml-2 mb-2 mt-2" @click="openDelete" size="large" />
                         </div>
                     </template>
                 </Toolbar>
             </div>
         </div>
-        <div class="card"><Button type="button" :icon="valueCustomTable.icon" label="Custom Table"
-                class="p-button-outlined mb-2" @click="customTable()" /></div>
-
+        <div class="card"><Button type="button" :icon="valueCustomTable.icon" label="Custom Table" class="p-button-outlined mb-2" @click="customTable()" /></div>
 
         <div class="card" v-if="valueCustomTable.status">
             <div class="card">
                 <div v-if="valueCustomTable.status" class="flex justify-content-center mb-4">
-                    <SelectButton v-model="size" :options="sizeOptions" optionLabel="label" dataKey="label">
-                    </SelectButton>
+                    <SelectButton v-model="size" :options="sizeOptions" optionLabel="label" dataKey="label"> </SelectButton>
                 </div>
             </div>
 
             <div class="card" v-if="valueCustomTable.status">
                 <h5>¿Which columns do you want to watch?</h5>
-                <MultiSelect v-model="column" :options="columnas" optionLabel="field" placeholder="Seleccione columnas"
-                    :filter="true" display="chip" class="w-full md:w-50rem" @change="onColumnsChange(column)">
+                <MultiSelect v-model="column" :options="columnas" optionLabel="field" placeholder="Seleccione columnas" :filter="true" display="chip" class="w-full md:w-50rem" @change="onColumnsChange(column)">
                     <template #value="slotProps">
-                        <div class="inline-flex align-items-center py-1 px-2 bg-primary text-primary border-round mr-2"
-                            v-for="option of slotProps.value" :key="option.header">
+                        <div class="inline-flex align-items-center py-1 px-2 bg-primary text-primary border-round mr-2" v-for="option of slotProps.value" :key="option.header">
                             <div>{{ option.header }}</div>
                         </div>
                     </template>
@@ -69,287 +52,701 @@
             </div>
         </div>
 
-        <DataTable responsiveLayout="scroll" v-model:selection="selectedRegisters"
-            @row-select="onRowSelect(selectedRegisters)" @row-unselect="onRowSelect(selectedRegisters)"
-            v-model:filters="filters" :filters="filters" :class="`p-datatable-${size.class}`" :value="dataResponseAPI.data"
-            showGridlines :globalFilterFields="['workCenter.name', 'last_name', 'company.name']" :rows="20"
-            tableStyle="min-width: 75rem" dataKey="uuid" :totalRecords="totalRecordsResponseAPI" ref="dt" :paginator="true"
-            :loading="loading" :rowsPerPageOptions="[5, 10, 20, 50]" filterDisplay="menu"
-            @select-all-change="onSelectAllChange" scrollable scrollHeight="600px" resizableColumns
-            columnResizeMode="expand">
+        <!-- <template v-if="$can('producto_listado')">  -->
 
-            <template #header>
+        <template>
+            <h1>No tienes permisos</h1>
+        </template>
+
+        <DataTable
+            
+            v-model:selection="selectedRegisters"
+            v-model:filters="filters"
+            :filters="filters"
+            :class="`p-datatable-${size.class}`"
+            :value="dataResponseAPI.data"
+            showGridlines
+            :globalFilterFields="['workCenter.name', 'last_name', 'company.name']"
+            :rows="20"
+            tableStyle="min-width: 75rem"
+            dataKey="uuid"
+            ref="dt"
+            :paginator="true"
+            :loading="loading"
+            :rowsPerPageOptions="[5, 10, 20, 50]"
+            filterDisplay="menu"
+            scrollable
+            scrollHeight="600px"
+            resizableColumns
+            columnResizeMode="expand"
+            sortMode="multiple"
+            @row-select="onRowSelect(selectedRegisters)"
+            @row-unselect="onRowSelect(selectedRegisters)"
+            @select-all-change="onSelectAllChange"
+        >
+            <!-- <template #header>
                 <div class="flex justify-content-between flex-column sm:flex-row">
-                    <Button type="button" icon="pi pi-filter-slash" label="Limpiar" class="p-button-outlined mb-2"
-                        @click="clearFilter()" />
+                    <Button type="button" icon="pi pi-filter-slash" label="Limpiar" class="p-button-outlined mb-2" @click="clearFilter()" />
                     <span class="p-input-icon-left mb-2">
                         <i class="pi pi-search" />
                         <InputText v-model="filters['global'].value" placeholder="Buscar" style="width: 100%" />
                     </span>
                 </div>
+            </template> -->
+            <template #header>
+                <Toolbar class = "mb-2">
+                    <template v-slot:start>
+                        <Button type="button" icon="pi pi-filter-slash" label="Limpiar" class="p-button-outlined mb-2" @click="clearFilter()" />
+                    </template>
+                    <template v-slot:end>
+                        <span class="p-input-icon-left mb-2">
+                        <i class="pi pi-search" />
+                        <InputText v-model="filters['global'].value" placeholder="Buscar" style="width: 100%" />
+                    </span>
+                    </template>
+                    <template v-slot:center>
+                        
+                        <SelectButton v-model="size" :options="sizeOptions" optionLabel="label" dataKey="label"> </SelectButton>
+                        
+                    </template>       
+                </Toolbar>
             </template>
+            
 
             <template #empty> No customers found. </template>
             <template #loading> Loading customers data. Please wait. </template>
 
             <Column selectionMode="multiple" headerStyle="width: 3rem"></Column>
-
-            <!-- <Column field="document" header="Document" style="min-width: 2rem"> -->
-            <!-- Line above uses a set min width as minimum, if that is does not placed is automatically -->
-
-            <Column v-if="column?.some(obj => obj.field === 'document')" field="document" header=" Document" sortable
-                :frozen="documentFrozen">
+            <Column v-if="column?.some((obj) => obj.field === 'document')" field="document" header=" Document" sortable :frozen="documentFrozen">
                 <template #header>
-                    <ToggleButton v-model="documentFrozen" onIcon="pi pi-lock" offIcon="pi pi-lock-open" onLabel=""
-                        offLabel="" />
-                    <div>&nbsp; </div>
+                    <ToggleButton v-model="documentFrozen" onIcon="pi pi-lock" offIcon="pi pi-lock-open" onLabel="" offLabel="" />
+                    <div>&nbsp;</div>
                 </template>
-
 
                 <template #body="{ data }">
-
                     {{ data.document }}
                 </template>
-
+                <template #filter="{ filterModel }">
+                    <InputText v-model="filterModel.value" type="text" class="p-column-filter" placeholder="Search by country" />
+                </template>
             </Column>
 
-            <Column v-if="column?.some(obj => obj.field === 'document_type')" header="Type of Document" sortable>
+            <Column v-if="column?.some((obj) => obj.field === 'document_type')" filterField = "document_type" header="Type of Document" sortable>
                 <template #body="{ data }">
                     {{ data.document_type }}
                 </template>
 
-                
                 <template #filter="{ filterModel }">
-              <InputText
-                type="text"
-                v-model="filterModel.value"
-                class="p-column-filter"
-                placeholder="Search by name"
-              />
-            </template>
-                
-                
+                    <InputText type="text" v-model="filterModel.value" class="p-column-filter" placeholder="Search by name" />
+                </template>
             </Column>
-
-
-            <Column v-if="column?.some(obj => obj.field === 'first_name')" sortable field="first_name" header="Name">
+            <Column v-if="column?.some((obj) => obj.field === 'first_name')" field="first_name" header="Name" sortable>
                 <template #body="{ data }">
                     {{ data.first_name }}
                 </template>
+                <template #filter="{ filterModel }">
+                    <InputText v-model="filterModel.value" type="text" class="p-column-filter" placeholder="Search by name" />
+                </template>
             </Column>
-
-            <Column v-if="column?.some(obj => obj.field === 'last_name')" field="last_name" header="Last Name">
+            
+            <Column field="last_name" header="Last Name" sortable>
                 <template #body="{ data }">
                     {{ data.last_name }}
                 </template>
+                <template #filter="{ filterModel }">
+                    <InputText v-model="filterModel.value" type="text" class="p-column-filter" placeholder="Search by last name" />
+                </template>
             </Column>
-
-            <Column v-if="column?.some(obj => obj.field === 'gender_id')" field="gender" header="Gender">
+            
+            <Column field="gender" filterField="gender_id" header="Gender" sortable>
                 <template #body="{ data }">
                     {{ data.gender_id }}
                 </template>
-            </Column>
-
-            <Column field="prueba" header="ColumnaPrueba">
-                <template #body="{ data }">
-                    <div class="flex align-items-center gap-2">
-                        <Avatar :image="'demo/images/avatar/amyelsner.png'" size="large" shape="circle"></Avatar>
-                        <!-- <span>{{ data.gender_id }}</span> -->
-                    </div>
+                <template #filter="{ filterModel }">
+                    <InputText v-model="filterModel.value" type="text" class="p-column-filter" placeholder="Search by gender" />
                 </template>
             </Column>
 
-            <Column field="status" header="Status">
-                <template #body="{ data }">
-                    <Tag :value="data.status.name" :severity="'#EFC88B'" />
-                </template>
-            </Column>
-
-            <Column v-if="column?.some(obj => obj.field === 'email')" field="email" header="Email">
+            
+            
+            <Column field="email" header="Email" sortable>
                 <template #body="{ data }">
                     {{ data.email }}
                 </template>
+
+                <template #filter="{ filterModel }">
+                    <InputText v-model="filterModel.value" type="text" class="p-column-filter" placeholder="Search by email" />
+                </template>
             </Column>
 
-            <Column field="workCenterName" header="Work Center Name">
+            <Column field="workCenterName" filterField="workCenter.name" header="Work Center Name" sortable>
                 <template #body="{ data }">
                     {{ data.workCenter.name }}
                 </template>
+                <template #filter="{ filterModel }">
+                    <InputText v-model="filterModel.value" type="text" class="p-column-filter" placeholder="Search by workcenter" />
+                </template>
             </Column>
-
-            <Column v-if="column?.some(obj => obj.field === 'bank_account_number')" field="bankAccountNumber"
-                header="Bank Account Number">
+            
+            <Column field="bankAccountNumber" filterField="bank_account_number" header="Bank Account Number" sortable>
                 <template #body="{ data }">
                     {{ data.bank_account_number }}
                 </template>
+                <template #filter="{ filterModel }">
+                    <InputText v-model="filterModel.value" type="text" class="p-column-filter" placeholder="Search by Bank Account number" />
+                </template>
             </Column>
-
-            <Column field="farmName" header="Farm Name">
+            <Column field="bankAccountDoc" header="Bank Account Document" sortable>
                 <template #body="{ data }">
-                    {{ data.farm.name }}
+                    {{ data.bank_account_doc }}
+                </template>
+                <template #filter="{ filterModel }">
+                    <InputText v-model="filterModel.value" type="text" class="p-column-filter" placeholder="Search by Bank Account Document" />
                 </template>
             </Column>
 
-            <Column field="companyName" header="Company Name">
+            <Column field="paymentType" filterField="payment_type.name" header="Payment Type" sortable>
+                <template #body="{ data }">
+                    {{ data.payment_type.name }}
+                </template>
+                <template #filter="{ filterModel }">
+                    <InputText v-model="filterModel.value" type="text" class="p-column-filter" placeholder="Search by payment type" />
+                </template>
+            </Column>
+
+            <Column field="farmName" filterField="farm.name" header="Farm Name" sortable>
+                <template #body="{ data }">
+                    {{ data.farm.name }}
+                </template>
+                <template #filter="{ filterModel }">
+                    <InputText v-model="filterModel.value" type="text" class="p-column-filter" placeholder="Search by farm" />
+                </template>
+            </Column>
+
+            <Column field="companyName" header="Company Name" sortable>
                 <template #body="{ data }">
                     {{ data.company.name }}
                 </template>
             </Column>
 
-            <template #footer>
-                Currently this page has got {{ dataResponseAPI.data ? dataResponseAPI.data.length : 0 }} registers. //
-                In total there are {{ totalRecordsResponseAPI ? totalRecordsResponseAPI : 0 }} registers.
-            </template>
-
+            <Column field="status" filterField="status.name" header="Status" sortable>
+                <template #body="{ data }">
+                    <Tag :value="data.status.name" :severity="'EFC88B'" />
+                </template>
+                <template #filter="{ filterModel }">
+                    <InputText v-model="filterModel.value" type="text" class="p-column-filter" placeholder="Search by status" />
+                </template>
+            </Column>
+            
         </DataTable>
-
-
-
-        <Dialog v-model:visible="formDialog" :style="{ width: '700px' }" header="Products Details" :modal="true"
-            class="p-fluid text-center mx-auto">
+        <pre>{{ dataResponseAPI.data }}</pre>
+        <Dialog v-model:visible="formDialog" :style="{ width: '700px' }" :header="headerDialog" :modal="true" class="p-fluid text-center mx-auto">
             <div class="p-grid">
-                <div class="p-col-12 p-md-4 mb-2">
+                <pre>{{ dataPost }}</pre>
+                <pre>{{ mode }}</pre>
+                <div class="p-col-6 p-md-4 mb-2">
+                    <label for="typeDocument" class="p-d-block">Type of documents</label>
+                    <Dropdown v-model="selectedDocumentType" :options="typesDocument" optionLabel="label" inputId="typeOfDocumentId" aria-labelledby="basic" :placeholder="selectedDocumentType.id" />
+                </div>
+                <div class="p-col-6 p-md-4 mb-2">
                     <label for="document_id" class="p-d-block">Document</label>
-                    <InputNumber v-model="documentDialog" inputId="document_id" aria-labelledby="basic"
-                        placeholder="Type your document here" />
+                    <InputText v-model="dataPost.document" inputId="document" aria-labelledby="basic" placeholder="Type your document here" />
                 </div>
 
-                <div class="p-col-12 p-md-4 mb-2">
-                    <label for="typeDocument" class="p-d-block">Type of Document</label>
-                    <Dropdown v-model="selectedTypeDocument" :options="typesDocument" optionLabel="name"
-                        inputId="typeDocument" aria-labelledby="basic" placeholder="Select a type" />
-                </div>
-
-                <div class="p-col-12 p-md-4 mb-2">
+                <div class="p-col-6 p-md-4 mb-2">
                     <label for="name" class="p-d-block">Name</label>
-                    <InputText v-model="nameDialog" inputId="name" aria-labelledby="basic"
-                        placeholder="Type your name here" />
+                    <InputText v-model="dataPost.first_name" inputId="name" aria-labelledby="basic" placeholder="Type your name here" />
                 </div>
 
-                <div class="p-col-12 p-md-4 mb-2">
+                <div class="p-col-6 p-md-4 mb-2">
                     <label for="lastName" class="p-d-block">Last Name</label>
-                    <InputText v-model="lastNameDialog" inputId="lastName" aria-labelledby="basic"
-                        placeholder="Type your last name here" />
+                    <InputText v-model="dataPost.last_name" inputId="lastName" aria-labelledby="basic" placeholder="Type your last name here" />
                 </div>
 
-                <!---->
-                <label for="lastName" class="p-d-block">Select gender</label>
-                <div class="flex-container">
-
-                    <div class="flex flex-wrap gap-3 align">
-                        <div class="flex align-items-center">
-                            <RadioButton v-model="genderDialog" inputId="gender1" name="gender" value="Masculino" />
-                            <label for="gender1" class="ml-2">Masculino</label>
-                        </div>
-                        <div class="flex align-items-center">
-                            <RadioButton v-model="genderDialog" inputId="gender2" name="gender" value="Femenino" />
-                            <label for="gender2" class="ml-2">Femenino</label>
-                        </div>
-                        <div class="flex align-items-center">
-                            <RadioButton v-model="genderDialog" inputId="gender3" name="gender" value="Otro" />
-                            <label for="gender3" class="ml-2">Otro</label>
-                        </div>
-
-
-                    </div>
+                <div class="p-col-6 p-md-4 mb-2">
+                    <label for="email" class="p-d-block">Email</label>
+                    <InputText v-model="dataPost.email" inputId="email" aria-labelledby="basic" placeholder="Type your email here" />
                 </div>
-                <!---->
-                <label for="lastName" class="p-d-block">Status</label>
-                <div class="card flex justify-content-center">
-                    <SelectButton v-model="statusDialog" :options="optionsStatus" aria-labelledby="basic"
-                        class="p-invalid" />
-                </div>
-                <!---->
 
-
-                <div class="p-col-12 text-center">
-                    <div v-if="!v$.$pending.documentDialog && v$.$error.documentDialog">
-                        <ul>
-                            <li v-for="(message, key) in validationMessages" :key="key">{{ message }}</li>
-                        </ul>
-                    </div>
+                <div class="p-col-6 p-md-4 mb-2">
+                    <label for="bankAccountNumber" class="p-d-block">Account number</label>
+                    <InputText v-model="dataPost.bank_account_number" inputId="bankAccountNumber" aria-labelledby="basic" placeholder="Type your account here" />
                 </div>
+
+                <div class="p-col-6 p-md-4 mb-2">
+                    <label for="bankAccountDoc" class="p-d-block">Account Document</label>
+                    <InputText v-model="dataPost.bank_account_doc" inputId="bankAccountDoc" aria-labelledby="basic" placeholder="Type your account document here" />
+                </div>
+
+                <div class="p-col-6 p-md-4 mb-2">
+                    <label for="paymentTypes" class="p-d-block">Payment types</label>
+                    <Dropdown v-model="selectedPaymentType" :options="paymentTypes" optionLabel="name" inputId="paymentType" aria-labelledby="basic" :placeholder="selectedPaymentType.name" />
+                </div>
+
+                <div class="p-col-6 p-md-4 mb-2">
+                    <label for="workCenter" class="p-d-block">Work Center</label>
+                    <Dropdown v-model="selectedWorkCenters" :options="workCenters" optionLabel="name" inputId="workCenter" aria-labelledby="basic" :placeholder="selectedWorkCenters.name" />
+                </div>
+
+                <div class="p-col-6 p-md-4 mb-2">
+                    <label for="genderType" class="p-d-block">Select gender</label>
+                    <Dropdown v-model="selectedGenderType" :options="genderTypes" optionLabel="label" inputId="genderType" aria-labelledby="basic" :placeholder="selectedGenderType.id" />
+                </div>
+
+                <div class="p-col-6 p-md-4 mb-2" >
+                    <label for="farmsId" class="p-d-block">Farms</label>
+                    <Dropdown v-model="selectedFarm" :options="farms" optionLabel="name" inputId="farmsId" aria-labelledby="basic" :placeholder="selectedFarm.id" />
+                </div>
+
             </div>
+
+            <template #footer>
+                <div>
+                    <Button label="Cancel" icon="pi pi-times" class="p-button-text" @click="hideDialog" />
+                    <Button label="Save" icon="pi pi-check" class="p-button-text" @click="saveRecord" />
+                </div>
+            </template>
         </Dialog>
+        <Toast />
 
+        <Dialog v-model:visible="deleteDialog" :style="{ width: '700px' }" :header="headerDialog" :modal="true" class="p-fluid text-center mx-auto">
+            <div class="flex align-items-center">
+                <div class="p-grid">
+                    <div class="p-col-6 p-md-4 mb-2">
+                        <label> {{ recordsDelete[0].document }} </label>
+                    </div>
+                    <div>
+                        <label> {{ recordsDelete[0].first_name }} </label>
+                    </div>
+                    <div>
+                        <label> {{ recordsDelete[0].last_name }} </label>
+                    </div>
+                </div>
 
-
+                <i class="pi pi-exclamation-triangle ml-3 mb-2" style="font-size: 2rem" />
+            </div>
+            <template #footer>
+                <div>
+                    <Button label="Cancel" icon="pi pi-times" class="p-button-text" @click="hideDialog" />
+                    <Button label="Save" icon="pi pi-check" class="p-button-text" @click="saveRecord" />
+                </div>
+            </template>
+        </Dialog>
+        <Toast />
     </div>
 </template>
 
 <script setup>
-
-
 import { ref, watch, provide, onBeforeMount, onMounted, computed } from 'vue';
 import { useToast } from 'primevue/usetoast';
-import useDataAPI from '@/composables/DataAPI/FetchDataAPI.js'
+import useDataAPI from '@/composables/DataAPI/FetchDataAPI.js';
 import { FilterMatchMode, FilterOperator } from 'primevue/api';
-import useEmployeesParameters from '@/composables/PayrollSettings/Employees/EmployeesParameters.js'
+import useEmployeesParameters from '@/composables/PayrollSettings/Employees/EmployeesParameters.js';
 import SelectButton from 'primevue/selectbutton';
-
-
-const { getAllResponseAPI, totalRecordsResponseAPI, currentPageResponseAPI, linksResponseAPI, postResponseAPI, putResponseAPI, deleteResponseAPI, errorResponseAPI, dataResponseAPI } = useDataAPI();
+import { useAbility } from '@casl/vue';
+import { useRouter } from 'vue-router';
+const router = useRouter();
+const { can, rules } = useAbility();
+const { getAllResponseAPI, totalRecordsResponseAPI, currentPageResponseAPI, linksResponseAPI, postResponseAPI, putResponseAPI, deleteResponseAPI, errorResponseAPI, dataResponseAPI, statusCode } = useDataAPI();
 const { conditionalColumns } = useEmployeesParameters();
-let endpoint = ref("/employees")
+let endpoint = ref('/employees');
+const toast = useToast();
 const columnas = ref([]);
 const column = ref([]);
 const valueCustomTable = ref({ status: false, icon: 'pi pi-lock', label: 'Custom Table' });
-const mode = ref('');
-const selectedTypeDocument = ref();
+const mode = ref();
+const selectedFarm = ref({ id: null });
+const selectedGenderType = ref({ id: null });
+const selectedDocumentType = ref({ id: 1 });
+const selectedPaymentType = ref({
+			uuid: "",
+			code: "",
+			name: "",
+			company_id: null,
+			farm_id: null,
+			status_id: null
+		});
+const selectedWorkCenters = ref({ id: 1, uuid: '',name: '' });
+const headerDialog = ref('');
 const typesDocument = ref([
-    { name: 'New York', code: 'NY' },
-    { name: 'Rome', code: 'RM' },
-    { name: 'London', code: 'LDN' },
-    { name: 'Istanbul', code: 'IST' },
-    { name: 'Paris', code: 'PRS' }
+    { label: 'Cedula de ciudadania', id: 'CEDCIUD' },
+    { label: 'Cedula de extranjería', id: 'CEDEXTR' }
 ]);
-const documentDialog = ref();
-const nameDialog = ref('');
-const lastNameDialog = ref('');
-const genderDialog = ref('');
-const statusDialog = ref('Inactive');
+const genderTypes = ref([
+    {
+        id: '',
+        label: 'Selecionar Tipo Documento'
+    },
+    {
+        id: 'F',
+        label: 'Femenino'
+    },
+    {
+        id: 'M',
+        label: 'Masculino'
+    },
+    {
+        id: 'O',
+        label: 'Otro'
+    }
+]);
+const paymentTypes = ref([
+		{
+			"uuid": "5adbd1ff-8eb6-40de-9e61-e888de339606",
+			"code": "BBVA",
+			"name": "Banco BBVA",
+			"company_id": 1,
+			"farm_id": 1,
+			"status_id": 1
+		},
+		{
+			"uuid": "a63235f4-f43b-47a4-b78c-896c96d79f7b",
+			"code": "DALE!",
+			"name": "DALE!",
+			"company_id": 1,
+			"farm_id": 1,
+			"status_id": 1
+		},
+		{
+			"uuid": "c31b8d07-6fa3-4a95-b3bb-ec8f15458933",
+			"code": "EFECTIVO",
+			"name": "EFECTIVO",
+			"company_id": 1,
+			"farm_id": 1,
+			"status_id": 1
+		}
+	])
+const workCenters = ref([
+    {
+        id: 1,
+        uuid: '40add967-f6cb-4794-940a-e519ddaaead8',
+        name: 'Contratista',
+        code: 'con01'
+    }
+]);
+const companies = ref([
+    {
+        id: 1,
+        uuid: 'd9612b51-2966-4bac-b1f7-5a7718e0c95a',
+        name: 'Basil Farms',
+        code: '900137869'
+    }
+]);
+
+const farms = ref([
+    {
+        uuid: 'c86883a4-9334-4519-96df-3a9416a293f6',
+        id: 0,
+        name: 'Otra',
+        code: 'FIN00'
+    },
+    {
+        uuid: 'c86883a4-9334-4519-96df-3a9416a293f6',
+        id: 1,
+        name: 'Retoño',
+        code: 'FIN01'
+    },
+    {
+        id: 2,
+        uuid: '21eb9f91-25df-458a-81fa-68e5a91eed69',
+        name: 'La consentida',
+        code: 'FIN02'
+    }
+]);
+
+const statusDialog = ref('Active');
 const optionsStatus = ref(['Inactive', 'Active']);
-
-//For opening the dialog
-
+const formDialog = ref(false);
+const deleteDialog = ref(false);
 const hideDialog = () => {
     formDialog.value = false;
+    deleteDialog.value = false;
+    recordsDelete.value = [];
+    resetValues();
 };
 
+const listRowSelect = ref([]);
+let dataPost = ref({
+    document_type: selectedDocumentType.value.id,
+    document: '',
+    first_name: '',
+    last_name: '',
+    last_name_b: '',
+    gender_id: selectedGenderType.value.id,
+    email: '',
+    bank_account_number: '',
+    bank_account_doc: '',
+    bank_type_buy: '',
+    work_center_id: selectedWorkCenters.value.id,
+    payment_type_id: selectedPaymentType.value.uuid,
+    // company_id: null,
+    farm_id: selectedFarm.value.id
+    
+    // status_id: null
+});
+
+const resetValues = () => {
+    dataPost.value.document = '';
+    dataPost.value.first_name = '';
+    dataPost.value.last_name = '';
+    dataPost.value.last_name_b = '';
+    dataPost.value.gender_id = '';
+    dataPost.value.email = '';
+    dataPost.value.document_type = '';
+    dataPost.value.bank_account_number = '';
+    dataPost.value.bank_account_doc = '';
+    dataPost.value.bank_type_buy = '';
+    dataPost.value.work_center_id = null;
+    // dataPost.value.company_id = null;
+    dataPost.value.farm_id = null;
+    dataPost.value.payment_type_id = null;
+    // dataPost.value.status_id = null;
+};
+
+const assignValues = (modex) => {
+    alert(modex)
+    if ((modex ==='EDIT')) {
+        
+        
+        selectedDocumentType.value.id = listRowSelect.value[0].document_type;
+        dataPost.value.document_type = listRowSelect.value[0].document_type;
+        //dataPost.value.document = listRowSelect.value[0].document;
+        dataPost.value.document = "";
+        dataPost.value.first_name = listRowSelect.value[0].first_name;
+        dataPost.value.last_name = listRowSelect.value[0].last_name;
+        dataPost.value.last_name_b = listRowSelect.value[0].last_name_b;
+        selectedGenderType.value.id = listRowSelect.value[0].gender_id;
+        dataPost.value.gender_id = listRowSelect.value[0].gender_id;
+        dataPost.value.email = listRowSelect.value[0].email;
+        dataPost.value.bank_account_number = listRowSelect.value[0].bank_account_number;
+        dataPost.value.bank_account_doc = listRowSelect.value[0].bank_account_doc;
+        dataPost.value.bank_type_buy = listRowSelect.value[0].bank_type_buy;
+        selectedWorkCenters.value.id = listRowSelect.value[0].workCenter.id;
+        selectedWorkCenters.value.name = listRowSelect.value[0].workCenter.name;
+        dataPost.value.work_center_id = listRowSelect.value[0].workCenter.id;
+        // dataPost.value.company_id = listRowSelect.value[0].company_id;
+        selectedFarm.value.id = listRowSelect.value[0].farm.id;
+        dataPost.value.farm_id = listRowSelect.value[0].farm.id;
+        selectedPaymentType.value.id = listRowSelect.value[0].payment_type.id;
+        selectedPaymentType.value.name = listRowSelect.value[0].payment_type.name;
+        dataPost.value.payment_type_id = listRowSelect.value[0].payment_type.uuid;
+
+        // dataPost.value.status_id = listRowSelect.value[0].status_id;
+    }
+    if ((modex=== 'CLONE' )) {
+        
+        dataPost.value.document_type = listRowSelect.value[0].document_type;
+        dataPost.value.document = "";
+        dataPost.value.first_name = listRowSelect.value[0].first_name;
+        dataPost.value.last_name = listRowSelect.value[0].last_name;
+        dataPost.value.last_name_b = listRowSelect.value[0].last_name_b;
+        dataPost.value.gender_id = listRowSelect.value[0].gender_id;
+        dataPost.value.email = listRowSelect.value[0].email;
+        dataPost.value.bank_account_number = listRowSelect.value[0].bank_account_number;
+        dataPost.value.bank_account_doc = listRowSelect.value[0].bank_account_doc;
+        dataPost.value.bank_type_buy = listRowSelect.value[0].bank_type_buy;
+        dataPost.value.work_center_id = listRowSelect.value[0].workCenter.id;
+        // dataPost.value.company_id = listRowSelect.value[0].company_id;
+        dataPost.value.farm_id = listRowSelect.value[0].farm.id;
+
+        // // dataPost.value.status_id = listRowSelect.value[0].status_id;
+    }
+};
+
+watch(
+    selectedFarm,
+    () => {
+        dataPost.value.farm_id = selectedFarm.value.id;
+    },
+    { deep: true }
+);
+watch(
+    selectedDocumentType,
+    () => {
+        dataPost.value.document_type = selectedDocumentType.value.id;
+    },
+    { deep: true }
+);
+
+watch(
+    selectedWorkCenters,
+    () => {
+        dataPost.value.work_center_id = selectedWorkCenters.value.id;
+    },
+    { deep: true }
+);
+watch(
+    selectedGenderType,
+    () => {
+        dataPost.value.gender_id = selectedGenderType.value.id;
+    },
+    { deep: true }
+);
 const openNew = () => {
-
     mode.value = 'NEW';
+    resetValues();
     formDialog.value = true;
-
-
+    headerDialog.value = 'New employee record';
+};
+const openEdit = () => {
+    mode.value = 'EDIT';
+    formDialog.value = true;
+    headerDialog.value = 'Edit a employee record';
+    assignValues(mode.value)
 };
 
+const openClone = () => {
+    mode.value = 'CLONE';
+    headerDialog.value = 'Clone a employee record';
+    formDialog.value = true;
+    assignValues(mode.value)
+};
+let recordsDelete = ref([]);
+const openDelete = () => {
+    mode.value = 'DELETE';
+    headerDialog.value = 'Delete a employee record';
+    resetValues();
+    deleteDialog.value = true;
 
+    for (let key in listRowSelect.value) {
+        recordsDelete.value.push({
+            uuid: listRowSelect.value[key].uuid,
+            document: listRowSelect.value[key].document,
+            first_name: listRowSelect.value[key].first_name,
+            last_name: listRowSelect.value[key].last_name
+        });
+    }
+};
+
+const openExport = () => {
+    mode.value = 'EXPORT';
+    headerDialog.value = 'Export a employee record';
+    resetValues();
+    formDialog.value = true;
+};
+
+const newRecord = async (requestDataUnitTypes, endpoint) => {
+    await postResponseAPI(requestDataUnitTypes, endpoint);
+    recordsDelete.value = [];
+    
+
+    switch (statusCode.value) {
+        case 201:
+            toast.add({ severity: 'success', summary: 'Successful', detail: 'Done', life: 3000 });
+            formDialog.value = false;
+            hideDialog();
+            router.go();
+            break;
+
+        case 422:
+            toast.add({ severity: 'error', summary: 'Validation Error', detail: 'There are validation errors', life: 3000 });
+            // Puedes agregar más casos según sea necesario
+            break;
+        case 200:
+            toast.add({ severity: 'warn', summary: 'xxxxxr', detail: 'There are validation errors', life: 3000 });
+            // Puedes agregar más casos según sea necesario
+            break;
+        default:
+            toast.add({ severity: 'error', summary: 'Error Message', detail: 'There was an error', life: 3000 });
+    }
+};
+const updateRecord = async (requestDataUnitTypes, id, endpoint) => {
+    await putResponseAPI(requestDataUnitTypes, endpoint, id);
+    recordsDelete.value = [];
+
+
+    switch (statusCode.value) {
+        case 202:
+            toast.add({ severity: 'success', summary: 'Successful', detail: 'Done', life: 3000 });
+
+            hideDialog();
+            router.go();
+            break;
+
+        case 422:
+            toast.add({ severity: 'error', summary: 'Validation Error', detail: 'There are validation errors', life: 3000 });
+            // Puedes agregar más casos según sea necesario
+            break;
+        case 200:
+            toast.add({ severity: 'warn', summary: 'xxxxxr', detail: 'There are validation errors', life: 3000 });
+            // Puedes agregar más casos según sea necesario
+            break;
+        default:
+            toast.add({ severity: 'error', summary: 'Error Message', detail: 'There was an error', life: 3000 });
+    }
+};
+const dropRecord = async (id, endpoint) => {
+    await deleteResponseAPI({}, endpoint, id);
+
+    
+
+    switch (statusCode.value) {
+        case 204:
+            toast.add({ severity: 'success', summary: 'Successful', detail: 'Done', life: 3000 });
+            router.go();
+            hideDialog();
+            break;
+
+        case 422:
+            toast.add({ severity: 'error', summary: 'Validation Error', detail: 'There are validation errors', life: 3000 });
+            // Puedes agregar más casos según sea necesario
+            break;
+        case 200:
+            toast.add({ severity: 'warn', summary: 'xxxxxr', detail: 'There are validation errors', life: 3000 });
+            // Puedes agregar más casos según sea necesario
+            break;
+        default:
+            toast.add({ severity: 'error', summary: 'Error Message', detail: 'There was an error', life: 3000 });
+    }
+};
+const saveRecord = async () => {
+    switch (mode.value) {
+        case 'NEW':
+            await newRecord(dataPost.value, endpoint.value, statusCode.value);
+            break;
+        case 'EDIT':
+            
+            await updateRecord(dataPost.value, listRowSelect.value[0].uuid, endpoint.value);
+            break;
+        case 'DELETE':
+            if (recordsDelete.value.length > 0 && recordsDelete.value.length < 2) await dropRecord(recordsDelete.value[0].uuid, endpoint.value);
+            else {
+                toast.add({ severity: 'error', summary: 'Error Message', detail: 'No puedes eliminar mas de un registro', life: 3000 });
+                
+            }
+            break;
+        case 'CLONE':
+            
+        await newRecord(dataPost.value, endpoint.value, statusCode.value);
+        break;    
+    }
+    mode.value = '';
+};
+
+////////////////////////////////////////////////////////////////
 const customTable = () => {
     if (valueCustomTable.value.status) {
         valueCustomTable.value.status = false;
         valueCustomTable.value.icon = 'pi pi-lock';
-    }
-    else {
+    } else {
         valueCustomTable.value.status = true;
         valueCustomTable.value.icon = 'pi pi-lock-open';
-
     }
-}
+};
 const documentFrozen = ref(false);
 
 const selectedRegisters = ref([]);
-const listRowSelect = ref([]);
+
 const onRowSelect = (data) => {
+    
     listRowSelect.value = data;
+    //assignValues(mode.value)
+    
 };
 
 watch(
     () => dataResponseAPI.value,
-    (x, y) => {
-
-
-    },
+    (x, y) => {},
     { immediate: true }
 );
 watch(listRowSelect, onRowSelect);
@@ -358,20 +755,23 @@ const onSelectAllChange = () => {
     onRowSelect();
 };
 
+// const first = ref(0);
+// const onSort = (event) => {
+//     lazyParams.value = event;
+//     loadLazyData(event);
+// };
 
 onBeforeMount(() => {
     initFilters();
-})
-//let endpointDocumentType = ref("/document-types")
+});
+
 onMounted(async () => {
-
-
     loading.value = true;
     lazyParams.value = {
-        first: dt.value.first,
-        rows: dt.value.rows,
-        sortField: null,
-        sortOrder: null,
+        ////  first: dt.value.first,
+        ////  rows: dt.value.rows,
+        ////  sortField: null,
+        ////  sortOrder: null,
         filters: filters.value
     };
 
@@ -381,26 +781,18 @@ onMounted(async () => {
 
     column.value = null;
     fillHeaderCustom();
-
-
-
-
-})
-
-
+});
 
 const fillHeaderCustom = () => {
-
-    console.log(dataResponseAPI.value.data[0])
+    
     let mappedArray1 = [];
 
     const types = ['string', 'number'];
 
     for (let key in dataResponseAPI.value.data[0]) {
-        if (types.includes(typeof dataResponseAPI.value.data[0][key]))
-            mappedArray1.push(key);
+        if (types.includes(typeof dataResponseAPI.value.data[0][key])) mappedArray1.push(key);
     }
-    console.log(mappedArray1)
+    
 
     columnas.value = mappedArray1.map((item) => {
         return {
@@ -411,33 +803,19 @@ const fillHeaderCustom = () => {
     });
 
     column.value = columnas.value;
-
-
-
-
-}
+};
 const onColumnsChange = (column) => {
     column.sort((a, b) => a.position - b.position);
 };
 const dt = ref();
 const loading = ref(false);
 const lazyParams = ref({});
-const first = ref(0);
 
 const loadLazyData = async (event) => {
-
-    lazyParams.value = { ...lazyParams.value, first: event?.first || first.value };
-    endpoint.value = "/employees"
-    await getAllResponseAPI(endpoint.value)
+    //lazyParams.value = { ...lazyParams.value, first: event?.first || first.value };
+    endpoint.value = '/employees';
+    await getAllResponseAPI(endpoint.value);
     loading.value = false;
-
-
-};
-
-const onSort = (event) => {
-    lazyParams.value = event;
-    loadLazyData(event);
-
 };
 
 const clearFilter = () => {
@@ -447,10 +825,18 @@ const filters = ref();
 const initFilters = () => {
     filters.value = {
         global: { value: null, matchMode: FilterMatchMode.CONTAINS },
-        name: { operator: FilterOperator.AND, constraints: [{ value: null, matchMode: FilterMatchMode.STARTS_WITH }] },
+        document: { operator: FilterOperator.AND, constraints: [{ value: null, matchMode: FilterMatchMode.STARTS_WITH }] },
         document_type: { operator: FilterOperator.AND, constraints: [{ value: null, matchMode: FilterMatchMode.STARTS_WITH }] },
-
-
+        first_name: { operator: FilterOperator.AND, constraints: [{ value: null, matchMode: FilterMatchMode.STARTS_WITH }] },
+        last_name: { operator: FilterOperator.AND, constraints: [{ value: null, matchMode: FilterMatchMode.STARTS_WITH }] },
+        'status.name': { operator: FilterOperator.AND, constraints: [{ value: null, matchMode: FilterMatchMode.STARTS_WITH }] },
+        email: { operator: FilterOperator.AND, constraints: [{ value: null, matchMode: FilterMatchMode.STARTS_WITH }] },
+        gender_id: { operator: FilterOperator.AND, constraints: [{ value: null, matchMode: FilterMatchMode.STARTS_WITH }] },
+        'workCenter.name': { operator: FilterOperator.AND, constraints: [{ value: null, matchMode: FilterMatchMode.STARTS_WITH }] },
+        bank_account_number: { operator: FilterOperator.AND, constraints: [{ value: null, matchMode: FilterMatchMode.STARTS_WITH }] },
+        'farm.name': { operator: FilterOperator.AND, constraints: [{ value: null, matchMode: FilterMatchMode.STARTS_WITH }] },
+        //'company.name': { operator: FilterOperator.AND, constraints: [{ value: null, matchMode: FilterMatchMode.STARTS_WITH }] },
+        'payment_type.name': { operator: FilterOperator.AND, constraints: [{ value: null, matchMode: FilterMatchMode.STARTS_WITH }] }
     };
 };
 // sizeOptionsButton
@@ -460,8 +846,6 @@ const sizeOptions = ref([
     { label: 'Normal', value: 'normal' },
     { label: 'Large', value: 'large', class: 'lg' }
 ]);
-
-
 </script>
 
 <style lang="scss" scoped>

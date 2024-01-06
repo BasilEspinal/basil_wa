@@ -7,19 +7,19 @@ import { required, email, minLength, maxLength } from '@vuelidate/validators';
 import { useToast } from 'primevue/usetoast';
 import Toast from 'primevue/toast';
 import useDataAPI from '@/composables/DataAPI/FetchDataAPI.js';
-
 import { AbilityBuilder, Ability } from '@casl/ability';
 import { ABILITY_TOKEN } from '@casl/vue';
-
+import { useAbility } from '@casl/vue';
 const { postResponseAPI, dataResponseAPI } = useDataAPI();
 const { layoutConfig } = useLayout();
 
 const count = ref(0);
 
+
 export default {
     setup() {
         const toast = useToast();
-        return { v$: useVuelidate() };
+        return { v$: useVuelidate()};
     },
     inject: {
         $ability: { from: ABILITY_TOKEN }
@@ -27,8 +27,8 @@ export default {
     data() {
         return {
             form: {
-                email: '',
-                password: ''
+                email: 'admin@admin.com',
+                password: 'password'
             },
             logoUrl: computed(() => {
                 return `layout/images/${layoutConfig.darkTheme.value ? 'logo-white' : 'logo-dark'}.png`;
@@ -91,7 +91,7 @@ export default {
         updateAbility(user, token) {
             const bearer = 'Bearer ' + token;
 
-            fetch('http://alirio.test/api/v1/abilities', {
+            fetch('http://164.90.146.196:81/api/v1/abilities', {
                 headers: {
                     Authorization: bearer,
                     accept: 'application/json'
@@ -100,9 +100,8 @@ export default {
                 .then((response) => response.json())
                 .then((permissions) => {
                     const { can, rules } = new AbilityBuilder(Ability);
-
                     can(permissions);
-
+                    console.log(permissions)
                     this.$ability.update(rules);
                 });
         }
