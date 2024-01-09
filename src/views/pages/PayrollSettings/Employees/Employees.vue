@@ -609,21 +609,32 @@ const assignValues = (modex) => {
     }
     if ((modex=== 'CLONE' )) {
         
-        dataPost.value.document_type= "";
+        selectedDocumentType.value.id = listRowSelect.value[0].document_type.id;
+        selectedDocumentType.value.name = listRowSelect.value[0].document_type.name;
+        dataPost.value.document_type = "";
         dataPost.value.document = "";
         dataPost.value.first_name = listRowSelect.value[0].first_name;
         dataPost.value.last_name = listRowSelect.value[0].last_name;
         dataPost.value.last_name_b = listRowSelect.value[0].last_name_b;
+        selectedGenderType.value.id = listRowSelect.value[0].gender_id;
+        selectedGenderType.value.label = listRowSelect.value[0].gender_label;
         dataPost.value.gender_id = listRowSelect.value[0].gender_id;
         dataPost.value.email = listRowSelect.value[0].email;
         dataPost.value.bank_account_number = listRowSelect.value[0].bank_account_number;
         dataPost.value.bank_account_doc = listRowSelect.value[0].bank_account_doc;
         dataPost.value.bank_type_buy = listRowSelect.value[0].bank_type_buy;
-        dataPost.value.work_center_id = listRowSelect.value[0].workCenter.id;
+        selectedWorkCenters.value.id = listRowSelect.value[0].workCenter.id;
+        selectedWorkCenters.value.name = listRowSelect.value[0].workCenter.name;
+        dataPost.value.work_center_id = listRowSelect.value[0].workCenter.uuid;
+        selectedFarm.value.id = listRowSelect.value[0].farm.id;
         dataPost.value.farm_id = listRowSelect.value[0].farm.id;
         selectedPaymentType.value.id = listRowSelect.value[0].payment_type.id;
-        selectedPaymentType.value.name = listRowSelect.value[0].payment_type.name;
+        selectedPaymentType.value.code = listRowSelect.value[0].payment_type.name;
         dataPost.value.payment_type_id = listRowSelect.value[0].payment_type.id;
+        selectedFarm.value.uuid = listRowSelect.value[0].farm.uuid;
+        selectedFarm.value.name = listRowSelect.value[0].farm.name;
+        dataPost.value.farm_id = listRowSelect.value[0].farm.uuid;
+        
     }
 };
 
