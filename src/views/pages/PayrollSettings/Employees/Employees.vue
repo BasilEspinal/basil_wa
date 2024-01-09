@@ -2,7 +2,7 @@
     <div>
     <div class="card">
         <div>
-            <!-- <pre>{{ listRowSelect }}</pre> -->
+            
 
             
             <h1>Información de Empleados</h1>
@@ -146,15 +146,16 @@
                 </template>
             </Column>
 
-            <Column v-if="column?.some((obj) => obj.field === 'document_type')" filterField = "document_type" header="Type of Document" sortable>
+            <Column  filterField = "document_type" header="Type of Document" sortable>
                 <template #body="{ data }">
-                    {{ data.document_type }}
+                    {{ data.document_type.name }}
                 </template>
 
                 <template #filter="{ filterModel }">
                     <InputText type="text" v-model="filterModel.value" class="p-column-filter" placeholder="Search by name" />
                 </template>
             </Column>
+
             <Column v-if="column?.some((obj) => obj.field === 'first_name')" field="first_name" header="Name" sortable>
                 <template #body="{ data }">
                     {{ data.first_name }}
@@ -223,7 +224,7 @@
 
             <Column field="paymentType" filterField="payment_type.name" header="Payment Type" sortable>
                 <template #body="{ data }">
-                    {{ data.payment_type.name }}
+                    <!-- {{ data.payment_type.name }} -->
                 </template>
                 <template #filter="{ filterModel }">
                     <InputText v-model="filterModel.value" type="text" class="p-column-filter" placeholder="Search by payment type" />
@@ -276,12 +277,19 @@
         <!-- <pre>{{ dataResponseAPI.data }}</pre> -->
         <Dialog v-model:visible="formDialog" :style="{ width: '700px' }" :header="headerDialog" :modal="true" class="p-fluid text-center mx-auto">
             <div class="p-grid">
-                <!-- <pre>{{ dataPost }}</pre>
-                <pre>{{ mode }}</pre> -->
+                <!-- <pre>{{ listRowSelect[0].workCenter }}</pre>-->
+                <pre>{{ dataPost }}</pre>
+                <!-- 
+                <pre>{{ selectedPaymentType }}</pre> -->
+                <!-- <pre>{{ listRowSelect}}</pre> -->
+                <!--<pre>{{ selectedGenderType}}</pre> -->
+                
+                
                 <div class="p-col-6 p-md-4 mb-2">
                     <label for="typeDocument" class="p-d-block">Type of documents</label>
-                    <Dropdown v-model="selectedDocumentType" :options="typesDocument" optionLabel="label" inputId="typeOfDocumentId" aria-labelledby="basic" :placeholder="selectedDocumentType.id" />
+                    <Dropdown v-model="selectedDocumentType" :options="typesDocument" optionLabel="name" inputId="typeOfDocumentId" aria-labelledby="basic" :placeholder="selectedDocumentType.name" />
                 </div>
+
                 <div class="p-col-6 p-md-4 mb-2">
                     <label for="document_id" class="p-d-block">Document</label>
                     <InputText v-model="dataPost.document" inputId="document" aria-labelledby="basic" placeholder="Type your document here" />
@@ -311,12 +319,12 @@
                     <label for="bankAccountDoc" class="p-d-block">Account Document</label>
                     <InputText v-model="dataPost.bank_account_doc" inputId="bankAccountDoc" aria-labelledby="basic" placeholder="Type your account document here" />
                 </div>
-
+                <pre>{{selectedPaymentType}}</pre>
                 <div class="p-col-6 p-md-4 mb-2">
                     <label for="paymentTypes" class="p-d-block">Payment types</label>
-                    <Dropdown v-model="selectedPaymentType" :options="paymentTypes" optionLabel="name" inputId="paymentType" aria-labelledby="basic" :placeholder="selectedPaymentType.name" />
+                    <Dropdown v-model="selectedPaymentType" :options="paymentTypes" optionLabel="code" inputId="paymentType" aria-labelledby="basic" :placeholder="selectedPaymentType.name" />
                 </div>
-
+<div>h1</div>
                 <div class="p-col-6 p-md-4 mb-2">
                     <label for="workCenter" class="p-d-block">Work Center</label>
                     <Dropdown v-model="selectedWorkCenters" :options="workCenters" optionLabel="name" inputId="workCenter" aria-labelledby="basic" :placeholder="selectedWorkCenters.name" />
@@ -324,12 +332,12 @@
 
                 <div class="p-col-6 p-md-4 mb-2">
                     <label for="genderType" class="p-d-block">Select gender</label>
-                    <Dropdown v-model="selectedGenderType" :options="genderTypes" optionLabel="label" inputId="genderType" aria-labelledby="basic" :placeholder="selectedGenderType.id" />
+                    <Dropdown v-model="selectedGenderType" :options="genderTypes" optionLabel="label" inputId="genderType" aria-labelledby="basic" :placeholder="selectedGenderType.label" />
                 </div>
 
                 <div class="p-col-6 p-md-4 mb-2" >
                     <label for="farmsId" class="p-d-block">Farms</label>
-                    <Dropdown v-model="selectedFarm" :options="farms" optionLabel="name" inputId="farmsId" aria-labelledby="basic" :placeholder="selectedFarm.id" />
+                    <Dropdown v-model="selectedFarm" :options="farms" optionLabel="name" inputId="farmsId" aria-labelledby="basic" :placeholder="selectedFarm.name" />
                 </div>
 
             </div>
@@ -372,14 +380,23 @@
 </template>
 
 <script setup>
-import { ref, watch, provide, onBeforeMount, onMounted } from 'vue';
+import { ref,inject, watch, provide, onBeforeMount, onMounted } from 'vue';
 import { useToast } from 'primevue/usetoast';
 import useDataAPI from '@/composables/DataAPI/FetchDataAPI.js';
 import { FilterMatchMode, FilterOperator } from 'primevue/api';
 import useEmployeesParameters from '@/composables/PayrollSettings/Employees/EmployeesParameters.js';
 import SelectButton from 'primevue/selectbutton';
-import { useAbility } from '@casl/vue';
 import { useRouter } from 'vue-router';
+
+
+import { AbilityBuilder, Ability } from '@casl/ability';
+import { ABILITY_TOKEN } from '@casl/vue';
+import { useAbility } from '@casl/vue';
+// Define a symbol for the injection token
+
+
+// Use inject to get the $ability from the parent component
+const $ability = inject('$ability', null);
 const router = useRouter();
 const { can, rules } = useAbility();
 const { getAllResponseAPI, totalRecordsResponseAPI, currentPageResponseAPI, linksResponseAPI, postResponseAPI, putResponseAPI, deleteResponseAPI, errorResponseAPI, dataResponseAPI, statusCode } = useDataAPI();
@@ -390,74 +407,97 @@ const columnas = ref([]);
 const column = ref([]);
 const valueCustomTable = ref({ status: false, icon: 'pi pi-table', label: '' });
 const mode = ref();
-const selectedFarm = ref({ id: null });
-const selectedGenderType = ref({ id: null });
-const selectedDocumentType = ref({ id: 1 });
+const selectedFarm = ref({uuid: "", name:""});
+const selectedGenderType = ref({ id: "",label:""});
+
+
 const selectedPaymentType = ref({
-			uuid: "",
-			code: "",
-			name: "",
-			company_id: null,
-			farm_id: null,
-			status_id: null
+			id: "",
+			code: "",	
 		});
-const selectedWorkCenters = ref({ id: 1, uuid: '',name: '' });
+        
+const selectedWorkCenters = ref(
+    {
+  uuid: "35c8cb40-2635-481a-ad1b-7ff46522b506",
+  name: "Selección",
+  code: "sel01",
+  created_at: "2024-01-07",
+  updated_at: "2024-01-07"
+}
+
+);
 const headerDialog = ref('');
-const typesDocument = ref([
-    { label: 'Cedula de ciudadania', id: 'CEDCIUD' },
-    { label: 'Cedula de extranjería', id: 'CEDEXTR' }
+const selectedDocumentType = ref([
+    { 
+        label: '',
+        id: ''
+    },
+    
 ]);
+const typesDocument = ref([
+    { 
+        name: 'Cedula de ciudadania',
+        id: 'CEDCIUD'
+    },
+    { 
+        name: 'Cedula de extranjería',
+        id: 'CEDEXTR' }
+]);
+
+
 const genderTypes = ref([
     {
-        id: '',
-        label: 'Selecionar Tipo Documento'
-    },
-    {
-        id: 'F',
-        label: 'Femenino'
-    },
-    {
-        id: 'M',
-        label: 'Masculino'
-    },
-    {
-        id: 'O',
-        label: 'Otro'
-    }
+		"id": "F",
+		"label": "Femenino"
+	},
+	{
+		"id": "M",
+		"label": "Masculino"
+	},
+	{
+		"id": "O",
+		"label": "Otro"
+	}
 ]);
 const paymentTypes = ref([
-		{
-			"uuid": "5adbd1ff-8eb6-40de-9e61-e888de339606",
+{
+			"id": 1,
 			"code": "BBVA",
-			"name": "Banco BBVA",
-			"company_id": 1,
-			"farm_id": 1,
-			"status_id": 1
+            "name": "BBVA"
 		},
 		{
-			"uuid": "a63235f4-f43b-47a4-b78c-896c96d79f7b",
+			"id": 2,
 			"code": "DALE!",
-			"name": "DALE!",
-			"company_id": 1,
-			"farm_id": 1,
-			"status_id": 1
+            "name": "DALE!"
+
 		},
 		{
-			"uuid": "c31b8d07-6fa3-4a95-b3bb-ec8f15458933",
+			"id": 3,
 			"code": "EFECTIVO",
-			"name": "EFECTIVO",
-			"company_id": 1,
-			"farm_id": 1,
-			"status_id": 1
+            "name": "EFECTIVO"
 		}
 	])
 const workCenters = ref([
-    {
-        id: 1,
-        uuid: '40add967-f6cb-4794-940a-e519ddaaead8',
-        name: 'Contratista',
-        code: 'con01'
-    }
+{
+			"id": 1,
+			"name": "Contratista"
+		},
+		{
+			"id": 2,
+			"name": "Corta"
+		},
+		{
+			"id": 3,
+			"name": "Planta"
+		},
+		{
+			"id": 4,
+			"name": "Selección"
+		},
+		{
+			"id": 5,
+			"name": "Laboratorio"
+		}
 ]);
 const companies = ref([
     {
@@ -501,24 +541,22 @@ const hideDialog = () => {
 };
 
 const listRowSelect = ref([]);
-let dataPost = ref({
-    document_type: selectedDocumentType.value.id,
-    document: '',
-    first_name: '',
-    last_name: '',
-    last_name_b: '',
-    gender_id: selectedGenderType.value.id,
-    email: '',
-    bank_account_number: '',
-    bank_account_doc: '',
-    bank_type_buy: '',
-    work_center_id: selectedWorkCenters.value.id,
-    payment_type_id: selectedPaymentType.value.uuid,
-    // company_id: null,
-    farm_id: selectedFarm.value.id
-    
-    // status_id: null
-});
+let dataPost = ref(
+    {
+  document_type: "",
+  document: "4",
+  first_name: "",
+  last_name: "",
+  last_name_b: "",
+  gender_id: "",
+  email: "",
+  bank_account_number: "",
+  bank_account_doc: "",
+  work_center_id: "",
+  payment_type_id: "",
+  farm_id: ""
+}
+);
 
 const resetValues = () => {
     dataPost.value.document = '';
@@ -530,12 +568,11 @@ const resetValues = () => {
     dataPost.value.document_type = '';
     dataPost.value.bank_account_number = '';
     dataPost.value.bank_account_doc = '';
-    dataPost.value.bank_type_buy = '';
     dataPost.value.work_center_id = null;
     // dataPost.value.company_id = null;
     dataPost.value.farm_id = null;
     dataPost.value.payment_type_id = null;
-    // dataPost.value.status_id = null;
+    
 };
 
 const assignValues = (modex) => {
@@ -543,14 +580,15 @@ const assignValues = (modex) => {
     if ((modex ==='EDIT')) {
         
         
-        selectedDocumentType.value.id = listRowSelect.value[0].document_type;
-        dataPost.value.document_type = listRowSelect.value[0].document_type;
-        //dataPost.value.document = listRowSelect.value[0].document;
-        dataPost.value.document = "";
+        selectedDocumentType.value.id = listRowSelect.value[0].document_type.id;
+        selectedDocumentType.value.name = listRowSelect.value[0].document_type.name;
+        dataPost.value.document_type = listRowSelect.value[0].document_type.id;
+        dataPost.value.document = listRowSelect.value[0].document;
         dataPost.value.first_name = listRowSelect.value[0].first_name;
         dataPost.value.last_name = listRowSelect.value[0].last_name;
         dataPost.value.last_name_b = listRowSelect.value[0].last_name_b;
         selectedGenderType.value.id = listRowSelect.value[0].gender_id;
+        selectedGenderType.value.label = listRowSelect.value[0].gender_label;
         dataPost.value.gender_id = listRowSelect.value[0].gender_id;
         dataPost.value.email = listRowSelect.value[0].email;
         dataPost.value.bank_account_number = listRowSelect.value[0].bank_account_number;
@@ -558,19 +596,20 @@ const assignValues = (modex) => {
         dataPost.value.bank_type_buy = listRowSelect.value[0].bank_type_buy;
         selectedWorkCenters.value.id = listRowSelect.value[0].workCenter.id;
         selectedWorkCenters.value.name = listRowSelect.value[0].workCenter.name;
-        dataPost.value.work_center_id = listRowSelect.value[0].workCenter.id;
-        // dataPost.value.company_id = listRowSelect.value[0].company_id;
+        dataPost.value.work_center_id = listRowSelect.value[0].workCenter.uuid;
         selectedFarm.value.id = listRowSelect.value[0].farm.id;
         dataPost.value.farm_id = listRowSelect.value[0].farm.id;
         selectedPaymentType.value.id = listRowSelect.value[0].payment_type.id;
-        selectedPaymentType.value.name = listRowSelect.value[0].payment_type.name;
-        dataPost.value.payment_type_id = listRowSelect.value[0].payment_type.uuid;
-
-        // dataPost.value.status_id = listRowSelect.value[0].status_id;
+        selectedPaymentType.value.code = listRowSelect.value[0].payment_type.name;
+        dataPost.value.payment_type_id = listRowSelect.value[0].payment_type.id;
+        selectedFarm.value.uuid = listRowSelect.value[0].farm.uuid;
+        selectedFarm.value.name = listRowSelect.value[0].farm.name;
+        dataPost.value.farm_id = listRowSelect.value[0].farm.uuid;
+        
     }
     if ((modex=== 'CLONE' )) {
         
-        dataPost.value.document_type = listRowSelect.value[0].document_type;
+        dataPost.value.document_type= "";
         dataPost.value.document = "";
         dataPost.value.first_name = listRowSelect.value[0].first_name;
         dataPost.value.last_name = listRowSelect.value[0].last_name;
@@ -581,10 +620,10 @@ const assignValues = (modex) => {
         dataPost.value.bank_account_doc = listRowSelect.value[0].bank_account_doc;
         dataPost.value.bank_type_buy = listRowSelect.value[0].bank_type_buy;
         dataPost.value.work_center_id = listRowSelect.value[0].workCenter.id;
-        // dataPost.value.company_id = listRowSelect.value[0].company_id;
         dataPost.value.farm_id = listRowSelect.value[0].farm.id;
-
-        // // dataPost.value.status_id = listRowSelect.value[0].status_id;
+        selectedPaymentType.value.id = listRowSelect.value[0].payment_type.id;
+        selectedPaymentType.value.name = listRowSelect.value[0].payment_type.name;
+        dataPost.value.payment_type_id = listRowSelect.value[0].payment_type.id;
     }
 };
 
@@ -592,9 +631,11 @@ watch(
     selectedFarm,
     () => {
         dataPost.value.farm_id = selectedFarm.value.id;
+        
     },
     { deep: true }
 );
+
 watch(
     selectedDocumentType,
     () => {
@@ -610,12 +651,20 @@ watch(
     { deep: true }
 );
 watch(
+    selectedPaymentType,
+    () => {
+        dataPost.value.payment_type_id = selectedPaymentType.value.id;
+    },
+    { deep: true }
+);
+watch(
     selectedGenderType,
     () => {
         dataPost.value.gender_id = selectedGenderType.value.id;
     },
     { deep: true }
 );
+
 const openNew = () => {
     mode.value = 'NEW';
     resetValues();
@@ -774,6 +823,7 @@ const selectedRegisters = ref([]);
 const onRowSelect = (data) => {
     
     listRowSelect.value = data;
+    
     //assignValues(mode.value)
     
 };
@@ -799,6 +849,23 @@ onBeforeMount(() => {
     initFilters();
 });
 
+const updateAbility = (user, token)=>  {
+            const bearer = 'Bearer ' + token;
+
+            fetch('http://164.90.146.196:81/api/v1/abilities', {
+                headers: {
+                    Authorization: bearer,
+                    accept: 'application/json'
+                }
+            })
+                .then((response) => response.json())
+                .then((permissions) => {
+                    const { can, rules } = new AbilityBuilder(Ability);
+                    can(permissions);
+                    console.log(permissions)
+                    this.$ability.update(rules);
+                });
+        }
 onMounted(async () => {
     loading.value = true;
     lazyParams.value = {
@@ -815,6 +882,8 @@ onMounted(async () => {
 
     column.value = null;
     fillHeaderCustom();
+
+    
 });
 
 const fillHeaderCustom = () => {
