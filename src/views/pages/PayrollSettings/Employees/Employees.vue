@@ -279,6 +279,7 @@
             <div class="p-grid">
                 <!-- <pre>{{ listRowSelect[0].workCenter }}</pre>-->
                 <pre>{{ dataPost }}</pre>
+                <pre>{{ listRowSelect }}</pre>
                 <!-- 
                 <pre>{{ selectedPaymentType }}</pre> -->
                 <!-- <pre>{{ listRowSelect}}</pre> -->
@@ -322,14 +323,14 @@
                 <pre>{{selectedPaymentType}}</pre>
                 <div class="p-col-6 p-md-4 mb-2">
                     <label for="paymentTypes" class="p-d-block">Payment types</label>
-                    <Dropdown v-model="selectedPaymentType" :options="paymentTypes" optionLabel="code" inputId="paymentType" aria-labelledby="basic" :placeholder="selectedPaymentType.name" />
+                    <Dropdown v-model="selectedPaymentType" :options="paymentTypes" optionLabel="code" inputId="paymentType" aria-labelledby="basic" :placeholder="selectedPaymentType.code" />
                 </div>
 <div>h1</div>
                 <div class="p-col-6 p-md-4 mb-2">
                     <label for="workCenter" class="p-d-block">Work Center</label>
                     <Dropdown v-model="selectedWorkCenters" :options="workCenters" optionLabel="name" inputId="workCenter" aria-labelledby="basic" :placeholder="selectedWorkCenters.name" />
                 </div>
-
+<pre>{{ selectedGenderType }}</pre>
                 <div class="p-col-6 p-md-4 mb-2">
                     <label for="genderType" class="p-d-block">Select gender</label>
                     <Dropdown v-model="selectedGenderType" :options="genderTypes" optionLabel="label" inputId="genderType" aria-labelledby="basic" :placeholder="selectedGenderType.label" />
@@ -408,7 +409,11 @@ const column = ref([]);
 const valueCustomTable = ref({ status: false, icon: 'pi pi-table', label: '' });
 const mode = ref();
 const selectedFarm = ref({uuid: "", name:""});
-const selectedGenderType = ref({ id: "",label:""});
+const selectedGenderType = ref({ 
+    id: "",
+    label:""
+
+});
 
 
 const selectedPaymentType = ref({
@@ -587,8 +592,8 @@ const assignValues = (modex) => {
         dataPost.value.first_name = listRowSelect.value[0].first_name;
         dataPost.value.last_name = listRowSelect.value[0].last_name;
         dataPost.value.last_name_b = listRowSelect.value[0].last_name_b;
-        selectedGenderType.value.id = listRowSelect.value[0].gender_id;
-        selectedGenderType.value.label = listRowSelect.value[0].gender_label;
+        selectedGenderType.value.id = listRowSelect.value[0].gender.id;
+        selectedGenderType.value.label = listRowSelect.value[0].gender.name;
         dataPost.value.gender_id = listRowSelect.value[0].gender_id;
         dataPost.value.email = listRowSelect.value[0].email;
         dataPost.value.bank_account_number = listRowSelect.value[0].bank_account_number;
