@@ -69,7 +69,7 @@
             <template>
                 <h1>No tienes permisos</h1>
             </template>
-            
+            <!-- <pre>{{dataResponseAPI}}</pre> -->
             <DataTable
                 v-model:selection="selectedRegisters"
                 v-model:filters="filters"
@@ -265,9 +265,11 @@
             </DataTable>
             
             <Dialog v-model:visible="formDialog" :style="{ width: '700px' }" :header="headerDialog" :modal="true" class="p-fluid text-center mx-auto">
+                
+                
                 <div class="p-grid">
 
-
+                    
                     <div class="p-col-6 p-md-4 mb-2">
                         <label for="typeDocument" class="p-d-block">Type of documents</label>
                         <Dropdown v-model="selectedDocumentType" :options="typesDocument" optionLabel="label" inputId="typeOfDocumentId" aria-labelledby="basic" :placeholder="selectedDocumentType.name" />
@@ -475,66 +477,86 @@ const resetValues = () => {
     dataPost.value.document_type = '';
     dataPost.value.bank_account_number = '';
     dataPost.value.bank_account_doc = '';
-    dataPost.value.work_center_id = null;
-    // dataPost.value.company_id = null;
-    dataPost.value.farm_id = null;
-    dataPost.value.payment_type_id = null;
+    dataPost.value.work_center_id = '';
+    dataPost.value.farm_id = '';
+    dataPost.value.payment_type_id = '';
 };
-
+const iddd = ref();
 const assignValues = (modex) => {
     if (modex === 'EDIT') {
+        alert("Edit")
+        console.log(dataPost.value)
         selectedDocumentType.value.id = listRowSelect.value[0].document_type.id;
         selectedDocumentType.value.name = listRowSelect.value[0].document_type.name;
         dataPost.value.document_type = listRowSelect.value[0].document_type.id;
 
         dataPost.value.document = listRowSelect.value[0].document;
-        dataPost.value.first_name = listRowSelect.value[0].first_name;
+        //dataPost.value.first_name = listRowSelect.value[0].first_name;
+        dataPost.value.first_name = "pruebaxxx";
         dataPost.value.last_name = listRowSelect.value[0].last_name;
         dataPost.value.last_name_b = listRowSelect.value[0].last_name_b;
+
         selectedGenderType.value.id = listRowSelect.value[0].gender.id;
         selectedGenderType.value.label = listRowSelect.value[0].gender.name;
         dataPost.value.gender_id = listRowSelect.value[0].gender_id;
+
         dataPost.value.email = listRowSelect.value[0].email;
+
         dataPost.value.bank_account_number = listRowSelect.value[0].bank_account_number;
         dataPost.value.bank_account_doc = listRowSelect.value[0].bank_account_doc;
 
-        selectedWorkCenters.value.id = listRowSelect.value[0].workCenter.id;
+        
+        selectedWorkCenters.value.id = workCenters.value.find(type => type.name === listRowSelect.value[0].workCenter.name)?.id || null;
         selectedWorkCenters.value.name = listRowSelect.value[0].workCenter.name;
-        dataPost.value.work_center_id = listRowSelect.value[0].workCenter.uuid;
+        
 
-        selectedFarm.value.id = listRowSelect.value[0].farm.id;
-        dataPost.value.farm_id = listRowSelect.value[0].farm.id;
 
+        selectedPaymentType.value.id = paymentTypes.value.find(type => type.code === listRowSelect.value[0].payment_type.name)?.id || null; 
         selectedPaymentType.value.code = listRowSelect.value[0].payment_type.name;
-        dataPost.value.payment_type_id = listRowSelect.value[0].payment_type.id;
-
-        selectedFarm.value.uuid = listRowSelect.value[0].farm.uuid;
+        //dataPost.value.payment_type_id = dataPost.value.payment_type_id = paymentTypes.value.find(type => type.code === listRowSelect.value[0].payment_type.name)?.id || null;
+        //dataPost.value.payment_type_id = listRowSelect.value[0].payment_type.id; 
+        // console.log(dataPost.value.payment_type_id)
+        
+        selectedFarm.value.id = farms.value.find(type => type.name === listRowSelect.value[0].farm.name)?.id || null;
         selectedFarm.value.name = listRowSelect.value[0].farm.name;
-        dataPost.value.farm_id = listRowSelect.value[0].farm.uuid;
+        
     }
     if (modex === 'CLONE') {
-        selectedDocumentType.value.id = listRowSelect.value[0].document_type.id;
-        selectedDocumentType.value.name = listRowSelect.value[0].document_type.name;
-        dataPost.value.document_type = '';
-        dataPost.value.document = '';
+        alert("clone")
+        selectedDocumentType.value.id = "";
+        selectedDocumentType.value.name = "";
+        dataPost.value.document_type = "";
+
+        dataPost.value.document = "";
+
         dataPost.value.first_name = listRowSelect.value[0].first_name;
         dataPost.value.last_name = listRowSelect.value[0].last_name;
         dataPost.value.last_name_b = listRowSelect.value[0].last_name_b;
-        selectedGenderType.value.id = listRowSelect.value[0].gender_id;
-        selectedGenderType.value.label = listRowSelect.value[0].gender_label;
+
+        selectedGenderType.value.id = listRowSelect.value[0].gender.id;
+        selectedGenderType.value.label = listRowSelect.value[0].gender.name;
         dataPost.value.gender_id = listRowSelect.value[0].gender_id;
+
         dataPost.value.email = listRowSelect.value[0].email;
-        dataPost.value.bank_account_number = listRowSelect.value[0].bank_account_number;
+
+        dataPost.value.bank_account_number = "";
         dataPost.value.bank_account_doc = listRowSelect.value[0].bank_account_doc;
 
         selectedWorkCenters.value.id = listRowSelect.value[0].workCenter.id;
         selectedWorkCenters.value.name = listRowSelect.value[0].workCenter.name;
         dataPost.value.work_center_id = listRowSelect.value[0].workCenter.uuid;
+
         selectedFarm.value.id = listRowSelect.value[0].farm.id;
         dataPost.value.farm_id = listRowSelect.value[0].farm.id;
-        selectedPaymentType.value.id = listRowSelect.value[0].payment_type.id;
+        
+        
+        selectedPaymentType.value.id = paymentTypes.value.find(type => type.code === listRowSelect.value[0].payment_type.name)?.id || null; 
         selectedPaymentType.value.code = listRowSelect.value[0].payment_type.name;
-        dataPost.value.payment_type_id = listRowSelect.value[0].payment_type.id;
+        //dataPost.value.payment_type_id = dataPost.value.payment_type_id = paymentTypes.value.find(type => type.code === listRowSelect.value[0].payment_type.name)?.id || null;
+        
+        
+        //console.log(dataPost.value.payment_type_id)
+
         selectedFarm.value.uuid = listRowSelect.value[0].farm.uuid;
         selectedFarm.value.name = listRowSelect.value[0].farm.name;
         dataPost.value.farm_id = listRowSelect.value[0].farm.uuid;
@@ -587,6 +609,7 @@ const openExport = () => {
 
 const newRecord = async (requestDataUnitTypes, endpoint) => {
     await postResponseAPI(requestDataUnitTypes, endpoint);
+    console.log(requestDataUnitTypes)
     recordsDelete.value = [];
 
     switch (statusCode.value) {
@@ -696,11 +719,9 @@ const selectedPaymentType = ref({
     code: ''
 });
 const selectedWorkCenters = ref({
-    uuid: '35c8cb40-2635-481a-ad1b-7ff46522b506',
-    name: 'Selección',
-    code: 'sel01',
-    created_at: '2024-01-07',
-    updated_at: '2024-01-07'
+    id: '',
+    name: '',
+    
 });
 const headerDialog = ref('');
 const companies = ref([
@@ -827,6 +848,7 @@ watch(
 watch(
     selectedPaymentType,
     () => {
+
         dataPost.value.payment_type_id = selectedPaymentType.value.id;
     },
     { deep: true }
