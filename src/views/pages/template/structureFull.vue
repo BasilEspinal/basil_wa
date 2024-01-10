@@ -156,7 +156,9 @@
 import { ref, watch, provide, onBeforeMount, onMounted } from 'vue';
 import useDataAPI from '@/composables/DataAPI/FetchDataAPI.js';
 import { FilterMatchMode, FilterOperator } from 'primevue/api';
-const { getAllResponseAPI, totalRecordsResponseAPI, currentPageResponseAPI, linksResponseAPI, postResponseAPI, putResponseAPI, deleteResponseAPI, errorResponseAPI, dataResponseAPI, statusCode } = useDataAPI();
+const { getAllResponseAPI, getAllResponseListAPI, totalRecordsResponseAPI, currentPageResponseAPI, linksResponseAPI, postResponseAPI, putResponseAPI, deleteResponseAPI, errorResponseAPI, dataResponseAPI, dataResponseListAPI, statusCode } =
+    useDataAPI();
+
 let endpoint = ref('/endpoint'); //replace endpoint with your endpoint
 const loading = ref(false);
 
@@ -208,6 +210,7 @@ const onRowSelect = (data) => {
     //assignValues(mode.value)
     
 };
+//Cut and paste this at the end
 watch(listRowSelect, onRowSelect);
 const onSelectAllChange = () => {
     onRowSelect();
