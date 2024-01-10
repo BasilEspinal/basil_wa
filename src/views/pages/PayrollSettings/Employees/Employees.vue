@@ -382,7 +382,6 @@ const { getAllResponseAPI, getAllResponseListAPI, totalRecordsResponseAPI, curre
 const { conditionalColumns } = useEmployeesParameters();
 const toast = useToast();
 ////////////////////////////////////////////
-
 // sizeOptionsButton
 const size = ref({ label: 'Normal', value: 'normal' });
 const sizeOptions = ref([
