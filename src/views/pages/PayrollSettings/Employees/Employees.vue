@@ -307,7 +307,7 @@
                         <label for="paymentTypes" class="p-d-block">Payment types</label>
                         <Dropdown v-model="selectedPaymentType" :options="paymentTypes" optionLabel="code" inputId="paymentType" aria-labelledby="basic" :placeholder="selectedPaymentType.code" />
                     </div>
-                    <div>h1</div>
+                    
                     <div class="p-col-6 p-md-4 mb-2">
                         <label for="workCenter" class="p-d-block">Work Center</label>
                         <Dropdown v-model="selectedWorkCenters" :options="workCenters" optionLabel="name" inputId="workCenter" aria-labelledby="basic" :placeholder="selectedWorkCenters.name" />
@@ -362,7 +362,7 @@
 </template>
 
 <script setup>
-import { ref, inject, watch, provide, onBeforeMount, onMounted } from 'vue';
+import { ref, watch, onBeforeMount, onMounted } from 'vue';
 import { useToast } from 'primevue/usetoast';
 import useDataAPI from '@/composables/DataAPI/FetchDataAPI.js';
 import { FilterMatchMode, FilterOperator } from 'primevue/api';
