@@ -436,72 +436,6 @@ const selectedDocumentType = ref([
     },
     
 ]);
-const typesDocument = ref([
-    // { 
-    //     name: 'Cedula de ciudadania',
-    //     id: 'CEDCIUD'
-    // },
-    // { 
-    //     name: 'Cedula de extranjería',
-    //     id: 'CEDEXTR' 
-    // }
-]);
-
-
-const genderTypes = ref([
-    // {
-	// 	"id": "F",
-	// 	"label": "Femenino"
-	// },
-	// {
-	// 	"id": "M",
-	// 	"label": "Masculino"
-	// },
-	// {
-	// 	"id": "O",
-	// 	"label": "Otro"
-	// }
-]);
-const paymentTypes = ref([
-        // {
-		// 	"id": 1,
-		// 	"code": "BBVA",
-        //     "name": "BBVA"
-		// },
-		// {
-		// 	"id": 2,
-		// 	"code": "DALE!",
-        //     "name": "DALE!"
-
-		// },
-		// {
-		// 	"id": 3,
-		// 	"code": "EFECTIVO",
-        //     "name": "EFECTIVO"
-		// }
-	])
-const workCenters = ref([
-// {
-// 			"id": 1,
-// 			"name": "Contratista"
-// 		},
-// 		{
-// 			"id": 2,
-// 			"name": "Corta"
-// 		},
-// 		{
-// 			"id": 3,
-// 			"name": "Planta"
-// 		},
-// 		{
-// 			"id": 4,
-// 			"name": "Selección"
-// 		},
-// 		{
-// 			"id": 5,
-// 			"name": "Laboratorio"
-// 		}
-]);
 const companies = ref([
     {
         id: 1,
@@ -510,28 +444,11 @@ const companies = ref([
         code: '900137869'
     }
 ]);
-
- const farms = ref([
-//     {
-//         uuid: 'c86883a4-9334-4519-96df-3a9416a293f6',
-//         id: 0,
-//         name: 'Otra',
-//         code: 'FIN00'
-//     },
-//     {
-//         uuid: 'c86883a4-9334-4519-96df-3a9416a293f6',
-//         id: 1,
-//         name: 'Retoño',
-//         code: 'FIN01'
-//     },
-//     {
-//         id: 2,
-//         uuid: '21eb9f91-25df-458a-81fa-68e5a91eed69',
-//         name: 'La consentida',
-//         code: 'FIN02'
-//     }
-]);
-
+const typesDocument = ref([]);
+const genderTypes = ref([]);
+const paymentTypes = ref([])
+const workCenters = ref([]);
+const farms = ref([]);
 const statusDialog = ref('Active');
 const optionsStatus = ref(['Inactive', 'Active']);
 const formDialog = ref(false);
