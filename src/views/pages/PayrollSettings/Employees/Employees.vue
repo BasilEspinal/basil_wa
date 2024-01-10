@@ -959,13 +959,11 @@ const loadLazyData = async (event) => {
     await getAllResponseAPI(endpoint.value);
     loading.value = false;
     // const workCentersItemId = await getListWorkCentersItemById('yourCodeToSearch');
-    //     console.log(workCentersItemId);
     await getListFarms();
     await getListPaymentTypes();
     await getListDocumentTypes();
     await getListGenderTypes();
     await getListWorkCenters();
-        
 };
 
 const clearFilter = () => {
