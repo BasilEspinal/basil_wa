@@ -7,6 +7,7 @@ export default function useDataAPI(datos) {
   const { pathAPI, APISettings } = useSettingsAPI();
   // Define data y error en el ámbito de useProducts
   let dataResponseAPI = ref({})
+  let dataResponseListAPI = ref({})
   let totalRecordsResponseAPI = ref(0)
   let currentPageResponseAPI = ref(0)
   let linksResponseAPI = ref({})
@@ -49,6 +50,47 @@ export default function useDataAPI(datos) {
           //linksResponseAPI.value = dataResponseAPI.value.links;
           //currentPageResponseAPI.value = dataResponseAPI.value.meta.current_page;
           
+          errorResponseAPI.value = ref('')
+        }
+        
+      })
+      .catch(error => {
+        if (error.name === 'TypeError') {
+          // Error de red
+          console.error('Error de red:', error.message);
+        } else {
+          // Error en la respuesta
+          console.error('Error en la respuesta:', error.message);
+        }
+        console.error('Error :', error);
+      });
+
+  }
+  const getAllResponseListAPI = async ( endPoint) => {
+    
+    let baseUrl = `${base}${api}${endPoint}`;
+    const requestOptions = {
+      method: 'GET',
+      headers: APISettings.headers,
+    };
+    await fetch(baseUrl, requestOptions)
+      .then(response => {
+
+        statusCode.value = response.status
+        errorResponseAPI.value = ref('')
+        return response.json()
+      })
+      .then(async (data) => {
+        
+        errorResponseAPI.value = ref('')
+        
+        if (data.errors) {
+          errorResponseAPI.value = data.errors
+          
+        }
+        else {
+          
+          dataResponseListAPI.value=JSON.parse(JSON.stringify(data, null, 2));
           errorResponseAPI.value = ref('')
         }
         
@@ -188,11 +230,13 @@ export default function useDataAPI(datos) {
   return {
     errorResponseAPI,
     dataResponseAPI,
+    dataResponseListAPI,
     statusCode,
     //totalRecordsResponseAPI,
     //currentPageResponseAPI,
     //linksResponseAPI,
     getAllResponseAPI,
+    getAllResponseListAPI,
     postResponseAPI,
     putResponseAPI,
     deleteResponseAPI

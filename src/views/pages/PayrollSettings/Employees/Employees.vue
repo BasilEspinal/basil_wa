@@ -20,7 +20,7 @@
                             <Button :disabled="!(listRowSelect.length > 0 && listRowSelect.length < 2)" label="Edit" icon="pi pi-file-edit" class="p-button-help mr-2 ml-2 mb-2 mt-2" @click="openEdit" size="large" />
                             <Button :disabled="!(listRowSelect.length > 0 && listRowSelect.length < 2)" label="Clone" icon="pi pi-copy" class="p-button-secondary mr-2 ml-2 mb-2 mt-2" @click="openClone" size="large" />
                             <Button label="Export" icon="pi pi-file-import" class="p-button-warning mr-2 ml-2 mb-2 mt-2" @click="openExport" size="large" />
-                            <Button :disabled="!listRowSelect.length > 0" label="Delete" icon="pi pi-trash" class="p-button-danger mr-2 ml-2 mb-2 mt-2" @click="openDelete" size="large" />
+                            <Button :disabled="!(listRowSelect.length > 0 && listRowSelect.length < 2)" label="Delete" icon="pi pi-trash" class="p-button-danger mr-2 ml-2 mb-2 mt-2" @click="openDelete" size="large" />
                         </div>
                     </template>
                 </Toolbar>
@@ -148,7 +148,7 @@
 
             <Column  filterField = "document_type" header="Type of Document" sortable>
                 <template #body="{ data }">
-                    {{ data.document_type.name }}
+                    <!-- {{ data.document_type.name }} -->
                 </template>
 
                 <template #filter="{ filterModel }">
@@ -176,7 +176,7 @@
             
             <Column field="gender" filterField="gender_id" header="Gender" sortable>
                 <template #body="{ data }">
-                    {{ data.gender_id }}
+                    <!-- {{ data.gender.name }} -->
                 </template>
                 <template #filter="{ filterModel }">
                     <InputText v-model="filterModel.value" type="text" class="p-column-filter" placeholder="Search by gender" />
@@ -197,7 +197,7 @@
 
             <Column field="workCenterName" filterField="workCenter.name" header="Work Center Name" sortable>
                 <template #body="{ data }">
-                    {{ data.workCenter.name }}
+                    <!-- {{ data.workCenter.name }} -->
                 </template>
                 <template #filter="{ filterModel }">
                     <InputText v-model="filterModel.value" type="text" class="p-column-filter" placeholder="Search by workcenter" />
@@ -233,7 +233,7 @@
 
             <Column field="farmName" filterField="farm.name" header="Farm Name" sortable>
                 <template #body="{ data }">
-                    {{ data.farm.name }}
+                    <!-- {{ data.farm.name }} -->
                 </template>
                 <template #filter="{ filterModel }">
                     <InputText v-model="filterModel.value" type="text" class="p-column-filter" placeholder="Search by farm" />
@@ -242,7 +242,7 @@
 
             <Column field="companyName" header="Company Name" sortable>
                 <template #body="{ data }">
-                    {{ data.company.name }}
+                    <!-- {{ data.company.name }} -->
                 </template>
             </Column>
 
@@ -266,7 +266,7 @@
 
             <Column field="status" filterField="status.name" header="Status" sortable>
                 <template #body="{ data }">
-                    <Tag :value="data.status.name" :severity="'EFC88B'" />
+                    <!-- <Tag :value="data.status.name" :severity="'EFC88B'" /> -->
                 </template>
                 <template #filter="{ filterModel }">
                     <InputText v-model="filterModel.value" type="text" class="p-column-filter" placeholder="Search by status" />
@@ -277,18 +277,15 @@
         <!-- <pre>{{ dataResponseAPI.data }}</pre> -->
         <Dialog v-model:visible="formDialog" :style="{ width: '700px' }" :header="headerDialog" :modal="true" class="p-fluid text-center mx-auto">
             <div class="p-grid">
-                <!-- <pre>{{ listRowSelect[0].workCenter }}</pre>-->
+                
                 <pre>{{ dataPost }}</pre>
-                <pre>{{ listRowSelect }}</pre>
-                <!-- 
-                <pre>{{ selectedPaymentType }}</pre> -->
-                <!-- <pre>{{ listRowSelect}}</pre> -->
-                <!--<pre>{{ selectedGenderType}}</pre> -->
+                
+                
                 
                 
                 <div class="p-col-6 p-md-4 mb-2">
                     <label for="typeDocument" class="p-d-block">Type of documents</label>
-                    <Dropdown v-model="selectedDocumentType" :options="typesDocument" optionLabel="name" inputId="typeOfDocumentId" aria-labelledby="basic" :placeholder="selectedDocumentType.name" />
+                    <Dropdown v-model="selectedDocumentType" :options="typesDocument" optionLabel="label" inputId="typeOfDocumentId" aria-labelledby="basic" :placeholder="selectedDocumentType.name" />
                 </div>
 
                 <div class="p-col-6 p-md-4 mb-2">
@@ -400,7 +397,7 @@ import { useAbility } from '@casl/vue';
 const $ability = inject('$ability', null);
 const router = useRouter();
 const { can, rules } = useAbility();
-const { getAllResponseAPI, totalRecordsResponseAPI, currentPageResponseAPI, linksResponseAPI, postResponseAPI, putResponseAPI, deleteResponseAPI, errorResponseAPI, dataResponseAPI, statusCode } = useDataAPI();
+const { getAllResponseAPI,getAllResponseListAPI, totalRecordsResponseAPI, currentPageResponseAPI, linksResponseAPI, postResponseAPI, putResponseAPI, deleteResponseAPI, errorResponseAPI, dataResponseAPI, dataResponseListAPI,statusCode } = useDataAPI();
 const { conditionalColumns } = useEmployeesParameters();
 let endpoint = ref('/employees');
 const toast = useToast();
@@ -440,69 +437,70 @@ const selectedDocumentType = ref([
     
 ]);
 const typesDocument = ref([
-    { 
-        name: 'Cedula de ciudadania',
-        id: 'CEDCIUD'
-    },
-    { 
-        name: 'Cedula de extranjería',
-        id: 'CEDEXTR' }
+    // { 
+    //     name: 'Cedula de ciudadania',
+    //     id: 'CEDCIUD'
+    // },
+    // { 
+    //     name: 'Cedula de extranjería',
+    //     id: 'CEDEXTR' 
+    // }
 ]);
 
 
 const genderTypes = ref([
-    {
-		"id": "F",
-		"label": "Femenino"
-	},
-	{
-		"id": "M",
-		"label": "Masculino"
-	},
-	{
-		"id": "O",
-		"label": "Otro"
-	}
+    // {
+	// 	"id": "F",
+	// 	"label": "Femenino"
+	// },
+	// {
+	// 	"id": "M",
+	// 	"label": "Masculino"
+	// },
+	// {
+	// 	"id": "O",
+	// 	"label": "Otro"
+	// }
 ]);
 const paymentTypes = ref([
-{
-			"id": 1,
-			"code": "BBVA",
-            "name": "BBVA"
-		},
-		{
-			"id": 2,
-			"code": "DALE!",
-            "name": "DALE!"
+        // {
+		// 	"id": 1,
+		// 	"code": "BBVA",
+        //     "name": "BBVA"
+		// },
+		// {
+		// 	"id": 2,
+		// 	"code": "DALE!",
+        //     "name": "DALE!"
 
-		},
-		{
-			"id": 3,
-			"code": "EFECTIVO",
-            "name": "EFECTIVO"
-		}
+		// },
+		// {
+		// 	"id": 3,
+		// 	"code": "EFECTIVO",
+        //     "name": "EFECTIVO"
+		// }
 	])
 const workCenters = ref([
-{
-			"id": 1,
-			"name": "Contratista"
-		},
-		{
-			"id": 2,
-			"name": "Corta"
-		},
-		{
-			"id": 3,
-			"name": "Planta"
-		},
-		{
-			"id": 4,
-			"name": "Selección"
-		},
-		{
-			"id": 5,
-			"name": "Laboratorio"
-		}
+// {
+// 			"id": 1,
+// 			"name": "Contratista"
+// 		},
+// 		{
+// 			"id": 2,
+// 			"name": "Corta"
+// 		},
+// 		{
+// 			"id": 3,
+// 			"name": "Planta"
+// 		},
+// 		{
+// 			"id": 4,
+// 			"name": "Selección"
+// 		},
+// 		{
+// 			"id": 5,
+// 			"name": "Laboratorio"
+// 		}
 ]);
 const companies = ref([
     {
@@ -513,25 +511,25 @@ const companies = ref([
     }
 ]);
 
-const farms = ref([
-    {
-        uuid: 'c86883a4-9334-4519-96df-3a9416a293f6',
-        id: 0,
-        name: 'Otra',
-        code: 'FIN00'
-    },
-    {
-        uuid: 'c86883a4-9334-4519-96df-3a9416a293f6',
-        id: 1,
-        name: 'Retoño',
-        code: 'FIN01'
-    },
-    {
-        id: 2,
-        uuid: '21eb9f91-25df-458a-81fa-68e5a91eed69',
-        name: 'La consentida',
-        code: 'FIN02'
-    }
+ const farms = ref([
+//     {
+//         uuid: 'c86883a4-9334-4519-96df-3a9416a293f6',
+//         id: 0,
+//         name: 'Otra',
+//         code: 'FIN00'
+//     },
+//     {
+//         uuid: 'c86883a4-9334-4519-96df-3a9416a293f6',
+//         id: 1,
+//         name: 'Retoño',
+//         code: 'FIN01'
+//     },
+//     {
+//         id: 2,
+//         uuid: '21eb9f91-25df-458a-81fa-68e5a91eed69',
+//         name: 'La consentida',
+//         code: 'FIN02'
+//     }
 ]);
 
 const statusDialog = ref('Active');
@@ -568,7 +566,7 @@ const resetValues = () => {
     dataPost.value.first_name = '';
     dataPost.value.last_name = '';
     dataPost.value.last_name_b = '';
-    dataPost.value.gender_id = '';
+    dataPost.value.gender_id = null;
     dataPost.value.email = '';
     dataPost.value.document_type = '';
     dataPost.value.bank_account_number = '';
@@ -588,6 +586,7 @@ const assignValues = (modex) => {
         selectedDocumentType.value.id = listRowSelect.value[0].document_type.id;
         selectedDocumentType.value.name = listRowSelect.value[0].document_type.name;
         dataPost.value.document_type = listRowSelect.value[0].document_type.id;
+
         dataPost.value.document = listRowSelect.value[0].document;
         dataPost.value.first_name = listRowSelect.value[0].first_name;
         dataPost.value.last_name = listRowSelect.value[0].last_name;
@@ -598,15 +597,21 @@ const assignValues = (modex) => {
         dataPost.value.email = listRowSelect.value[0].email;
         dataPost.value.bank_account_number = listRowSelect.value[0].bank_account_number;
         dataPost.value.bank_account_doc = listRowSelect.value[0].bank_account_doc;
-        dataPost.value.bank_type_buy = listRowSelect.value[0].bank_type_buy;
+        
+
         selectedWorkCenters.value.id = listRowSelect.value[0].workCenter.id;
         selectedWorkCenters.value.name = listRowSelect.value[0].workCenter.name;
         dataPost.value.work_center_id = listRowSelect.value[0].workCenter.uuid;
+
         selectedFarm.value.id = listRowSelect.value[0].farm.id;
         dataPost.value.farm_id = listRowSelect.value[0].farm.id;
-        selectedPaymentType.value.id = listRowSelect.value[0].payment_type.id;
+
+
+        
+
         selectedPaymentType.value.code = listRowSelect.value[0].payment_type.name;
         dataPost.value.payment_type_id = listRowSelect.value[0].payment_type.id;
+
         selectedFarm.value.uuid = listRowSelect.value[0].farm.uuid;
         selectedFarm.value.name = listRowSelect.value[0].farm.name;
         dataPost.value.farm_id = listRowSelect.value[0].farm.uuid;
@@ -627,7 +632,7 @@ const assignValues = (modex) => {
         dataPost.value.email = listRowSelect.value[0].email;
         dataPost.value.bank_account_number = listRowSelect.value[0].bank_account_number;
         dataPost.value.bank_account_doc = listRowSelect.value[0].bank_account_doc;
-        dataPost.value.bank_type_buy = listRowSelect.value[0].bank_type_buy;
+        
         selectedWorkCenters.value.id = listRowSelect.value[0].workCenter.id;
         selectedWorkCenters.value.name = listRowSelect.value[0].workCenter.name;
         dataPost.value.work_center_id = listRowSelect.value[0].workCenter.uuid;
@@ -700,6 +705,7 @@ const openClone = () => {
     formDialog.value = true;
     assignValues(mode.value)
 };
+
 let recordsDelete = ref([]);
 const openDelete = () => {
     mode.value = 'DELETE';
@@ -806,6 +812,7 @@ const saveRecord = async () => {
         case 'EDIT':
             
             await updateRecord(dataPost.value, listRowSelect.value[0].uuid, endpoint.value);
+            console.info(dataPost.value)
             break;
         case 'DELETE':
             if (recordsDelete.value.length > 0 && recordsDelete.value.length < 2) await dropRecord(recordsDelete.value[0].uuid, endpoint.value);
@@ -863,43 +870,24 @@ const onSelectAllChange = () => {
 
 onBeforeMount(() => {
     initFilters();
+
+
 });
 
-const updateAbility = (user, token)=>  {
-            const bearer = 'Bearer ' + token;
 
-            fetch('http://164.90.146.196:81/api/v1/abilities', {
-                headers: {
-                    Authorization: bearer,
-                    accept: 'application/json'
-                }
-            })
-                .then((response) => response.json())
-                .then((permissions) => {
-                    const { can, rules } = new AbilityBuilder(Ability);
-                    can(permissions);
-                    console.log(permissions)
-                    this.$ability.update(rules);
-                });
-        }
 onMounted(async () => {
-    loading.value = true;
-    lazyParams.value = {
-        ////  first: dt.value.first,
-        ////  rows: dt.value.rows,
-        ////  sortField: null,
-        ////  sortOrder: null,
+        loading.value = true;
+        lazyParams.value = {
+            //TODO
         filters: filters.value
-    };
-
-    await loadLazyData();
-
-    selectedRegisters.value = [];
-
-    column.value = null;
-    fillHeaderCustom();
-
-    
+        };
+        await loadLazyData(); 
+        console.log(dataResponseAPI.value.data);
+        selectedRegisters.value = [];
+        column.value = null;
+        fillHeaderCustom();
+        //selectedPaymentType.value.id = listRowSelect.value[0].payment_type.id;
+        
 });
 
 const fillHeaderCustom = () => {
@@ -930,11 +918,54 @@ const dt = ref();
 const loading = ref(false);
 const lazyParams = ref({});
 
+// async function getListWorkCenters() {
+//     const response = await getAllResponseAPI('/lists_work_centers');
+//     return response.value.data;
+// }
+
+async function getListFarms() {
+    await getAllResponseListAPI('/lists_farms');
+    farms.value = dataResponseListAPI.value.data;
+    console.log(farms.value)
+    
+}
+
+async function getListPaymentTypes() {
+    await getAllResponseListAPI('/lists_payment_types');
+    paymentTypes.value = dataResponseListAPI.value.data;
+    console.log(paymentTypes.value)
+}
+
+async function getListDocumentTypes() {
+    await getAllResponseListAPI('/lists_document_types');
+    typesDocument.value = dataResponseListAPI.value;
+    console.log(typesDocument.value)
+}
+
+async function getListGenderTypes() {
+    await getAllResponseListAPI('/lists_gender_types');
+    genderTypes.value = dataResponseListAPI.value;
+    console.log(genderTypes.value)
+}
+async function getListWorkCenters() {
+    await getAllResponseListAPI('/lists_work_centers');
+    workCenters.value = dataResponseListAPI.value.data;
+    console.log(workCenters.value)
+}
+
 const loadLazyData = async (event) => {
     //lazyParams.value = { ...lazyParams.value, first: event?.first || first.value };
     endpoint.value = '/employees';
     await getAllResponseAPI(endpoint.value);
     loading.value = false;
+    // const workCentersItemId = await getListWorkCentersItemById('yourCodeToSearch');
+    //     console.log(workCentersItemId);
+    await getListFarms();
+    await getListPaymentTypes();
+    await getListDocumentTypes();
+    await getListGenderTypes();
+    await getListWorkCenters();
+        
 };
 
 const clearFilter = () => {
