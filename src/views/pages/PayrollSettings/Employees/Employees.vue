@@ -69,7 +69,7 @@
             <template>
                 <h1>No tienes permisos</h1>
             </template>
-
+            <!-- <pre>{{ dataResponseAPI }}</pre> -->
             <DataTable
                 v-model:selection="selectedRegisters"
                 v-model:filters="filters"
@@ -140,7 +140,7 @@
 
                 <Column filterField="document_type" header="Type of Document" sortable>
                     <template #body="{ data }">
-                        <!-- {{ data.document_type.name }} -->
+                        {{ data.document_type.name }}
                     </template>
 
                     <template #filter="{ filterModel }">
@@ -168,7 +168,7 @@
 
                 <Column field="gender" filterField="gender_id" header="Gender" sortable>
                     <template #body="{ data }">
-                        <!-- {{ data.gender.name }} -->
+                        {{ data.gender.name }}
                     </template>
                     <template #filter="{ filterModel }">
                         <InputText v-model="filterModel.value" type="text" class="p-column-filter" placeholder="Search by gender" />
@@ -187,7 +187,7 @@
 
                 <Column field="workCenterName" filterField="workCenter.name" header="Work Center Name" sortable>
                     <template #body="{ data }">
-                        <!-- {{ data.workCenter.name }} -->
+                        {{ data.workCenter.name }}
                     </template>
                     <template #filter="{ filterModel }">
                         <InputText v-model="filterModel.value" type="text" class="p-column-filter" placeholder="Search by workcenter" />
@@ -214,7 +214,7 @@
 
                 <Column field="paymentType" filterField="payment_type.name" header="Payment Type" sortable>
                     <template #body="{ data }">
-                        <!-- {{ data.payment_type.name }} -->
+                        {{ data.payment_type.name }}
                     </template>
                     <template #filter="{ filterModel }">
                         <InputText v-model="filterModel.value" type="text" class="p-column-filter" placeholder="Search by payment type" />
@@ -223,7 +223,7 @@
 
                 <Column field="farmName" filterField="farm.name" header="Farm Name" sortable>
                     <template #body="{ data }">
-                        <!-- {{ data.farm.name }} -->
+                        {{ data.farm.name }}
                     </template>
                     <template #filter="{ filterModel }">
                         <InputText v-model="filterModel.value" type="text" class="p-column-filter" placeholder="Search by farm" />
@@ -232,7 +232,7 @@
 
                 <Column field="companyName" header="Company Name" sortable>
                     <template #body="{ data }">
-                        <!-- {{ data.company.name }} -->
+                        {{ data.company.name }}
                     </template>
                 </Column>
 
@@ -256,7 +256,7 @@
 
                 <Column field="status" filterField="status.name" header="Status" sortable>
                     <template #body="{ data }">
-                        <!-- <Tag :value="data.status.name" :severity="'EFC88B'" /> -->
+                        <Tag :value="data.status.name" :severity="data.status.color" />
                     </template>
                     <template #filter="{ filterModel }">
                         <InputText v-model="filterModel.value" type="text" class="p-column-filter" placeholder="Search by status" />
