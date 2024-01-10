@@ -69,7 +69,7 @@
             <template>
                 <h1>No tienes permisos</h1>
             </template>
-            <!-- <pre>{{ dataResponseAPI }}</pre> -->
+            
             <DataTable
                 v-model:selection="selectedRegisters"
                 v-model:filters="filters"
@@ -263,10 +263,10 @@
                     </template>
                 </Column>
             </DataTable>
-            <!-- <pre>{{ dataResponseAPI.data }}</pre> -->
+            
             <Dialog v-model:visible="formDialog" :style="{ width: '700px' }" :header="headerDialog" :modal="true" class="p-fluid text-center mx-auto">
                 <div class="p-grid">
-                    <pre>{{ dataPost }}</pre>
+
 
                     <div class="p-col-6 p-md-4 mb-2">
                         <label for="typeDocument" class="p-d-block">Type of documents</label>
@@ -302,7 +302,7 @@
                         <label for="bankAccountDoc" class="p-d-block">Account Document</label>
                         <InputText v-model="dataPost.bank_account_doc" inputId="bankAccountDoc" aria-labelledby="basic" placeholder="Type your account document here" />
                     </div>
-                    <pre>{{ selectedPaymentType }}</pre>
+                    
                     <div class="p-col-6 p-md-4 mb-2">
                         <label for="paymentTypes" class="p-d-block">Payment types</label>
                         <Dropdown v-model="selectedPaymentType" :options="paymentTypes" optionLabel="code" inputId="paymentType" aria-labelledby="basic" :placeholder="selectedPaymentType.code" />
@@ -312,7 +312,7 @@
                         <label for="workCenter" class="p-d-block">Work Center</label>
                         <Dropdown v-model="selectedWorkCenters" :options="workCenters" optionLabel="name" inputId="workCenter" aria-labelledby="basic" :placeholder="selectedWorkCenters.name" />
                     </div>
-                    <pre>{{ selectedGenderType }}</pre>
+                    
                     <div class="p-col-6 p-md-4 mb-2">
                         <label for="genderType" class="p-d-block">Select gender</label>
                         <Dropdown v-model="selectedGenderType" :options="genderTypes" optionLabel="label" inputId="genderType" aria-labelledby="basic" :placeholder="selectedGenderType.label" />
