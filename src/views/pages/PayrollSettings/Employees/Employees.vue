@@ -385,72 +385,99 @@ import { FilterMatchMode, FilterOperator } from 'primevue/api';
 import useEmployeesParameters from '@/composables/PayrollSettings/Employees/EmployeesParameters.js';
 import SelectButton from 'primevue/selectbutton';
 import { useRouter } from 'vue-router';
-
-
-import { AbilityBuilder, Ability } from '@casl/ability';
-import { ABILITY_TOKEN } from '@casl/vue';
 import { useAbility } from '@casl/vue';
-// Define a symbol for the injection token
 
+let endpoint = ref('/employees');
+const loading = ref(false);
 
-// Use inject to get the $ability from the parent component
-const $ability = inject('$ability', null);
+////////////////////////////////////////////
 const router = useRouter();
 const { can, rules } = useAbility();
 const { getAllResponseAPI,getAllResponseListAPI, totalRecordsResponseAPI, currentPageResponseAPI, linksResponseAPI, postResponseAPI, putResponseAPI, deleteResponseAPI, errorResponseAPI, dataResponseAPI, dataResponseListAPI,statusCode } = useDataAPI();
 const { conditionalColumns } = useEmployeesParameters();
-let endpoint = ref('/employees');
 const toast = useToast();
-const columnas = ref([]);
-const column = ref([]);
-const valueCustomTable = ref({ status: false, icon: 'pi pi-table', label: '' });
-const mode = ref();
-const selectedFarm = ref({uuid: "", name:""});
-const selectedGenderType = ref({ 
-    id: "",
-    label:""
+////////////////////////////////////////////
+
+// sizeOptionsButton
+const size = ref({ label: 'Normal', value: 'normal' });
+const sizeOptions = ref([
+    { label: 'Small', value: 'small', class: 'sm' },
+    { label: 'Normal', value: 'normal' },
+    { label: 'Large', value: 'large', class: 'lg' }
+]);
+
+onMounted(async () => {
+        loading.value = true;
+        lazyParams.value = {
+            //TODO
+        filters: filters.value
+        };
+        await loadLazyData(); 
+        console.log(dataResponseAPI.value.data);
+        selectedRegisters.value = [];
+        column.value = null;
+        fillHeaderCustom();
+        //selectedPaymentType.value.id = listRowSelect.value[0].payment_type.id;
+        
+});
+const filters = ref();
+onBeforeMount(() => {
+    initFilters();
+
 
 });
 
+const clearFilter = () => {
+    initFilters();
+};
 
-const selectedPaymentType = ref({
-			id: "",
-			code: "",	
-		});
-        
-const selectedWorkCenters = ref(
-    {
-  uuid: "35c8cb40-2635-481a-ad1b-7ff46522b506",
-  name: "Selección",
-  code: "sel01",
-  created_at: "2024-01-07",
-  updated_at: "2024-01-07"
-}
+const initFilters = () => {
+    filters.value = {
+        global: { value: null, matchMode: FilterMatchMode.CONTAINS },
+        document: { operator: FilterOperator.AND, constraints: [{ value: null, matchMode: FilterMatchMode.STARTS_WITH }] },
+        document_type: { operator: FilterOperator.AND, constraints: [{ value: null, matchMode: FilterMatchMode.STARTS_WITH }] },
+        first_name: { operator: FilterOperator.AND, constraints: [{ value: null, matchMode: FilterMatchMode.STARTS_WITH }] },
+        last_name: { operator: FilterOperator.AND, constraints: [{ value: null, matchMode: FilterMatchMode.STARTS_WITH }] },
+        'status.name': { operator: FilterOperator.AND, constraints: [{ value: null, matchMode: FilterMatchMode.STARTS_WITH }] },
+        email: { operator: FilterOperator.AND, constraints: [{ value: null, matchMode: FilterMatchMode.STARTS_WITH }] },
+        gender_id: { operator: FilterOperator.AND, constraints: [{ value: null, matchMode: FilterMatchMode.STARTS_WITH }] },
+        'workCenter.name': { operator: FilterOperator.AND, constraints: [{ value: null, matchMode: FilterMatchMode.STARTS_WITH }] },
+        bank_account_number: { operator: FilterOperator.AND, constraints: [{ value: null, matchMode: FilterMatchMode.STARTS_WITH }] },
+        bank_account_doc: { operator: FilterOperator.AND, constraints: [{ value: null, matchMode: FilterMatchMode.STARTS_WITH }] },
+        'farm.name': { operator: FilterOperator.AND, constraints: [{ value: null, matchMode: FilterMatchMode.STARTS_WITH }] },
+        //'company.name': { operator: FilterOperator.AND, constraints: [{ value: null, matchMode: FilterMatchMode.STARTS_WITH }] },
+        'payment_type.name': { operator: FilterOperator.AND, constraints: [{ value: null, matchMode: FilterMatchMode.STARTS_WITH }] },
+        created_at: { operator: FilterOperator.AND, constraints: [{ value: null, matchMode: FilterMatchMode.STARTS_WITH }] },
+        updated_at: { operator: FilterOperator.AND, constraints: [{ value: null, matchMode: FilterMatchMode.STARTS_WITH }] },
 
-);
-const headerDialog = ref('');
-const selectedDocumentType = ref([
-    { 
-        label: '',
-        id: ''
-    },
+    };
+};
+
+const loadLazyData = async (event) => {
+    //lazyParams.value = { ...lazyParams.value, first: event?.first || first.value };
+    endpoint.value = '/employees';
+    await getAllResponseAPI(endpoint.value);
+    loading.value = false;
+    // const workCentersItemId = await getListWorkCentersItemById('yourCodeToSearch');
+    await getListFarms();
+    await getListPaymentTypes();
+    await getListDocumentTypes();
+    await getListGenderTypes();
+    await getListWorkCenters();
+};
+
+const listRowSelect = ref([]);
+const selectedRegisters = ref([]);
+
+const onRowSelect = (data) => {
     
-]);
-const companies = ref([
-    {
-        id: 1,
-        uuid: 'd9612b51-2966-4bac-b1f7-5a7718e0c95a',
-        name: 'Basil Farms',
-        code: '900137869'
-    }
-]);
-const typesDocument = ref([]);
-const genderTypes = ref([]);
-const paymentTypes = ref([])
-const workCenters = ref([]);
-const farms = ref([]);
-const statusDialog = ref('Active');
-const optionsStatus = ref(['Inactive', 'Active']);
+    listRowSelect.value = data;
+    
+    //assignValues(mode.value)
+    
+};
+
+const mode = ref();
 const formDialog = ref(false);
 const deleteDialog = ref(false);
 const hideDialog = () => {
@@ -460,23 +487,6 @@ const hideDialog = () => {
     resetValues();
 };
 
-const listRowSelect = ref([]);
-let dataPost = ref(
-    {
-  document_type: "",
-  document: "4",
-  first_name: "",
-  last_name: "",
-  last_name_b: "",
-  gender_id: "",
-  email: "",
-  bank_account_number: "",
-  bank_account_doc: "",
-  work_center_id: "",
-  payment_type_id: "",
-  farm_id: ""
-}
-);
 
 const resetValues = () => {
     dataPost.value.document = '';
@@ -564,44 +574,6 @@ const assignValues = (modex) => {
         
     }
 };
-
-watch(
-    selectedFarm,
-    () => {
-        dataPost.value.farm_id = selectedFarm.value.id;
-        
-    },
-    { deep: true }
-);
-
-watch(
-    selectedDocumentType,
-    () => {
-        dataPost.value.document_type = selectedDocumentType.value.id;
-    },
-    { deep: true }
-);
-watch(
-    selectedWorkCenters,
-    () => {
-        dataPost.value.work_center_id = selectedWorkCenters.value.id;
-    },
-    { deep: true }
-);
-watch(
-    selectedPaymentType,
-    () => {
-        dataPost.value.payment_type_id = selectedPaymentType.value.id;
-    },
-    { deep: true }
-);
-watch(
-    selectedGenderType,
-    () => {
-        dataPost.value.gender_id = selectedGenderType.value.id;
-    },
-    { deep: true }
-);
 
 const openNew = () => {
     mode.value = 'NEW';
@@ -745,8 +717,100 @@ const saveRecord = async () => {
     }
     mode.value = '';
 };
+///////////////////////////////////////////////////////////////////
+const selectedDocumentType = ref([
+
+    { 
+        label: '',
+        id: ''
+    },
+    
+]);
+const selectedFarm = ref({
+    uuid: "", name:""
+});
+const selectedGenderType = ref({ 
+    id: "",
+    label:""
+
+});
+const selectedPaymentType = ref({
+			id: "",
+			code: "",	
+		});        
+const selectedWorkCenters = ref(
+    {
+  uuid: "35c8cb40-2635-481a-ad1b-7ff46522b506",
+  name: "Selección",
+  code: "sel01",
+  created_at: "2024-01-07",
+  updated_at: "2024-01-07"
+}
+
+);
+const headerDialog = ref('');
+const companies = ref([
+    {
+        id: 1,
+        uuid: 'd9612b51-2966-4bac-b1f7-5a7718e0c95a',
+        name: 'Basil Farms',
+        code: '900137869'
+    }
+]);
+const typesDocument = ref([]);
+const genderTypes = ref([]);
+const paymentTypes = ref([])
+const workCenters = ref([]);
+const farms = ref([]);
+let dataPost = ref(
+    {
+  document_type: "",
+  document: "4",
+  first_name: "",
+  last_name: "",
+  last_name_b: "",
+  gender_id: "",
+  email: "",
+  bank_account_number: "",
+  bank_account_doc: "",
+  work_center_id: "",
+  payment_type_id: "",
+  farm_id: ""
+}
+);
+async function getListFarms() {
+    await getAllResponseListAPI('/lists_farms');
+    farms.value = dataResponseListAPI.value.data;
+    console.log(farms.value)
+    
+}
+async function getListPaymentTypes() {
+    await getAllResponseListAPI('/lists_payment_types');
+    paymentTypes.value = dataResponseListAPI.value.data;
+    console.log(paymentTypes.value)
+}
+async function getListDocumentTypes() {
+    await getAllResponseListAPI('/lists_document_types');
+    typesDocument.value = dataResponseListAPI.value;
+    console.log(typesDocument.value)
+}
+async function getListGenderTypes() {
+    await getAllResponseListAPI('/lists_gender_types');
+    genderTypes.value = dataResponseListAPI.value;
+    console.log(genderTypes.value)
+}
+async function getListWorkCenters() {
+    await getAllResponseListAPI('/lists_work_centers');
+    workCenters.value = dataResponseListAPI.value.data;
+    console.log(workCenters.value)
+}
+
 
 ////////////////////////////////////////////////////////////////
+//Related to table properties
+const columnas = ref([]);
+const column = ref([]);
+const valueCustomTable = ref({ status: false, icon: 'pi pi-table', label: '' });
 const customTable = () => {
     if (valueCustomTable.value.status) {
         valueCustomTable.value.status = false;
@@ -758,54 +822,9 @@ const customTable = () => {
 };
 const documentFrozen = ref(false);
 
-const selectedRegisters = ref([]);
-
-const onRowSelect = (data) => {
-    
-    listRowSelect.value = data;
-    
-    //assignValues(mode.value)
-    
-};
-
-watch(
-    () => dataResponseAPI.value,
-    (x, y) => {},
-    { immediate: true }
-);
-watch(listRowSelect, onRowSelect);
-
 const onSelectAllChange = () => {
     onRowSelect();
 };
-
-// const first = ref(0);
-// const onSort = (event) => {
-//     lazyParams.value = event;
-//     loadLazyData(event);
-// };
-
-onBeforeMount(() => {
-    initFilters();
-
-
-});
-
-
-onMounted(async () => {
-        loading.value = true;
-        lazyParams.value = {
-            //TODO
-        filters: filters.value
-        };
-        await loadLazyData(); 
-        console.log(dataResponseAPI.value.data);
-        selectedRegisters.value = [];
-        column.value = null;
-        fillHeaderCustom();
-        //selectedPaymentType.value.id = listRowSelect.value[0].payment_type.id;
-        
-});
 
 const fillHeaderCustom = () => {
     
@@ -832,89 +851,53 @@ const onColumnsChange = (column) => {
     column.sort((a, b) => a.position - b.position);
 };
 const dt = ref();
-const loading = ref(false);
 const lazyParams = ref({});
 
-// async function getListWorkCenters() {
-//     const response = await getAllResponseAPI('/lists_work_centers');
-//     return response.value.data;
-// }
+////////////////////////////////////////////////////////////////
 
-async function getListFarms() {
-    await getAllResponseListAPI('/lists_farms');
-    farms.value = dataResponseListAPI.value.data;
-    console.log(farms.value)
-    
-}
 
-async function getListPaymentTypes() {
-    await getAllResponseListAPI('/lists_payment_types');
-    paymentTypes.value = dataResponseListAPI.value.data;
-    console.log(paymentTypes.value)
-}
-
-async function getListDocumentTypes() {
-    await getAllResponseListAPI('/lists_document_types');
-    typesDocument.value = dataResponseListAPI.value;
-    console.log(typesDocument.value)
-}
-
-async function getListGenderTypes() {
-    await getAllResponseListAPI('/lists_gender_types');
-    genderTypes.value = dataResponseListAPI.value;
-    console.log(genderTypes.value)
-}
-async function getListWorkCenters() {
-    await getAllResponseListAPI('/lists_work_centers');
-    workCenters.value = dataResponseListAPI.value.data;
-    console.log(workCenters.value)
-}
-
-const loadLazyData = async (event) => {
-    //lazyParams.value = { ...lazyParams.value, first: event?.first || first.value };
-    endpoint.value = '/employees';
-    await getAllResponseAPI(endpoint.value);
-    loading.value = false;
-    // const workCentersItemId = await getListWorkCentersItemById('yourCodeToSearch');
-    await getListFarms();
-    await getListPaymentTypes();
-    await getListDocumentTypes();
-    await getListGenderTypes();
-    await getListWorkCenters();
-};
-
-const clearFilter = () => {
-    initFilters();
-};
-const filters = ref();
-const initFilters = () => {
-    filters.value = {
-        global: { value: null, matchMode: FilterMatchMode.CONTAINS },
-        document: { operator: FilterOperator.AND, constraints: [{ value: null, matchMode: FilterMatchMode.STARTS_WITH }] },
-        document_type: { operator: FilterOperator.AND, constraints: [{ value: null, matchMode: FilterMatchMode.STARTS_WITH }] },
-        first_name: { operator: FilterOperator.AND, constraints: [{ value: null, matchMode: FilterMatchMode.STARTS_WITH }] },
-        last_name: { operator: FilterOperator.AND, constraints: [{ value: null, matchMode: FilterMatchMode.STARTS_WITH }] },
-        'status.name': { operator: FilterOperator.AND, constraints: [{ value: null, matchMode: FilterMatchMode.STARTS_WITH }] },
-        email: { operator: FilterOperator.AND, constraints: [{ value: null, matchMode: FilterMatchMode.STARTS_WITH }] },
-        gender_id: { operator: FilterOperator.AND, constraints: [{ value: null, matchMode: FilterMatchMode.STARTS_WITH }] },
-        'workCenter.name': { operator: FilterOperator.AND, constraints: [{ value: null, matchMode: FilterMatchMode.STARTS_WITH }] },
-        bank_account_number: { operator: FilterOperator.AND, constraints: [{ value: null, matchMode: FilterMatchMode.STARTS_WITH }] },
-        bank_account_doc: { operator: FilterOperator.AND, constraints: [{ value: null, matchMode: FilterMatchMode.STARTS_WITH }] },
-        'farm.name': { operator: FilterOperator.AND, constraints: [{ value: null, matchMode: FilterMatchMode.STARTS_WITH }] },
-        //'company.name': { operator: FilterOperator.AND, constraints: [{ value: null, matchMode: FilterMatchMode.STARTS_WITH }] },
-        'payment_type.name': { operator: FilterOperator.AND, constraints: [{ value: null, matchMode: FilterMatchMode.STARTS_WITH }] },
-        created_at: { operator: FilterOperator.AND, constraints: [{ value: null, matchMode: FilterMatchMode.STARTS_WITH }] },
-        updated_at: { operator: FilterOperator.AND, constraints: [{ value: null, matchMode: FilterMatchMode.STARTS_WITH }] },
-
-    };
-};
-// sizeOptionsButton
-const size = ref({ label: 'Normal', value: 'normal' });
-const sizeOptions = ref([
-    { label: 'Small', value: 'small', class: 'sm' },
-    { label: 'Normal', value: 'normal' },
-    { label: 'Large', value: 'large', class: 'lg' }
-]);
+watch(
+    selectedFarm,
+    () => {
+        dataPost.value.farm_id = selectedFarm.value.id;
+        
+    },
+    { deep: true }
+);
+watch(
+    selectedDocumentType,
+    () => {
+        dataPost.value.document_type = selectedDocumentType.value.id;
+    },
+    { deep: true }
+);
+watch(
+    selectedWorkCenters,
+    () => {
+        dataPost.value.work_center_id = selectedWorkCenters.value.id;
+    },
+    { deep: true }
+);
+watch(
+    selectedPaymentType,
+    () => {
+        dataPost.value.payment_type_id = selectedPaymentType.value.id;
+    },
+    { deep: true }
+);
+watch(
+    selectedGenderType,
+    () => {
+        dataPost.value.gender_id = selectedGenderType.value.id;
+    },
+    { deep: true }
+);
+watch(
+    () => dataResponseAPI.value,
+    (x, y) => {},
+    { immediate: true }
+);
+watch(listRowSelect, onRowSelect);
 </script>
 
 <style lang="scss" scoped>
