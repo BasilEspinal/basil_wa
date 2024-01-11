@@ -176,9 +176,6 @@ const onSelectAllChange = () => {
     onRowSelect();
 };
 
-const exportData = (data) => {
-    data.data ? exportTableToCSV(data.name) : exportExcel(data.name);
-};
 
 
 watch(
@@ -209,6 +206,9 @@ watch(
     },
     { immediate: true }
 );
+const exportData = (data) => {
+    data.data ? exportTableToCSV(data.name) : exportExcel(data.name);
+};
 
 const exportExcel = (name) => {
     const uri = 'data:application/vnd.ms-excel;base64,';

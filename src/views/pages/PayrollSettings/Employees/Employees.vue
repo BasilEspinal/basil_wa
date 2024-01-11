@@ -16,7 +16,7 @@
                                 <!-- <i class="pi pi-bars p-toolbar-separator mr-2 ml-2 mb-2 mt-2"></i> -->
                                 <Button :disabled="!(listRowSelect.length > 0 && listRowSelect.length < 2)" label="Edit" icon="pi pi-file-edit" class="p-button-help mr-2 ml-2 mb-2 mt-2" @click="openEdit" size="large" />
                                 <Button :disabled="!(listRowSelect.length > 0 && listRowSelect.length < 2)" label="Clone" icon="pi pi-copy" class="p-button-secondary mr-2 ml-2 mb-2 mt-2" @click="openClone" size="large" />
-                                <Button label="Export" icon="pi pi-file-import" class="p-button-warning mr-2 ml-2 mb-2 mt-2" @click="openExport" size="large" />
+                                <Button label="Export" icon="pi pi-file-import" class="p-button-warning mr-2 ml-2 mb-2 mt-2" @click="exportCSV" size="large" />
                                 <Button :disabled="!(listRowSelect.length > 0 && listRowSelect.length < 2)" label="Delete" icon="pi pi-trash" class="p-button-danger mr-2 ml-2 mb-2 mt-2" @click="openDelete" size="large" />
                             </div>
                         </template>
@@ -93,6 +93,7 @@
                 @row-select="onRowSelect(selectedRegisters)"
                 @row-unselect="onRowSelect(selectedRegisters)"
                 @select-all-change="onSelectAllChange"
+                
             >
                 <!-- <template #header>
                 <div class="flex justify-content-between flex-column sm:flex-row">
@@ -815,6 +816,9 @@ const onColumnsChange = (column) => {
     column.sort((a, b) => a.position - b.position);
 };
 const dt = ref();
+const exportCSV = () => {
+    dt.value.exportCSV();
+};
 const lazyParams = ref({});
 
 ////////////////////////////////////////////////////////////////
