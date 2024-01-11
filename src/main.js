@@ -114,7 +114,6 @@ import { abilitiesPlugin } from '@casl/vue';
 import ability from './service/ability';
 
 const app = createApp(App);
-
 app.use(abilitiesPlugin, ability, { useGlobalProperties: true });
 app.use(router);
 app.use(PrimeVue, { ripple: true });

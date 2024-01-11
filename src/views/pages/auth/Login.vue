@@ -1,117 +1,102 @@
-<script>
+<script setup>
 import { useLayout } from '@/layout/composables/layout';
-import { computed, ref } from 'vue';
+import { computed, ref, inject } from 'vue';
 import { useRouter } from 'vue-router';
-import { useVuelidate } from '@vuelidate/core';
-import { required, email, minLength, maxLength } from '@vuelidate/validators';
 import { useToast } from 'primevue/usetoast';
 import Toast from 'primevue/toast';
 import useDataAPI from '@/composables/DataAPI/FetchDataAPI.js';
 import { AbilityBuilder, Ability } from '@casl/ability';
 import { ABILITY_TOKEN } from '@casl/vue';
 import { useAbility } from '@casl/vue';
-const { postResponseAPI, dataResponseAPI } = useDataAPI();
-const { layoutConfig } = useLayout();
+import { useForm } from 'vee-validate';
+import { toTypedSchema } from '@vee-validate/zod';
+import { z } from 'zod';
 
+const { postResponseAPI, dataResponsePermissionsAPI,dataResponseAPI,getAllResponsePermissionsAPI } = useDataAPI();
+const { layoutConfig } = useLayout();
+const toast = useToast();
 const count = ref(0);
 
 
-export default {
-    setup() {
-        const toast = useToast();
-        return { v$: useVuelidate()};
-    },
-    inject: {
-        $ability: { from: ABILITY_TOKEN }
-    },
-    data() {
-        return {
-            form: {
-                email: 'admin@admin.com',
-                password: 'password'
-            },
-            logoUrl: computed(() => {
-                return `layout/images/${layoutConfig.darkTheme.value ? 'logo-white' : 'logo-dark'}.png`;
-            }),
-            checked: false,
-            message: [],
-            router: useRouter()
-        };
-    },
-    validations() {
-        return {
-            form: {
-                email: {
-                    required,
-                    email
-                },
-                password: {
-                    required,
-                    min: minLength(6),
-                    max: maxLength(16)
-                }
-            }
-        };
-    },
-    methods: {
-        onSubmit() {
-            if (this.v$.form.email.$invalid) {
-                this.message.push({ severity: 'error', detail: 'Error E-Mail', content: 'E-Mail Invalid', id: count.value++, life: 3000 });
-            }
-            if (this.v$.form.password.$invalid) {
-                this.message.push({ severity: 'error', detail: 'Error Password', content: 'Password Invalid', id: count.value++ });
-            }
-            if (this.v$.form.$invalid) return;
-            this.fetchInfoPostLogin(this.form);
-        },
-        async fetchInfoPostLogin(data) {
-            try {
-                await postResponseAPI({ email: this.form.email, password: this.form.password }, '/login');
-                let response = dataResponseAPI.value;
 
-                if (response['error']) throw response.error;
-                if (!response['user']) throw response.error;
+// initPermissions();
+const { values,errors, defineField } = useForm({
+  validationSchema: toTypedSchema(
+    z.object({
+      email: z.string().min(3).email().includes("admin").endsWith("mail.com"),
+      password: z.string().min(6),
+    }),
+  ),
+});
 
-                const token = response.token;
-                const user = response.user.name;
+const [email, emailAttrs] = defineField('email');
+const [password, passwordAttrs] = defineField('password');
+const router = useRouter();
 
-                sessionStorage.setItem('accessSessionToken', token);
-                sessionStorage.setItem('accessSessionUser', user);
-                localStorage.setItem('accesSessionTokens', token);
+const logoUrl = computed(() => {
+  return `layout/images/${layoutConfig.darkTheme.value ? 'logo-white' : 'logo-dark'}.png`;
+});
 
-                this.updateAbility(response.user, token);
-                this.message.push({ severity: 'success', detail: 'Success', content: 'Successful Login', id: count.value++ });
-                this.router.push('/applayout');
-            } catch (error) {
-                this.message.push({ severity: 'error', detail: 'Error Response', content: error, id: count.value++ });
-                console.error('Error:', error);
-            }
-        },
 
-        updateAbility(user, token) {
-            const bearer = 'Bearer ' + token;
+const onSubmit = () => {
 
-            fetch('http://164.90.146.196:81/api/v1/abilities', {
-                headers: {
-                    Authorization: bearer,
-                    accept: 'application/json'
-                }
-            })
-                .then((response) => response.json())
-                .then((permissions) => {
-                    const { can, rules } = new AbilityBuilder(Ability);
-                    can(permissions);
-                    console.log(permissions)
-                    this.$ability.update(rules);
-                });
-        }
-    },
-    components: { Toast }
+  fetchInfoPostLogin();
+  
+};
+
+const fetchInfoPostLogin = async (data) => {
+  try {
+    // await postResponseAPI({ email: data.email, password: data.password }, '/login');
+    await postResponseAPI({ email: "admin@admin.com", password: "password" }, '/login');
+    let response = dataResponseAPI.value;
+
+    if (response['error']) throw response.error;
+    if (!response['user']) throw response.error;
+
+    const token = response.token;
+    const user = response.user.name;
+
+    sessionStorage.setItem('accessSessionToken', token);
+    sessionStorage.setItem('accessSessionUser', user);
+    localStorage.setItem('accesSessionTokens', token);
+    
+    updateAbility(response.user, token);
+    toast.add({ severity: 'success', detail: 'Success', content: 'Successful Login', id: count.value++ });
+    router.push('/applayout');
+  } catch (error) {
+    toast.add({ severity: 'error', detail: 'Error Response', content: error, id: count.value++ });
+    console.error('Error:', error);
+  }
+};
+
+const updateAbility = (user, token) => {
+  const bearer = 'Bearer ' + token;
+
+  fetch('http://164.90.146.196:81/api/v1/abilities', {
+    headers: {
+      Authorization: bearer,
+      accept: 'application/json'
+    }
+  })
+    .then((response) => response.json())
+    .then((permissions) => {
+      const { can, rules } = new AbilityBuilder(Ability);
+      can(permissions);
+      console.log(permissions);
+
+      // Obtén la instancia de Ability de la inyección global
+      // const ability = inject(ABILITY_TOKEN);
+      
+      // // Actualiza la capacidad en el ámbito global
+      // ability.update(rules);
+    });
 };
 </script>
 
 <template>
+    
     <div class="surface-ground flex align-items-center justify-content-center min-h-screen min-w-screen overflow-hidden" style="background: linear-gradient(180deg, var(--paleta-400) 5%, var(--paleta-100) 15%)">
+        
         <div class="flex flex-column align-items-center justify-content-center" @keyup.enter="onSubmit">
             <router-link to="/" class="align-items-center mb-5">
                 <img :src="logoUrl" alt="Sakai logo" class="w-6rem flex-shrink-0" />
@@ -124,41 +109,40 @@ export default {
                         <span class="text-600 font-medium">Sign in to continue</span>
                     </div>
                     <Toast />
-
-                    <form>
+                    
+                    <form >
                         <transition-group name="p-message" tag="div" class="w-full">
                             <Message v-for="msg of message" :severity="msg.severity" :key="msg.content" :sticky="false" :life="msg.life">{{ msg.content }}</Message>
                         </transition-group>
                         <div>
+                            
                             <label for="email1" class="block text-900 text-xl font-medium mb-2"> Email </label>
                             <InputText
                                 id="email1"
                                 type="text"
                                 placeholder="Email address"
-                                :class="{
-                                    'p-invalid w-full md:w-30rem mb-4': v$.form.email.$invalid,
-                                    'w-full md:w-30rem mb-4': !v$.form.email.$invalid
-                                }"
                                 style="padding: 1rem"
-                                v-model="v$.form.email.$model"
+                                v-model="email"
                             />
+                                                        
+                            <label for="email1" class="block text-xl mb-2" :class="{ 'text-red-700': errors.email }">
+                                {{ errors.email}}
+                            </label>
 
                             <label for="password1" class="block text-900 font-medium text-xl mb-2">Password</label>
                             <Password
                                 id="password1"
-                                v-model="v$.form.password.$model"
+                                v-model="password"
                                 placeholder="Password"
                                 :feedback="false"
                                 :toggleMask="true"
-                                :class="{
-                                    'p-invalid w-full mb-3': v$.form.password.$invalid,
-                                    'w-full mb-3': !v$.form.password.$invalid
-                                }"
                                 inputClass="w-full"
                                 :inputStyle="{ padding: '1rem' }"
                                 style="color: rgb(0, 0, 0)"
                             ></Password>
-
+                            <label for="password1" class="block text-xl mb-2" :class="{ 'text-red-700': errors.password }">
+                                {{ errors.password}}
+                            </label>
                             <div class="flex align-items-center justify-content-between mb-5 gap-5">
                                 <div class="flex align-items-center">
                                     <Checkbox v-model="checked" id="rememberme1" binary class="mr-2"></Checkbox>

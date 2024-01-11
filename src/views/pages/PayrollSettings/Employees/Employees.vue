@@ -69,7 +69,7 @@
             <template>
                 <h1>No tienes permisos</h1>
             </template>
-            <!-- <pre>{{dataResponseAPI}}</pre> -->
+            
             <DataTable
                 v-model:selection="selectedRegisters"
                 v-model:filters="filters"
@@ -264,8 +264,8 @@
                 </Column>
             </DataTable>
             
-            <Dialog v-model:visible="formDialog" :style="{ width: '700px' }" :header="headerDialog" :modal="true" class="p-fluid text-center mx-auto">
-                
+            <Dialog  v-model:visible="formDialog" :style="{ width: '700px' }" :header="headerDialog" :modal="true" class="p-fluid text-center mx-auto">
+                  
                 
                 <div class="p-grid">
 
@@ -320,10 +320,10 @@
                         <Dropdown v-model="selectedGenderType" :options="genderTypes" optionLabel="label" inputId="genderType" aria-labelledby="basic" :placeholder="selectedGenderType.label" />
                     </div>
 
-                    <div class="p-col-6 p-md-4 mb-2">
+                    <!-- <div class="p-col-6 p-md-4 mb-2">
                         <label for="farmsId" class="p-d-block">Farms</label>
                         <Dropdown v-model="selectedFarm" :options="farms" optionLabel="name" inputId="farmsId" aria-labelledby="basic" :placeholder="selectedFarm.name" />
-                    </div>
+                    </div> -->
                 </div>
 
                 <template #footer>
@@ -376,6 +376,13 @@ import { useAbility } from '@casl/vue';
 let endpoint = ref('/employees');
 const loading = ref(false);
 
+import { inject } from 'vue';
+import { ABILITY_TOKEN } from '@casl/vue';
+
+// Obtener la instancia de la capacidad desde el ámbito global
+const ability = inject(ABILITY_TOKEN);
+console.log();
+console.log(ability.can('rol_crear'));
 ////////////////////////////////////////////
 const router = useRouter();
 const { can, rules } = useAbility();
@@ -403,6 +410,7 @@ onMounted(async () => {
     selectedRegisters.value = [];
     column.value = null;
     fillHeaderCustom();
+    
     //selectedPaymentType.value.id = listRowSelect.value[0].payment_type.id;
 });
 const filters = ref();
@@ -484,45 +492,41 @@ const resetValues = () => {
 const iddd = ref();
 const assignValues = (modex) => {
     if (modex === 'EDIT') {
-        alert("Edit")
-        console.log(dataPost.value)
+        
+        
         selectedDocumentType.value.id = listRowSelect.value[0].document_type.id;
         selectedDocumentType.value.name = listRowSelect.value[0].document_type.name;
         dataPost.value.document_type = listRowSelect.value[0].document_type.id;
 
         dataPost.value.document = listRowSelect.value[0].document;
         //dataPost.value.first_name = listRowSelect.value[0].first_name;
-        dataPost.value.first_name = "pruebaxxx";
+        dataPost.value.first_name = listRowSelect.value[0].first_name;
         dataPost.value.last_name = listRowSelect.value[0].last_name;
         dataPost.value.last_name_b = listRowSelect.value[0].last_name_b;
-
-        selectedGenderType.value.id = listRowSelect.value[0].gender.id;
-        selectedGenderType.value.label = listRowSelect.value[0].gender.name;
-        dataPost.value.gender_id = listRowSelect.value[0].gender_id;
 
         dataPost.value.email = listRowSelect.value[0].email;
 
         dataPost.value.bank_account_number = listRowSelect.value[0].bank_account_number;
         dataPost.value.bank_account_doc = listRowSelect.value[0].bank_account_doc;
 
-        
+        selectedGenderType.value.id = listRowSelect.value[0].gender.id;
+        selectedGenderType.value.label = listRowSelect.value[0].gender.name;
+        dataPost.value.gender_id = listRowSelect.value[0].gender_id;
+
         selectedWorkCenters.value.id = workCenters.value.find(type => type.name === listRowSelect.value[0].workCenter.name)?.id || null;
         selectedWorkCenters.value.name = listRowSelect.value[0].workCenter.name;
         
-
-
         selectedPaymentType.value.id = paymentTypes.value.find(type => type.code === listRowSelect.value[0].payment_type.name)?.id || null; 
         selectedPaymentType.value.code = listRowSelect.value[0].payment_type.name;
-        //dataPost.value.payment_type_id = dataPost.value.payment_type_id = paymentTypes.value.find(type => type.code === listRowSelect.value[0].payment_type.name)?.id || null;
-        //dataPost.value.payment_type_id = listRowSelect.value[0].payment_type.id; 
-        // console.log(dataPost.value.payment_type_id)
         
         selectedFarm.value.id = farms.value.find(type => type.name === listRowSelect.value[0].farm.name)?.id || null;
         selectedFarm.value.name = listRowSelect.value[0].farm.name;
+
+        dataPost.value.employee_uuid = listRowSelect.value[0].uuid; 
         
     }
     if (modex === 'CLONE') {
-        alert("clone")
+        resetValues();
         selectedDocumentType.value.id = "";
         selectedDocumentType.value.name = "";
         dataPost.value.document_type = "";
@@ -533,33 +537,24 @@ const assignValues = (modex) => {
         dataPost.value.last_name = listRowSelect.value[0].last_name;
         dataPost.value.last_name_b = listRowSelect.value[0].last_name_b;
 
-        selectedGenderType.value.id = listRowSelect.value[0].gender.id;
-        selectedGenderType.value.label = listRowSelect.value[0].gender.name;
-        dataPost.value.gender_id = listRowSelect.value[0].gender_id;
+        //dataPost.value.email = listRowSelect.value[0].email;
 
-        dataPost.value.email = listRowSelect.value[0].email;
-
-        dataPost.value.bank_account_number = "";
+        //dataPost.value.bank_account_number = listRowSelect.value[0].bank_account_number;
         dataPost.value.bank_account_doc = listRowSelect.value[0].bank_account_doc;
 
-        selectedWorkCenters.value.id = listRowSelect.value[0].workCenter.id;
-        selectedWorkCenters.value.name = listRowSelect.value[0].workCenter.name;
-        dataPost.value.work_center_id = listRowSelect.value[0].workCenter.uuid;
-
-        selectedFarm.value.id = listRowSelect.value[0].farm.id;
-        dataPost.value.farm_id = listRowSelect.value[0].farm.id;
+        // selectedGenderType.value.id = listRowSelect.value[0].gender.id;
+        // selectedGenderType.value.label = listRowSelect.value[0].gender.name;
+        // dataPost.value.gender_id = listRowSelect.value[0].gender_id;
         
         
-        selectedPaymentType.value.id = paymentTypes.value.find(type => type.code === listRowSelect.value[0].payment_type.name)?.id || null; 
-        selectedPaymentType.value.code = listRowSelect.value[0].payment_type.name;
-        //dataPost.value.payment_type_id = dataPost.value.payment_type_id = paymentTypes.value.find(type => type.code === listRowSelect.value[0].payment_type.name)?.id || null;
+        //selectedWorkCenters.value.id = workCenters.value.find(type => type.name === listRowSelect.value[0].workCenter.name)?.id || null;
+        //selectedWorkCenters.value.name = listRowSelect.value[0].workCenter.name;
         
+        //selectedPaymentType.value.id = paymentTypes.value.find(type => type.code === listRowSelect.value[0].payment_type.name)?.id || null; 
+        //selectedPaymentType.value.code = listRowSelect.value[0].payment_type.name;
         
-        //console.log(dataPost.value.payment_type_id)
-
-        selectedFarm.value.uuid = listRowSelect.value[0].farm.uuid;
-        selectedFarm.value.name = listRowSelect.value[0].farm.name;
-        dataPost.value.farm_id = listRowSelect.value[0].farm.uuid;
+        //selectedFarm.value.id = farms.value.find(type => type.name === listRowSelect.value[0].farm.name)?.id || null;
+        //selectedFarm.value.name = listRowSelect.value[0].farm.name;
     }
 };
 
@@ -707,7 +702,7 @@ const selectedDocumentType = ref([
     }
 ]);
 const selectedFarm = ref({
-    uuid: '',
+    id: '',
     name: ''
 });
 const selectedGenderType = ref({

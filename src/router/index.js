@@ -208,6 +208,12 @@ const router = createRouter({
                     component: () => import('@/views/pages/System/PlatformStatuses/PlatformRegisteringStatus.vue')
                 },
 
+                {
+                    path: '/AppMovil/AppMovil',
+                    name: 'appmovil',
+                    component: () => import('@/views/pages/AppMovil/AppMovil.vue')
+                },
+
                 
             ]
         },

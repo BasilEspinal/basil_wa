@@ -9,7 +9,7 @@ const model2 = ref([
         items:[
             {
         label: 'Inicio',
-        gate: '',
+        gate: 'centro_control',
         items: [{ 
             label: 'Centro de control', 
             icon: 'pi pi-fw pi-home', 
@@ -283,7 +283,26 @@ const model2 = ref([
                 ]
             }
         ]
+    },
+    {
+        items: [
+            {
+                label: 'App Movil',
+                rol: 'admin',
+                icon: 'pi pi-box',
+                items: [
+                    {
+                        label: 'Captura de corta',
+                        to: '/AppMovil/AppMovil',
+                        icon: 'pi pi-mobile'
+                    },
+                ]
+            }
+        ]
     }
+
+
+
 ]);
 
 onBeforeMount(() => {
