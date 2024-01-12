@@ -266,40 +266,68 @@
             </DataTable>
 
             <Dialog v-model:visible="formDialog" :style="{ width: '700px' }" :header="headerDialog" :modal="true" class="p-fluid text-center mx-auto">
+              <pre>{{ dataPost }}</pre>  
+              <pre>{{ values }}</pre>
+                <pre>{{ errors }}</pre>
                 <div class="p-grid">
+                    <form>
                     <div class="p-col-6 p-md-4 mb-2">
-                        <label for="typeDocument" class="p-d-block">Type of documents</label>
+                        <label for="typeOfDocumentId" class="p-d-block">Type of documents</label>
                         <Dropdown v-model="selectedDocumentType" :options="typesDocument" optionLabel="label" inputId="typeOfDocumentId" aria-labelledby="basic" :placeholder="selectedDocumentType.name" />
+                        
                     </div>
+                        
 
                     <div class="p-col-6 p-md-4 mb-2">
+
                         <label for="document_id" class="p-d-block">Document</label>
-                        <InputText v-model="dataPost.document" inputId="document" aria-labelledby="basic" placeholder="Type your document here" />
+                        <InputText v-model="documentV" inputId="document_id" aria-labelledby="basic" placeholder="Type your document here" />
+                        <label for="document_id" class="block text-l mb-2" :class="{ 'text-red-700': errors['document'] }">
+                        {{ errors['document'] }}
+                        </label>
                     </div>
+
+                    
 
                     <div class="p-col-6 p-md-4 mb-2">
                         <label for="name" class="p-d-block">Name</label>
-                        <InputText v-model="dataPost.first_name" inputId="name" aria-labelledby="basic" placeholder="Type your name here" />
+                        <InputText v-model="firstNameV" inputId="name" aria-labelledby="basic" placeholder="Type your name here" />
+                        <label for="name" class="block text-l mb-2" :class="{ 'text-red-700': errors['first_name'] }">
+                        {{ errors['first_name'] }}
+                        </label>
                     </div>
+                    
 
                     <div class="p-col-6 p-md-4 mb-2">
                         <label for="lastName" class="p-d-block">Last Name</label>
-                        <InputText v-model="dataPost.last_name" inputId="lastName" aria-labelledby="basic" placeholder="Type your last name here" />
+                        <InputText v-model="lastNameV" inputId="lastName" aria-labelledby="basic" placeholder="Type your last name here" />
+                        <label for="lastName" class="block text-l mb-2" :class="{ 'text-red-700': errors['last_name'] }">
+                        {{ errors['last_name'] }}
+                        </label>
                     </div>
 
                     <div class="p-col-6 p-md-4 mb-2">
                         <label for="email" class="p-d-block">Email</label>
-                        <InputText v-model="dataPost.email" inputId="email" aria-labelledby="basic" placeholder="Type your email here" />
+                        <InputText v-model="emailV" inputId="email" aria-labelledby="basic" placeholder="Type your email here" />
+                        <label for="email" class="block text-l mb-2" :class="{ 'text-red-700': errors['email'] }">
+                        {{ errors['email'] }}
+                        </label>
                     </div>
 
                     <div class="p-col-6 p-md-4 mb-2">
                         <label for="bankAccountNumber" class="p-d-block">Account number</label>
-                        <InputText v-model="dataPost.bank_account_number" inputId="bankAccountNumber" aria-labelledby="basic" placeholder="Type your account here" />
+                        <InputText v-model="bankAccountNumberV" inputId="bankAccountNumber" aria-labelledby="basic" placeholder="Type your account here" />
+                        <label for="bankAccountNumber" class="block text-l mb-2" :class="{ 'text-red-700': errors['bank_account_number'] }">
+                        {{ errors['bank_account_number'] }}
+                        </label>
                     </div>
 
                     <div class="p-col-6 p-md-4 mb-2">
                         <label for="bankAccountDoc" class="p-d-block">Account Document</label>
-                        <InputText v-model="dataPost.bank_account_doc" inputId="bankAccountDoc" aria-labelledby="basic" placeholder="Type your account document here" />
+                        <InputText v-model="bankAccountDocV" inputId="bankAccountDoc" aria-labelledby="basic" placeholder="Type your account document here" />
+                        <label for="bankAccountDoc" class="block text-l mb-2" :class="{ 'text-red-700': errors['bank_account_doc'] }">
+                        {{ errors['bank_account_doc'] }}
+                        </label>
                     </div>
 
                     <div class="p-col-6 p-md-4 mb-2">
@@ -321,6 +349,7 @@
                         <label for="farmsId" class="p-d-block">Farms</label>
                         <Dropdown v-model="selectedFarm" :options="farms" optionLabel="name" inputId="farmsId" aria-labelledby="basic" :placeholder="selectedFarm.name" />
                     </div> -->
+                </form>
                 </div>
 
                 <template #footer>
@@ -329,7 +358,9 @@
                         <Button label="Save" icon="pi pi-check" class="p-button-text" @click="saveRecord" />
                     </div>
                 </template>
+            
             </Dialog>
+            
             <Toast />
 
             <Dialog v-model:visible="deleteDialog" :style="{ width: '700px' }" :header="headerDialog" :modal="true" class="p-fluid text-center mx-auto">
@@ -383,26 +414,151 @@ import { FilterMatchMode, FilterOperator } from 'primevue/api';
 import useEmployeesParameters from '@/composables/PayrollSettings/Employees/EmployeesParameters.js';
 import SelectButton from 'primevue/selectbutton';
 import { useRouter } from 'vue-router';
-import { useAbility } from '@casl/vue';
+import { useForm } from 'vee-validate';
+import { toTypedSchema } from '@vee-validate/zod';
+import { z } from 'zod';
+
 
 let endpoint = ref('/employees');
 const loading = ref(false);
 
-import { inject } from 'vue';
-import { ABILITY_TOKEN } from '@casl/vue';
-
-// Obtener la instancia de la capacidad desde el ámbito global
-const ability = inject(ABILITY_TOKEN);
-console.log();
-console.log(ability.can('rol_crear'));
-////////////////////////////////////////////
 const router = useRouter();
-const { can, rules } = useAbility();
+
 const { getAllResponseAPI, getAllResponseListAPI, totalRecordsResponseAPI, currentPageResponseAPI, linksResponseAPI, postResponseAPI, putResponseAPI, deleteResponseAPI, errorResponseAPI, dataResponseAPI, dataResponseListAPI, statusCode } =
     useDataAPI();
 const { conditionalColumns } = useEmployeesParameters();
 const toast = useToast();
 ////////////////////////////////////////////
+let dataPost = ref({
+    document_type: '',
+    document: '4',
+    first_name: '',
+    last_name: '',
+    last_name_b: '',
+    gender_id: '',
+    email: '',
+    bank_account_number: '',
+    bank_account_doc: '',
+    work_center_id: '',
+    payment_type_id: '',
+    farm_id: ''
+});
+const {
+  values,
+  errors,
+  meta,
+  validate,
+  handleSubmit,
+  setFieldValue,
+  setErrors,
+  defineField,
+} = useForm({
+  validationSchema: toTypedSchema(
+    z.object({
+      document_type: z.string(),
+      document: z.string().nonempty('Field is required').min(3),
+      first_name: z.string().nonempty('Field is required').min(3),
+      last_name: z.string().nonempty('Field is required').min(3),
+      last_name_b: z.string().nonempty('Field is required').min(3),
+      gender_id: z.string(),
+      email: z.string().nonempty('Field is required').min(3).email(),
+      bank_account_number: z.string().min(3),
+      bank_account_doc: z.string().min(3),
+      work_center_id: z.string(),
+      payment_type_id: z.string(),
+      farm_id: z.string(),
+    })
+  ),
+});
+
+const [
+    documentTypeV,
+     documentTypeAttrs
+] = defineField('document_type', validate);
+const [
+    documentV,
+    documentAttrs
+] = defineField('document', validate);
+
+const [
+  firstNameV,
+  firstNameAttrs
+] = defineField('first_name', validate);
+
+const [
+  lastNameV,
+  lastNameAttrs
+] = defineField('last_name', validate);
+
+const [
+  lastNameBV,
+  lastNameBAttrs
+] = defineField('last_name_b', validate);
+
+const [
+  genderIdV,
+  genderIdAttrs
+] = defineField('gender_id', validate);
+
+const [emailV, emailAttrs] = defineField('email', validate);
+
+const [
+  bankAccountNumberV,
+  bankAccountNumberAttrs
+] = defineField('bank_account_number', validate);
+
+const [
+  bankAccountDocV,
+  bankAccountDocAttrs
+] = defineField('bank_account_doc', validate);
+
+const [
+  workCenterIdV,
+  workCenterIdAttrs
+] = defineField('work_center_id', validate);
+
+const [
+  paymentTypeIdV,
+  paymentTypeIdAttrs
+] = defineField('payment_type_id', validate);
+
+const [farmIdV, farmIdAttrs] = defineField('farm_id', validate);
+
+// Asignar valores y manejar cambios
+watch(
+  () => ({
+    // documentTypeV: documentTypeV.value,
+    documentV: documentV.value,
+    firstNameV: firstNameV.value,
+    lastNameV: lastNameV.value,
+    lastNameBV: lastNameBV.value,
+    // genderIdV: genderIdV.value,
+    emailV: emailV.value,
+    bankAccountNumberV: bankAccountNumberV.value,
+    bankAccountDocV: bankAccountDocV.value,
+    // workCenterIdV: workCenterIdV.value,
+    // paymentTypeIdV: paymentTypeIdV.value,
+    // farmIdV: farmIdV.value,
+  }),
+  (newValues) => {
+    // dataPost.value.document_type = newValues.documentTypeV;
+    dataPost.value.document = newValues.documentV;
+    dataPost.value.first_name = newValues.firstNameV;
+    dataPost.value.last_name = newValues.lastNameV;
+    dataPost.value.last_name_b = newValues.lastNameBV;
+    // dataPost.value.gender_id = newValues.genderIdV;
+    dataPost.value.email = newValues.emailV;
+    dataPost.value.bank_account_number = newValues.bankAccountNumberV;
+    dataPost.value.bank_account_doc = newValues.bankAccountDocV;
+    // dataPost.value.work_center_id = newValues.workCenterIdV;
+    // dataPost.value.payment_type_id = newValues.paymentTypeIdV;
+    // dataPost.value.farm_id = newValues.farmIdV;
+  },
+  { deep: true }
+);
+
+
+///////////////////////////////////////////
 // sizeOptionsButton
 const size = ref({ label: 'Normal', value: 'normal' });
 const sizeOptions = ref([
@@ -757,20 +913,7 @@ const genderTypes = ref([]);
 const paymentTypes = ref([]);
 const workCenters = ref([]);
 const farms = ref([]);
-let dataPost = ref({
-    document_type: '',
-    document: '4',
-    first_name: '',
-    last_name: '',
-    last_name_b: '',
-    gender_id: '',
-    email: '',
-    bank_account_number: '',
-    bank_account_doc: '',
-    work_center_id: '',
-    payment_type_id: '',
-    farm_id: ''
-});
+
 async function getListFarms() {
     await getAllResponseListAPI('/lists_farms');
     farms.value = dataResponseListAPI.value.data;
@@ -959,6 +1102,7 @@ watch(
     { immediate: true }
 );
 watch(listRowSelect, onRowSelect);
+
 </script>
 
 <style lang="scss" scoped>
