@@ -216,7 +216,7 @@ const router = createRouter({
                 {
                     path: '/AppMovil/PreFrio',
                     name: 'appmovil_prefio',
-                    component: () => import('@/views/pages/AppMovil/AppMovilPrefrio.vue')
+                    component: () => import('@/views/pages/AppMovil/AppMovilPreFrio.vue')
                 },
                 {
                     path: '/AppMovil/Seleccion',
