@@ -110,12 +110,12 @@ const updateAbility = (user, token) => {
                     </div>
                     <Toast />
                     
-                    <form >
+                    
                         <transition-group name="p-message" tag="div" class="w-full">
                             <Message v-for="msg of message" :severity="msg.severity" :key="msg.content" :sticky="false" :life="msg.life">{{ msg.content }}</Message>
                         </transition-group>
                         <div>
-                            
+                          <form >
                             <label for="email1" class="block text-900 text-xl font-medium mb-2"> Email </label>
                             <InputText
                                 id="email1"
@@ -125,7 +125,7 @@ const updateAbility = (user, token) => {
                                 v-model="email"
                             />
                                                         
-                            <label for="email1" class="block text-xl mb-2" :class="{ 'text-red-700': errors.email }">
+                            <label for="email1" class="block text-l mb-2" :class="{ 'text-red-700': errors.email }">
                                 {{ errors.email}}
                             </label>
 
@@ -140,7 +140,7 @@ const updateAbility = (user, token) => {
                                 :inputStyle="{ padding: '1rem' }"
                                 style="color: rgb(0, 0, 0)"
                             ></Password>
-                            <label for="password1" class="block text-xl mb-2" :class="{ 'text-red-700': errors.password }">
+                            <label for="password1" class="block text-l mb-2" :class="{ 'text-red-700': errors.password }">
                                 {{ errors.password}}
                             </label>
                             <div class="flex align-items-center justify-content-between mb-5 gap-5">
@@ -152,8 +152,10 @@ const updateAbility = (user, token) => {
                             </div>
 
                             <Button label="Sign In" class="w-full p-3 text-xl" @click="onSubmit"></Button>
+                          </form>
                         </div>
-                    </form>
+                    
+
                 </div>
             </div>
         </div>
