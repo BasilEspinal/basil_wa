@@ -281,9 +281,9 @@
                     <div class="p-col-6 p-md-4 mb-2">
 
                         <label for="document_id" class="p-d-block">Document</label>
-                        <InputText v-model="documentV" inputId="document_id" aria-labelledby="basic" placeholder="Type your document here" />
-                        <label for="document_id" class="block text-l mb-2" :class="{ 'text-red-700': errors['document'] }">
-                        {{ errors['document'] }}
+                        <InputText v-model="documentV" inputId="document_id" aria-labelledby="basic" placeholder="Type your document here" :class="{ 'p-invalid': errors['document'] }"/>
+                        <label for="document_id" class="block text-l mb-2" :class="{ 'p-invalid text-red-700': errors['document']}">
+                            {{ errors['document']  }}
                         </label>
                     </div>
 
@@ -291,7 +291,7 @@
 
                     <div class="p-col-6 p-md-4 mb-2">
                         <label for="name" class="p-d-block">Name</label>
-                        <InputText v-model="firstNameV" inputId="name" aria-labelledby="basic" placeholder="Type your name here" />
+                        <InputText v-model="firstNameV" inputId="name" aria-labelledby="basic" placeholder="Type your name here" :class="{ 'p-invalid': errors['first_name'] }"/>
                         <label for="name" class="block text-l mb-2" :class="{ 'text-red-700': errors['first_name'] }">
                         {{ errors['first_name'] }}
                         </label>
@@ -300,7 +300,7 @@
 
                     <div class="p-col-6 p-md-4 mb-2">
                         <label for="lastName" class="p-d-block">Last Name</label>
-                        <InputText v-model="lastNameV" inputId="lastName" aria-labelledby="basic" placeholder="Type your last name here" />
+                        <InputText v-model="lastNameV" inputId="lastName" aria-labelledby="basic" placeholder="Type your last name here" :class="{ 'p-invalid': errors['last_name'] }"/>
                         <label for="lastName" class="block text-l mb-2" :class="{ 'text-red-700': errors['last_name'] }">
                         {{ errors['last_name'] }}
                         </label>
@@ -308,7 +308,7 @@
 
                     <div class="p-col-6 p-md-4 mb-2">
                         <label for="email" class="p-d-block">Email</label>
-                        <InputText v-model="emailV" inputId="email" aria-labelledby="basic" placeholder="Type your email here" />
+                        <InputText v-model="emailV" inputId="email" aria-labelledby="basic" placeholder="Type your email here" :class="{ 'p-invalid': errors['email'] }" />
                         <label for="email" class="block text-l mb-2" :class="{ 'text-red-700': errors['email'] }">
                         {{ errors['email'] }}
                         </label>
@@ -316,7 +316,7 @@
 
                     <div class="p-col-6 p-md-4 mb-2">
                         <label for="bankAccountNumber" class="p-d-block">Account number</label>
-                        <InputText v-model="bankAccountNumberV" inputId="bankAccountNumber" aria-labelledby="basic" placeholder="Type your account here" />
+                        <InputText v-model="bankAccountNumberV" inputId="bankAccountNumber" aria-labelledby="basic" placeholder="Type your account here" :class="{ 'p-invalid': errors['bank_account_number'] }"/>
                         <label for="bankAccountNumber" class="block text-l mb-2" :class="{ 'text-red-700': errors['bank_account_number'] }">
                         {{ errors['bank_account_number'] }}
                         </label>
@@ -324,7 +324,7 @@
 
                     <div class="p-col-6 p-md-4 mb-2">
                         <label for="bankAccountDoc" class="p-d-block">Account Document</label>
-                        <InputText v-model="bankAccountDocV" inputId="bankAccountDoc" aria-labelledby="basic" placeholder="Type your account document here" />
+                        <InputText v-model="bankAccountDocV" inputId="bankAccountDoc" aria-labelledby="basic" placeholder="Type your account document here" :class="{ 'p-invalid': errors['bank_account_doc'] }"/>
                         <label for="bankAccountDoc" class="block text-l mb-2" :class="{ 'text-red-700': errors['bank_account_doc'] }">
                         {{ errors['bank_account_doc'] }}
                         </label>

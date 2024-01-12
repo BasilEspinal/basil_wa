@@ -23,7 +23,7 @@ const count = ref(0);
 const { values,errors, defineField } = useForm({
   validationSchema: toTypedSchema(
     z.object({
-      email: z.string().min(3).email().includes("admin").endsWith("mail.com"),
+      email: z.string().min(3).email(),
       password: z.string().min(6),
     }),
   ),
