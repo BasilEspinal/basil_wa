@@ -4,7 +4,7 @@
              <div>
                 <!-- {{ data_planner }} -->
               
-                <h3>Planeacióm Diaria para el Area: {{ areawork}}</h3>
+                <h3>Planeación Diaria para el Area: {{ areawork}}</h3>
                 <div class="p-fluid formgrid grid">
                     <div class="field col-12 md:col-6">
                         <pre>Empleado Cortador : {{data_planner.name_employee}}</pre>
