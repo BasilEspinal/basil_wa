@@ -152,6 +152,15 @@
     
 </template>
 
+<!-- 
+filterDisplay="menu"
+v-model:filters="filters"
+:globalFilterFields="['', 'company.name']"
+
+
+const documentFrozen = ref(false); change name field 
+<DataTable id="tblData"
+     -->
 <script setup>
 import { ref, watch, provide, onBeforeMount, onMounted } from 'vue';
 import useDataAPI from '@/composables/DataAPI/FetchDataAPI.js';
@@ -210,7 +219,7 @@ const onRowSelect = (data) => {
     //assignValues(mode.value)
     
 };
-//Cut and paste this at the end
+
 watch(listRowSelect, onRowSelect);
 const onSelectAllChange = () => {
     onRowSelect();

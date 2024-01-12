@@ -16,7 +16,7 @@
                                 <!-- <i class="pi pi-bars p-toolbar-separator mr-2 ml-2 mb-2 mt-2"></i> -->
                                 <Button :disabled="!(listRowSelect.length > 0 && listRowSelect.length < 2)" label="Edit" icon="pi pi-file-edit" class="p-button-help mr-2 ml-2 mb-2 mt-2" @click="openEdit" size="large" />
                                 <Button :disabled="!(listRowSelect.length > 0 && listRowSelect.length < 2)" label="Clone" icon="pi pi-copy" class="p-button-secondary mr-2 ml-2 mb-2 mt-2" @click="openClone" size="large" />
-                                <Button label="Export" icon="pi pi-file-import" class="p-button-warning mr-2 ml-2 mb-2 mt-2" @click="exportCSV" size="large" />
+                                <Button label="Export" icon="pi pi-file-import" class="p-button-warning mr-2 ml-2 mb-2 mt-2" @click="openExport" size="large" />
                                 <Button :disabled="!(listRowSelect.length > 0 && listRowSelect.length < 2)" label="Delete" icon="pi pi-trash" class="p-button-danger mr-2 ml-2 mb-2 mt-2" @click="openDelete" size="large" />
                             </div>
                         </template>
@@ -69,8 +69,10 @@
             <template>
                 <h1>No tienes permisos</h1>
             </template>
-            
+
             <DataTable
+                id="tblData"
+                ref="dt"
                 v-model:selection="selectedRegisters"
                 v-model:filters="filters"
                 :class="`p-datatable-${size.class}`"
@@ -79,7 +81,6 @@
                 :globalFilterFields="['workCenter.name', 'last_name', 'company.name']"
                 tableStyle="min-width: 75rem"
                 dataKey="uuid"
-                ref="dt"
                 :paginator="true"
                 :loading="loading"
                 :rows="20"
@@ -93,7 +94,6 @@
                 @row-select="onRowSelect(selectedRegisters)"
                 @row-unselect="onRowSelect(selectedRegisters)"
                 @select-all-change="onSelectAllChange"
-                
             >
                 <!-- <template #header>
                 <div class="flex justify-content-between flex-column sm:flex-row">
@@ -264,13 +264,9 @@
                     </template>
                 </Column>
             </DataTable>
-            
-            <Dialog  v-model:visible="formDialog" :style="{ width: '700px' }" :header="headerDialog" :modal="true" class="p-fluid text-center mx-auto">
-                  
-                
-                <div class="p-grid">
 
-                    
+            <Dialog v-model:visible="formDialog" :style="{ width: '700px' }" :header="headerDialog" :modal="true" class="p-fluid text-center mx-auto">
+                <div class="p-grid">
                     <div class="p-col-6 p-md-4 mb-2">
                         <label for="typeDocument" class="p-d-block">Type of documents</label>
                         <Dropdown v-model="selectedDocumentType" :options="typesDocument" optionLabel="label" inputId="typeOfDocumentId" aria-labelledby="basic" :placeholder="selectedDocumentType.name" />
@@ -305,17 +301,17 @@
                         <label for="bankAccountDoc" class="p-d-block">Account Document</label>
                         <InputText v-model="dataPost.bank_account_doc" inputId="bankAccountDoc" aria-labelledby="basic" placeholder="Type your account document here" />
                     </div>
-                    
+
                     <div class="p-col-6 p-md-4 mb-2">
                         <label for="paymentTypes" class="p-d-block">Payment types</label>
                         <Dropdown v-model="selectedPaymentType" :options="paymentTypes" optionLabel="code" inputId="paymentType" aria-labelledby="basic" :placeholder="selectedPaymentType.code" />
                     </div>
-                    
+
                     <div class="p-col-6 p-md-4 mb-2">
                         <label for="workCenter" class="p-d-block">Work Center</label>
                         <Dropdown v-model="selectedWorkCenters" :options="workCenters" optionLabel="name" inputId="workCenter" aria-labelledby="basic" :placeholder="selectedWorkCenters.name" />
                     </div>
-                    
+
                     <div class="p-col-6 p-md-4 mb-2">
                         <label for="genderType" class="p-d-block">Select gender</label>
                         <Dropdown v-model="selectedGenderType" :options="genderTypes" optionLabel="label" inputId="genderType" aria-labelledby="basic" :placeholder="selectedGenderType.label" />
@@ -359,13 +355,28 @@
                     </div>
                 </template>
             </Dialog>
+
+            <Dialog v-model:visible="exportDialog" :style="{ width: '280px' }" :header=" headerDialog" :modal="true" class="p-fluid">
+                <div class="field col">
+                    <label>File name</label>
+                    <InputText id="name" v-model="filename" :required="true" integeronly />
+                    <span class="p-float-label mt-5">
+                        <Dropdown v-model="format" :options="ext_file" optionLabel="name" :class="{ 'p-invalid w-full md:w-14rem': format == '', ' w-full md:w-14rem': format != '' }" />
+                        <label for="cs-city">Format</label>
+                    </span>
+                </div>
+                <template #footer>
+                    <Button label="Cancel" icon="pi pi-times" class="p-button-text" @click="exportDialog = false" />
+                    <Button label="Export" icon="pi pi-check" class="p-button-text" @click="saveRecord" />
+                </template>
+            </Dialog>
             <Toast />
         </div>
     </div>
 </template>
 
 <script setup>
-import { ref, watch, onBeforeMount, onMounted } from 'vue';
+import { ref, watch, onBeforeMount, onMounted,provide} from 'vue';
 import { useToast } from 'primevue/usetoast';
 import useDataAPI from '@/composables/DataAPI/FetchDataAPI.js';
 import { FilterMatchMode, FilterOperator } from 'primevue/api';
@@ -411,7 +422,7 @@ onMounted(async () => {
     selectedRegisters.value = [];
     column.value = null;
     fillHeaderCustom();
-    
+
     //selectedPaymentType.value.id = listRowSelect.value[0].payment_type.id;
 });
 const filters = ref();
@@ -493,8 +504,6 @@ const resetValues = () => {
 const iddd = ref();
 const assignValues = (modex) => {
     if (modex === 'EDIT') {
-        
-        
         selectedDocumentType.value.id = listRowSelect.value[0].document_type.id;
         selectedDocumentType.value.name = listRowSelect.value[0].document_type.name;
         dataPost.value.document_type = listRowSelect.value[0].document_type.id;
@@ -514,25 +523,24 @@ const assignValues = (modex) => {
         selectedGenderType.value.label = listRowSelect.value[0].gender.name;
         dataPost.value.gender_id = listRowSelect.value[0].gender_id;
 
-        selectedWorkCenters.value.id = workCenters.value.find(type => type.name === listRowSelect.value[0].workCenter.name)?.id || null;
+        selectedWorkCenters.value.id = workCenters.value.find((type) => type.name === listRowSelect.value[0].workCenter.name)?.id || null;
         selectedWorkCenters.value.name = listRowSelect.value[0].workCenter.name;
-        
-        selectedPaymentType.value.id = paymentTypes.value.find(type => type.code === listRowSelect.value[0].payment_type.name)?.id || null; 
+
+        selectedPaymentType.value.id = paymentTypes.value.find((type) => type.code === listRowSelect.value[0].payment_type.name)?.id || null;
         selectedPaymentType.value.code = listRowSelect.value[0].payment_type.name;
-        
-        selectedFarm.value.id = farms.value.find(type => type.name === listRowSelect.value[0].farm.name)?.id || null;
+
+        selectedFarm.value.id = farms.value.find((type) => type.name === listRowSelect.value[0].farm.name)?.id || null;
         selectedFarm.value.name = listRowSelect.value[0].farm.name;
 
-        dataPost.value.employee_uuid = listRowSelect.value[0].uuid; 
-        
+        dataPost.value.employee_uuid = listRowSelect.value[0].uuid;
     }
     if (modex === 'CLONE') {
         resetValues();
-        selectedDocumentType.value.id = "";
-        selectedDocumentType.value.name = "";
-        dataPost.value.document_type = "";
+        selectedDocumentType.value.id = '';
+        selectedDocumentType.value.name = '';
+        dataPost.value.document_type = '';
 
-        dataPost.value.document = "";
+        dataPost.value.document = '';
 
         dataPost.value.first_name = listRowSelect.value[0].first_name;
         dataPost.value.last_name = listRowSelect.value[0].last_name;
@@ -546,14 +554,13 @@ const assignValues = (modex) => {
         // selectedGenderType.value.id = listRowSelect.value[0].gender.id;
         // selectedGenderType.value.label = listRowSelect.value[0].gender.name;
         // dataPost.value.gender_id = listRowSelect.value[0].gender_id;
-        
-        
+
         //selectedWorkCenters.value.id = workCenters.value.find(type => type.name === listRowSelect.value[0].workCenter.name)?.id || null;
         //selectedWorkCenters.value.name = listRowSelect.value[0].workCenter.name;
-        
-        //selectedPaymentType.value.id = paymentTypes.value.find(type => type.code === listRowSelect.value[0].payment_type.name)?.id || null; 
+
+        //selectedPaymentType.value.id = paymentTypes.value.find(type => type.code === listRowSelect.value[0].payment_type.name)?.id || null;
         //selectedPaymentType.value.code = listRowSelect.value[0].payment_type.name;
-        
+
         //selectedFarm.value.id = farms.value.find(type => type.name === listRowSelect.value[0].farm.name)?.id || null;
         //selectedFarm.value.name = listRowSelect.value[0].farm.name;
     }
@@ -579,6 +586,16 @@ const openClone = () => {
     assignValues(mode.value);
 };
 
+const openExport = () => {
+    mode.value = 'EXPORT';
+    format.value = '';
+    headerDialog.value = 'Export a employee record';
+    exportDialog.value = true;
+    console.info("ClickBoton", mode.value);
+    resetValues();
+    
+};
+
 let recordsDelete = ref([]);
 const openDelete = () => {
     mode.value = 'DELETE';
@@ -596,16 +613,9 @@ const openDelete = () => {
     }
 };
 
-const openExport = () => {
-    mode.value = 'EXPORT';
-    headerDialog.value = 'Export a employee record';
-    resetValues();
-    formDialog.value = true;
-};
-
 const newRecord = async (requestDataUnitTypes, endpoint) => {
     await postResponseAPI(requestDataUnitTypes, endpoint);
-    console.log(requestDataUnitTypes)
+    console.log(requestDataUnitTypes);
     recordsDelete.value = [];
 
     switch (statusCode.value) {
@@ -675,6 +685,7 @@ const dropRecord = async (id, endpoint) => {
     }
 };
 const saveRecord = async () => {
+    let data = [];
     switch (mode.value) {
         case 'NEW':
             await newRecord(dataPost.value, endpoint.value, statusCode.value);
@@ -692,6 +703,20 @@ const saveRecord = async () => {
         case 'CLONE':
             await newRecord(dataPost.value, endpoint.value, statusCode.value);
             break;
+        case 'EXPORT':
+            console.info("SaveRecord", mode.value);
+                if (format.value == '') {
+                    toast.add({ severity: 'error', summary: 'Select Format', detail: 'Must select a format', life: 3000 });
+                    return;
+                }
+                data = {
+                    data: format.value.code,
+                    name: filename.value + (format.value.code ? '.csv' : '.xls')
+            };
+            exportData(data);
+            exportDialog.value = false;
+            
+            break;    
     }
     mode.value = '';
 };
@@ -716,8 +741,7 @@ const selectedPaymentType = ref({
 });
 const selectedWorkCenters = ref({
     id: '',
-    name: '',
-    
+    name: ''
 });
 const headerDialog = ref('');
 const companies = ref([
@@ -815,10 +839,81 @@ const fillHeaderCustom = () => {
 const onColumnsChange = (column) => {
     column.sort((a, b) => a.position - b.position);
 };
+
+const exportDialog = ref(false);
+const filename = ref('employees');
+const isChanging = ref(false);
 const dt = ref();
+const format = ref('');
+
+const ext_file = ref([
+    {
+        name: 'CSV',
+        code: true
+    },
+    {
+        name: 'XLS',
+        code: false
+    }
+]);
+
+provide('isChanging', isChanging);
+
 const exportCSV = () => {
     dt.value.exportCSV();
 };
+
+const exportData = (data) => {
+    data.data ? exportTableToCSV(data.name) : exportExcel(data.name);
+};
+
+const exportExcel = (name) => {
+    const uri = 'data:application/vnd.ms-excel;base64,';
+    const template =
+        '<html xmlns:o="urn:schemas-microsoft-com:office:office" xmlns:x="urn:schemas-microsoft-com:office:excel" xmlns="http://www.w3.org/TR/REC-html40"><head><!--[if gte mso 9]><xml><x:ExcelWorkbook><x:ExcelWorksheets><x:ExcelWorksheet><x:Name>{worksheet}</x:Name><x:WorksheetOptions><x:DisplayGridlines/></x:WorksheetOptions></x:ExcelWorksheet></x:ExcelWorksheets></x:ExcelWorkbook></xml><![endif]--></head><body><table>{table}</table></body></html>';
+    const base64 = (s) => window.btoa(unescape(encodeURIComponent(s)));
+
+    const format = (s, c) => s.replace(/{(\w+)}/g, (m, p) => c[p]);
+
+    const htmls = document.getElementById('tblData').innerHTML;
+
+    const ctx = {
+        worksheet: 'Worksheet',
+        table: htmls
+    };
+
+    const link = document.createElement('a');
+    link.download = name;
+    link.href = uri + base64(format(template, ctx));
+    link.click();
+};
+
+function downloadCSV(csv, name) {
+    const csvFile = new Blob([csv], { type: 'text/csv' });
+    const downloadLink = document.createElement('a');
+    downloadLink.download = name;
+    downloadLink.href = window.URL.createObjectURL(csvFile);
+    downloadLink.style.display = 'none';
+    document.body.appendChild(downloadLink);
+    downloadLink.click();
+}
+
+function exportTableToCSV(name) {
+    let csv = [];
+    const rows = document.querySelectorAll('table tr');
+
+    for (let i = 0; i < rows.length; i++) {
+        let row = [],
+            cols = rows[i].querySelectorAll('td, th');
+
+        for (let j = 0; j < cols.length; j++) row.push(cols[j].innerText);
+
+        csv.push(row.join(','));
+    }
+
+    downloadCSV(csv.join('\n'), name);
+}
+
 const lazyParams = ref({});
 
 ////////////////////////////////////////////////////////////////
@@ -847,7 +942,6 @@ watch(
 watch(
     selectedPaymentType,
     () => {
-
         dataPost.value.payment_type_id = selectedPaymentType.value.id;
     },
     { deep: true }
