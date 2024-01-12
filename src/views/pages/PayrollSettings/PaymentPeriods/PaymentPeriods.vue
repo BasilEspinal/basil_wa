@@ -48,22 +48,20 @@
                 :globalFilterFields="['', 'company.name']"
             >
                 <template #header>
-                    <Toolbar class = "mb-2">
-                    <template v-slot:start>
-                        <Button type="button" icon="pi pi-filter-slash" label="Limpiar" class="p-button-outlined mb-2" @click="clearFilter()" />
-                    </template>
-                    <template v-slot:end>
-                        <span class="p-input-icon-left mb-2">
-                        <i class="pi pi-search" />
-                        <InputText v-model="filters['global'].value" placeholder="Buscar" style="width: 100%" />
-                    </span>
-                    </template>
-                    <template v-slot:center>
-                        
-                        <SelectButton v-model="size" :options="sizeOptions" optionLabel="label" dataKey="label"> </SelectButton>
-                        
-                    </template>       
-                </Toolbar>
+                    <Toolbar class="mb-2">
+                        <template v-slot:start>
+                            <Button type="button" icon="pi pi-filter-slash" label="Limpiar" class="p-button-outlined mb-2" @click="clearFilter()" />
+                        </template>
+                        <template v-slot:end>
+                            <span class="p-input-icon-left mb-2">
+                                <i class="pi pi-search" />
+                                <InputText v-model="filters['global'].value" placeholder="Buscar" style="width: 100%" />
+                            </span>
+                        </template>
+                        <template v-slot:center>
+                            <SelectButton v-model="size" :options="sizeOptions" optionLabel="label" dataKey="label"> </SelectButton>
+                        </template>
+                    </Toolbar>
                 </template>
 
                 <template #empty> No customers found. </template>
@@ -83,22 +81,27 @@
                     </template>
                 </Column>
 
-                <Column field="start_date" header="start_date" sortable filterField="start_date" dataType="date" style="min-width: 10rem">
+
+                <Column field="start_date" filterField="start_date" header="Date Start" sortable>
                     <template #body="{ data }">
-                        {{ formatDate(data.start_date) }}
+                        {{ data.created_at }}
                     </template>
                     <template #filter="{ filterModel }">
-                        <Calendar v-model="filterModel.value" dateFormat="YY-dd-mm" placeholder="YY-dd-mm" mask="9999/99/99" />
-                    </template>
-                </Column> 
-                <Column field="end_date" header="end_date" sortable filterField="end_date" dataType="date" style="min-width: 10rem">
-                    <template #body="{ data }">
-                        {{ formatDate(data.start_date) }}
-                    </template>
-                    <template #filter="{ filterModel }">
-                        <Calendar v-model="filterModel.value" dateFormat="YY-dd-mm" placeholder="YY-dd-mm" mask="9999/99/99" />
+                        <InputText v-model="filterModel.value" type="text" class="p-column-filter" placeholder="Search by creation date" />
                     </template>
                 </Column>
+
+                 <Column field="end_date" filterField="end_date" header="Date End" sortable>
+                    <template #body="{ data }">
+                        {{ data.created_at }}
+                    </template>
+                    <template #filter="{ filterModel }">
+                        <InputText v-model="filterModel.value" type="text" class="p-column-filter" placeholder="Search by creation date" />
+                    </template>
+                </Column>
+
+            
+             
 
                 <Column field="period_num" filterField="period_num" header="period_num" sortable>
                     <template #body="{ data }">
@@ -205,8 +208,10 @@ const initFilters = () => {
         global: { value: null, matchMode: FilterMatchMode.CONTAINS },
         code: { operator: FilterOperator.AND, constraints: [{ value: null, matchMode: FilterMatchMode.STARTS_WITH }] },
         name: { operator: FilterOperator.AND, constraints: [{ value: null, matchMode: FilterMatchMode.STARTS_WITH }] },
-        start_date: { operator: FilterOperator.AND, constraints: [{ value: null, matchMode: FilterMatchMode.DATE_IS }] },
-        end_date: { operator: FilterOperator.AND, constraints: [{ value: null, matchMode: FilterMatchMode.DATE_IS }] },
+        start_date: { operator: FilterOperator.AND, constraints: [{ value: null, matchMode: FilterMatchMode.STARTS_WITH }] },
+        end_date: { operator: FilterOperator.AND, constraints: [{ value: null, matchMode: FilterMatchMode.STARTS_WITH }] },
+        quantity_days: { operator: FilterOperator.AND, constraints: [{ value: null, matchMode: FilterMatchMode.STARTS_WITH }] },
+        period_num:{ operator: FilterOperator.AND, constraints: [{ value: null, matchMode: FilterMatchMode.STARTS_WITH }] },
         'status.name': { operator: FilterOperator.AND, constraints: [{ value: null, matchMode: FilterMatchMode.STARTS_WITH }] },
         'farm.name': { operator: FilterOperator.AND, constraints: [{ value: null, matchMode: FilterMatchMode.STARTS_WITH }] },
         created_at: { operator: FilterOperator.AND, constraints: [{ value: null, matchMode: FilterMatchMode.STARTS_WITH }] },
@@ -214,7 +219,7 @@ const initFilters = () => {
     };
 };
 
-const formatDate = (value) => {
+const formatDateUsa = (value) => {
     if (!(value instanceof Date)) {
         value = new Date(value);
     }
@@ -224,6 +229,18 @@ const formatDate = (value) => {
         month: '2-digit',
         year: 'numeric'
     });
+};
+
+const formatDate = (value) => {
+    if (!(value instanceof Date)) {
+        value = new Date(value);
+    }
+
+    const year = value.getFullYear();
+    const month = String(value.getMonth() + 1).padStart(2, '0');
+    const day = String(value.getDate()).padStart(2, '0');
+
+    return `${year}-${month}-${day}`;
 };
 
 const loadLazyData = async (event) => {

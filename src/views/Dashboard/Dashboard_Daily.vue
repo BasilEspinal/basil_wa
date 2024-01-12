@@ -61,8 +61,8 @@ const onSortChange = (event) => {
     <div class="grid">
         <div class="col-12">
             <div class="card">
-                <h5>Work Daily for Employee For WorkCenter</h5>
-                <DataView :value="dataviewValue" :layout="layout" :paginator="true" :rows="9" :sortOrder="sortOrder" :sortField="sortField">
+                <h5>Work Daily for (10) Employees Congratulations For WorkCenter</h5>
+                <DataView :value="dataviewValue" :layout="list" :paginator="true" :rows="4" :sortOrder="sortOrder" :sortField="sortField">
                     <template #header>
                         <div class="grid grid-nogutter">
                             <div class="col-6 text-left">
@@ -88,7 +88,7 @@ const onSortChange = (event) => {
                                 </div>
                                 <div class="flex flex-row md:flex-column justify-content-between w-full md:w-auto align-items-center md:align-items-end mt-5 md:mt-0">
                                     <span class="text-2xl font-semibold mb-2 align-self-center md:align-self-end">${{ slotProps.data.price }}</span>
-                                    <Button icon="pi pi-shopping-cart" label="Add to Cart" :disabled="slotProps.data.inventoryStatus === 'OUTOFSTOCK'" class="mb-2"></Button>
+                                    <Button icon="pi pi-print" label="View Ticket" :disabled="slotProps.data.inventoryStatus === 'OUTOFSTOCK'" class="mb-2"></Button>
                                     <span :class="'product-badge status-' + slotProps.data.inventoryStatus.toLowerCase()">{{ slotProps.data.inventoryStatus }}</span>
                                 </div>
                             </div>

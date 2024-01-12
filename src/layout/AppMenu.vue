@@ -26,7 +26,10 @@ const model2 = ref([
                 icon: 'pi pi-desktop',
                 label: 'Monitor Online',
                 gate: '',
-                items: [{ label: 'Corta', icon: 'pi pi-fw pi-table', to: '/corta' }]
+                items: [{
+                    label: '10 de Mejor Rendimiento', icon: 'pi pi-fw pi-table',
+                    to: '/monitorCorta'
+                }]
             }
         ]
     },
@@ -293,7 +296,27 @@ const model2 = ref([
                 items: [
                     {
                         label: 'Captura de corta',
-                        to: '/AppMovil/AppMovil',
+                        to: '/AppMovil/Corta',
+                        icon: 'pi pi-mobile'
+                    },
+                    {
+                        label: 'Captura de Prefio',
+                        to: '/AppMovil/PreFrio',
+                        icon: 'pi pi-mobile'
+                    },
+                    {
+                        label: 'Captura de Seleccion',
+                        to: '/AppMovil/Seleccion',
+                        icon: 'pi pi-mobile'
+                    },
+                     {
+                        label: 'Captura de Contratista',
+                        to: '/AppMovil/Contractor',
+                        icon: 'pi pi-mobile'
+                    },
+                    {
+                        label: 'Captura de Agronomìa',
+                        to: '/AppMovil/Agronomo',
                         icon: 'pi pi-mobile'
                     },
                 ]
