@@ -12,7 +12,9 @@
                     <Toolbar class="bg-gray-900 shadow-2" style="border-radius: 3rem; background-image: linear-gradient(to right, var(--green-100), var(--green-200))">
                         <template v-slot:start>
                             <div>
-                                <Button label="New" icon="pi pi-plus" class="p-button-success mr-2 ml-2 mb-2 mt-2" @click="openNew" size="large" />
+                                <pre>{{ rules }}</pre>
+                                <pre>{{ ability.can('empleado_crear') }}</pre>
+                                <Button v-if = "ability.can('empleado_crear')" label="New" icon="pi pi-plus" class="p-button-success mr-2 ml-2 mb-2 mt-2" @click="openNew" size="large" />
                                 <!-- <i class="pi pi-bars p-toolbar-separator mr-2 ml-2 mb-2 mt-2"></i> -->
                                 <Button :disabled="!(listRowSelect.length > 0 && listRowSelect.length < 2)" label="Edit" icon="pi pi-file-edit" class="p-button-help mr-2 ml-2 mb-2 mt-2" @click="openEdit" size="large" />
                                 <Button :disabled="!(listRowSelect.length > 0 && listRowSelect.length < 2)" label="Clone" icon="pi pi-copy" class="p-button-secondary mr-2 ml-2 mb-2 mt-2" @click="openClone" size="large" />
@@ -419,6 +421,36 @@ import { toTypedSchema } from '@vee-validate/zod';
 import { z } from 'zod';
 
 
+import { createMongoAbility } from '@casl/ability';
+import { AbilityBuilder} from '@casl/ability';
+
+const ability = createMongoAbility();
+const token = sessionStorage.getItem('accessSessionToken');
+const { can, rules } = new AbilityBuilder();
+
+
+const updateAbility = (token) => {
+  const bearer = 'Bearer ' + token;
+
+fetch('http://164.90.146.196:81/api/v1/abilities', {
+    headers: {
+        Authorization: bearer,
+        accept: 'application/json'
+    }
+})
+    .then((response) => response.json())
+    .then((permissions) => {
+        
+
+        can(permissions);
+        console.log(permissions)
+        ability.update(rules);
+        console.log(can(permissions))
+        console.log(ability.can('empleado_crear'))
+    });
+};
+
+
 let endpoint = ref('/employees');
 const loading = ref(false);
 
@@ -568,6 +600,7 @@ const sizeOptions = ref([
 ]);
 
 onMounted(async () => {
+    updateAbility(token);
     loading.value = true;
     lazyParams.value = {
         //TODO
@@ -583,6 +616,7 @@ onMounted(async () => {
 });
 const filters = ref();
 onBeforeMount(() => {
+    updateAbility(token);
     initFilters();
 });
 
