@@ -41,7 +41,7 @@ import { createMongoAbility } from '@casl/ability';
 import { AbilityBuilder} from '@casl/ability';
 const ability = createMongoAbility();
 const updateAbility = (token) => {
-  const bearer = 'Bearer ' + token;
+  const bearer = 'Bearer ' + token; 
 
 fetch('http://164.90.146.196:81/api/v1/abilities', {
     headers: {
