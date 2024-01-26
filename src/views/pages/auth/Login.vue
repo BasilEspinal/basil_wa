@@ -1,16 +1,20 @@
 <script setup>
 import { useLayout } from '@/layout/composables/layout';
-import { computed, ref, inject } from 'vue';
+import { computed, ref, inject,provide } from 'vue';
 import { useRouter } from 'vue-router';
 import { useToast } from 'primevue/usetoast';
 import Toast from 'primevue/toast';
 import useDataAPI from '@/composables/DataAPI/FetchDataAPI.js';
-import { AbilityBuilder, Ability } from '@casl/ability';
+
+
+
 import { ABILITY_TOKEN } from '@casl/vue';
 import { useAbility } from '@casl/vue';
 import { useForm } from 'vee-validate';
 import { toTypedSchema } from '@vee-validate/zod';
 import { z } from 'zod';
+
+import { defineAbility } from '@casl/ability';
 
 const { postResponseAPI, dataResponsePermissionsAPI,dataResponseAPI,getAllResponsePermissionsAPI } = useDataAPI();
 const { layoutConfig } = useLayout();
@@ -18,6 +22,43 @@ const toast = useToast();
 const count = ref(0);
 
 
+
+// define abilities
+// const ability = defineAbility((can, cannot) => {
+//   can('read', 'Post');
+//   cannot('read', 'Post', { private: true });
+// });
+// const actions = ['listar_empleado', 'ver_empleado', 'eliminar_empleado'];
+
+// const ability = defineAbility((can, cannot) => actions.forEach(action => can(action)));
+
+// // Verificar cada acción por separado
+// console.log(ability.can('listar_empleado')); // true
+// console.log(ability.can('ver_empleado')); // true
+// console.log(ability.can('eliminar_empleado')); // true
+
+import { createMongoAbility } from '@casl/ability';
+import { AbilityBuilder} from '@casl/ability';
+const ability = createMongoAbility();
+const updateAbility = (token) => {
+  const bearer = 'Bearer ' + token;
+
+fetch('http://164.90.146.196:81/api/v1/abilities', {
+    headers: {
+        Authorization: bearer,
+        accept: 'application/json'
+    }
+})
+    .then((response) => response.json())
+    .then((permissions) => {
+        const { can, rules } = new AbilityBuilder();
+
+        can(permissions);
+        console.log(permissions)
+        ability.update(rules);
+        console.log(ability.can('rol_crear'))
+    });
+};
 
 // initPermissions();
 const { values,errors, defineField } = useForm({
@@ -28,7 +69,6 @@ const { values,errors, defineField } = useForm({
     }),
   ),
 });
-
 const [email, emailAttrs] = defineField('email');
 const [password, passwordAttrs] = defineField('password');
 const router = useRouter();
@@ -60,7 +100,8 @@ const fetchInfoPostLogin = async (data) => {
     sessionStorage.setItem('accessSessionUser', user);
     localStorage.setItem('accesSessionTokens', token);
     
-    updateAbility(response.user, token);
+    updateAbility(token);
+
     toast.add({ severity: 'success', detail: 'Success', content: 'Successful Login', id: count.value++ });
     router.push('/applayout');
   } catch (error) {
@@ -69,34 +110,19 @@ const fetchInfoPostLogin = async (data) => {
   }
 };
 
-const updateAbility = (user, token) => {
-  const bearer = 'Bearer ' + token;
 
-  fetch('http://164.90.146.196:81/api/v1/abilities', {
-    headers: {
-      Authorization: bearer,
-      accept: 'application/json'
-    }
-  })
-    .then((response) => response.json())
-    .then((permissions) => {
-      const { can, rules } = new AbilityBuilder(Ability);
-      can(permissions);
-      console.log(permissions);
 
-      // Obtén la instancia de Ability de la inyección global
-      // const ability = inject(ABILITY_TOKEN);
-      
-      // // Actualiza la capacidad en el ámbito global
-      // ability.update(rules);
-    });
-};
+
+
+
 </script>
 
 <template>
+  
     
     <div class="surface-ground flex align-items-center justify-content-center min-h-screen min-w-screen overflow-hidden" style="background: linear-gradient(180deg, var(--paleta-400) 5%, var(--paleta-100) 15%)">
         
+
         <div class="flex flex-column align-items-center justify-content-center" @keyup.enter="onSubmit">
             <router-link to="/" class="align-items-center mb-5">
                 <img :src="logoUrl" alt="Sakai logo" class="w-6rem flex-shrink-0" />
