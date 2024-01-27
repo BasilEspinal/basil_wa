@@ -1,4 +1,6 @@
+
 <script setup>
+// This is the Login Page withut any fixed about layout
 import { useLayout } from '@/layout/composables/layout';
 import { computed, ref, inject,provide } from 'vue';
 import { useRouter } from 'vue-router';
