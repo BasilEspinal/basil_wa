@@ -1,5 +1,6 @@
-import { AbilityBuilder, Ability } from '@casl/ability';
+import { defineAbility } from '@casl/ability';
 
-const { can, cannot, build } = new AbilityBuilder(Ability);
-
-export default build();
+export default defineAbility((can, cannot) => {
+  can('manage', 'all');
+  cannot('delete', 'User');
+});

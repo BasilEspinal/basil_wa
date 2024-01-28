@@ -40,8 +40,27 @@ const count = ref(0);
 // console.log(ability.can('eliminar_empleado')); // true
 
 import { createMongoAbility } from '@casl/ability';
-import { AbilityBuilder} from '@casl/ability';
-const ability = createMongoAbility();
+import { AbilityBuilder } from '@casl/ability';
+import { provideAbility } from '@casl/vue';
+
+const { can, cannot, build } = new AbilityBuilder();
+
+// const ability = defineAbility((can, cannot) => {
+//   can('manage', 'all');
+//   cannot('delete', 'User');
+// });
+// provideAbility(ability)
+
+
+// const ability = createMongoAbility();
+import ability from '@/service/ability.js';
+
+ability.can('read', 'Post') // true
+ability.can('read', 'User') // true
+ability.can('update', 'User') // true
+ability.can('delete', 'User') // false
+ability.cannot('delete', 'User') // true
+
 const updateAbility = (token) => {
   const bearer = 'Bearer ' + token; 
 
@@ -59,6 +78,7 @@ fetch('http://164.90.146.196:81/api/v1/abilities', {
         console.log(permissions)
         ability.update(rules);
         console.log(ability.can('rol_crear'))
+        
     });
 };
 

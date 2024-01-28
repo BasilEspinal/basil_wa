@@ -111,10 +111,11 @@ import SidebarItemGroup from './layout/SidebarPlugin/ItemGroup.vue';
 import SidebarItemSubGroup from './layout/SidebarPlugin/ItemSubGroup.vue';
 
 import { abilitiesPlugin } from '@casl/vue';
-import ability from './service/ability';
+import ability from '@/service/ability.js';
 
 const app = createApp(App);
 app.use(abilitiesPlugin, ability, { useGlobalProperties: true });
+app.provide('ability', ability);
 app.use(router);
 app.use(PrimeVue, { ripple: true });
 app.use(ToastService);
