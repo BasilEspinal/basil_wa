@@ -12,20 +12,20 @@
                     <Toolbar class="bg-gray-900 shadow-2" style="border-radius: 3rem; background-image: linear-gradient(to right, var(--green-100), var(--green-200))">
                         <template v-slot:start>
                             <div>
-                                <pre>{{ rules }}</pre>
-                                <pre>{{ ability.can('empleado_crear') }}</pre>
+                                
+                                
                                 <Button v-if = "ability.can('empleado_crear')" label="New" icon="pi pi-plus" class="p-button-success mr-2 ml-2 mb-2 mt-2" @click="openNew" size="large" />
                                 <!-- <i class="pi pi-bars p-toolbar-separator mr-2 ml-2 mb-2 mt-2"></i> -->
-                                <Button :disabled="!(listRowSelect.length > 0 && listRowSelect.length < 2)" label="Edit" icon="pi pi-file-edit" class="p-button-help mr-2 ml-2 mb-2 mt-2" @click="openEdit" size="large" />
+                                <Button v-if = "ability.can('empleado_editar')" :disabled="!(listRowSelect.length > 0 && listRowSelect.length < 2)" label="Edit" icon="pi pi-file-edit" class="p-button-help mr-2 ml-2 mb-2 mt-2" @click="openEdit" size="large" />
                                 <Button :disabled="!(listRowSelect.length > 0 && listRowSelect.length < 2)" label="Clone" icon="pi pi-copy" class="p-button-secondary mr-2 ml-2 mb-2 mt-2" @click="openClone" size="large" />
                                 <Button label="Export" icon="pi pi-file-import" class="p-button-warning mr-2 ml-2 mb-2 mt-2" @click="openExport" size="large" />
-                                <Button :disabled="!(listRowSelect.length > 0 && listRowSelect.length < 2)" label="Delete" icon="pi pi-trash" class="p-button-danger mr-2 ml-2 mb-2 mt-2" @click="openDelete" size="large" />
+                                <Button v-if = "ability.can('empleado_eliminar')" :disabled="!(listRowSelect.length > 0 && listRowSelect.length < 2)" label="Delete" icon="pi pi-trash" class="p-button-danger mr-2 ml-2 mb-2 mt-2" @click="openDelete" size="large" />
                             </div>
                         </template>
                     </Toolbar>
                 </div>
             </div>
-            <div class="card">
+            <div class="card" v-if = "ability.can('empleado_ver_detalles')">
                 <Button type="button" icon="pi pi-table" label="" class="p-button-outlined mb-2" @click="customTable" />
                 <h5 v-if="valueCustomTable.status">¿Which columns do you want to watch?</h5>
                 <MultiSelect v-if="valueCustomTable.status" v-model="column" :options="columnas" optionLabel="field" placeholder="Seleccione columnas" :filter="true" display="chip" class="w-full md:w-20rem" @change="onColumnsChange(column)">
@@ -96,6 +96,7 @@
                 @row-select="onRowSelect(selectedRegisters)"
                 @row-unselect="onRowSelect(selectedRegisters)"
                 @select-all-change="onSelectAllChange"
+                v-if = "ability.can('empleado_listado')"
             >
                 <!-- <template #header>
                 <div class="flex justify-content-between flex-column sm:flex-row">
@@ -419,18 +420,15 @@ import { useRouter } from 'vue-router';
 import { useForm } from 'vee-validate';
 import { toTypedSchema } from '@vee-validate/zod';
 import { z } from 'zod';
-
-
-import { createMongoAbility } from '@casl/ability';
+import ability from '@/service/ability.js';
 import { AbilityBuilder} from '@casl/ability';
 
-const ability = createMongoAbility();
+
 const token = sessionStorage.getItem('accessSessionToken');
-const { can, rules } = new AbilityBuilder();
 
 
 const updateAbility = (token) => {
-  const bearer = 'Bearer ' + token;
+  const bearer = 'Bearer ' + token; 
 
 fetch('http://164.90.146.196:81/api/v1/abilities', {
     headers: {
@@ -440,16 +438,15 @@ fetch('http://164.90.146.196:81/api/v1/abilities', {
 })
     .then((response) => response.json())
     .then((permissions) => {
-        
+        const { can, rules } = new AbilityBuilder();
 
         can(permissions);
         console.log(permissions)
         ability.update(rules);
-        console.log(can(permissions))
         console.log(ability.can('empleado_crear'))
+        
     });
 };
-
 
 let endpoint = ref('/employees');
 const loading = ref(false);
@@ -600,7 +597,7 @@ const sizeOptions = ref([
 ]);
 
 onMounted(async () => {
-    updateAbility(token);
+    updateAbility(sessionStorage.getItem('accessSessionToken'));
     loading.value = true;
     lazyParams.value = {
         //TODO
