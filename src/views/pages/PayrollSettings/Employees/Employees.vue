@@ -268,48 +268,47 @@
                 </Column>
             </DataTable>
 
-            <Dialog v-model:visible="formDialog" :style="{ width: '700px' }" :header="headerDialog" :modal="true" class="p-fluid text-center mx-auto">
-              <pre>{{ dataPost }}</pre>  
+            <Dialog v-model:visible="formDialog" :style="{ width: '700px' }" :header="headerDialog" :modal="true" class=" text-center mx-auto">
+              <!-- <pre>{{ dataPost }}</pre>  
+                
               <pre>{{ values }}</pre>
-                <pre>{{ errors }}</pre>
-                <div class="p-grid">
-                    <form>
-                    <div class="p-col-6 p-md-4 mb-2">
+                <pre>{{ errors }}</pre> -->
+                
+                <div class="col-12">
+            <div class="card">
+                
+                <div class="p-fluid formgrid grid">
+                    <div class="field col-12 md:col-6">
                         <label for="typeOfDocumentId" class="p-d-block">Type of documents</label>
                         <Dropdown v-model="selectedDocumentType" :options="typesDocument" optionLabel="label" inputId="typeOfDocumentId" aria-labelledby="basic" :placeholder="selectedDocumentType.name" />
-                        
                     </div>
-                        
-
-                    <div class="p-col-6 p-md-4 mb-2">
-
+                    <div class="field col-12 md:col-6">
                         <label for="document_id" class="p-d-block">Document</label>
                         <InputText v-model="documentV" inputId="document_id" aria-labelledby="basic" placeholder="Type your document here" :class="{ 'p-invalid': errors['document'] }"/>
                         <label for="document_id" class="block text-l mb-2" :class="{ 'p-invalid text-red-700': errors['document']}">
                             {{ errors['document']  }}
                         </label>
                     </div>
-
-                    
-
-                    <div class="p-col-6 p-md-4 mb-2">
+                    <!-- <div class="field col-12">
+                        <label for="address">Address</label>
+                        <Textarea id="address" rows="4" />
+                    </div> -->
+                    <div class="field col-12 md:col-6">
                         <label for="name" class="p-d-block">Name</label>
                         <InputText v-model="firstNameV" inputId="name" aria-labelledby="basic" placeholder="Type your name here" :class="{ 'p-invalid': errors['first_name'] }"/>
                         <label for="name" class="block text-l mb-2" :class="{ 'text-red-700': errors['first_name'] }">
                         {{ errors['first_name'] }}
                         </label>
                     </div>
-                    
-
-                    <div class="p-col-6 p-md-4 mb-2">
+                    <div class="field col-12 md:col-3">
                         <label for="lastName" class="p-d-block">Last Name</label>
                         <InputText v-model="lastNameV" inputId="lastName" aria-labelledby="basic" placeholder="Type your last name here" :class="{ 'p-invalid': errors['last_name'] }"/>
                         <label for="lastName" class="block text-l mb-2" :class="{ 'text-red-700': errors['last_name'] }">
                         {{ errors['last_name'] }}
                         </label>
+                    
                     </div>
-
-                    <div class="p-col-6 p-md-4 mb-2">
+                    <div class="field col-12 md:col-3">
                         <label for="email" class="p-d-block">Email</label>
                         <InputText v-model="emailV" inputId="email" aria-labelledby="basic" placeholder="Type your email here" :class="{ 'p-invalid': errors['email'] }" />
                         <label for="email" class="block text-l mb-2" :class="{ 'text-red-700': errors['email'] }">
@@ -317,43 +316,108 @@
                         </label>
                     </div>
 
-                    <div class="p-col-6 p-md-4 mb-2">
+                    <div class="field col-12 md:col-6">
                         <label for="bankAccountNumber" class="p-d-block">Account number</label>
                         <InputText v-model="bankAccountNumberV" inputId="bankAccountNumber" aria-labelledby="basic" placeholder="Type your account here" :class="{ 'p-invalid': errors['bank_account_number'] }"/>
                         <label for="bankAccountNumber" class="block text-l mb-2" :class="{ 'text-red-700': errors['bank_account_number'] }">
                         {{ errors['bank_account_number'] }}
                         </label>
                     </div>
-
-                    <div class="p-col-6 p-md-4 mb-2">
+                    <div class="field col-12 md:col-6">
                         <label for="bankAccountDoc" class="p-d-block">Account Document</label>
                         <InputText v-model="bankAccountDocV" inputId="bankAccountDoc" aria-labelledby="basic" placeholder="Type your account document here" :class="{ 'p-invalid': errors['bank_account_doc'] }"/>
                         <label for="bankAccountDoc" class="block text-l mb-2" :class="{ 'text-red-700': errors['bank_account_doc'] }">
                         {{ errors['bank_account_doc'] }}
                         </label>
                     </div>
-
-                    <div class="p-col-6 p-md-4 mb-2">
+                        
+                    
+                    
+                        
+                    
+                        
+                    <div class="field col-12 md:col-6">
+                        <label for="genderType" class="p-d-block">Select gender</label>
+                        <Dropdown v-model="selectedGenderType" :options="genderTypes" optionLabel="label" inputId="genderType" aria-labelledby="basic" :placeholder="selectedGenderType.label" />
+                    </div>
+                    <div class="field col-12 md:col-3">
                         <label for="paymentTypes" class="p-d-block">Payment types</label>
                         <Dropdown v-model="selectedPaymentType" :options="paymentTypes" optionLabel="code" inputId="paymentType" aria-labelledby="basic" :placeholder="selectedPaymentType.code" />
+                    
                     </div>
-
-                    <div class="p-col-6 p-md-4 mb-2">
+                    <div class="field col-12 md:col-3">
                         <label for="workCenter" class="p-d-block">Work Center</label>
                         <Dropdown v-model="selectedWorkCenters" :options="workCenters" optionLabel="name" inputId="workCenter" aria-labelledby="basic" :placeholder="selectedWorkCenters.name" />
                     </div>
 
-                    <div class="p-col-6 p-md-4 mb-2">
+                </div>
+            </div>
+        </div>
+
+                <!-- <div class="grid grid-cols-2 gap-4">
+                    <form >
+                    
+                        <label for="typeOfDocumentId" class="p-d-block">Type of documents</label>
+                        <Dropdown v-model="selectedDocumentType" :options="typesDocument" optionLabel="label" inputId="typeOfDocumentId" aria-labelledby="basic" :placeholder="selectedDocumentType.name" />
+                        
+                        <label for="document_id" class="p-d-block">Document</label>
+                        <InputText v-model="documentV" inputId="document_id" aria-labelledby="basic" placeholder="Type your document here" :class="{ 'p-invalid': errors['document'] }"/>
+                        <label for="document_id" class="block text-l mb-2" :class="{ 'p-invalid text-red-700': errors['document']}">
+                            {{ errors['document']  }}
+                        </label>
+                    
+
+                    
+
+                    
+                        <label for="name" class="p-d-block">Name</label>
+                        <InputText v-model="firstNameV" inputId="name" aria-labelledby="basic" placeholder="Type your name here" :class="{ 'p-invalid': errors['first_name'] }"/>
+                        <label for="name" class="block text-l mb-2" :class="{ 'text-red-700': errors['first_name'] }">
+                        {{ errors['first_name'] }}
+                        </label>
+                    
+                    
+
+                    
+                        <label for="lastName" class="p-d-block">Last Name</label>
+                        <InputText v-model="lastNameV" inputId="lastName" aria-labelledby="basic" placeholder="Type your last name here" :class="{ 'p-invalid': errors['last_name'] }"/>
+                        <label for="lastName" class="block text-l mb-2" :class="{ 'text-red-700': errors['last_name'] }">
+                        {{ errors['last_name'] }}
+                        </label>
+                    
+
+                    
+                        <label for="email" class="p-d-block">Email</label>
+                        <InputText v-model="emailV" inputId="email" aria-labelledby="basic" placeholder="Type your email here" :class="{ 'p-invalid': errors['email'] }" />
+                        <label for="email" class="block text-l mb-2" :class="{ 'text-red-700': errors['email'] }">
+                        {{ errors['email'] }}
+                        </label>
+                    
+                        <label for="bankAccountNumber" class="p-d-block">Account number</label>
+                        <InputText v-model="bankAccountNumberV" inputId="bankAccountNumber" aria-labelledby="basic" placeholder="Type your account here" :class="{ 'p-invalid': errors['bank_account_number'] }"/>
+                        <label for="bankAccountNumber" class="block text-l mb-2" :class="{ 'text-red-700': errors['bank_account_number'] }">
+                        {{ errors['bank_account_number'] }}
+                        </label>
+                    
+                        <label for="bankAccountDoc" class="p-d-block">Account Document</label>
+                        <InputText v-model="bankAccountDocV" inputId="bankAccountDoc" aria-labelledby="basic" placeholder="Type your account document here" :class="{ 'p-invalid': errors['bank_account_doc'] }"/>
+                        <label for="bankAccountDoc" class="block text-l mb-2" :class="{ 'text-red-700': errors['bank_account_doc'] }">
+                        {{ errors['bank_account_doc'] }}
+                        </label>
+                    
+                        <label for="paymentTypes" class="p-d-block">Payment types</label>
+                        <Dropdown v-model="selectedPaymentType" :options="paymentTypes" optionLabel="code" inputId="paymentType" aria-labelledby="basic" :placeholder="selectedPaymentType.code" />
+                    
+                        <label for="workCenter" class="p-d-block">Work Center</label>
+                        <Dropdown v-model="selectedWorkCenters" :options="workCenters" optionLabel="name" inputId="workCenter" aria-labelledby="basic" :placeholder="selectedWorkCenters.name" />
+                    
                         <label for="genderType" class="p-d-block">Select gender</label>
                         <Dropdown v-model="selectedGenderType" :options="genderTypes" optionLabel="label" inputId="genderType" aria-labelledby="basic" :placeholder="selectedGenderType.label" />
-                    </div>
+                    
 
-                    <!-- <div class="p-col-6 p-md-4 mb-2">
-                        <label for="farmsId" class="p-d-block">Farms</label>
-                        <Dropdown v-model="selectedFarm" :options="farms" optionLabel="name" inputId="farmsId" aria-labelledby="basic" :placeholder="selectedFarm.name" />
-                    </div> -->
+                    
                 </form>
-                </div>
+                </div> -->
 
                 <template #footer>
                     <div>
