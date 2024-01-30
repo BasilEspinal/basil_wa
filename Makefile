@@ -3,3 +3,5 @@ gt:
 	git add .
 	git commit -m "$(message)"
 	git push origin HEAD
+#Example:
+#make gt message="feature: Add new feature"

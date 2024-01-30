@@ -21,28 +21,33 @@ const pieOptions = ref(null);
 const polarOptions = ref(null);
 const barOptions = ref(null);
 const radarOptions = ref(null);
-const updateAbility = (token) => {
-  const bearer = 'Bearer ' + token; 
 
-fetch('http://164.90.146.196:81/api/v1/abilities', {
-    headers: {
-        Authorization: bearer,
-        accept: 'application/json'
-    }
-})
-    .then((response) => response.json())
-    .then((permissions) => {
-        const { can, rules } = new AbilityBuilder();
+let endpoint = ref('/employees');
 
-        can(permissions);
-        console.log(permissions)
-        ability.update(rules);
-        console.log(ability.can('rol_crear'))
+
+const updateAbility = async (token) => {
+  //const bearer = 'Bearer ' + token; 
+  await getAllResponsePermissionsAPI(endpoint.value);
+// fetch('http://164.90.146.196:81/api/v1/abilities', {
+//     headers: {
+//         Authorization: bearer,
+//         accept: 'application/json'
+//     }
+// })
+//     .then((response) => response.json())
+//     .then((permissions) => {
+//         const { can, rules } = new AbilityBuilder();
+
+//         can(permissions);
+//         console.log(permissions)
+//         ability.update(rules);
+//         console.log(ability.can('rol_crear'))
         
-    });
+//     });
 };
 onMounted(() => {
-    updateAbility(sessionStorage.getItem('accessSessionToken'));
+    //updateAbility(sessionStorage.getItem('accessSessionToken'));
+    updateAbility();
 console.log(ability.can('read', 'Post')); // true
 console.log(ability.can('read', 'User')); // true
 console.log(ability.can('update', 'User')); // true

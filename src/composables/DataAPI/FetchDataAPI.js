@@ -1,7 +1,8 @@
 // api.js
 import { ref } from 'vue'
 import useSettingsAPI from "@/composables/DataAPI/settings_API";
-
+import ability from '@/service/ability.js';
+import { AbilityBuilder } from '@casl/ability';
 export default function useDataAPI(datos) {
 
   const { pathAPI, APISettings } = useSettingsAPI();
@@ -73,39 +74,21 @@ export default function useDataAPI(datos) {
     const requestOptions = {
       method: 'GET',
       headers: APISettings.headers,
+      
     };
     await fetch(baseUrl, requestOptions)
-      .then(response => {
+    .then((response) => response.json())
+      
+      .then((permissions) => {
+        const { can, rules } = new AbilityBuilder();
+
+        can(permissions);
+        console.log(permissions)
+        ability.update(rules);
+        console.log(ability.can('rol_crearx'))
         
-        statusCode.value = response.status
-        errorResponseAPI.value = ref('')
-        return response.json()
-      })
-      .then(async (data) => {
-        // actions to data answer
-        errorResponseAPI.value = ref('')
-        // console.log(statusCode.value)
-        if (data.errors) {
-          errorResponseAPI.value = data.errors
-          
-        }
-        else {
-          
-          dataResponsePermissionsAPI.value=JSON.parse(JSON.stringify(data, null, 2));
-          errorResponseAPI.value = ref('')
-        }
-        
-      })
-      .catch(error => {
-        if (error.name === 'TypeError') {
-          // Error de red
-          console.error('Error de red:', error.message);
-        } else {
-          // Error en la respuesta
-          console.error('Error en la respuesta:', error.message);
-        }
-        console.error('Error :', error);
-      });
+    })
+
 
   }
   const getAllResponseListAPI = async ( endPoint) => {

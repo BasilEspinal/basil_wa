@@ -427,33 +427,33 @@ import { AbilityBuilder} from '@casl/ability';
 const token = sessionStorage.getItem('accessSessionToken');
 
 
-const updateAbility = (token) => {
-  const bearer = 'Bearer ' + token; 
+// const updateAbility = (token) => {
+//   const bearer = 'Bearer ' + token; 
 
-fetch('http://164.90.146.196:81/api/v1/abilities', {
-    headers: {
-        Authorization: bearer,
-        accept: 'application/json'
-    }
-})
-    .then((response) => response.json())
-    .then((permissions) => {
-        const { can, rules } = new AbilityBuilder();
+// fetch('http://164.90.146.196:81/api/v1/abilities', {
+//     headers: {
+//         Authorization: bearer,
+//         accept: 'application/json'
+//     }
+// })
+//     .then((response) => response.json())
+//     .then((permissions) => {
+//         const { can, rules } = new AbilityBuilder();
 
-        can(permissions);
-        console.log(permissions)
-        ability.update(rules);
-        console.log(ability.can('empleado_crear'))
+//         can(permissions);
+//         console.log(permissions)
+//         ability.update(rules);
+//         console.log(ability.can('empleado_crear'))
         
-    });
-};
+//     });
+// };
 
 let endpoint = ref('/employees');
 const loading = ref(false);
 
 const router = useRouter();
 
-const { getAllResponseAPI, getAllResponseListAPI, totalRecordsResponseAPI, currentPageResponseAPI, linksResponseAPI, postResponseAPI, putResponseAPI, deleteResponseAPI, errorResponseAPI, dataResponseAPI, dataResponseListAPI, statusCode } =
+const { getAllResponseAPI, getAllResponsePermissionsAPI, getAllResponseListAPI, totalRecordsResponseAPI, currentPageResponseAPI, linksResponseAPI, postResponseAPI, putResponseAPI, deleteResponseAPI, errorResponseAPI, dataResponseAPI, dataResponseListAPI, statusCode } =
     useDataAPI();
 const { conditionalColumns } = useEmployeesParameters();
 const toast = useToast();
@@ -597,7 +597,8 @@ const sizeOptions = ref([
 ]);
 
 onMounted(async () => {
-    updateAbility(sessionStorage.getItem('accessSessionToken'));
+    //updateAbility(sessionStorage.getItem('accessSessionToken'));
+    await getAllResponsePermissionsAPI("/abilities");
     loading.value = true;
     lazyParams.value = {
         //TODO
@@ -613,7 +614,7 @@ onMounted(async () => {
 });
 const filters = ref();
 onBeforeMount(() => {
-    updateAbility(token);
+    // updateAbility(token);
     initFilters();
 });
 
