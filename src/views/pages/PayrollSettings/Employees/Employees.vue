@@ -279,16 +279,17 @@
                 
                 <div class="p-fluid formgrid grid">
                     <div class="field col-12 md:col-6">
-                        <label for="typeOfDocumentId" class="p-d-block">Type of documents</label>
-                        <Dropdown v-model="selectedDocumentType" :options="typesDocument" optionLabel="label" inputId="typeOfDocumentId" aria-labelledby="basic" :placeholder="selectedDocumentType.name" />
-                    </div>
-                    <div class="field col-12 md:col-6">
                         <label for="document_id" class="p-d-block">Document</label>
                         <InputText v-model="documentV" inputId="document_id" aria-labelledby="basic" placeholder="Type your document here" :class="{ 'p-invalid': errors['document'] }"/>
                         <label for="document_id" class="block text-l mb-2" :class="{ 'p-invalid text-red-700': errors['document']}">
                             {{ errors['document']  }}
                         </label>
                     </div>
+                    <div class="field col-12 md:col-6">
+                        <label for="typeOfDocumentId" class="p-d-block">Type of documents</label>
+                        <Dropdown v-model="selectedDocumentType" :options="typesDocument" optionLabel="label" inputId="typeOfDocumentId" aria-labelledby="basic" :placeholder="selectedDocumentType.name" />
+                    </div>
+                    
                     <!-- <div class="field col-12">
                         <label for="address">Address</label>
                         <Textarea id="address" rows="4" />

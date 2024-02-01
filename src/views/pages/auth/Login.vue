@@ -109,7 +109,7 @@ const onSubmit = () => {
 const fetchInfoPostLogin = async (data) => {
   try {
     // await postResponseAPI({ email: data.email, password: data.password }, '/login');
-    await postResponseAPI({ email: "admin@admin.com", password: "password" }, '/login');
+    await postResponseAPI({ email: "employee@admin.com", password: "password" }, '/login');
     let response = dataResponseAPI.value;
 
     if (response['error']) throw response.error;
