@@ -678,8 +678,8 @@ onMounted(async () => {
     //selectedPaymentType.value.id = listRowSelect.value[0].payment_type.id;
 });
 const filters = ref();
-onBeforeMount(() => {
-    // updateAbility(token);
+onBeforeMount(async () => {
+    
     initFilters();
 });
 
