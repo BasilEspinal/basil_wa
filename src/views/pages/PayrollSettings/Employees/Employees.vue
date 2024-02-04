@@ -12,20 +12,20 @@
                     <Toolbar class="bg-gray-900 shadow-2" style="border-radius: 3rem; background-image: linear-gradient(to right, var(--green-100), var(--green-200))">
                         <template v-slot:start>
                             <div>
-                                <pre>{{ rules }}</pre>
-                                <pre>{{ ability.can('empleado_crear') }}</pre>
+                                
+                                
                                 <Button v-if = "ability.can('empleado_crear')" label="New" icon="pi pi-plus" class="p-button-success mr-2 ml-2 mb-2 mt-2" @click="openNew" size="large" />
                                 <!-- <i class="pi pi-bars p-toolbar-separator mr-2 ml-2 mb-2 mt-2"></i> -->
-                                <Button :disabled="!(listRowSelect.length > 0 && listRowSelect.length < 2)" label="Edit" icon="pi pi-file-edit" class="p-button-help mr-2 ml-2 mb-2 mt-2" @click="openEdit" size="large" />
+                                <Button v-if = "ability.can('empleado_editar')" :disabled="!(listRowSelect.length > 0 && listRowSelect.length < 2)" label="Edit" icon="pi pi-file-edit" class="p-button-help mr-2 ml-2 mb-2 mt-2" @click="openEdit" size="large" />
                                 <Button :disabled="!(listRowSelect.length > 0 && listRowSelect.length < 2)" label="Clone" icon="pi pi-copy" class="p-button-secondary mr-2 ml-2 mb-2 mt-2" @click="openClone" size="large" />
                                 <Button label="Export" icon="pi pi-file-import" class="p-button-warning mr-2 ml-2 mb-2 mt-2" @click="openExport" size="large" />
-                                <Button :disabled="!(listRowSelect.length > 0 && listRowSelect.length < 2)" label="Delete" icon="pi pi-trash" class="p-button-danger mr-2 ml-2 mb-2 mt-2" @click="openDelete" size="large" />
+                                <Button v-if = "ability.can('empleado_eliminar')" :disabled="!(listRowSelect.length > 0 && listRowSelect.length < 2)" label="Delete" icon="pi pi-trash" class="p-button-danger mr-2 ml-2 mb-2 mt-2" @click="openDelete" size="large" />
                             </div>
                         </template>
                     </Toolbar>
                 </div>
             </div>
-            <div class="card">
+            <div class="card" v-if = "ability.can('empleado_ver_detalles')">
                 <Button type="button" icon="pi pi-table" label="" class="p-button-outlined mb-2" @click="customTable" />
                 <h5 v-if="valueCustomTable.status">¿Which columns do you want to watch?</h5>
                 <MultiSelect v-if="valueCustomTable.status" v-model="column" :options="columnas" optionLabel="field" placeholder="Seleccione columnas" :filter="true" display="chip" class="w-full md:w-20rem" @change="onColumnsChange(column)">
@@ -96,6 +96,7 @@
                 @row-select="onRowSelect(selectedRegisters)"
                 @row-unselect="onRowSelect(selectedRegisters)"
                 @select-all-change="onSelectAllChange"
+                v-if = "ability.can('empleado_listado')"
             >
                 <!-- <template #header>
                 <div class="flex justify-content-between flex-column sm:flex-row">
@@ -267,48 +268,48 @@
                 </Column>
             </DataTable>
 
-            <Dialog v-model:visible="formDialog" :style="{ width: '700px' }" :header="headerDialog" :modal="true" class="p-fluid text-center mx-auto">
-              <pre>{{ dataPost }}</pre>  
+            <Dialog v-model:visible="formDialog" :style="{ width: '700px' }" :header="headerDialog" :modal="true" class=" text-center mx-auto">
+              <!-- <pre>{{ dataPost }}</pre>  
+                
               <pre>{{ values }}</pre>
-                <pre>{{ errors }}</pre>
-                <div class="p-grid">
-                    <form>
-                    <div class="p-col-6 p-md-4 mb-2">
-                        <label for="typeOfDocumentId" class="p-d-block">Type of documents</label>
-                        <Dropdown v-model="selectedDocumentType" :options="typesDocument" optionLabel="label" inputId="typeOfDocumentId" aria-labelledby="basic" :placeholder="selectedDocumentType.name" />
-                        
-                    </div>
-                        
-
-                    <div class="p-col-6 p-md-4 mb-2">
-
+                <pre>{{ errors }}</pre> -->
+                
+                <div class="col-12">
+            <div class="card">
+                
+                <div class="p-fluid formgrid grid">
+                    <div class="field col-12 md:col-6">
                         <label for="document_id" class="p-d-block">Document</label>
                         <InputText v-model="documentV" inputId="document_id" aria-labelledby="basic" placeholder="Type your document here" :class="{ 'p-invalid': errors['document'] }"/>
                         <label for="document_id" class="block text-l mb-2" :class="{ 'p-invalid text-red-700': errors['document']}">
                             {{ errors['document']  }}
                         </label>
                     </div>
-
+                    <div class="field col-12 md:col-6">
+                        <label for="typeOfDocumentId" class="p-d-block">Type of documents</label>
+                        <Dropdown v-model="selectedDocumentType" :options="typesDocument" optionLabel="label" inputId="typeOfDocumentId" aria-labelledby="basic" :placeholder="selectedDocumentType.name" />
+                    </div>
                     
-
-                    <div class="p-col-6 p-md-4 mb-2">
+                    <!-- <div class="field col-12">
+                        <label for="address">Address</label>
+                        <Textarea id="address" rows="4" />
+                    </div> -->
+                    <div class="field col-12 md:col-6">
                         <label for="name" class="p-d-block">Name</label>
                         <InputText v-model="firstNameV" inputId="name" aria-labelledby="basic" placeholder="Type your name here" :class="{ 'p-invalid': errors['first_name'] }"/>
                         <label for="name" class="block text-l mb-2" :class="{ 'text-red-700': errors['first_name'] }">
                         {{ errors['first_name'] }}
                         </label>
                     </div>
-                    
-
-                    <div class="p-col-6 p-md-4 mb-2">
+                    <div class="field col-12 md:col-3">
                         <label for="lastName" class="p-d-block">Last Name</label>
                         <InputText v-model="lastNameV" inputId="lastName" aria-labelledby="basic" placeholder="Type your last name here" :class="{ 'p-invalid': errors['last_name'] }"/>
                         <label for="lastName" class="block text-l mb-2" :class="{ 'text-red-700': errors['last_name'] }">
                         {{ errors['last_name'] }}
                         </label>
+                    
                     </div>
-
-                    <div class="p-col-6 p-md-4 mb-2">
+                    <div class="field col-12 md:col-3">
                         <label for="email" class="p-d-block">Email</label>
                         <InputText v-model="emailV" inputId="email" aria-labelledby="basic" placeholder="Type your email here" :class="{ 'p-invalid': errors['email'] }" />
                         <label for="email" class="block text-l mb-2" :class="{ 'text-red-700': errors['email'] }">
@@ -316,43 +317,108 @@
                         </label>
                     </div>
 
-                    <div class="p-col-6 p-md-4 mb-2">
+                    <div class="field col-12 md:col-6">
                         <label for="bankAccountNumber" class="p-d-block">Account number</label>
                         <InputText v-model="bankAccountNumberV" inputId="bankAccountNumber" aria-labelledby="basic" placeholder="Type your account here" :class="{ 'p-invalid': errors['bank_account_number'] }"/>
                         <label for="bankAccountNumber" class="block text-l mb-2" :class="{ 'text-red-700': errors['bank_account_number'] }">
                         {{ errors['bank_account_number'] }}
                         </label>
                     </div>
-
-                    <div class="p-col-6 p-md-4 mb-2">
+                    <div class="field col-12 md:col-6">
                         <label for="bankAccountDoc" class="p-d-block">Account Document</label>
                         <InputText v-model="bankAccountDocV" inputId="bankAccountDoc" aria-labelledby="basic" placeholder="Type your account document here" :class="{ 'p-invalid': errors['bank_account_doc'] }"/>
                         <label for="bankAccountDoc" class="block text-l mb-2" :class="{ 'text-red-700': errors['bank_account_doc'] }">
                         {{ errors['bank_account_doc'] }}
                         </label>
                     </div>
-
-                    <div class="p-col-6 p-md-4 mb-2">
+                        
+                    
+                    
+                        
+                    
+                        
+                    <div class="field col-12 md:col-6">
+                        <label for="genderType" class="p-d-block">Select gender</label>
+                        <Dropdown v-model="selectedGenderType" :options="genderTypes" optionLabel="label" inputId="genderType" aria-labelledby="basic" :placeholder="selectedGenderType.label" />
+                    </div>
+                    <div class="field col-12 md:col-3">
                         <label for="paymentTypes" class="p-d-block">Payment types</label>
                         <Dropdown v-model="selectedPaymentType" :options="paymentTypes" optionLabel="code" inputId="paymentType" aria-labelledby="basic" :placeholder="selectedPaymentType.code" />
+                    
                     </div>
-
-                    <div class="p-col-6 p-md-4 mb-2">
+                    <div class="field col-12 md:col-3">
                         <label for="workCenter" class="p-d-block">Work Center</label>
                         <Dropdown v-model="selectedWorkCenters" :options="workCenters" optionLabel="name" inputId="workCenter" aria-labelledby="basic" :placeholder="selectedWorkCenters.name" />
                     </div>
 
-                    <div class="p-col-6 p-md-4 mb-2">
+                </div>
+            </div>
+        </div>
+
+                <!-- <div class="grid grid-cols-2 gap-4">
+                    <form >
+                    
+                        <label for="typeOfDocumentId" class="p-d-block">Type of documents</label>
+                        <Dropdown v-model="selectedDocumentType" :options="typesDocument" optionLabel="label" inputId="typeOfDocumentId" aria-labelledby="basic" :placeholder="selectedDocumentType.name" />
+                        
+                        <label for="document_id" class="p-d-block">Document</label>
+                        <InputText v-model="documentV" inputId="document_id" aria-labelledby="basic" placeholder="Type your document here" :class="{ 'p-invalid': errors['document'] }"/>
+                        <label for="document_id" class="block text-l mb-2" :class="{ 'p-invalid text-red-700': errors['document']}">
+                            {{ errors['document']  }}
+                        </label>
+                    
+
+                    
+
+                    
+                        <label for="name" class="p-d-block">Name</label>
+                        <InputText v-model="firstNameV" inputId="name" aria-labelledby="basic" placeholder="Type your name here" :class="{ 'p-invalid': errors['first_name'] }"/>
+                        <label for="name" class="block text-l mb-2" :class="{ 'text-red-700': errors['first_name'] }">
+                        {{ errors['first_name'] }}
+                        </label>
+                    
+                    
+
+                    
+                        <label for="lastName" class="p-d-block">Last Name</label>
+                        <InputText v-model="lastNameV" inputId="lastName" aria-labelledby="basic" placeholder="Type your last name here" :class="{ 'p-invalid': errors['last_name'] }"/>
+                        <label for="lastName" class="block text-l mb-2" :class="{ 'text-red-700': errors['last_name'] }">
+                        {{ errors['last_name'] }}
+                        </label>
+                    
+
+                    
+                        <label for="email" class="p-d-block">Email</label>
+                        <InputText v-model="emailV" inputId="email" aria-labelledby="basic" placeholder="Type your email here" :class="{ 'p-invalid': errors['email'] }" />
+                        <label for="email" class="block text-l mb-2" :class="{ 'text-red-700': errors['email'] }">
+                        {{ errors['email'] }}
+                        </label>
+                    
+                        <label for="bankAccountNumber" class="p-d-block">Account number</label>
+                        <InputText v-model="bankAccountNumberV" inputId="bankAccountNumber" aria-labelledby="basic" placeholder="Type your account here" :class="{ 'p-invalid': errors['bank_account_number'] }"/>
+                        <label for="bankAccountNumber" class="block text-l mb-2" :class="{ 'text-red-700': errors['bank_account_number'] }">
+                        {{ errors['bank_account_number'] }}
+                        </label>
+                    
+                        <label for="bankAccountDoc" class="p-d-block">Account Document</label>
+                        <InputText v-model="bankAccountDocV" inputId="bankAccountDoc" aria-labelledby="basic" placeholder="Type your account document here" :class="{ 'p-invalid': errors['bank_account_doc'] }"/>
+                        <label for="bankAccountDoc" class="block text-l mb-2" :class="{ 'text-red-700': errors['bank_account_doc'] }">
+                        {{ errors['bank_account_doc'] }}
+                        </label>
+                    
+                        <label for="paymentTypes" class="p-d-block">Payment types</label>
+                        <Dropdown v-model="selectedPaymentType" :options="paymentTypes" optionLabel="code" inputId="paymentType" aria-labelledby="basic" :placeholder="selectedPaymentType.code" />
+                    
+                        <label for="workCenter" class="p-d-block">Work Center</label>
+                        <Dropdown v-model="selectedWorkCenters" :options="workCenters" optionLabel="name" inputId="workCenter" aria-labelledby="basic" :placeholder="selectedWorkCenters.name" />
+                    
                         <label for="genderType" class="p-d-block">Select gender</label>
                         <Dropdown v-model="selectedGenderType" :options="genderTypes" optionLabel="label" inputId="genderType" aria-labelledby="basic" :placeholder="selectedGenderType.label" />
-                    </div>
+                    
 
-                    <!-- <div class="p-col-6 p-md-4 mb-2">
-                        <label for="farmsId" class="p-d-block">Farms</label>
-                        <Dropdown v-model="selectedFarm" :options="farms" optionLabel="name" inputId="farmsId" aria-labelledby="basic" :placeholder="selectedFarm.name" />
-                    </div> -->
+                    
                 </form>
-                </div>
+                </div> -->
 
                 <template #footer>
                     <div>
@@ -419,44 +485,40 @@ import { useRouter } from 'vue-router';
 import { useForm } from 'vee-validate';
 import { toTypedSchema } from '@vee-validate/zod';
 import { z } from 'zod';
-
-
-import { createMongoAbility } from '@casl/ability';
+import ability from '@/service/ability.js';
 import { AbilityBuilder} from '@casl/ability';
 
-const ability = createMongoAbility();
+
 const token = sessionStorage.getItem('accessSessionToken');
-const { can, rules } = new AbilityBuilder();
 
 
-const updateAbility = (token) => {
-  const bearer = 'Bearer ' + token;
+// const updateAbility = (token) => {
+//   const bearer = 'Bearer ' + token; 
 
-fetch('http://164.90.146.196:81/api/v1/abilities', {
-    headers: {
-        Authorization: bearer,
-        accept: 'application/json'
-    }
-})
-    .then((response) => response.json())
-    .then((permissions) => {
+// fetch('http://164.90.146.196:81/api/v1/abilities', {
+//     headers: {
+//         Authorization: bearer,
+//         accept: 'application/json'
+//     }
+// })
+//     .then((response) => response.json())
+//     .then((permissions) => {
+//         const { can, rules } = new AbilityBuilder();
+
+//         can(permissions);
+//         console.log(permissions)
+//         ability.update(rules);
+//         console.log(ability.can('empleado_crear'))
         
-
-        can(permissions);
-        console.log(permissions)
-        ability.update(rules);
-        console.log(can(permissions))
-        console.log(ability.can('empleado_crear'))
-    });
-};
-
+//     });
+// };
 
 let endpoint = ref('/employees');
 const loading = ref(false);
 
 const router = useRouter();
 
-const { getAllResponseAPI, getAllResponseListAPI, totalRecordsResponseAPI, currentPageResponseAPI, linksResponseAPI, postResponseAPI, putResponseAPI, deleteResponseAPI, errorResponseAPI, dataResponseAPI, dataResponseListAPI, statusCode } =
+const { getAllResponseAPI, getAllResponsePermissionsAPI, getAllResponseListAPI, totalRecordsResponseAPI, currentPageResponseAPI, linksResponseAPI, postResponseAPI, putResponseAPI, deleteResponseAPI, errorResponseAPI, dataResponseAPI, dataResponseListAPI, statusCode } =
     useDataAPI();
 const { conditionalColumns } = useEmployeesParameters();
 const toast = useToast();
@@ -600,7 +662,8 @@ const sizeOptions = ref([
 ]);
 
 onMounted(async () => {
-    updateAbility(token);
+    //updateAbility(sessionStorage.getItem('accessSessionToken'));
+    await getAllResponsePermissionsAPI("/abilities");
     loading.value = true;
     lazyParams.value = {
         //TODO
@@ -615,8 +678,8 @@ onMounted(async () => {
     //selectedPaymentType.value.id = listRowSelect.value[0].payment_type.id;
 });
 const filters = ref();
-onBeforeMount(() => {
-    updateAbility(token);
+onBeforeMount(async () => {
+    
     initFilters();
 });
 

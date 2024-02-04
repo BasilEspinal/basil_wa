@@ -2,8 +2,8 @@
 import { onMounted, ref, watch } from 'vue';
 import ProductService from '@/service/ProductService';
 import { useLayout } from '@/layout/composables/layout';
-import { AbilityBuilder, Ability } from '@casl/ability';
-import { ABILITY_TOKEN } from '@casl/vue';
+import ability from '@/service/ability.js';
+import { AbilityBuilder } from '@casl/ability';
 const { layoutConfig } = useLayout();
 let documentStyle = getComputedStyle(document.documentElement);
 let textColor = documentStyle.getPropertyValue('--text-color');
@@ -22,6 +22,42 @@ const polarOptions = ref(null);
 const barOptions = ref(null);
 const radarOptions = ref(null);
 
+let endpoint = ref('/employees');
+
+
+const updateAbility = async (token) => {
+  //const bearer = 'Bearer ' + token; 
+  await getAllResponsePermissionsAPI(endpoint.value);
+// fetch('http://164.90.146.196:81/api/v1/abilities', {
+//     headers: {
+//         Authorization: bearer,
+//         accept: 'application/json'
+//     }
+// })
+//     .then((response) => response.json())
+//     .then((permissions) => {
+//         const { can, rules } = new AbilityBuilder();
+
+//         can(permissions);
+//         console.log(permissions)
+//         ability.update(rules);
+//         console.log(ability.can('rol_crear'))
+        
+//     });
+};
+onMounted(() => {
+    //updateAbility(sessionStorage.getItem('accessSessionToken'));
+    updateAbility();
+console.log(ability.can('read', 'Post')); // true
+console.log(ability.can('read', 'User')); // true
+console.log(ability.can('update', 'User')); // true
+console.log(ability.can('delete', 'User')); // false
+console.log(ability.cannot('delete', 'User')); // true
+console.log("rol_crear",ability.can('rol_crearxx')) //?
+
+
+    
+});
 const setColorOptions = () => {
     documentStyle = getComputedStyle(document.documentElement);
     textColor = documentStyle.getPropertyValue('--text-color');
@@ -323,7 +359,8 @@ watch(
 <template>
     <div class="grid">
         <div class="col-12 lg:col-6 xl:col-3" >
-            <div class="card mb-0">
+            
+            <div class="card mb-0" v-if="ability.can('rol_crear')">
                 <div class="flex justify-content-between mb-3">
                     <div>
                         <span class="block text-500 font-medium mb-3">Icopores Recogidos</span>
