@@ -17,8 +17,13 @@ import { toTypedSchema } from '@vee-validate/zod';
 import { z } from 'zod';
 
 import { defineAbility } from '@casl/ability';
+import elementosVista from '@/service/permissionsMenuTmp.js';
 
-const { postResponseAPI, dataResponsePermissionsAPI,dataResponseAPI,getAllResponsePermissionsAPI } = useDataAPI();
+
+
+
+const { getAllResponseAPI, getAllResponsePermissionsAPI, getAllResponseListAPI, totalRecordsResponseAPI, currentPageResponseAPI, linksResponseAPI, postResponseAPI, putResponseAPI, deleteResponseAPI, errorResponseAPI, dataResponseAPI, dataResponseListAPI, statusCode } =
+    useDataAPI();
 const { layoutConfig } = useLayout();
 const toast = useToast();
 const count = ref(0);
@@ -55,32 +60,28 @@ const { can, cannot, build } = new AbilityBuilder();
 // const ability = createMongoAbility();
 import ability from '@/service/ability.js';
 
-ability.can('read', 'Post') // true
-ability.can('read', 'User') // true
-ability.can('update', 'User') // true
-ability.can('delete', 'User') // false
-ability.cannot('delete', 'User') // true
 
-const updateAbility = (token) => {
-  const bearer = 'Bearer ' + token; 
 
-fetch('http://164.90.146.196:81/api/v1/abilities', {
-    headers: {
-        Authorization: bearer,
-        accept: 'application/json'
-    }
-})
-    .then((response) => response.json())
-    .then((permissions) => {
-        const { can, rules } = new AbilityBuilder();
+// const updateAbility = (token) => {
+//   const bearer = 'Bearer ' + token; 
 
-        can(permissions);
-        console.log(permissions)
-        ability.update(rules);
-        console.log(ability.can('rol_crear'))
+// fetch('http://164.90.146.196:81/api/v1/abilities', {
+//     headers: {
+//         Authorization: bearer,
+//         accept: 'application/json'
+//     }
+// })
+//     .then((response) => response.json())
+//     .then((permissions) => {
+//         const { can, rules } = new AbilityBuilder();
+
+//         can(permissions);
+//         console.log(permissions)
+//         ability.update(rules);
+//         console.log(ability.can('rol_crear'))
         
-    });
-};
+//     });
+// };
 
 // initPermissions();
 const { values,errors, defineField } = useForm({
@@ -109,7 +110,7 @@ const onSubmit = () => {
 const fetchInfoPostLogin = async (data) => {
   try {
     // await postResponseAPI({ email: data.email, password: data.password }, '/login');
-    await postResponseAPI({ email: "employee@admin.com", password: "password" }, '/login');
+    await postResponseAPI({ email: "supervisor@admin.com", password: "password" }, '/login');
     let response = dataResponseAPI.value;
 
     if (response['error']) throw response.error;
@@ -122,8 +123,8 @@ const fetchInfoPostLogin = async (data) => {
     sessionStorage.setItem('accessSessionUser', user);
     localStorage.setItem('accesSessionTokens', token);
     
-    updateAbility(token);
-
+    // updateAbility(token);
+    await getAllResponsePermissionsAPI("/abilities");
     toast.add({ severity: 'success', detail: 'Success', content: 'Successful Login', id: count.value++ });
     router.push('/applayout');
   } catch (error) {

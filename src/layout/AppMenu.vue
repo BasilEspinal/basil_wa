@@ -2,6 +2,11 @@
 import { ref, onBeforeMount } from 'vue';
 
 import AppMenuItem from './AppMenuItem.vue';
+import ability from '@/service/ability.js';
+import useDataAPI from '@/composables/DataAPI/FetchDataAPI.js';
+
+const { getAllResponseAPI, getAllResponsePermissionsAPI, getAllResponseListAPI, totalRecordsResponseAPI, currentPageResponseAPI, linksResponseAPI, postResponseAPI, putResponseAPI, deleteResponseAPI, errorResponseAPI, dataResponseAPI, dataResponseListAPI, statusCode } =
+    useDataAPI();
 
 const model2 = ref([
     
@@ -334,11 +339,14 @@ onBeforeMount(() => {
 
 async function fetchInfoAndUpdateValue() {
     try {
-        //model.value = await menuService.getMenu();
+        await getAllResponsePermissionsAPI("/abilities");
+        console.log(ability.can('rol_listado'))
     } catch (error) {
         console.error('Error:', error);
     }
 }
+
+
 </script>
 
 <!-- <template>
