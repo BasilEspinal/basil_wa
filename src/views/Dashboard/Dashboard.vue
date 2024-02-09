@@ -28,6 +28,7 @@ let endpoint = ref('/employees');
 const updateAbility = async (token) => {
   //const bearer = 'Bearer ' + token; 
   await getAllResponsePermissionsAPI(endpoint.value);
+  console.log('updateAbility')
 // fetch('http://164.90.146.196:81/api/v1/abilities', {
 //     headers: {
 //         Authorization: bearer,
@@ -48,13 +49,7 @@ const updateAbility = async (token) => {
 onMounted(() => {
     //updateAbility(sessionStorage.getItem('accessSessionToken'));
     updateAbility();
-console.log(ability.can('read', 'Post')); // true
-console.log(ability.can('read', 'User')); // true
-console.log(ability.can('update', 'User')); // true
-console.log(ability.can('delete', 'User')); // false
-console.log(ability.cannot('delete', 'User')); // true
-console.log("rol_crear",ability.can('rol_crearxx')) //?
-
+    console.log(ability.can('tiposDeTareas_vista'))
 
     
 });
