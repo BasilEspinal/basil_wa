@@ -109,8 +109,11 @@ const onSubmit = () => {
 
 const fetchInfoPostLogin = async (data) => {
   try {
-    //await postResponseAPI({ email: data.email, password: data.password }, '/login');
-     await postResponseAPI({ email: "admin@admin.com", password: "password" }, '/login');
+    
+    await postResponseAPI({ email: email.value, password: password.value }, '/login');
+    //await postResponseAPI({ email: "admin@admin.com", password: "password" }, '/login');
+    
+    
     let response = dataResponseAPI.value;
 
     if (response['error']) throw response.error;
@@ -135,7 +138,7 @@ const fetchInfoPostLogin = async (data) => {
 };
 
 onMounted(()=>{
-  console.log('hol',ability.can('hola','chao'))
+  
 })
 
 
@@ -161,8 +164,7 @@ onMounted(()=>{
                         <span class="text-600 font-medium">Sign in to continue</span>
                     </div>
                     <Toast />
-                    
-                    
+
                         <transition-group name="p-message" tag="div" class="w-full">
                             <Message v-for="msg of message" :severity="msg.severity" :key="msg.content" :sticky="false" :life="msg.life">{{ msg.content }}</Message>
                         </transition-group>
