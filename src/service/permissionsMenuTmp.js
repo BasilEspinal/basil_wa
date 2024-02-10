@@ -1,6 +1,7 @@
 // nombre-del-archivo.js
 
 const elementosVista = [
+    
     'rol_vista',
     'permisos_vista',
     'usuario_vista',
@@ -28,7 +29,7 @@ const elementosVista = [
     'produccion_programacionDeLotes_vista',
     'configuracionDePagos_vista',
     'configuracionDePagos_tiposDePago_vista',
-    'tiposDeTareas_vista',
+    'configuracionDePagos_tiposDePago_vista',
     'configuracionDePagos_tarifasPorTarea_vista',
     'configuracionDePagos_tarifasPorLabores_vista',
     'configuracionDePagos_periodosDePago_vista',

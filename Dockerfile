@@ -13,14 +13,15 @@ COPY package*.json ./
 RUN npm install
 
 # copy project files and folders to the current working directory (i.e. 'app' folder)
-#COPY . .
+COPY . .
 
 
 # build app for production with minification
 RUN npm run build
 
-# copy 'dist' folder to the current working directory
-COPY dist/ ./dist/
+#copy 'dist' folder to the current working directory
+# COPY dist ./dist
+
 
 
 EXPOSE 8080

@@ -2,7 +2,7 @@
 <script setup>
 // This is the Login Page withut any fixed about layout
 import { useLayout } from '@/layout/composables/layout';
-import { computed, ref, inject,provide } from 'vue';
+import { computed, ref, inject,provide, onMounted } from 'vue';
 import { useRouter } from 'vue-router';
 import { useToast } from 'primevue/usetoast';
 import Toast from 'primevue/toast';
@@ -109,8 +109,8 @@ const onSubmit = () => {
 
 const fetchInfoPostLogin = async (data) => {
   try {
-    // await postResponseAPI({ email: data.email, password: data.password }, '/login');
-    await postResponseAPI({ email: "supervisor@admin.com", password: "password" }, '/login');
+    //await postResponseAPI({ email: data.email, password: data.password }, '/login');
+     await postResponseAPI({ email: "admin@admin.com", password: "password" }, '/login');
     let response = dataResponseAPI.value;
 
     if (response['error']) throw response.error;
@@ -124,6 +124,7 @@ const fetchInfoPostLogin = async (data) => {
     localStorage.setItem('accesSessionTokens', token);
     
     // updateAbility(token);
+    
     await getAllResponsePermissionsAPI("/abilities");
     toast.add({ severity: 'success', detail: 'Success', content: 'Successful Login', id: count.value++ });
     router.push('/applayout');
@@ -133,7 +134,9 @@ const fetchInfoPostLogin = async (data) => {
   }
 };
 
-
+onMounted(()=>{
+  console.log('hol',ability.can('hola','chao'))
+})
 
 
 
@@ -152,7 +155,7 @@ const fetchInfoPostLogin = async (data) => {
                 <span class="text-700 font-bold">AGRO-ONLINE</span>
             </router-link>
             <div style="border-radius: 56px; padding: 0.3rem; background: linear-gradient(160deg, var(--primary-color) 10%, var(--paleta-100) 60%, var(--primary-color) 100%)">
-                <div class="w-full py-7 px-3 sm:px-6" style="border-radius: 53px; background-color: var(--paleta-100)">
+                <div class="w-full py-7 px-3 sm:px-6" style="border-radius: 153px; background-color: var(--paleta-100)">
                     <div class="text-center mb-5">
                         <div class="text-900 text-4xl font-bold mb-3">Welcome!</div>
                         <span class="text-600 font-medium">Sign in to continue</span>
@@ -170,7 +173,7 @@ const fetchInfoPostLogin = async (data) => {
                                 id="email1"
                                 type="text"
                                 placeholder="Email address"
-                                style="padding: 1rem"
+                                style="width: 100%; padding: 1rem;"
                                 v-model="email"
                             />
                                                         
@@ -187,7 +190,7 @@ const fetchInfoPostLogin = async (data) => {
                                 :toggleMask="true"
                                 inputClass="w-full"
                                 :inputStyle="{ padding: '1rem' }"
-                                style="color: rgb(0, 0, 0)"
+                                style="width: 100%; padding: 0rem; color: rgb(0, 0, 0)"
                             ></Password>
                             <label for="password1" class="block text-l mb-2" :class="{ 'text-red-700': errors.password }">
                                 {{ errors.password}}
