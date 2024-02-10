@@ -165,12 +165,22 @@ const documentFrozen = ref(false); change name field
 import { ref, watch, provide, onBeforeMount, onMounted } from 'vue';
 import useDataAPI from '@/composables/DataAPI/FetchDataAPI.js';
 import { FilterMatchMode, FilterOperator } from 'primevue/api';
-const { getAllResponseAPI, getAllResponseListAPI, totalRecordsResponseAPI, currentPageResponseAPI, linksResponseAPI, postResponseAPI, putResponseAPI, deleteResponseAPI, errorResponseAPI, dataResponseAPI, dataResponseListAPI, statusCode } =
-    useDataAPI();
+import { useRouter } from 'vue-router';
+import { useForm } from 'vee-validate';
+import { toTypedSchema } from '@vee-validate/zod';
+import { z } from 'zod';
+import ability from '@/service/ability.js';
+import { AbilityBuilder} from '@casl/ability';
 
 let endpoint = ref('/endpoint'); //replace endpoint with your endpoint
 const loading = ref(false);
 
+const { getAllResponseAPI, getAllResponseListAPI, totalRecordsResponseAPI, currentPageResponseAPI, linksResponseAPI, postResponseAPI, putResponseAPI, deleteResponseAPI, errorResponseAPI, dataResponseAPI, dataResponseListAPI, statusCode } =
+    useDataAPI();
+
+////////////
+ //Form here
+ ////////////   
 const size = ref({ label: 'Normal', value: 'normal' });
 const sizeOptions = ref([
     { label: 'Small', value: 'small', class: 'sm' },
@@ -181,6 +191,7 @@ const sizeOptions = ref([
 
 onMounted(async () => {
     await loadLazyData();
+    await getAllResponsePermissionsAPI("/abilities");
 });
 
 const filters = ref();
