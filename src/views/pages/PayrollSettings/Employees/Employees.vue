@@ -489,8 +489,6 @@ import ability from '@/service/ability.js';
 import { AbilityBuilder} from '@casl/ability';
 
 
-const token = sessionStorage.getItem('accessSessionToken');
-
 
 // const updateAbility = (token) => {
 //   const bearer = 'Bearer ' + token; 
