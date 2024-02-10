@@ -664,6 +664,8 @@ const sizeOptions = ref([
 onMounted(async () => {
     //updateAbility(sessionStorage.getItem('accessSessionToken'));
     await getAllResponsePermissionsAPI("/abilities");
+    console.log(ability.can('tiposDeTareas_vista'))
+    console.log(ability.can('rol_crear'))
     loading.value = true;
     lazyParams.value = {
         //TODO

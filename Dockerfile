@@ -20,7 +20,8 @@ RUN npm install
 RUN npm run build
 
 # copy 'dist' folder to the current working directory
-COPY dist/ ./dist/
+#COPY dist ./dist
+
 
 
 EXPOSE 8080

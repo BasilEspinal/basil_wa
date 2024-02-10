@@ -1,15 +1,23 @@
 <script setup>
-import { computed, watch, ref, onBeforeMount } from 'vue';
+import { computed, watch, ref, onBeforeMount, onMounted } from 'vue';
 import AppTopbar from './AppTopbar.vue';
 import AppFooter from './AppFooter.vue';
 import { useRouter } from 'vue-router';
 import AppSidebar from './AppSidebar.vue';
+import useDataAPI from '@/composables/DataAPI/FetchDataAPI.js';
 import { useLayout } from '@/layout/composables/layout';
-
+import ability from '@/service/ability.js';
+const {getAllResponsePermissionsAPI } =
+    useDataAPI();
 const { layoutConfig, layoutState, isSidebarActive } = useLayout();
 
 const outsideClickListener = ref(null);
 const router = useRouter();
+
+onMounted(async () => {
+    await getAllResponsePermissionsAPI("/abilities");
+    
+});
 
 watch(isSidebarActive, (newVal) => {
     if (newVal) {
@@ -62,12 +70,18 @@ const isOutsideClicked = (event) => {
 
     return !(sidebarEl.isSameNode(event.target) || sidebarEl.contains(event.target) || topbarEl.isSameNode(event.target) || topbarEl.contains(event.target));
 };
+
+
 </script>
 
 <template>
-    <div class="layout-wrapper" :class="containerClass">
+    <div :class="[
+    !ability.can('agro_tv') ? 'layout-wrapper' : '',
+    containerClass
+]" >
         <app-topbar></app-topbar>
-        <div class="layout-sidebar">
+        
+        <div v-if="!ability.can('agro_tv')" class="layout-sidebar">
             <app-sidebar></app-sidebar>
         </div>
         <div class="layout-main-container">

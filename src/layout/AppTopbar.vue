@@ -3,6 +3,17 @@ import { ref, computed, onMounted, onBeforeUnmount } from 'vue';
 import { useLayout } from '@/layout/composables/layout';
 import { useRouter } from 'vue-router';
 import useDataAPI from '@/composables/DataAPI/FetchDataAPI.js'
+
+import ability from '@/service/ability.js';
+const {getAllResponsePermissionsAPI } =
+    useDataAPI();
+
+onMounted(async () => {
+    await getAllResponsePermissionsAPI("/abilities");
+    
+});
+
+
 const { layoutConfig, onMenuToggle, changeThemeSettings } = useLayout();
 const { getAllResponseAPI, totalRecordsResponseAPI, currentPageResponseAPI, linksResponseAPI, postResponseAPI, putResponseAPI, deleteResponseAPI, errorResponseAPI, dataResponseAPI } = useDataAPI();
 const outsideClickListener = ref(null);
@@ -100,8 +111,8 @@ const Exit = () => {
             <span>AgroOnline</span>
         </router-link>
 
-        <button class="p-link layout-menu-button layout-topbar-button" @click="onMenuToggle()">
-            <i class="pi pi-bars"></i>
+        <button v-if="!ability.can('agro_tv')" class="p-link layout-menu-button layout-topbar-button" @click="onMenuToggle()">
+            <i v-if="!ability.can('agro_tv')" class="pi pi-bars"></i>
         </button>
 
         <button class="p-link layout-topbar-menu-button layout-topbar-button" @click="onTopBarMenuButton()">
