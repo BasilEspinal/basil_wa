@@ -27,7 +27,8 @@ let endpoint = ref('/employees');
 
 const updateAbility = async (token) => {
   //const bearer = 'Bearer ' + token; 
-  await getAllResponsePermissionsAPI(endpoint.value);
+//   await getAllResponsePermissionsAPI("/abilities");
+//   console.log('updateAbility')
 // fetch('http://164.90.146.196:81/api/v1/abilities', {
 //     headers: {
 //         Authorization: bearer,
@@ -47,14 +48,8 @@ const updateAbility = async (token) => {
 };
 onMounted(() => {
     //updateAbility(sessionStorage.getItem('accessSessionToken'));
-    updateAbility();
-console.log(ability.can('read', 'Post')); // true
-console.log(ability.can('read', 'User')); // true
-console.log(ability.can('update', 'User')); // true
-console.log(ability.can('delete', 'User')); // false
-console.log(ability.cannot('delete', 'User')); // true
-console.log("rol_crear",ability.can('rol_crearxx')) //?
-
+    //updateAbility();
+    
 
     
 });
@@ -360,7 +355,7 @@ watch(
     <div class="grid">
         <div class="col-12 lg:col-6 xl:col-3" >
             
-            <div class="card mb-0" v-if="ability.can('rol_crear')">
+            <div class="card mb-0">
                 <div class="flex justify-content-between mb-3">
                     <div>
                         <span class="block text-500 font-medium mb-3">Icopores Recogidos</span>

@@ -2,7 +2,7 @@
 <script setup>
 // This is the Login Page withut any fixed about layout
 import { useLayout } from '@/layout/composables/layout';
-import { computed, ref, inject,provide } from 'vue';
+import { computed, ref, inject,provide, onMounted } from 'vue';
 import { useRouter } from 'vue-router';
 import { useToast } from 'primevue/usetoast';
 import Toast from 'primevue/toast';
@@ -17,8 +17,13 @@ import { toTypedSchema } from '@vee-validate/zod';
 import { z } from 'zod';
 
 import { defineAbility } from '@casl/ability';
+import elementosVista from '@/service/permissionsMenuTmp.js';
 
-const { postResponseAPI, dataResponsePermissionsAPI,dataResponseAPI,getAllResponsePermissionsAPI } = useDataAPI();
+
+
+
+const { getAllResponseAPI, getAllResponsePermissionsAPI, getAllResponseListAPI, totalRecordsResponseAPI, currentPageResponseAPI, linksResponseAPI, postResponseAPI, putResponseAPI, deleteResponseAPI, errorResponseAPI, dataResponseAPI, dataResponseListAPI, statusCode } =
+    useDataAPI();
 const { layoutConfig } = useLayout();
 const toast = useToast();
 const count = ref(0);
@@ -55,32 +60,28 @@ const { can, cannot, build } = new AbilityBuilder();
 // const ability = createMongoAbility();
 import ability from '@/service/ability.js';
 
-ability.can('read', 'Post') // true
-ability.can('read', 'User') // true
-ability.can('update', 'User') // true
-ability.can('delete', 'User') // false
-ability.cannot('delete', 'User') // true
 
-const updateAbility = (token) => {
-  const bearer = 'Bearer ' + token; 
 
-fetch('http://164.90.146.196:81/api/v1/abilities', {
-    headers: {
-        Authorization: bearer,
-        accept: 'application/json'
-    }
-})
-    .then((response) => response.json())
-    .then((permissions) => {
-        const { can, rules } = new AbilityBuilder();
+// const updateAbility = (token) => {
+//   const bearer = 'Bearer ' + token; 
 
-        can(permissions);
-        console.log(permissions)
-        ability.update(rules);
-        console.log(ability.can('rol_crear'))
+// fetch('http://164.90.146.196:81/api/v1/abilities', {
+//     headers: {
+//         Authorization: bearer,
+//         accept: 'application/json'
+//     }
+// })
+//     .then((response) => response.json())
+//     .then((permissions) => {
+//         const { can, rules } = new AbilityBuilder();
+
+//         can(permissions);
+//         console.log(permissions)
+//         ability.update(rules);
+//         console.log(ability.can('rol_crear'))
         
-    });
-};
+//     });
+// };
 
 // initPermissions();
 const { values,errors, defineField } = useForm({
@@ -108,8 +109,11 @@ const onSubmit = () => {
 
 const fetchInfoPostLogin = async (data) => {
   try {
-    // await postResponseAPI({ email: data.email, password: data.password }, '/login');
-    await postResponseAPI({ email: "employee@admin.com", password: "password" }, '/login');
+    
+    await postResponseAPI({ email: email.value, password: password.value }, '/login');
+    //await postResponseAPI({ email: "admin@admin.com", password: "password" }, '/login');
+    
+    
     let response = dataResponseAPI.value;
 
     if (response['error']) throw response.error;
@@ -122,8 +126,9 @@ const fetchInfoPostLogin = async (data) => {
     sessionStorage.setItem('accessSessionUser', user);
     localStorage.setItem('accesSessionTokens', token);
     
-    updateAbility(token);
-
+    // updateAbility(token);
+    
+    await getAllResponsePermissionsAPI("/abilities");
     toast.add({ severity: 'success', detail: 'Success', content: 'Successful Login', id: count.value++ });
     router.push('/applayout');
   } catch (error) {
@@ -132,7 +137,9 @@ const fetchInfoPostLogin = async (data) => {
   }
 };
 
-
+onMounted(()=>{
+  
+})
 
 
 
@@ -151,14 +158,13 @@ const fetchInfoPostLogin = async (data) => {
                 <span class="text-700 font-bold">AGRO-ONLINE</span>
             </router-link>
             <div style="border-radius: 56px; padding: 0.3rem; background: linear-gradient(160deg, var(--primary-color) 10%, var(--paleta-100) 60%, var(--primary-color) 100%)">
-                <div class="w-full py-7 px-3 sm:px-6" style="border-radius: 53px; background-color: var(--paleta-100)">
+                <div class="w-full py-7 px-3 sm:px-6" style="border-radius: 153px; background-color: var(--paleta-100)">
                     <div class="text-center mb-5">
                         <div class="text-900 text-4xl font-bold mb-3">Welcome!</div>
                         <span class="text-600 font-medium">Sign in to continue</span>
                     </div>
                     <Toast />
-                    
-                    
+
                         <transition-group name="p-message" tag="div" class="w-full">
                             <Message v-for="msg of message" :severity="msg.severity" :key="msg.content" :sticky="false" :life="msg.life">{{ msg.content }}</Message>
                         </transition-group>
@@ -169,7 +175,7 @@ const fetchInfoPostLogin = async (data) => {
                                 id="email1"
                                 type="text"
                                 placeholder="Email address"
-                                style="padding: 1rem"
+                                style="width: 100%; padding: 1rem;"
                                 v-model="email"
                             />
                                                         
@@ -186,7 +192,7 @@ const fetchInfoPostLogin = async (data) => {
                                 :toggleMask="true"
                                 inputClass="w-full"
                                 :inputStyle="{ padding: '1rem' }"
-                                style="color: rgb(0, 0, 0)"
+                                style="width: 100%; padding: 0rem; color: rgb(0, 0, 0)"
                             ></Password>
                             <label for="password1" class="block text-l mb-2" :class="{ 'text-red-700': errors.password }">
                                 {{ errors.password}}

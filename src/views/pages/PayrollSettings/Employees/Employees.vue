@@ -489,8 +489,6 @@ import ability from '@/service/ability.js';
 import { AbilityBuilder} from '@casl/ability';
 
 
-const token = sessionStorage.getItem('accessSessionToken');
-
 
 // const updateAbility = (token) => {
 //   const bearer = 'Bearer ' + token; 
@@ -664,6 +662,8 @@ const sizeOptions = ref([
 onMounted(async () => {
     //updateAbility(sessionStorage.getItem('accessSessionToken'));
     await getAllResponsePermissionsAPI("/abilities");
+    console.log(ability.can('tiposDeTareas_vista'))
+    console.log(ability.can('rol_crear'))
     loading.value = true;
     lazyParams.value = {
         //TODO

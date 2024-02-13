@@ -2,7 +2,10 @@
 import { ref, onBeforeMount, watch } from 'vue';
 import { useRoute } from 'vue-router';
 import { useLayout } from '@/layout/composables/layout';
-
+import ability from '@/service/ability.js';
+import useDataAPI from '@/composables/DataAPI/FetchDataAPI.js';
+const { getAllResponseAPI, getAllResponsePermissionsAPI, getAllResponseListAPI, totalRecordsResponseAPI, currentPageResponseAPI, linksResponseAPI, postResponseAPI, putResponseAPI, deleteResponseAPI, errorResponseAPI, dataResponseAPI, dataResponseListAPI, statusCode } =
+    useDataAPI();
 const route = useRoute();
 
 const { layoutConfig, layoutState, setActiveMenuItem, onMenuToggle } = useLayout();
@@ -29,7 +32,9 @@ const props = defineProps({
 const isActiveMenu = ref(false);
 const itemKey = ref(null);
 
-onBeforeMount(() => {
+onBeforeMount(async () => {
+    
+
     itemKey.value = props.parentItemKey ? props.parentItemKey + '-' + props.index : String(props.index);
 
     const activeItem = layoutState.activeMenuItem;
@@ -85,11 +90,15 @@ const checkActiveRoute = (item) => {
             <i class="pi pi-fw pi-angle-down layout-submenu-toggler" v-if="item.items"></i>
         </router-link>
         <Transition v-if="item.items && item.visible !== false" name="layout-submenu">
-            <ul v-show="root ? true : isActiveMenu" class="layout-submenu">
+            <ul v-show="root ? true : isActiveMenu" class="layout-submenu" v-if=" !(ability.can(item.items[0].gate))">
+                <!-- <pre>{{ item.items[0].items.gate }}</pre> -->
                 <app-menu-item v-for="(child, i) in item.items" :key="child" :index="i" :item="child"
-                    :parentItemKey="itemKey" :root="false" v-if="item.items.gate === undefined || can(item.items.gate) ||can(item.gate)">
+                    :parentItemKey="itemKey" :root="false" >
+                    
                 </app-menu-item>
-                <!-- <pre>{{ item.items }}</pre> -->
+                
+                
+                
             </ul>
             
         </Transition>

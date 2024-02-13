@@ -85,7 +85,7 @@ export default function useDataAPI(datos) {
         can(permissions);
         console.log(permissions)
         ability.update(rules);
-        console.log(ability.can('rol_crearx'))
+        //console.log(ability.can('monitor_vista'))
         
     })
 
