@@ -58,6 +58,8 @@ const bindOutsideClickListener = () => {
         document.addEventListener('click', outsideClickListener.value);
     }
 };
+
+
 const unbindOutsideClickListener = () => {
     if (outsideClickListener.value) {
         document.removeEventListener('click', outsideClickListener);
@@ -76,12 +78,12 @@ const isOutsideClicked = (event) => {
 
 <template>
     <div :class="[
-    !ability.can('agro_tv') ? 'layout-wrapper' : '',
+    ability.can('agro_tv') ? 'layout-wrapper' : '',
     containerClass
 ]" >
         <app-topbar></app-topbar>
         
-        <div v-if="!ability.can('agro_tv')" class="layout-sidebar">
+        <div v-if="ability.can('agro_tv')" class="layout-sidebar">
             <app-sidebar></app-sidebar>
         </div>
         <div class="layout-main-container">

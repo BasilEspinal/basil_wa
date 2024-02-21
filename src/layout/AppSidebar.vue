@@ -7,6 +7,7 @@ import AppMenu from './AppMenu.vue';
 <template>
     <app-menu></app-menu>
     <!-- <sidebar-layout></sidebar-layout> -->
+    <!--Logo dinamico-->
     <img src="/layout/images/logo-basil.png" height="150" class="mr-2" />
 </template>
 
