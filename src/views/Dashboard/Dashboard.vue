@@ -26,30 +26,30 @@ let endpoint = ref('/employees');
 
 
 const updateAbility = async (token) => {
-  //const bearer = 'Bearer ' + token; 
-//   await getAllResponsePermissionsAPI("/abilities");
-//   console.log('updateAbility')
-// fetch('http://164.90.146.196:81/api/v1/abilities', {
-//     headers: {
-//         Authorization: bearer,
-//         accept: 'application/json'
-//     }
-// })
-//     .then((response) => response.json())
-//     .then((permissions) => {
-//         const { can, rules } = new AbilityBuilder();
+    //const bearer = 'Bearer ' + token;
+    //   await getAllResponsePermissionsAPI("/abilities");
+    //   console.log('updateAbility')
+    // fetch('http://164.90.146.196:81/api/v1/abilities', {
+    //     headers: {
+    //         Authorization: bearer,
+    //         accept: 'application/json'
+    //     }
+    // })
+    //     .then((response) => response.json())
+    //     .then((permissions) => {
+    //         const { can, rules } = new AbilityBuilder();
 
-//         can(permissions);
-//         console.log(permissions)
-//         ability.update(rules);
-//         console.log(ability.can('rol_crear'))
-        
-//     });
+    //         can(permissions);
+    //         console.log(permissions)
+    //         ability.update(rules);
+    //         console.log(ability.can('rol_crear'))
+
+    //     });
 };
 onMounted(() => {
     //updateAbility(sessionStorage.getItem('accessSessionToken'));
     //updateAbility();
-    
+
 
     
 });
@@ -263,7 +263,7 @@ watch(
     },
     { immediate: true }
 );
- 
+
 //=======================================================================
 const { isDarkTheme } = useLayout();
 const products = ref(null);
@@ -354,7 +354,6 @@ watch(
 <template>
     <div class="grid">
         <div class="col-12 lg:col-6 xl:col-3" >
-            
             <div class="card mb-0">
                 <div class="flex justify-content-between mb-3">
                     <div>
@@ -369,8 +368,8 @@ watch(
                 <span class="text-500">En Traslado</span>
             </div>
         </div>
-        
-        <div class="col-12 lg:col-6 xl:col-3" >
+
+        <div class="col-12 lg:col-6 xl:col-3">
             <div class="card mb-0">
                 <div class="flex justify-content-between mb-3">
                     <div>
@@ -418,16 +417,14 @@ watch(
         <div class="col-12 xl:col-6">
             <div class="card">
                 <h5>Icopores por semana</h5>
-                <Chart type="bar" :data="barData" :options="barOptions"></Chart>
+                <Chart type="bar" :data="barData" :options="barOptions" class="h-30rem"/>
             </div>
         </div>
         <div class="col-12 xl:col-6">
             <div class="card flex flex-column align-items-center">
                 <h5 class="text-left w-full">Productos Mensual</h5>
-                <Chart type="pie" :data="pieData" :options="pieOptions"></Chart>
+                <Chart type="pie" :data="pieData" :options="pieOptions" class="h-30rem" />
             </div>
         </div>
-
     </div>
-    
 </template>

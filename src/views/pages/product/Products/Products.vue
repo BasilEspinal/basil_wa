@@ -1,7 +1,7 @@
 
 <template>
     <h1>Información de productos </h1>
-    <pre>{{ requestData }}</pre>
+<pre>{{ requestData }}</pre>
     <div class="card">
         <div class="grid">
             <div class="col-xs-12 col-sm-6 col-md-4 mb-2 text-center mx-auto">
@@ -33,7 +33,7 @@
                 class="p-fluid">
                 <div class="formgrid grid">
                     <!-- <pre>{{ listRowSelect}}</pre> -->
-                    
+
                     
                     
                     <div v-for="key in conditionsProducts " :key="key" class="field">
@@ -117,7 +117,7 @@
 
 
             <Dialog v-model:visible="deleteRecords" :style="{ width: '450px' }" header="Confirm" :modal="true">
-                
+
                 <div class="flex align-items-center " v-for="item in headerNamesRow" :key="item">
                     <Checkbox class="mr-2" v-model="item.selecti" :binary="true" />
                     <label :for="item.uuid"> {{ item.label }} </label>
@@ -137,7 +137,7 @@
         </div>
 
 
-        <Table v-if = "$can('producto_listado')" title="" path-api="" @HeaderNames="onHeaderNames" @onRowSelect="RowSelect"
+        <Table title="" path-api="" @HeaderNames="onHeaderNames" @onRowSelect="RowSelect"
             :dataGot="dataFromComponent" :allLabels="allLabels" />
 
     </div>
