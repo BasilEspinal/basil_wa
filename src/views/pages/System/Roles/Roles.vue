@@ -309,6 +309,8 @@ const [
   firstNameV,
   
 ] = defineField('first_name', validate);
+let idExpanded = ref();
+let nameExpanded = ref();
 
 const changeRoles = async () => {
     console.log(
@@ -320,7 +322,7 @@ const changeRoles = async () => {
     );
     await putResponseAPI(
         {
-            name: 'pruebaRolV2',
+            name: nameExpanded.value,
             permissions: picklistValue.value[1].map((item) => {
                 return {
                     id: item.code
@@ -328,19 +330,11 @@ const changeRoles = async () => {
             })
         },
         '/roles',
-        35
+        
     );
+
 };
-const dataNewRole = async () => {
-    console.log(picklistValue.value[1]);
-    return(
-        {
-            name: firstNameV.value,
-            permissions: [{ id: 17 }]
-        })
-    
-    
-};
+
 const permissionsListFromValue = async () => {
     console.log(picklistValue.value);
     await getAllResponseListAPI(`/permissions/without-roles/2`);
@@ -458,11 +452,16 @@ const newRecord = async (requestDataUnitTypes, endpoint) => {
 };
 const onRowExpand = (event) => {
     toast.add({ severity: 'info', summary: 'Product Expanded', detail: event.data.name, life: 3000 });
+
     permissionsListFromValue();
     permissionsListToValue();
+    console.log(event.data.id);
+    idExpanded.value= event.data.id;
+    nameExpanded.value= event.data.name;
 };
 const onRowCollapse = (event) => {
     toast.add({ severity: 'success', summary: 'Product Collapsed', detail: event.data.name, life: 3000 });
+    idExpanded.value= null;
 };
 const expandAll = () => {
     expandedRows.value = products.value.reduce((acc, p) => (acc[p.id] = true) && acc, {});
