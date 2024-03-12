@@ -140,7 +140,7 @@
                             <div class="card">
                                 <h5>Name: {{ data.name }}</h5>
                                 <h5>Id rol {{ data.id }}</h5>
-                                <pre>{{ picklistValue[1] }}</pre>
+                                
                                 <Button label="Save" icon="pi pi-save" class="p-button-success flex items-center justify-center mb-2 mt-2" @click="changeRoles" size="large" />
 
                                 <PickList v-model="picklistValue" listStyle="height:250px" dataKey="code">
@@ -199,8 +199,8 @@
                         <label for="name" class="block text-l mb-2" :class="{ 'text-red-700': errors['first_name'] }">
                         {{ errors['first_name'] }}
                         </label>
-                    </div>
                         </div>
+                    </div>
                     </div>
                 </div>  
                 <template #footer>
@@ -211,7 +211,23 @@
                 </template>
             </Dialog>
             <Dialog v-model:visible="deleteDialog" :style="{ width: '700px' }" :header="headerDialog" :modal="true" class="p-fluid text-center mx-auto">
-                <pre>{{ selectedRegisters }}</pre>
+                <div class="flex align-items-center">
+                    <div class="p-grid">
+                        <!-- <pre>{{ listRowSelect[0].name }}</pre> -->
+                        <div>
+                            <label> {{ recordsDelete[0]['name'] }} </label>
+                        </div>
+                        
+                    </div>
+
+                    <i class="pi pi-exclamation-triangle ml-3 mb-2" style="font-size: 2rem" />
+                </div>
+                <template #footer>
+                    <div>
+                        <Button label="Cancel" icon="pi pi-times" class="p-button-text" @click="hideDialog" />
+                        <Button label="Save" icon="pi pi-check" class="p-button-text" @click="saveRecord" />
+                    </div>
+                </template>
             </Dialog>
             <Toast />
         </div>
@@ -239,7 +255,7 @@ import ability from '@/service/ability.js';
 import { AbilityBuilder } from '@casl/ability';
 import { useToast } from 'primevue/usetoast';
 
-let endpoint = ref('/roles'); //replace endpoint with your endpoint
+let endpoint = ref('/roles'); 
 const loading = ref(false);
 import ProductService from '@/service/ProductService';
 const router = useRouter();
@@ -378,13 +394,7 @@ const saveRecord = async () => {
     switch (mode.value) {
         case 'NEW':
             console.log(dataPost.value.first_name);
-
-
             await newRecord({name:dataPost.value.first_name,permissions: [{ id: 17 }]}, endpoint.value, statusCode.value);
-            break;
-        case 'EDIT':
-            await updateRecord(dataPost.value, listRowSelect.value[0].uuid, endpoint.value);
-            console.info(dataPost.value);
             break;
         case 'DELETE':
             if (recordsDelete.value.length > 0 && recordsDelete.value.length < 2) await dropRecord(recordsDelete.value[0].uuid, endpoint.value);
@@ -395,24 +405,32 @@ const saveRecord = async () => {
         case 'CLONE':
             await newRecord(dataPost.value, endpoint.value, statusCode.value);
             break;
-        case 'EXPORT':
-            console.info("SaveRecord", mode.value);
-                if (format.value == '') {
-                    toast.add({ severity: 'error', summary: 'Select Format', detail: 'Must select a format', life: 3000 });
-                    return;
-                }
-                data = {
-                    data: format.value.code,
-                    name: filename.value + (format.value.code ? '.csv' : '.xls')
-            };
-            exportData(data);
-            exportDialog.value = false;
             
-            break;    
     }
     mode.value = '';
 };
+const dropRecord = async (id, endpoint) => {
+    await deleteResponseAPI({}, endpoint, deleteRecords[0].id);
 
+    switch (statusCode.value) {
+        case 204:
+            toast.add({ severity: 'success', summary: 'Successful', detail: 'Done', life: 3000 });
+            router.go();
+            hideDialog();
+            break;
+
+        case 422:
+            toast.add({ severity: 'error', summary: 'Validation Error', detail: 'There are validation errors', life: 3000 });
+            // Puedes agregar más casos según sea necesario
+            break;
+        case 200:
+            toast.add({ severity: 'warn', summary: 'xxxxxr', detail: 'There are validation errors', life: 3000 });
+            // Puedes agregar más casos según sea necesario
+            break;
+        default:
+            toast.add({ severity: 'error', summary: 'Error Message', detail: 'There was an error', life: 3000 });
+    }
+};
 const newRecord = async (requestDataUnitTypes, endpoint) => {
     await postResponseAPI(requestDataUnitTypes, endpoint);
     console.log(requestDataUnitTypes);
@@ -541,6 +559,13 @@ const openDelete = () => {
     headerDialog.value = 'Delete a xxxxx record';
     resetValues();
     deleteDialog.value = true;
+
+    for (let key in listRowSelect.value) {
+        recordsDelete.value.push({
+            name: listRowSelect.value[key].name,
+            id: listRowSelect.value[key].id,
+        });
+    }
 };
 const openExport = () => {
     mode.value = 'EXPORT';
