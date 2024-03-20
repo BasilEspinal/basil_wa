@@ -15,7 +15,7 @@
                             <template v-slot:start>
                                 <div>
                                     <Button label="New" icon="pi pi-plus" class="p-button-success mr-2 ml-2 mb-2 mt-2" @click="openNew" size="large" />
-                                    <Button :disabled="!(listRowSelect.length > 0 && listRowSelect.length < 2)" label="Clone" icon="pi pi-copy" class="p-button-secondary mr-2 ml-2 mb-2 mt-2" @click="openClone" size="large" />
+                                    <!-- <Button :disabled="!(listRowSelect.length > 0 && listRowSelect.length < 2)" label="Clone" icon="pi pi-copy" class="p-button-secondary mr-2 ml-2 mb-2 mt-2" @click="openClone" size="large" /> -->
                                     <!-- <Button label="Export" icon="pi pi-file-import" class="p-button-warning mr-2 ml-2 mb-2 mt-2" @click="openExport" size="large" /> -->
                                     <Button :disabled="!(listRowSelect.length > 0 && listRowSelect.length < 2)" label="Delete" icon="pi pi-trash" class="p-button-danger mr-2 ml-2 mb-2 mt-2" @click="openDelete" size="large" />
                                 </div>
@@ -141,7 +141,8 @@
                                 <h5>Name: {{ data.name }}</h5>
                                 <h5>Id rol {{ data.id }}</h5>
                                 
-                                <Button label="Save" icon="pi pi-save" class="p-button-success flex items-center justify-center mb-2 mt-2" @click="changeRoles" size="large" />
+                                
+
 
                                 <PickList v-model="picklistValue" listStyle="height:250px" dataKey="code">
                                     <template #sourceheader> From </template>
@@ -149,7 +150,13 @@
                                     <template #item="slotProps">
                                         <div>{{ slotProps.item.name }}</div>
                                     </template>
+                                    
                                 </PickList>
+                                
+                                    <div class="flex flex-col justify-center items-center h-auto py-4">
+                                        <Button label="Save" icon="pi pi-save" class="p-button-success flex items-center justify-center mb-2 mt-2" @click="updateRecord(idExpanded)" size="large" />
+                                    </div>
+                                
                             </div>
                         </div>
                         <!-- <DataTable :value="dataResponseAPI.data">
@@ -215,6 +222,7 @@
                     <div class="p-grid">
                         <!-- <pre>{{ listRowSelect[0].name }}</pre> -->
                         <div>
+                            <pre>{{ recordsDelete[0].id }}</pre>
                             <label> {{ recordsDelete[0]['name'] }} </label>
                         </div>
                         
@@ -320,6 +328,7 @@ const changeRoles = async () => {
             };
         })
     );
+    console.log(picklistValue.value[1]);
     await putResponseAPI(
         {
             name: nameExpanded.value,
@@ -328,25 +337,30 @@ const changeRoles = async () => {
                     id: item.code
                 };
             })
-        },
-        '/roles',
+        }
+        ,
+        endpoint.value,
+        idExpanded.value
         
     );
+    permissionsListFromValue();
+    permissionsListToValue();
 
 };
-
+watch(picklistValue, onChangeRoles);
 const permissionsListFromValue = async () => {
     console.log(picklistValue.value);
     await getAllResponseListAPI(`/permissions/without-roles/2`);
     const dataFrom = ref();
     dataFrom.value = dataResponseListAPI.value;
+    console.log(dataFrom.value);
     const transformObject = (originalObj) => {
         return Object.entries(originalObj).map(([key, value]) => {
             return { name: value, code: key };
         });
     };
-    const tet = transformObject(dataFrom.value);
-    picklistValue.value[0] = tet;
+    picklistValue.value[0] = transformObject(dataFrom.value);
+    // picklistValue.value[0] = tet;
 };
 const permissionsListToValue = async () => {
     console.log(picklistValue.value);
@@ -358,8 +372,8 @@ const permissionsListToValue = async () => {
             return { name: value, code: key };
         });
     };
-    const tet = transformObject(dataTo.value);
-    picklistValue.value[1] = tet;
+    picklistValue.value[1] = transformObject(dataTo.value);
+    // picklistValue.value[1] = tet;
 };
 
 const size = ref({ label: 'Normal', value: 'normal' });
@@ -383,6 +397,55 @@ watch(
     },
     { deep: true }
 );
+
+const updateRecord = async ( id) => {
+    // await putResponseAPI(requestDataUnitTypes, endpoint, id);
+    console.log(
+        picklistValue.value[1].map((item) => {
+            return {
+                id: item.code
+            };
+        })
+    );
+    console.log(picklistValue.value[1]);
+    await putResponseAPI(
+        {
+            name: nameExpanded.value,
+            permissions: picklistValue.value[1].map((item) => {
+                return {
+                    id: item.code
+                };
+            })
+        }
+        ,
+        endpoint.value,
+        id
+        
+    );
+    permissionsListFromValue();
+    permissionsListToValue();
+    recordsDelete.value = [];
+
+    switch (statusCode.value) {
+        case 202:
+            toast.add({ severity: 'success', summary: 'Successful', detail: 'Done', life: 3000 });
+
+            hideDialog();
+            router.go();
+            break;
+
+        case 422:
+            toast.add({ severity: 'error', summary: 'Validation Error', detail: 'There are validation errors', life: 3000 });
+            // Puedes agregar más casos según sea necesario
+            break;
+        case 200:
+            toast.add({ severity: 'warn', summary: 'xxxxxr', detail: 'There are validation errors', life: 3000 });
+            // Puedes agregar más casos según sea necesario
+            break;
+        default:
+            toast.add({ severity: 'error', summary: 'Error Message', detail: 'There was an error', life: 3000 });
+    }
+};
 const saveRecord = async () => {
     let data = [];
     switch (mode.value) {
@@ -390,8 +453,13 @@ const saveRecord = async () => {
             console.log(dataPost.value.first_name);
             await newRecord({name:dataPost.value.first_name,permissions: [{ id: 17 }]}, endpoint.value, statusCode.value);
             break;
+        case 'EDIT':
+            // await updateRecord(dataPost.value, listRowSelect.value[0].uuid, endpoint.value);
+            // changeRoles()
+            console.info(dataPost.value);
+            break;
         case 'DELETE':
-            if (recordsDelete.value.length > 0 && recordsDelete.value.length < 2) await dropRecord(recordsDelete.value[0].uuid, endpoint.value);
+            if (recordsDelete.value.length > 0 && recordsDelete.value.length < 2) await dropRecord(recordsDelete.value[0].id, endpoint.value);
             else {
                 toast.add({ severity: 'error', summary: 'Error Message', detail: 'No puedes eliminar mas de un registro', life: 3000 });
             }
@@ -404,7 +472,8 @@ const saveRecord = async () => {
     mode.value = '';
 };
 const dropRecord = async (id, endpoint) => {
-    await deleteResponseAPI({}, endpoint, deleteRecords[0].id);
+    console.log(recordsDelete)
+    await deleteResponseAPI({}, endpoint, id);
 
     switch (statusCode.value) {
         case 204:
@@ -476,6 +545,8 @@ onMounted(async () => {
     await loadLazyData();
     await getAllResponsePermissionsAPI('/abilities');
     columnas.value = dataResponseAPI.value.data;
+    permissionsListFromValue();
+    permissionsListToValue();
     console.log(columnas.value);
     const permissionNames = [];
 });
@@ -527,7 +598,10 @@ const hideDialog = () => {
     recordsDelete.value = [];
     resetValues();
 };
-const resetValues = () => {};
+const resetValues = () => {
+dataPost.value.first_name = '';
+
+};
 const assignValues = (modex) => {
     if (modex === 'EDIT') {
     }

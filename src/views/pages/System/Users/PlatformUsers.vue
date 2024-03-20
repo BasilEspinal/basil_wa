@@ -2,7 +2,7 @@
     <div>
     <div class="card">
         <div>
-            <h1>Información de xxxxx</h1> 
+            <h1>Resumen de roles asociados a los usuarios</h1> 
         </div>
     </div>
     <div class="card">
@@ -46,6 +46,7 @@
         @row-unselect="onRowSelect(selectedRegisters)"
         @select-all-change="onSelectAllChange"
         v-model:selection="selectedRegisters"
+        v-model:expandedRows="expandedRows"
          
         >
         <template #header>
@@ -72,29 +73,84 @@
         <template #empty> No customers found. </template>
         <template #loading> Loading customers data. Please wait. </template>
         <Column selectionMode="multiple" headerStyle="width: 3rem"></Column>
-        <Column field="xxxxxx" filterField="xxxxxx" header="xxxxxx " sortable frozen=""> <!--Replace :frozen with the model-->
+        <Column expander style="width: 5rem" />
+        <Column field="xxxxxx" filterField="xxxxxx" header="Name " sortable frozen=""> <!--Replace :frozen with the model-->
             <template #header>
                     <ToggleButton v-model="documentFrozen" onIcon="pi pi-lock" offIcon="pi pi-lock-open" onLabel="" offLabel="" />
                     <div>&nbsp;</div>
                 </template>
 
                 <template #body="{ data }">
-                    <!-- {{ data.document }} replace with the object key-->
+                    {{ data.name }} 
                 </template>
                 <template #filter="{ filterModel }">
                     <InputText v-model="filterModel.value" type="text" class="p-column-filter" placeholder="Search by " />
                 </template>
         </Column>
 
-        <Column field="" filterField="" header=" " sortable> 
+        <Column field="" filterField="" header=" Email" sortable> 
             
                 <template #body="{ data }">
-                    <!-- {{ data.document }} replace with the object key-->
+                    {{ data.email }} 
                 </template>
                 <template #filter="{ filterModel }">
                     <InputText v-model="filterModel.value" type="text" class="p-column-filter" placeholder="Search by " />
                 </template>
         </Column>
+
+        <template #expansion="{ data }">
+                    <div class="p-3">
+                        <h5>Orders for {{ data.name }}</h5>
+                        <div class="col-12 lg:col-8">
+                            <div class="card">
+                                <h5>Name: {{ data.name }}</h5>
+                                <h5>Perteneciente a finca: {{ data.farm.name }}</h5>
+                                <div class="card flex justify-content-center">
+                                    
+                                    <Listbox v-model="selectedCity" :options="cities" filter optionLabel="name" class="w-full md:w-14rem" />
+                                </div>                                
+                                
+
+                            </div>
+                        </div>
+                        <!-- <DataTable :value="dataResponseAPI.data">
+                        
+                        <Column field="description" filterField="description" header="Description" sortable> 
+                                
+                                <template #body="{ data }">
+                                    {{ data.permissions[0].name }} 
+                                </template>
+                                <template #filter="{ filterModel }">
+                                    <InputText v-model="filterModel.value" type="text" class="p-column-filter" placeholder="Search by " />
+                                </template>
+                        </Column> -->
+
+                        <!-- <Column v-for="(column, index) in columnas" :key="index" >
+                            <template #body="{ data }">
+                                {{ console.log(columnas, data.permissions) }}
+                                {{ column.permissions[index].description }} 
+                            </template>
+                            
+                            <template #filter="{ filterModel }">
+                                <InputText v-model="filterModel.value" type="text" class="p-column-filter" :placeholder="'Search by ' + column.name" />
+                            </template>
+                        </Column> -->
+
+                        <!-- <Column field="status" header="Status" sortable>
+                            <template #body="data">
+                                <Tag :value="data.data.status.toLowerCase()" :severity="getOrderSeverity(data.data)" />
+                            </template>
+                        </Column> -->
+                        <!-- <Column headerStyle="width:4rem">
+                            <template #body>
+                                <Button icon="pi pi-search" />
+                            </template>
+                        </Column> -->
+                        <!-- </DataTable> -->
+                    </div>
+                </template>
+
+        
 
         <!--Here add other columns-->
 
@@ -171,16 +227,27 @@ import { toTypedSchema } from '@vee-validate/zod';
 import { z } from 'zod';
 import ability from '@/service/ability.js';
 import { AbilityBuilder} from '@casl/ability';
+import { useToast } from 'primevue/usetoast';
 
-let endpoint = ref('/endpoint'); //replace endpoint with your endpoint
+let endpoint = ref('/users'); //replace endpoint with your endpoint
 const loading = ref(false);
 
-const { getAllResponseAPI, getAllResponseListAPI, totalRecordsResponseAPI, currentPageResponseAPI, linksResponseAPI, postResponseAPI, putResponseAPI, deleteResponseAPI, errorResponseAPI, dataResponseAPI, dataResponseListAPI, statusCode } =
+const { getAllResponseAPI, getAllResponsePermissionsAPI, getAllResponseListAPI, totalRecordsResponseAPI, currentPageResponseAPI, linksResponseAPI, postResponseAPI, putResponseAPI, deleteResponseAPI, errorResponseAPI, dataResponseAPI, dataResponseListAPI, statusCode } =
     useDataAPI();
 
 ////////////
  //Form here
  ////////////   
+
+const selectedCity = ref();
+// const cities = ref([
+//     { name: 'New York', code: 'NY' },
+//     { name: 'Rome', code: 'RM' },
+//     { name: 'London', code: 'LDN' },
+//     { name: 'Istanbul', code: 'IST' },
+//     { name: 'Paris', code: 'PRS' }
+// ]);
+const cities = ref()
 const size = ref({ label: 'Normal', value: 'normal' });
 const sizeOptions = ref([
     { label: 'Small', value: 'small', class: 'sm' },
@@ -188,10 +255,35 @@ const sizeOptions = ref([
     { label: 'Large', value: 'large', class: 'lg' }
 ]);
 
+const permissionsListToValue = async () => {
+ 
+    const dataTo = ref();
+    
+    cities.value = dataResponseAPI.value.data.flatMap(item =>
+  item.roles.map(role => ({
+    id: role.id,
+    name: role.name
+  }))
+);
+
+    
+    // picklistValue.value[1] = tet;
+};
 
 onMounted(async () => {
     await loadLazyData();
     await getAllResponsePermissionsAPI("/abilities");
+    console.log(dataResponseAPI.value);
+    dataResponseAPI.value.data.forEach(item => {
+        item.roles.forEach(role => {
+        console.log(role.name); // Esto imprimirá el nombre de cada rol
+  });
+
+});
+permissionsListToValue();
+  
+
+    
 });
 
 const filters = ref();
@@ -218,9 +310,23 @@ const loadLazyData = async (event) => {
     
     await getAllResponseAPI(endpoint.value);
     loading.value = false;
+   
     
 };
 
+const expandedRows = ref([]);
+const toast = useToast();
+const onRowCollapse = (event) => {
+    toast.add({ severity: 'success', summary: 'Product Collapsed', detail: event.data.name, life: 3000 });
+    idExpanded.value= null;
+};
+const expandAll = () => {
+    expandedRows.value = products.value.reduce((acc, p) => (acc[p.id] = true) && acc, {});
+};
+
+const collapseAll = () => {
+    expandedRows.value = null;
+};
 
 const listRowSelect = ref([]);
 const selectedRegisters = ref([]);
