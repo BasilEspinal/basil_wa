@@ -46,21 +46,21 @@ const openSave = () => {
 };
 const openNew = () => {
     formDialog.value = true;
-    headerDialog.value = 'New xxxxxxx record';
+    headerDialog.value = 'New xx record';
 };
 const openEdit = () => {
     formDialog.value = true;
-    headerDialog.value = 'Edit a xxxxx record';
+    headerDialog.value = 'Edit a xx record';
 };
 const openClone = () => {
-    headerDialog.value = 'Clone a xxxx record';
+    headerDialog.value = 'Clone a xx record';
     formDialog.value = true;
 };
 const openDelete = () => {
-    headerDialog.value = 'Delete a xxxxx record';
+    headerDialog.value = 'Delete a xxx record';
 };
 const openExport = () => {
-    headerDialog.value = 'Export a xxxxx record';
+    headerDialog.value = 'Export a xxx record';
     formDialog.value = true;
 };
 
