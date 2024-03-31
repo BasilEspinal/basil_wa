@@ -1,53 +1,51 @@
 <template>
-    <div>
-        <div class="card">
-             <div>
-                <!-- {{ data_planner }} -->
-              
-                <h3>Planeación Diaria para el Area: {{ areawork}}</h3>
-                <div class="p-fluid formgrid grid">
+<div class="card">
+    
+    <div class="p-fluid formgrid grid">
                     <div class="field col-12 md:col-6">
-                        <pre>Empleado Cortador : {{data_planner.name_employee}}</pre>
+                        <h4>Trabajo diario de: {{ areawork }}</h4>
+                        
                     </div>
-                     <div class="field col-12 md:col-6">
-                        <pre>Fecha Planeada :{{ data_planner.planner_date }}</pre>
+                    <div class="field col-12 md:col-6">
+                        <h4> Empleado: <span v-if="selectedEmployee && selectedEmployee.name">{{ selectedEmployee.name }}</span> </h4>
+                        
                     </div>
-                  <div class="field col-12 md:col-6">
-                        <pre>Producto:{{data_planner.product_type}}</pre>
+    </div>
+
+        <TabView class="tabview-custom">
+            <TabPanel>
+                <template #header>
+                    <div class="flex align-items-center gap-2">
+                        <Avatar image="https://primefaces.org/cdn/primevue/images/avatar/ionibowcher.png" shape="circle" />
+                        <!-- <span class="font-bold white-space-nowrap">Empleados</span> -->
+                        
                     </div>
-                     <div class="field col-12 md:col-6">
-                        <pre>Variedad : {{data_planner.product_variant}}</pre>
-                    </div>
-                      <div class="field col-12 md:col-6">
-                        <pre>Lote Despacho : {{data_planner.lot_dispatch}}</pre>
-                    </div>
-                </div>
-            </div> 
+                </template>
+                <div class="card flex justify-content-center">
+                    <Listbox v-model="selectedEmployee" :options="availableAreaEmployees" optionLabel="name" filter class="w-full sm:w-64 md:w-96 lg:w-128 xl:w-1/2 2xl:w-2/3" listStyle="max-height:250px">
+    <template #option="slotProps">
+        <div class="flex align-items-center">
+            <img :alt="slotProps.option.name" src="https://primefaces.org/cdn/primevue/images/flag/flag_placeholder.png" :class="`flag flag-${slotProps.option.code.toLowerCase()} mr-2`" style="width: 18px" />
+            <div>{{ slotProps.option.name }}</div>
         </div>
-        <div class="card">
-            <div class="grid">
-                <div class="col-xs-12 col-sm-6 col-md-4 mb-2 text-center mx-auto">
-                    <!--Uncomment when table is done-->
+    </template>
+</Listbox>
 
-                    <!-- <div class="col-xs-12 col-sm-6 col-md-4 mb-2 text-center mx-auto">
-                <Toolbar class="bg-gray-900 shadow-2" style="border-radius: 3rem; background-image: linear-gradient(to right, var(--green-100), var(--green-200))">
-                    <template v-slot:start>
-                        <div>
-                            <Button label="New" icon="pi pi-plus" class="p-button-success mr-2 ml-2 mb-2 mt-2" @click="openNew" size="large" />
-                            <Button :disabled="!(listRowSelect.length > 0 && listRowSelect.length < 2)" label="Edit" icon="pi pi-file-edit" class="p-button-help mr-2 ml-2 mb-2 mt-2" @click="openEdit" size="large" />
-                            <Button :disabled="!(listRowSelect.length > 0 && listRowSelect.length < 2)" label="Clone" icon="pi pi-copy" class="p-button-secondary mr-2 ml-2 mb-2 mt-2" @click="openClone" size="large" />
-                            <Button label="Export" icon="pi pi-file-import" class="p-button-warning mr-2 ml-2 mb-2 mt-2" @click="openExport" size="large" />
-                            <Button :disabled="!listRowSelect.length > 0" label="Delete" icon="pi pi-trash" class="p-button-danger mr-2 ml-2 mb-2 mt-2" @click="openDelete" size="large" />
-                        </div>
-                    </template>
-                </Toolbar>
-            </div> -->
                 </div>
-            </div>
-            <!-- <pre>{{ dataResponseAPI }}</pre> -->
-
-            <div class="col-12">
+            </TabPanel>
+            <TabPanel>
+                <template #header>
+                    <div class="flex align-items-center gap-2">
+                        <Avatar image="https://primefaces.org/cdn/primevue/images/avatar/amyelsner.png" shape="circle" />
+                        <span class="font-bold white-space-nowrap">Trabajo</span>
+                    </div>
+                </template>
+                
+                <div class="col-12">
+                    
                 <div class="card">
+                    <!-- <p>Empleado : {{ data_planner.name_employee }}</p> -->
+                    
                     <div class="p-fluid formgrid grid">
                          <div class="field col-12 md:col-6">
                              <label for="tasktype">Tipo Actividad</label>
@@ -98,24 +96,211 @@
                         </div>
                 </div>
             </div>
-        </div>
+
+            </TabPanel>
+            <TabPanel>
+                <template #header>
+                    <div class="flex align-items-center gap-2">
+                        <Avatar image="https://primefaces.org/cdn/primevue/images/avatar/onyamalimba.png" shape="circle" />
+                        <span class="font-bold white-space-nowrap">Detalles</span>
+                    </div>
+                </template>
+                
+                <div>
+                <h4>Supervisor : {{ data_planner.nameSupervisor }}</h4>
+                <div class="p-fluid formgrid grid">
+                    <div class="field col-12 md:col-6">
+                        <pre>Lote Despacho : {{ data_planner.lot_dispatch }}</pre>
+                    </div>
+                    <div class="field col-12 md:col-6">
+                        <pre>Fecha Planeada :{{ data_planner.planner_date }}</pre>
+                    </div>
+                    <div class="field col-12 md:col-6">
+                        <pre>Producto:{{ data_planner.product_type }}</pre>
+                    </div>
+                    <div class="field col-12 md:col-6">
+                        <pre>Variedad : {{ data_planner.product_variant }}</pre>
+                    </div>
+                    <div class="field col-12 md:col-6">
+                        <pre>Empaque:{{ data_planner.packing_type }}</pre>
+                    </div>
+                    <div class="field col-12 md:col-6">
+                        <pre>Dia laboral : {{ data_planner.day_type }}</pre>
+                    </div>
+
+                </div>
+
+            
+            
+
+            
+            </div>
+            </TabPanel>
+            <TabPanel>
+                <template #header>
+                    <div class="flex align-items-center gap-2">
+                        <Avatar image="https://primefaces.org/cdn/primevue/images/avatar/ionibowcher.png" shape="circle" />
+                        <span class="font-bold white-space-nowrap">Resumen</span>
+                        <Badge value="2" />
+                    </div>
+                </template>
+
+                
+                <DataTable :value="worksDay" tableStyle="min-width: 50rem">
+        <ColumnGroup type="header">
+            <Row>
+                <Column header="Empleado" :rowspan="3" />
+                
+            </Row>
+            <Row>
+                
+                <Column header="Trabajos" :colspan="2" />
+            </Row>
+            <Row>
+                
+                <Column header="Cantidad" sortable field="lastYearProfit"/>
+                <Column header="Precio" sortable field="thisYearProfit"/>
+            </Row>
+        </ColumnGroup>
+        <Column field="employee" />
+
+        <Column field="quantity">
+            <template #body="slotProps">
+                {{formatCurrency(slotProps.data.quantity)}}
+            </template>
+        </Column>
+        <Column field="totalPrice">
+            <template #body="slotProps">
+                {{formatCurrency(slotProps.data.totalPrice)}}
+            </template>
+        </Column>
+        
+        <ColumnGroup type="footer">
+            <Row>
+                <Column footer="Totals:" :colspan="1" footerStyle="text-align:left"/>
+                <Column :footer="quantities" />
+                <Column :footer="totalPrices" />
+            </Row>
+        </ColumnGroup>
+    </DataTable>
+            </TabPanel>
+        </TabView>
     </div>
+
+
 </template>
 
 <script setup>
-import { ref, watch, provide, onBeforeMount, onMounted } from 'vue';
+import { ref, computed,watch, provide, onBeforeMount, onMounted } from 'vue';
 import useDataAPI from '@/composables/DataAPI/FetchDataAPI.js';
 import { FilterMatchMode, FilterOperator } from 'primevue/api';
 ///Demo  App Movil
 
+const selectedCountry = ref();
+const countries = ref([
+    { name: 'Australia', code: 'AU' },
+    { name: 'Brazil', code: 'BR' },
+    { name: 'China', code: 'CN' },
+    { name: 'Egypt', code: 'EG' },
+    { name: 'France', code: 'FR' },
+    { name: 'Germany', code: 'DE' },
+    { name: 'India', code: 'IN' },
+    { name: 'Japan', code: 'JP' },
+    { name: 'Spain', code: 'ES' },
+    { name: 'United States', code: 'US' }
+]);
+
+
+const selectedEmployee = ref();
+const availableAreaEmployees = ref([
+    { name: 'Employee 1', code: 'AU', id:1 },
+    { name: 'Employee 2', code: 'BR', id:2 },
+    { name: 'Employee 3', code: 'CN', id:3 },
+    { name: 'Employee 4', code: 'EG', id:4 },
+    { name: 'Employee 5', code: 'FR', id:5 },
+    { name: 'Employee 6', code: 'DE', id:6 },
+    { name: 'Employee 7', code: 'IN', id:7 },
+    { name: 'Employee 8', code: 'JP', id:8 },
+    { name: 'Employee 9', code: 'ES', id:9 },
+    { name: 'Employee 10', code: 'US', id:10 }
+    
+    
+]);
+
+const sales = ref([
+    {product: 'Bamboo Watch', lastYearSale: 51, thisYearSale: 40, lastYearProfit: 54406, thisYearProfit: 43342},
+    {product: 'Black Watch', lastYearSale: 83, thisYearSale: 9, lastYearProfit: 423132, thisYearProfit: 312122},
+    {product: 'Blue Band', lastYearSale: 38, thisYearSale: 5, lastYearProfit: 12321, thisYearProfit: 8500},
+    {product: 'Blue T-Shirt', lastYearSale: 49, thisYearSale: 22, lastYearProfit: 745232, thisYearProfit: 65323},
+    {product: 'Brown Purse', lastYearSale: 17, thisYearSale: 79, lastYearProfit: 643242, thisYearProfit: 500332},
+    {product: 'Chakra Bracelet', lastYearSale: 52, thisYearSale:  65, lastYearProfit: 421132, thisYearProfit: 150005},
+    {product: 'Galaxy Earrings', lastYearSale: 82, thisYearSale: 12, lastYearProfit: 131211, thisYearProfit: 100214},
+    {product: 'Game Controller', lastYearSale: 44, thisYearSale: 45, lastYearProfit: 66442, thisYearProfit: 53322},
+    {product: 'Gaming Set', lastYearSale: 90, thisYearSale: 56, lastYearProfit: 765442, thisYearProfit: 296232},
+    {product: 'Gold Phone Case', lastYearSale: 75, thisYearSale: 54, lastYearProfit: 21212, thisYearProfit: 12533}
+]);
+
+const worksDay = ref([
+{employee: 'Empleado 1', quantity: 54406, totalPrice: 43342},
+{employee: 'Empleado 1', quantity: 54406, totalPrice: 43342},
+{employee: 'Empleado 1', quantity: 54406, totalPrice: 43342},
+])
+
+const formatCurrency = (value) => {
+    return value.toLocaleString('en-US', {style: 'currency', currency: 'USD'});
+};
+
+const lastYearTotal = computed(() => {
+    let total = 0;
+    for(let sale of sales.value) {
+        total += sale.lastYearProfit;
+    }
+
+    return formatCurrency(total);
+});
+
+const quantities = computed(() => {
+    let total = 0;
+    for(let workDay of worksDay.value) {
+        total += workDay.quantity;
+    }
+
+    return total;
+});
+const thisYearTotal = computed(() => {
+    let total = 0;
+    for(let sale of sales.value) {
+        total += sale.thisYearProfit;
+    }
+
+    return formatCurrency(total);
+});
+
+const totalPrices = computed(() => {
+    let total = 0;
+    for(let workDay of worksDay.value) {
+        total += workDay.totalPrice;
+    }
+
+    return formatCurrency(total);
+});
+
+
+
+
 const data_planner = ref({
-    document: 'XXXXXX',
+document: 'XXXXXX',
     planner_date: '2024-01-13',
     product_type: 'Albaca',
     product_variant: 'Nufar',
+    packing_type: 'Icopor',
     lot_dispatch: '20822-5589',
     name_employee: 'Nombre del empleado',
     nameSupervisor: 'Nombre Supervisor',
+    areawork: 'Corta',
+    day_type: 'Festivo',
+    day_price: 1500.00,
+    total_packing: 500
 });
 
 const quanty = ref();
