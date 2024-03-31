@@ -284,9 +284,6 @@ const {
 } = useDataAPI();
 
 const picklistValue = ref([[], []]);
-const onChangeRoles = () => {
-    console.log(picklistValue.value[1]);
-};
 // {
 
 // "name":"pruebaRolV2",
@@ -320,37 +317,11 @@ const [
 let idExpanded = ref();
 let nameExpanded = ref();
 
-const changeRoles = async () => {
-    console.log(
-        picklistValue.value[1].map((item) => {
-            return {
-                id: item.code
-            };
-        })
-    );
-    console.log(picklistValue.value[1]);
-    await putResponseAPI(
-        {
-            name: nameExpanded.value,
-            permissions: picklistValue.value[1].map((item) => {
-                return {
-                    id: item.code
-                };
-            })
-        }
-        ,
-        endpoint.value,
-        idExpanded.value
-        
-    );
-    permissionsListFromValue();
-    permissionsListToValue();
 
-};
-watch(picklistValue, onChangeRoles);
-const permissionsListFromValue = async () => {
+
+const permissionsListFromValue = async (id) => {
     console.log(picklistValue.value);
-    await getAllResponseListAPI(`/permissions/without-roles/2`);
+    await getAllResponseListAPI(`/permissions/without-roles/${id}`);
     const dataFrom = ref();
     dataFrom.value = dataResponseListAPI.value;
     console.log(dataFrom.value);
@@ -362,9 +333,9 @@ const permissionsListFromValue = async () => {
     picklistValue.value[0] = transformObject(dataFrom.value);
     // picklistValue.value[0] = tet;
 };
-const permissionsListToValue = async () => {
+const permissionsListToValue = async (id) => {
     console.log(picklistValue.value);
-    await getAllResponseListAPI(`/permissions/roles/2`);
+    await getAllResponseListAPI(`/permissions/roles/${id}`);
     const dataTo = ref();
     dataTo.value = dataResponseListAPI.value;
     const transformObject = (originalObj) => {
@@ -422,8 +393,8 @@ const updateRecord = async ( id) => {
         id
         
     );
-    permissionsListFromValue();
-    permissionsListToValue();
+    permissionsListFromValue(id);
+    permissionsListToValue(id);
     recordsDelete.value = [];
 
     switch (statusCode.value) {
@@ -431,7 +402,10 @@ const updateRecord = async ( id) => {
             toast.add({ severity: 'success', summary: 'Successful', detail: 'Done', life: 3000 });
 
             hideDialog();
-            router.go();
+            await loadLazyData();
+            permissionsListFromValue(id);
+            permissionsListToValue(id);
+            
             break;
 
         case 422:
@@ -521,9 +495,8 @@ const newRecord = async (requestDataUnitTypes, endpoint) => {
 };
 const onRowExpand = (event) => {
     toast.add({ severity: 'info', summary: 'Product Expanded', detail: event.data.name, life: 3000 });
-
-    permissionsListFromValue();
-    permissionsListToValue();
+    permissionsListFromValue(event.data.id);
+    permissionsListToValue(event.data.id);
     console.log(event.data.id);
     idExpanded.value= event.data.id;
     nameExpanded.value= event.data.name;
