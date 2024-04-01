@@ -369,6 +369,7 @@ watch(
     { deep: true }
 );
 
+
 const updateRecord = async ( id) => {
     // await putResponseAPI(requestDataUnitTypes, endpoint, id);
     console.log(
@@ -493,6 +494,7 @@ const newRecord = async (requestDataUnitTypes, endpoint) => {
             toast.add({ severity: 'error', summary: 'Error Message', detail: 'There was an error', life: 3000 });
     }
 };
+
 const onRowExpand = (event) => {
     toast.add({ severity: 'info', summary: 'Product Expanded', detail: event.data.name, life: 3000 });
     permissionsListFromValue(event.data.id);
@@ -518,8 +520,8 @@ onMounted(async () => {
     await loadLazyData();
     await getAllResponsePermissionsAPI('/abilities');
     columnas.value = dataResponseAPI.value.data;
-    permissionsListFromValue();
-    permissionsListToValue();
+    
+    
     console.log(columnas.value);
     const permissionNames = [];
 });
