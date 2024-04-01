@@ -78,12 +78,12 @@ const isOutsideClicked = (event) => {
 
 <template>
     <div :class="[
-    !ability.can('agro_tv') ? 'layout-wrapper' : '',
+    ability.can('agro_tv_menu') ? 'layout-wrapper' : '',
     containerClass
-]" >
+    ]" >
         <app-topbar></app-topbar>
         
-        <div v-if="!ability.can('agro_tv')" class="layout-sidebar">
+        <div v-if="ability.can('agro_tv_menu')" class="layout-sidebar">
             <app-sidebar></app-sidebar>
         </div>
         <div class="layout-main-container">
