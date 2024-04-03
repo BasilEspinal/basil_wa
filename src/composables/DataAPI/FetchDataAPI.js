@@ -194,6 +194,7 @@ export default function useDataAPI(datos) {
     const deleteResponseAPI = async (requestData, endPoint, id) => {
         let baseUrl = `${base}${api}${endPoint}${'/'}${id}`;
 
+        console.log('baseUrl', baseUrl);
         const requestOptions = {
             method: 'DELETE',
             headers: APISettings.headers,
