@@ -6,16 +6,16 @@ import PickList from './PickList.vue';
 
 let endpoint = ref('/users');
 const toast = useToast();
-const abilitie = ref([]);
-const roles = ref([]);
-const Abilities = ref([]);
-const abilities = ref([]);
+const employe = ref([]);
+const rolesList = ref([]);
+const Employees = ref([]);
+const employes = ref([]);
 const emit = defineEmits([]);
 const { dataResponseAPI, getAllResponseAPI, putResponseAPI } = useDataAPI();
 
 onMounted(async () => {
-    await getAllResponseAPI('/abilities');
-    Abilities.value = dataResponseAPI.value.map(abil => ({ name: abil }));
+    await getAllResponseAPI('/employees');
+    Employees.value = dataResponseAPI.value.data.map(emplo => ({ id: emplo.uuid, name: emplo.first_name + ' ' + emplo.last_name }));
 });
 
 const props = defineProps({
@@ -24,41 +24,37 @@ const props = defineProps({
     },
     data: {
         type: Object
-    },
+    }
 });
 
 const search = (event) => {
     setTimeout(() => {
         if (!event.query.trim().length) {
-            abilities.value = [...Abilities.value];
-            console.log(abilities);
-            console.log(event.query);
+            employes.value = [...Employees.value];
         } else {
-            abilities.value = Abilities.value.filter((country) => {
+            employes.value = Employees.value.filter((country) => {
                 return country.name.toLowerCase().startsWith(event.query.toLowerCase());
             });
         }
     }, 200);
-}
+};
 
 const saveRoles = async () => {
     const dataJson = ({
         name: props.data.name,
-        email: props.data.email+roles.value.length,
+        email: props.data.email,
         "farm_id": 1,
-        "employee_id":1,
-        roles: roles.value.map(rol => ({ id: rol.id }))
+        "employee_id": employe.value.id || 1,
+        roles: rolesList.value.map(rol => ({ id: rol.id }))
     });
-    console.log('dataJson', dataJson)
     const restp = await putResponseAPI(dataJson, endpoint.value, props.data.id);
-    console.log("RESPUESTA: ", restp);
     toast.add({ severity: restp.ok ? 'success' : 'error', summary: 'Update User ' + props.data.name, detail: restp.ok ? "Acualizado" : "Error", life: 3000 });
-    emit('update', {update: true});
+    emit('update', { update: true });
 };
 
 function updateRoles(data) {
     const { list } = data;
-    roles.value = list;
+    rolesList.value = list;
 }
 
 </script>
@@ -74,7 +70,7 @@ function updateRoles(data) {
             </template>
 
             <template #end>
-                <AutoComplete v-model="abilitie" inputId="ac" :suggestions="abilities" placeholder="Abilities"
+                <AutoComplete v-model="employe" inputId="ac" :suggestions="employes" placeholder="Employees"
                     @complete="search" field="name" dropdown />
                 <Button label="Save" icon="pi pi-save" class="p-button-success ml-3" @click="saveRoles">
                 </Button>

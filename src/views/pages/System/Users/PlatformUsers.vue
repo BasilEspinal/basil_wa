@@ -18,11 +18,13 @@ const headerDialogSave = ref('');
 const headerDialogNew = ref('');
 const headerDialogEdit = ref('');
 const headerDialogClone = ref('');
+const headerDialogExport = ref('');
 const headerDialogDelete = ref('');
 const DialogSave = ref(false);
 const DialogNew = ref(false);
 const DialogEdit = ref(false);
 const DialogClone = ref(false);
+const DialogExport = ref(false);
 const DialogDelete = ref(false);
 const toast = useToast();
 
@@ -91,6 +93,8 @@ const openClone = () => {
     const data = selectedRegisters.value[0];
     name.value = data.name;
     email.value = data.email;
+    password.value = '';
+    confirmation.value = '';
     DialogClone.value = true;
 };
 const openDelete = () => {
@@ -99,8 +103,8 @@ const openDelete = () => {
 };
 
 const openExport = () => {
-    headerDialogSave.value = 'Export a xxx record';
-    DialogSave.value = true;
+    headerDialogExport.value = 'Export a xxx record';
+    DialogExport.value = true;
 };
 
 const newUser = handleSubmit(async values => {
@@ -112,12 +116,10 @@ const newUser = handleSubmit(async values => {
         "farm_id": 1,
         "roles": [{ "id": 1 }]
     };
-    console.log('DATA: ', data);
     await postResponseAPI(data, endpoint.value);
-    const restp = dataResponseAPI.value;
-    console.log('RESP: ', restp);
+    const restp = dataResponseAPI.value.data;
+    toast.add({ severity: restp ? 'success' : 'error', summary: 'Create User ' + values.name, detail: restp ? "Creado" : "Error", life: 3000 });
     loadingData();
-    toast.add({ severity: restp.status == 201 ? 'success' : 'error', summary: 'Create User ' + values.name, detail: restp.status == 201 ? "Acualizado" : "Error", life: 3000 });
 });
 
 const editUser = submitEdit(async values => {
@@ -128,23 +130,21 @@ const editUser = submitEdit(async values => {
         "employee_id": 1,
         roles: selectedRegisters.value[0].roles.map(rol => ({ id: rol.id }))
     });
-    console.log('dataJson', dataJson)
     const restp = await putResponseAPI(dataJson, endpoint.value, selectedRegisters.value[0].id);
-    toast.add({ severity: restp.ok ? 'success' : 'error', summary: 'Update User ' + values.nameEdit, detail: restp.ok ? "Acualizado" : "Error", life: 3000 });
+    toast.add({ severity: restp.ok ? 'success' : 'error', summary: 'Update User ' + values.nameEdit, detail: restp.ok ? "Update" : "Error", life: 3000 });
     DialogEdit.value = false;
     loadingData();
 });
 
 const deleteUsers = () => {
-    DialogDelete.value = true;
+    DialogDelete.value = false;
     selectedRegisters.value.forEach(async (item) => {
-        console.log('esto es : ',endpoint.value, item.id);
         const data = ({});
         await deleteResponseAPI(data, endpoint.value, item.id);
         const resp = errorResponseAPI.value;
-        console.log(resp);
-        toast.add({ severity: resp ? 'success' : 'error', summary: 'Update User ', detail: resp ? "Deleted" : "Error", life: 3000 });
+        toast.add({ severity: resp ? 'success' : 'error', summary: 'Deleted User', detail: resp ? "Deleted" : "Error", life: 3000 });
     });
+    selectedRegisters.value = [];
     loadingData();
 };
 // function exportToCSV() {
@@ -170,7 +170,6 @@ const deleteUsers = () => {
 
 const remove = (aver) => {
     const index = selectedRegisters.value.findIndex(x => x.id === aver.id);
-    console.log('AVER', index);
     if (index !== -1) {
         selectedRegisters.value.splice(index, 1);
     }
@@ -185,7 +184,6 @@ const remove = (aver) => {
                 <h1>Resumen de roles asociados a los usuarios</h1>
             </div>
         </div>
-        {{ selectedRegisters }}
         <div class="card">
             <div class="grid">
                 <div class="col-xs-12 col-sm-6 col-md-4 mb-4 text-center mx-auto">
@@ -210,8 +208,7 @@ const remove = (aver) => {
             </div>
             <DataTable v-model:expandedRows="expandedRows" :loading="loading" :value="users" dataKey="id" :rows="50"
                 :rowsPerPageOptions="[5, 10, 20, 50]" tableStyle="min-width: 75rem" showGridlines :paginator="true"
-                @row-select="onRowSelect(selectedRegisters)" v-model:selection="selectedRegisters"
-                @row-unselect="onRowSelect(selectedRegisters)" @rowExpand="onRowExpand">
+                v-model:selection="selectedRegisters">
                 <template #empty> No customers found. </template>
                 <template #loading> Loading customers data. Please wait. </template>
                 <Column selectionMode="multiple" headerStyle="width: 3rem"></Column>
@@ -302,8 +299,8 @@ const remove = (aver) => {
                         v-bind="nameEditProps" />
                 </div>
                 <small id="username-help" :class="{ 'p-invalid text-red-700': errorEdit['nameEdit'] }">{{
-            errorEdit.nameEdit
-        }}</small>
+                                        errorEdit.nameEdit
+                                    }}</small>
             </div>
             <div class="mb-3">
                 <div class="flex align-items-center gap-3 mb-1">
@@ -312,8 +309,8 @@ const remove = (aver) => {
                         v-bind="emailEditProps" />
                 </div>
                 <small id="username-help" :class="{ 'p-invalid text-red-700': errorEdit['emailEdit'] }">{{
-            errorEdit.emailEdit
-        }}</small>
+                                        errorEdit.emailEdit
+                                    }}</small>
             </div>
             <div class="flex justify-content-end gap-2">
                 <Button type="button" label="Cancel" severity="secondary" @click="DialogEdit = false" />
@@ -362,7 +359,16 @@ const remove = (aver) => {
                 <Button type="button" label="Save" @click="() => { newUser(); DialogClone = false }" />
             </div>
         </Dialog>
-        <Dialog v-model:visible="DialogDelete" modal :header="headerDialogDelete" class="p-fluid text-center mx-auto col-10 md:col-4">
+        <Dialog v-model:visible="DialogExport" modal :header="headerDialogExport"
+            class="p-fluid text-center mx-auto col-10 md:col-4">
+            <h2>EXPORT</h2>
+            <div class="flex justify-content-end gap-2">
+                <Button type="button" label="Cancel" severity="secondary" @click="DialogExport = false" />
+                <Button type="button" label="Export" />
+            </div>
+        </Dialog>
+        <Dialog v-model:visible="DialogDelete" modal :header="headerDialogDelete"
+            class="p-fluid text-center mx-auto col-10 md:col-4">
             <div class="card flex flex-wrap gap-2">
                 <div v-for="item in selectedRegisters" :key="item.id">
                     <Chip :label="item.name" removable @remove="remove(item)" icon="pi pi-user" />
