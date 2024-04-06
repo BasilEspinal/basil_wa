@@ -5,12 +5,12 @@ import { useRouter } from 'vue-router';
 import useDataAPI from '@/composables/DataAPI/FetchDataAPI.js'
 
 import ability from '@/service/ability.js';
-const {getAllResponsePermissionsAPI } =
+const {getAllResponsePermissionsAPI ,dataResponsePermissionsAPI} =
     useDataAPI();
-
+const lengthPermissions = ref(0);
 onMounted(async () => {
     await getAllResponsePermissionsAPI("/abilities");
-    
+    lengthPermissions.value = dataResponsePermissionsAPI.value.length;
 });
 
 
@@ -111,8 +111,9 @@ const Exit = () => {
             <span>AgroOnline</span>
         </router-link>
 
-        <button v-if="!ability.can('agro_tv')" class="p-link layout-menu-button layout-topbar-button" @click="onMenuToggle()">
-            <i v-if="!ability.can('agro_tv')" class="pi pi-bars"></i>
+        
+        <button v-if="!(ability.can('agro_tv_menu') && lengthPermissions==1)" class="p-link layout-menu-button layout-topbar-button" @click="onMenuToggle()">
+            <i v-if="!(ability.can('agro_tv_menu') && lengthPermissions==1)" class="pi pi-bars"></i>
         </button>
 
         <button class="p-link layout-topbar-menu-button layout-topbar-button" @click="onTopBarMenuButton()">

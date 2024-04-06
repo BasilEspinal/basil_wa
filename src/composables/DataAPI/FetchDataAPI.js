@@ -75,9 +75,10 @@ export default function useDataAPI(datos) {
                 const { can, rules } = new AbilityBuilder();
 
                 can(permissions);
-                console.log(permissions);
+                console.log(permissions.length);
+                dataResponsePermissionsAPI.value = permissions;
                 ability.update(rules);
-                //console.log(ability.can('monitor_vista'))
+                
             });
     };
     const getAllResponseListAPI = async (endPoint) => {
