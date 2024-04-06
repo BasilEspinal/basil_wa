@@ -2,7 +2,7 @@
     <div>
     <div class="card">
         <div>
-            <h1>Información de permisos del usuario</h1> 
+            <h1>Información de permisos</h1> 
         </div>
     </div>
     <div class="card">
@@ -46,12 +46,15 @@
         @row-unselect="onRowSelect(selectedRegisters)"
         @select-all-change="onSelectAllChange"
         v-model:selection="selectedRegisters"
+        filterDisplay="menu"
+        v-model:filters="filters"
+        :globalFilterFields="['', 'company.name']"
          
         >
         <template #header>
             <!--Uncomment when filters are done-->
 
-            <!-- <Toolbar class = "mb-2">
+            <Toolbar class = "mb-2">
                     <template v-slot:start>
                         <Button type="button" icon="pi pi-filter-slash" label="Limpiar" class="p-button-outlined mb-2" @click="clearFilter()" />
                     </template>
@@ -66,53 +69,37 @@
                         <SelectButton v-model="size" :options="sizeOptions" optionLabel="label" dataKey="label"> </SelectButton>
                         
                     </template>       
-                </Toolbar> -->
+                </Toolbar>
         </template>
 
-        <template #empty> <pre>{{ dataResponseAPI }}</pre> </template>
+        <template #empty> No customers found. </template>
         <template #loading> Loading customers data. Please wait. </template>
         <Column selectionMode="multiple" headerStyle="width: 3rem"></Column>
-        <Column field="xxxxxx" filterField="xxxxxx" header="Name " sortable frozen=""> <!--Replace :frozen with the model-->
+        <Column field="name" filterField="name" header="Name" sortable frozen=""> <!--Replace :frozen with the model-->
             <template #header>
                     <ToggleButton v-model="documentFrozen" onIcon="pi pi-lock" offIcon="pi pi-lock-open" onLabel="" offLabel="" />
                     <div>&nbsp;</div>
                 </template>
 
                 <template #body="{ data }">
-                    
-                    {{ data.id }}
+                    {{ data.name }} 
                 </template>
                 <template #filter="{ filterModel }">
                     <InputText v-model="filterModel.value" type="text" class="p-column-filter" placeholder="Search by " />
                 </template>
         </Column>
 
-        <Column field="" filterField="" header="Name " sortable> 
+        <Column field="description" filterField="description" header="Description" sortable> 
             
                 <template #body="{ data }">
-                    {{ data.action }}
+                    {{ data.description }} 
                 </template>
                 <template #filter="{ filterModel }">
                     <InputText v-model="filterModel.value" type="text" class="p-column-filter" placeholder="Search by " />
                 </template>
         </Column>
 
-        <!--Here add other columns-->
-
-        <!-- <Column field="farmName" filterField="farm.name" header="Farm Name" sortable>
-                <template #body="{ data }">
-                    {{ data.farm.name }}
-                </template>
-                <template #filter="{ filterModel }">
-                    <InputText v-model="filterModel.value" type="text" class="p-column-filter" placeholder="Search by farm" />
-                </template>
-            </Column>
-
-            <Column field="companyName" header="Company Name" sortable>
-                <template #body="{ data }">
-                    {{ data.company.name }}
-                </template>
-            </Column>
+      
 
             <Column field="createdAt" filterField="created_at" header="Creation date" sortable>
                 <template #body="{ data }">
@@ -132,14 +119,14 @@
                 </template>
             </Column>
 
-            <Column field="status" filterField="status.name" header="Status" sortable>
+            <!-- <Column field="status" filterField="status.name" header="Status" sortable>
                 <template #body="{ data }">
                     <Tag :value="data.status.name" :severity="'EFC88B'" />
                 </template>
                 <template #filter="{ filterModel }">
                     <InputText v-model="filterModel.value" type="text" class="p-column-filter" placeholder="Search by status" />
                 </template>
-            </Column> -->
+            </Column>  -->
 
         </DataTable>
         <Dialog v-model:visible="formDialog" :style="{ width: '700px' }" :header="headerDialog" :modal="true" class="p-fluid text-center mx-auto">
@@ -173,10 +160,10 @@ import { z } from 'zod';
 import ability from '@/service/ability.js';
 import { AbilityBuilder} from '@casl/ability';
 
-let endpoint = ref('/permissions/roles/2'); //replace endpoint with your endpoint
+let endpoint = ref('/permissions'); //replace endpoint with your endpoint
 const loading = ref(false);
-
-const { getAllResponseAPI, getAllResponsePermissionsAPI,getAllResponseListAPI, totalRecordsResponseAPI, currentPageResponseAPI, linksResponseAPI, postResponseAPI, putResponseAPI, deleteResponseAPI, errorResponseAPI, dataResponseAPI, dataResponseListAPI, statusCode } =
+const documentFrozen = ref(false); 
+const { getAllResponseAPI,getAllResponsePermissionsAPI, getAllResponseListAPI, totalRecordsResponseAPI, currentPageResponseAPI, linksResponseAPI, postResponseAPI, putResponseAPI, deleteResponseAPI, errorResponseAPI, dataResponseAPI, dataResponsePermissionsAPI,dataResponseListAPI, statusCode } =
     useDataAPI();
 
 ////////////
@@ -206,11 +193,10 @@ const clearFilter = () => {
 const initFilters = () => {
     filters.value = {
         global: { value: null, matchMode: FilterMatchMode.CONTAINS },
-        //xxxx: { operator: FilterOperator.AND, constraints: [{ value: null, matchMode: FilterMatchMode.STARTS_WITH }] },
-        // 'status.name': { operator: FilterOperator.AND, constraints: [{ value: null, matchMode: FilterMatchMode.STARTS_WITH }] },
-        // 'farm.name': { operator: FilterOperator.AND, constraints: [{ value: null, matchMode: FilterMatchMode.STARTS_WITH }] },
-        // created_at: { operator: FilterOperator.AND, constraints: [{ value: null, matchMode: FilterMatchMode.STARTS_WITH }] },
-        // updated_at: { operator: FilterOperator.AND, constraints: [{ value: null, matchMode: FilterMatchMode.STARTS_WITH }] }
+        name: { operator: FilterOperator.AND, constraints: [{ value: null, matchMode: FilterMatchMode.STARTS_WITH }] },
+        description: { operator: FilterOperator.AND, constraints: [{ value: null, matchMode: FilterMatchMode.STARTS_WITH }] },
+        created_at: { operator: FilterOperator.AND, constraints: [{ value: null, matchMode: FilterMatchMode.STARTS_WITH }] },
+        updated_at: { operator: FilterOperator.AND, constraints: [{ value: null, matchMode: FilterMatchMode.STARTS_WITH }] }
     };
 };
 
@@ -218,15 +204,6 @@ const loadLazyData = async (event) => {
     //lazyParams.value = { ...lazyParams.value, first: event?.first || first.value };
     
     await getAllResponseAPI(endpoint.value);
-    dataResponseAPI.value = Object.entries(dataResponseAPI.value).map(([key, value]) => ({
-    id: key,
-    action: value
-    }));
-    dataResponseAPI.value  = {
-        data: dataResponseAPI.value,
-    };
-    console.log(dataResponseAPI.value);
-
     loading.value = false;
     
 };
