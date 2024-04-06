@@ -7,15 +7,17 @@ import AppSidebar from './AppSidebar.vue';
 import useDataAPI from '@/composables/DataAPI/FetchDataAPI.js';
 import { useLayout } from '@/layout/composables/layout';
 import ability from '@/service/ability.js';
-const {getAllResponsePermissionsAPI } =
+const {getAllResponsePermissionsAPI,dataResponsePermissionsAPI  } =
     useDataAPI();
 const { layoutConfig, layoutState, isSidebarActive } = useLayout();
 
 const outsideClickListener = ref(null);
 const router = useRouter();
-
-onMounted(async () => {
+const lengthPermissions = ref(0);
+onBeforeMount(async () => {
+    
     await getAllResponsePermissionsAPI("/abilities");
+    lengthPermissions.value = dataResponsePermissionsAPI.value.length;
     
 });
 
@@ -72,21 +74,29 @@ const isOutsideClicked = (event) => {
 
     return !(sidebarEl.isSameNode(event.target) || sidebarEl.contains(event.target) || topbarEl.isSameNode(event.target) || topbarEl.contains(event.target));
 };
-
+// 
 
 </script>
 
 <template>
     <div :class="[
-    ability.can('agro_tv_menu') ? 'layout-wrapper' : '',
+    (ability.can('agro_tv_menu') && lengthPermissions==1) ||lengthPermissions==0 ? '' : 'layout-wrapper',
     containerClass
     ]" >
         <app-topbar></app-topbar>
         
-        <div v-if="ability.can('agro_tv_menu')" class="layout-sidebar">
-            <app-sidebar></app-sidebar>
+        <div v-if="(ability.can('agro_tv_menu')&&lengthPermissions==1)||lengthPermissions==0"  >
+            
         </div>
+        <div v-else class="layout-sidebar" >
+            <app-sidebar></app-sidebar>
+        </div> 
+
+
         <div class="layout-main-container">
+            <div v-if="(ability.can('agro_tv_menu') && lengthPermissions==1) ||lengthPermissions==0" >
+                
+            </div>
             <div class="layout-main">
                 <router-view></router-view>
             </div>
