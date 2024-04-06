@@ -48,6 +48,7 @@ const saveRoles = async () => {
         roles: rolesList.value.map(rol => ({ id: rol.id }))
     });
     const restp = await putResponseAPI(dataJson, endpoint.value, props.data.id);
+    console.log(props.data.id);
     toast.add({ severity: restp.ok ? 'success' : 'error', summary: 'Update User ' + props.data.name, detail: restp.ok ? "Acualizado" : "Error", life: 3000 });
     emit('update', { update: true });
 };

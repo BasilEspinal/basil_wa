@@ -201,6 +201,7 @@ const remove = (aver) => {
                                     class="p-button-warning mr-2 ml-2 mb-2 mt-2" @click="openExport" size="large" />
                                 <Button :disabled="!selectedRegisters.length > 0" label="Delete" icon="pi pi-trash"
                                     class="p-button-danger mr-2 ml-2 mb-2 mt-2" @click="openDelete" size="large" />
+                                    
                             </div>
                         </template>
                     </Toolbar>
