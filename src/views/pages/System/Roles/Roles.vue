@@ -15,7 +15,7 @@
                             <template v-slot:start>
                                 <div>
                                     <Button label="New" icon="pi pi-plus" class="p-button-success mr-2 ml-2 mb-2 mt-2" @click="openNew" size="large" />
-                                    <!-- <Button :disabled="!(listRowSelect.length > 0 && listRowSelect.length < 2)" label="Clone" icon="pi pi-copy" class="p-button-secondary mr-2 ml-2 mb-2 mt-2" @click="openClone" size="large" /> -->
+                                    <Button :disabled="!(listRowSelect.length > 0 && listRowSelect.length < 2)" label="Clone" icon="pi pi-copy" class="p-button-secondary mr-2 ml-2 mb-2 mt-2" @click="openClone" size="large" />
                                     <!-- <Button label="Export" icon="pi pi-file-import" class="p-button-warning mr-2 ml-2 mb-2 mt-2" @click="openExport" size="large" /> -->
                                     <Button :disabled="!(listRowSelect.length > 0 && listRowSelect.length < 2)" label="Delete" icon="pi pi-trash" class="p-button-danger mr-2 ml-2 mb-2 mt-2" @click="openDelete" size="large" />
                                 </div>
@@ -202,11 +202,12 @@
                         <div class="p-fluid formgrid grid">
                             <div class="field col-12 md:col-6">
                         <label for="name" class="p-d-block">Name</label>
-                        <InputText v-model="firstNameV" inputId="name" aria-labelledby="basic" placeholder="Type your name here" :class="{ 'p-invalid': errors['first_name'] }"/>
-                        <label for="name" class="block text-l mb-2" :class="{ 'text-red-700': errors['first_name'] }">
-                        {{ errors['first_name'] }}
+                        <InputText v-model="firstNameV" inputId="name" aria-labelledby="basic" placeholder="Type your name here" :class="{ 'p-invalid': errors['name'] }"/>
+                        <label for="name" class="block text-l mb-2" :class="{ 'text-red-700': errors['name'] }">
+                        {{ errors['name'] }}
                         </label>
                         </div>
+                        <pre>{{ dataPost }}</pre>
                     </div>
                     </div>
                 </div>  
@@ -306,14 +307,14 @@ const {
 } = useForm({
   validationSchema: toTypedSchema(
     z.object({
-      first_name: z.string().nonempty('Field is required').min(3),
+      name: z.string().nonempty('Field is required').min(3),
     })
   ),
 });
 const [
   firstNameV,
   
-] = defineField('first_name', validate);
+] = defineField('name', validate);
 let idExpanded = ref();
 let nameExpanded = ref();
 
@@ -358,13 +359,14 @@ const expandedRows = ref([]);
 const toast = useToast();
 let dataPost = ref({
     
-    first_name: '',
+    name: '',
+    permissions: [{ id: 17 }]
     
 });
 watch(
     firstNameV,
     () => {
-        dataPost.value.first_name = firstNameV.value;
+        dataPost.value.name = firstNameV.value;
     },
     { deep: true }
 );
@@ -425,8 +427,8 @@ const saveRecord = async () => {
     let data = [];
     switch (mode.value) {
         case 'NEW':
-            console.log(dataPost.value.first_name);
-            await newRecord({name:dataPost.value.first_name,permissions: [{ id: 17 }]}, endpoint.value, statusCode.value);
+            console.log(dataPost.value.name);
+            await newRecord({name:dataPost.value.name,permissions: dataPost.value.permissions}, endpoint.value, statusCode.value);
             break;
         case 'EDIT':
             // await updateRecord(dataPost.value, listRowSelect.value[0].uuid, endpoint.value);
@@ -574,37 +576,47 @@ const hideDialog = () => {
     resetValues();
 };
 const resetValues = () => {
-dataPost.value.first_name = '';
+dataPost.value.name = '';
+dataPost.value.permissions = ref([{id: 17}]);
 
 };
 const assignValues = (modex) => {
     if (modex === 'EDIT') {
+        
     }
     if (modex === 'CLONE') {
+        resetValues();
+        dataPost.value.name = listRowSelect.value[0].name;
+        listRowSelect.value[0].permissions.map((item) => {
+            picklistValue.value[1].push({  id: item.id });
+        });
+        console.log(picklistValue.value[1]);
+        dataPost.value.permissions = picklistValue.value[1];
     }
 };
 const openNew = () => {
     mode.value = 'NEW';
     resetValues();
     formDialog.value = true;
-    headerDialog.value = 'New xxxxxxx record';
+    headerDialog.value = 'New role record';
 };
 const openEdit = () => {
     mode.value = 'EDIT';
     formDialog.value = true;
-    headerDialog.value = 'Edit a xxxxx record';
+    headerDialog.value = 'Edit a role record';
     assignValues(mode.value);
 };
 const openClone = () => {
     mode.value = 'CLONE';
-    headerDialog.value = 'Clone a xxxx record';
+    headerDialog.value = 'Clone a role record';
     formDialog.value = true;
     assignValues(mode.value);
+    console.log(listRowSelect.value);
 };
 let recordsDelete = ref([]);
 const openDelete = () => {
     mode.value = 'DELETE';
-    headerDialog.value = 'Delete a xxxxx record';
+    headerDialog.value = 'Delete a role record';
     resetValues();
     deleteDialog.value = true;
 
@@ -617,7 +629,7 @@ const openDelete = () => {
 };
 const openExport = () => {
     mode.value = 'EXPORT';
-    headerDialog.value = 'Export a xxxxx record';
+    headerDialog.value = 'Export a role record';
     resetValues();
     formDialog.value = true;
 };
