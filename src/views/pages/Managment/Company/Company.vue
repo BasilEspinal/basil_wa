@@ -10,7 +10,7 @@
             <div class="col-xs-12 col-sm-6 col-md-4 mb-2 text-center mx-auto">
                 <!--Uncomment when table is done-->
                 
-                <div class="col-xs-12 col-sm-6 col-md-4 mb-2 text-center mx-auto">
+                <!-- <div class="col-xs-12 col-sm-6 col-md-4 mb-2 text-center mx-auto">
                 <Toolbar class="bg-gray-900 shadow-2" style="border-radius: 3rem; background-image: linear-gradient(to right, var(--green-100), var(--green-200))">
                     <template v-slot:start>
                         <div>
@@ -22,7 +22,7 @@
                         </div>
                     </template>
                 </Toolbar>
-            </div>
+            </div> -->
 
             </div>
         </div>
@@ -48,7 +48,7 @@
         v-model:selection="selectedRegisters"
         filterDisplay="menu"
         v-model:filters="filters"
-        :globalFilterFields="['', 'name']"
+        :globalFilterFields="['code', 'name']"
          
         >
         <template #header>
