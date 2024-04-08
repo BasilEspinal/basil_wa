@@ -2,7 +2,7 @@
   <div>
   <div class="card">
       <div>
-          <h1>Información de xxxxx</h1> 
+          <h1>Información de solicitudes de clientes</h1> 
       </div>
   </div>
   <div class="card">
@@ -46,12 +46,15 @@
       @row-unselect="onRowSelect(selectedRegisters)"
       @select-all-change="onSelectAllChange"
       v-model:selection="selectedRegisters"
+      filterDisplay="menu"
+        v-model:filters="filters"
+        :globalFilterFields="['', 'order_number_customer', 'invoice_number_customer', 'customer_name', 'request_date', 'delivery_datetime', 'packaging_presentation', 'dispatch_number_lot', 'outlet_temperature', 'request_qty', 'packing_type_id', 'packing_type_name', 'employee_id', 'place_of_delivery', 'product_id', 'product_type_id']"
        
       >
       <template #header>
           <!--Uncomment when filters are done-->
 
-          <!-- <Toolbar class = "mb-2">
+          <Toolbar class = "mb-2">
                   <template v-slot:start>
                       <Button type="button" icon="pi pi-filter-slash" label="Limpiar" class="p-button-outlined mb-2" @click="clearFilter()" />
                   </template>
@@ -66,39 +69,172 @@
                       <SelectButton v-model="size" :options="sizeOptions" optionLabel="label" dataKey="label"> </SelectButton>
                       
                   </template>       
-              </Toolbar> -->
+              </Toolbar>
       </template>
 
       <template #empty> No customers found. </template>
       <template #loading> Loading customers data. Please wait. </template>
       <Column selectionMode="multiple" headerStyle="width: 3rem"></Column>
-      <Column field="xxxxxx" filterField="xxxxxx" header="xxxxxx " sortable frozen=""> <!--Replace :frozen with the model-->
+      
+      <Column field="dispatch_number_lot" filterField="dispatch_number_lot" header="Dispatch Number Lot " sortable frozen=""> <!--Replace :frozen with the model-->
           <template #header>
                   <ToggleButton v-model="documentFrozen" onIcon="pi pi-lock" offIcon="pi pi-lock-open" onLabel="" offLabel="" />
                   <div>&nbsp;</div>
               </template>
 
               <template #body="{ data }">
-                  <!-- {{ data.document }} replace with the object key-->
+                  {{ data.dispatch_number_lot }} 
               </template>
               <template #filter="{ filterModel }">
                   <InputText v-model="filterModel.value" type="text" class="p-column-filter" placeholder="Search by " />
               </template>
       </Column>
 
-      <Column field="" filterField="" header=" " sortable> 
+      <Column field="order_number_customer" filterField="order_number_customer" header="Order Number Customer" sortable> 
+          
+          <template #body="{ data }">
+              {{ data.order_number_customer }}
+          </template>
+          <template #filter="{ filterModel }">
+              <InputText v-model="filterModel.value" type="text" class="p-column-filter" placeholder="Search by " />
+          </template>
+  </Column>
+
+      <Column field="invoice_number_customer" filterField="invoice_number_customer" header="Invoice Number Customer" sortable> 
           
               <template #body="{ data }">
-                  <!-- {{ data.document }} replace with the object key-->
+                  {{ data.invoice_number_customer }}
               </template>
               <template #filter="{ filterModel }">
                   <InputText v-model="filterModel.value" type="text" class="p-column-filter" placeholder="Search by " />
               </template>
       </Column>
+
+      <Column field="customer_name" filterField="customer_name" header="Customer Name" sortable> 
+          
+          <template #body="{ data }">
+              {{ data.customer_name }}
+          </template>
+          <template #filter="{ filterModel }">
+              <InputText v-model="filterModel.value" type="text" class="p-column-filter" placeholder="Search by " />
+          </template>
+    </Column>
+
+    <Column field="request_date" filterField="request_date" header="Request Date" sortable> 
+          
+          <template #body="{ data }">
+              {{ data.request_date }}
+          </template>
+          <template #filter="{ filterModel }">
+              <InputText v-model="filterModel.value" type="text" class="p-column-filter" placeholder="Search by " />
+          </template>
+    </Column>
+
+    <Column field="delivery_datetime" filterField="delivery_datetime" header="Delivery Datetime" sortable> 
+          
+          <template #body="{ data }">
+              {{ data.request_date }}
+          </template>
+          <template #filter="{ filterModel }">
+              <InputText v-model="filterModel.value" type="text" class="p-column-filter" placeholder="Search by " />
+          </template>
+    </Column>
+
+    <Column field="packaging_presentation" filterField="packaging_presentation" header="Packaging" sortable> 
+          
+          <template #body="{ data }">
+              {{ data.packaging_presentation }}
+          </template>
+          <template #filter="{ filterModel }">
+              <InputText v-model="filterModel.value" type="text" class="p-column-filter" placeholder="Search by " />
+          </template>
+    </Column>
+
+    <Column field="outlet_temperature" filterField="outlet_temperature" header="Outlet Temperature" sortable> 
+          
+          <template #body="{ data }">
+              {{ data.outlet_temperature }}
+          </template>
+          <template #filter="{ filterModel }">
+              <InputText v-model="filterModel.value" type="text" class="p-column-filter" placeholder="Search by " />
+          </template>
+    </Column>
+
+    <Column field="request_qty" filterField="request_qty" header="Quantity Request" sortable> 
+          
+          <template #body="{ data }">
+              {{ data.request_qty }}
+          </template>
+          <template #filter="{ filterModel }">
+              <InputText v-model="filterModel.value" type="text" class="p-column-filter" placeholder="Search by " />
+          </template>
+    </Column>
+ 
+    <Column field="packing_type_id" filterField="packing_type_id" header="ID packing type" sortable> 
+          
+          <template #body="{ data }">
+              {{ data.packing_type_id }}
+          </template>
+          <template #filter="{ filterModel }">
+              <InputText v-model="filterModel.value" type="text" class="p-column-filter" placeholder="Search by " />
+          </template>
+    </Column>
+
+    <Column field="packing_type_name" filterField="packing_type_name" header="Packing type name" sortable> 
+          
+          <template #body="{ data }">
+              {{ data.packing_type_name }}
+          </template>
+          <template #filter="{ filterModel }">
+              <InputText v-model="filterModel.value" type="text" class="p-column-filter" placeholder="Search by " />
+          </template>
+    </Column>
+
+    <Column field="employee_id" filterField="employee_id" header="ID employee" sortable> 
+          
+          <template #body="{ data }">
+              {{ data.employee_id }}
+          </template>
+          <template #filter="{ filterModel }">
+              <InputText v-model="filterModel.value" type="text" class="p-column-filter" placeholder="Search by " />
+          </template>
+    </Column>
+
+    <Column field="place_of_delivery" filterField="place_of_delivery" header="Delivery Place" sortable> 
+          
+          <template #body="{ data }">
+              {{ data.place_of_delivery }}
+          </template>
+          <template #filter="{ filterModel }">
+              <InputText v-model="filterModel.value" type="text" class="p-column-filter" placeholder="Search by " />
+          </template>
+    </Column>
+
+    <Column field="product_id" filterField="product_id" header="ID product" sortable> 
+          
+          <template #body="{ data }">
+              {{ data.product_id }}
+          </template>
+          <template #filter="{ filterModel }">
+              <InputText v-model="filterModel.value" type="text" class="p-column-filter" placeholder="Search by " />
+          </template>
+    </Column>
+
+    <Column field="product_type_id" filterField="product_type_id" header="ID product type" sortable> 
+          
+          <template #body="{ data }">
+              {{ data.product_type_id }}
+          </template>
+          <template #filter="{ filterModel }">
+              <InputText v-model="filterModel.value" type="text" class="p-column-filter" placeholder="Search by " />
+          </template>
+    </Column>
+    
+    
 
       <!--Here add other columns-->
 
-      <!-- <Column field="farmName" filterField="farm.name" header="Farm Name" sortable>
+      <Column field="farmName" filterField="farm.name" header="Farm Name" sortable>
               <template #body="{ data }">
                   {{ data.farm.name }}
               </template>
@@ -141,7 +277,7 @@
               <template #filter="{ filterModel }">
                   <InputText v-model="filterModel.value" type="text" class="p-column-filter" placeholder="Search by status" />
               </template>
-          </Column> -->
+          </Column>
 
       </DataTable>
       <Dialog v-model:visible="formDialog" :style="{ width: '700px' }" :header="headerDialog" :modal="true" class="p-fluid text-center mx-auto">
@@ -175,12 +311,12 @@ import { z } from 'zod';
 import ability from '@/service/ability.js';
 import { AbilityBuilder} from '@casl/ability';
 
-let endpoint = ref('/endpoint'); //replace endpoint with your endpoint
+let endpoint = ref('/customers_requests'); //replace endpoint with your endpoint
 const loading = ref(false);
 
 const { getAllResponseAPI,getAllResponsePermissionsAPI, getAllResponseListAPI, totalRecordsResponseAPI, currentPageResponseAPI, linksResponseAPI, postResponseAPI, putResponseAPI, deleteResponseAPI, errorResponseAPI, dataResponseAPI, dataResponsePermissionsAPI,dataResponseListAPI, statusCode } =
   useDataAPI();
-
+  const documentFrozen = ref(false);
 ////////////
 //Form here
 ////////////   
@@ -207,13 +343,27 @@ const clearFilter = () => {
 };
 const initFilters = () => {
   filters.value = {
-      global: { value: null, matchMode: FilterMatchMode.CONTAINS },
-      //xxxx: { operator: FilterOperator.AND, constraints: [{ value: null, matchMode: FilterMatchMode.STARTS_WITH }] },
-      // 'status.name': { operator: FilterOperator.AND, constraints: [{ value: null, matchMode: FilterMatchMode.STARTS_WITH }] },
-      // 'farm.name': { operator: FilterOperator.AND, constraints: [{ value: null, matchMode: FilterMatchMode.STARTS_WITH }] },
-      // 'company.name': { operator: FilterOperator.AND, constraints: [{ value: null, matchMode: FilterMatchMode.STARTS_WITH }] },
-      // created_at: { operator: FilterOperator.AND, constraints: [{ value: null, matchMode: FilterMatchMode.STARTS_WITH }] },
-      // updated_at: { operator: FilterOperator.AND, constraints: [{ value: null, matchMode: FilterMatchMode.STARTS_WITH }] }
+            global: { value: null, matchMode: FilterMatchMode.CONTAINS },
+            order_number_customer: { operator: FilterOperator.AND, constraints: [{ value: null, matchMode: FilterMatchMode.STARTS_WITH }] },
+			invoice_number_customer: { operator: FilterOperator.AND, constraints: [{ value: null, matchMode: FilterMatchMode.STARTS_WITH }] },
+			customer_name: { operator: FilterOperator.AND, constraints: [{ value: null, matchMode: FilterMatchMode.STARTS_WITH }] },
+			request_date: { operator: FilterOperator.AND, constraints: [{ value: null, matchMode: FilterMatchMode.STARTS_WITH }] },
+			delivery_datetime: { operator: FilterOperator.AND, constraints: [{ value: null, matchMode: FilterMatchMode.STARTS_WITH }] },
+			packaging_presentation: { operator: FilterOperator.AND, constraints: [{ value: null, matchMode: FilterMatchMode.STARTS_WITH }] },
+			dispatch_number_lot: { operator: FilterOperator.AND, constraints: [{ value: null, matchMode: FilterMatchMode.STARTS_WITH }] },
+			outlet_temperature: { operator: FilterOperator.AND, constraints: [{ value: null, matchMode: FilterMatchMode.STARTS_WITH }] },
+			request_qty: { operator: FilterOperator.AND, constraints: [{ value: null, matchMode: FilterMatchMode.STARTS_WITH }] },
+			packing_type_id: { operator: FilterOperator.AND, constraints: [{ value: null, matchMode: FilterMatchMode.STARTS_WITH }] },
+			packing_type_name: { operator: FilterOperator.AND, constraints: [{ value: null, matchMode: FilterMatchMode.STARTS_WITH }] },
+			employee_id: { operator: FilterOperator.AND, constraints: [{ value: null, matchMode: FilterMatchMode.STARTS_WITH }] },
+			place_of_delivery: { operator: FilterOperator.AND, constraints: [{ value: null, matchMode: FilterMatchMode.STARTS_WITH }] },
+			product_id:{ operator: FilterOperator.AND, constraints: [{ value: null, matchMode: FilterMatchMode.STARTS_WITH }] },
+			product_type_id:{ operator: FilterOperator.AND, constraints: [{ value: null, matchMode: FilterMatchMode.STARTS_WITH }] },
+			'farm.name':{ operator: FilterOperator.AND, constraints: [{ value: null, matchMode: FilterMatchMode.STARTS_WITH }] },
+			'company.name': { operator: FilterOperator.AND, constraints: [{ value: null, matchMode: FilterMatchMode.STARTS_WITH }] },
+			'status.name': { operator: FilterOperator.AND, constraints: [{ value: null, matchMode: FilterMatchMode.STARTS_WITH }] },
+			created_at: { operator: FilterOperator.AND, constraints: [{ value: null, matchMode: FilterMatchMode.STARTS_WITH }] },
+			updated_at: { operator: FilterOperator.AND, constraints: [{ value: null, matchMode: FilterMatchMode.STARTS_WITH }] },
   };
 };
 
