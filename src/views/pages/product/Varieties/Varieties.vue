@@ -1,472 +1,298 @@
 <template>
-    <h1>Información de tipo de Variedades </h1>
-    
+    <div>
     <div class="card">
-
-
-
+        <div>
+            <h1>Información de tipos de variedades</h1> 
+        </div>
+    </div>
+    <div class="card">
         <div class="grid">
             <div class="col-xs-12 col-sm-6 col-md-4 mb-2 text-center mx-auto">
-                <Toolbar class="bg-gray-900 shadow-2"
-                    style="border-radius: 3rem; background-image: linear-gradient(to right, var(--green-100), var(--green-200))">
+                <!--Uncomment when table is done-->
+                
+                <!-- <div class="col-xs-12 col-sm-6 col-md-4 mb-2 text-center mx-auto">
+                <Toolbar class="bg-gray-900 shadow-2" style="border-radius: 3rem; background-image: linear-gradient(to right, var(--green-100), var(--green-200))">
                     <template v-slot:start>
                         <div>
-                            <Button :disabled="headerNames.length > 0" label="New" icon="pi pi-plus"
-                                class="p-button-success mr-2 ml-2 mb-2 mt-2" @click="openNew" size="large" />
-                            <!-- <i class="pi pi-bars p-toolbar-separator mr-2 ml-2 mb-2 mt-2"></i> -->
-                            <Button :disabled="!(listRowSelect.length > 0 && listRowSelect.length < 2)" label="Edit"
-                                icon="pi pi-file-edit" class="p-button-help mr-2 ml-2 mb-2 mt-2" @click="openEdit"
-                                size="large" />
-                            <Button :disabled="!(listRowSelect.length > 0 && listRowSelect.length < 2)" label="Clone"
-                                icon="pi pi-copy" class="p-button-secondary mr-2 ml-2 mb-2 mt-2" @click="openClone"
-                                size="large" />
-                            <Button :disabled="headerNames.length > 0" label="Export" icon="pi pi-file-import"
-                                class="p-button-warning mr-2 ml-2 mb-2 mt-2" @click="openExport" size="large" />
-                            <Button :disabled="!listRowSelect.length > 0" label="Delete" icon="pi pi-trash"
-                                class="p-button-danger mr-2 ml-2 mb-2 mt-2" @click="openDelete" size="large" />
-
+                            <Button label="New" icon="pi pi-plus" class="p-button-success mr-2 ml-2 mb-2 mt-2" @click="openNew" size="large" />
+                            <Button :disabled="!(listRowSelect.length > 0 && listRowSelect.length < 2)" label="Edit" icon="pi pi-file-edit" class="p-button-help mr-2 ml-2 mb-2 mt-2" @click="openEdit" size="large" />
+                            <Button :disabled="!(listRowSelect.length > 0 && listRowSelect.length < 2)" label="Clone" icon="pi pi-copy" class="p-button-secondary mr-2 ml-2 mb-2 mt-2" @click="openClone" size="large" />
+                            <Button label="Export" icon="pi pi-file-import" class="p-button-warning mr-2 ml-2 mb-2 mt-2" @click="openExport" size="large" />
+                            <Button :disabled="!listRowSelect.length > 0" label="Delete" icon="pi pi-trash" class="p-button-danger mr-2 ml-2 mb-2 mt-2" @click="openDelete" size="large" />
                         </div>
                     </template>
                 </Toolbar>
+            </div> -->
 
             </div>
-            
-            
-            <Dialog v-model:visible="formDialog" :style="{ width: '700px' }" header="Unit Types Details" :modal="true"
-                class="p-fluid">
-                <div class="formgrid grid">
-                    <!-- <pre>{{ listRowSelect}}</pre> -->
-                    
-                    
-                    <div v-for="key in conditionsVarieties   " :key="key" class="field">
-
-
-                        <div class="field col">
-                            <!-- <div v-if="key.type === 'text' && (key.label === 'name' || key.label === 'code')" class="field col"> -->
-
-                            <!-- <label v-text="key.label"></label> -->
-                            <!-- <pre>{{conditionsProducts }}</pre> -->
-
-                            <label :for="key.label" class="ml-2"> {{ key.label }} </label>
-                            <!-- <pre>{{ listRowSelect.length}}</pre> -->
-
-                            <!-- <pre>{{ headerNamesRow }}</pre> -->
-                            
-                            <div v-if="listRowSelect.length == 0">
-                                <component v-model="headerNamesRow[getIndexByLabel(key.fieldName)].data" 
-                                :is='key.typeDataForm' 
-                                :label="key.label"
-                                    :inputId="key.label" :options="options" aria-labelledby="basic"
-                                    :placeholder="key.label" />
-                            </div>
-                            <div v-else>
-                                <component
-                                    v-model="headerNamesRow[getIndexByLabel(key.fieldName)].data"
-                                    :is="key.typeDataForm" :label="key.label" :inputId="key.label" :options="options"
-                                    aria-labelledby="basic" :placeholder="key.label" />
-
-                            </div>
-
-
-                            <!-- <InputText id="name" v-model="key.data" :required="true" integeronly /> -->
-
-
-                            <div v-if="isServerError && allLabels.includes(key.fieldName)" class="text-danger">
-                                <div v-for="errorKey in Object.keys(serverError)" :key="errorKey" class="text-danger">
-                                    <span class="text-danger" v-if="key.fieldName == errorKey"
-                                        v-text="`${serverError[errorKey]}`"></span>
-
-                                </div>
-                            </div>
-
-                            <!-- <div v-if="isServerError && conditionsProducts .code.label == key.label" class="text-danger">
-                                <div v-for="errorKey in Object.keys(serverError)" :key="errorKey" class="text-danger">
-                                    <span class="text-danger" v-if="key.label == errorKey"
-                                        v-text="`${serverError[errorKey]}`"></span>
-
-                                </div>
-                            </div> -->
-
-
-                        </div>
-                    </div>
-                </div>
-                <template #footer>
-                    <div>
-                        <Button label="Cancel" icon="pi pi-times" class="p-button-text" @click="hideDialog" />
-                        <Button label="Save" icon="pi pi-check" class="p-button-text" @click="saveRecord" />
-
-                    </div>
-                </template>
-            </Dialog>
-
-            <Dialog v-model:visible="exportDialog" :style="{ width: '280px' }" header="Unit Types Details" :modal="true"
-                class="p-fluid">
-                <div class="field col">
-                    <label>File name</label>
-                    <InputText id="name" v-model="filename" :required="true" integeronly />
-                    <span class="p-float-label mt-5">
-                        <Dropdown v-model="format" :options="extenciones" optionLabel="name"
-                            :class="{ 'p-invalid w-full md:w-14rem': format == '', ' w-full md:w-14rem': format != '' }" />
-                        <label for="cs-city">Format</label>
-                    </span>
-                </div>
-                <template #footer>
-                    <Button label="Cancel" icon="pi pi-times" class="p-button-text" @click="exportDialog = false" />
-                    <Button label="Export" icon="pi pi-check" class="p-button-text" @click="saveRecord" />
-                </template>
-            </Dialog>
-
-
-            <Dialog v-model:visible="deleteRecords" :style="{ width: '450px' }" header="Confirm" :modal="true">
-                <div class="flex align-items-center " v-for="item in headerNamesRow" :key="item">
-                    <Checkbox class="mr-2" v-model="item.selecti" :binary="true" />
-                    <label :for="item.id"> {{ item.label }} </label>
-                    <i class="pi pi-exclamation-triangle ml-3 mb-2" style="font-size: 2rem" />
-                </div>
-
-                <div class="flex align-items-center justify-content-center"><br><br><span>Are you sure you want to delete
-                        the selected ones?</span></div>
-
-                <template #footer>
-                    <Button label="No" icon="pi pi-times" class="p-button-text" @click="deleteRecords = false" />
-                    <Button label="Yes" icon="pi pi-check" class="p-button-text" @click="saveRecord" />
-                </template>
-            </Dialog>
-
-            <Toast />
         </div>
+        <!-- <pre>{{ dataResponseAPI }}</pre> -->
+        <DataTable
+        :value="dataResponseAPI.data"
+        dataKey="uuid"
+        tableStyle="min-width: 75rem"
+        showGridlines
+        :loading="loading"
+        scrollable
+        scrollHeight="600px"
+        resizableColumns
+        columnResizeMode="expand"
+        sortMode="multiple"
+        :paginator="true"
+        :rows="50"
+        :rowsPerPageOptions="[5, 10, 20, 50]"
+        :class="`p-datatable-${size.class}`"
+        @row-select="onRowSelect(selectedRegisters)"
+        @row-unselect="onRowSelect(selectedRegisters)"
+        @select-all-change="onSelectAllChange"
+        v-model:selection="selectedRegisters"
+        filterDisplay="menu"
+        v-model:filters="filters"
+        :globalFilterFields="['code', 'name']"
+         
+        >
+        <template #header>
+            <!--Uncomment when filters are done-->
 
+            <Toolbar class = "mb-2">
+                    <template v-slot:start>
+                        <Button type="button" icon="pi pi-filter-slash" label="Limpiar" class="p-button-outlined mb-2" @click="clearFilter()" />
+                    </template>
+                    <template v-slot:end>
+                        <span class="p-input-icon-left mb-2">
+                        <i class="pi pi-search" />
+                        <InputText v-model="filters['global'].value" placeholder="Buscar" style="width: 100%" />
+                    </span>
+                    </template>
+                    <template v-slot:center>
+                        
+                        <SelectButton v-model="size" :options="sizeOptions" optionLabel="label" dataKey="label"> </SelectButton>
+                        
+                    </template>       
+                </Toolbar>
+        </template>
 
-        <Table title="" path-api="/unit_types" @HeaderNames="onHeaderNames" @onRowSelect="RowSelect"
-            :dataGot="dataFromComponent" :allLabels="allLabels" />
+        <template #empty> No customers found. </template>
+        <template #loading> Loading customers data. Please wait. </template>
+        <Column selectionMode="multiple" headerStyle="width: 3rem"></Column>
+        <Column field="code" filterField="code" header="Code" sortable frozen=""> <!--Replace :frozen with the model-->
+            <template #header>
+                    <ToggleButton v-model="documentFrozen" onIcon="pi pi-lock" offIcon="pi pi-lock-open" onLabel="" offLabel="" />
+                    <div>&nbsp;</div>
+                </template>
 
+                <template #body="{ data }">
+                    {{ data.code }} 
+                </template>
+                <template #filter="{ filterModel }">
+                    <InputText v-model="filterModel.value" type="text" class="p-column-filter" placeholder="Search by " />
+                </template>
+        </Column>
+
+        <Column field="name" filterField="name" header="Name" sortable> 
+            
+                <template #body="{ data }">
+                    {{ data.name }} 
+                </template>
+                <template #filter="{ filterModel }">
+                    <InputText v-model="filterModel.value" type="text" class="p-column-filter" placeholder="Search by " />
+                </template>
+        </Column>
+
+        <!--Here add other columns-->
+
+        <Column field="farmName" filterField="farm.name" header="Farm Name" sortable>
+                <template #body="{ data }">
+                    {{ data.farm.name }}
+                </template>
+                <template #filter="{ filterModel }">
+                    <InputText v-model="filterModel.value" type="text" class="p-column-filter" placeholder="Search by farm" />
+                </template>
+            </Column>
+
+            <Column field="companyName" filterField="company.name" header="Company Name" sortable>
+                <template #body="{ data }">
+                    {{ data.company.name }}
+                </template>
+                <template #filter="{ filterModel }">
+                    <InputText v-model="filterModel.value" type="text" class="p-column-filter" placeholder="Search by farm" />
+                </template>
+            </Column>
+
+            <Column field="createdAt" filterField="created_at" header="Creation date" sortable>
+                <template #body="{ data }">
+                    {{ data.created_at }}
+                </template>
+                <template #filter="{ filterModel }">
+                    <InputText v-model="filterModel.value" type="text" class="p-column-filter" placeholder="Search by creation date" />
+                </template>
+            </Column>
+
+            <Column field="updatedAt" filterField="updated_at" header="Modification date" sortable>
+                <template #body="{ data }">
+                    {{ data.updated_at }}
+                </template>
+                <template #filter="{ filterModel }">
+                    <InputText v-model="filterModel.value" type="text" class="p-column-filter" placeholder="Search by modification date" />
+                </template>
+            </Column>
+
+            <Column field="status" filterField="status.name" header="Status" sortable>
+                <template #body="{ data }">
+                    <Tag :value="data.status.name" :severity="'EFC88B'" />
+                </template>
+                <template #filter="{ filterModel }">
+                    <InputText v-model="filterModel.value" type="text" class="p-column-filter" placeholder="Search by status" />
+                </template>
+            </Column>
+
+        </DataTable>
+        <Dialog v-model:visible="formDialog" :style="{ width: '700px' }" :header="headerDialog" :modal="true" class="p-fluid text-center mx-auto">
+            <pre>{{ selectedRegisters }}</pre>
+        </Dialog>
+        <Dialog v-model:visible="deleteDialog" :style="{ width: '700px' }" :header="headerDialog" :modal="true" class="p-fluid text-center mx-auto">
+            <pre>{{ selectedRegisters }}</pre>
+        </Dialog> 
     </div>
+</div>
+    
 </template>
 
+<!-- 
+filterDisplay="menu"
+v-model:filters="filters"
+:globalFilterFields="['', 'company.name']"
 
+
+const documentFrozen = ref(false); change name field 
+<DataTable id="tblData"
+     -->
 <script setup>
+import { ref, watch, provide, onBeforeMount, onMounted } from 'vue';
+import useDataAPI from '@/composables/DataAPI/FetchDataAPI.js';
+import { FilterMatchMode, FilterOperator } from 'primevue/api';
+import { useRouter } from 'vue-router';
+import { useForm } from 'vee-validate';
+import { toTypedSchema } from '@vee-validate/zod';
+import { z } from 'zod';
+import ability from '@/service/ability.js';
+import { AbilityBuilder} from '@casl/ability';
+
+let endpoint = ref('/variants'); //replace endpoint with your endpoint
+const loading = ref(false);
+
+const { getAllResponseAPI,getAllResponsePermissionsAPI, getAllResponseListAPI, totalRecordsResponseAPI, currentPageResponseAPI, linksResponseAPI, postResponseAPI, putResponseAPI, deleteResponseAPI, errorResponseAPI, dataResponseAPI, dataResponsePermissionsAPI,dataResponseListAPI, statusCode } =
+    useDataAPI();
+const documentFrozen = ref(false);
+////////////
+ //Form here
+ ////////////   
+const size = ref({ label: 'Normal', value: 'normal' });
+const sizeOptions = ref([
+    { label: 'Small', value: 'small', class: 'sm' },
+    { label: 'Normal', value: 'normal' },
+    { label: 'Large', value: 'large', class: 'lg' }
+]);
 
 
-import { ref, watch, provide, onBeforeMount } from 'vue';
-import { useToast } from 'primevue/usetoast';
-
-import Table from '@/components/Table.vue';
-import useRestrictionVarieties from '@/composables/Product/Varieties/restrictionsVarieties.js';
-import useDataAPI from '@/composables/DataAPI/FetchDataAPI.js'
-
-const { getAllResponseAPI, postResponseAPI, putResponseAPI, deleteResponseAPI, errorResponseAPI, dataResponseAPI } = useDataAPI();
-const requestDataUnitTypesDelete = {}
-const dataFromComponent = ref();
-const { conditionsVarieties } = useRestrictionVarieties();
-
-const allLabels = ref([])
-allLabels.value = Object.values(conditionsVarieties).map(condition => condition.fieldName);
-const idEditRecord = ref()
-const toast = useToast();
-const formDialog = ref(false);
-const deleteRecords = ref(false);
-const exportDialog = ref(false);
-const mode = ref('');
-const filename = ref('table');
-const headerNamesRow = ref([]);
-const isChanging = ref(false);
-let endpoint = ref("/variants")
-
-const getIndexByLabel = (fieldName) => {
-  const index = headerNamesRow.value.findIndex(objeto => objeto.label === fieldName);
-  return index !== -1 ? index : null;
-};
-onBeforeMount(async () => {
-    readAll(endpoint.value);
+onMounted(async () => {
+    await loadLazyData();
+    await getAllResponsePermissionsAPI("/abilities");
 });
 
-const readAll = async (endpoint) => {
+const filters = ref();
+onBeforeMount(() => {
+    initFilters();
+});
 
-    await getAllResponseAPI(endpoint);
-    dataFromComponent.value = dataResponseAPI.value;
-    // dataFromComponent.value = JSON.parse(JSON.stringify(dataFromComponent.value, null, 2));
-
-
+const clearFilter = () => {
+    initFilters();
 };
-watch(
-    () => dataFromComponent.value,
-    (newValue, oldValue) => {
+const initFilters = () => {
+    filters.value = {
+        global: { value: null, matchMode: FilterMatchMode.CONTAINS },
+        code: { operator: FilterOperator.AND, constraints: [{ value: null, matchMode: FilterMatchMode.STARTS_WITH }] },
+        name: { operator: FilterOperator.AND, constraints: [{ value: null, matchMode: FilterMatchMode.STARTS_WITH }] },
+        'status.name': { operator: FilterOperator.AND, constraints: [{ value: null, matchMode: FilterMatchMode.STARTS_WITH }] },
+        'farm.name': { operator: FilterOperator.AND, constraints: [{ value: null, matchMode: FilterMatchMode.STARTS_WITH }] },
+        'company.name': { operator: FilterOperator.AND, constraints: [{ value: null, matchMode: FilterMatchMode.STARTS_WITH }] },
+        created_at: { operator: FilterOperator.AND, constraints: [{ value: null, matchMode: FilterMatchMode.STARTS_WITH }] },
+        updated_at: { operator: FilterOperator.AND, constraints: [{ value: null, matchMode: FilterMatchMode.STARTS_WITH }] }
+    };
+};
 
-    }
-);
-watch(
-    () => isChanging.value,
-    (newValue, oldValue) => {
-        readAll(endpoint.value);
-        console.log(newValue)
-        console.log(oldValue)
-    }
-);
-
-let serverError = ref(null);
-let isServerError = ref(false);
-const newRecord = async (requestDataUnitTypes, endpoint) => {
+const loadLazyData = async (event) => {
+    //lazyParams.value = { ...lazyParams.value, first: event?.first || first.value };
     
-    await postResponseAPI(requestDataUnitTypes, endpoint);
-    //console.log(errorResponseAPI.value)    
-    serverError.value = errorResponseAPI.value;
-    //console.log(serverError.value)
+    await getAllResponseAPI(endpoint.value);
+    loading.value = false;
     
-    
-    if (serverError.value._rawValue != "") {
-        isServerError.value = true
-        toast.add({ severity: 'Error', summary: 'There are some errores', detail: 'Must correct some mistakes', life: 3000 });
-                    
-    }
-    else {
-        isChanging.value = true
-        isServerError.value = false
-        hideDialog();
-        toast.add({ severity: 'success', summary: 'Successful', detail: 'Done', life: 3000 });
-    }
-
-
 };
 
-const updateRecord = async (requestDataUnitTypes, id, endpoint) => {
-    await putResponseAPI(requestDataUnitTypes, endpoint, id);
-        serverError.value = errorResponseAPI.value;
-    if (serverError.value._rawValue != "") {
-        isServerError.value = true
-        toast.add({ severity: 'Error', summary: 'There are some errores', detail: 'Must correct some mistakes', life: 3000 });
-                   
-    }
-    else {
-        isChanging.value = true
-        isServerError.value = false
-        hideDialog();
-        toast.add({ severity: 'success', summary: 'Successful', detail: 'Done', life: 3000 });
-    }
-};
-const dropRecord = async (id, endpoint) => {
-    await deleteResponseAPI(requestDataUnitTypesDelete, endpoint, id);
-        serverError.value = errorResponseAPI.value;
-    if (serverError.value._rawValue != "") {
-        isServerError.value = true
-        toast.add({ severity: 'Error', summary: 'There are some errores', detail: 'Must correct some mistakes', life: 3000 });
-    }
-    else {
-        isChanging.value = true
-        isServerError.value = false
-        hideDialog();
-        toast.add({ severity: 'success', summary: 'Successful', detail: 'Done', life: 3000 });
-    }
-};
-const extenciones = ref([
-    {
-        name: 'CSV',
-        code: true
-    },
-    {
-        name: 'XLS',
-        code: false
-    }
-]);
-const format = ref('');
-
-let requestData = {}
-const hideDialog = () => {
-    formDialog.value = false;
-};
 
 const listRowSelect = ref([]);
-const RowSelect = (data) => {
-    listRowSelect.value = data;
-};
-let headerNames = ref([]);
-const onHeaderNames = (data) => (
-    headerNames.value = data
-
-);
-
-
-provide('isChanging', isChanging);
-watch(listRowSelect, RowSelect);
-const openEdit = () => {
-    mode.value = 'EDIT';
-    headerNamesRow.value = [];
+const selectedRegisters = ref([]);
+const onRowSelect = (data) => {
     
-    for (let key in listRowSelect.value[0]) {
-        if (key == 'id') {
-            idEditRecord.value = listRowSelect.value[0][key]
-            continue;
-        }
-        else if (!allLabels.value.includes(key)) continue
-        headerNamesRow.value.push({
-            label: key,
-            data: listRowSelect.value[0][key],
-            id: idEditRecord,
-            selecti: true
-        });
-
-    }
-    formDialog.value = true;
+    listRowSelect.value = data;
+    //assignValues(mode.value)
+    
 };
 
+watch(listRowSelect, onRowSelect);
+const onSelectAllChange = () => {
+    onRowSelect();
+};
+
+const mode = ref();
+const formDialog = ref(false);
+const deleteDialog = ref(false);
+const headerDialog = ref('');
+const hideDialog = () => {
+    formDialog.value = false;
+    deleteDialog.value = false;
+    recordsDelete.value = [];
+    resetValues();
+}
+const resetValues = () => {}
+const assignValues = (modex) => {
+    if ((modex ==='EDIT')) {}
+    if ((modex=== 'CLONE' )) {}
+}
 const openNew = () => {
     mode.value = 'NEW';
-    headerNamesRow.value = [];
-    for (let key in headerNames.value) {
-        if (key == 'id') continue;
-        else if (!allLabels.value.includes(key)) {
-            continue
-        }
-        headerNamesRow.value.push({
-            label: key,
-            data: ''
-        });
-
-    }
-
+    resetValues();
     formDialog.value = true;
+    headerDialog.value = 'New xxxxxxx record';
+}
+const openEdit = () => {
+    mode.value = 'EDIT';
+    formDialog.value = true;
+    headerDialog.value = 'Edit a xxxxx record';
+    assignValues(mode.value)
 
-
-};
-
+}
 const openClone = () => {
     mode.value = 'CLONE';
-    headerNamesRow.value = [];
-
-    for (let key in headerNames.value) {
-        if (key == 'id') continue;
-        else if (!allLabels.value.includes(key)) {
-
-            continue
-        }
-        headerNamesRow.value.push({
-            label: key,
-            data: headerNames.value[key]
-        });
-    }
+    headerDialog.value = 'Clone a xxxx record';
     formDialog.value = true;
-};
-
-const openExport = () => {
-    mode.value = 'EXPORT';
-    format.value = '';
-    exportDialog.value = true;
-};
-
+    assignValues(mode.value)
+}
+let recordsDelete = ref([]);
 const openDelete = () => {
     mode.value = 'DELETE';
-    headerNamesRow.value = [];
-    for (let key in listRowSelect.value) {
-        headerNamesRow.value.push({
-            label: listRowSelect.value[key].name,
-            id: listRowSelect.value[key].id,
-            selecti: true
-        });
-
-    }
-    deleteRecords.value = true;
-};
-
-const saveRecord = () => {
-    let data = [];
-
-    if (mode.value == 'DELETE') {
-        headerNamesRow.value.map((item) => {
-            if (item.selecti) {
-                data.push(item.id);
-
-                dropRecord(item.id, endpoint.value)
-            }
-        });
-        isChanging.value = true
-    } else if (mode.value == 'EXPORT') {
-        if (format.value == '') {
-            toast.add({ severity: 'error', summary: 'Select Format', detail: 'Must select a format', life: 3000 });
-            return;
-        }
-        data = {
-            data: format.value.code,
-            name: filename.value + (format.value.code ? '.csv' : '.xls')
-        };
-        isChanging.value = true
-    }
-    else if (mode.value == 'NEW') {
-        data = headerNamesRow.value.map((heade) => {
-            const data = {};
-            data[heade.label] = heade.data;
-
-            dataTmp = data
-            console.log(data)
-            return data;
-        });
-
-
-        requestData = data.reduce((result, currentObject) => {
-
-            const [key] = Object.keys(currentObject);
-            const value = currentObject[key];
-            result[key] = value;
-            return result;
-        }, {});
-
-        newRecord(requestData, endpoint.value)
-
-
-    }
-
-    else if (mode.value == 'CLONE') {
-        data = headerNamesRow.value.map((heade) => {
-            const data = {};
-            data[heade.label] = heade.data;
-            dataTmp = data
-
-            return data;
-        });
-        requestData = data.reduce((result, currentObject) => {
-            const [key] = Object.keys(currentObject);
-            const value = currentObject[key];
-            result[key] = value;
-            return result;
-        }, {});
-        newRecord(requestData, endpoint.value)
-        isChanging.value = true
-    }
-    else if (mode.value == 'EDIT') {
-        console.log("Guardé al edit")
-        let id = 0
-        data = headerNamesRow.value.map((heade) => {
-            const data = {};
-            data[heade.label] = heade.data;
-            dataTmp = data
-            
-            if (heade.selecti)
-                id = heade.id
-            console.log(id)
-            return data;
-
-        });
-        requestData = data.reduce((result, currentObject) => {
-            const [key] = Object.keys(currentObject);
-            const value = currentObject[key];
-            result[key] = value;
-            return result;
-        }, {});
-        updateRecord(requestData, id, endpoint.value)
-        isChanging.value = true
-    }
-
-    deleteRecords.value = false;
-    exportDialog.value = false;
-
-};
-
-
+    headerDialog.value = 'Delete a xxxxx record';
+    resetValues();
+    deleteDialog.value = true;
+}
+const openExport = () => {
+    mode.value = 'EXPORT';
+    headerDialog.value = 'Export a xxxxx record';
+    resetValues();
+    formDialog.value = true;
+}
 
 </script>
 
 <style lang="scss" scoped>
-.text-danger {
-    color: red;
-    /* O el color que desees */
-}
 </style>

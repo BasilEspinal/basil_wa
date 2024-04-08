@@ -48,7 +48,7 @@
         v-model:selection="selectedRegisters"
         filterDisplay="menu"
         v-model:filters="filters"
-        :globalFilterFields="['', 'name']"
+        :globalFilterFields="['code', 'name']"
          
         >
         <template #header>
