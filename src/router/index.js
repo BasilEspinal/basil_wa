@@ -162,15 +162,15 @@ const router = createRouter({
                 },
                 
                 {
-                    path: '/comercial/customers_requests',
-                    name: '/comercial/customers_requests',
-                    component: () => import('@/views/pages/Comercial/Customers/CustomersRequests.vue')
+                    path: '/Commercial/CustomersRequests/CustomersRequests',
+                    name: '/CustomersRequests',
+                    component: () => import('@/views/pages/Commercial/CustomersRequests/CustomersRequests.vue')
                 },
 
                 {
-                    path: '/comercial/customers',
-                    name: '/comercial/customers',
-                    component: () => import('@/views/pages/Comercial/Customers/Customers.vue')
+                    path: '/Commercial/Customers/Customers',
+                    name: 'Customers',
+                    component: () => import('@/views/pages/Commercial/Customers/Customers.vue')
                 },
                 {
                     path: '/admon/companies',
