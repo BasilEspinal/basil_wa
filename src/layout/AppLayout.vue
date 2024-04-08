@@ -1,15 +1,25 @@
 <script setup>
-import { computed, watch, ref, onBeforeMount } from 'vue';
+import { computed, watch, ref, onBeforeMount, onMounted } from 'vue';
 import AppTopbar from './AppTopbar.vue';
 import AppFooter from './AppFooter.vue';
 import { useRouter } from 'vue-router';
 import AppSidebar from './AppSidebar.vue';
+import useDataAPI from '@/composables/DataAPI/FetchDataAPI.js';
 import { useLayout } from '@/layout/composables/layout';
-
+import ability from '@/service/ability.js';
+const {getAllResponsePermissionsAPI,dataResponsePermissionsAPI  } =
+    useDataAPI();
 const { layoutConfig, layoutState, isSidebarActive } = useLayout();
 
 const outsideClickListener = ref(null);
 const router = useRouter();
+const lengthPermissions = ref(0);
+onBeforeMount(async () => {
+    
+    await getAllResponsePermissionsAPI("/abilities");
+    lengthPermissions.value = dataResponsePermissionsAPI.value.length;
+    
+});
 
 watch(isSidebarActive, (newVal) => {
     if (newVal) {
@@ -20,7 +30,7 @@ watch(isSidebarActive, (newVal) => {
 });
 
 onBeforeMount(() => {
-    if (!sessionStorage.getItem('JWT')) {
+    if (!sessionStorage.getItem('accessSessionToken')) {
         router.push('/auth/login');
     }
 });
@@ -50,6 +60,8 @@ const bindOutsideClickListener = () => {
         document.addEventListener('click', outsideClickListener.value);
     }
 };
+
+
 const unbindOutsideClickListener = () => {
     if (outsideClickListener.value) {
         document.removeEventListener('click', outsideClickListener);
@@ -62,15 +74,29 @@ const isOutsideClicked = (event) => {
 
     return !(sidebarEl.isSameNode(event.target) || sidebarEl.contains(event.target) || topbarEl.isSameNode(event.target) || topbarEl.contains(event.target));
 };
+// 
+
 </script>
 
 <template>
-    <div class="layout-wrapper" :class="containerClass">
+    <div :class="[
+    (ability.can('agro_tv_menu') && lengthPermissions==1) ||lengthPermissions==0 ? '' : 'layout-wrapper',
+    containerClass
+    ]" >
         <app-topbar></app-topbar>
-        <div class="layout-sidebar">
-            <app-sidebar></app-sidebar>
+        
+        <div v-if="(ability.can('agro_tv_menu')&&lengthPermissions==1)||lengthPermissions==0"  >
+            
         </div>
+        <div v-else class="layout-sidebar" >
+            <app-sidebar></app-sidebar>
+        </div> 
+
+
         <div class="layout-main-container">
+            <div v-if="(ability.can('agro_tv_menu') && lengthPermissions==1) ||lengthPermissions==0" >
+                
+            </div>
             <div class="layout-main">
                 <router-view></router-view>
             </div>

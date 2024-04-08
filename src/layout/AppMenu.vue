@@ -1,190 +1,419 @@
 <script setup>
 import { ref, onBeforeMount } from 'vue';
 
-//import AppMenuItem from './AppMenuItem.vue';
-import MenuService from '@/service/MenuService';
+import AppMenuItem from './AppMenuItem.vue';
+import ability from '@/service/ability.js';
+import useDataAPI from '@/composables/DataAPI/FetchDataAPI.js';
 
-const menuService = new MenuService();
+const { getAllResponseAPI, getAllResponsePermissionsAPI, getAllResponseListAPI, totalRecordsResponseAPI, currentPageResponseAPI, linksResponseAPI, postResponseAPI, putResponseAPI, deleteResponseAPI, errorResponseAPI, dataResponseAPI, dataResponseListAPI, statusCode } =
+    useDataAPI();
 
-const model = ref([]);
-const oldModel = ref([
+const model2 = ref([
+    
     {
-        label: 'Home',
-        items: [{ label: 'Dashboard', icon: 'pi pi-fw pi-home', to: '/applayout' }]
-    },
-    {
-        label: 'UI Components',
-        items: [
-            { label: 'Generic Table', icon: 'pi pi-fw pi-id-card', to: '/components/GenericComponet' },
-            { label: 'Form Layout', icon: 'pi pi-fw pi-id-card', to: '/uikit/formlayout' },
-            { label: 'Input', icon: 'pi pi-fw pi-check-square', to: '/uikit/input' },
-            { label: 'Float Label', icon: 'pi pi-fw pi-bookmark', to: '/uikit/floatlabel' },
-            { label: 'Invalid State', icon: 'pi pi-fw pi-exclamation-circle', to: '/uikit/invalidstate' },
-            { label: 'Button', icon: 'pi pi-fw pi-mobile', to: '/uikit/button', class: 'rotated-icon' },
-            { label: 'Table', icon: 'pi pi-fw pi-table', to: '/uikit/table' },
-            { label: 'List', icon: 'pi pi-fw pi-list', to: '/uikit/list' },
-            { label: 'Tree', icon: 'pi pi-fw pi-share-alt', to: '/uikit/tree' },
-            { label: 'Panel', icon: 'pi pi-fw pi-tablet', to: '/uikit/panel' },
-            { label: 'Overlay', icon: 'pi pi-fw pi-clone', to: '/uikit/overlay' },
-            { label: 'Media', icon: 'pi pi-fw pi-image', to: '/uikit/media' },
-            { label: 'Menu', icon: 'pi pi-fw pi-bars', to: '/uikit/menu', preventExact: true },
-            { label: 'Message', icon: 'pi pi-fw pi-comment', to: '/uikit/message' },
-            { label: 'File', icon: 'pi pi-fw pi-file', to: '/uikit/file' },
-            { label: 'Chart', icon: 'pi pi-fw pi-chart-bar', to: '/uikit/charts' },
-            { label: 'Misc', icon: 'pi pi-fw pi-circle', to: '/uikit/misc' }
+        items:[
+            {
+        label: 'Inicio',
+        gate: 'centro_control',
+        items: [{ 
+            label: 'Centro de control', 
+            icon: 'pi pi-fw pi-home', 
+            to: '/applayout',
+            gate: 'centroControl_vista',
+        }]
+    }
         ]
     },
     {
-        label: 'Prime Blocks',
-        items: [
-            { label: 'Free Blocks', icon: 'pi pi-fw pi-eye', to: '/blocks', badge: 'NEW' },
-            { label: 'All Blocks', icon: 'pi pi-fw pi-globe', url: 'https://www.primefaces.org/primeblocks-vue', target: '_blank' }
-        ]
-    },
-    {
-        label: 'Utilities',
-        items: [
-            { label: 'PrimeIcons', icon: 'pi pi-fw pi-prime', to: '/utilities/icons' },
-            { label: 'PrimeFlex', icon: 'pi pi-fw pi-desktop', url: 'https://www.primefaces.org/primeflex/', target: '_blank' }
-        ]
-    },
-    {
-        label: 'Pages',
-        icon: 'pi pi-fw pi-briefcase',
-        to: '/pages',
         items: [
             {
-                label: 'Landing',
-                icon: 'pi pi-fw pi-globe',
-                to: '/landing'
-            },
-            {
-                label: 'Auth',
-                icon: 'pi pi-fw pi-user',
-                items: [
-                    {
-                        label: 'Login',
-                        icon: 'pi pi-fw pi-sign-in',
-                        to: '/auth/login'
-                    },
-                    {
-                        label: 'Error',
-                        icon: 'pi pi-fw pi-times-circle',
-                        to: '/auth/error'
-                    },
-                    {
-                        label: 'Access Denied',
-                        icon: 'pi pi-fw pi-lock',
-                        to: '/auth/access'
-                    }
-                ]
-            },
-            {
-                label: 'Crud',
-                icon: 'pi pi-fw pi-pencil',
-                to: '/pages/crud'
-            },
-            {
-                label: 'Timeline',
-                icon: 'pi pi-fw pi-calendar',
-                to: '/pages/timeline'
-            },
-            {
-                label: 'Not Found',
-                icon: 'pi pi-fw pi-exclamation-circle',
-                to: '/pages/notfound'
-            },
-            {
-                label: 'Empty',
-                icon: 'pi pi-fw pi-circle-off',
-                to: '/pages/empty'
+                rol: 'admin',
+                icon: 'pi pi-desktop',
+                label: 'Monitor Online',
+                gate: 'monitor_vista',
+                items: [{
+                    label: '10 de Mejor Rendimiento', icon: 'pi pi-fw pi-table',
+                    to: '/monitorCorta',
+                    gate: 'monitor_corta_vista'
+                }]
             }
         ]
     },
     {
-        label: 'Hierarchy',
         items: [
             {
-                label: 'Submenu 1',
-                icon: 'pi pi-fw pi-bookmark',
+                rol: 'admin',
+                icon: 'pi pi-bars',
+                label: 'Producto',
+                gate: 'producto_vista',
                 items: [
                     {
-                        label: 'Submenu 1.1',
-                        icon: 'pi pi-fw pi-bookmark',
-                        items: [
-                            { label: 'Submenu 1.1.1', icon: 'pi pi-fw pi-bookmark' },
-                            { label: 'Submenu 1.1.2', icon: 'pi pi-fw pi-bookmark' },
-                            { label: 'Submenu 1.1.3', icon: 'pi pi-fw pi-bookmark' }
-                        ]
+                        label: 'Variedades',
+                        to: '/product/varieties',
+                        icon: 'pi pi-th-large',
+                        gate: 'producto_variedades_vista'
                     },
                     {
-                        label: 'Submenu 1.2',
-                        icon: 'pi pi-fw pi-bookmark',
-                        items: [{ label: 'Submenu 1.2.1', icon: 'pi pi-fw pi-bookmark' }]
-                    }
-                ]
-            },
-            {
-                label: 'Submenu 2',
-                icon: 'pi pi-fw pi-bookmark',
-                items: [
-                    {
-                        label: 'Submenu 2.1',
-                        icon: 'pi pi-fw pi-bookmark',
-                        items: [
-                            { label: 'Submenu 2.1.1', icon: 'pi pi-fw pi-bookmark' },
-                            { label: 'Submenu 2.1.2', icon: 'pi pi-fw pi-bookmark' }
-                        ]
+                        icon: 'pi pi-bars',
+                        label: 'Productos',
+                        to: '/product/products',
+                        gate: 'producto_productos_vista',
+                        
                     },
                     {
-                        label: 'Submenu 2.2',
-                        icon: 'pi pi-fw pi-bookmark',
-                        items: [{ label: 'Submenu 2.2.1', icon: 'pi pi-fw pi-bookmark' }]
+                        label: 'Variedades de producto',
+                        to: '/product/productvarieties',
+                        icon: 'pi pi-list',
+                        gate: 'producto_variedadesDeProducto_vista',
+                    },
+                    {
+                        label: 'Tipos de productos',
+                        icon: 'pi pi-bookmark',
+                        to: '/product/productTypes',
+                        gate: 'producto_tiposDeProducto_vista',
+                    },
+                    {
+                        label: 'Tipos de Unidades',
+                        to: '/product/unit_types',
+                        icon: 'pi pi-bookmark',
+                        gate: 'producto_tiposDeUnidades_vista',
+                    },
+                    {
+                        label: 'Tipos de Empaque',
+                        to: '/product/packing_types',
+                        icon: 'pi pi-bookmark',
+                        gate: 'producto_tiposDeEmpaque_vista',
                     }
                 ]
             }
         ]
     },
     {
-        label: 'Get Started',
         items: [
             {
-                label: 'Documentation',
-                icon: 'pi pi-fw pi-question',
-                to: '/documentation'
-            },
+                label: 'Comercial',
+                rol: 'admin',
+                icon: 'pi pi-sitemap',
+                gate: 'comercial_vista',
+                items: [
+                    {
+                        label: 'Ofertas de producto',
+                        to: '/access',
+                        icon: 'pi pi-folder',
+                        gate: 'comercial_ofertasDeProducto_vista',
+                    },
+                    {
+                        label: 'Solicitudes de Clientes',
+                        to: '/comercial/customers_requests',
+                        icon: 'pi pi-bookmark',
+                        gate: 'comercial_solicitudesDeClientes_vista',
+                    },
+                    {
+                        label: 'Clientes',
+                        to: '/comercial/customers',
+                        icon: 'pi pi-bookmark',
+                        gate: 'comercial_clientes_vista',
+                    },
+                    {
+                        label: 'Despachos',
+                        to: '/access',
+                        icon: 'pi pi-bolt',
+                        gate: 'comercial_despachos_vista',
+                    }
+                ]
+            }
+        ]
+    },
+    {
+        items: [
             {
-                label: 'View Source',
-                icon: 'pi pi-fw pi-search',
-                url: 'https://github.com/primefaces/sakai-vue',
-                target: '_blank'
-            },
+                label: 'Producción',
+                rol: 'admin',
+                icon: 'pi pi-shopping-cart',
+                gate: 'produccion_vista',
+                items: [
+                    {
+                        label: 'Lotes para Cultivo ',
+                        to: '/production/croplots',
+                        icon: 'pi pi-bars',
+                        gate: 'produccion_lotesParaCultivo_vista',
+                    },
+                    {
+                        label: 'Vehículos',
+                        to: '/production/vehicles',
+                        icon: 'pi pi-car',
+                        gate: 'produccion_vehiculos_vista',
+                    },
+                    {
+                        label: 'Programación de Lotes',
+                        to: '/access',
+                        icon: 'pi pi-calendar-minus',
+                        gate: 'produccion_programacionDeLotes_vista',
+                    }
+                ]
+            }
+        ]
+    },
+    {
+        items: [
             {
-                label: 'Nuxt Version',
-                url: 'https://github.com/primefaces/sakai-nuxt',
-                icon: 'pi pi-fw pi-star'
+                label: 'Configuración de Pagos',
+                rol: 'admin',
+                icon: 'pi pi-dollar',
+                gate: 'configuracionDePagos_vista',
+                items: [
+                    {
+                        label: 'Tipos de Pago',
+                        to: '/payrollsettings/PaymentTypes',
+                        icon: 'pi pi-tablet',
+                        gate: 'configuracionDePagos_tiposDePago_vista',
+                    
+                    },
+                    {
+                        label: 'Tipos de Tareas',
+                        to: '/payrollsettings/taskstypes',
+                        icon: 'pi pi-list',
+                        gate: 'configuracionDePagos_tiposDeTareas_vista',
+                    },
+                    {
+                        label: 'Tarifas por Tareas',
+                        to: '/payrollsettings/taskstarif',
+                        icon: 'pi pi-bookmark',
+                        gate: 'configuracionDePagos_tarifasPorTarea_vista',
+                        
+                    },
+                    {
+                        label: 'Tarifas por Labores',
+                        to: '/payrollsettings/workstarif',
+                        icon: 'pi pi-briefcase',
+                        gate: 'configuracionDePagos_tarifasPorLabores_vista',
+                    },
+                    {
+                        label: 'Periodos de Pago',
+                        to: '/payrollsettings/payperiods',
+                        icon: 'pi pi-calendar-plus',
+                        gate: 'configuracionDePagos_periodosDePago_vista',
+                    },
+                    {
+                        label: 'Calendarios',
+                        to: '/payrollsettings/calendars',
+                        icon: 'pi pi-calendar-times',
+                        gate: 'configuracionDePagos_calendarios_vista',
+                    },
+
+                    {
+                        label: 'Centros de Trabajo',
+                        to: '/payrollsettings/Workcenters',
+                        icon: 'pi pi-bookmark',
+                        gate: 'configuracionDePagos_centrosDeTrabajo_vista',
+                    },
+                    {
+                        label: 'Cargos',
+                        to: '/payrollsettings/Jobtypes',
+                        icon: 'pi pi-bolt',
+                        gate: 'configuracionDePagos_cargos_vista',
+                    },
+                    {
+                        label: 'Empleados',
+                        to: '/payrollsettings/Employees',
+                        icon: 'pi pi-users',
+                        gate: 'configuracionDePagos_empleados_vista',
+                    }
+                ]
+            }
+        ]
+    },
+    {
+        items: [
+            {
+                label: 'Liquidacion de nómina',
+                rol: 'admin',
+                icon: 'pi pi-money-bill',
+                gate: 'liquidacion_nomina_vista',
+                items: [
+                    {
+                        label: 'Planeación Diaria',
+                        to: '/PayrollSettlement/DailyPlanner',
+                        icon: 'pi pi-tablet',
+                        gate: 'liquidacionDeNomina_planeacionDiaria_vista',
+                    },
+                    {
+                        label: 'Trabajos de Corta',
+                        to: '/PayrollSettlement/WorkRegisterCorta',
+                        icon: 'pi pi-percentage',
+                        gate: 'liquidacionDeNomina_trabajosDeCorta_vista',
+                    },
+                    {
+                        label: 'Traslado a Prefrio',
+                        to: '/PayrollSettlement/TransferTasks',
+                        icon: 'pi pi-bookmark',
+                        gate: 'liquidacionDeNomina_trasladoAPrefrio_vista',
+
+                    },
+                    {
+                        label: 'Trabajos de Selección',
+                        to: '/PayrollSettlement/WorkRegisterSelection',
+                        icon: 'pi pi-tablet',
+                        gate: 'liquidacionDeNomina_trabajosDeSeleccion_vista',
+                    },
+                    {
+                        label: 'Labores de Contratistas',
+                        to: '/PayrollSettlement/WorkRegisterDaily',
+                        icon: 'pi pi-share-alt',
+                        gate: 'liquidacionDeNomina_laboresDeContratista_vista',
+                    },
+
+                    {
+                        label: 'Descuentos de Nómina',
+                        to: '/PayrollSettlement/DiscountRegistering',
+                        icon: 'pi pi-ticket',
+                        gate: 'liquidacionDeNomina_descuentosDeNomina_vista',
+                    }
+                ]
+            }
+        ]
+    },
+    {
+        items: [
+            {
+                label: 'Administración',
+                rol: 'admin',
+                icon: 'pi pi-prime',
+                gate: 'administracion_vista',
+                items: [
+                    {
+                        label: 'Empresa',
+                        to: '/admon/companies',
+                        icon: 'pi pi-folder',
+                        gate:'administracion_empresa_vista',
+                    },
+                    {
+                        label: 'Fincas',
+                        to: '/admon/farms',
+                        icon: 'pi pi-bookmark',
+                        gate: 'administracion_fincas_vista',
+                    }
+                ]
+            }
+        ]
+    },
+    {
+        items: [
+            {
+                label: 'Sistema',
+                rol: 'admin',
+                icon: 'pi pi-desktop',
+                gate:'sistema_vista',
+                items: [
+                    {
+                        label: 'Usuarios',
+                        to: '/system/Users',
+                        icon: 'pi pi-id-card',
+                        gate: 'sistema_usuarios_vista',
+                    },
+                    {
+                        label: 'Roles',
+                        to: '/system/roles',
+                        icon: 'pi pi-user-plus',
+                        gate: 'sistema_roles_vista',
+                    },
+                    {
+                        label: 'Permisos',
+                        to: '/system/permissions',
+                        icon: 'pi pi-eye-slash',
+                        gate: 'sistema_permisos_vista',
+                    },
+                    {
+                        label: 'Estado de Registros',
+                        to: '/system/statuses',
+                        icon: 'pi pi-bell',
+                        gate: 'sistema_estadoDeRegistros_vista'
+                    }
+                ]
+            }
+        ]
+    },
+    {
+        items: [
+            {
+                label: 'App Movil',
+                rol: 'admin',
+                icon: 'pi pi-box',
+                gate: '',
+                items: [
+                    {
+                        label: 'Captura de corta',
+                        to: '/AppMovil/Corta',
+                        icon: 'pi pi-mobile',
+                        gate: ''
+                    },
+                    {
+                        label: 'Captura de Prefio',
+                        to: '/AppMovil/PreFrio',
+                        icon: 'pi pi-mobile',
+                        gate: ''
+                    },
+                    {
+                        label: 'Captura de Seleccion',
+                        to: '/AppMovil/Seleccion',
+                        icon: 'pi pi-mobile',
+                        gate: ''
+                    },
+                     {
+                        label: 'Captura de Contratista',
+                        to: '/AppMovil/Contractor',
+                        icon: 'pi pi-mobile',
+                        gate: ''
+                    },
+                    {
+                        label: 'Captura de Agronomìa',
+                        to: '/AppMovil/Agronomo',
+                        icon: 'pi pi-mobile',
+                        gate: ''
+                    },
+                ]
             }
         ]
     }
+
+
+
 ]);
 
 onBeforeMount(() => {
     fetchInfoAndUpdateValue();
 });
 
-
-
 async function fetchInfoAndUpdateValue() {
     try {
-        model.value = await menuService.getMenu();
+        await getAllResponsePermissionsAPI("/abilities");
+        
     } catch (error) {
         console.error('Error:', error);
     }
 }
+
+
 </script>
 
+<!-- <template>
+    <app-menu-item :model="oldModel" />
+</template> -->
 <template>
-    <PanelMenu :model="model" />
+    
+    <ul class="layout-menu">
+        <div v-for="item in model2" :key="item.label">
+  <!-- <p>{{ item.label }}</p> -->
+  <div v-for="nestedItem in item.items" :key="nestedItem.label">
+    <!-- <p>{{ nestedItem.label }} - Gate: {{ nestedItem.gate }}</p> -->
+  </div>
+</div>
+        <template v-for="(item, i) in model2" :key="item">
+            <!-- <div class="card"> -->
+            <app-menu-item v-if="!item.separator" :item="item" :index="i"></app-menu-item>
+            <li v-if="item.separator" class="menu-separator"></li>
+            <!-- </div> -->
+        </template>
+    </ul>
 </template>
-
 <style lang="scss" scoped></style>
