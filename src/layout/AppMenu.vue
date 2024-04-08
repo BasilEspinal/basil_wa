@@ -104,13 +104,13 @@ const model2 = ref([
                     },
                     {
                         label: 'Solicitudes de Clientes',
-                        to: '/comercial/customers_requests',
+                        to: '/Commercial/CustomerRequests',
                         icon: 'pi pi-bookmark',
                         gate: 'comercial_solicitudesDeClientes_vista',
                     },
                     {
                         label: 'Clientes',
-                        to: '/comercial/customers',
+                        to: '/Commercial/Customers',
                         icon: 'pi pi-bookmark',
                         gate: 'comercial_clientes_vista',
                     },
