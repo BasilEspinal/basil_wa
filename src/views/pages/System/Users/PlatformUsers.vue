@@ -13,13 +13,11 @@ const { dataResponseAPI, getAllResponseAPI, putResponseAPI, postResponseAPI, del
 const selectedRegisters = ref([]);
 const expandedRows = ref([]);
 const users = ref([]);
-const headerDialogSave = ref('');
 const headerDialogNew = ref('');
 const headerDialogEdit = ref('');
 const headerDialogClone = ref('');
 const headerDialogExport = ref('');
 const headerDialogDelete = ref('');
-const DialogSave = ref(false);
 const DialogNew = ref(false);
 const DialogEdit = ref(false);
 const DialogClone = ref(false);
@@ -42,13 +40,15 @@ const { handleSubmit: submitEdit, errors: errorEdit, defineField: defineEdit } =
     validationSchema: toTypedSchema(
         z.object({
             nameEdit: z.string().min(6),
-            emailEdit: z.string().email()
+            emailEdit: z.string().email(),
+            passwordEdit: z.string().refine(value => !value.length || value.length >= 8, { message: 'String must contain at least 8 character(s)' }).optional()
         }),
     ),
 });
 
 const [nameEdit, nameEditProps] = defineEdit('nameEdit');
 const [emailEdit, emailEditProps] = defineEdit('emailEdit');
+const [passwordEdit, passwordEditProps] = defineEdit('passwordEdit');
 const [name, nameProps] = defineField('name');
 const [email, emailProps] = defineField('email');
 const [password, passwordProps] = defineField('password');
@@ -81,6 +81,9 @@ const openNew = () => {
 const openEdit = () => {
     headerDialogEdit.value = 'Edit User';
     const data = selectedRegisters.value[0];
+    nameEdit.value = '';
+    emailEdit.value = '';
+    passwordEdit.value = '';
     nameEdit.value = data.name;
     emailEdit.value = data.email;
     DialogEdit.value = true;
@@ -124,14 +127,17 @@ const editUser = submitEdit(async values => {
     const dataJson = ({
         name: values.nameEdit,
         email: values.emailEdit,
-        "farm_id": 1,
-        "employee_id": 1,
+        "farm_uuid": selectedRegisters.value[0].farm.uuid,
         roles: selectedRegisters.value[0].roles.map(rol => ({ id: rol.id }))
     });
+    if (values.passwordEdit) {
+        dataJson.password = values.passwordEdit;
+    }
     const restp = await putResponseAPI(dataJson, endpoint.value, selectedRegisters.value[0].id);
     toast.add({ severity: restp.ok ? 'success' : 'error', summary: 'Update User ' + values.nameEdit, detail: restp.ok ? "Update" : "Error", life: 3000 });
     DialogEdit.value = false;
     loadingData();
+    selectedRegisters.value = [];
 });
 
 const deleteUsers = () => {
@@ -184,14 +190,16 @@ const remove = (aver) => {
         <div class="card">
             <Toolbar style="margin-bottom: 1rem;">
                 <template #center>
-                    <Button label="New" icon="pi pi-plus" class="p-button-success mr-2 ml-2 mb-2 mt-2" @click="openNew"
-                        size="large" />
-                    <Button :disabled="!(selectedRegisters.length == 1)" label="Edit" icon="pi pi-file-edit"
-                        class="p-button-help mr-2 ml-2 mb-2 mt-2" @click="openEdit" size="large" />
-                    <Button :disabled="!(selectedRegisters.length == 1)" label="Clone" icon="pi pi-copy"
-                        class="p-button-secondary mr-2 ml-2 mb-2 mt-2" @click="openClone" size="large" />
-                    <Button :disabled="!selectedRegisters.length > 0" label="Delete" icon="pi pi-trash"
-                        class="p-button-danger mr-2 ml-2 mb-2 mt-2" @click="openDelete" size="large" />
+                    <Button label="New" icon="pi pi-plus" class="p-button-success" @click="openNew" size="large" />
+                    <Divider layout="vertical" />
+                    <Button :disabled="selectedRegisters.length != 1" label="Edit" icon="pi pi-file-edit"
+                        class="p-button-help" @click="openEdit" size="large" />
+                    <Divider layout="vertical" />
+                    <Button :disabled="selectedRegisters.length != 1" label="Clone" icon="pi pi-copy"
+                        class="p-button-secondary" @click="openClone" size="large" />
+                    <Divider layout="vertical" />
+                    <Button :disabled="!selectedRegisters.length" label="Delete" icon="pi pi-trash"
+                        class="p-button-danger" @click="openDelete" size="large" />
                 </template>
             </Toolbar>
             <DataTable v-model:expandedRows="expandedRows" :loading="loading" :value="users" dataKey="id" :rows="50"
@@ -226,14 +234,6 @@ const remove = (aver) => {
                 </template>
             </DataTable>
         </div>
-        <Dialog v-model:visible="DialogSave" modal :header="headerDialogSave" class="p-fluid text-center mx-auto">
-            <span class="p-text-primary block m-5">Se actualizara la informacion de {{ selectedRegisters.length }}
-                usuarios.</span>
-            <div class="flex justify-content-end gap-2">
-                <Button type="button" label="Cancel" severity="secondary" @click="DialogSave = false"></Button>
-                <Button type="button" label="Save" @click="saveRoles()"></Button>
-            </div>
-        </Dialog>
         <Dialog v-model:visible="DialogNew" modal :header="headerDialogNew" class="p-fluid text-center mx-auto">
             <div class="mb-3">
                 <div class="flex align-items-center gap-3  mb-1">
@@ -283,9 +283,9 @@ const remove = (aver) => {
                     <InputText id="username" v-model="nameEdit" class="flex-auto" autocomplete="off"
                         v-bind="nameEditProps" />
                 </div>
-                <small id="username-help" :class="{ 'p-invalid text-red-700': errorEdit['nameEdit'] }">{{
-                        errorEdit.nameEdit
-                    }}</small>
+                <small id="username-help" :class="{ 'p-invalid text-red-700': errorEdit['nameEdit'] }">
+                    {{ errorEdit.nameEdit }}
+                </small>
             </div>
             <div class="mb-3">
                 <div class="flex align-items-center gap-3 mb-1">
@@ -293,9 +293,19 @@ const remove = (aver) => {
                     <InputText id="email" v-model="emailEdit" class="flex-auto" autocomplete="off"
                         v-bind="emailEditProps" />
                 </div>
-                <small id="username-help" :class="{ 'p-invalid text-red-700': errorEdit['emailEdit'] }">{{
-                        errorEdit.emailEdit
-                    }}</small>
+                <small id="username-help" :class="{ 'p-invalid text-red-700': errorEdit['emailEdit'] }">
+                    {{ errorEdit.emailEdit }}
+                </small>
+            </div>
+            <div class="mb-3">
+                <div class="flex align-items-center gap-3 mb-1">
+                    <label for="passwordEdit" class="font-semibold w-6rem">Password </label>
+                    <Password id="id" v-model="passwordEdit" :feedback="false" :toggleMask="true"
+                        v-bind="passwordEditProps" />
+                </div>
+                <small id="username-help" :class="{ 'p-invalid text-red-700': errorEdit['passwordEdit'] }">
+                    {{ errorEdit.passwordEdit }}
+                </small>
             </div>
             <div class="flex justify-content-end gap-2">
                 <Button type="button" label="Cancel" severity="secondary" @click="DialogEdit = false" />
