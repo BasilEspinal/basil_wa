@@ -16,7 +16,9 @@
             <TabPanel>
                 <template #header>
                     <div class="flex align-items-center gap-2">
-                        <Avatar image="https://primefaces.org/cdn/primevue/images/avatar/ionibowcher.png" shape="circle" />
+
+                        <!-- Empleado avatar-->
+                        <i class="pi pi-user" style="font-size: 2.0rem"></i> 
                         <!-- <span class="font-bold white-space-nowrap">Empleados</span> -->
                         
                     </div>
@@ -36,7 +38,9 @@
             <TabPanel>
                 <template #header>
                     <div class="flex align-items-center gap-2">
-                        <Avatar image="https://primefaces.org/cdn/primevue/images/avatar/amyelsner.png" shape="circle" />
+                        <!-- Trabajo avatar -->
+                        <i class="pi pi-wrench" style="font-size: 2.0rem"></i> 
+                        
                         <span class="font-bold white-space-nowrap">Trabajo</span>
                     </div>
                 </template>
@@ -101,7 +105,9 @@
             <TabPanel>
                 <template #header>
                     <div class="flex align-items-center gap-2">
-                        <Avatar image="https://primefaces.org/cdn/primevue/images/avatar/onyamalimba.png" shape="circle" />
+                        <!-- Detalles avatar -->
+                        <i class="pi pi-info-circle" style="font-size: 2.0rem"></i> 
+                        <!-- <Avatar image="https://primefaces.org/cdn/primevue/images/avatar/onyamalimba.png" shape="circle" /> -->
                         <span class="font-bold white-space-nowrap">Detalles</span>
                     </div>
                 </template>
@@ -139,7 +145,9 @@
             <TabPanel>
                 <template #header>
                     <div class="flex align-items-center gap-2">
-                        <Avatar image="https://primefaces.org/cdn/primevue/images/avatar/ionibowcher.png" shape="circle" />
+                        <!-- Resumen avatar-->
+                        <i class="pi pi-bars" style="font-size: 2.0rem"></i> 
+                        <!-- <Avatar image="https://primefaces.org/cdn/primevue/images/avatar/ionibowcher.png" shape="circle" /> -->
                         <span class="font-bold white-space-nowrap">Resumen</span>
                         <Badge value="2" />
                     </div>
