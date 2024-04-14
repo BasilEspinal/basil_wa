@@ -7,7 +7,14 @@
                             
                         </div>
                         <div class="field col-12 md:col-6">
-                            <h4> Empleado: <span v-if="selectedEmployee && selectedEmployee.name">{{ selectedEmployee.name }}</span> </h4>
+                            <h4> Empleado: 
+                                <span v-if="selectedEmployee && selectedEmployee.name">
+                                    {{ selectedEmployee.name }}
+                                </span> 
+                                <span v-else>
+                                    No selected employee
+                                </span>
+                            </h4>
                             
                         </div>
         </div>
