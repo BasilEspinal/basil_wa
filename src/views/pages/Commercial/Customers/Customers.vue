@@ -2,7 +2,7 @@
   <div>
   <div class="card">
       <div>
-          <h1>Información de xxxxx</h1> 
+          <h1>Información de clientes</h1> 
       </div>
   </div>
   <div class="card">
@@ -72,14 +72,14 @@
       <template #empty> No customers found. </template>
       <template #loading> Loading customers data. Please wait. </template>
       <Column selectionMode="multiple" headerStyle="width: 3rem"></Column>
-      <Column field="xxxxxx" filterField="xxxxxx" header="xxxxxx " sortable frozen=""> <!--Replace :frozen with the model-->
+      <Column field="order_number_customer" filterField="order_number_customer" header="Order Customer Number " sortable frozen=""> <!--Replace :frozen with the model-->
           <template #header>
                   <ToggleButton v-model="documentFrozen" onIcon="pi pi-lock" offIcon="pi pi-lock-open" onLabel="" offLabel="" />
                   <div>&nbsp;</div>
               </template>
 
               <template #body="{ data }">
-                  <!-- {{ data.document }} replace with the object key-->
+                  {{ data.order_number_customer }} 
               </template>
               <template #filter="{ filterModel }">
                   <InputText v-model="filterModel.value" type="text" class="p-column-filter" placeholder="Search by " />
