@@ -30,11 +30,11 @@ const model2 = ref([
                 rol: 'admin',
                 icon: 'pi pi-desktop',
                 label: 'Monitor Online',
-                gate: 'monitor_vista',
+                gate: 'monitor_corta_menu',
                 items: [{
                     label: '10 de Mejor Rendimiento', icon: 'pi pi-fw pi-table',
                     to: '/monitorCorta',
-                    gate: 'monitor_corta_vista'
+                    gate: 'monitor_corta_menu'
                 }]
             }
         ]
@@ -45,44 +45,44 @@ const model2 = ref([
                 rol: 'admin',
                 icon: 'pi pi-bars',
                 label: 'Producto',
-                gate: 'producto_vista',
+                gate: 'producto_menu',
                 items: [
                     {
                         label: 'Variedades',
                         to: '/product/varieties',
                         icon: 'pi pi-th-large',
-                        gate: 'producto_variedades_vista'
+                        gate: 'producto_variedades_menu'
                     },
                     {
                         icon: 'pi pi-bars',
                         label: 'Productos',
                         to: '/product/products',
-                        gate: 'producto_productos_vista',
+                        gate: 'producto_productos_menu',
                         
                     },
                     {
                         label: 'Variedades de producto',
                         to: '/product/productvarieties',
                         icon: 'pi pi-list',
-                        gate: 'producto_variedadesDeProducto_vista',
+                        gate: 'producto_variedadesdeproducto_menu',
                     },
                     {
                         label: 'Tipos de productos',
                         icon: 'pi pi-bookmark',
                         to: '/product/productTypes',
-                        gate: 'producto_tiposDeProducto_vista',
+                        gate: 'producto_tiposdeproducto_menu',
                     },
                     {
                         label: 'Tipos de Unidades',
                         to: '/product/unit_types',
                         icon: 'pi pi-bookmark',
-                        gate: 'producto_tiposDeUnidades_vista',
+                        gate: 'producto_tiposdeunidades_menu',
                     },
                     {
                         label: 'Tipos de Empaque',
                         to: '/product/packing_types',
                         icon: 'pi pi-bookmark',
-                        gate: 'producto_tiposDeEmpaque_vista',
+                        gate: 'producto_tiposdeempaque_menu',
                     }
                 ]
             }
@@ -94,31 +94,31 @@ const model2 = ref([
                 label: 'Comercial',
                 rol: 'admin',
                 icon: 'pi pi-sitemap',
-                gate: 'comercial_vista',
+                gate: 'comercial_menu',
                 items: [
                     {
                         label: 'Ofertas de producto',
                         to: '/access',
                         icon: 'pi pi-folder',
-                        gate: 'comercial_ofertasDeProducto_vista',
+                        gate: 'comercial_ofertasdeproducto_menu',
                     },
                     {
                         label: 'Solicitudes de Clientes',
                         to: '/Commercial/CustomersRequests/CustomersRequests',
                         icon: 'pi pi-bookmark',
-                        gate: 'comercial_solicitudesDeClientes_vista',
+                        gate: 'comercial_solicitudesdeclientes_menu,',
                     },
                     {
                         label: 'Clientes',
                         to: '/Commercial/Customers/Customers',
                         icon: 'pi pi-bookmark',
-                        gate: 'comercial_clientes_vista',
+                        gate: 'comercial_clientes_menu,',
                     },
                     {
                         label: 'Despachos',
                         to: '/access',
                         icon: 'pi pi-bolt',
-                        gate: 'comercial_despachos_vista',
+                        gate: 'comercial_despachos_menu,',
                     }
                 ]
             }
@@ -130,25 +130,25 @@ const model2 = ref([
                 label: 'Producción',
                 rol: 'admin',
                 icon: 'pi pi-shopping-cart',
-                gate: 'produccion_vista',
+                gate: 'produccion_menu',
                 items: [
                     {
                         label: 'Lotes para Cultivo ',
                         to: '/production/croplots',
                         icon: 'pi pi-bars',
-                        gate: 'produccion_lotesParaCultivo_vista',
+                        gate: 'produccion_lotesparacultivo_menu',
                     },
                     {
                         label: 'Vehículos',
                         to: '/production/vehicles',
                         icon: 'pi pi-car',
-                        gate: 'produccion_vehiculos_vista',
+                        gate: 'produccion_vehiculos_menu,',
                     },
                     {
                         label: 'Programación de Lotes',
                         to: '/access',
                         icon: 'pi pi-calendar-minus',
-                        gate: 'produccion_programacionDeLotes_vista',
+                        gate: 'produccion_programaciondelotes_menu',
                     }
                 ]
             }
@@ -160,64 +160,64 @@ const model2 = ref([
                 label: 'Configuración de Pagos',
                 rol: 'admin',
                 icon: 'pi pi-dollar',
-                gate: 'configuracionDePagos_vista',
+                gate: 'configuraciondepagos_menu',
                 items: [
                     {
                         label: 'Tipos de Pago',
                         to: '/payrollsettings/PaymentTypes',
                         icon: 'pi pi-tablet',
-                        gate: 'configuracionDePagos_tiposDePago_vista',
+                        gate: 'configuraciondepagos_tiposdepago_menu',
                     
                     },
                     {
                         label: 'Tipos de Tareas',
                         to: '/payrollsettings/taskstypes',
                         icon: 'pi pi-list',
-                        gate: 'configuracionDePagos_tiposDeTareas_vista',
+                        gate: 'configuraciondetiposdetareas_menu',
                     },
                     {
                         label: 'Tarifas por Tareas',
                         to: '/payrollsettings/taskstarif',
                         icon: 'pi pi-bookmark',
-                        gate: 'configuracionDePagos_tarifasPorTarea_vista',
+                        gate: 'configuraciondepagos_tarifasportarea_menu,',
                         
                     },
                     {
                         label: 'Tarifas por Labores',
                         to: '/payrollsettings/workstarif',
                         icon: 'pi pi-briefcase',
-                        gate: 'configuracionDePagos_tarifasPorLabores_vista',
+                        gate: 'configuraciondepagos_tarifasporlabores_menu',
                     },
                     {
                         label: 'Periodos de Pago',
                         to: '/payrollsettings/payperiods',
                         icon: 'pi pi-calendar-plus',
-                        gate: 'configuracionDePagos_periodosDePago_vista',
+                        gate: 'configuraciondepagos_periodosdepago_menu,',
                     },
                     {
                         label: 'Calendarios',
                         to: '/payrollsettings/calendars',
                         icon: 'pi pi-calendar-times',
-                        gate: 'configuracionDePagos_calendarios_vista',
+                        gate: 'configuraciondepagos_calendarios_menu',
                     },
 
                     {
                         label: 'Centros de Trabajo',
                         to: '/payrollsettings/Workcenters',
                         icon: 'pi pi-bookmark',
-                        gate: 'configuracionDePagos_centrosDeTrabajo_vista',
+                        gate: 'configuraciondepagos_centrosdetrabajo_menu',
                     },
                     {
                         label: 'Cargos',
                         to: '/payrollsettings/Jobtypes',
                         icon: 'pi pi-bolt',
-                        gate: 'configuracionDePagos_cargos_vista',
+                        gate: 'configuraciondepagos_cargos_menu',
                     },
                     {
                         label: 'Empleados',
                         to: '/payrollsettings/Employees',
                         icon: 'pi pi-users',
-                        gate: 'configuracionDePagos_empleados_vista',
+                        gate: 'configuraciondepagos_empleados_menu,',
                     }
                 ]
             }
@@ -229,45 +229,45 @@ const model2 = ref([
                 label: 'Liquidacion de nómina',
                 rol: 'admin',
                 icon: 'pi pi-money-bill',
-                gate: 'liquidacion_nomina_vista',
+                gate: 'liquidacion_nomina_menu',
                 items: [
                     {
                         label: 'Planeación Diaria',
                         to: '/PayrollSettlement/DailyPlanner',
                         icon: 'pi pi-tablet',
-                        gate: 'liquidacionDeNomina_planeacionDiaria_vista',
+                        gate: 'liquidaciondenomina_planeaciondiaria_menu',
                     },
                     {
                         label: 'Trabajos de Corta',
                         to: '/PayrollSettlement/WorkRegisterCorta',
                         icon: 'pi pi-percentage',
-                        gate: 'liquidacionDeNomina_trabajosDeCorta_vista',
+                        gate: 'liquidaciondenomina_trabajosdecorta_menu',
                     },
                     {
                         label: 'Traslado a Prefrio',
                         to: '/PayrollSettlement/TransferTasks',
                         icon: 'pi pi-bookmark',
-                        gate: 'liquidacionDeNomina_trasladoAPrefrio_vista',
+                        gate: 'liquidaciondenomina_trasladoaprefrio_menu',
 
                     },
                     {
                         label: 'Trabajos de Selección',
                         to: '/PayrollSettlement/WorkRegisterSelection',
                         icon: 'pi pi-tablet',
-                        gate: 'liquidacionDeNomina_trabajosDeSeleccion_vista',
+                        gate: 'liquidaciondenomina_trabajosdeseleccion_menu',
                     },
                     {
                         label: 'Labores de Contratistas',
                         to: '/PayrollSettlement/WorkRegisterDaily',
                         icon: 'pi pi-share-alt',
-                        gate: 'liquidacionDeNomina_laboresDeContratista_vista',
+                        gate: 'liquidaciondenomina_laboresdecontratista_menu',
                     },
 
                     {
                         label: 'Descuentos de Nómina',
                         to: '/PayrollSettlement/DiscountRegistering',
                         icon: 'pi pi-ticket',
-                        gate: 'liquidacionDeNomina_descuentosDeNomina_vista',
+                        gate: 'liquidaciondenomina_descuentosdenomina_menu',
                     }
                 ]
             }
@@ -279,19 +279,19 @@ const model2 = ref([
                 label: 'Administración',
                 rol: 'admin',
                 icon: 'pi pi-prime',
-                gate: 'administracion_vista',
+                gate: 'administracion_menu',
                 items: [
                     {
                         label: 'Empresa',
                         to: '/admon/companies',
                         icon: 'pi pi-folder',
-                        gate:'administracion_empresa_vista',
+                        gate:'administracion_empresa_menu',
                     },
                     {
                         label: 'Fincas',
                         to: '/admon/farms',
                         icon: 'pi pi-bookmark',
-                        gate: 'administracion_fincas_vista',
+                        gate: 'administracion_fincas_menu',
                     }
                 ]
             }
@@ -303,31 +303,31 @@ const model2 = ref([
                 label: 'Sistema',
                 rol: 'admin',
                 icon: 'pi pi-desktop',
-                gate:'sistema_vista',
+                gate:'sistema_menu',
                 items: [
                     {
                         label: 'Usuarios',
                         to: '/system/Users',
                         icon: 'pi pi-id-card',
-                        gate: 'sistema_usuarios_vista',
+                        gate: 'sistema_usuarios_menu',
                     },
                     {
                         label: 'Roles',
                         to: '/system/roles',
                         icon: 'pi pi-user-plus',
-                        gate: 'sistema_roles_vista',
+                        gate: 'sistema_roles_menu',
                     },
                     {
                         label: 'Permisos',
                         to: '/system/permissions',
                         icon: 'pi pi-eye-slash',
-                        gate: 'sistema_permisos_vista',
+                        gate: 'sistema_permisos_menu',
                     },
                     {
                         label: 'Estado de Registros',
                         to: '/system/statuses',
                         icon: 'pi pi-bell',
-                        gate: 'sistema_estadoDeRegistros_vista'
+                        gate: 'sistema_estadoderegistros_menu'
                     }
                 ]
             }
@@ -339,19 +339,19 @@ const model2 = ref([
                 label: 'App Movil',
                 rol: 'admin',
                 icon: 'pi pi-box',
-                gate: '',
+                gate: 'appmovil_menu',
                 items: [
                     {
                         label: 'Captura de corta',
                         to: '/AppMovil/Corta',
                         icon: 'pi pi-mobile',
-                        gate: ''
+                        gate: 'appmovil_corta_menu'
                     },
                     {
                         label: 'Captura de Prefio',
                         to: '/AppMovil/PreFrio',
                         icon: 'pi pi-mobile',
-                        gate: ''
+                        gate: 'appmovil_prefrio_menu,'
                     },
                     {
                         label: 'Captura de Seleccion',
@@ -363,13 +363,13 @@ const model2 = ref([
                         label: 'Captura de Contratista',
                         to: '/AppMovil/Contractor',
                         icon: 'pi pi-mobile',
-                        gate: ''
+                        gate: 'appmovil_contratista_menu'
                     },
                     {
                         label: 'Captura de Agronomìa',
                         to: '/AppMovil/Agronomo',
                         icon: 'pi pi-mobile',
-                        gate: ''
+                        gate: 'appmovil_agronomia_menu'
                     },
                 ]
             }

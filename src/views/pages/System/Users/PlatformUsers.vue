@@ -13,14 +13,11 @@ const { dataResponseAPI, getAllResponseAPI, putResponseAPI, postResponseAPI, del
 const selectedRegisters = ref([]);
 const expandedRows = ref([]);
 const users = ref([]);
-const roles = ref();
-const headerDialogSave = ref('');
 const headerDialogNew = ref('');
 const headerDialogEdit = ref('');
 const headerDialogClone = ref('');
 const headerDialogExport = ref('');
 const headerDialogDelete = ref('');
-const DialogSave = ref(false);
 const DialogNew = ref(false);
 const DialogEdit = ref(false);
 const DialogClone = ref(false);
@@ -43,13 +40,15 @@ const { handleSubmit: submitEdit, errors: errorEdit, defineField: defineEdit } =
     validationSchema: toTypedSchema(
         z.object({
             nameEdit: z.string().min(6),
-            emailEdit: z.string().email()
+            emailEdit: z.string().email(),
+            passwordEdit: z.string().refine(value => !value.length || value.length >= 8, { message: 'String must contain at least 8 character(s)' }).optional()
         }),
     ),
 });
 
 const [nameEdit, nameEditProps] = defineEdit('nameEdit');
 const [emailEdit, emailEditProps] = defineEdit('emailEdit');
+const [passwordEdit, passwordEditProps] = defineEdit('passwordEdit');
 const [name, nameProps] = defineField('name');
 const [email, emailProps] = defineField('email');
 const [password, passwordProps] = defineField('password');
@@ -66,11 +65,10 @@ const loadingData = async () => {
 
 const permissionsListToValue = async () => {
     users.value = dataResponseAPI.value.data;
-    await getAllResponseAPI('/roles');
-    roles.value = dataResponseAPI.value.data.map(role => ({ id: role.id, name: role.name }));
 };
 
 const loadLazyData = async () => {
+    loading.value = true;
     await getAllResponseAPI(endpoint.value);
     loading.value = false;
 };
@@ -83,6 +81,9 @@ const openNew = () => {
 const openEdit = () => {
     headerDialogEdit.value = 'Edit User';
     const data = selectedRegisters.value[0];
+    nameEdit.value = '';
+    emailEdit.value = '';
+    passwordEdit.value = '';
     nameEdit.value = data.name;
     emailEdit.value = data.email;
     DialogEdit.value = true;
@@ -126,14 +127,17 @@ const editUser = submitEdit(async values => {
     const dataJson = ({
         name: values.nameEdit,
         email: values.emailEdit,
-        "farm_id": 1,
-        "employee_id": 1,
+        "farm_uuid": selectedRegisters.value[0].farm.uuid,
         roles: selectedRegisters.value[0].roles.map(rol => ({ id: rol.id }))
     });
+    if (values.passwordEdit) {
+        dataJson.password = values.passwordEdit;
+    }
     const restp = await putResponseAPI(dataJson, endpoint.value, selectedRegisters.value[0].id);
     toast.add({ severity: restp.ok ? 'success' : 'error', summary: 'Update User ' + values.nameEdit, detail: restp.ok ? "Update" : "Error", life: 3000 });
     DialogEdit.value = false;
     loadingData();
+    selectedRegisters.value = [];
 });
 
 const deleteUsers = () => {
@@ -167,7 +171,6 @@ const deleteUsers = () => {
 //     link.click();
 // }
 
-
 const remove = (aver) => {
     const index = selectedRegisters.value.findIndex(x => x.id === aver.id);
     if (index !== -1) {
@@ -185,71 +188,52 @@ const remove = (aver) => {
             </div>
         </div>
         <div class="card">
-            <div class="grid">
-                <div class="col-xs-12 col-sm-6 col-md-4 mb-4 text-center mx-auto">
-                    <Toolbar class="bg-gray-900 shadow-2"
-                        style="border-radius: 3rem; background-image: linear-gradient(to right, var(--green-100), var(--green-200))">
-                        <template v-slot:start>
-                            <div>
-                                <Button label="New" icon="pi pi-plus" class="p-button-success mr-2 ml-2 mb-2 mt-2"
-                                    @click="openNew" size="large" />
-                                <Button :disabled="!(selectedRegisters.length == 1)" label="Edit" icon="pi pi-file-edit"
-                                    class="p-button-help mr-2 ml-2 mb-2 mt-2" @click="openEdit" size="large" />
-                                <Button :disabled="!(selectedRegisters.length == 1)" label="Clone" icon="pi pi-copy"
-                                    class="p-button-secondary mr-2 ml-2 mb-2 mt-2" @click="openClone" size="large" />
-                                <Button label="Export" icon="pi pi-file-import"
-                                    class="p-button-warning mr-2 ml-2 mb-2 mt-2" @click="openExport" size="large" />
-                                <Button :disabled="!selectedRegisters.length > 0" label="Delete" icon="pi pi-trash"
-                                    class="p-button-danger mr-2 ml-2 mb-2 mt-2" @click="openDelete" size="large" />
-                                    
-                            </div>
-                        </template>
-                    </Toolbar>
-                </div>
-            </div>
+            <Toolbar style="margin-bottom: 1rem;">
+                <template #center>
+                    <Button label="New" icon="pi pi-plus" class="p-button-success" @click="openNew" size="large" />
+                    <Divider layout="vertical" />
+                    <Button :disabled="selectedRegisters.length != 1" label="Edit" icon="pi pi-file-edit"
+                        class="p-button-help" @click="openEdit" size="large" />
+                    <Divider layout="vertical" />
+                    <Button :disabled="selectedRegisters.length != 1" label="Clone" icon="pi pi-copy"
+                        class="p-button-secondary" @click="openClone" size="large" />
+                    <Divider layout="vertical" />
+                    <Button :disabled="!selectedRegisters.length" label="Delete" icon="pi pi-trash"
+                        class="p-button-danger" @click="openDelete" size="large" />
+                </template>
+            </Toolbar>
             <DataTable v-model:expandedRows="expandedRows" :loading="loading" :value="users" dataKey="id" :rows="50"
                 :rowsPerPageOptions="[5, 10, 20, 50]" tableStyle="min-width: 75rem" showGridlines :paginator="true"
                 v-model:selection="selectedRegisters">
                 <template #empty> No customers found. </template>
                 <template #loading> Loading customers data. Please wait. </template>
-                <Column selectionMode="multiple" headerStyle="width: 3rem"></Column>
-                <Column expander style="width: 5rem" />
-                <Column field="xxxxxx" filterField="xxxxxx" header="Name" sortable frozen="">
-                    <template #header>
-                        <ToggleButton v-model="documentFrozen" onIcon="pi pi-lock" offIcon="pi pi-lock-open" onLabel=""
-                            offLabel="" />
-                        <div>&nbsp;</div>
-                    </template>
-                    <template #body="{ data }">
-                        {{ data.name }}
-                    </template>
-                    <template #filter="{ filterModel }">
-                        <InputText v-model="filterModel.value" type="text" class="p-column-filter"
-                            placeholder="Search by " />
-                    </template>
-                </Column>
-                <Column field="" filterField="" header=" Email" sortable>
-                    <template #body="{ data }">
-                        {{ data.email }}
-                    </template>
-                    <template #filter="{ filterModel }">
-                        <InputText v-model="filterModel.value" type="text" class="p-column-filter"
-                            placeholder="Search by " />
-                    </template>
-                </Column>
+                <template>
+                    <Column selectionMode="multiple" headerStyle="width: 3rem"></Column>
+                    <Column expander style="width: 5rem" />
+                    <Column field="xxxxxx" filterField="xxxxxx" header="Name" sortable frozen="">
+                        <template #body="{ data }">
+                            {{ data.name }}
+                        </template>
+                        <template #filter="{ filterModel }">
+                            <InputText v-model="filterModel.value" type="text" class="p-column-filter"
+                                placeholder="Search by " />
+                        </template>
+                    </Column>
+                    <Column field="" filterField="" header=" Email" sortable>
+                        <template #body="{ data }">
+                            {{ data.email }}
+                        </template>
+                        <template #filter="{ filterModel }">
+                            <InputText v-model="filterModel.value" type="text" class="p-column-filter"
+                                placeholder="Search by " />
+                        </template>
+                    </Column>
+                </template>
                 <template #expansion="{ data }">
-                    <FormRols :data="data" :roles="roles" @update="loadingData" />
+                    <FormRols :data="data" @update="loadingData" />
                 </template>
             </DataTable>
         </div>
-        <Dialog v-model:visible="DialogSave" modal :header="headerDialogSave" class="p-fluid text-center mx-auto">
-            <span class="p-text-primary block m-5">Se actualizara la informacion de {{ selectedRegisters.length }}
-                usuarios.</span>
-            <div class="flex justify-content-end gap-2">
-                <Button type="button" label="Cancel" severity="secondary" @click="DialogSave = false"></Button>
-                <Button type="button" label="Save" @click="saveRoles()"></Button>
-            </div>
-        </Dialog>
         <Dialog v-model:visible="DialogNew" modal :header="headerDialogNew" class="p-fluid text-center mx-auto">
             <div class="mb-3">
                 <div class="flex align-items-center gap-3  mb-1">
@@ -299,9 +283,9 @@ const remove = (aver) => {
                     <InputText id="username" v-model="nameEdit" class="flex-auto" autocomplete="off"
                         v-bind="nameEditProps" />
                 </div>
-                <small id="username-help" :class="{ 'p-invalid text-red-700': errorEdit['nameEdit'] }">{{
-                                        errorEdit.nameEdit
-                                    }}</small>
+                <small id="username-help" :class="{ 'p-invalid text-red-700': errorEdit['nameEdit'] }">
+                    {{ errorEdit.nameEdit }}
+                </small>
             </div>
             <div class="mb-3">
                 <div class="flex align-items-center gap-3 mb-1">
@@ -309,9 +293,19 @@ const remove = (aver) => {
                     <InputText id="email" v-model="emailEdit" class="flex-auto" autocomplete="off"
                         v-bind="emailEditProps" />
                 </div>
-                <small id="username-help" :class="{ 'p-invalid text-red-700': errorEdit['emailEdit'] }">{{
-                                        errorEdit.emailEdit
-                                    }}</small>
+                <small id="username-help" :class="{ 'p-invalid text-red-700': errorEdit['emailEdit'] }">
+                    {{ errorEdit.emailEdit }}
+                </small>
+            </div>
+            <div class="mb-3">
+                <div class="flex align-items-center gap-3 mb-1">
+                    <label for="passwordEdit" class="font-semibold w-6rem">Password </label>
+                    <Password id="id" v-model="passwordEdit" :feedback="false" :toggleMask="true"
+                        v-bind="passwordEditProps" />
+                </div>
+                <small id="username-help" :class="{ 'p-invalid text-red-700': errorEdit['passwordEdit'] }">
+                    {{ errorEdit.passwordEdit }}
+                </small>
             </div>
             <div class="flex justify-content-end gap-2">
                 <Button type="button" label="Cancel" severity="secondary" @click="DialogEdit = false" />
