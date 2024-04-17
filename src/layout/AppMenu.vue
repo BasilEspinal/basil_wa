@@ -13,13 +13,13 @@ const model2 = ref([
     {
         items:[
             {
-        label: 'Inicio',
-        gate: 'centro_control',
+        label: 'Dashboards',
+        gate: 'monitor_menu',
         items: [{ 
             label: 'Centro de control', 
             icon: 'pi pi-fw pi-home', 
             to: '/applayout',
-            gate: 'centroControl_vista',
+            gate: 'agro_tv_menu',
         }]
     }
         ]
