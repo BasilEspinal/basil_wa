@@ -19,7 +19,7 @@ const model2 = ref([
             label: 'Centro de control', 
             icon: 'pi pi-fw pi-home', 
             to: '/applayout',
-            gate: 'agro_tv_menu',
+            gate: 'monitor_menu',
         }]
     }
         ]
@@ -257,7 +257,7 @@ const model2 = ref([
                         gate: 'liquidaciondenomina_trabajosdeseleccion_menu',
                     },
                     {
-                        label: 'Labores de Contratistas',
+                        label: 'Trabajos de Contratistas',
                         to: '/PayrollSettlement/WorkRegisterDaily',
                         icon: 'pi pi-share-alt',
                         gate: 'liquidaciondenomina_laboresdecontratista_menu',
