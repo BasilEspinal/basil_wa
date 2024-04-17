@@ -9,20 +9,20 @@
         <div class="grid">
             <div class="col-xs-12 col-sm-6 col-md-4 mb-2 text-center mx-auto">
                 <!--Uncomment when table is done-->
-                
-                <!-- <div class="col-xs-12 col-sm-6 col-md-4 mb-2 text-center mx-auto">
+                <pre>falta CRUD</pre>  
+                <div class="col-xs-12 col-sm-6 col-md-4 mb-2 text-center mx-auto">
                 <Toolbar class="bg-gray-900 shadow-2" style="border-radius: 3rem; background-image: linear-gradient(to right, var(--green-100), var(--green-200))">
                     <template v-slot:start>
                         <div>
-                            <Button label="New" icon="pi pi-plus" class="p-button-success mr-2 ml-2 mb-2 mt-2" @click="openNew" size="large" />
-                            <Button :disabled="!(listRowSelect.length > 0 && listRowSelect.length < 2)" label="Edit" icon="pi pi-file-edit" class="p-button-help mr-2 ml-2 mb-2 mt-2" @click="openEdit" size="large" />
-                            <Button :disabled="!(listRowSelect.length > 0 && listRowSelect.length < 2)" label="Clone" icon="pi pi-copy" class="p-button-secondary mr-2 ml-2 mb-2 mt-2" @click="openClone" size="large" />
+                            <Button v-if = "ability.can('trabajo_prefrio_crear')" label="New" icon="pi pi-plus" class="p-button-success mr-2 ml-2 mb-2 mt-2" @click="openNew" size="large" />
+                            <Button v-if = "ability.can('trabajo_prefrio_editar')" :disabled="!(listRowSelect.length > 0 && listRowSelect.length < 2)" label="Edit" icon="pi pi-file-edit" class="p-button-help mr-2 ml-2 mb-2 mt-2" @click="openEdit" size="large" />
+                            <Button v-if = "ability.can('trabajo_prefrio_crear')" :disabled="!(listRowSelect.length > 0 && listRowSelect.length < 2)" label="Clone" icon="pi pi-copy" class="p-button-secondary mr-2 ml-2 mb-2 mt-2" @click="openClone" size="large" />
                             <Button label="Export" icon="pi pi-file-import" class="p-button-warning mr-2 ml-2 mb-2 mt-2" @click="openExport" size="large" />
-                            <Button :disabled="!listRowSelect.length > 0" label="Delete" icon="pi pi-trash" class="p-button-danger mr-2 ml-2 mb-2 mt-2" @click="openDelete" size="large" />
+                            <Button v-if = "ability.can('trabajo_prefrio_eliminar')" :disabled="!listRowSelect.length > 0" label="Delete" icon="pi pi-trash" class="p-button-danger mr-2 ml-2 mb-2 mt-2" @click="openDelete" size="large" />
                         </div>
                     </template>
                 </Toolbar>
-            </div> -->
+            </div>
 
             </div>
         </div>
@@ -46,6 +46,10 @@
         @row-unselect="onRowSelect(selectedRegisters)"
         @select-all-change="onSelectAllChange"
         v-model:selection="selectedRegisters"
+        filterDisplay="menu"
+        v-model:filters="filters"
+        :globalFilterFields="['', '']"
+        v-if = "ability.can('trabajo_prefrio_listado')"
          
         >
         <template #header>
@@ -107,9 +111,12 @@
                 </template>
             </Column>
 
-            <Column field="companyName" header="Company Name" sortable>
+            <Column field="companyName" filterField="company.name" header="Company Name" sortable>
                 <template #body="{ data }">
                     {{ data.company.name }}
+                </template>
+                <template #filter="{ filterModel }">
+                    <InputText v-model="filterModel.value" type="text" class="p-column-filter" placeholder="Search by farm" />
                 </template>
             </Column>
 
@@ -165,12 +172,22 @@ const documentFrozen = ref(false); change name field
 import { ref, watch, provide, onBeforeMount, onMounted } from 'vue';
 import useDataAPI from '@/composables/DataAPI/FetchDataAPI.js';
 import { FilterMatchMode, FilterOperator } from 'primevue/api';
-const { getAllResponseAPI, getAllResponseListAPI, totalRecordsResponseAPI, currentPageResponseAPI, linksResponseAPI, postResponseAPI, putResponseAPI, deleteResponseAPI, errorResponseAPI, dataResponseAPI, dataResponseListAPI, statusCode } =
-    useDataAPI();
+import { useRouter } from 'vue-router';
+import { useForm } from 'vee-validate';
+import { toTypedSchema } from '@vee-validate/zod';
+import { z } from 'zod';
+import ability from '@/service/ability.js';
+import { AbilityBuilder} from '@casl/ability';
 
 let endpoint = ref('/endpoint'); //replace endpoint with your endpoint
 const loading = ref(false);
 
+const { getAllResponseAPI,getAllResponsePermissionsAPI, getAllResponseListAPI, totalRecordsResponseAPI, currentPageResponseAPI, linksResponseAPI, postResponseAPI, putResponseAPI, deleteResponseAPI, errorResponseAPI, dataResponseAPI, dataResponsePermissionsAPI,dataResponseListAPI, statusCode } =
+    useDataAPI();
+
+////////////
+ //Form here
+ ////////////   
 const size = ref({ label: 'Normal', value: 'normal' });
 const sizeOptions = ref([
     { label: 'Small', value: 'small', class: 'sm' },
@@ -181,6 +198,7 @@ const sizeOptions = ref([
 
 onMounted(async () => {
     await loadLazyData();
+    await getAllResponsePermissionsAPI("/abilities");
 });
 
 const filters = ref();
@@ -197,6 +215,7 @@ const initFilters = () => {
         //xxxx: { operator: FilterOperator.AND, constraints: [{ value: null, matchMode: FilterMatchMode.STARTS_WITH }] },
         // 'status.name': { operator: FilterOperator.AND, constraints: [{ value: null, matchMode: FilterMatchMode.STARTS_WITH }] },
         // 'farm.name': { operator: FilterOperator.AND, constraints: [{ value: null, matchMode: FilterMatchMode.STARTS_WITH }] },
+        // 'company.name': { operator: FilterOperator.AND, constraints: [{ value: null, matchMode: FilterMatchMode.STARTS_WITH }] },
         // created_at: { operator: FilterOperator.AND, constraints: [{ value: null, matchMode: FilterMatchMode.STARTS_WITH }] },
         // updated_at: { operator: FilterOperator.AND, constraints: [{ value: null, matchMode: FilterMatchMode.STARTS_WITH }] }
     };

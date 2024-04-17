@@ -2,35 +2,33 @@
     <div>
     <div class="card">
         <div>
-            <h1>Información de Vehículos</h1> 
+            <h1>Información de lotes para Cultivo</h1> 
         </div>
     </div>
     <div class="card">
+        
         <div class="grid">
             <div class="col-xs-12 col-sm-6 col-md-4 mb-2 text-center mx-auto">
-               
-                
-                 <div class="col-xs-12 col-sm-6 col-md-4 mb-2 text-center mx-auto">
                 <Toolbar class="bg-gray-900 shadow-2" style="border-radius: 3rem; background-image: linear-gradient(to right, var(--green-100), var(--green-200))">
                     <template v-slot:start>
                         <div>
-                            <Button v-if = "ability.can('vehiculo_crear,')" label="New" icon="pi pi-plus" class="p-button-success mr-2 ml-2 mb-2 mt-2" @click="openNew" size="large" />
-                            <Button v-if = "ability.can('vehiculo_editar')" :disabled="!(listRowSelect.length > 0 && listRowSelect.length < 2)" label="Edit" icon="pi pi-file-edit" class="p-button-help mr-2 ml-2 mb-2 mt-2" @click="openEdit" size="large" />
-                            <Button v-if = "ability.can('vehiculo_crear,')"  :disabled="!(listRowSelect.length > 0 && listRowSelect.length < 2)" label="Clone" icon="pi pi-copy" class="p-button-secondary mr-2 ml-2 mb-2 mt-2" @click="openClone" size="large" />
-                            <Button  label="Export" icon="pi pi-file-import" class="p-button-warning mr-2 ml-2 mb-2 mt-2" @click="openExport" size="large" />
-                            <Button v-if = "ability.can('vehiculo_eliminar')" :disabled="!listRowSelect.length > 0" label="Delete" icon="pi pi-trash" class="p-button-danger mr-2 ml-2 mb-2 mt-2" @click="openDelete" size="large" />
+                            <Button v-if = "ability.can('lote_crear')" label="New" icon="pi pi-plus" class="p-button-success mr-2 ml-2 mb-2 mt-2" @click="openNew" size="large" />
+                            <!-- <i class="pi pi-bars p-toolbar-separator mr-2 ml-2 mb-2 mt-2"></i> -->
+                            <Button v-if = "ability.can('lote_editar')" :disabled="!(listRowSelect.length > 0 && listRowSelect.length < 2)" label="Edit" icon="pi pi-file-edit" class="p-button-help mr-2 ml-2 mb-2 mt-2" @click="openEdit" size="large" />
+                            <Button v-if = "ability.can('lote_crear')" :disabled="!(listRowSelect.length > 0 && listRowSelect.length < 2)" label="Clone" icon="pi pi-copy" class="p-button-secondary mr-2 ml-2 mb-2 mt-2" @click="openClone" size="large" />
+                            <Button label="Export" icon="pi pi-file-import" class="p-button-warning mr-2 ml-2 mb-2 mt-2" @click="openExport" size="large" />
+                            <Button v-if = "ability.can('lote_eliminar,')" :disabled="!listRowSelect.length > 0" label="Delete" icon="pi pi-trash" class="p-button-danger mr-2 ml-2 mb-2 mt-2" @click="openDelete" size="large" />
                         </div>
                     </template>
                 </Toolbar>
             </div>
-
-            </div>
         </div>
-        <!-- <pre>{{ dataResponseAPI }}</pre> -->
+
         <DataTable
         :value="dataResponseAPI.data"
         dataKey="uuid"
         tableStyle="min-width: 75rem"
+        :class="`p-datatable-${size.class}`"
         showGridlines
         :loading="loading"
         scrollable
@@ -41,19 +39,17 @@
         :paginator="true"
         :rows="50"
         :rowsPerPageOptions="[5, 10, 20, 50]"
-        :class="`p-datatable-${size.class}`"
+        filterDisplay="menu"
+        :globalFilterFields="['code', 'area_m2', 'farm.name']"
+        v-model:filters="filters"
         @row-select="onRowSelect(selectedRegisters)"
         @row-unselect="onRowSelect(selectedRegisters)"
         @select-all-change="onSelectAllChange"
         v-model:selection="selectedRegisters"
-        filterDisplay="menu"
-        v-model:filters="filters"
-        :globalFilterFields="['code', 'vehicle_type', 'company.name']"
-        v-if = "ability.can('vehiculo_listado')" 
+        v-if = "ability.can('lote_listado')"
+        
         >
         <template #header>
-            <!--Uncomment when filters are done-->
-
             <Toolbar class = "mb-2">
                     <template v-slot:start>
                         <Button type="button" icon="pi pi-filter-slash" label="Limpiar" class="p-button-outlined mb-2" @click="clearFilter()" />
@@ -75,7 +71,7 @@
         <template #empty> No customers found. </template>
         <template #loading> Loading customers data. Please wait. </template>
         <Column selectionMode="multiple" headerStyle="width: 3rem"></Column>
-        <Column field="code" filterField="code" header="code " sortable frozen="code"> <!--Replace :frozen with the model-->
+        <Column field="code" filterField="code" header="Code" sortable :frozen="codeFrozen"> <!--Replace :frozen with the model-->
             <template #header>
                     <ToggleButton v-model="codeFrozen" onIcon="pi pi-lock" offIcon="pi pi-lock-open" onLabel="" offLabel="" />
                     <div>&nbsp;</div>
@@ -85,41 +81,50 @@
                      {{ data.code }} 
                 </template>
                 <template #filter="{ filterModel }">
-                    <InputText v-model="filterModel.value" type="text" class="p-column-filter" placeholder="Search by " />
+                    <InputText v-model="filterModel.value" type="text" class="p-column-filter" placeholder="Search by code" />
                 </template>
         </Column>
 
-        <Column field="vehicle_type" filterField="vehicle_type" header="Vehicle type " sortable> 
+        <Column field="area_m2" filterField="area_m2" header="Area(m2) " sortable> 
             
-                <template #body="{ data }">
-                    {{ data.vehicle_type }} 
-                </template>
-                <template #filter="{ filterModel }">
-                    <InputText v-model="filterModel.value" type="text" class="p-column-filter" placeholder="Search by " />
-                </template>
-        </Column>
+            <template #body="{ data }">
+                {{ data.area_m2 }}
+            </template>
+            <template #filter="{ filterModel }">
+                <InputText v-model="filterModel.value" type="text" class="p-column-filter" placeholder="Search by area" />
+            </template>
+    </Column>
 
-        <Column field="quantity_available" filterField="quantity_available" header="quantity_available type " sortable> 
+    <Column field="zone" filterField="zone" header="Zone" sortable> 
             
-                <template #body="{ data }">
-                    {{ data.quantity_available }} 
-                </template>
-                <template #filter="{ filterModel }">
-                    <InputText v-model="filterModel.value" type="text" class="p-column-filter" placeholder="Search by " />
-                </template>
-        </Column>
+            <template #body="{ data }">
+                {{ data.zone }}
+            </template>
+            <template #filter="{ filterModel }">
+                <InputText v-model="filterModel.value" type="text" class="p-column-filter" placeholder="Search by zone" />
+            </template>
+    </Column>
 
-        <Column field="weight_packing_type" filterField="weight_packing_type" header="weight_packing_type type " sortable> 
+    <Column field="latitude" filterField="latitude" header="Latitude" sortable> 
             
-                <template #body="{ data }">
-                    {{ data.weight_packing_type }} 
-                </template>
-                <template #filter="{ filterModel }">
-                    <InputText v-model="filterModel.value" type="text" class="p-column-filter" placeholder="Search by " />
-                </template>
-        </Column>
+            <template #body="{ data }">
+                {{ data.latitude }}
+            </template>
+            <template #filter="{ filterModel }">
+                <InputText v-model="filterModel.value" type="text" class="p-column-filter" placeholder="Search by latitude" />
+            </template>
+    </Column>
 
-        <Column field="farmName" filterField="farm.name" header="Farm Name" sortable>
+    <Column field="longitude" filterField="longitude" header="Longitude" sortable> 
+            <template #body="{ data }">
+                {{ data.longitude }}
+            </template>
+            <template #filter="{ filterModel }">
+                <InputText v-model="filterModel.value" type="text" class="p-column-filter" placeholder="Search by longitud" />
+            </template>
+    </Column>
+     
+    <Column field="farmName" filterField="farm.name" header="Farm Name" sortable>
                 <template #body="{ data }">
                     {{ data.farm.name }}
                 </template>
@@ -160,13 +165,13 @@
                     <InputText v-model="filterModel.value" type="text" class="p-column-filter" placeholder="Search by status" />
                 </template>
             </Column>
+        
 
-        </DataTable>
+        </DataTable> 
         <Dialog v-model:visible="formDialog" :style="{ width: '700px' }" :header="headerDialog" :modal="true" class="p-fluid text-center mx-auto">
             <pre>{{ selectedRegisters }}</pre>
         </Dialog>
         <Dialog v-model:visible="deleteDialog" :style="{ width: '700px' }" :header="headerDialog" :modal="true" class="p-fluid text-center mx-auto">
-            <pre>{{ selectedRegisters }}</pre>
         </Dialog> 
     </div>
 </div>
@@ -177,11 +182,10 @@
 import { ref, watch, provide, onBeforeMount, onMounted } from 'vue';
 import useDataAPI from '@/composables/DataAPI/FetchDataAPI.js';
 import { FilterMatchMode, FilterOperator } from 'primevue/api';
-const { getAllResponseAPI, getAllResponseListAPI, totalRecordsResponseAPI, currentPageResponseAPI, linksResponseAPI, postResponseAPI, putResponseAPI, deleteResponseAPI, errorResponseAPI, dataResponseAPI, dataResponseListAPI, statusCode } =
-    useDataAPI();
-
-let endpoint = ref('/vehicles'); //replace endpoint with your endpoint
+const { getAllResponseAPI, totalRecordsResponseAPI, currentPageResponseAPI, linksResponseAPI, postResponseAPI, putResponseAPI, deleteResponseAPI, errorResponseAPI, dataResponseAPI, statusCode } = useDataAPI();
+let endpoint = ref('/lots');
 const loading = ref(false);
+const codeFrozen = ref(false);
 
 const size = ref({ label: 'Normal', value: 'normal' });
 const sizeOptions = ref([
@@ -189,17 +193,14 @@ const sizeOptions = ref([
     { label: 'Normal', value: 'normal' },
     { label: 'Large', value: 'large', class: 'lg' }
 ]);
-
-
 onMounted(async () => {
+    loading.value = true
     await loadLazyData();
 });
-
 const filters = ref();
 onBeforeMount(() => {
     initFilters();
 });
-
 const clearFilter = () => {
     initFilters();
 };
@@ -207,25 +208,24 @@ const initFilters = () => {
     filters.value = {
         global: { value: null, matchMode: FilterMatchMode.CONTAINS },
         code: { operator: FilterOperator.AND, constraints: [{ value: null, matchMode: FilterMatchMode.STARTS_WITH }] },
-        vehicle_type: { operator: FilterOperator.AND, constraints: [{ value: null, matchMode: FilterMatchMode.STARTS_WITH }] },
-        quantity_available: { operator: FilterOperator.AND, constraints: [{ value: null, matchMode: FilterMatchMode.STARTS_WITH }] },
-        weight_packing_type: { operator: FilterOperator.AND, constraints: [{ value: null, matchMode: FilterMatchMode.STARTS_WITH }] },
+        area_m2: { operator: FilterOperator.AND, constraints: [{ value: null, matchMode: FilterMatchMode.STARTS_WITH }] },
+        zone: { operator: FilterOperator.AND, constraints: [{ value: null, matchMode: FilterMatchMode.STARTS_WITH }] },
+        latitude: { operator: FilterOperator.AND, constraints: [{ value: null, matchMode: FilterMatchMode.STARTS_WITH }] },
+        longitude: { operator: FilterOperator.AND, constraints: [{ value: null, matchMode: FilterMatchMode.STARTS_WITH }] },
         'status.name': { operator: FilterOperator.AND, constraints: [{ value: null, matchMode: FilterMatchMode.STARTS_WITH }] },
         'farm.name': { operator: FilterOperator.AND, constraints: [{ value: null, matchMode: FilterMatchMode.STARTS_WITH }] },
         created_at: { operator: FilterOperator.AND, constraints: [{ value: null, matchMode: FilterMatchMode.STARTS_WITH }] },
         updated_at: { operator: FilterOperator.AND, constraints: [{ value: null, matchMode: FilterMatchMode.STARTS_WITH }] },
+
     };
 };
-
 const loadLazyData = async (event) => {
     //lazyParams.value = { ...lazyParams.value, first: event?.first || first.value };
-    
     await getAllResponseAPI(endpoint.value);
     loading.value = false;
     
+
 };
-
-
 const listRowSelect = ref([]);
 const selectedRegisters = ref([]);
 const onRowSelect = (data) => {
@@ -234,14 +234,10 @@ const onRowSelect = (data) => {
     //assignValues(mode.value)
     
 };
-
-const codeFrozen = ref(false);
-
 watch(listRowSelect, onRowSelect);
 const onSelectAllChange = () => {
     onRowSelect();
 };
-
 const mode = ref();
 const formDialog = ref(false);
 const deleteDialog = ref(false);
@@ -254,41 +250,42 @@ const hideDialog = () => {
 }
 const resetValues = () => {}
 const assignValues = (modex) => {
-    if ((mode ==='EDIT')) {}
-    if ((mode=== 'CLONE' )) {}
+    if ((modex ==='EDIT')) {}
+    if ((modex=== 'CLONE' )) {}
 }
 const openNew = () => {
     mode.value = 'NEW';
     resetValues();
     formDialog.value = true;
-    headerDialog.value = 'New Vehículo record';
+    headerDialog.value = 'New xxxxxxx record';
 }
 const openEdit = () => {
     mode.value = 'EDIT';
     formDialog.value = true;
-    headerDialog.value = 'Edit a Vehículo record';
+    headerDialog.value = 'Edit a xxxxx record';
     assignValues(mode.value)
 
 }
 const openClone = () => {
     mode.value = 'CLONE';
-    headerDialog.value = 'Clone a Vehículo record';
+    headerDialog.value = 'Clone a xxxx record';
     formDialog.value = true;
     assignValues(mode.value)
 }
 let recordsDelete = ref([]);
 const openDelete = () => {
     mode.value = 'DELETE';
-    headerDialog.value = 'Delete a Vehículo record';
+    headerDialog.value = 'Delete a xxxxx record';
     resetValues();
     deleteDialog.value = true;
 }
 const openExport = () => {
     mode.value = 'EXPORT';
-    headerDialog.value = 'Export a Vehículo record';
+    headerDialog.value = 'Export a xxxxx record';
     resetValues();
     formDialog.value = true;
 }
+
 
 </script>
 

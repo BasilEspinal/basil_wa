@@ -9,19 +9,29 @@
         <div class="grid">
             <div class="col-xs-12 col-sm-6 col-md-4 mb-2 text-center mx-auto">
                 <!--Uncomment when table is done-->
-                
+                <pre>falta CRUD</pre>
                 <div class="col-xs-12 col-sm-6 col-md-4 mb-2 text-center mx-auto">
-                <Toolbar class="bg-gray-900 shadow-2" style="border-radius: 3rem; background-image: linear-gradient(to right, var(--green-100), var(--green-200))">
-                    <template v-slot:start>
-                        <div>
-                            <Button label="New" icon="pi pi-plus" class="p-button-success mr-2 ml-2 mb-2 mt-2" @click="openNew" size="large" />
-                            <Button :disabled="!(listRowSelect.length > 0 && listRowSelect.length < 2)" label="Edit" icon="pi pi-file-edit" class="p-button-help mr-2 ml-2 mb-2 mt-2" @click="openEdit" size="large" />
-                            <Button :disabled="!(listRowSelect.length > 0 && listRowSelect.length < 2)" label="Clone" icon="pi pi-copy" class="p-button-secondary mr-2 ml-2 mb-2 mt-2" @click="openClone" size="large" />
-                            <Button label="Export" icon="pi pi-file-import" class="p-button-warning mr-2 ml-2 mb-2 mt-2" @click="openExport" size="large" />
-                            <Button :disabled="!listRowSelect.length > 0" label="Delete" icon="pi pi-trash" class="p-button-danger mr-2 ml-2 mb-2 mt-2" @click="openDelete" size="large" />
-                        </div>
-                    </template>
-                </Toolbar>
+                    <Toolbar class="bg-gray-900 shadow-2" style="border-radius: 3rem; background-image: linear-gradient(to right, var(--green-100), var(--green-200))">
+                        <template v-slot:start>
+                            <div>
+                                <!-- "New" button, visible only if the user has the 'centro_trabajo_crear' permission -->
+                                <Button v-if="ability.can('centro_trabajo_crear')" label="New" icon="pi pi-plus" class="p-button-success mr-2 ml-2 mb-2 mt-2" @click="openNew" size="large" />
+                                
+                                <!-- "Edit" button, visible only if the user has the 'centro_trabajo_editar' permission -->
+                                <Button v-if="ability.can('centro_trabajo_editar')" :disabled="!(listRowSelect.length > 0 && listRowSelect.length < 2)" label="Edit" icon="pi pi-file-edit" class="p-button-help mr-2 ml-2 mb-2 mt-2" @click="openEdit" size="large" />
+
+                                <!-- "Clone" button, assumes same permission as "Edit" for visibility -->
+                                <Button v-if="ability.can('centro_trabajo_crear')" :disabled="!(listRowSelect.length > 0 && listRowSelect.length < 2)" label="Clone" icon="pi pi-copy" class="p-button-secondary mr-2 ml-2 mb-2 mt-2" @click="openClone" size="large" />
+                                
+                                <!-- "Export" button, visible if the user has the 'centro_trabajo_listado' permission -->
+                                <Button label="Export" icon="pi pi-file-import" class="p-button-warning mr-2 ml-2 mb-2 mt-2" @click="openExport" size="large" />
+                                
+                                <!-- "Delete" button, visible only if the user has the 'centro_trabajo_eliminar' permission -->
+                                <Button v-if="ability.can('centro_trabajo_eliminar')" :disabled="!listRowSelect.length > 0" label="Delete" icon="pi pi-trash" class="p-button-danger mr-2 ml-2 mb-2 mt-2" @click="openDelete" size="large" />
+                            </div>
+                        </template>
+                    </Toolbar>
+
             </div>
 
             </div>
@@ -48,8 +58,8 @@
         v-model:selection="selectedRegisters"
         filterDisplay="menu"
         v-model:filters="filters"
-        :globalFilterFields="['name', 'company.name']"
-         
+        :globalFilterFields="['code','name', 'company.name', 'farm.name', 'status.name', 'created_at', 'updated_at']"
+        v-if="ability.can('centro_trabajo_listado')"
         >
         <template #header>
             <!--Uncomment when filters are done-->
@@ -75,7 +85,7 @@
         <template #empty> No customers found. </template>
         <template #loading> Loading customers data. Please wait. </template>
         <Column selectionMode="multiple" headerStyle="width: 3rem"></Column>
-        <Column field="name" filterField="name" header="Name " sortable frozen=""> <!--Replace :frozen with the model-->
+        <Column field="name" filterField="name" header="Name " sortable :frozen="documentFrozen"> <!--Replace :frozen with the model-->
             <template #header>
                     <ToggleButton v-model="documentFrozen" onIcon="pi pi-lock" offIcon="pi pi-lock-open" onLabel="" offLabel="" />
                     <div>&nbsp;</div>
@@ -90,13 +100,12 @@
         </Column>
 
         <Column field="code" filterField="code" header="Code" sortable> 
-            
-                <template #body="{ data }">
-                    {{ data.relationtask.name }} 
-                </template>
-                <template #filter="{ filterModel }">
-                    <InputText v-model="filterModel.value" type="text" class="p-column-filter" placeholder="Search by " />
-                </template>
+            <template #body="{ data }">
+                {{ data.relationtask?.name }}  <!-- Using optional chaining -->
+            </template>
+            <template #filter="{ filterModel }">
+                <InputText v-model="filterModel.value" type="text" class="p-column-filter" placeholder="Search by Code" />
+            </template>
         </Column>
 
         <!--Here add other columns-->
@@ -169,12 +178,22 @@ const documentFrozen = ref(false); change name field
 import { ref, watch, provide, onBeforeMount, onMounted } from 'vue';
 import useDataAPI from '@/composables/DataAPI/FetchDataAPI.js';
 import { FilterMatchMode, FilterOperator } from 'primevue/api';
-const { getAllResponseAPI, getAllResponseListAPI, totalRecordsResponseAPI, currentPageResponseAPI, linksResponseAPI, postResponseAPI, putResponseAPI, deleteResponseAPI, errorResponseAPI, dataResponseAPI, dataResponseListAPI, statusCode } =
-    useDataAPI();
+import { useRouter } from 'vue-router';
+import { useForm } from 'vee-validate';
+import { toTypedSchema } from '@vee-validate/zod';
+import { z } from 'zod';
+import ability from '@/service/ability.js';
+import { AbilityBuilder} from '@casl/ability';
 
 let endpoint = ref('/work_centers'); //replace endpoint with your endpoint
 const loading = ref(false);
+const documentFrozen = ref(false);
+const { getAllResponseAPI,getAllResponsePermissionsAPI, getAllResponseListAPI, totalRecordsResponseAPI, currentPageResponseAPI, linksResponseAPI, postResponseAPI, putResponseAPI, deleteResponseAPI, errorResponseAPI, dataResponseAPI, dataResponsePermissionsAPI,dataResponseListAPI, statusCode } =
+    useDataAPI();
 
+////////////
+ //Form here
+ ////////////   
 const size = ref({ label: 'Normal', value: 'normal' });
 const sizeOptions = ref([
     { label: 'Small', value: 'small', class: 'sm' },
@@ -185,6 +204,7 @@ const sizeOptions = ref([
 
 onMounted(async () => {
     await loadLazyData();
+    await getAllResponsePermissionsAPI("/abilities");
 });
 
 const filters = ref();

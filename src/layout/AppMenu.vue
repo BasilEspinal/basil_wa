@@ -13,13 +13,13 @@ const model2 = ref([
     {
         items:[
             {
-        label: 'Inicio',
-        gate: 'centro_control',
+        label: 'Dashboards',
+        gate: 'monitor_menu',
         items: [{ 
             label: 'Centro de control', 
             icon: 'pi pi-fw pi-home', 
             to: '/applayout',
-            gate: 'centroControl_vista',
+            gate: 'monitor_menu',
         }]
     }
         ]
@@ -257,7 +257,7 @@ const model2 = ref([
                         gate: 'liquidaciondenomina_trabajosdeseleccion_menu',
                     },
                     {
-                        label: 'Labores de Contratistas',
+                        label: 'Trabajos de Contratistas',
                         to: '/PayrollSettlement/WorkRegisterDaily',
                         icon: 'pi pi-share-alt',
                         gate: 'liquidaciondenomina_laboresdecontratista_menu',

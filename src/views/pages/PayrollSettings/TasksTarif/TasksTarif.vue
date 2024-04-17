@@ -14,11 +14,11 @@
                 <Toolbar class="bg-gray-900 shadow-2" style="border-radius: 3rem; background-image: linear-gradient(to right, var(--green-100), var(--green-200))">
                     <template v-slot:start>
                         <div>
-                            <Button label="New" icon="pi pi-plus" class="p-button-success mr-2 ml-2 mb-2 mt-2" @click="openNew" size="large" />
-                            <Button :disabled="!(listRowSelect.length > 0 && listRowSelect.length < 2)" label="Edit" icon="pi pi-file-edit" class="p-button-help mr-2 ml-2 mb-2 mt-2" @click="openEdit" size="large" />
-                            <Button :disabled="!(listRowSelect.length > 0 && listRowSelect.length < 2)" label="Clone" icon="pi pi-copy" class="p-button-secondary mr-2 ml-2 mb-2 mt-2" @click="openClone" size="large" />
+                            <Button v-if = "ability.can('tarifa_tarea_crear')" label="New" icon="pi pi-plus" class="p-button-success mr-2 ml-2 mb-2 mt-2" @click="openNew" size="large" />
+                            <Button v-if = "ability.can('tarifa_tarea_editar')" :disabled="!(listRowSelect.length > 0 && listRowSelect.length < 2)" label="Edit" icon="pi pi-file-edit" class="p-button-help mr-2 ml-2 mb-2 mt-2" @click="openEdit" size="large" />
+                            <Button v-if = "ability.can('tarifa_tarea_crear')" :disabled="!(listRowSelect.length > 0 && listRowSelect.length < 2)" label="Clone" icon="pi pi-copy" class="p-button-secondary mr-2 ml-2 mb-2 mt-2" @click="openClone" size="large" />
                             <Button label="Export" icon="pi pi-file-import" class="p-button-warning mr-2 ml-2 mb-2 mt-2" @click="openExport" size="large" />
-                            <Button :disabled="!listRowSelect.length > 0" label="Delete" icon="pi pi-trash" class="p-button-danger mr-2 ml-2 mb-2 mt-2" @click="openDelete" size="large" />
+                            <Button v-if = "ability.can('tarifa_tarea_eliminar')" :disabled="!listRowSelect.length > 0" label="Delete" icon="pi pi-trash" class="p-button-danger mr-2 ml-2 mb-2 mt-2" @click="openDelete" size="large" />
                         </div>
                     </template>
                 </Toolbar>
@@ -31,7 +31,6 @@
         :value="dataResponseAPI.data"
         dataKey="uuid"
         tableStyle="min-width: 75rem"
-        :class="`p-datatable-${size.class}`"
         showGridlines
         :loading="loading"
         scrollable
@@ -42,14 +41,15 @@
         :paginator="true"
         :rows="50"
         :rowsPerPageOptions="[5, 10, 20, 50]"
-        filterDisplay="menu"
-        :globalFilterFields="['code', 'area_m2', 'farm.name']"
-        v-model:filters="filters"
+        :class="`p-datatable-${size.class}`"
         @row-select="onRowSelect(selectedRegisters)"
         @row-unselect="onRowSelect(selectedRegisters)"
         @select-all-change="onSelectAllChange"
         v-model:selection="selectedRegisters"
-         
+        filterDisplay="menu"
+        v-model:filters="filters"
+        :globalFilterFields="['company.name', 'farm.name', 'status.name', 'created_at', 'updated_at','type_date','type_price','price_tarif','taskType.name','packing_type.name']"
+        v-if = "!ability.can('tarifa_tarea_listado')"
         >
         <template #header>
             <!--Uncomment when filters are done-->
@@ -75,7 +75,7 @@
         <template #empty> No customers found. </template>
         <template #loading> Loading customers data. Please wait. </template>
         <Column selectionMode="multiple" headerStyle="width: 3rem"></Column>
-        <Column field="type_date" filterField="type_date" header="Type Date" sortable :frozen="type_date"> <!--Replace :frozen with the model-->
+        <Column field="type_date" filterField="type_date" header="Type Date" sortable :frozen="documentFrozen"> <!--Replace :frozen with the model-->
             <template #header>
                     <ToggleButton v-model="documentFrozen" onIcon="pi pi-lock" offIcon="pi pi-lock-open" onLabel="" offLabel="" />
                     <div>&nbsp;</div>
@@ -173,6 +173,7 @@
                 </template>
             </Column>
 
+
         </DataTable>
         <Dialog v-model:visible="formDialog" :style="{ width: '700px' }" :header="headerDialog" :modal="true" class="p-fluid text-center mx-auto">
             <pre>{{ selectedRegisters }}</pre>
@@ -185,14 +186,35 @@
     
 </template>
 
+<!-- 
+filterDisplay="menu"
+v-model:filters="filters"
+:globalFilterFields="['', 'company.name']"
+
+
+const documentFrozen = ref(false); change name field 
+<DataTable id="tblData"
+     -->
 <script setup>
 import { ref, watch, provide, onBeforeMount, onMounted } from 'vue';
 import useDataAPI from '@/composables/DataAPI/FetchDataAPI.js';
 import { FilterMatchMode, FilterOperator } from 'primevue/api';
-const { getAllResponseAPI, totalRecordsResponseAPI, currentPageResponseAPI, linksResponseAPI, postResponseAPI, putResponseAPI, deleteResponseAPI, errorResponseAPI, dataResponseAPI, statusCode } = useDataAPI();
+import { useRouter } from 'vue-router';
+import { useForm } from 'vee-validate';
+import { toTypedSchema } from '@vee-validate/zod';
+import { z } from 'zod';
+import ability from '@/service/ability.js';
+import { AbilityBuilder} from '@casl/ability';
+
 let endpoint = ref('/tarif_of_tasks'); //replace endpoint with your endpoint
 const loading = ref(false);
+const documentFrozen = ref(false);
+const { getAllResponseAPI,getAllResponsePermissionsAPI, getAllResponseListAPI, totalRecordsResponseAPI, currentPageResponseAPI, linksResponseAPI, postResponseAPI, putResponseAPI, deleteResponseAPI, errorResponseAPI, dataResponseAPI, dataResponsePermissionsAPI,dataResponseListAPI, statusCode } =
+    useDataAPI();
 
+////////////
+ //Form here
+ ////////////   
 const size = ref({ label: 'Normal', value: 'normal' });
 const sizeOptions = ref([
     { label: 'Small', value: 'small', class: 'sm' },
@@ -203,6 +225,7 @@ const sizeOptions = ref([
 
 onMounted(async () => {
     await loadLazyData();
+    await getAllResponsePermissionsAPI("/abilities");
 });
 
 const filters = ref();
@@ -245,6 +268,7 @@ const onRowSelect = (data) => {
     //assignValues(mode.value)
     
 };
+
 watch(listRowSelect, onRowSelect);
 const onSelectAllChange = () => {
     onRowSelect();
