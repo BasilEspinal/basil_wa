@@ -129,16 +129,14 @@ export default function useDataAPI(datos) {
                 return response.json();
             })
             .then((data) => {
-                // actions to data answer
-                // console.log(statusCode.value)
+                
                 if (data.errors) {
                     errorResponseAPI.value = data.errors;
                 } else {
-                    //console.log("Esta es la respuesta " + data)
+                
                     dataResponseAPI.value = JSON.parse(JSON.stringify(data, null, 2));
                 }
-                // console.log(errors)
-                //console.log(data)
+                
             })
             .catch((error) => {
                 if (error.name === 'TypeError') {
