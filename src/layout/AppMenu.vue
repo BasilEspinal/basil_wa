@@ -8,6 +8,7 @@ import useDataAPI from '@/composables/DataAPI/FetchDataAPI.js';
 const { getAllResponseAPI, getAllResponsePermissionsAPI, getAllResponseListAPI, totalRecordsResponseAPI, currentPageResponseAPI, linksResponseAPI, postResponseAPI, putResponseAPI, deleteResponseAPI, errorResponseAPI, dataResponseAPI, dataResponseListAPI, statusCode } =
     useDataAPI();
 
+//This is the model that will be used to create the menu
 const model2 = ref([
     
     {
