@@ -2,23 +2,23 @@
     <div>
     <div class="card">
         <div>
-            <h1>Información de producto</h1> 
+            <h1>Información de tarifas por tareas</h1> 
         </div>
     </div>
     <div class="card">
         <div class="grid">
             <div class="col-xs-12 col-sm-6 col-md-4 mb-2 text-center mx-auto">
                 <!--Uncomment when table is done-->
-                <pre>falta CRUD</pre>
+                
                 <div class="col-xs-12 col-sm-6 col-md-4 mb-2 text-center mx-auto">
                 <Toolbar class="bg-gray-900 shadow-2" style="border-radius: 3rem; background-image: linear-gradient(to right, var(--green-100), var(--green-200))">
                     <template v-slot:start>
                         <div>
-                            <Button v-if = "ability.can('producto_crear')" label="New" icon="pi pi-plus" class="p-button-success mr-2 ml-2 mb-2 mt-2" @click="openNew" size="large" />
-                            <Button v-if = "ability.can('producto_editar')" :disabled="!(listRowSelect.length > 0 && listRowSelect.length < 2)" label="Edit" icon="pi pi-file-edit" class="p-button-help mr-2 ml-2 mb-2 mt-2" @click="openEdit" size="large" />
-                            <Button v-if = "ability.can('producto_crear,')" :disabled="!(listRowSelect.length > 0 && listRowSelect.length < 2)" label="Clone" icon="pi pi-copy" class="p-button-secondary mr-2 ml-2 mb-2 mt-2" @click="openClone" size="large" />
+                            <Button label="New" icon="pi pi-plus" class="p-button-success mr-2 ml-2 mb-2 mt-2" @click="openNew" size="large" />
+                            <Button :disabled="!(listRowSelect.length > 0 && listRowSelect.length < 2)" label="Edit" icon="pi pi-file-edit" class="p-button-help mr-2 ml-2 mb-2 mt-2" @click="openEdit" size="large" />
+                            <Button :disabled="!(listRowSelect.length > 0 && listRowSelect.length < 2)" label="Clone" icon="pi pi-copy" class="p-button-secondary mr-2 ml-2 mb-2 mt-2" @click="openClone" size="large" />
                             <Button label="Export" icon="pi pi-file-import" class="p-button-warning mr-2 ml-2 mb-2 mt-2" @click="openExport" size="large" />
-                            <Button v-if = "ability.can('producto_eliminar')" :disabled="!listRowSelect.length > 0" label="Delete" icon="pi pi-trash" class="p-button-danger mr-2 ml-2 mb-2 mt-2" @click="openDelete" size="large" />
+                            <Button :disabled="!listRowSelect.length > 0" label="Delete" icon="pi pi-trash" class="p-button-danger mr-2 ml-2 mb-2 mt-2" @click="openDelete" size="large" />
                         </div>
                     </template>
                 </Toolbar>
@@ -31,6 +31,7 @@
         :value="dataResponseAPI.data"
         dataKey="uuid"
         tableStyle="min-width: 75rem"
+        :class="`p-datatable-${size.class}`"
         showGridlines
         :loading="loading"
         scrollable
@@ -41,15 +42,14 @@
         :paginator="true"
         :rows="50"
         :rowsPerPageOptions="[5, 10, 20, 50]"
-        :class="`p-datatable-${size.class}`"
+        filterDisplay="menu"
+        :globalFilterFields="['code', 'area_m2', 'farm.name']"
+        v-model:filters="filters"
         @row-select="onRowSelect(selectedRegisters)"
         @row-unselect="onRowSelect(selectedRegisters)"
         @select-all-change="onSelectAllChange"
         v-model:selection="selectedRegisters"
-        filterDisplay="menu"
-        v-model:filters="filters"
-        :globalFilterFields="['short_name', 'name','cultivated','slug']"
-        v-if = "ability.can('producto_listado')"
+         
         >
         <template #header>
             <!--Uncomment when filters are done-->
@@ -75,39 +75,59 @@
         <template #empty> No customers found. </template>
         <template #loading> Loading customers data. Please wait. </template>
         <Column selectionMode="multiple" headerStyle="width: 3rem"></Column>
-
-        <Column field="slug" filterField="slug" header="Slug" sortable>
-                <template #body="{ data }">
-                    {{ data.slug }}
-                </template>
-                <template #filter="{ filterModel }">
-                    <InputText v-model="filterModel.value" type="text" class="p-column-filter" placeholder="Search by farm" />
-                </template>
-            </Column>
-
-        <Column field="shortName" filterField="shortName" header="shortName" sortable frozen=""> <!--Replace :frozen with the model-->
+        <Column field="type_date" filterField="type_date" header="Type Date" sortable :frozen="type_date"> <!--Replace :frozen with the model-->
             <template #header>
                     <ToggleButton v-model="documentFrozen" onIcon="pi pi-lock" offIcon="pi pi-lock-open" onLabel="" offLabel="" />
                     <div>&nbsp;</div>
                 </template>
 
                 <template #body="{ data }">
-                    {{ data.short_name }} 
+                    {{ data.type_date }}
                 </template>
                 <template #filter="{ filterModel }">
-                    <InputText v-model="filterModel.value" type="text" class="p-column-filter" placeholder="Search by " />
+                    <InputText v-model="filterModel.value" type="text" class="p-column-filter" placeholder="Search by Type Date" />
                 </template>
         </Column>
 
-        <Column field="name" filterField="name" header="Name" sortable> 
+        <Column field="type_price" filterField="type_price" header="Type Price " sortable> 
             
                 <template #body="{ data }">
-                    {{ data.name }}
+                    {{ data.type_price }}
                 </template>
                 <template #filter="{ filterModel }">
-                    <InputText v-model="filterModel.value" type="text" class="p-column-filter" placeholder="Search by " />
+                    <InputText v-model="filterModel.value" type="text" class="p-column-filter" placeholder="Search by Type Price" />
                 </template>
         </Column>
+        
+        <Column field="price_tarif" filterField="price_tarif" header="Tarif Price " sortable> 
+            
+            <template #body="{ data }">
+                {{ data.price_tarif }}
+            </template>
+            <template #filter="{ filterModel }">
+                <InputText v-model="filterModel.value" type="text" class="p-column-filter" placeholder="Search by Tarif Price" />
+            </template>
+    </Column>
+    
+    <Column field="taskType.name" filterField="taskType.name" header="Task Type Name " sortable> 
+            
+            <template #body="{ data }">
+                {{ data.taskType.name }}
+            </template>
+            <template #filter="{ filterModel }">
+                <InputText v-model="filterModel.value" type="text" class="p-column-filter" placeholder="Search by Task Type Name" />
+            </template>
+    </Column>
+    
+    <Column field="packing_type.name" filterField="packing_type.name" header="Packing Type Name " sortable> 
+            
+            <template #body="{ data }">
+                {{ data.packing_type.name }}
+            </template>
+            <template #filter="{ filterModel }">
+                <InputText v-model="filterModel.value" type="text" class="p-column-filter" placeholder="Search by Packing Type Name" />
+            </template>
+    </Column>
 
         <!--Here add other columns-->
 
@@ -120,23 +140,9 @@
                 </template>
             </Column>
 
-
-
-            <Column field="cultivated" filterField="cultivated" header="cultivated" sortable>
-                <template #body="{ data }">
-                    {{ data.cultivated }}
-                </template>
-                <template #filter="{ filterModel }">
-                    <InputText v-model="filterModel.value" type="text" class="p-column-filter" placeholder="Search by farm" />
-                </template>
-            </Column>
-
-            <Column field="companyName" filterField="companyName" header="Company Name" sortable>
+            <Column field="companyName" header="Company Name" sortable>
                 <template #body="{ data }">
                     {{ data.company.name }}
-                </template>
-                <template #filter="{ filterModel }">
-                    <InputText v-model="filterModel.value" type="text" class="p-column-filter" placeholder="Search by farm" />
                 </template>
             </Column>
 
@@ -179,35 +185,14 @@
     
 </template>
 
-<!-- 
-filterDisplay="menu"
-v-model:filters="filters"
-:globalFilterFields="['', 'company.name']"
-
-
-const documentFrozen = ref(false); change name field 
-<DataTable id="tblData"
-     -->
 <script setup>
 import { ref, watch, provide, onBeforeMount, onMounted } from 'vue';
 import useDataAPI from '@/composables/DataAPI/FetchDataAPI.js';
 import { FilterMatchMode, FilterOperator } from 'primevue/api';
-import { useRouter } from 'vue-router';
-import { useForm } from 'vee-validate';
-import { toTypedSchema } from '@vee-validate/zod';
-import { z } from 'zod';
-import ability from '@/service/ability.js';
-import { AbilityBuilder} from '@casl/ability';
-
-let endpoint = ref('/products'); //replace endpoint with your endpoint
+const { getAllResponseAPI, totalRecordsResponseAPI, currentPageResponseAPI, linksResponseAPI, postResponseAPI, putResponseAPI, deleteResponseAPI, errorResponseAPI, dataResponseAPI, statusCode } = useDataAPI();
+let endpoint = ref('/tarif_of_tasks'); //replace endpoint with your endpoint
 const loading = ref(false);
-const documentFrozen = ref(false); 
-const { getAllResponseAPI,getAllResponsePermissionsAPI, getAllResponseListAPI, totalRecordsResponseAPI, currentPageResponseAPI, linksResponseAPI, postResponseAPI, putResponseAPI, deleteResponseAPI, errorResponseAPI, dataResponseAPI, dataResponsePermissionsAPI,dataResponseListAPI, statusCode } =
-    useDataAPI();
 
-////////////
- //Form here
- ////////////   
 const size = ref({ label: 'Normal', value: 'normal' });
 const sizeOptions = ref([
     { label: 'Small', value: 'small', class: 'sm' },
@@ -218,7 +203,6 @@ const sizeOptions = ref([
 
 onMounted(async () => {
     await loadLazyData();
-    await getAllResponsePermissionsAPI("/abilities");
 });
 
 const filters = ref();
@@ -232,16 +216,15 @@ const clearFilter = () => {
 const initFilters = () => {
     filters.value = {
         global: { value: null, matchMode: FilterMatchMode.CONTAINS },
-        slug: { operator: FilterOperator.AND, constraints: [{ value: null, matchMode: FilterMatchMode.STARTS_WITH }] },
-        name: { operator: FilterOperator.AND, constraints: [{ value: null, matchMode: FilterMatchMode.STARTS_WITH }] },
-        shortName: { operator: FilterOperator.AND, constraints: [{ value: null, matchMode: FilterMatchMode.STARTS_WITH }] },
-        
-        cultivated: { operator: FilterOperator.AND, constraints: [{ value: null, matchMode: FilterMatchMode.STARTS_WITH }] },
+        type_date: { operator: FilterOperator.AND, constraints: [{ value: null, matchMode: FilterMatchMode.STARTS_WITH }] },
+        type_price:{ operator: FilterOperator.AND, constraints: [{ value: null, matchMode: FilterMatchMode.STARTS_WITH }] },
+        price_tarif:{ operator: FilterOperator.AND, constraints: [{ value: null, matchMode: FilterMatchMode.STARTS_WITH }] },
+        'taskType.name':{ operator: FilterOperator.AND, constraints: [{ value: null, matchMode: FilterMatchMode.STARTS_WITH }] },
+        'packing_type.name':{ operator: FilterOperator.AND, constraints: [{ value: null, matchMode: FilterMatchMode.STARTS_WITH }] },
         'status.name': { operator: FilterOperator.AND, constraints: [{ value: null, matchMode: FilterMatchMode.STARTS_WITH }] },
-        'company.name': { operator: FilterOperator.AND, constraints: [{ value: null, matchMode: FilterMatchMode.STARTS_WITH }] },
         'farm.name': { operator: FilterOperator.AND, constraints: [{ value: null, matchMode: FilterMatchMode.STARTS_WITH }] },
         created_at: { operator: FilterOperator.AND, constraints: [{ value: null, matchMode: FilterMatchMode.STARTS_WITH }] },
-        updated_at: { operator: FilterOperator.AND, constraints: [{ value: null, matchMode: FilterMatchMode.STARTS_WITH }] }
+        updated_at: { operator: FilterOperator.AND, constraints: [{ value: null, matchMode: FilterMatchMode.STARTS_WITH }] },
     };
 };
 
@@ -262,7 +245,6 @@ const onRowSelect = (data) => {
     //assignValues(mode.value)
     
 };
-
 watch(listRowSelect, onRowSelect);
 const onSelectAllChange = () => {
     onRowSelect();

@@ -1,16 +1,15 @@
 <template>
     <div>
-    <div class="card">
-        <div>
-            <h1>Información de tipo de pagos</h1> 
+        <div class="card">
+            <div>
+                <h1>Información de tipos de pago</h1>
+            </div>
         </div>
-    </div>
-    <div class="card">
-        <div class="grid">
-            <div class="col-xs-12 col-sm-6 col-md-4 mb-2 text-center mx-auto">
-                <!--Uncomment when table is done-->
-                <pre>falta CRUD</pre>
+        <div class="card">
+            <div class="grid">
                 <div class="col-xs-12 col-sm-6 col-md-4 mb-2 text-center mx-auto">
+
+                    <div class="col-xs-12 col-sm-6 col-md-4 mb-2 text-center mx-auto">
                 <Toolbar class="bg-gray-900 shadow-2" style="border-radius: 3rem; background-image: linear-gradient(to right, var(--green-100), var(--green-200))">
                     <template v-slot:start>
                         <div>
@@ -23,74 +22,66 @@
                     </template>
                 </Toolbar>
             </div>
-
+                </div>
             </div>
-        </div>
-        <!-- <pre>{{ dataResponseAPI }}</pre> -->
-        <DataTable
-        :value="dataResponseAPI.data"
-        dataKey="uuid"
-        tableStyle="min-width: 75rem"
-        showGridlines
-        :loading="loading"
-        scrollable
-        scrollHeight="600px"
-        resizableColumns
-        columnResizeMode="expand"
-        sortMode="multiple"
-        :paginator="true"
-        :rows="50"
-        :rowsPerPageOptions="[5, 10, 20, 50]"
-        :class="`p-datatable-${size.class}`"
-        @row-select="onRowSelect(selectedRegisters)"
-        @row-unselect="onRowSelect(selectedRegisters)"
-        @select-all-change="onSelectAllChange"
-        v-model:selection="selectedRegisters"
-        filterDisplay="menu"
-        v-model:filters="filters"
-        :globalFilterFields="['code', 'name', 'company.name']"
-        v-if = "ability.can('tipo_pago_listado')"
-         
-        >
-        <template #header>
-            <!--Uncomment when filters are done-->
+            <!-- <pre>{{ dataResponseAPI }}</pre> -->
+            <DataTable
+                :value="dataResponseAPI.data"
+                dataKey="uuid"
+                tableStyle="min-width: 75rem"
+                showGridlines
+                :loading="loading"
+                scrollable
+                scrollHeight="600px"
+                resizableColumns
+                columnResizeMode="expand"
+                sortMode="multiple"
+                :paginator="true"
+                :rows="50"
+                :rowsPerPageOptions="[5, 10, 20, 50]"
+                :class="`p-datatable-${size.class}`"
+                @row-select="onRowSelect(selectedRegisters)"
+                @row-unselect="onRowSelect(selectedRegisters)"
+                @select-all-change="onSelectAllChange"
+                v-model:selection="selectedRegisters"
+                filterDisplay="menu"
+                v-model:filters="filters"
+                :globalFilterFields="['code', 'name', 'company.name']"
+                
+            >
+                <template #header>
+                    <Toolbar class="mb-2">
+                        <template v-slot:start>
+                            <Button type="button" icon="pi pi-filter-slash" label="Limpiar" class="p-button-outlined mb-2" @click="clearFilter()" />
+                        </template>
+                        <template v-slot:end>
+                            <span class="p-input-icon-left mb-2">
+                                <i class="pi pi-search" />
+                                <InputText v-model="filters['global'].value" placeholder="Buscar" style="width: 100%" />
+                            </span>
+                        </template>
+                        <template v-slot:center>
+                            <SelectButton v-model="size" :options="sizeOptions" optionLabel="label" dataKey="label"> </SelectButton>
+                        </template>
+                    </Toolbar>
+                </template>
 
-            <Toolbar class = "mb-2">
-                    <template v-slot:start>
-                        <Button type="button" icon="pi pi-filter-slash" label="Limpiar" class="p-button-outlined mb-2" @click="clearFilter()" />
+                <template #empty> No customers found. </template>
+                <template #loading> Loading customers data. Please wait. </template>
+                <Column selectionMode="multiple" headerStyle="width: 3rem"></Column>
+                <Column field="code" filterField="code" header="code " sortable frozen="">
+                    <template #header>
+                        <ToggleButton v-model="codeFrozen" onIcon="pi pi-lock" offIcon="pi pi-lock-open" onLabel="" offLabel="" />
+                        <div>&nbsp;</div>
                     </template>
-                    <template v-slot:end>
-                        <span class="p-input-icon-left mb-2">
-                        <i class="pi pi-search" />
-                        <InputText v-model="filters['global'].value" placeholder="Buscar" style="width: 100%" />
-                    </span>
+
+                    <template #body="{ data }">
+                        {{ data.code }}
                     </template>
-                    <template v-slot:center>
-                        
-                        <SelectButton v-model="size" :options="sizeOptions" optionLabel="label" dataKey="label"> </SelectButton>
-                        
-                    </template>       
-                </Toolbar>
-        </template>
-
-        <template #empty> No customers found. </template>
-        <template #loading> Loading customers data. Please wait. </template>
-        <Column selectionMode="multiple" headerStyle="width: 3rem"></Column>
-        <Column field="code" filterField="code" header="code " sortable :frozen="documentFrozen"> <!--Replace :frozen with the model-->
-            <template #header>
-                    <ToggleButton v-model="documentFrozen" onIcon="pi pi-lock" offIcon="pi pi-lock-open" onLabel="" offLabel="" />
-                    <div>&nbsp;</div>
-                </template>
-
-                <template #body="{ data }">
-                    {{ data.code }} 
-                </template>
-                <template #filter="{ filterModel }">
-                    <InputText v-model="filterModel.value" type="text" class="p-column-filter" placeholder="Search by " />
-                </template>
-        </Column>
-
-
+                    <template #filter="{ filterModel }">
+                        <InputText v-model="filterModel.value" type="text" class="p-column-filter" placeholder="Search by " />
+                    </template>
+                </Column>
 
                 <Column field="name" filterField="name" header="name" sortable>
                     <template #body="{ data }">
@@ -141,64 +132,15 @@
                         <InputText v-model="filterModel.value" type="text" class="p-column-filter" placeholder="Search by status" />
                     </template>
                 </Column>
-
-        <!--Here add other columns-->
-
-        <!-- <Column field="farmName" filterField="farm.name" header="Farm Name" sortable>
-                <template #body="{ data }">
-                    {{ data.farm.name }}
-                </template>
-                <template #filter="{ filterModel }">
-                    <InputText v-model="filterModel.value" type="text" class="p-column-filter" placeholder="Search by farm" />
-                </template>
-            </Column>
-
-            <Column field="companyName" filterField="company.name" header="Company Name" sortable>
-                <template #body="{ data }">
-                    {{ data.company.name }}
-                </template>
-                <template #filter="{ filterModel }">
-                    <InputText v-model="filterModel.value" type="text" class="p-column-filter" placeholder="Search by farm" />
-                </template>
-            </Column>
-
-            <Column field="createdAt" filterField="created_at" header="Creation date" sortable>
-                <template #body="{ data }">
-                    {{ data.created_at }}
-                </template>
-                <template #filter="{ filterModel }">
-                    <InputText v-model="filterModel.value" type="text" class="p-column-filter" placeholder="Search by creation date" />
-                </template>
-            </Column>
-
-            <Column field="updatedAt" filterField="updated_at" header="Modification date" sortable>
-                <template #body="{ data }">
-                    {{ data.updated_at }}
-                </template>
-                <template #filter="{ filterModel }">
-                    <InputText v-model="filterModel.value" type="text" class="p-column-filter" placeholder="Search by modification date" />
-                </template>
-            </Column>
-
-            <Column field="status" filterField="status.name" header="Status" sortable>
-                <template #body="{ data }">
-                    <Tag :value="data.status.name" :severity="'EFC88B'" />
-                </template>
-                <template #filter="{ filterModel }">
-                    <InputText v-model="filterModel.value" type="text" class="p-column-filter" placeholder="Search by status" />
-                </template>
-            </Column> -->
-
-        </DataTable>
-        <Dialog v-model:visible="formDialog" :style="{ width: '700px' }" :header="headerDialog" :modal="true" class="p-fluid text-center mx-auto">
-            <pre>{{ selectedRegisters }}</pre>
-        </Dialog>
-        <Dialog v-model:visible="deleteDialog" :style="{ width: '700px' }" :header="headerDialog" :modal="true" class="p-fluid text-center mx-auto">
-            <pre>{{ selectedRegisters }}</pre>
-        </Dialog> 
+            </DataTable>
+            <Dialog v-model:visible="formDialog" :style="{ width: '700px' }" :header="headerDialog" :modal="true" class="p-fluid text-center mx-auto">
+                <pre>{{ selectedRegisters }}</pre>
+            </Dialog>
+            <Dialog v-model:visible="deleteDialog" :style="{ width: '700px' }" :header="headerDialog" :modal="true" class="p-fluid text-center mx-auto">
+                <pre>{{ selectedRegisters }}</pre>
+            </Dialog>
+        </div>
     </div>
-</div>
-    
 </template>
 
 <!-- 
@@ -208,28 +150,17 @@ v-model:filters="filters"
 
 
 const documentFrozen = ref(false); change name field 
-<DataTable id="tblData"
      -->
 <script setup>
 import { ref, watch, provide, onBeforeMount, onMounted } from 'vue';
 import useDataAPI from '@/composables/DataAPI/FetchDataAPI.js';
 import { FilterMatchMode, FilterOperator } from 'primevue/api';
-import { useRouter } from 'vue-router';
-import { useForm } from 'vee-validate';
-import { toTypedSchema } from '@vee-validate/zod';
-import { z } from 'zod';
-import ability from '@/service/ability.js';
-import { AbilityBuilder} from '@casl/ability';
+const { getAllResponseAPI, getAllResponseListAPI, totalRecordsResponseAPI, currentPageResponseAPI, linksResponseAPI, postResponseAPI, putResponseAPI, deleteResponseAPI, errorResponseAPI, dataResponseAPI, dataResponseListAPI, statusCode } =
+    useDataAPI();
 
 let endpoint = ref('/payment_types'); //replace endpoint with your endpoint
 const loading = ref(false);
-
-const { getAllResponseAPI,getAllResponsePermissionsAPI, getAllResponseListAPI, totalRecordsResponseAPI, currentPageResponseAPI, linksResponseAPI, postResponseAPI, putResponseAPI, deleteResponseAPI, errorResponseAPI, dataResponseAPI, dataResponsePermissionsAPI,dataResponseListAPI, statusCode } =
-    useDataAPI();
-const documentFrozen = ref(false); 
-////////////
- //Form here
- ////////////   
+const codeFrozen = ref(false);
 const size = ref({ label: 'Normal', value: 'normal' });
 const sizeOptions = ref([
     { label: 'Small', value: 'small', class: 'sm' },
@@ -237,10 +168,8 @@ const sizeOptions = ref([
     { label: 'Large', value: 'large', class: 'lg' }
 ]);
 
-
 onMounted(async () => {
     await loadLazyData();
-    await getAllResponsePermissionsAPI("/abilities");
 });
 
 const filters = ref();
@@ -265,22 +194,18 @@ const initFilters = () => {
 
 const loadLazyData = async (event) => {
     //lazyParams.value = { ...lazyParams.value, first: event?.first || first.value };
-    
+
     await getAllResponseAPI(endpoint.value);
     loading.value = false;
-    
 };
-
 
 const listRowSelect = ref([]);
 const selectedRegisters = ref([]);
 const onRowSelect = (data) => {
-    
     listRowSelect.value = data;
     //assignValues(mode.value)
-    
 };
-
+//Cut and paste this at the end
 watch(listRowSelect, onRowSelect);
 const onSelectAllChange = () => {
     onRowSelect();
@@ -295,45 +220,45 @@ const hideDialog = () => {
     deleteDialog.value = false;
     recordsDelete.value = [];
     resetValues();
-}
-const resetValues = () => {}
+};
+const resetValues = () => {};
 const assignValues = (modex) => {
-    if ((modex ==='EDIT')) {}
-    if ((modex=== 'CLONE' )) {}
-}
+    if (modex === 'EDIT') {
+    }
+    if (modex === 'CLONE') {
+    }
+};
 const openNew = () => {
     mode.value = 'NEW';
     resetValues();
     formDialog.value = true;
     headerDialog.value = 'New xxxxxxx record';
-}
+};
 const openEdit = () => {
     mode.value = 'EDIT';
     formDialog.value = true;
     headerDialog.value = 'Edit a xxxxx record';
-    assignValues(mode.value)
-
-}
+    assignValues(mode.value);
+};
 const openClone = () => {
     mode.value = 'CLONE';
     headerDialog.value = 'Clone a xxxx record';
     formDialog.value = true;
-    assignValues(mode.value)
-}
+    assignValues(mode.value);
+};
 let recordsDelete = ref([]);
 const openDelete = () => {
     mode.value = 'DELETE';
     headerDialog.value = 'Delete a xxxxx record';
     resetValues();
     deleteDialog.value = true;
-}
+};
 const openExport = () => {
     mode.value = 'EXPORT';
     headerDialog.value = 'Export a xxxxx record';
     resetValues();
     formDialog.value = true;
-}
-
+};
 </script>
 
 <style lang="scss" scoped>

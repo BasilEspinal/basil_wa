@@ -80,7 +80,7 @@
                 :class="`p-datatable-${size.class}`"
                 :value="dataResponseAPI.data"
                 showGridlines
-                :globalFilterFields="['workCenter.name', 'last_name', 'company.name']"
+                :globalFilterFields="['workCenter.name', 'document', 'first_name', 'last_name','gender.name', 'email', 'bank_account_number', 'bank_account_doc', 'payment_type.name', 'farm.name', 'company.name', 'created_at', 'updated_at', 'status.name']"
                 tableStyle="min-width: 75rem"
                 dataKey="uuid"
                 :paginator="true"

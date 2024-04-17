@@ -6,29 +6,32 @@
         </div>
     </div>
     <div class="card">
-        
         <div class="grid">
             <div class="col-xs-12 col-sm-6 col-md-4 mb-2 text-center mx-auto">
-                <Toolbar class="bg-gray-900 shadow-2" style="border-radius: 3rem; background-image: linear-gradient(to right, var(--green-100), var(--green-200))">
+                <!--Uncomment when table is done-->
+                
+                <div class="col-xs-12 col-sm-6 col-md-4 mb-2 text-center mx-auto">
+                    <Toolbar class="bg-gray-900 shadow-2" style="border-radius: 3rem; background-image: linear-gradient(to right, var(--green-100), var(--green-200))">
                     <template v-slot:start>
                         <div>
-                            <Button label="New" icon="pi pi-plus" class="p-button-success mr-2 ml-2 mb-2 mt-2" @click="openNew" size="large" />
+                            <Button v-if = "ability.can('lote_crear')" label="New" icon="pi pi-plus" class="p-button-success mr-2 ml-2 mb-2 mt-2" @click="openNew" size="large" />
                             <!-- <i class="pi pi-bars p-toolbar-separator mr-2 ml-2 mb-2 mt-2"></i> -->
-                            <Button :disabled="!(listRowSelect.length > 0 && listRowSelect.length < 2)" label="Edit" icon="pi pi-file-edit" class="p-button-help mr-2 ml-2 mb-2 mt-2" @click="openEdit" size="large" />
-                            <Button :disabled="!(listRowSelect.length > 0 && listRowSelect.length < 2)" label="Clone" icon="pi pi-copy" class="p-button-secondary mr-2 ml-2 mb-2 mt-2" @click="openClone" size="large" />
+                            <Button v-if = "ability.can('lote_editar')" :disabled="!(listRowSelect.length > 0 && listRowSelect.length < 2)" label="Edit" icon="pi pi-file-edit" class="p-button-help mr-2 ml-2 mb-2 mt-2" @click="openEdit" size="large" />
+                            <Button v-if = "ability.can('lote_crear')" :disabled="!(listRowSelect.length > 0 && listRowSelect.length < 2)" label="Clone" icon="pi pi-copy" class="p-button-secondary mr-2 ml-2 mb-2 mt-2" @click="openClone" size="large" />
                             <Button label="Export" icon="pi pi-file-import" class="p-button-warning mr-2 ml-2 mb-2 mt-2" @click="openExport" size="large" />
-                            <Button :disabled="!listRowSelect.length > 0" label="Delete" icon="pi pi-trash" class="p-button-danger mr-2 ml-2 mb-2 mt-2" @click="openDelete" size="large" />
+                            <Button v-if = "ability.can('lote_eliminar,')" :disabled="!listRowSelect.length > 0" label="Delete" icon="pi pi-trash" class="p-button-danger mr-2 ml-2 mb-2 mt-2" @click="openDelete" size="large" />
                         </div>
                     </template>
                 </Toolbar>
             </div>
-        </div>
 
+            </div>
+        </div>
+        <!-- <pre>{{ dataResponseAPI }}</pre> -->
         <DataTable
         :value="dataResponseAPI.data"
         dataKey="uuid"
         tableStyle="min-width: 75rem"
-        :class="`p-datatable-${size.class}`"
         showGridlines
         :loading="loading"
         scrollable
@@ -39,18 +42,21 @@
         :paginator="true"
         :rows="50"
         :rowsPerPageOptions="[5, 10, 20, 50]"
-        filterDisplay="menu"
-        :globalFilterFields="['code', 'area_m2', 'farm.name']"
-        v-model:filters="filters"
+        :class="`p-datatable-${size.class}`"
         @row-select="onRowSelect(selectedRegisters)"
         @row-unselect="onRowSelect(selectedRegisters)"
         @select-all-change="onSelectAllChange"
         v-model:selection="selectedRegisters"
-
-        
+        filterDisplay="menu"
+        v-model:filters="filters"
+        :globalFilterFields="['', 'company.name', 'farm.name', 'status.name', 'created_at', 'updated_at', 'code', 'area_m2', 'zone', 'latitude', 'longitude']"
+        v-if = "ability.can('lote_listado')"
+         
         >
         <template #header>
-            <Toolbar class = "mb-2">
+            <!--Uncomment when filters are done-->
+
+            <!-- <Toolbar class = "mb-2">
                     <template v-slot:start>
                         <Button type="button" icon="pi pi-filter-slash" label="Limpiar" class="p-button-outlined mb-2" @click="clearFilter()" />
                     </template>
@@ -65,12 +71,13 @@
                         <SelectButton v-model="size" :options="sizeOptions" optionLabel="label" dataKey="label"> </SelectButton>
                         
                     </template>       
-                </Toolbar>
+                </Toolbar> -->
         </template>
 
         <template #empty> No customers found. </template>
         <template #loading> Loading customers data. Please wait. </template>
         <Column selectionMode="multiple" headerStyle="width: 3rem"></Column>
+
         <Column field="code" filterField="code" header="Code" sortable :frozen="codeFrozen"> <!--Replace :frozen with the model-->
             <template #header>
                     <ToggleButton v-model="codeFrozen" onIcon="pi pi-lock" offIcon="pi pi-lock-open" onLabel="" offLabel="" />
@@ -165,42 +172,65 @@
                     <InputText v-model="filterModel.value" type="text" class="p-column-filter" placeholder="Search by status" />
                 </template>
             </Column>
-        
-
-        </DataTable> 
+        </DataTable>
         <Dialog v-model:visible="formDialog" :style="{ width: '700px' }" :header="headerDialog" :modal="true" class="p-fluid text-center mx-auto">
             <pre>{{ selectedRegisters }}</pre>
         </Dialog>
         <Dialog v-model:visible="deleteDialog" :style="{ width: '700px' }" :header="headerDialog" :modal="true" class="p-fluid text-center mx-auto">
+            <pre>{{ selectedRegisters }}</pre>
         </Dialog> 
     </div>
 </div>
     
 </template>
 
+<!-- 
+filterDisplay="menu"
+v-model:filters="filters"
+:globalFilterFields="['', 'company.name']"
+
+
+const documentFrozen = ref(false); change name field 
+<DataTable id="tblData"
+     -->
 <script setup>
 import { ref, watch, provide, onBeforeMount, onMounted } from 'vue';
 import useDataAPI from '@/composables/DataAPI/FetchDataAPI.js';
 import { FilterMatchMode, FilterOperator } from 'primevue/api';
-const { getAllResponseAPI, totalRecordsResponseAPI, currentPageResponseAPI, linksResponseAPI, postResponseAPI, putResponseAPI, deleteResponseAPI, errorResponseAPI, dataResponseAPI, statusCode } = useDataAPI();
-let endpoint = ref('/lots');
+import { useRouter } from 'vue-router';
+import { useForm } from 'vee-validate';
+import { toTypedSchema } from '@vee-validate/zod';
+import { z } from 'zod';
+import ability from '@/service/ability.js';
+import { AbilityBuilder} from '@casl/ability';
+
+let endpoint = ref('/lots'); //replace endpoint with your endpoint
 const loading = ref(false);
 const codeFrozen = ref(false);
+const { getAllResponseAPI,getAllResponsePermissionsAPI, getAllResponseListAPI, totalRecordsResponseAPI, currentPageResponseAPI, linksResponseAPI, postResponseAPI, putResponseAPI, deleteResponseAPI, errorResponseAPI, dataResponseAPI, dataResponsePermissionsAPI,dataResponseListAPI, statusCode } =
+    useDataAPI();
 
+////////////
+ //Form here
+ ////////////   
 const size = ref({ label: 'Normal', value: 'normal' });
 const sizeOptions = ref([
     { label: 'Small', value: 'small', class: 'sm' },
     { label: 'Normal', value: 'normal' },
     { label: 'Large', value: 'large', class: 'lg' }
 ]);
+
+
 onMounted(async () => {
-    loading.value = true
     await loadLazyData();
+    await getAllResponsePermissionsAPI("/abilities");
 });
+
 const filters = ref();
 onBeforeMount(() => {
     initFilters();
 });
+
 const clearFilter = () => {
     initFilters();
 };
@@ -219,13 +249,16 @@ const initFilters = () => {
 
     };
 };
+
 const loadLazyData = async (event) => {
     //lazyParams.value = { ...lazyParams.value, first: event?.first || first.value };
+    
     await getAllResponseAPI(endpoint.value);
     loading.value = false;
     
-
 };
+
+
 const listRowSelect = ref([]);
 const selectedRegisters = ref([]);
 const onRowSelect = (data) => {
@@ -234,10 +267,12 @@ const onRowSelect = (data) => {
     //assignValues(mode.value)
     
 };
+
 watch(listRowSelect, onRowSelect);
 const onSelectAllChange = () => {
     onRowSelect();
 };
+
 const mode = ref();
 const formDialog = ref(false);
 const deleteDialog = ref(false);
@@ -285,7 +320,6 @@ const openExport = () => {
     resetValues();
     formDialog.value = true;
 }
-
 
 </script>
 
