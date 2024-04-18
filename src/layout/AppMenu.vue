@@ -150,6 +150,18 @@ const model2 = ref([
                         to: '/access',
                         icon: 'pi pi-calendar-minus',
                         gate: 'produccion_programaciondelotes_menu',
+                    },
+                    {
+                        label: 'Control de temperatura',
+                        to: '/production/TemperatureControl',
+                        icon: 'pi pi-calendar-minus',
+                        gate: '',
+                    },
+                    {
+                        label: 'Estación metereológica',
+                        to: '/production/MetereologicalStation',
+                        icon: 'pi pi-calendar-minus',
+                        gate: '',
                     }
                 ]
             }
@@ -182,6 +194,12 @@ const model2 = ref([
                         icon: 'pi pi-bookmark',
                         gate: 'configuraciondepagos_tarifasportarea_menu,',
                         
+                    },
+                    {
+                        label: 'Tipos de Labores',
+                        to: '/payrollsettings/taskstypes',
+                        icon: 'pi pi-list',
+                        gate: 'configuraciondetiposdetareas_menu',
                     },
                     {
                         label: 'Tarifas por Labores',
