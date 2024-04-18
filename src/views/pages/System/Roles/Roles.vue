@@ -126,11 +126,9 @@ const deleteRoles = () => {
                 <template #center>
                     <Button label="New" icon="pi pi-plus" class="p-button-success" @click="openNew" size="large" />
                     <Divider layout="vertical" />
-                    <Button :disabled="selectedRegisters.length != 1" label="Clone" icon="pi pi-copy"
-                        class="p-button-secondary" @click="openClone" size="large" />
+                    <Button :disabled="selectedRegisters.length != 1" label="Clone" icon="pi pi-copy" class="p-button-secondary" @click="openClone" size="large" />
                     <Divider layout="vertical" />
-                    <Button :disabled="!selectedRegisters.length" label="Delete" icon="pi pi-trash"
-                        class="p-button-danger" @click="openDelete" size="large" />
+                    <Button :disabled="!selectedRegisters.length" label="Delete" icon="pi pi-trash" class="p-button-danger" @click="openDelete" size="large" />
                 </template>
             </Toolbar>
             <DataTable v-model:expandedRows="expandedRows" :loading="loading" :value="roles" dataKey="id" :rows="50"
@@ -146,8 +144,7 @@ const deleteRoles = () => {
                             {{ data.name }}
                         </template>
                         <template #filter="{ filterModel }">
-                            <InputText v-model="filterModel.value" type="text" class="p-column-filter"
-                                placeholder="Search by " />
+                            <InputText v-model="filterModel.value" type="text" class="p-column-filter" placeholder="Search by " />
                         </template>
                     </Column>
                 </template>
