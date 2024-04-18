@@ -114,11 +114,13 @@ const newUser = handleSubmit(async values => {
         name: values.name,
         email: values.email,
         password: values.password,
-        "farm_id": 1,
+        "farm_uuid": '8ef93a7b-31bf-4233-af80-481020e9cf97',
         "roles": [{ "id": 1 }]
     };
+    console.log('data: ' , data);
     await postResponseAPI(data, endpoint.value);
     const restp = dataResponseAPI.value.data;
+    console.log('data: ' , restp);
     toast.add({ severity: restp ? 'success' : 'error', summary: 'Create User ' + values.name, detail: restp ? "Creado" : "Error", life: 3000 });
     loadingData();
 });

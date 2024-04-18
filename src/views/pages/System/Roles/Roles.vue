@@ -124,22 +124,68 @@ const deleteRoles = () => {
         </div>
 
         <div class="card">
-            <div class="grid">
-                <div class="col-xs-12 col-sm-6 col-md-4 mb-2 text-center mx-auto">
-                    <!--Uncomment when table is done-->
-
-                    <div class="col-xs-12 col-sm-6 col-md-4 mb-2 text-center mx-auto">
-                        <Toolbar class="bg-gray-900 shadow-2" style="border-radius: 3rem; background-image: linear-gradient(to right, var(--green-100), var(--green-200))">
-                            <template v-slot:start>
-                                <div>
-                                    <Button v-if = "ability.can('rol_crear')" label="New" icon="pi pi-plus" class="p-button-success mr-2 ml-2 mb-2 mt-2" @click="openNew" size="large" />
-                                    <Button v-if = "ability.can('rol_editar')" :disabled="!(listRowSelect.length > 0 && listRowSelect.length < 2)" label="Edit" icon="pi pi-file-edit" class="p-button-help mr-2 ml-2 mb-2 mt-2" @click="openEdit" size="large" />
-                                    <Button v-if = "ability.can('rol_crear')" :disabled="!(listRowSelect.length > 0 && listRowSelect.length < 2)" label="Clone" icon="pi pi-copy" class="p-button-secondary mr-2 ml-2 mb-2 mt-2" @click="openClone" size="large" />
-                                    <!-- <Button label="Export" icon="pi pi-file-import" class="p-button-warning mr-2 ml-2 mb-2 mt-2" @click="openExport" size="large" /> -->
-                                    <Button v-if = "ability.can('rol_eliminar')" :disabled="!(listRowSelect.length > 0 && listRowSelect.length < 2)" label="Delete" icon="pi pi-trash" class="p-button-danger mr-2 ml-2 mb-2 mt-2" @click="openDelete" size="large" />
-                                </div>
-                            </template>
-                        </Toolbar>
+            <Toolbar style="margin-bottom: 1rem;">
+                <template #center>
+                    <Button label="New" icon="pi pi-plus" class="p-button-success" @click="openNew" size="large" />
+                    <Divider layout="vertical" />
+                    <Button :disabled="selectedRegisters.length != 1" label="Clone" icon="pi pi-copy" class="p-button-secondary" @click="openClone" size="large" />
+                    <Divider layout="vertical" />
+                    <Button :disabled="!selectedRegisters.length" label="Delete" icon="pi pi-trash" class="p-button-danger" @click="openDelete" size="large" />
+                </template>
+            </Toolbar>
+            <DataTable v-model:expandedRows="expandedRows" :loading="loading" :value="roles" dataKey="id" :rows="50"
+                :rowsPerPageOptions="[5, 10, 20, 50]" tableStyle="min-width: 75rem" showGridlines :paginator="true"
+                v-model:selection="selectedRegisters">
+                <template #empty> No customers found. </template>
+                <template #loading> Loading customers data. Please wait. </template>
+                <template>
+                    <Column selectionMode="multiple" headerStyle="width: 3rem"></Column>
+                    <Column expander style="width: 5rem" />
+                    <Column field="xxxxxx" filterField="xxxxxx" header="Name" sortable frozen="">
+                        <template #body="{ data }">
+                            {{ data.name }}
+                        </template>
+                        <template #filter="{ filterModel }">
+                            <InputText v-model="filterModel.value" type="text" class="p-column-filter" placeholder="Search by " />
+                        </template>
+                    </Column>
+                </template>
+                <template #expansion="{ data }">
+                    <FormPermissions :permiss="permisos" :data="data" @update="loadingData" />
+                </template>
+            </DataTable>
+        </div>
+        <Dialog v-model:visible="DialogNew" modal :header="headerDialogNew" class="p-fluid text-center mx-auto">
+            <div class="mb-3">
+                <div class="flex align-items-center gap-3  m-2">
+                    <label for="username" class="font-semibold w-6rem">Name</label>
+                    <InputText id="username" v-model="name" class="flex-auto" autocomplete="off" v-bind="nameProps" />
+                </div>
+                <small id="username-help" :class="{ 'p-invalid text-red-700': errors['name'] }">{{ errors.name
+                    }}</small>
+            </div>
+            <Divider />
+            <div class="flex justify-content-end gap-2">
+                <Button type="button" label="Cancel" severity="secondary" @click="DialogNew = false" />
+                <Button type="button" label="Save" @click="newRol()" />
+            </div>
+        </Dialog>
+        <Dialog v-model:visible="DialogClone" modal :header="headerDialogClone" class="p-fluid text-center mx-auto"
+            :style="{ width: '25rem' }">
+            <div class="mb-3">
+                <div class="flex align-items-center gap-3  m-2">
+                    <label for="username" class="font-bold w-6rem">Name</label>
+                    <InputText id="username" v-model="name" class="flex-auto" autocomplete="off" v-bind="nameProps" />
+                </div>
+                <small id="username-help" :class="{ 'p-invalid text-red-700': errors['name'] }">
+                    {{ errors.name }}
+                </small>
+            </div>
+            <div class="mb-3">
+                <label for="username" class="font-bold w-6rem mb-2">Permissions</label>
+                <div class="justify-content-center">
+                    <div v-for="tab in listPermiss" :key="tab.title" optionLabel="name">
+                        <Chip class="m-1" :label="tab.name" />
                     </div>
                 </div>
             </div>
