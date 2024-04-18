@@ -120,7 +120,9 @@ const deleteRoles = () => {
             <div>
                 <h1>Información de roles</h1>
             </div>
+
         </div>
+
         <div class="card">
             <div class="grid">
                 <div class="col-xs-12 col-sm-6 col-md-4 mb-2 text-center mx-auto">
@@ -146,7 +148,8 @@ const deleteRoles = () => {
                 <Button type="button" label="Cancel" severity="secondary" @click="DialogClone = false" />
                 <Button type="button" label="Save" @click="CloneRol()" />
             </div>
-        </Dialog>
+        
+
         <Dialog v-model:visible="DialogDelete" modal :header="headerDialogDelete"
             class="p-fluid text-center mx-auto col-10 md:col-4">
             <div class="card flex flex-wrap gap-2">
@@ -159,7 +162,10 @@ const deleteRoles = () => {
                 <Button type="button" label="Delete" @click="deleteRoles" />
             </div>
         </Dialog>
+
+        </div>
     </div>
+    
 </template>
 
 <style lang="scss" scoped></style>
