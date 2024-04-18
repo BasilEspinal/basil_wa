@@ -194,7 +194,7 @@ const deleteRoles = () => {
                 <Button type="button" label="Cancel" severity="secondary" @click="DialogClone = false" />
                 <Button type="button" label="Save" @click="CloneRol()" />
             </div>
-        
+        </Dialog>        
 
         <Dialog v-model:visible="DialogDelete" modal :header="headerDialogDelete"
             class="p-fluid text-center mx-auto col-10 md:col-4">
