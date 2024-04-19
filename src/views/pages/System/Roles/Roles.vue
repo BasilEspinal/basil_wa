@@ -4,6 +4,7 @@ import useDataAPI from '@/composables/DataAPI/FetchDataAPI.js';
 import { useToast } from 'primevue/usetoast';
 import { toTypedSchema } from '@vee-validate/zod';
 import { useForm } from 'vee-validate';
+import ability from '@/service/ability.js';
 import { z } from 'zod';
 import FormPermissions from './FormPermissions.vue';
 
@@ -68,8 +69,13 @@ const loadLazyData = async () => {
     await getAllResponseAPI(endpoint.value);
     roles.value = dataResponseAPI.value.data;
     loading.value = false;
-    await getAllResponseListAPI(`/permissions`);
-    permisos.value = dataResponseListAPI.value.data.map(permso => ({ id: permso.uuid, name: permso.name }));
+    await getAllResponseListAPI(`/permissions/without-roles/2`);
+    const newArray = dataResponseListAPI.value;
+    const listaDeObjetos = [];
+    for (const clave in newArray) {
+        listaDeObjetos.push({ id: clave, name: newArray[clave]});
+    }
+    permisos.value = listaDeObjetos;
 };
 
 const remove = (aver) => {
@@ -124,11 +130,13 @@ const deleteRoles = () => {
         <div class="card">
             <Toolbar style="margin-bottom: 1rem;">
                 <template #center>
-                    <Button label="New" icon="pi pi-plus" class="p-button-success" @click="openNew" size="large" />
+                    <Button v-if="ability.can('rol_crear')" label="New" icon="pi pi-plus" class="p-button-success" @click="openNew" size="large" />
+                    <Divider  layout="vertical" />
+                    <Button v-if="ability.can('rol_editar')" :disabled="selectedRegisters.length != 1" label="Clone" icon="pi pi-copy"
+                        class="p-button-secondary" @click="openClone" size="large" />
                     <Divider layout="vertical" />
-                    <Button :disabled="selectedRegisters.length != 1" label="Clone" icon="pi pi-copy" class="p-button-secondary" @click="openClone" size="large" />
-                    <Divider layout="vertical" />
-                    <Button :disabled="!selectedRegisters.length" label="Delete" icon="pi pi-trash" class="p-button-danger" @click="openDelete" size="large" />
+                    <Button v-if="ability.can('rol_eliminar')" :disabled="!selectedRegisters.length" label="Delete" icon="pi pi-trash"
+                        class="p-button-danger" @click="openDelete" size="large" />
                 </template>
             </Toolbar>
             <DataTable v-model:expandedRows="expandedRows" :loading="loading" :value="roles" dataKey="id" :rows="50"
@@ -144,7 +152,8 @@ const deleteRoles = () => {
                             {{ data.name }}
                         </template>
                         <template #filter="{ filterModel }">
-                            <InputText v-model="filterModel.value" type="text" class="p-column-filter" placeholder="Search by " />
+                            <InputText v-model="filterModel.value" type="text" class="p-column-filter"
+                                placeholder="Search by " />
                         </template>
                     </Column>
                 </template>

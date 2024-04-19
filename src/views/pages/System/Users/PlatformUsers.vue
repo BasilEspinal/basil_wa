@@ -5,6 +5,7 @@ import FormRols from './FormRols.vue';
 import { useToast } from 'primevue/usetoast';
 import { toTypedSchema } from '@vee-validate/zod';
 import { useForm } from 'vee-validate';
+import ability from '@/service/ability.js';
 import { z } from 'zod';
 
 let endpoint = ref('/users');
@@ -192,15 +193,15 @@ const remove = (aver) => {
         <div class="card">
             <Toolbar style="margin-bottom: 1rem;">
                 <template #center>
-                    <Button label="New" icon="pi pi-plus" class="p-button-success" @click="openNew" size="large" />
+                    <Button v-if="ability.can('usuario_crear')" label="New" icon="pi pi-plus" class="p-button-success" @click="openNew" size="large" />
                     <Divider layout="vertical" />
-                    <Button :disabled="selectedRegisters.length != 1" label="Edit" icon="pi pi-file-edit"
+                    <Button v-if="ability.can('usuario_editar')" :disabled="selectedRegisters.length != 1" label="Edit" icon="pi pi-file-edit"
                         class="p-button-help" @click="openEdit" size="large" />
                     <Divider layout="vertical" />
-                    <Button :disabled="selectedRegisters.length != 1" label="Clone" icon="pi pi-copy"
+                    <Button v-if="ability.can('usuario_crear')" :disabled="selectedRegisters.length != 1" label="Clone" icon="pi pi-copy"
                         class="p-button-secondary" @click="openClone" size="large" />
                     <Divider layout="vertical" />
-                    <Button :disabled="!selectedRegisters.length" label="Delete" icon="pi pi-trash"
+                    <Button v-if="ability.can('usuario_eliminar')" :disabled="!selectedRegisters.length" label="Delete" icon="pi pi-trash"
                         class="p-button-danger" @click="openDelete" size="large" />
                 </template>
             </Toolbar>
