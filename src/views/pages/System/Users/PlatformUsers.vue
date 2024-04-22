@@ -32,19 +32,29 @@ const { handleSubmit, errors, defineField } = useForm({
             name: z.string().min(6),
             email: z.string().email(),
             password: z.string().min(8),
-            confirmation: z.string().min(8).refine(value => password.value === value, { message: 'Different Passwords' })
-        }),
-    ),
+            confirmation: z
+                .string()
+                .min(8)
+                .refine((value) => password.value === value, { message: 'Different Passwords' })
+        })
+    )
 });
 
-const { handleSubmit: submitEdit, errors: errorEdit, defineField: defineEdit } = useForm({
+const {
+    handleSubmit: submitEdit,
+    errors: errorEdit,
+    defineField: defineEdit
+} = useForm({
     validationSchema: toTypedSchema(
         z.object({
             nameEdit: z.string().min(6),
             emailEdit: z.string().email(),
-            passwordEdit: z.string().refine(value => !value.length || value.length >= 8, { message: 'String must contain at least 8 character(s)' }).optional()
-        }),
-    ),
+            passwordEdit: z
+                .string()
+                .refine((value) => !value.length || value.length >= 8, { message: 'String must contain at least 8 character(s)' })
+                .optional()
+        })
+    )
 });
 
 const [nameEdit, nameEditProps] = defineEdit('nameEdit');
@@ -66,6 +76,7 @@ const loadingData = async () => {
 
 const permissionsListToValue = async () => {
     users.value = dataResponseAPI.value.data;
+    console.log('users: ', users.value);
 };
 
 const loadLazyData = async () => {
@@ -108,14 +119,14 @@ const openExport = () => {
     DialogExport.value = true;
 };
 
-const newUser = handleSubmit(async values => {
+const newUser = handleSubmit(async (values) => {
     DialogNew.value = false;
     const data = {
         name: values.name,
         email: values.email,
         password: values.password,
-        "farm_uuid": '8ef93a7b-31bf-4233-af80-481020e9cf97',
-        "roles": [{ "id": 1 }]
+        farm_uuid: '8ef93a7b-31bf-4233-af80-481020e9cf97',
+        roles: [{ id: 1 }]
     };
     console.log('data: ', data);
     await postResponseAPI(data, endpoint.value);
@@ -125,18 +136,18 @@ const newUser = handleSubmit(async values => {
     loadingData();
 });
 
-const editUser = submitEdit(async values => {
-    const dataJson = ({
+const editUser = submitEdit(async (values) => {
+    const dataJson = {
         name: values.nameEdit,
         email: values.emailEdit,
-        "farm_uuid": selectedRegisters.value[0].farm.uuid,
-        roles: selectedRegisters.value[0].roles.map(rol => ({ id: rol.id }))
-    });
+        farm_uuid: selectedRegisters.value[0].farm.uuid,
+        roles: selectedRegisters.value[0].roles.map((rol) => ({ id: rol.id }))
+    };
     if (values.passwordEdit) {
         dataJson.password = values.passwordEdit;
     }
     const restp = await putResponseAPI(dataJson, endpoint.value, selectedRegisters.value[0].id);
-    toast.add({ severity: restp.ok ? 'success' : 'error', summary: 'Update User ' + values.nameEdit, detail: restp.ok ? "Update" : "Error", life: 3000 });
+    toast.add({ severity: restp.ok ? 'success' : 'error', summary: 'Update User ' + values.nameEdit, detail: restp.ok ? 'Update' : 'Error', life: 3000 });
     DialogEdit.value = false;
     loadingData();
     selectedRegisters.value = [];
@@ -144,7 +155,6 @@ const editUser = submitEdit(async values => {
 
 const deleteUsers = async() => {
     DialogDelete.value = false;
-
     try {
         const deletePromises = [];
         selectedRegisters.value.forEach( async item => {
@@ -183,7 +193,7 @@ const deleteUsers = async() => {
 // }
 
 const remove = (aver) => {
-    const index = selectedRegisters.value.findIndex(x => x.id === aver.id);
+    const index = selectedRegisters.value.findIndex((x) => x.id === aver.id);
     if (index !== -1) {
         selectedRegisters.value.splice(index, 1);
     }
@@ -207,7 +217,7 @@ const collapseAll = () => {
             </div>
         </div>
         <div class="card">
-            <Toolbar style="margin-bottom: 1rem;">
+            <Toolbar style="margin-bottom: 1rem">
                 <template #center>
                     <Button v-if="ability.can('usuario_crear')" label="New" icon="pi pi-plus" class="p-button-success"
                         @click="openNew" size="large" />
@@ -222,11 +232,22 @@ const collapseAll = () => {
                         icon="pi pi-trash" class="p-button-danger" @click="openDelete" size="large" />
                 </template>
             </Toolbar>
-            <DataTable v-model:expandedRows="expandedRows" :loading="loading" :value="users" dataKey="id" :rows="50"
-                :rowsPerPageOptions="[5, 10, 20, 50]" tableStyle="min-width: 75rem" showGridlines :paginator="true"
-                v-model:selection="selectedRegisters">
+            <DataTable
+                v-model:expandedRows="expandedRows"
+                :loading="loading"
+                :value="users"
+                dataKey="id"
+                :rows="50"
+                :rowsPerPageOptions="[5, 10, 20, 50]"
+                tableStyle="min-width: 75rem"
+                showGridlines
+                :paginator="true"
+                v-model:selection="selectedRegisters"
+            >
                 <template #empty> No customers found. </template>
                 <template #loading> Loading customers data. Please wait. </template>
+                
+                
                 <template>
                     <Column selectionMode="multiple" headerStyle="width: 3rem"></Column>
                     <Column expander style="width: 5rem" />
@@ -235,8 +256,7 @@ const collapseAll = () => {
                             {{ data.name }}
                         </template>
                         <template #filter="{ filterModel }">
-                            <InputText v-model="filterModel.value" type="text" class="p-column-filter"
-                                placeholder="Search by " />
+                            <InputText v-model="filterModel.value" type="text" class="p-column-filter" placeholder="Search by " />
                         </template>
                     </Column>
                     <Column field="" filterField="" header=" Email" sortable>
@@ -244,8 +264,7 @@ const collapseAll = () => {
                             {{ data.email }}
                         </template>
                         <template #filter="{ filterModel }">
-                            <InputText v-model="filterModel.value" type="text" class="p-column-filter"
-                                placeholder="Search by " />
+                            <InputText v-model="filterModel.value" type="text" class="p-column-filter" placeholder="Search by " />
                         </template>
                     </Column>
                 </template>
@@ -256,26 +275,23 @@ const collapseAll = () => {
         </div>
         <Dialog v-model:visible="DialogNew" modal :header="headerDialogNew" class="p-fluid text-center mx-auto">
             <div class="mb-3">
-                <div class="flex align-items-center gap-3  mb-1">
+                <div class="flex align-items-center gap-3 mb-1">
                     <label for="username" class="font-semibold w-6rem">Name</label>
                     <InputText id="username" v-model="name" class="flex-auto" autocomplete="off" v-bind="nameProps" />
                 </div>
-                <small id="username-help" :class="{ 'p-invalid text-red-700': errors['name'] }">{{ errors.name
-                    }}</small>
+                <small id="username-help" :class="{ 'p-invalid text-red-700': errors['name'] }">{{ errors.name }}</small>
             </div>
             <div class="mb-3">
                 <div class="flex align-items-center gap-3 mb-1">
                     <label for="email" class="font-semibold w-6rem">Email</label>
                     <InputText id="email" v-model="email" class="flex-auto" autocomplete="off" v-bind="emailProps" />
                 </div>
-                <small id="username-help" :class="{ 'p-invalid text-red-700': errors['email'] }">{{ errors.email
-                    }}</small>
+                <small id="username-help" :class="{ 'p-invalid text-red-700': errors['email'] }">{{ errors.email }}</small>
             </div>
             <div class="mb-3">
                 <div class="flex align-items-center gap-3 mb-1">
                     <label for="password" class="font-semibold w-6rem">Password</label>
-                    <Password id="password1" v-model="password" placeholder="Password" :feedback="false"
-                        :toggleMask="true" v-bind="passwordProps" />
+                    <Password id="password1" v-model="password" placeholder="Password" :feedback="false" :toggleMask="true" v-bind="passwordProps" />
                 </div>
                 <small id="username-help" :class="{ 'p-invalid text-red-700': errors['password'] }">
                     {{ errors.password }}
@@ -284,8 +300,7 @@ const collapseAll = () => {
             <div class="mb-3">
                 <div class="flex align-items-center gap-3 mb-1">
                     <label for="password" class="font-semibold w-6rem">Confirm</label>
-                    <Password id="password1" v-model="confirmation" placeholder="Password" :feedback="false"
-                        :toggleMask="true" v-bind="confirmProps" />
+                    <Password id="password1" v-model="confirmation" placeholder="Password" :feedback="false" :toggleMask="true" v-bind="confirmProps" />
                 </div>
                 <small id="username-help" :class="{ 'p-invalid text-red-700': errors['confirmation'] }">
                     {{ errors.confirmation }}
@@ -298,10 +313,9 @@ const collapseAll = () => {
         </Dialog>
         <Dialog v-model:visible="DialogEdit" modal :header="headerDialogEdit" class="p-fluid text-center mx-auto">
             <div class="mb-3">
-                <div class="flex align-items-center gap-3  mb-1">
+                <div class="flex align-items-center gap-3 mb-1">
                     <label for="username" class="font-semibold w-6rem">Name</label>
-                    <InputText id="username" v-model="nameEdit" class="flex-auto" autocomplete="off"
-                        v-bind="nameEditProps" />
+                    <InputText id="username" v-model="nameEdit" class="flex-auto" autocomplete="off" v-bind="nameEditProps" />
                 </div>
                 <small id="username-help" :class="{ 'p-invalid text-red-700': errorEdit['nameEdit'] }">
                     {{ errorEdit.nameEdit }}
@@ -310,18 +324,16 @@ const collapseAll = () => {
             <div class="mb-3">
                 <div class="flex align-items-center gap-3 mb-1">
                     <label for="email" class="font-semibold w-6rem">Email</label>
-                    <InputText id="email" v-model="emailEdit" class="flex-auto" autocomplete="off"
-                        v-bind="emailEditProps" />
+                    <InputText id="email" v-model="emailEdit" class="flex-auto" autocomplete="off" v-bind="emailEditProps" />
                 </div>
                 <small id="username-help" :class="{ 'p-invalid text-red-700': errorEdit['emailEdit'] }">
                     {{ errorEdit.emailEdit }}
                 </small>
             </div>
-            <div class="mb-3">
+            <div class="mb-3" v-if="ability.can('editar_contrasena')">
                 <div class="flex align-items-center gap-3 mb-1">
                     <label for="passwordEdit" class="font-semibold w-6rem">Password </label>
-                    <Password id="id" v-model="passwordEdit" :feedback="false" :toggleMask="true"
-                        v-bind="passwordEditProps" />
+                    <Password id="id" v-model="passwordEdit" :feedback="false" :toggleMask="true" v-bind="passwordEditProps" />
                 </div>
                 <small id="username-help" :class="{ 'p-invalid text-red-700': errorEdit['passwordEdit'] }">
                     {{ errorEdit.passwordEdit }}
@@ -334,36 +346,33 @@ const collapseAll = () => {
         </Dialog>
         <Dialog v-model:visible="DialogClone" modal :header="headerDialogClone" class="p-fluid text-center mx-auto">
             <div class="mb-3">
-                <div class="flex align-items-center gap-3  mb-1">
+                <div class="flex align-items-center gap-3 mb-1">
                     <label for="username" class="font-semibold w-6rem">Name</label>
                     <InputText id="username" v-model="name" class="flex-auto" autocomplete="off" v-bind="nameProps" />
                 </div>
-                <small id="username-help" :class="{ 'p-invalid text-red-700': errors['name'] }">{{ errors.name
-                    }}</small>
+                <small id="username-help" :class="{ 'p-invalid text-red-700': errors['name'] }">{{ errors.name }}</small>
             </div>
             <div class="mb-3">
                 <div class="flex align-items-center gap-3 mb-1">
                     <label for="email" class="font-semibold w-6rem">Email</label>
                     <InputText id="email" v-model="email" class="flex-auto" autocomplete="off" v-bind="emailProps" />
                 </div>
-                <small id="username-help" :class="{ 'p-invalid text-red-700': errors['email'] }">{{ errors.email
-                    }}</small>
+                <small id="username-help" :class="{ 'p-invalid text-red-700': errors['email'] }">{{ errors.email }}</small>
             </div>
-            <div class="mb-3">
+            <div class="mb-3" v-if="ability.can('editar_contrasena')">
                 <div class="flex align-items-center gap-3 mb-1">
                     <label for="password" class="font-semibold w-6rem">Password</label>
-                    <Password id="password1" v-model="password" placeholder="Password" :feedback="false"
-                        :toggleMask="true" v-bind="passwordProps" />
+                    <Password id="password1" v-model="password" placeholder="Password" :feedback="false" :toggleMask="true" v-bind="passwordProps" />
+                    
                 </div>
                 <small id="username-help" :class="{ 'p-invalid text-red-700': errors['password'] }">
                     {{ errors.password }}
                 </small>
             </div>
-            <div class="mb-3">
+            <div class="mb-3" v-if="ability.can('editar_contrasena')">
                 <div class="flex align-items-center gap-3 mb-1">
                     <label for="password" class="font-semibold w-6rem">Confirm</label>
-                    <Password id="password1" v-model="confirmation" placeholder="Password" :feedback="false"
-                        :toggleMask="true" v-bind="confirmProps" />
+                    <Password id="password1" v-model="confirmation" placeholder="Password" :feedback="false" :toggleMask="true" v-bind="confirmProps" />
                 </div>
                 <small id="username-help" :class="{ 'p-invalid text-red-700': errors['confirmation'] }">
                     {{ errors.confirmation }}
@@ -371,19 +380,26 @@ const collapseAll = () => {
             </div>
             <div class="flex justify-content-end gap-2">
                 <Button type="button" label="Cancel" severity="secondary" @click="DialogClone = false" />
-                <Button type="button" label="Save" @click="() => { newUser(); DialogClone = false }" />
+                <Button
+                    type="button"
+                    label="Save"
+                    @click="
+                        () => {
+                            newUser();
+                            DialogClone = false;
+                        }
+                    "
+                />
             </div>
         </Dialog>
-        <Dialog v-model:visible="DialogExport" modal :header="headerDialogExport"
-            class="p-fluid text-center mx-auto col-10 md:col-4">
+        <Dialog v-model:visible="DialogExport" modal :header="headerDialogExport" class="p-fluid text-center mx-auto col-10 md:col-4">
             <h2>EXPORT</h2>
             <div class="flex justify-content-end gap-2">
                 <Button type="button" label="Cancel" severity="secondary" @click="DialogExport = false" />
                 <Button type="button" label="Export" />
             </div>
         </Dialog>
-        <Dialog v-model:visible="DialogDelete" modal :header="headerDialogDelete"
-            class="p-fluid text-center mx-auto col-10 md:col-4">
+        <Dialog v-model:visible="DialogDelete" modal :header="headerDialogDelete" class="p-fluid text-center mx-auto col-10 md:col-4">
             <div class="card flex flex-wrap gap-2">
                 <div v-for="item in selectedRegisters" :key="item.id">
                     <Chip :label="item.name" removable @remove="remove(item)" icon="pi pi-user" />
