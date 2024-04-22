@@ -2,12 +2,10 @@
 import { FilterMatchMode, FilterOperator } from 'primevue/api';
 import { ref, onBeforeMount, watch, inject } from 'vue';
 
-
 const columnas = ref([]);
 const column = ref(null);
 const headerNames = ref(null);
-const allLabels = ref([])
-
+const allLabels = ref([]);
 
 // Filtro
 const filters = ref(null);
@@ -18,7 +16,6 @@ const emits = defineEmits([]);
 const isChanging2 = inject('isChanging');
 //const dt = ref();
 let dataFromComponent = ref();
-
 
 const loadingData = () => {
     allLabels.value = props.allLabels;
@@ -31,7 +28,6 @@ const loadingData = () => {
     filters.value = {
         global: { value: null, matchMode: FilterMatchMode.CONTAINS }
     };
-    
 
     fetchInfoAndUpdateValue();
 };
@@ -41,9 +37,7 @@ const loadingData = () => {
  * mounted to the DOM. In this case, it is used to perform some initialization tasks before the
  * component is rendered.
  */
-onBeforeMount(
-    loadingData
-);
+onBeforeMount(loadingData);
 
 /**
  * The `initFilters` function is initializing the filters for each column in the table. It loops
@@ -96,7 +90,6 @@ const formatDate = (value) => {
  * @param jsonDataPath the path to the JSON data
  */
 const props = defineProps({
-    
     title: {
         type: String,
         default: 'Tabla de registro de corte'
@@ -108,12 +101,10 @@ const props = defineProps({
     dataGot: {
         type: Object
     },
-    allLabels:{
+    allLabels: {
         type: Array
-    
     }
 });
-
 
 /**
  * The `fetchInfoAndUpdateValue` function is an asynchronous function that is responsible for fetching
@@ -123,48 +114,44 @@ const props = defineProps({
 
 function fetchInfoAndUpdateValue() {
     try {
-
         if (!props.dataGot) {
-            return
+            return;
+        } else {
+            dataFromComponent.value = JSON.parse(JSON.stringify(props.dataGot));
         }
-        else {
-            dataFromComponent = JSON.parse(JSON.stringify(props.dataGot))
-        }
-        
-        tableData.value = dataFromComponent['data'];
+
+        tableData.value = dataFromComponent.value['data'];
         let mappedArray1 = [];
-        console.log(dataFromComponent['data'][0])
-        const types = ['string', 'number','boolean'];
-        if (dataFromComponent['data']) {
-            for (let key in dataFromComponent['data'][0]) {
-                if (types.includes(typeof dataFromComponent['data'][0][key]))
-                    mappedArray1.push(key);
-                
+        console.log(dataFromComponent.value['data'][0]);
+        const types = ['string', 'number', 'boolean'];
+        if (dataFromComponent.value['data']) {
+            for (let key in dataFromComponent.value['data'][0]) {
+                if (types.includes(typeof dataFromComponent.value['data'][0][key])) mappedArray1.push(key);
             }
             // console.log(tableData.value)
             // console.log(allLabels.value)
             // console.log(mappedArray1)
             //Here the condition of columns is applied
             columnas.value = mappedArray1
-            .filter(item => allLabels.value.includes(item))
+                .filter((item) => allLabels.value.includes(item))
                 .map((item, index) => ({
                     field: item,
                     header: item.replaceAll('_', ' ').toUpperCase(),
                     position: index
                 }));
-                console.log(columnas.value)
+            console.log(columnas.value);
             column.value = columnas.value;
             headerNames.value = column.value.map((col) => col.field);
-            
+
             initFilters();
-            
-            emits('HeaderNames', dataFromComponent['data'][0]);
-        } else { }
+
+            emits('HeaderNames', dataFromComponent.value['data'][0]);
+        }
     } catch (error) {
         tableData.value = ref([]);
         headerNames.value = ref([]);
         loading.value = false;
-        console.error('Error fetching cut data:', error);
+        console.log('Error fetching cut data:', error);
     }
 }
 
@@ -176,32 +163,26 @@ const onSelectAllChange = () => {
     onRowSelect();
 };
 
-
-
 watch(
     () => isChanging2.value,
     () => {
-        loadingData()
-        console.log("CIsChanging" + isChanging2.value)
-        isChanging2.value = false
-
-
+        loadingData();
+        console.log('CIsChanging' + isChanging2.value);
+        isChanging2.value = false;
     }
 );
 
 watch(
     () => props.dataGot,
     (x, y) => {
-
         loadingData();
     },
     { immediate: true }
 );
 
 watch(
-    () => dataFromComponent,
+    () => dataFromComponent.value,
     (x, y) => {
-
         loadingData();
     },
     { immediate: true }
@@ -266,59 +247,66 @@ const onColumnsChange = (column) => {
 };
 </script>
 <template>
-    <div class="col-12 md:col-12">
+    <div class="col-12">
+        <h4 v-text="props.title"></h4>
         <div class="card">
-            <h4 v-text="props.title"></h4>
-            <div class="card">
-                <h5>¿Cuales columnas quieres ver?</h5>
-                <MultiSelect v-model="column" :options="columnas" optionLabel="field" placeholder="Seleccione columnas"
-                    :filter="true" display="chip" class="w-full md:w-50rem" @change="onColumnsChange(column)">
-                    <template #value="slotProps">
-                        <div class="inline-flex align-items-center py-1 px-2 bg-primary text-primary border-round mr-2"
-                            v-for="option of slotProps.value" :key="option.header">
-                            <div>{{ option.header }}</div>
-                        </div>
-                    </template>
-
-                    <template #option="slotProps">
-                        <div class="flex align-items-center">
-                            <div>{{ slotProps.option.header }}</div>
-                        </div>
-                    </template>
-                </MultiSelect>
-            </div>
-            <DataTable id="tblData" v-model:selection="selectedProduct" :value="tableData" :paginator="true"
-                class="p-datatable-gridlines" :rows="10" dataKey="uuid" :rowHover="true" v-model:filters="filters"
-                filterDisplay="menu" :loading="loading" :filters="filters" responsiveLayout="scroll" 
-                :globalFilterFields="headerNames" @row-select="onRowSelect" @row-unselect="onRowSelect"
-                @select-all-change="onSelectAllChange">
-                <template #header>
-                    <div class="flex justify-content-between flex-column sm:flex-row">
-                        <Button type="button" icon="pi pi-filter-slash" label="Limpiar" class="p-button-outlined mb-2"
-                            @click="clearFilter()" />
-                        <span class="p-input-icon-left mb-2">
-                            <i class="pi pi-search" />
-                            <InputText v-model="filters['global'].value" placeholder="Buscar" style="width: 100%" />
-                        </span>
+            <h5>¿Cuales columnas quieres ver?</h5>
+            <MultiSelect v-model="column" :options="columnas" optionLabel="field" placeholder="Seleccione columnas" :filter="true" display="chip" class="w-full" @change="onColumnsChange(column)">
+                <template #value="slotProps">
+                    <div class="inline-flex align-items-center py-1 px-2 bg-primary text-primary border-round mr-2" v-for="option of slotProps.value" :key="option.header">
+                        <div>{{ option.header }}</div>
                     </div>
                 </template>
-                <template #empty> No se encontraron datos. </template>
-                <template #loading> Cargando los datos por favor espere. </template>
 
-                <Column selectionMode="multiple" headerStyle="width: 3rem"></Column>
-
-                <Column id="col" v-for="col of column" :key="col.field" :field="col.field" :header="col.header"
-                    :enable="col.enabled" :filterField="col.field" style="min-width: 1rem">
-                    <template #body="{ data }">
-                        {{ data[col.field] }}
-                    </template>
-                    <template #filter="{ filterModel }">
-                        <InputText type="text" v-model="filterModel.value" class="p-column-filter"
-                            placeholder="Buscar por nombre" />
-                    </template>
-                </Column>
-            </DataTable>
+                <template #option="slotProps">
+                    <div class="flex align-items-center">
+                        <div>{{ slotProps.option.header }}</div>
+                    </div>
+                </template>
+            </MultiSelect>
         </div>
+        <DataTable
+            id="tblData"
+            v-model:selection="selectedProduct"
+            :value="tableData"
+            :paginator="true"
+            class="p-datatable-gridlines"
+            :rows="10"
+            dataKey="uuid"
+            :rowHover="true"
+            v-model:filters="filters"
+            filterDisplay="menu"
+            :loading="loading"
+            :filters="filters"
+            responsiveLayout="scroll"
+            :globalFilterFields="headerNames"
+            @row-select="onRowSelect"
+            @row-unselect="onRowSelect"
+            @select-all-change="onSelectAllChange"
+        >
+            <template #header>
+                <div class="flex justify-content-between flex-column sm:flex-row">
+                    <Button type="button" icon="pi pi-filter-slash" label="Limpiar" class="p-button-outlined mb-2" @click="clearFilter()" />
+                    <span class="p-input-icon-left mb-2">
+                        <i class="pi pi-search" />
+                        <InputText v-model="filters['global'].value" placeholder="Buscar" style="width: 100%" />
+                    </span>
+                </div>
+            </template>
+            <template #empty> No se encontraron datos. </template>
+            <template #loading> Cargando los datos por favor espere. </template>
+
+            <Column selectionMode="multiple" headerStyle="width: 3rem"></Column>
+
+            <Column id="col" v-for="col of column" :key="col.field" :field="col.field" :header="col.header" :enable="col.enabled" :filterField="col.field" style="min-width: 1rem">
+                <template #body="{ data }">
+                    {{ data[col.field] }}
+                </template>
+                <template #filter="{ filterModel }">
+                    <InputText type="text" v-model="filterModel.value" class="p-column-filter" placeholder="Buscar por nombre" />
+                </template>
+            </Column>
+        </DataTable>
     </div>
 </template>
 

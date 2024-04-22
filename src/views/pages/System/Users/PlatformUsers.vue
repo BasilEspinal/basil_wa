@@ -94,7 +94,6 @@ const openClone = () => {
     headerDialogClone.value = 'Clone a xx record';
     const data = selectedRegisters.value[0];
     name.value = data.name;
-    email.value = data.email;
     password.value = '';
     confirmation.value = '';
     DialogClone.value = true;
@@ -118,10 +117,10 @@ const newUser = handleSubmit(async values => {
         "farm_uuid": '8ef93a7b-31bf-4233-af80-481020e9cf97',
         "roles": [{ "id": 1 }]
     };
-    console.log('data: ' , data);
+    console.log('data: ', data);
     await postResponseAPI(data, endpoint.value);
     const restp = dataResponseAPI.value.data;
-    console.log('data: ' , restp);
+    console.log('data: ', restp);
     toast.add({ severity: restp ? 'success' : 'error', summary: 'Create User ' + values.name, detail: restp ? "Creado" : "Error", life: 3000 });
     loadingData();
 });
@@ -143,16 +142,25 @@ const editUser = submitEdit(async values => {
     selectedRegisters.value = [];
 });
 
-const deleteUsers = () => {
+const deleteUsers = async() => {
     DialogDelete.value = false;
-    selectedRegisters.value.forEach(async (item) => {
-        const data = ({});
-        await deleteResponseAPI(data, endpoint.value, item.id);
-        const resp = errorResponseAPI.value;
-        toast.add({ severity: resp ? 'success' : 'error', summary: 'Deleted User', detail: resp ? "Deleted" : "Error", life: 3000 });
-    });
-    selectedRegisters.value = [];
-    loadingData();
+
+    try {
+        const deletePromises = [];
+        selectedRegisters.value.forEach( async item => {
+            const data = ({});
+            const deletePromise = await deleteResponseAPI(data, endpoint.value, item.id);
+            deletePromises.push(deletePromise);
+        });
+        await Promise.all(deletePromises);
+        loadingData();
+        toast.add({ severity: 'success', summary: 'Deleted User', detail: 'Deleted', life: 3000 });
+    } catch (error) {
+        console.error('Error deleting:', error);
+        toast.add({ severity: 'error', summary: 'Error', detail: 'Error deleting', life: 3000 });
+    } finally {
+        selectedRegisters.value = [];
+    }
 };
 // function exportToCSV() {
 //     const data = [];
@@ -181,6 +189,14 @@ const remove = (aver) => {
     }
 };
 
+const expandAll = () => {
+    expandedRows.value = users.value.reduce((acc, p) => (acc[p.id] = true) && acc, {});
+};
+
+const collapseAll = () => {
+    expandedRows.value = null;
+};
+
 </script>
 <template>
     <div>
@@ -193,16 +209,17 @@ const remove = (aver) => {
         <div class="card">
             <Toolbar style="margin-bottom: 1rem;">
                 <template #center>
-                    <Button v-if="ability.can('usuario_crear')" label="New" icon="pi pi-plus" class="p-button-success" @click="openNew" size="large" />
+                    <Button v-if="ability.can('usuario_crear')" label="New" icon="pi pi-plus" class="p-button-success"
+                        @click="openNew" size="large" />
                     <Divider layout="vertical" />
-                    <Button v-if="ability.can('usuario_editar')" :disabled="selectedRegisters.length != 1" label="Edit" icon="pi pi-file-edit"
-                        class="p-button-help" @click="openEdit" size="large" />
+                    <Button v-if="ability.can('usuario_editar')" :disabled="selectedRegisters.length != 1" label="Edit"
+                        icon="pi pi-file-edit" class="p-button-help" @click="openEdit" size="large" />
                     <Divider layout="vertical" />
-                    <Button v-if="ability.can('usuario_crear')" :disabled="selectedRegisters.length != 1" label="Clone" icon="pi pi-copy"
-                        class="p-button-secondary" @click="openClone" size="large" />
+                    <Button v-if="ability.can('usuario_crear')" :disabled="selectedRegisters.length != 1" label="Clone"
+                        icon="pi pi-copy" class="p-button-secondary" @click="openClone" size="large" />
                     <Divider layout="vertical" />
-                    <Button v-if="ability.can('usuario_eliminar')" :disabled="!selectedRegisters.length" label="Delete" icon="pi pi-trash"
-                        class="p-button-danger" @click="openDelete" size="large" />
+                    <Button v-if="ability.can('usuario_eliminar')" :disabled="!selectedRegisters.length" label="Delete"
+                        icon="pi pi-trash" class="p-button-danger" @click="openDelete" size="large" />
                 </template>
             </Toolbar>
             <DataTable v-model:expandedRows="expandedRows" :loading="loading" :value="users" dataKey="id" :rows="50"
