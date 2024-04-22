@@ -117,16 +117,16 @@ function fetchInfoAndUpdateValue() {
         if (!props.dataGot) {
             return;
         } else {
-            dataFromComponent.value = JSON.parse(JSON.stringify(props.dataGot));
+            dataFromComponent = JSON.parse(JSON.stringify(props.dataGot));
         }
 
-        tableData.value = dataFromComponent.value['data'];
+        tableData.value = dataFromComponent['data'];
         let mappedArray1 = [];
-        console.log(dataFromComponent.value['data'][0]);
+        console.log(dataFromComponent['data'][0]);
         const types = ['string', 'number', 'boolean'];
-        if (dataFromComponent.value['data']) {
-            for (let key in dataFromComponent.value['data'][0]) {
-                if (types.includes(typeof dataFromComponent.value['data'][0][key])) mappedArray1.push(key);
+        if (dataFromComponent['data']) {
+            for (let key in dataFromComponent['data'][0]) {
+                if (types.includes(typeof dataFromComponent['data'][0][key])) mappedArray1.push(key);
             }
             // console.log(tableData.value)
             // console.log(allLabels.value)
@@ -145,13 +145,14 @@ function fetchInfoAndUpdateValue() {
 
             initFilters();
 
-            emits('HeaderNames', dataFromComponent.value['data'][0]);
+            emits('HeaderNames', dataFromComponent['data'][0]);
+        } else {
         }
     } catch (error) {
         tableData.value = ref([]);
         headerNames.value = ref([]);
         loading.value = false;
-        console.log('Error fetching cut data:', error);
+        console.error('Error fetching cut data:', error);
     }
 }
 
@@ -181,7 +182,7 @@ watch(
 );
 
 watch(
-    () => dataFromComponent.value,
+    () => dataFromComponent,
     (x, y) => {
         loadingData();
     },
