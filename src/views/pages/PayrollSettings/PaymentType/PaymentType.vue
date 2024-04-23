@@ -190,12 +190,84 @@
             </Column> -->
 
         </DataTable>
-        <Dialog v-model:visible="formDialog" :style="{ width: '700px' }" :header="headerDialog" :modal="true" class="p-fluid text-center mx-auto">
-            <pre>{{ selectedRegisters }}</pre>
+        <Dialog v-model:visible="DialogEdit" modal :header="headerDialogEdit" class="p-fluid text-center mx-auto">
+            <div class="mb-3">
+                <div class="flex align-items-center gap-3  mb-1">
+                    <label for="username" class="font-semibold w-6rem">Name</label>
+                    <InputText id="username" v-model="nameEdit" class="flex-auto" autocomplete="off"
+                        v-bind="nameEditProps" />
+                </div>
+                <small id="username-help" :class="{ 'p-invalid text-red-700': errorEdit['nameEdit'] }">
+                    {{ errorEdit.nameEdit }}
+                </small>
+            </div>
+            <div class="mb-3">
+                <div class="flex align-items-center gap-3 mb-1">
+                    <label for="email" class="font-semibold w-6rem">Email</label>
+                    <InputText id="email" v-model="emailEdit" class="flex-auto" autocomplete="off"
+                        v-bind="emailEditProps" />
+                </div>
+                <small id="username-help" :class="{ 'p-invalid text-red-700': errorEdit['emailEdit'] }">
+                    {{ errorEdit.emailEdit }}
+                </small>
+            </div>
+            <div class="mb-3">
+                <div class="flex align-items-center gap-3 mb-1">
+                    <label for="passwordEdit" class="font-semibold w-6rem">Password </label>
+                    <Password id="id" v-model="passwordEdit" :feedback="false" :toggleMask="true"
+                        v-bind="passwordEditProps" />
+                </div>
+                <small id="username-help" :class="{ 'p-invalid text-red-700': errorEdit['passwordEdit'] }">
+                    {{ errorEdit.passwordEdit }}
+                </small>
+            </div>
+            <div class="flex justify-content-end gap-2">
+                <Button type="button" label="Cancel" severity="secondary" @click="DialogEdit = false" />
+                <Button type="button" label="Save" @click="editUser()" />
+            </div>
         </Dialog>
-        <Dialog v-model:visible="deleteDialog" :style="{ width: '700px' }" :header="headerDialog" :modal="true" class="p-fluid text-center mx-auto">
-            <pre>{{ selectedRegisters }}</pre>
-        </Dialog> 
+        <Dialog v-model:visible="DialogClone" modal :header="headerDialogClone" class="p-fluid text-center mx-auto">
+            <div class="mb-3">
+                <div class="flex align-items-center gap-3  mb-1">
+                    <label for="username" class="font-semibold w-6rem">Name</label>
+                    <InputText id="username" v-model="name" class="flex-auto" autocomplete="off" v-bind="nameProps" />
+                </div>
+                <small id="username-help" :class="{ 'p-invalid text-red-700': errors['name'] }">{{ errors.name
+                    }}</small>
+            </div>
+            <div class="mb-3">
+                <div class="flex align-items-center gap-3 mb-1">
+                    <label for="email" class="font-semibold w-6rem">Email</label>
+                    <InputText id="email" v-model="email" class="flex-auto" autocomplete="off" v-bind="emailProps" />
+                </div>
+                <small id="username-help" :class="{ 'p-invalid text-red-700': errors['email'] }">{{ errors.email
+                    }}</small>
+            </div>
+            <div class="mb-3">
+                <div class="flex align-items-center gap-3 mb-1">
+                    <label for="password" class="font-semibold w-6rem">Password</label>
+                    <Password id="password1" v-model="password" placeholder="Password" :feedback="false"
+                        :toggleMask="true" v-bind="passwordProps" />
+                </div>
+                <small id="username-help" :class="{ 'p-invalid text-red-700': errors['password'] }">
+                    {{ errors.password }}
+                </small>
+            </div>
+            <div class="mb-3">
+                <div class="flex align-items-center gap-3 mb-1">
+                    <label for="password" class="font-semibold w-6rem">Confirm</label>
+                    <Password id="password1" v-model="confirmation" placeholder="Password" :feedback="false"
+                        :toggleMask="true" v-bind="confirmProps" />
+                </div>
+                <small id="username-help" :class="{ 'p-invalid text-red-700': errors['confirmation'] }">
+                    {{ errors.confirmation }}
+                </small>
+            </div>
+            <div class="flex justify-content-end gap-2">
+                <Button type="button" label="Cancel" severity="secondary" @click="DialogClone = false" />
+                <Button type="button" label="Save" @click="() => { newUser(); DialogClone = false }" />
+            </div>
+        </Dialog>
     </div>
 </div>
     
@@ -223,6 +295,16 @@ import { AbilityBuilder} from '@casl/ability';
 
 let endpoint = ref('/payment_types'); //replace endpoint with your endpoint
 const loading = ref(false);
+const headerDialogNew = ref('');
+const headerDialogEdit = ref('');
+const headerDialogClone = ref('');
+const headerDialogExport = ref('');
+const headerDialogDelete = ref('');
+const DialogNew = ref(false);
+const DialogEdit = ref(false);
+const DialogClone = ref(false);
+const DialogExport = ref(false);
+const DialogDelete = ref(false);
 
 const { getAllResponseAPI,getAllResponsePermissionsAPI, getAllResponseListAPI, totalRecordsResponseAPI, currentPageResponseAPI, linksResponseAPI, postResponseAPI, putResponseAPI, deleteResponseAPI, errorResponseAPI, dataResponseAPI, dataResponsePermissionsAPI,dataResponseListAPI, statusCode } =
     useDataAPI();
@@ -302,11 +384,28 @@ const assignValues = (modex) => {
     if ((modex=== 'CLONE' )) {}
 }
 const openNew = () => {
-    mode.value = 'NEW';
+    headerDialogNew.value = 'New payment type record';
+    DialogEdit.value = true;
     resetValues();
-    formDialog.value = true;
-    headerDialog.value = 'New xxxxxxx record';
+    
+    
 }
+const newUser = handleSubmit(async values => {
+    DialogNew.value = false;
+    const data = {
+        name: values.name,
+        email: values.email,
+        password: values.password,
+        "farm_uuid": '8ef93a7b-31bf-4233-af80-481020e9cf97',
+        "roles": [{ "id": 1 }]
+    };
+    console.log('data: ' , data);
+    await postResponseAPI(data, endpoint.value);
+    const restp = dataResponseAPI.value.data;
+    console.log('data: ' , restp);
+    toast.add({ severity: restp ? 'success' : 'error', summary: 'Create User ' + values.name, detail: restp ? "Creado" : "Error", life: 3000 });
+    loadingData();
+});
 const openEdit = () => {
     mode.value = 'EDIT';
     formDialog.value = true;
