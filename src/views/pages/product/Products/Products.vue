@@ -74,10 +74,6 @@ const [cultivate] = defineField('cultivate', false);
 const [farm] = defineField('farm');
 const [company] = defineField('company');
 
-const clearForm = () => {
-    resetForm();
-};
-
 const readAll = async () => {
     loadingData();
     const respFarms = await getRequest('/farms');
@@ -120,7 +116,7 @@ watch(listRowSelect, RowSelect);
 //////////////////////////////////////////////////////////////////////
 //Functions for toolbar
 const openEdit = () => {
-    clearForm();
+    resetForm();
     const { slug: slugvalue, name: nombre, short_name, cultivated } = listRowSelect.value[0];
 
     name.value = nombre;
@@ -132,13 +128,13 @@ const openEdit = () => {
 };
 
 const openNew = () => {
-    clearForm();
+    resetForm();
     cultivate.value = false;
     formDialogNew.value = true;
 };
 
 const openClone = () => {
-    clearForm();
+    resetForm();
     const { slug: slugvalue, name: nombre, short_name, cultivated, farm: finca, company: empresa } = listRowSelect.value[0];
 
     name.value = nombre;

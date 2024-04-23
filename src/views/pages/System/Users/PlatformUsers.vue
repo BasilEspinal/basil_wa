@@ -1,6 +1,5 @@
 <script setup>
 import { ref, onMounted } from 'vue';
-import useDataAPI from '@/composables/DataAPI/FetchDataAPI.js';
 import FormRols from './FormRols.vue';
 import { useToast } from 'primevue/usetoast';
 import { toTypedSchema } from '@vee-validate/zod';
@@ -8,9 +7,11 @@ import { useForm } from 'vee-validate';
 import ability from '@/service/ability.js';
 import { z } from 'zod';
 
+import useData from '@/composables/DataAPI/FetchDataAPICopy.js';
+const { getRequest, postRequest, putRequest, deleteRequest } = useData();
+
 let endpoint = ref('/users');
 const loading = ref(false);
-const { dataResponseAPI, getAllResponseAPI, putResponseAPI, postResponseAPI, deleteResponseAPI, errorResponseAPI } = useDataAPI();
 const selectedRegisters = ref([]);
 const expandedRows = ref([]);
 const users = ref([]);
@@ -43,7 +44,8 @@ const { handleSubmit, errors, defineField } = useForm({
 const {
     handleSubmit: submitEdit,
     errors: errorEdit,
-    defineField: defineEdit
+    defineField: defineEdit,
+    resetForm
 } = useForm({
     validationSchema: toTypedSchema(
         z.object({
@@ -70,43 +72,33 @@ onMounted(() => {
 });
 
 const loadingData = async () => {
-    await loadLazyData();
-    permissionsListToValue();
-};
-
-const permissionsListToValue = async () => {
-    users.value = dataResponseAPI.value.data;
-    console.log('users: ', users.value);
-};
-
-const loadLazyData = async () => {
     loading.value = true;
-    await getAllResponseAPI(endpoint.value);
+    const response = await getRequest(endpoint.value);
+    if (!response.ok) toast.add({ severity: 'error', detail: 'Error' + response.error, life: 3000 });
+    users.value = response.data.data;
     loading.value = false;
 };
 
 const openNew = () => {
+    resetForm();
     headerDialogNew.value = 'New User';
     DialogNew.value = true;
 };
 
 const openEdit = () => {
+    resetForm();
     headerDialogEdit.value = 'Edit User';
     const data = selectedRegisters.value[0];
-    nameEdit.value = '';
-    emailEdit.value = '';
-    passwordEdit.value = '';
     nameEdit.value = data.name;
     emailEdit.value = data.email;
     DialogEdit.value = true;
 };
 
 const openClone = () => {
+    resetForm();
     headerDialogClone.value = 'Clone a xx record';
     const data = selectedRegisters.value[0];
     name.value = data.name;
-    password.value = '';
-    confirmation.value = '';
     DialogClone.value = true;
 };
 const openDelete = () => {
@@ -128,38 +120,35 @@ const newUser = handleSubmit(async (values) => {
         farm_uuid: '8ef93a7b-31bf-4233-af80-481020e9cf97',
         roles: [{ id: 1 }]
     };
-    console.log('data: ', data);
-    await postResponseAPI(data, endpoint.value);
-    const restp = dataResponseAPI.value.data;
-    console.log('data: ', restp);
-    toast.add({ severity: restp ? 'success' : 'error', summary: 'Create User ' + values.name, detail: restp ? "Creado" : "Error", life: 3000 });
+    const restp = await postRequest(endpoint.value, data);
+    toast.add({ severity: restp.ok ? 'success' : 'error', summary: 'Create', detail: restp.ok ? 'Creado' : restp.error, life: 3000 });
     loadingData();
 });
 
 const editUser = submitEdit(async (values) => {
-    const dataJson = {
+    const { farm, roles, id } = selectedRegisters.value[0];
+    const data = {
         name: values.nameEdit,
         email: values.emailEdit,
-        farm_uuid: selectedRegisters.value[0].farm.uuid,
-        roles: selectedRegisters.value[0].roles.map((rol) => ({ id: rol.id }))
+        farm_uuid: farm.uuid,
+        roles: roles.map((rol) => ({ id: rol.id }))
     };
     if (values.passwordEdit) {
-        dataJson.password = values.passwordEdit;
+        data.password = values.passwordEdit;
     }
-    const restp = await putResponseAPI(dataJson, endpoint.value, selectedRegisters.value[0].id);
-    toast.add({ severity: restp.ok ? 'success' : 'error', summary: 'Update User ' + values.nameEdit, detail: restp.ok ? 'Update' : 'Error', life: 3000 });
+    const restp = await putRequest(endpoint.value, data, id);
+    toast.add({ severity: restp.ok ? 'success' : 'error', summary: 'Edit', detail: restp.ok ? 'Editado' : restp.error, life: 3000 });
     DialogEdit.value = false;
     loadingData();
     selectedRegisters.value = [];
 });
 
-const deleteUsers = async() => {
+const deleteUsers = async () => {
     DialogDelete.value = false;
     try {
         const deletePromises = [];
-        selectedRegisters.value.forEach( async item => {
-            const data = ({});
-            const deletePromise = await deleteResponseAPI(data, endpoint.value, item.id);
+        selectedRegisters.value.forEach(async (item) => {
+            const deletePromise = await deleteRequest(endpoint.value, item.id);
             deletePromises.push(deletePromise);
         });
         await Promise.all(deletePromises);
@@ -206,7 +195,6 @@ const expandAll = () => {
 const collapseAll = () => {
     expandedRows.value = null;
 };
-
 </script>
 <template>
     <div>
@@ -219,17 +207,13 @@ const collapseAll = () => {
         <div class="card">
             <Toolbar style="margin-bottom: 1rem">
                 <template #center>
-                    <Button v-if="ability.can('usuario_crear')" label="New" icon="pi pi-plus" class="p-button-success"
-                        @click="openNew" size="large" />
+                    <Button v-if="ability.can('usuario_crear')" label="New" icon="pi pi-plus" class="p-button-success" @click="openNew" size="large" />
                     <Divider layout="vertical" />
-                    <Button v-if="ability.can('usuario_editar')" :disabled="selectedRegisters.length != 1" label="Edit"
-                        icon="pi pi-file-edit" class="p-button-help" @click="openEdit" size="large" />
+                    <Button v-if="ability.can('usuario_editar')" :disabled="selectedRegisters.length != 1" label="Edit" icon="pi pi-file-edit" class="p-button-help" @click="openEdit" size="large" />
                     <Divider layout="vertical" />
-                    <Button v-if="ability.can('usuario_crear')" :disabled="selectedRegisters.length != 1" label="Clone"
-                        icon="pi pi-copy" class="p-button-secondary" @click="openClone" size="large" />
+                    <Button v-if="ability.can('usuario_crear')" :disabled="selectedRegisters.length != 1" label="Clone" icon="pi pi-copy" class="p-button-secondary" @click="openClone" size="large" />
                     <Divider layout="vertical" />
-                    <Button v-if="ability.can('usuario_eliminar')" :disabled="!selectedRegisters.length" label="Delete"
-                        icon="pi pi-trash" class="p-button-danger" @click="openDelete" size="large" />
+                    <Button v-if="ability.can('usuario_eliminar')" :disabled="!selectedRegisters.length" label="Delete" icon="pi pi-trash" class="p-button-danger" @click="openDelete" size="large" />
                 </template>
             </Toolbar>
             <DataTable
@@ -246,8 +230,7 @@ const collapseAll = () => {
             >
                 <template #empty> No customers found. </template>
                 <template #loading> Loading customers data. Please wait. </template>
-                
-                
+
                 <template>
                     <Column selectionMode="multiple" headerStyle="width: 3rem"></Column>
                     <Column expander style="width: 5rem" />
@@ -363,7 +346,6 @@ const collapseAll = () => {
                 <div class="flex align-items-center gap-3 mb-1">
                     <label for="password" class="font-semibold w-6rem">Password</label>
                     <Password id="password1" v-model="password" placeholder="Password" :feedback="false" :toggleMask="true" v-bind="passwordProps" />
-                    
                 </div>
                 <small id="username-help" :class="{ 'p-invalid text-red-700': errors['password'] }">
                     {{ errors.password }}
@@ -402,7 +384,7 @@ const collapseAll = () => {
         <Dialog v-model:visible="DialogDelete" modal :header="headerDialogDelete" class="p-fluid text-center mx-auto col-10 md:col-4">
             <div class="card flex flex-wrap gap-2">
                 <div v-for="item in selectedRegisters" :key="item.id">
-                    <Chip :label="item.name" removable @remove="remove(item)" icon="pi pi-user" />
+                    <Chip :label="item.name" removable @remove="remove(item)" icon="pi pi-ban" />
                 </div>
             </div>
             <div class="flex justify-content-end gap-2">

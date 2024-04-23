@@ -8,6 +8,9 @@ import ability from '@/service/ability.js';
 import { z } from 'zod';
 import FormPermissions from './FormPermissions.vue';
 
+import useData from '@/composables/DataAPI/FetchDataAPICopy.js';
+const { getRequest, postRequest, putRequest, deleteRequest } = useData();
+
 let endpoint = ref('/roles');
 const loading = ref(false);
 const { dataResponseAPI, getAllResponseAPI, getAllResponseListAPI, dataResponseListAPI, postResponseAPI, deleteResponseAPI, errorResponseAPI } = useDataAPI();
@@ -28,58 +31,56 @@ onMounted(() => {
     loadingData();
 });
 
-
-const { handleSubmit, errors, defineField } = useForm({
+const { handleSubmit, errors, defineField, resetForm } = useForm({
     validationSchema: toTypedSchema(
         z.object({
-            name: z.string().min(6),
-        }),
-    ),
+            name: z.string().min(6)
+        })
+    )
 });
 
 const [name, nameProps] = defineField('name');
 
-const newRol = handleSubmit(async values => {
+const newRol = handleSubmit(async (values) => {
     DialogNew.value = false;
     const data = {
         name: values.name,
-        "permissions": [{ "id": 1 }]
+        permissions: [{ id: 1 }]
     };
-    await postResponseAPI(data, endpoint.value);
-    const restp = dataResponseAPI.value.data;
-    toast.add({ severity: restp ? 'success' : 'error', summary: 'Create User ' + values.name, detail: restp ? "Creado" : "Error", life: 3000 });
+    const restp = await postRequest(endpoint.value, data);
+    toast.add({ severity: restp.ok ? 'success' : 'error', summary: 'Create', detail: restp.ok ? 'Creado' : restp.error, life: 3000 });
     loadingData();
 });
 
-const CloneRol = handleSubmit(async values => {
+const CloneRol = handleSubmit(async (values) => {
     DialogClone.value = false;
     const data = {
         name: values.name,
-        "permissions": selectedRegisters.value[0].permissions.map(perm => ({ id: perm.id }))
+        permissions: selectedRegisters.value[0].permissions.map((perm) => ({ id: perm.id }))
     };
-    await postResponseAPI(data, endpoint.value);
-    const restp = dataResponseAPI.value.data;
-    toast.add({ severity: restp ? 'success' : 'error', summary: 'Create User ' + values.name, detail: restp ? "Creado" : "Error", life: 3000 });
+    const restp = await postRequest(endpoint.value, data);
+    toast.add({ severity: restp.ok ? 'success' : 'error', summary: 'Clone', detail: restp.ok ? 'Clonado' : restp.error, life: 3000 });
     loadingData();
 });
 
-
 const loadLazyData = async () => {
     loading.value = true;
-    await getAllResponseAPI(endpoint.value);
-    roles.value = dataResponseAPI.value.data;
+    const response = await getRequest(endpoint.value);
+    if (!response.ok) toast.add({ severity: 'error', detail: 'Error' + response.error, life: 3000 });
+    roles.value = response.data.data ?? [];
     loading.value = false;
-    await getAllResponseListAPI(`/permissions/without-roles/2`);
-    const newArray = dataResponseListAPI.value;
+    
+    const permiss = await getRequest(`/permissions/without-roles/2`);
+    const newArray = permiss.data ?? [];
     const listaDeObjetos = [];
     for (const clave in newArray) {
-        listaDeObjetos.push({ id: clave, name: newArray[clave]});
+        listaDeObjetos.push({ id: clave, name: newArray[clave] });
     }
     permisos.value = listaDeObjetos;
 };
 
 const remove = (aver) => {
-    const index = selectedRegisters.value.findIndex(x => x.id === aver.id);
+    const index = selectedRegisters.value.findIndex((x) => x.id === aver.id);
     if (index !== -1) {
         selectedRegisters.value.splice(index, 1);
     }
@@ -87,17 +88,19 @@ const remove = (aver) => {
 
 const loadingData = async () => {
     await loadLazyData();
-}
+};
 
 const openNew = () => {
+    resetForm();
     headerDialogNew.value = 'new Rol';
     DialogNew.value = true;
 };
 
 const openClone = () => {
+    resetForm();
     headerDialogClone.value = 'Clone Rol';
     name.value = selectedRegisters.value[0].name;
-    listPermiss.value = selectedRegisters.value[0].permissions.map(perm => ({ name: perm.name }));
+    listPermiss.value = selectedRegisters.value[0].permissions.map((perm) => ({ name: perm.name }));
     DialogClone.value = true;
 };
 
@@ -106,18 +109,24 @@ const openDelete = () => {
     DialogDelete.value = true;
 };
 
-const deleteRoles = () => {
+const deleteRoles = async () => {
     DialogDelete.value = false;
-    selectedRegisters.value.forEach(async (item) => {
-        const data = ({});
-        await deleteResponseAPI(data, endpoint.value, item.id);
-        const resp = errorResponseAPI.value;
-        toast.add({ severity: resp ? 'success' : 'error', summary: 'Deleted User', detail: resp ? "Deleted" : "Error", life: 3000 });
-    });
-    selectedRegisters.value = [];
-    loadingData();
+    try {
+        const deletePromises = [];
+        selectedRegisters.value.forEach(async item => {
+            const deletePromise = await deleteRequest(endpoint.value, item.id);
+            deletePromises.push(deletePromise);
+        });
+        await Promise.all(deletePromises);
+        loadingData();
+        toast.add({ severity: 'success', summary: 'Deleted User', detail: 'Deleted', life: 3000 });
+    } catch (error) {
+        console.error('Error deleting:', error);
+        toast.add({ severity: 'error', summary: 'Error', detail: 'Error deleting', life: 3000 });
+    } finally {
+        selectedRegisters.value = [];
+    }
 };
-
 </script>
 <template>
     <div>
@@ -128,20 +137,27 @@ const deleteRoles = () => {
             </div>
         </div>
         <div class="card">
-            <Toolbar style="margin-bottom: 1rem;">
+            <Toolbar style="margin-bottom: 1rem">
                 <template #center>
                     <Button v-if="ability.can('rol_crear')" label="New" icon="pi pi-plus" class="p-button-success" @click="openNew" size="large" />
-                    <Divider  layout="vertical" />
-                    <Button v-if="ability.can('rol_editar')" :disabled="selectedRegisters.length != 1" label="Clone" icon="pi pi-copy"
-                        class="p-button-secondary" @click="openClone" size="large" />
                     <Divider layout="vertical" />
-                    <Button v-if="ability.can('rol_eliminar')" :disabled="!selectedRegisters.length" label="Delete" icon="pi pi-trash"
-                        class="p-button-danger" @click="openDelete" size="large" />
+                    <Button v-if="ability.can('rol_editar')" :disabled="selectedRegisters.length != 1" label="Clone" icon="pi pi-copy" class="p-button-secondary" @click="openClone" size="large" />
+                    <Divider layout="vertical" />
+                    <Button v-if="ability.can('rol_eliminar')" :disabled="!selectedRegisters.length" label="Delete" icon="pi pi-trash" class="p-button-danger" @click="openDelete" size="large" />
                 </template>
             </Toolbar>
-            <DataTable v-model:expandedRows="expandedRows" :loading="loading" :value="roles" dataKey="id" :rows="50"
-                :rowsPerPageOptions="[5, 10, 20, 50]" tableStyle="min-width: 75rem" showGridlines :paginator="true"
-                v-model:selection="selectedRegisters">
+            <DataTable
+                v-model:expandedRows="expandedRows"
+                :loading="loading"
+                :value="roles"
+                dataKey="id"
+                :rows="50"
+                :rowsPerPageOptions="[5, 10, 20, 50]"
+                tableStyle="min-width: 75rem"
+                showGridlines
+                :paginator="true"
+                v-model:selection="selectedRegisters"
+            >
                 <template #empty> No customers found. </template>
                 <template #loading> Loading customers data. Please wait. </template>
                 <template>
@@ -152,8 +168,7 @@ const deleteRoles = () => {
                             {{ data.name }}
                         </template>
                         <template #filter="{ filterModel }">
-                            <InputText v-model="filterModel.value" type="text" class="p-column-filter"
-                                placeholder="Search by " />
+                            <InputText v-model="filterModel.value" type="text" class="p-column-filter" placeholder="Search by " />
                         </template>
                     </Column>
                 </template>
@@ -164,12 +179,11 @@ const deleteRoles = () => {
         </div>
         <Dialog v-model:visible="DialogNew" modal :header="headerDialogNew" class="p-fluid text-center mx-auto">
             <div class="mb-3">
-                <div class="flex align-items-center gap-3  m-2">
+                <div class="flex align-items-center gap-3 m-2">
                     <label for="username" class="font-semibold w-6rem">Name</label>
                     <InputText id="username" v-model="name" class="flex-auto" autocomplete="off" v-bind="nameProps" />
                 </div>
-                <small id="username-help" :class="{ 'p-invalid text-red-700': errors['name'] }">{{ errors.name
-                    }}</small>
+                <small id="username-help" :class="{ 'p-invalid text-red-700': errors['name'] }">{{ errors.name }}</small>
             </div>
             <Divider />
             <div class="flex justify-content-end gap-2">
@@ -177,10 +191,9 @@ const deleteRoles = () => {
                 <Button type="button" label="Save" @click="newRol()" />
             </div>
         </Dialog>
-        <Dialog v-model:visible="DialogClone" modal :header="headerDialogClone" class="p-fluid text-center mx-auto"
-            :style="{ width: '25rem' }">
+        <Dialog v-model:visible="DialogClone" modal :header="headerDialogClone" class="p-fluid text-center mx-auto" :style="{ width: '25rem' }">
             <div class="mb-3">
-                <div class="flex align-items-center gap-3  m-2">
+                <div class="flex align-items-center gap-3 m-2">
                     <label for="username" class="font-bold w-6rem">Name</label>
                     <InputText id="username" v-model="name" class="flex-auto" autocomplete="off" v-bind="nameProps" />
                 </div>
@@ -202,11 +215,10 @@ const deleteRoles = () => {
                 <Button type="button" label="Save" @click="CloneRol()" />
             </div>
         </Dialog>
-        <Dialog v-model:visible="DialogDelete" modal :header="headerDialogDelete"
-            class="p-fluid text-center mx-auto col-10 md:col-4">
+        <Dialog v-model:visible="DialogDelete" modal :header="headerDialogDelete" class="p-fluid text-center mx-auto col-10 md:col-4">
             <div class="card flex flex-wrap gap-2">
                 <div v-for="item in selectedRegisters" :key="item.id">
-                    <Chip :label="item.name" removable @remove="remove(item)" icon="pi pi-user" />
+                    <Chip :label="item.name" removable @remove="remove(item)" icon="pi pi-ban" />
                 </div>
             </div>
             <div class="flex justify-content-end gap-2">

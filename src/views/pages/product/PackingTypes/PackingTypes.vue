@@ -85,10 +85,6 @@ const [codigo, codigoProps] = defineField('codigo');
 const [farm] = defineField('farm');
 const [company] = defineField('company');
 
-const clearForm = () => {
-    resetForm();
-};
-
 const extenciones = ref([{ name: 'CSV' }, { name: 'XLS' }]);
 const optionsEsport = ref([{ name: 'ALL' }, { name: 'SELECTED' }]);
 const format = ref({ name: 'CSV' });
@@ -132,12 +128,12 @@ const searchCompannies = (event) => {
 };
 
 const openNew = () => {
-    clearForm();
+    resetForm();
     formDialogNew.value = true;
 };
 
 const openEdit = () => {
-    clearForm();
+    resetForm();
     const { code, company: empresa, farm: finca, name: nombre } = listRowSelect.value[0];
 
     name.value = nombre;
@@ -149,7 +145,7 @@ const openEdit = () => {
 };
 
 const openClone = () => {
-    clearForm();
+    resetForm();
     const { company: empresa, farm: finca, name: nombre } = listRowSelect.value[0];
 
     name.value = nombre;
@@ -283,7 +279,6 @@ const remove = (aver) => {
     <div class="card">
         <h1>Información Tipos de Empaque</h1>
     </div>
-    {{ listRowSelect }}
     <div class="card">
         <Toolbar style="margin-bottom: 1rem">
             <template #center>
