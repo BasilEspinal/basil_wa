@@ -2,14 +2,14 @@
     <div>
     <div class="card">
         <div>
-            <h1>Información Tipos de Tareas</h1> 
+            <h1>Información Tipos de Tareasx</h1> 
         </div>
     </div>
     <div class="card">
         <div class="grid">
             <div class="col-xs-12 col-sm-6 col-md-4 mb-2 text-center mx-auto">
                 <!--Uncomment when table is done-->
-                <pre>falta CRUD</pre>
+                <pre>arreglar CRUD</pre>
                 <div class="col-xs-12 col-sm-6 col-md-4 mb-2 text-center mx-auto">
                 <Toolbar class="bg-gray-900 shadow-2" style="border-radius: 3rem; background-image: linear-gradient(to right, var(--green-100), var(--green-200))">
                     <template v-slot:start>
@@ -28,6 +28,7 @@
         </div>
         <!-- <pre>{{ dataResponseAPI }}</pre> -->
         <DataTable
+        id="tblData"
         :value="dataResponseAPI.data"
         dataKey="uuid"
         tableStyle="min-width: 75rem"
@@ -142,11 +143,46 @@
                 </Column>
 
         </DataTable>
-        <Dialog v-model:visible="formDialog" :style="{ width: '700px' }" :header="headerDialog" :modal="true" class="p-fluid text-center mx-auto">
-            <pre>{{ selectedRegisters }}</pre>
+        <Dialog v-model:visible="formDialog" :style="{ width: '500px' }" :header="headerDialog" :modal="true" class="p-fluid text-center mx-auto">
+            <div class="mb-3">
+                <div class="flex align-items-center gap-3 mb-1">
+                    <label for="name" class="font-semibold w-6rem">Name :</label>
+                    <InputText id="name" v-model="nameV" class="flex-auto" autocomplete="off"  />
+                </div>
+                <small id="name-help" :class="{ 'p-invalid text-red-700': errors['name'] }">
+                    {{ errors['name'] }}
+                </small>
+            </div>
+            <div class="mb-3">
+                <div class="flex align-items-center gap-3 mb-1">
+                    <label for="code" class="font-semibold w-6rem">Code :</label>
+                    <InputText id="code" v-model="codeV" class="flex-auto" autocomplete="off"  />
+                </div>
+                <small id="code-help" :class="{ 'p-invalid text-red-700': errors['name'] }">
+                    {{ errors['code'] }}
+                </small>
+                
+            </div>   
+
+            
+
+            <div class="flex justify-content-end gap-2">
+                <Button type="button" label="Cancel" icon="pi pi-times" severity="secondary" @click="hideDialog" />
+                <Button type="button" label="Save" icon="pi pi-check" @click="saveRecord" />
+            </div>
         </Dialog>
         <Dialog v-model:visible="deleteDialog" :style="{ width: '700px' }" :header="headerDialog" :modal="true" class="p-fluid text-center mx-auto">
-            <pre>{{ selectedRegisters }}</pre>
+            <label for="username" class="text-2xl font-medium w-6rem"> Are you sure you want to delete the selected ones? </label>
+            <div class="card flex flex-wrap mt-2 gap-2">
+                <div v-for="item in listRowSelect" :key="item.id">
+                    <Chip :label="item.name" removable @remove="remove(item)" icon="pi pi-ban" />
+                </div>
+            </div>
+            <div class="flex justify-content-end gap-2">
+                <Button type="button" label="Cancel" severity="secondary" @click="saveRecord" />
+                <Button type="button" label="Delete" @click="DeleteVarieties" />
+            </div>
+            
         </Dialog> 
     </div>
 </div>
@@ -164,6 +200,7 @@ const documentFrozen = ref(false); change name field
      -->
 <script setup>
 import { ref, watch, provide, onBeforeMount, onMounted } from 'vue';
+import { useToast } from 'primevue/usetoast';
 import useDataAPI from '@/composables/DataAPI/FetchDataAPI.js';
 import { FilterMatchMode, FilterOperator } from 'primevue/api';
 import { useRouter } from 'vue-router';
@@ -179,7 +216,70 @@ const codeFrozen = ref(false);
 
 const { getAllResponseAPI,getAllResponsePermissionsAPI, getAllResponseListAPI, totalRecordsResponseAPI, currentPageResponseAPI, linksResponseAPI, postResponseAPI, putResponseAPI, deleteResponseAPI, errorResponseAPI, dataResponseAPI, dataResponsePermissionsAPI,dataResponseListAPI, statusCode } =
     useDataAPI();
+const toast = useToast();
 
+let dataPost = ref({
+    code: '',
+    name: '',
+    farm_uuid: '',
+    company_uuid: ''
+});
+
+const {
+  values,
+  errors,
+  meta,
+  validate,
+  handleSubmit,
+  setFieldValue,
+  setErrors,
+  defineField,
+} = useForm({
+  validationSchema: toTypedSchema(
+    z.object({
+
+      
+      code: z.string().nonempty('Field is required').min(3),
+      name: z.string().nonempty('Field is required').min(3),
+      farm_uuid: z.string(),
+        company_uuid: z.string(),
+    })
+  ),
+});
+
+const [
+    codeV,
+    codeAttrs
+] = defineField('code', validate);
+
+const [
+  nameV,
+  nameAttrs
+] = defineField('name', validate);
+const [
+  farmV,
+  farmAttrs
+] = defineField('farm_uuid', validate);
+const [
+  companyV,
+  companyAttrs
+] = defineField('company_uuid', validate);
+
+watch(
+  () => ({
+    // documentTypeV: documentTypeV.value,
+    codeV: codeV.value,
+    nameV: nameV.value,
+    // farmIdV: farmIdV.value,
+  }),
+  (newValues) => {
+    // dataPost.value.document_type = newValues.documentTypeV;
+    dataPost.value.code = newValues.codeV;
+    dataPost.value.name = newValues.nameV;
+
+  },
+  { deep: true }
+);
 ////////////
  //Form here
  ////////////   
@@ -250,44 +350,180 @@ const hideDialog = () => {
     recordsDelete.value = [];
     resetValues();
 }
-const resetValues = () => {}
+const resetValues = () => {
+    dataPost.value.code = '';
+    dataPost.value.name = '';
+    dataPost.value.farm_uuid = '';
+    dataPost.value.company_uuid = '';
+}
 const assignValues = (modex) => {
-    if ((modex ==='EDIT')) {}
-    if ((modex=== 'CLONE' )) {}
+    if ((modex ==='EDIT')) {
+        dataPost.value.code=listRowSelect.value[0].code;
+        codeV.value=listRowSelect.value[0].code;
+        dataPost.value.name=listRowSelect.value[0].name;
+        nameV.value=listRowSelect.value[0].name;
+        
+
+    }
+    if ((modex=== 'CLONE' )) {
+        resetValues();
+        dataPost.value.code=listRowSelect.value[0].code;
+        codeV.value=listRowSelect.value[0].code;
+        dataPost.value.name=listRowSelect.value[0].name;
+        nameV.value=listRowSelect.value[0].name;
+        
+    }
 }
 const openNew = () => {
     mode.value = 'NEW';
     resetValues();
     formDialog.value = true;
-    headerDialog.value = 'New xxxxxxx record';
+    headerDialog.value = 'New type of task record';
 }
 const openEdit = () => {
     mode.value = 'EDIT';
     formDialog.value = true;
-    headerDialog.value = 'Edit a xxxxx record';
+    headerDialog.value = 'Edit a type of task record';
     assignValues(mode.value)
 
 }
 const openClone = () => {
     mode.value = 'CLONE';
-    headerDialog.value = 'Clone a xxxx record';
+    headerDialog.value = 'Clone a type of task record';
     formDialog.value = true;
     assignValues(mode.value)
 }
 let recordsDelete = ref([]);
 const openDelete = () => {
     mode.value = 'DELETE';
-    headerDialog.value = 'Delete a xxxxx record';
+    headerDialog.value = 'Delete a type of task record';
     resetValues();
     deleteDialog.value = true;
 }
 const openExport = () => {
     mode.value = 'EXPORT';
-    headerDialog.value = 'Export a xxxxx record';
+    headerDialog.value = 'Export a type of task record';
     resetValues();
     formDialog.value = true;
 }
 
+const newRecord = async (requestDataUnitTypes, endpoint) => {
+    await postResponseAPI(requestDataUnitTypes, endpoint);
+    console.log(requestDataUnitTypes);
+    recordsDelete.value = [];
+
+    switch (statusCode.value) {
+        case 201:
+            loadLazyData();
+            toast.add({ severity: 'success', summary: 'Successful', detail: 'Done', life: 3000 });
+            formDialog.value = false;
+            hideDialog();
+            
+            break;
+
+        case 422:
+            toast.add({ severity: 'error', summary: 'Validation Error', detail: 'There are validation errors', life: 3000 });
+            // Puedes agregar más casos según sea necesario
+            break;
+        case 200:
+            toast.add({ severity: 'warn', summary: 'xxxxxr', detail: 'There are validation errors', life: 3000 });
+            // Puedes agregar más casos según sea necesario
+            break;
+        default:
+            toast.add({ severity: 'error', summary: 'Error Message', detail: 'There was an error', life: 3000 });
+    }
+};
+const updateRecord = async (requestDataUnitTypes, id, endpoint) => {
+    await putResponseAPI(requestDataUnitTypes, endpoint, id);
+    recordsDelete.value = [];
+
+    switch (statusCode.value) {
+        case 202:
+            loadLazyData();
+            toast.add({ severity: 'success', summary: 'Successful', detail: 'Done', life: 3000 });
+
+            hideDialog();
+            
+            break;
+
+        case 422:
+            toast.add({ severity: 'error', summary: 'Validation Error', detail: 'There are validation errors', life: 3000 });
+            // Puedes agregar más casos según sea necesario
+            break;
+        case 200:
+            toast.add({ severity: 'warn', summary: 'xxxxxr', detail: 'There are validation errors', life: 3000 });
+            // Puedes agregar más casos según sea necesario
+            break;
+        default:
+            toast.add({ severity: 'error', summary: 'Error Message', detail: 'There was an error', life: 3000 });
+    }
+};
+const dropRecord = async (id, endpoint) => {
+    await deleteResponseAPI({}, endpoint, id);
+
+    switch (statusCode.value) {
+        case 204:
+            loadLazyData();
+            toast.add({ severity: 'success', summary: 'Successful', detail: 'Done', life: 3000 });
+            
+            hideDialog();
+            break;
+
+        case 422:
+            toast.add({ severity: 'error', summary: 'Validation Error', detail: 'There are validation errors', life: 3000 });
+            // Puedes agregar más casos según sea necesario
+            break;
+        case 200:
+            toast.add({ severity: 'warn', summary: 'xxxxxr', detail: 'There are validation errors', life: 3000 });
+            // Puedes agregar más casos según sea necesario
+            break;
+        default:
+            toast.add({ severity: 'error', summary: 'Error Message', detail: 'There was an error', life: 3000 });
+    }
+};
+
+const saveRecord = async () => {
+    let data = [];
+    switch (mode.value) {
+        case 'NEW':
+            await newRecord(dataPost.value, endpoint.value, statusCode.value);
+            break;
+        case 'EDIT':
+            await updateRecord(dataPost.value, listRowSelect.value[0].uuid, endpoint.value);
+            console.info(dataPost.value);
+            break;
+        case 'DELETE':
+            if (recordsDelete.value.length > 0 && recordsDelete.value.length < 2) await dropRecord(recordsDelete.value[0].uuid, endpoint.value);
+            else {
+                toast.add({ severity: 'error', summary: 'Error Message', detail: 'No puedes eliminar mas de un registro', life: 3000 });
+            }
+            break;
+        case 'CLONE':
+            await newRecord(dataPost.value, endpoint.value, statusCode.value);
+            break;
+        case 'EXPORT':
+            console.info("SaveRecord", mode.value);
+                if (format.value == '') {
+                    toast.add({ severity: 'error', summary: 'Select Format', detail: 'Must select a format', life: 3000 });
+                    return;
+                }
+                data = {
+                    data: format.value.code,
+                    name: filename.value + (format.value.code ? '.csv' : '.xls')
+            };
+            exportData(data);
+            exportDialog.value = false;
+            
+            break;    
+    }
+    mode.value = '';
+};
+const remove = (aver) => {
+    const index = listRowSelect.value.findIndex(x => x.id === aver.id);
+    if (index !== -1) {
+        listRowSelect.value.splice(index, 1);
+    }
+};
 </script>
 
 <style lang="scss" scoped>

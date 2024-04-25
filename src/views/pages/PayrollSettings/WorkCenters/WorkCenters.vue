@@ -38,6 +38,7 @@
         </div>
         <!-- <pre>{{ dataResponseAPI }}</pre> -->
         <DataTable
+        id="tblData"
         :value="dataResponseAPI.data"
         dataKey="uuid"
         tableStyle="min-width: 75rem"

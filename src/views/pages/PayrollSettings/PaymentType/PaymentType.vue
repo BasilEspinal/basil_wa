@@ -2,7 +2,7 @@
     <div>
     <div class="card">
         <div>
-            <h1>Información de tipo de pagos</h1> 
+            <h1>Información de tipo de pagosx</h1> 
         </div>
     </div>
     <div class="card">

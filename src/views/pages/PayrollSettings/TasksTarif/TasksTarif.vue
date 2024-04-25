@@ -49,7 +49,7 @@
         filterDisplay="menu"
         v-model:filters="filters"
         :globalFilterFields="['company.name', 'farm.name', 'status.name', 'created_at', 'updated_at','type_date','type_price','price_tarif','taskType.name','packing_type.name']"
-        v-if = "!ability.can('tarifa_tarea_listado')"
+        v-if = "ability.can('tarifa_tarea_listado')"
         >
         <template #header>
             <!--Uncomment when filters are done-->
