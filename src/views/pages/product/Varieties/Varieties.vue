@@ -287,7 +287,6 @@ const remove = (aver) => {
         <div class="card">
             <h1>Información de tipo de Variedades</h1>
         </div>
-
         <div class="card">
             <Toolbar style="margin-bottom: 1rem">
                 <template #center>
@@ -478,6 +477,7 @@ const remove = (aver) => {
             <Toast />
         </div>
     </div>
+</div>
 </template>
 
 <style lang="scss" scoped>

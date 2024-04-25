@@ -1,0 +1,8 @@
+{
+    "data": [ 
+               {"name": "Icopores recogidos", "code": "IR", "number":152, "numberPercent":50, "labelNumberPercent":"En traslado"},
+               {"name": "Tabacos empacados", "code": "TE","number":152, "numberPercent":52, "labelNumberPercent":"Meta del día"},
+               {"name": "Labores contratistas", "code": "LC","number":152, "numberPercent":520, "labelNumberPercent":"Pendientes"},
+               {"name": "Traslados", "code": "TL","number":152, "numberPercent":85, "labelNumberPercent":"Pendientes"}
+    ]
+}
