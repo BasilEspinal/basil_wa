@@ -144,7 +144,7 @@ const openEdit = () => {
     formDialogEdit.value = true;
 };
 
-}
+
 const openClone = () => {
     resetForm();
     const { company: empresa, farm: finca, name: nombre } = listRowSelect.value[0];
