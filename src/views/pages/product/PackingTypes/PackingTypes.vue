@@ -257,12 +257,14 @@ const DeleteVarieties = async () => {
             deletePromises.push(deletePromise);
         });
         await Promise.all(deletePromises);
-        loadingData();
         toast.add({ severity: 'success', summary: 'Deleted Varieties', detail: 'Deleted', life: 3000 });
     } catch (error) {
         console.error('Error deleting:', error);
         toast.add({ severity: 'error', summary: 'Error', detail: 'Error deleting', life: 3000 });
     } finally {
+        setTimeout(() => {
+            loadingData();
+        }, 100);
         listRowSelect.value = [];
     }
 };

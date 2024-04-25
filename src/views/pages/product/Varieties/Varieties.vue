@@ -257,23 +257,25 @@ const DeleteVarieties = async () => {
 
     try {
         const deletePromises = [];
-        listRowSelect.value.forEach( async item => {
+        await listRowSelect.value.forEach(async (item) => {
             const deletePromise = await deleteRequest(endpoint.value, item.uuid);
             deletePromises.push(deletePromise);
         });
         await Promise.all(deletePromises);
-        loadingData();
         toast.add({ severity: 'success', summary: 'Deleted Varieties', detail: 'Deleted', life: 3000 });
     } catch (error) {
         console.error('Error deleting:', error);
         toast.add({ severity: 'error', summary: 'Error', detail: 'Error deleting', life: 3000 });
     } finally {
-        listRowSelect.value = [];
+        listRowSelect.value = [{}];
+        setTimeout(() => {
+            loadingData();
+        }, 100);
     }
 };
 
 const remove = (aver) => {
-    const index = listRowSelect.value.findIndex(x => x.id === aver.id);
+    const index = listRowSelect.value.findIndex((x) => x.id === aver.id);
     if (index !== -1) {
         listRowSelect.value.splice(index, 1);
     }
@@ -281,90 +283,91 @@ const remove = (aver) => {
 </script>
 
 <template>
-    <div class="card">
-        <h1>Información de tipo de Variedades</h1>
-    </div>
+    <div>
+        <div class="card">
+            <h1>Información de tipo de Variedades</h1>
+        </div>
 
-    <div class="card">
-        <Toolbar style="margin-bottom: 1rem">
-            <template #center>
-                <Button :disabled="headerNames.length > 0" label="New" icon="pi pi-plus" class="p-button-success mb-2 mt-2" @click="openNew" size="large" />
-                <Divider layout="vertical" />
-                <Button :disabled="!(listRowSelect.length > 0 && listRowSelect.length < 2)" label="Edit" icon="pi pi-file-edit" class="p-button-help mb-2 mt-2" @click="openEdit" size="large" />
-                <Divider layout="vertical" />
-                <Button :disabled="!(listRowSelect.length > 0 && listRowSelect.length < 2)" label="Clone" icon="pi pi-copy" class="p-button-secondary mb-2 mt-2" @click="openClone" size="large" />
-                <Divider layout="vertical" />
-                <Button :disabled="headerNames.length > 0" label="Export" icon="pi pi-file-import" class="p-button-warning mb-2 mt-2" @click="openExport" size="large" />
-                <Divider layout="vertical" />
-                <Button :disabled="!listRowSelect.length > 0" label="Delete" icon="pi pi-trash" class="p-button-danger mb-2 mt-2" @click="openDelete" size="large" />
-            </template>
-        </Toolbar>
-        <Table title="" path-api="/unit_types" @HeaderNames="onHeaderNames" @onRowSelect="RowSelect" :dataGot="dataFromComponent" :allLabels="allLabels" />
+        <div class="card">
+            <Toolbar style="margin-bottom: 1rem">
+                <template #center>
+                    <Button :disabled="headerNames.length > 0" label="New" icon="pi pi-plus" class="p-button-success mb-2 mt-2" @click="openNew" size="large" />
+                    <Divider layout="vertical" />
+                    <Button :disabled="!(listRowSelect.length > 0 && listRowSelect.length < 2)" label="Edit" icon="pi pi-file-edit" class="p-button-help mb-2 mt-2" @click="openEdit" size="large" />
+                    <Divider layout="vertical" />
+                    <Button :disabled="!(listRowSelect.length > 0 && listRowSelect.length < 2)" label="Clone" icon="pi pi-copy" class="p-button-secondary mb-2 mt-2" @click="openClone" size="large" />
+                    <Divider layout="vertical" />
+                    <Button :disabled="headerNames.length > 0" label="Export" icon="pi pi-file-import" class="p-button-warning mb-2 mt-2" @click="openExport" size="large" />
+                    <Divider layout="vertical" />
+                    <Button :disabled="!listRowSelect.length > 0" label="Delete" icon="pi pi-trash" class="p-button-danger mb-2 mt-2" @click="openDelete" size="large" />
+                </template>
+            </Toolbar>
+            <Table title="" path-api="/unit_types" @HeaderNames="onHeaderNames" @onRowSelect="RowSelect" :dataGot="dataFromComponent" :allLabels="allLabels" />
 
-        <Dialog v-model:visible="formDialogNew" modal :header="'Create new varieties'" class="p-fluid text-center mx-auto">
-            <div class="mb-3">
-                <div class="flex align-items-center gap-3 mb-1">
-                    <label for="username" class="font-semibold w-6rem">Name :</label>
-                    <InputText id="username" v-model="name" class="flex-auto" autocomplete="off" v-bind="nameProps" />
+            <Dialog v-model:visible="formDialogNew" modal :header="'Create new varieties'" class="p-fluid text-center mx-auto">
+                <div class="mb-3">
+                    <div class="flex align-items-center gap-3 mb-1">
+                        <label for="username" class="font-semibold w-6rem">Name :</label>
+                        <InputText id="username" v-model="name" class="flex-auto" autocomplete="off" v-bind="nameProps" />
+                    </div>
+                    <small id="username-help" :class="{ 'p-invalid text-red-700': errorsNew['name'] }">
+                        {{ errorsNew.name }}
+                    </small>
                 </div>
-                <small id="username-help" :class="{ 'p-invalid text-red-700': errorsNew['name'] }">
-                    {{ errorsNew.name }}
-                </small>
-            </div>
-            <div class="mb-3">
-                <div class="flex align-items-center gap-3 mb-1">
-                    <label for="username" class="font-semibold w-6rem">Code :</label>
-                    <InputText id="username" v-model="codigo" class="flex-auto" autocomplete="off" v-bind="codigoProps" />
+                <div class="mb-3">
+                    <div class="flex align-items-center gap-3 mb-1">
+                        <label for="username" class="font-semibold w-6rem">Code :</label>
+                        <InputText id="username" v-model="codigo" class="flex-auto" autocomplete="off" v-bind="codigoProps" />
+                    </div>
+                    <small id="username-help" :class="{ 'p-invalid text-red-700': errorsNew['codigo'] }">
+                        {{ errorsNew.codigo }}
+                    </small>
                 </div>
-                <small id="username-help" :class="{ 'p-invalid text-red-700': errorsNew['codigo'] }">
-                    {{ errorsNew.codigo }}
-                </small>
-            </div>
-            <div class="mb-3">
-                <div class="flex align-items-center">
-                    <label for="username" class="font-semibold w-3">Farm :</label>
-                    <AutoComplete v-model="farm" inputId="ac" :suggestions="farms" @complete="searchFarms" field="name" dropdown />
+                <div class="mb-3">
+                    <div class="flex align-items-center">
+                        <label for="username" class="font-semibold w-3">Farm :</label>
+                        <AutoComplete v-model="farm" inputId="ac" :suggestions="farms" @complete="searchFarms" field="name" dropdown />
+                    </div>
+                    <small id="username-help" :class="{ 'p-invalid text-red-700': errorsNew['farm'] }">
+                        {{ errorsNew.farm }}
+                    </small>
                 </div>
-                <small id="username-help" :class="{ 'p-invalid text-red-700': errorsNew['farm'] }">
-                    {{ errorsNew.farm }}
-                </small>
-            </div>
-            <div class="mb-3">
-                <div class="flex align-items-center">
-                    <label for="username" class="font-semibold w-3">Companny:</label>
-                    <AutoComplete v-model="company" inputId="ac" :suggestions="compa" @complete="searchCompannies" field="name" dropdown />
+                <div class="mb-3">
+                    <div class="flex align-items-center">
+                        <label for="username" class="font-semibold w-3">Companny:</label>
+                        <AutoComplete v-model="company" inputId="ac" :suggestions="compa" @complete="searchCompannies" field="name" dropdown />
+                    </div>
+                    <small id="username-help" :class="{ 'p-invalid text-red-700': errorsNew['company'] }">
+                        {{ errorsNew.company }}
+                    </small>
                 </div>
-                <small id="username-help" :class="{ 'p-invalid text-red-700': errorsNew['company'] }">
-                    {{ errorsNew.company }}
-                </small>
-            </div>
 
-            <div class="flex justify-content-end gap-2">
-                <Button type="button" label="Cancel" severity="secondary" @click="formDialogNew = false" />
-                <Button type="button" label="Save" @click="createVarieties()" />
-            </div>
-        </Dialog>
+                <div class="flex justify-content-end gap-2">
+                    <Button type="button" label="Cancel" severity="secondary" @click="formDialogNew = false" />
+                    <Button type="button" label="Save" @click="createVarieties()" />
+                </div>
+            </Dialog>
 
-        <Dialog v-model:visible="formDialogEdit" modal :header="'Edit varieties'" class="p-fluid text-center mx-auto">
-            <div class="mb-3">
-                <div class="flex align-items-center gap-3 mb-1">
-                    <label for="username" class="font-semibold w-6rem">Name :</label>
-                    <InputText id="username" v-model="name" class="flex-auto" autocomplete="off" v-bind="nameProps" />
+            <Dialog v-model:visible="formDialogEdit" modal :header="'Edit varieties'" class="p-fluid text-center mx-auto">
+                <div class="mb-3">
+                    <div class="flex align-items-center gap-3 mb-1">
+                        <label for="username" class="font-semibold w-6rem">Name :</label>
+                        <InputText id="username" v-model="name" class="flex-auto" autocomplete="off" v-bind="nameProps" />
+                    </div>
+                    <small id="username-help" :class="{ 'p-invalid text-red-700': errorsNew['name'] }">
+                        {{ errorsNew.name }}
+                    </small>
                 </div>
-                <small id="username-help" :class="{ 'p-invalid text-red-700': errorsNew['name'] }">
-                    {{ errorsNew.name }}
-                </small>
-            </div>
-            <div class="mb-3">
-                <div class="flex align-items-center gap-3 mb-1">
-                    <label for="username" class="font-semibold w-6rem">Code :</label>
-                    <InputText id="username" v-model="codigo" class="flex-auto" autocomplete="off" v-bind="codigoProps" />
+                <div class="mb-3">
+                    <div class="flex align-items-center gap-3 mb-1">
+                        <label for="username" class="font-semibold w-6rem">Code :</label>
+                        <InputText id="username" v-model="codigo" class="flex-auto" autocomplete="off" v-bind="codigoProps" />
+                    </div>
+                    <small id="username-help" :class="{ 'p-invalid text-red-700': errorsNew['codigo'] }">
+                        {{ errorsNew.codigo }}
+                    </small>
                 </div>
-                <small id="username-help" :class="{ 'p-invalid text-red-700': errorsNew['codigo'] }">
-                    {{ errorsNew.codigo }}
-                </small>
-            </div>
-            <!-- <div class="mb-3">
+                <!-- <div class="mb-3">
                 <div class="flex align-items-center">
                     <label for="username" class="font-semibold w-3">Farm :</label>
                     <AutoComplete v-model="farm" inputId="ac" :suggestions="farms" @complete="searchFarms" field="name"
@@ -385,96 +388,95 @@ const remove = (aver) => {
                 </small>
             </div> -->
 
-            <div class="flex justify-content-end gap-2">
-                <Button type="button" label="Cancel" severity="secondary" @click="formDialogEdit = false" />
-                <Button type="button" label="Save" @click="EditVarieties()" />
-            </div>
-        </Dialog>
+                <div class="flex justify-content-end gap-2">
+                    <Button type="button" label="Cancel" severity="secondary" @click="formDialogEdit = false" />
+                    <Button type="button" label="Save" @click="EditVarieties()" />
+                </div>
+            </Dialog>
 
-        <Dialog v-model:visible="formDialogClone" modal :header="'Clone varieti'" class="p-fluid text-center mx-auto">
-            <div class="mb-3">
-                <div class="flex align-items-center gap-3 mb-1">
-                    <label for="username" class="font-semibold w-6rem">Name :</label>
-                    <InputText id="username" v-model="name" class="flex-auto" autocomplete="off" v-bind="nameProps" />
+            <Dialog v-model:visible="formDialogClone" modal :header="'Clone varieti'" class="p-fluid text-center mx-auto">
+                <div class="mb-3">
+                    <div class="flex align-items-center gap-3 mb-1">
+                        <label for="username" class="font-semibold w-6rem">Name :</label>
+                        <InputText id="username" v-model="name" class="flex-auto" autocomplete="off" v-bind="nameProps" />
+                    </div>
+                    <small id="username-help" :class="{ 'p-invalid text-red-700': errorsNew['name'] }">
+                        {{ errorsNew.name }}
+                    </small>
                 </div>
-                <small id="username-help" :class="{ 'p-invalid text-red-700': errorsNew['name'] }">
-                    {{ errorsNew.name }}
-                </small>
-            </div>
-            <div class="mb-3">
-                <div class="flex align-items-center gap-3 mb-1">
-                    <label for="username" class="font-semibold w-6rem">Code :</label>
-                    <InputText id="username" v-model="codigo" class="flex-auto" autocomplete="off" v-bind="codigoProps" />
+                <div class="mb-3">
+                    <div class="flex align-items-center gap-3 mb-1">
+                        <label for="username" class="font-semibold w-6rem">Code :</label>
+                        <InputText id="username" v-model="codigo" class="flex-auto" autocomplete="off" v-bind="codigoProps" />
+                    </div>
+                    <small id="username-help" :class="{ 'p-invalid text-red-700': errorsNew['codigo'] }">
+                        {{ errorsNew.codigo }}
+                    </small>
                 </div>
-                <small id="username-help" :class="{ 'p-invalid text-red-700': errorsNew['codigo'] }">
-                    {{ errorsNew.codigo }}
-                </small>
-            </div>
-            <div class="mb-3">
-                <div class="flex align-items-center">
-                    <label for="username" class="font-semibold w-3">Farm :</label>
-                    <AutoComplete v-model="farm" inputId="ac" :suggestions="farms" @complete="searchFarms" field="name" dropdown />
+                <div class="mb-3">
+                    <div class="flex align-items-center">
+                        <label for="username" class="font-semibold w-3">Farm :</label>
+                        <AutoComplete v-model="farm" inputId="ac" :suggestions="farms" @complete="searchFarms" field="name" dropdown />
+                    </div>
+                    <small id="username-help" :class="{ 'p-invalid text-red-700': errorsNew['farm'] }">
+                        {{ errorsNew.farm }}
+                    </small>
                 </div>
-                <small id="username-help" :class="{ 'p-invalid text-red-700': errorsNew['farm'] }">
-                    {{ errorsNew.farm }}
-                </small>
-            </div>
-            <div class="mb-3">
-                <div class="flex align-items-center">
-                    <label for="username" class="font-semibold w-3">Companny:</label>
-                    <AutoComplete v-model="company" inputId="ac" :suggestions="compa" @complete="searchCompannies" field="name" dropdown />
+                <div class="mb-3">
+                    <div class="flex align-items-center">
+                        <label for="username" class="font-semibold w-3">Companny:</label>
+                        <AutoComplete v-model="company" inputId="ac" :suggestions="compa" @complete="searchCompannies" field="name" dropdown />
+                    </div>
+                    <small id="username-help" :class="{ 'p-invalid text-red-700': errorsNew['company'] }">
+                        {{ errorsNew.company }}
+                    </small>
                 </div>
-                <small id="username-help" :class="{ 'p-invalid text-red-700': errorsNew['company'] }">
-                    {{ errorsNew.company }}
-                </small>
-            </div>
 
-            <div class="flex justify-content-end gap-2">
-                <Button type="button" label="Cancel" severity="secondary" @click="formDialogClone = false" />
-                <Button type="button" label="Save" @click="CloneVarieties()" />
-            </div>
-        </Dialog>
-
-        <Dialog v-model:visible="formDialogExport" :style="{ width: '290px' }" header="Export varieties" :modal="true" class="p-fluid">
-            <div class="mb-3">
-                <div class="flex align-items-center gap-3 mb-1">
-                    <label for="username" class="font-semibold w-6rem">Filename:</label>
-                    <InputText id="username" v-model="filename" class="flex-auto" autocomplete="off" v-bind="nameProps" :required="true" />
+                <div class="flex justify-content-end gap-2">
+                    <Button type="button" label="Cancel" severity="secondary" @click="formDialogClone = false" />
+                    <Button type="button" label="Save" @click="CloneVarieties()" />
                 </div>
-            </div>
-            <div class="flex align-items-center gap-3">
-                <div class="align-items-center gap-3">
-                    <label for="username" class="font-semibold">Format:</label>
-                    <Dropdown v-model="format" :options="extenciones" optionLabel="name" :class="' w-full'" />
-                </div>
-                <div class="align-items-center gap-3">
-                    <label for="username" class="font-semibold">Export:</label>
-                    <Dropdown v-model="exportAll" :options="optionsEsport" optionLabel="name" :class="' w-full md:w-10rem'" />
-                </div>
-            </div>
+            </Dialog>
 
-            <template #footer>
-                <Button label="Cancel" icon="pi pi-times" class="p-button-text" @click="formDialogExport = false" />
-                <Button label="Export" icon="pi pi-check" class="p-button-text" @click="ExportVarieties" />
-            </template>
-        </Dialog>
-
-        <Dialog v-model:visible="formDialogDelete" :style="{ width: '450px' }" header="Delete" :modal="true">
-            <label for="username" class="text-2xl font-medium w-6rem">
-                Are you sure you want to delete the selected ones?
-            </label>
-            <div class="card flex flex-wrap mt-2 gap-2">
-                <div v-for="item in listRowSelect" :key="item.id">
-                    <Chip :label="item.name" removable @remove="remove(item)" icon="pi pi-ban" />
+            <Dialog v-model:visible="formDialogExport" :style="{ width: '290px' }" header="Export varieties" :modal="true" class="p-fluid">
+                <div class="mb-3">
+                    <div class="flex align-items-center gap-3 mb-1">
+                        <label for="username" class="font-semibold w-6rem">Filename:</label>
+                        <InputText id="username" v-model="filename" class="flex-auto" autocomplete="off" v-bind="nameProps" :required="true" />
+                    </div>
                 </div>
-            </div>
-            <div class="flex justify-content-end gap-2">
-                <Button type="button" label="Cancel" severity="secondary" @click="formDialogDelete = false" />
-                <Button type="button" label="Delete" @click="DeleteVarieties" />
-            </div>
-        </Dialog>
+                <div class="flex align-items-center gap-3">
+                    <div class="align-items-center gap-3">
+                        <label for="username" class="font-semibold">Format:</label>
+                        <Dropdown v-model="format" :options="extenciones" optionLabel="name" :class="' w-full'" />
+                    </div>
+                    <div class="align-items-center gap-3">
+                        <label for="username" class="font-semibold">Export:</label>
+                        <Dropdown v-model="exportAll" :options="optionsEsport" optionLabel="name" :class="' w-full md:w-10rem'" />
+                    </div>
+                </div>
 
-        <Toast />
+                <template #footer>
+                    <Button label="Cancel" icon="pi pi-times" class="p-button-text" @click="formDialogExport = false" />
+                    <Button label="Export" icon="pi pi-check" class="p-button-text" @click="ExportVarieties" />
+                </template>
+            </Dialog>
+
+            <Dialog v-model:visible="formDialogDelete" :style="{ width: '450px' }" header="Delete" :modal="true">
+                <label for="username" class="text-2xl font-medium w-6rem"> Are you sure you want to delete the selected ones? </label>
+                <div class="card flex flex-wrap mt-2 gap-2">
+                    <div v-for="item in listRowSelect" :key="item.id">
+                        <Chip :label="item.name" removable @remove="remove(item)" icon="pi pi-ban" />
+                    </div>
+                </div>
+                <div class="flex justify-content-end gap-2">
+                    <Button type="button" label="Cancel" severity="secondary" @click="formDialogDelete = false" />
+                    <Button type="button" label="Delete" @click="DeleteVarieties" />
+                </div>
+            </Dialog>
+
+            <Toast />
+        </div>
     </div>
 </template>
 

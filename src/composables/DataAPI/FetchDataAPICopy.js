@@ -11,21 +11,22 @@ export default function useData() {
     async function getRequest(endPoint) {
         let responseData = { data: {}, error: '', ok: false };
         let baseUrl = `${base}${api}${endPoint}`;
+        let resp;
         const requestOptions = {
             method: 'GET',
             headers: APISettings.headers
         };
         try {
             const response = await fetch(baseUrl, requestOptions);
+            resp = await response.json();
             responseData.ok = response.ok;
             if (!response.ok) {
-                responseData.error = response.statusText;
                 throw new Error(`Error ${response.status} al obtener datos`);
             }
-            responseData.data = await response.json();
+            responseData.data = resp;
         } catch (e) {
             console.error('Error en la solicitud GET:', e.message);
-            responseData.error += ' ' + e.message;
+            responseData.error = resp.message ?? e.message; 
         }
         return responseData;
     }
@@ -33,6 +34,7 @@ export default function useData() {
     async function postRequest(endPoint, data) {
         let responseData = { data: [], error: '', ok: false };
         let baseUrl = `${base}${api}${endPoint}`;
+        let resp;
         const requestOptions = {
             method: 'POST',
             headers: APISettings.headers,
@@ -40,15 +42,15 @@ export default function useData() {
         };
         try {
             const response = await fetch(baseUrl, requestOptions);
+            resp = await response.json();
             responseData.ok = response.ok;
             if (!response.ok) {
-                responseData.error = response.statusText;
                 throw new Error(`Error ${response.status} al enviar datos.`);
             }
-            responseData.data = await response.json();
+            responseData.data = resp;
         } catch (e) {
             console.error('Error en la solicitud POST:', e.message);
-            responseData.error += ' ' + e.message;
+            responseData.error = resp.message ?? e.message; 
         }
         return responseData;
     }
@@ -56,6 +58,7 @@ export default function useData() {
     async function putRequest(endPoint,data, id) {
         let responseData = { data: [], error: '', ok: false };
         let baseUrl = `${base}${api}${endPoint}/${id}`;
+        let resp;
         const requestOptions = {
             method: 'PUT',
             headers: APISettings.headers,
@@ -63,15 +66,15 @@ export default function useData() {
         };
         try {
             const response = await fetch(baseUrl, requestOptions);
+            resp = await response.json();
             responseData.ok = response.ok;
             if (!response.ok) {
-                responseData.error = response.statusText;
                 throw new Error(`Error ${response.status} al enviar datos.`);
             }
-            responseData.data = await response.json();
+            responseData.data = resp;
         } catch (e) {
-            console.error('Error en la solicitud POST:', e.message);
-            responseData.error += ' ' + e.message;
+            console.error('Error en la solicitud PUT:', e.message);
+            responseData.error = resp.message ?? e.message; 
         }
         return responseData;
     }
@@ -79,6 +82,7 @@ export default function useData() {
     async function deleteRequest(endPoint,  id) {
         let responseData = { data: [], error: '', ok: false };
         let baseUrl = `${base}${api}${endPoint}/${id}`;
+        let resp;
         const requestOptions = {
             method: 'DELETE',
             headers: APISettings.headers,
@@ -86,15 +90,15 @@ export default function useData() {
         };
         try {
             const response = await fetch(baseUrl, requestOptions);
+            resp = await response.json();
             responseData.ok = response.ok;
-            responseData.data = await response.json();
             if (!response.ok) {
-                responseData.error = response.statusText;
                 throw new Error(`Error ${response.status} al enviar datos.`);
             }
+            responseData.data = resp;
         } catch (e) {
-            console.error('Error en la solicitud POST:', e.message);
-            responseData.error += ' ' + e.message;
+            console.error('Error en la solicitud DELETE:', e.message);
+            responseData.error = resp.message ?? e.message; 
         }
         return responseData;
     }

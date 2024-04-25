@@ -135,10 +135,9 @@ const openNew = () => {
 
 const openClone = () => {
     resetForm();
-    const { slug: slugvalue, name: nombre, short_name, cultivated, farm: finca, company: empresa } = listRowSelect.value[0];
+    const { name: nombre, short_name, cultivated, farm: finca, company: empresa } = listRowSelect.value[0];
 
     name.value = nombre;
-    slug.value = slugvalue;
     cultivate.value = cultivated;
     shortname.value = short_name;
     farm.value = { id: finca.uuid, name: finca.name };
@@ -268,12 +267,14 @@ const DeleteVarieties = async () => {
             deletePromises.push(deletePromise);
         });
         await Promise.all(deletePromises);
-        loadingData();
         toast.add({ severity: 'success', summary: 'Deleted Varieties', detail: 'Deleted', life: 3000 });
     } catch (error) {
         console.error('Error deleting:', error);
         toast.add({ severity: 'error', summary: 'Error', detail: 'Error deleting', life: 3000 });
     } finally {
+        setTimeout(() => {
+            loadingData();
+        }, 100);
         listRowSelect.value = [];
     }
 };
@@ -321,7 +322,7 @@ const remove = (aver) => {
                 </div>
                 <div class="flex justify-content-end">
                     <div class="flex align-items-center">
-                        <label for="username" class="font-semibold mr-2">Companny:</label>
+                        <label for="username" class="font-semibold mr-2">Cultivated:</label>
                         <InputSwitch v-model="cultivate" />
                     </div>
                 </div>
@@ -394,7 +395,7 @@ const remove = (aver) => {
             </div>
             <div class="justify-content-center mb-3">
                 <div class="flex align-items-center gap-3 mb-1">
-                    <label for="username" class="font-semibold w-6rem mr-2">Companny:</label>
+                    <label for="username" class="font-semibold w-6rem mr-2">Cultivated:</label>
                     <InputSwitch v-model="cultivate" />
                 </div>
             </div>
@@ -417,7 +418,7 @@ const remove = (aver) => {
                 </div>
                 <div class="flex justify-content-end">
                     <div class="flex align-items-center">
-                        <label for="username" class="font-semibold mr-2">Companny:</label>
+                        <label for="username" class="font-semibold mr-2">Cultivated:</label>
                         <InputSwitch v-model="cultivate" />
                     </div>
                 </div>
