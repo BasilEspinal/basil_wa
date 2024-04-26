@@ -135,6 +135,7 @@ export default function useDataAPI(datos) {
                 } else {
                 
                     dataResponseAPI.value = JSON.parse(JSON.stringify(data, null, 2));
+                    console.log('Esta es la respuesta ' + data.value);
                 }
                 
             })
