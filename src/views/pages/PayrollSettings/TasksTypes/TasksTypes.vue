@@ -2,7 +2,7 @@
     <div>
     <div class="card">
         <div>
-            <h1>Información de tipo de tareas</h1> 
+            <h1>{{ titlePage }}</h1> 
         </div>
 
 
@@ -150,7 +150,7 @@
             </Column>
 
         </DataTable>
-        <Dialog v-model:visible="formDialogNew" modal :header="'Create new type of task'" class="p-fluid text-center mx-auto">
+        <Dialog v-model:visible="formDialogNew" modal :header="formDialogNewTitle" class="p-fluid text-center mx-auto">
                 <div class="mb-3">
                     <div class="flex align-items-center gap-3 mb-1">
                         <label for="username" class="font-semibold w-6rem">Name :</label>
@@ -163,10 +163,10 @@
                 <div class="mb-3">
                     <div class="flex align-items-center gap-3 mb-1">
                         <label for="username" class="font-semibold w-6rem">Code :</label>
-                        <InputText id="username" v-model="codigo" class="flex-auto" autocomplete="off" v-bind="codigoProps" />
+                        <InputText id="username" v-model="codeV" class="flex-auto" autocomplete="off" v-bind="codeVProps" />
                     </div>
-                    <small id="username-help" :class="{ 'p-invalid text-red-700': errorsNew['codigo'] }">
-                        {{ errorsNew.codigo }}
+                    <small id="username-help" :class="{ 'p-invalid text-red-700': errorsNew['codeV'] }">
+                        {{ errorsNew.codeV }}
                     </small>
                 </div>
                 <div class="mb-3">
@@ -190,11 +190,11 @@
 
                 <div class="flex justify-content-end gap-2">
                     <Button type="button" label="Cancel" severity="secondary" @click="formDialogNew = false" />
-                    <Button type="button" label="Save" @click="createVarieties()" />
+                    <Button type="button" label="Save" @click="createRecord()" />
                 </div>
             </Dialog>
 
-            <Dialog v-model:visible="formDialogEdit" modal :header="'Edit type of task'" class="p-fluid text-center mx-auto">
+            <Dialog v-model:visible="formDialogEdit" modal :header="formDialogEditTitle" class="p-fluid text-center mx-auto">
                 <div class="mb-3">
                     <div class="flex align-items-center gap-3 mb-1">
                         <label for="username" class="font-semibold w-6rem">Name :</label>
@@ -207,10 +207,10 @@
                 <div class="mb-3">
                     <div class="flex align-items-center gap-3 mb-1">
                         <label for="username" class="font-semibold w-6rem">Code :</label>
-                        <InputText id="username" v-model="codigo" class="flex-auto" autocomplete="off" v-bind="codigoProps" />
+                        <InputText id="username" v-model="codeV" class="flex-auto" autocomplete="off" v-bind="codeVProps" />
                     </div>
-                    <small id="username-help" :class="{ 'p-invalid text-red-700': errorsNew['codigo'] }">
-                        {{ errorsNew.codigo }}
+                    <small id="username-help" :class="{ 'p-invalid text-red-700': errorsNew['codeV'] }">
+                        {{ errorsNew.codeV }}
                     </small>
                 </div>
                 <!-- <div class="mb-3">
@@ -226,7 +226,7 @@
             <div class="mb-3">
                 <div class="flex align-items-center">
                     <label for="username" class="font-semibold w-3">Companny:</label>
-                    <AutoComplete v-model="company" inputId="ac" :suggestions="compa" @complete="EditVarieties"
+                    <AutoComplete v-model="company" inputId="ac" :suggestions="compa" @complete="EditRecord"
                         field="name" dropdown />
                 </div>
                 <small id="username-help" :class="{ 'p-invalid text-red-700': errorsNew['company'] }">
@@ -236,11 +236,11 @@
 
                 <div class="flex justify-content-end gap-2">
                     <Button type="button" label="Cancel" severity="secondary" @click="formDialogEdit = false" />
-                    <Button type="button" label="Save" @click="EditVarieties()" />
+                    <Button type="button" label="Save" @click="EditRecord()" />
                 </div>
             </Dialog>
 
-            <Dialog v-model:visible="formDialogClone" modal :header="'Clone type of task'" class="p-fluid text-center mx-auto">
+            <Dialog v-model:visible="formDialogClone" modal :header="formDialogCloneTitle" class="p-fluid text-center mx-auto">
                 <div class="mb-3">
                     <div class="flex align-items-center gap-3 mb-1">
                         <label for="username" class="font-semibold w-6rem">Name :</label>
@@ -253,10 +253,10 @@
                 <div class="mb-3">
                     <div class="flex align-items-center gap-3 mb-1">
                         <label for="username" class="font-semibold w-6rem">Code :</label>
-                        <InputText id="username" v-model="codigo" class="flex-auto" autocomplete="off" v-bind="codigoProps" />
+                        <InputText id="username" v-model="codeV" class="flex-auto" autocomplete="off" v-bind="codeVProps" />
                     </div>
-                    <small id="username-help" :class="{ 'p-invalid text-red-700': errorsNew['codigo'] }">
-                        {{ errorsNew.codigo }}
+                    <small id="username-help" :class="{ 'p-invalid text-red-700': errorsNew['codeV'] }">
+                        {{ errorsNew.codeV }}
                     </small>
                 </div>
                 <div class="mb-3">
@@ -280,11 +280,11 @@
 
                 <div class="flex justify-content-end gap-2">
                     <Button type="button" label="Cancel" severity="secondary" @click="formDialogClone = false" />
-                    <Button type="button" label="Save" @click="CloneVarieties()" />
+                    <Button type="button" label="Save" @click="CloneRecord()" />
                 </div>
             </Dialog>
 
-            <Dialog v-model:visible="formDialogExport" :style="{ width: '290px' }" header="Export type of task" :modal="true" class="p-fluid">
+            <Dialog v-model:visible="formDialogExport" :style="{ width: '290px' }" :header="formDialogExportTitle" :modal="true" class="p-fluid">
                 <div class="mb-3">
                     <div class="flex align-items-center gap-3 mb-1">
                         <label for="username" class="font-semibold w-6rem">Filename:</label>
@@ -304,11 +304,11 @@
 
                 <template #footer>
                     <Button label="Cancel" icon="pi pi-times" class="p-button-text" @click="formDialogExport = false" />
-                    <Button label="Export" icon="pi pi-check" class="p-button-text" @click="ExportVarieties" />
+                    <Button label="Export" icon="pi pi-check" class="p-button-text" @click="ExportRecord" />
                 </template>
             </Dialog>
 
-            <Dialog v-model:visible="formDialogDelete" :style="{ width: '450px' }" header="Delete type of task" :modal="true">
+            <Dialog v-model:visible="formDialogDelete" :style="{ width: '450px' }" :header="formDialogDeleteTitle" :modal="true">
                 <label for="username" class="text-2xl font-medium w-6rem"> Are you sure you want to delete the selected ones? </label>
                 <div class="card flex flex-wrap mt-2 gap-2">
                     <div v-for="item in listRowSelect" :key="item.id">
@@ -317,7 +317,7 @@
                 </div>
                 <div class="flex justify-content-end gap-2">
                     <Button type="button" label="Cancel" severity="secondary" @click="formDialogDelete = false" />
-                    <Button type="button" label="Delete" @click="DeleteVarieties" />
+                    <Button type="button" label="Delete" @click="DeleteRecord" />
                 </div>
             </Dialog>
 
@@ -352,6 +352,7 @@ import { z } from 'zod';
 import ability from '@/service/ability.js';
 import { AbilityBuilder} from '@casl/ability';
 
+const titlePage = 'Type of tasks information';
 const dataFromComponent = ref();
 const Farms = ref([]);
 const farms = ref([]);
@@ -359,20 +360,20 @@ const Compan = ref([]);
 const compa = ref([]);
 
 const formDialogNew = ref(false);
+const formDialogNewTitle = 'Create new type of tasks';
+const formDialogEditTitle = 'Edit type of tasks';
+const formDialogCloneTitle = 'Clone type of tasks';
+const formDialogExportTitle = 'Export type of tasks';
+const formDialogDeleteTitle = 'Delete type of tasks';
 const formDialogEdit = ref(false);
 const formDialogClone = ref(false);
 const formDialogExport = ref(false);
 const formDialogDelete = ref(false);
 const toast = useToast();
 const filename = ref('table');
-const headerNamesRow = ref([]);
 const isChanging = ref(false);
-let endpoint = ref('/tasks_of_type'); //replace endpoint with your endpoint
+let endpoint = ref('/tasks_of_type');   //replace endpoint with your endpoint
 
-
-
-const { getAllResponseAPI,getAllResponsePermissionsAPI, getAllResponseListAPI, totalRecordsResponseAPI, currentPageResponseAPI, linksResponseAPI, postResponseAPI, putResponseAPI, deleteResponseAPI, errorResponseAPI, dataResponseAPI, dataResponsePermissionsAPI,dataResponseListAPI, statusCode } =
-    useDataAPI();
 
 ////////////
  //Form here
@@ -384,11 +385,6 @@ const sizeOptions = ref([
     { label: 'Large', value: 'large', class: 'lg' }
 ]);
 
-
-// onMounted(async () => {
-//     await loadLazyData();
-//     await getAllResponsePermissionsAPI("/abilities");
-// });
 
 
 onBeforeMount(() => {
@@ -417,7 +413,6 @@ const clearFilter = () => {
 const initFilters = () => {
     filters.value = {
         global: { value: null, matchMode: FilterMatchMode.CONTAINS },
-        global: { value: null, matchMode: FilterMatchMode.CONTAINS },
         code: { operator: FilterOperator.AND, constraints: [{ value: null, matchMode: FilterMatchMode.STARTS_WITH }] },
         name: { operator: FilterOperator.AND, constraints: [{ value: null, matchMode: FilterMatchMode.STARTS_WITH }] },
         'status.name': { operator: FilterOperator.AND, constraints: [{ value: null, matchMode: FilterMatchMode.STARTS_WITH }] },
@@ -428,13 +423,6 @@ const initFilters = () => {
     };
 };
 
-// const loadLazyData = async (event) => {
-//     //lazyParams.value = { ...lazyParams.value, first: event?.first || first.value };
-    
-//     await getAllResponseAPI(endpoint.value);
-//     loading.value = false;
-    
-// };
 const documentFrozen = ref(false);
 const readAll = async () => {
     loadingData();
@@ -472,7 +460,7 @@ const {
     validationSchema: toTypedSchema(
         z.object({
             name: z.string().min(4),
-            codigo: z.string().min(4),
+            codeV: z.string().min(4),
             farm: z
                 .object({
                     name: z.string().min(4),
@@ -489,7 +477,7 @@ const {
     )
 });
 const [name, nameProps] = defineField('name');
-const [codigo, codigoProps] = defineField('codigo');
+const [codeV, codeVProps] = defineField('codeV');
 const [farm] = defineField('farm');
 const [company] = defineField('company');
 
@@ -502,14 +490,12 @@ const RowSelect = (data) => {
     listRowSelect.value = data;
 };
 let headerNames = ref([]);
-const onHeaderNames = (data) => (headerNames.value = data);
-
 provide('isChanging', isChanging);
 watch(listRowSelect, RowSelect);
 
-const createVarieties = handleSubmitNew(async (values) => {
+const createRecord = handleSubmitNew(async (values) => {
     const data = {
-        code: values.codigo,
+        code: values.codeV,
         name: values.name,
         company_uuid: values.company ? values.company.id : '25b4319c-e93f-4411-936c-118060f5e7c9',
         farm_uuid: values.farm ? values.farm.id : '8ef93a7b-31bf-4233-af80-481020e9cf97'
@@ -535,27 +521,28 @@ const searchCompannies = (event) => {
 const openNew = () => {
     resetForm();
     formDialogNew.value = true;
+
 };
 
 const openEdit = () => {
     resetForm();
-    const { code, company: empresa, farm: finca, name: nombre } = listRowSelect.value[0];
+    const { code, company: empresa, farm: farmParameter, name: nombre } = listRowSelect.value[0];
 
     name.value = nombre;
-    codigo.value = code;
+    codeV.value = code;
     company.value = { id: empresa.uuid, name: empresa.name };
-    farm.value = { id: finca.uuid, name: finca.name };
+    farm.value = { id: farmParameter.uuid, name: farmParameter.name };
 
     formDialogEdit.value = true;
 };
 
 const openClone = () => {
     resetForm();
-    const { company: empresa, farm: finca, name: nombre } = listRowSelect.value[0];
+    const { company: empresa, farm: farmParameter, name: nombre } = listRowSelect.value[0];
 
     name.value = nombre;
     company.value = { id: empresa.uuid, name: empresa.name };
-    farm.value = { id: finca.uuid, name: finca.name };
+    farm.value = { id: farmParameter.uuid, name: farmParameter.name };
     formDialogClone.value = true;
 };
 
@@ -568,10 +555,10 @@ const openDelete = () => {
     formDialogDelete.value = true;
 };
 
-const EditVarieties = handleSubmitNew(async (values) => {
+const EditRecord = handleSubmitNew(async (values) => {
     const { uuid } = listRowSelect.value[0];
     const data = {
-        code: values.codigo,
+        code: values.codeV,
         name: values.name
     };
     // company_id: values.company ? values.company.id : '25b4319c-e93f-4411-936c-118060f5e7c9',
@@ -582,9 +569,9 @@ const EditVarieties = handleSubmitNew(async (values) => {
     formDialogEdit.value = false;
 });
 
-const CloneVarieties = handleSubmitNew(async (values) => {
+const CloneRecord = handleSubmitNew(async (values) => {
     const data = {
-        code: values.codigo,
+        code: values.codeV,
         name: values.name,
         company_uuid: values.company ? values.company.id : '25b4319c-e93f-4411-936c-118060f5e7c9',
         farm_uuid: values.farm ? values.farm.id : '8ef93a7b-31bf-4233-af80-481020e9cf97'
@@ -607,7 +594,7 @@ const searchFarms = (event) => {
     }, 200);
 };
 
-const ExportVarieties = () => {
+const ExportRecord = () => {
     const eventos = exportAll.value.name == 'ALL' ? dataFromComponent.value.map((data) => data) : listRowSelect.value.map((data) => data);
     formDialogExport.value = false;
     if (!eventos.length) return;
@@ -640,7 +627,7 @@ function formatXLS(eventos) {
     saveAs(file, filename.value + '.xlsx');
 }
 
-const DeleteVarieties = async () => {
+const DeleteRecord = async () => {
     formDialogDelete.value = false;
 
     try {
@@ -651,7 +638,7 @@ const DeleteVarieties = async () => {
         });
         await Promise.all(deletePromises);
         loadingData();
-        toast.add({ severity: 'success', summary: 'Deleted Varieties', detail: 'Deleted', life: 3000 });
+        toast.add({ severity: 'success', summary: 'Deleted Record', detail: 'Deleted', life: 3000 });
     } catch (error) {
         console.error('Error deleting:', error);
         toast.add({ severity: 'error', summary: 'Error', detail: 'Error deleting', life: 3000 });
