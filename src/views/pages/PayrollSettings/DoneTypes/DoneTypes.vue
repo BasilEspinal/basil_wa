@@ -2,7 +2,7 @@
     <div>
     <div class="card">
         <div>
-            <h1>Información de tipos de trabajo</h1> 
+            <h1>Información de tipos de labores</h1> 
         </div>
     </div>
     <div class="card">
