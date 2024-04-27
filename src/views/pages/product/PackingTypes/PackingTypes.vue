@@ -11,6 +11,46 @@ import * as XLSX from 'xlsx';
 import ability from '@/service/ability.js';
 import { z } from 'zod';
 import { saveAs } from 'file-saver';
+import { FilterMatchMode, FilterOperator } from 'primevue/api';
+
+const listRowSelect = ref([]);
+const loading = ref(false);
+const size = ref({ label: 'Normal', value: 'normal' });
+const sizeOptions = ref([
+    { label: 'Small', value: 'small', class: 'sm' },
+    { label: 'Normal', value: 'normal' },
+    { label: 'Large', value: 'large', class: 'lg' }
+]);
+const onRowSelect = (data) => {
+    listRowSelect.value = data;
+};
+
+watch(listRowSelect, onRowSelect);
+const onSelectAllChange = () => {
+    onRowSelect();
+};
+const filters = ref();
+onBeforeMount(() => {
+    initFilters();
+});
+
+const clearFilter = () => {
+    initFilters();
+};
+const initFilters = () => {
+    filters.value = {
+        global: { value: null, matchMode: FilterMatchMode.CONTAINS },
+        code: { operator: FilterOperator.AND, constraints: [{ value: null, matchMode: FilterMatchMode.STARTS_WITH }] },
+        name: { operator: FilterOperator.AND, constraints: [{ value: null, matchMode: FilterMatchMode.STARTS_WITH }] },
+        'status.name': { operator: FilterOperator.AND, constraints: [{ value: null, matchMode: FilterMatchMode.STARTS_WITH }] },
+        'farm.name': { operator: FilterOperator.AND, constraints: [{ value: null, matchMode: FilterMatchMode.STARTS_WITH }] },
+        'company.name': { operator: FilterOperator.AND, constraints: [{ value: null, matchMode: FilterMatchMode.STARTS_WITH }] },
+        created_at: { operator: FilterOperator.AND, constraints: [{ value: null, matchMode: FilterMatchMode.STARTS_WITH }] },
+        updated_at: { operator: FilterOperator.AND, constraints: [{ value: null, matchMode: FilterMatchMode.STARTS_WITH }] }
+    };
+};
+const documentFrozen = ref(false);
+
 
 const dataFromComponent = ref();
 const { conditionsPackingTypes } = useRestrictionPackingTypes();
@@ -51,7 +91,7 @@ const readAll = async () => {
 const loadingData = async () => {
     const response = await getRequest(endpoint.value);
     if (!response.ok) toast.add({ severity: 'error', detail: 'Error' + response.error, life: 3000 });
-    dataFromComponent.value = response.data;
+    dataFromComponent.value = response.data.data;
 };
 
 const {
@@ -90,7 +130,6 @@ const optionsEsport = ref([{ name: 'ALL' }, { name: 'SELECTED' }]);
 const format = ref({ name: 'CSV' });
 const exportAll = ref({ name: 'ALL' });
 
-const listRowSelect = ref([]);
 const RowSelect = (data) => {
     listRowSelect.value = data;
 };
@@ -143,7 +182,6 @@ const openEdit = () => {
 
     formDialogEdit.value = true;
 };
-
 
 const openClone = () => {
     resetForm();
@@ -216,7 +254,7 @@ const searchFarms = (event) => {
 };
 
 const ExportVarieties = () => {
-    const eventos = exportAll.value.name == 'ALL' ? dataFromComponent.value.data.map((data) => data) : listRowSelect.value.map((data) => data);
+    const eventos = exportAll.value.name == 'ALL' ? dataFromComponent.value.map((data) => data) : listRowSelect.value.map((data) => data);
     formDialogExport.value = false;
     if (!eventos.length) return;
     if (format.value.name == 'CSV') formatCSV(eventos);
@@ -253,7 +291,7 @@ const DeleteVarieties = async () => {
 
     try {
         const deletePromises = [];
-        listRowSelect.value.forEach( async item => {
+        listRowSelect.value.forEach(async (item) => {
             const deletePromise = await deleteRequest(endpoint.value, item.uuid);
             deletePromises.push(deletePromise);
         });
@@ -295,8 +333,123 @@ const remove = (aver) => {
             </template>
         </Toolbar>
 
-        <Table v-if="ability.can('tipo_empaque_listado')" title="" path-api="/unit_types" @HeaderNames="onHeaderNames" @onRowSelect="RowSelect" :dataGot="dataFromComponent" :allLabels="allLabels" />
+        <DataTable
+            v-if="ability.can('tipo_producto_listado')"
+            :value="dataFromComponent"
+            dataKey="uuid"
+            tableStyle="min-width: 75rem"
+            showGridlines
+            :loading="loading"
+            scrollable
+            scrollHeight="600px"
+            resizableColumns
+            columnResizeMode="expand"
+            sortMode="multiple"
+            :paginator="true"
+            :rows="50"
+            :rowsPerPageOptions="[5, 10, 20, 50]"
+            :class="`p-datatable-${size.class}`"
+            @row-select="onRowSelect(listRowSelect)"
+            @row-unselect="onRowSelect(listRowSelect)"
+            @select-all-change="onSelectAllChange"
+            v-model:selection="listRowSelect"
+            filterDisplay="menu"
+            v-model:filters="filters"
+            :globalFilterFields="['name', 'company.name', 'farm.name', 'status.name', 'created_at', 'updated_at']"
+        >
+            <template #header>
+                <!--Uncomment when filters are done-->
 
+                <Toolbar class="mb-2">
+                    <template v-slot:start>
+                        <Button type="button" icon="pi pi-filter-slash" label="Limpiar" class="p-button-outlined mb-2" @click="clearFilter()" />
+                    </template>
+                    <template v-slot:end>
+                        <span class="p-input-icon-left mb-2">
+                            <i class="pi pi-search" />
+                            <InputText v-model="filters['global'].value" placeholder="Buscar" style="width: 100%" />
+                        </span>
+                    </template>
+                    <template v-slot:center>
+                        <SelectButton v-model="size" :options="sizeOptions" optionLabel="label" dataKey="label"> </SelectButton>
+                    </template>
+                </Toolbar>
+            </template>
+
+            <template #empty> No customers found. </template>
+            <template #loading> Loading customers data. Please wait. </template>
+            <Column selectionMode="multiple" headerStyle="width: 3rem"></Column>
+            <Column field="code" filterField="code" header="Code " sortable :frozen="documentFrozen">
+                <!--Replace :frozen with the model-->
+                <template #header>
+                    <ToggleButton v-model="documentFrozen" onIcon="pi pi-lock" offIcon="pi pi-lock-open" onLabel="" offLabel="" />
+                    <div>&nbsp;</div>
+                </template>
+
+                <template #body="{ data }">
+                    {{ data.code }}
+                </template>
+                <template #filter="{ filterModel }">
+                    <InputText v-model="filterModel.value" type="text" class="p-column-filter" placeholder="Search by " />
+                </template>
+            </Column>
+
+            <Column field="name" filterField="name" header="Name" sortable>
+                <template #body="{ data }">
+                    {{ data.name }}
+                </template>
+                <template #filter="{ filterModel }">
+                    <InputText v-model="filterModel.value" type="text" class="p-column-filter" placeholder="Search by " />
+                </template>
+            </Column>
+
+            <!--Here add other columns-->
+
+            <Column field="farmName" filterField="farm.name" header="Farm Name" sortable>
+                <template #body="{ data }">
+                    {{ data.farm.name }}
+                </template>
+                <template #filter="{ filterModel }">
+                    <InputText v-model="filterModel.value" type="text" class="p-column-filter" placeholder="Search by farm" />
+                </template>
+            </Column>
+
+            <Column field="companyName" filterField="company.name" header="Company Name" sortable>
+                <template #body="{ data }">
+                    {{ data.company.name }}
+                </template>
+                <template #filter="{ filterModel }">
+                    <InputText v-model="filterModel.value" type="text" class="p-column-filter" placeholder="Search by farm" />
+                </template>
+            </Column>
+
+            <Column field="createdAt" filterField="created_at" header="Creation date" sortable>
+                <template #body="{ data }">
+                    {{ data.created_at }}
+                </template>
+                <template #filter="{ filterModel }">
+                    <InputText v-model="filterModel.value" type="text" class="p-column-filter" placeholder="Search by creation date" />
+                </template>
+            </Column>
+
+            <Column field="updatedAt" filterField="updated_at" header="Modification date" sortable>
+                <template #body="{ data }">
+                    {{ data.updated_at }}
+                </template>
+                <template #filter="{ filterModel }">
+                    <InputText v-model="filterModel.value" type="text" class="p-column-filter" placeholder="Search by modification date" />
+                </template>
+            </Column>
+
+            <Column field="status" filterField="status.name" header="Status" sortable>
+                <template #body="{ data }">
+                    <Tag :value="data.status.name" :severity="'EFC88B'" />
+                </template>
+                <template #filter="{ filterModel }">
+                    <InputText v-model="filterModel.value" type="text" class="p-column-filter" placeholder="Search by status" />
+                </template>
+            </Column>
+        </DataTable>
         <Dialog v-model:visible="formDialogNew" modal :header="'Create new varieties'" class="p-fluid text-center mx-auto">
             <div class="mb-3">
                 <div class="flex align-items-center gap-3 mb-1">
