@@ -1,7 +1,6 @@
 <script setup>
 import { ref, watch, provide, onBeforeMount } from 'vue';
 import { useToast } from 'primevue/usetoast';
-import Table from '@/components/Table.vue';
 import useRestrictionPackingTypes from '@/composables/Product/PackingTypes/restrictionPackingTypes';
 import useData from '@/composables/DataAPI/FetchDataAPICopy.js';
 const { getRequest, postRequest, putRequest, deleteRequest } = useData();
@@ -21,18 +20,41 @@ const sizeOptions = ref([
     { label: 'Normal', value: 'normal' },
     { label: 'Large', value: 'large', class: 'lg' }
 ]);
+const documentFrozen = ref(false);
+
+const dataFromComponent = ref();
+
+const Farms = ref([]);
+const farms = ref([]);
+const Compan = ref([]);
+const compa = ref([]);
+
+const formDialogNew = ref(false);
+const formDialogEdit = ref(false);
+const formDialogClone = ref(false);
+const formDialogExport = ref(false);
+const formDialogDelete = ref(false);
+
+const filters = ref();
+const filename = ref('table');
+const isChanging = ref(false);
+const endpoint = ref('/packing_types');
+const toast = useToast();
+
 const onRowSelect = (data) => {
     listRowSelect.value = data;
 };
 
 watch(listRowSelect, onRowSelect);
+
+onBeforeMount(() => {
+    readAll();
+    initFilters();
+});
+
 const onSelectAllChange = () => {
     onRowSelect();
 };
-const filters = ref();
-onBeforeMount(() => {
-    initFilters();
-});
 
 const clearFilter = () => {
     initFilters();
@@ -49,33 +71,7 @@ const initFilters = () => {
         updated_at: { operator: FilterOperator.AND, constraints: [{ value: null, matchMode: FilterMatchMode.STARTS_WITH }] }
     };
 };
-const documentFrozen = ref(false);
 
-
-const dataFromComponent = ref();
-const { conditionsPackingTypes } = useRestrictionPackingTypes();
-
-const Farms = ref([]);
-const farms = ref([]);
-const Compan = ref([]);
-const compa = ref([]);
-
-const formDialogNew = ref(false);
-const formDialogEdit = ref(false);
-const formDialogClone = ref(false);
-const formDialogExport = ref(false);
-const formDialogDelete = ref(false);
-
-const allLabels = ref([]);
-allLabels.value = Object.values(conditionsPackingTypes).map((condition) => condition.fieldName);
-const toast = useToast();
-const filename = ref('table');
-const isChanging = ref(false);
-let endpoint = ref('/packing_types');
-
-onBeforeMount(async () => {
-    readAll();
-});
 
 const readAll = async () => {
     loadingData();
@@ -103,7 +99,7 @@ const {
     validationSchema: toTypedSchema(
         z.object({
             name: z.string().min(4),
-            codigo: z.string().min(4),
+            codigo: z.string().min(2),
             farm: z
                 .object({
                     name: z.string().min(4),
@@ -139,7 +135,7 @@ const onHeaderNames = (data) => (headerNames.value = data);
 provide('isChanging', isChanging);
 watch(listRowSelect, RowSelect);
 
-const create = handleSubmitNew(async (values) => {
+const Create = handleSubmitNew(async (values) => {
     const data = {
         code: values.codigo,
         name: values.name,
@@ -202,17 +198,7 @@ const openDelete = () => {
     formDialogDelete.value = true;
 };
 
-/*
-{
-    "code": "CODE123",
-    "name": "prueba123",
-    "weight_tare": 1,
-    "company_id": "d0df10d0-7d64-4499-9e70-148a1bc70d43",
-    "farm_id": "b3fc0353-f306-4866-abf2-75f9e06dd662"
-}
-*/
-
-const edit = handleSubmitNew(async (values) => {
+const Edit = handleSubmitNew(async (values) => {
     const { uuid } = listRowSelect.value[0];
     const data = {
         code: values.codigo,
@@ -227,7 +213,7 @@ const edit = handleSubmitNew(async (values) => {
     formDialogEdit.value = false;
 });
 
-const clone = handleSubmitNew(async (values) => {
+const Clone = handleSubmitNew(async (values) => {
     const data = {
         code: values.codigo,
         name: values.name,
@@ -253,7 +239,7 @@ const searchFarms = (event) => {
     }, 200);
 };
 
-const ExportVarieties = () => {
+const Export = () => {
     const eventos = exportAll.value.name == 'ALL' ? dataFromComponent.value.map((data) => data) : listRowSelect.value.map((data) => data);
     formDialogExport.value = false;
     if (!eventos.length) return;
@@ -286,7 +272,7 @@ function formatXLS(eventos) {
     saveAs(file, filename.value + '.xlsx');
 }
 
-const DeleteVarieties = async () => {
+const Delete = async () => {
     formDialogDelete.value = false;
 
     try {
@@ -490,7 +476,7 @@ const remove = (aver) => {
 
             <div class="flex justify-content-end gap-2">
                 <Button type="button" label="Cancel" severity="secondary" @click="formDialogNew = false" />
-                <Button type="button" label="Save" @click="create()" />
+                <Button type="button" label="Save" @click="Create()" />
             </div>
         </Dialog>
 
@@ -534,7 +520,7 @@ const remove = (aver) => {
 
             <div class="flex justify-content-end gap-2">
                 <Button type="button" label="Cancel" severity="secondary" @click="formDialogEdit = false" />
-                <Button type="button" label="Save" @click="edit()" />
+                <Button type="button" label="Save" @click="Edit()" />
             </div>
         </Dialog>
 
@@ -578,7 +564,7 @@ const remove = (aver) => {
 
             <div class="flex justify-content-end gap-2">
                 <Button type="button" label="Cancel" severity="secondary" @click="formDialogClone = false" />
-                <Button type="button" label="Save" @click="clone()" />
+                <Button type="button" label="Save" @click="Clone()" />
             </div>
         </Dialog>
 
@@ -602,7 +588,7 @@ const remove = (aver) => {
 
             <template #footer>
                 <Button label="Cancel" icon="pi pi-times" class="p-button-text" @click="formDialogExport = false" />
-                <Button label="Export" icon="pi pi-check" class="p-button-text" @click="ExportVarieties" />
+                <Button label="Export" icon="pi pi-check" class="p-button-text" @click="Export" />
             </template>
         </Dialog>
 
@@ -615,7 +601,7 @@ const remove = (aver) => {
             </div>
             <div class="flex justify-content-end gap-2">
                 <Button type="button" label="Cancel" severity="secondary" @click="formDialogDelete = false" />
-                <Button type="button" label="Delete" @click="DeleteVarieties" />
+                <Button type="button" label="Delete" @click="Delete" />
             </div>
         </Dialog>
 

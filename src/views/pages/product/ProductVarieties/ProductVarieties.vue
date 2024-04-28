@@ -271,7 +271,7 @@ function formatXLS(eventos) {
     saveAs(file, filename.value + '.xlsx');
 }
 
-const DeleteVarieties = async () => {
+const Delete = async () => {
     formDialogDelete.value = false;
 
     try {
@@ -603,7 +603,7 @@ const remove = (aver) => {
                 </div>
                 <div class="flex justify-content-end gap-2">
                     <Button type="button" label="Cancel" severity="secondary" @click="formDialogDelete = false" />
-                    <Button type="button" label="Delete" @click="DeleteVarieties" />
+                    <Button type="button" label="Delete" @click="Delete" />
                 </div>
             </Dialog>
 

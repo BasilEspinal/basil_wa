@@ -155,7 +155,7 @@ const onHeaderNames = (data) => (headerNames.value = data);
 provide('isChanging', isChanging);
 watch(listRowSelect, RowSelect);
 
-const createVarieties = handleSubmitNew(async (values) => {
+const Create = handleSubmitNew(async (values) => {
     const data = {
         code: values.codigo,
         name: values.name,
@@ -217,7 +217,7 @@ const openDelete = () => {
     formDialogDelete.value = true;
 };
 
-const EditVarieties = handleSubmitNew(async (values) => {
+const Edit = handleSubmitNew(async (values) => {
     const { uuid } = listRowSelect.value[0];
     const data = {
         code: values.codigo,
@@ -231,7 +231,7 @@ const EditVarieties = handleSubmitNew(async (values) => {
     formDialogEdit.value = false;
 });
 
-const CloneVarieties = handleSubmitNew(async (values) => {
+const Clone = handleSubmitNew(async (values) => {
     const data = {
         code: values.codigo,
         name: values.name,
@@ -256,7 +256,7 @@ const searchFarms = (event) => {
     }, 200);
 };
 
-const ExportVarieties = () => {
+const Export = () => {
     const eventos = exportAll.value.name == 'ALL' ? dataFromComponent.value.map((data) => data) : listRowSelect.value.map((data) => data);
     formDialogExport.value = false;
     if (!eventos.length) return;
@@ -289,7 +289,7 @@ function formatXLS(eventos) {
     saveAs(file, filename.value + '.xlsx');
 }
 
-const DeleteVarieties = async () => {
+const Delete = async () => {
     formDialogDelete.value = false;
 
     try {
@@ -498,7 +498,7 @@ const remove = (aver) => {
 
                 <div class="flex justify-content-end gap-2">
                     <Button type="button" label="Cancel" severity="secondary" @click="formDialogNew = false" />
-                    <Button type="button" label="Save" @click="createVarieties()" />
+                    <Button type="button" label="Save" @click="Create()" />
                 </div>
             </Dialog>
 
@@ -544,7 +544,7 @@ const remove = (aver) => {
 
                 <div class="flex justify-content-end gap-2">
                     <Button type="button" label="Cancel" severity="secondary" @click="formDialogEdit = false" />
-                    <Button type="button" label="Save" @click="EditVarieties()" />
+                    <Button type="button" label="Save" @click="Edit()" />
                 </div>
             </Dialog>
 
@@ -588,7 +588,7 @@ const remove = (aver) => {
 
                 <div class="flex justify-content-end gap-2">
                     <Button type="button" label="Cancel" severity="secondary" @click="formDialogClone = false" />
-                    <Button type="button" label="Save" @click="CloneVarieties()" />
+                    <Button type="button" label="Save" @click="Clone()" />
                 </div>
             </Dialog>
 
@@ -612,7 +612,7 @@ const remove = (aver) => {
 
                 <template #footer>
                     <Button label="Cancel" icon="pi pi-times" class="p-button-text" @click="formDialogExport = false" />
-                    <Button label="Export" icon="pi pi-check" class="p-button-text" @click="ExportVarieties" />
+                    <Button label="Export" icon="pi pi-check" class="p-button-text" @click="Export" />
                 </template>
             </Dialog>
 
@@ -625,7 +625,7 @@ const remove = (aver) => {
                 </div>
                 <div class="flex justify-content-end gap-2">
                     <Button type="button" label="Cancel" severity="secondary" @click="formDialogDelete = false" />
-                    <Button type="button" label="Delete" @click="DeleteVarieties" />
+                    <Button type="button" label="Delete" @click="Delete" />
                 </div>
             </Dialog>
 
