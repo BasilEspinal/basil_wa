@@ -351,7 +351,7 @@ import { saveAs } from 'file-saver';
 import { z } from 'zod';
 import ability from '@/service/ability.js';
 import { AbilityBuilder} from '@casl/ability';
-const namePage = ' Done Types ';
+const namePage = 'xxxxxxxxx';
 const titlePage = namePage+'information';
 const dataFromComponent = ref();
 const Farms = ref([]);
@@ -372,7 +372,7 @@ const formDialogDelete = ref(false);
 const toast = useToast();
 const filename = ref('table');
 const isChanging = ref(false);
-let endpoint = ref('/done_types');  //replace endpoint with your endpoint
+let endpoint = ref('/endpoint');  //replace endpoint with your endpoint
 
 
 ////////////

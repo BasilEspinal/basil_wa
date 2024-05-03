@@ -213,7 +213,7 @@
                         {{ errorsNew.codeV }}
                     </small>
                 </div>
-                <!-- <div class="mb-3">
+                <div class="mb-3">
                 <div class="flex align-items-center">
                     <label for="username" class="font-semibold w-3">Farm :</label>
                     <AutoComplete v-model="farm" inputId="ac" :suggestions="farms" @complete="searchFarms" field="name"
@@ -232,7 +232,7 @@
                 <small id="username-help" :class="{ 'p-invalid text-red-700': errorsNew['company'] }">
                     {{ errorsNew.company }}
                 </small>
-            </div> -->
+            </div>
 
                 <div class="flex justify-content-end gap-2">
                     <Button type="button" label="Cancel" severity="secondary" @click="formDialogEdit = false" />
@@ -351,8 +351,8 @@ import { saveAs } from 'file-saver';
 import { z } from 'zod';
 import ability from '@/service/ability.js';
 import { AbilityBuilder} from '@casl/ability';
-
-const titlePage = 'Work Centers information';
+const namePage = ' Work Centers ';
+const titlePage = namePage+'information';
 const dataFromComponent = ref();
 const Farms = ref([]);
 const farms = ref([]);
@@ -360,11 +360,11 @@ const Compan = ref([]);
 const compa = ref([]);
 
 const formDialogNew = ref(false);
-const formDialogNewTitle = 'Create new workcenter';
-const formDialogEditTitle = 'Edit workcenter';
-const formDialogCloneTitle = 'Clone workcenter';
-const formDialogExportTitle = 'Export workcenter';
-const formDialogDeleteTitle = 'Delete workcenter';
+const formDialogNewTitle = 'Create new'+namePage;
+const formDialogEditTitle = 'Edit'+namePage;
+const formDialogCloneTitle = 'Clone' + namePage;
+const formDialogExportTitle = 'Export' + namePage;
+const formDialogDeleteTitle = 'Delete'+namePage;
 const formDialogEdit = ref(false);
 const formDialogClone = ref(false);
 const formDialogExport = ref(false);
@@ -559,10 +559,11 @@ const EditRecord = handleSubmitNew(async (values) => {
     const { uuid } = listRowSelect.value[0];
     const data = {
         code: values.codeV,
-        name: values.name
+        name: values.name,
+        company_uuid: values.company ? values.company.id : '25b4319c-e93f-4411-936c-118060f5e7c9',
+        farm_uuid: values.farm ? values.farm.id : values.farm
     };
-    // company_id: values.company ? values.company.id : '25b4319c-e93f-4411-936c-118060f5e7c9',
-    // farm_id: values.farm ? values.farm : '8ef93a7b-31bf-4233-af80-481020e9cf97'
+    
     const restp = await putRequest(endpoint.value, data, uuid);
     toast.add({ severity: restp.ok ? 'success' : 'error', summary: 'Edit', detail: restp.ok ? 'Editado' : restp.error, life: 3000 });
     loadingData();
