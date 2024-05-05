@@ -195,7 +195,7 @@
                     <div class=" flex align-items-center">
                         <label for="username" class="font-semibold w-3">Transaction Date :</label>
                         <!-- <Calendar v-model="transaction_dateV" class="flex-auto" v-bind="transaction_dateVProps"/> -->
-                        <Calendar v-model="transaction_dateV" class="flex-auto"  showIcon :showOnFocus="false" inputId="buttondisplay" />
+                        <Calendar dateFormat="dd/mm/yy" v-model="transaction_dateV" class="flex-auto"  showIcon :showOnFocus="false" inputId="buttondisplay" />
                     </div>
                     
                     <pre>{{transaction_dateV}}</pre>
@@ -531,7 +531,7 @@ const {
         z.object({
             // name: z.string().min(4),
             // codeV: z.string().min(4),
-            // transaction_dateV: z.optional(z.string().min(4)),
+            transaction_dateV: z.date(),
             type_dateV: z.object({
                 name: z.string().min(4),
                 code: z.string().min(4)
@@ -571,11 +571,20 @@ provide('isChanging', isChanging);
 watch(listRowSelect, RowSelect);
 
 const createRecord = handleSubmitNew(async (values) => {
+    console.log(values)
+    // Asegurarse de que el mes y el día tienen dos dígitos
+    const yyyy = values.transaction_dateV.getFullYear();
+    const mm = String(values.transaction_dateV.getMonth() + 1).padStart(2, '0'); // Los meses en JavaScript son 0-indexados
+    const dd = String(values.transaction_dateV.getDate()).padStart(2, '0');
+
+// Formatear la fecha en formato YYYY-MM-DD
+const formattedDate = `${yyyy}-${mm}-${dd}`;
+console.log(formattedDate);
     const data = {
         // code: values.codeV,
         // name: values.name,
         // transaction_date: values.transaction_dateV,
-        transaction_date:"2023-06-14",
+        transaction_date:formattedDate,
         type_date: values.type_dateV.code,
         company_uuid: values.company ? values.company.id : '25b4319c-e93f-4411-936c-118060f5e7c9',
         farm_uuid: values.farm ? values.farm.id : '8ef93a7b-31bf-4233-af80-481020e9cf97'
@@ -645,11 +654,20 @@ const EditRecord = handleSubmitNew(async (values) => {
     //     company_uuid: values.company ? values.company.id : '25b4319c-e93f-4411-936c-118060f5e7c9',
     //     farm_uuid: values.farm ? values.farm.id : values.farm
     // };
+    console.log(values)
+    
+    // Asegurarse de que el mes y el día tienen dos dígitos
+    const yyyy = values.transaction_dateV.getFullYear();
+    const mm = String(values.transaction_dateV.getMonth() + 1).padStart(2, '0'); // Los meses en JavaScript son 0-indexados
+    const dd = String(values.transaction_dateV.getDate()).padStart(2, '0');
+
+// Formatear la fecha en formato YYYY-MM-DD
+const formattedDate = `${yyyy}-${mm}-${dd}`;
+console.log(formattedDate);
     const data = {
         // code: values.codeV,
         // name: values.name,
-        // transaction_date: values.transaction_dateV,
-        transaction_date:"2023-06-14",
+        transaction_date: formattedDate,
         type_date: values.type_dateV.code,
         company_uuid: values.company ? values.company.id : '25b4319c-e93f-4411-936c-118060f5e7c9',
         farm_uuid: values.farm ? values.farm.id : '8ef93a7b-31bf-4233-af80-481020e9cf97'
@@ -668,11 +686,20 @@ const CloneRecord = handleSubmitNew(async (values) => {
     //     company_uuid: values.company ? values.company.id : '25b4319c-e93f-4411-936c-118060f5e7c9',
     //     farm_uuid: values.farm ? values.farm.id : '8ef93a7b-31bf-4233-af80-481020e9cf97'
     // };
+    console.log(values)
+    // Asegurarse de que el mes y el día tienen dos dígitos
+    const yyyy = values.transaction_dateV.getFullYear();
+    const mm = String(values.transaction_dateV.getMonth() + 1).padStart(2, '0'); // Los meses en JavaScript son 0-indexados
+    const dd = String(values.transaction_dateV.getDate()).padStart(2, '0');
+
+// Formatear la fecha en formato YYYY-MM-DD
+const formattedDate = `${yyyy}-${mm}-${dd}`;
+console.log(formattedDate);
     const data = {
         // code: values.codeV,
         // name: values.name,
         // transaction_date: values.transaction_dateV,
-        transaction_date:"2023-06-17",
+        transaction_date:formattedDate,
         type_date: values.type_dateV.code,
         company_uuid: values.company ? values.company.id : '25b4319c-e93f-4411-936c-118060f5e7c9',
         farm_uuid: values.farm ? values.farm.id : '8ef93a7b-31bf-4233-af80-481020e9cf97'
