@@ -198,7 +198,7 @@
                         <Calendar dateFormat="dd/mm/yy" v-model="transaction_dateV" class="flex-auto"  showIcon :showOnFocus="false" inputId="buttondisplay" />
                     </div>
                     
-                    <pre>{{transaction_dateV}}</pre>
+                    
                     <small id="username-help" :class="{ 'p-invalid text-red-700': errorsNew['transaction_dateV'] }">
                         {{ errorsNew.transaction_dateV }}
                     </small>
@@ -249,7 +249,7 @@
                         <Calendar v-model="transaction_dateV" class="flex-auto"  showIcon :showOnFocus="false" inputId="buttondisplay" />
                     </div>
                     
-                    <pre>{{transaction_dateV}}</pre>
+                    
                     <small id="username-help" :class="{ 'p-invalid text-red-700': errorsNew['transaction_dateV'] }">
                         {{ errorsNew.transaction_dateV }}
                     </small>
@@ -300,7 +300,7 @@
                         <Calendar v-model="transaction_dateV" class="flex-auto"  showIcon :showOnFocus="false" inputId="buttondisplay" />
                     </div>
                     
-                    <pre>{{transaction_dateV}}</pre>
+                    
                     <small id="username-help" :class="{ 'p-invalid text-red-700': errorsNew['transaction_dateV'] }">
                         {{ errorsNew.transaction_dateV }}
                     </small>
@@ -617,7 +617,7 @@ const openNew = () => {
 
 const openEdit = () => {
     resetForm();
-    const { code, company: empresa, farm: farmParameter, name: nombre } = listRowSelect.value[0];
+    const {  code, company: empresa, farm: farmParameter, name: nombre } = listRowSelect.value[0];
 
     name.value = nombre;
     codeV.value = code;
