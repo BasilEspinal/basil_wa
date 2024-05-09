@@ -94,9 +94,14 @@ const router = createRouter({
                     component: () => import('@/views/pages/PayrollSettings/Calendars/Calendars.vue')
                 },
                 {
-                    path: '/payrollsettings/JobTypes',
+                    path: '/payrollsettings/jobtypes',
                     name: 'jobtypes',
                     component: () => import('@/views/pages/PayrollSettings/JobTypes/JobTypes.vue')
+                },
+                {
+                    path: '/payrollsettings/donetypes',
+                    name: 'donetypes',
+                    component: () => import('@/views/pages/PayrollSettings/DoneTypes/DoneTypes.vue')
                 },
                 {
                     path: '/payrollsettings/workstarif',

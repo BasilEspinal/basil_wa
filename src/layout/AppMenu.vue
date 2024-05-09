@@ -197,10 +197,16 @@ const model2 = ref([
                     },
                     {
                         label: 'Tipos de Labores',
-                        to: '/payrollsettings/taskstypes',
+                        to: '/payrollsettings/donetypes',
                         icon: 'pi pi-list',
                         gate: 'configuraciondetiposdetareas_menu',
                     },
+                    // {
+                    //     label: 'Tipos de trabajo',
+                    //     to: '/payrollsettings/jobtypes/',
+                    //     icon: 'pi pi-list',
+                    //     gate: 'configuraciondetiposdetareas_menu',
+                    // },
                     {
                         label: 'Tarifas por Labores',
                         to: '/payrollsettings/workstarif',
