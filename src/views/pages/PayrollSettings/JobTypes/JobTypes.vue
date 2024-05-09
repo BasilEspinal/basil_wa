@@ -196,7 +196,6 @@
 
             <Dialog v-model:visible="formDialogEdit" modal :header="formDialogEditTitle" class="p-fluid text-center mx-auto">
                 <div class="mb-3">
-                    
                     <div class="flex align-items-center gap-3 mb-1">
                         <label for="username" class="font-semibold w-6rem">Name :</label>
                         <InputText id="username" v-model="name" class="flex-auto" autocomplete="off" v-bind="nameProps" />
@@ -352,8 +351,8 @@ import { saveAs } from 'file-saver';
 import { z } from 'zod';
 import ability from '@/service/ability.js';
 import { AbilityBuilder} from '@casl/ability';
-
-const titlePage = 'type of jobs information';
+const namePage = ' Job Types ';
+const titlePage = namePage+'information';
 const dataFromComponent = ref();
 const Farms = ref([]);
 const farms = ref([]);
@@ -361,17 +360,17 @@ const Compan = ref([]);
 const compa = ref([]);
 
 const formDialogNew = ref(false);
-const formDialogNewTitle = 'Create new type of jobs';
-const formDialogEditTitle = 'Edit type of jobs';
-const formDialogCloneTitle = 'Clone type of jobs';
-const formDialogExportTitle = 'Export type of jobs';
-const formDialogDeleteTitle = 'Delete type of jobs';
+const formDialogNewTitle = 'Create new'+namePage;
+const formDialogEditTitle = 'Edit'+namePage;
+const formDialogCloneTitle = 'Clone' + namePage;
+const formDialogExportTitle = 'Export' + namePage;
+const formDialogDeleteTitle = 'Delete'+namePage;
 const formDialogEdit = ref(false);
 const formDialogClone = ref(false);
 const formDialogExport = ref(false);
 const formDialogDelete = ref(false);
 const toast = useToast();
-const filename = ref('jobTypes_table');
+const filename = ref('table');
 const isChanging = ref(false);
 let endpoint = ref('/job_types');  //replace endpoint with your endpoint
 

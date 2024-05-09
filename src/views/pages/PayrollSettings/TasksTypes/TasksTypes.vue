@@ -372,7 +372,7 @@ const formDialogDelete = ref(false);
 const toast = useToast();
 const filename = ref('table');
 const isChanging = ref(false);
-let endpoint = ref('/tasks_of_type');   //replace endpoint with your endpoint
+let endpoint = ref('/task_of_types');   //replace endpoint with your endpoint
 
 
 ////////////
