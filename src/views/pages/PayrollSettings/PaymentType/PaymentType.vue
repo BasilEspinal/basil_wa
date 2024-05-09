@@ -351,11 +351,7 @@ import { saveAs } from 'file-saver';
 import { z } from 'zod';
 import ability from '@/service/ability.js';
 import { AbilityBuilder} from '@casl/ability';
-<<<<<<< HEAD
-const namePage = ' Payment Types';
-=======
 const namePage = ' Payment Types ';
->>>>>>> 04ab6646580a3d5cc483af035023f93ec18bc136
 const titlePage = namePage+'information';
 const dataFromComponent = ref();
 const Farms = ref([]);
