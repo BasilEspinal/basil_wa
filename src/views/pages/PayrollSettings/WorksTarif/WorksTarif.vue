@@ -78,7 +78,7 @@
         <template #empty> No customers found. </template>
         <template #loading> Loading customers data. Please wait. </template>
         <Column selectionMode="multiple" headerStyle="width: 3rem"></Column>
-        <Column field="code" filterField="code" header="Code" sortable :frozen="documentFrozen"> <!--Replace :frozen with the model-->
+        <!-- <Column field="code" filterField="code" header="Code" sortable :frozen="documentFrozen"> 
             <template #header>
                     <ToggleButton v-model="documentFrozen" onIcon="pi pi-lock" offIcon="pi pi-lock-open" onLabel="" offLabel="" />
                     <div>&nbsp;</div>
@@ -90,9 +90,9 @@
                 <template #filter="{ filterModel }">
                     <InputText v-model="filterModel.value" type="text" class="p-column-filter" placeholder="Search by " />
                 </template>
-        </Column>
+        </Column> -->
 
-        <Column field="name" filterField="name" header="Name" sortable> 
+        <!-- <Column field="name" filterField="name" header="Name" sortable> 
             
                 <template #body="{ data }">
                     {{ data.name }} 
@@ -100,9 +100,86 @@
                 <template #filter="{ filterModel }">
                     <InputText v-model="filterModel.value" type="text" class="p-column-filter" placeholder="Search by " />
                 </template>
+        </Column> -->
+        <Column field="tasks_of_type_code" filterField="tasks_of_type_code" header="Code Task Type" sortable :frozen="documentFrozen"> 
+            <template #header>
+                    <ToggleButton v-model="documentFrozen" onIcon="pi pi-lock" offIcon="pi pi-lock-open" onLabel="" offLabel="" />
+                    <div>&nbsp;</div>
+                </template>
+            <template #body="{ data }">
+                {{ data.tasks_of_type.code }} 
+            </template>
+            <template #filter="{ filterModel }">
+                <InputText v-model="filterModel.value" type="text" class="p-column-filter" placeholder="Search by " />
+            </template>
         </Column>
 
+        <Column field="tasks_of_type_name" filterField="tasks_of_type_name" header="Name Task Type" sortable> 
+            
+            <template #body="{ data }">
+                {{ data.tasks_of_type.name }} 
+            </template>
+            <template #filter="{ filterModel }">
+                <InputText v-model="filterModel.value" type="text" class="p-column-filter" placeholder="Search by " />
+            </template>
+        </Column>
+
+        <Column field="done_type_code" filterField="done_type_code" header="Code Done Type" sortable> 
+            
+            <template #body="{ data }">
+                {{ data.done_type.code }} 
+            </template>
+            <template #filter="{ filterModel }">
+                <InputText v-model="filterModel.value" type="text" class="p-column-filter" placeholder="Search by " />
+            </template>
+        </Column>
+
+        <Column field="done_type_name" filterField="done_type_name" header="Name Done Type" sortable> 
+            
+            <template #body="{ data }">
+                {{ data.done_type.name }} 
+            </template>
+            <template #filter="{ filterModel }">
+                <InputText v-model="filterModel.value" type="text" class="p-column-filter" placeholder="Search by " />
+            </template>
+        </Column>
+        <Column field="work_type_day" filterField="work_type_day" header="Work Type day" sortable> 
+            
+            <template #body="{ data }">
+                {{ data.work_type_day }} 
+            </template>
+            <template #filter="{ filterModel }">
+                <InputText v-model="filterModel.value" type="text" class="p-column-filter" placeholder="Search by Work Price Type " />
+            </template>
+    </Column>
+
+    <Column field="work_type_tarif" filterField="work_type_tarif" header="Work Type tarif" sortable> 
+            
+            <template #body="{ data }">
+                {{ data.work_type_tarif }} 
+            </template>
+            <template #filter="{ filterModel }">
+                <InputText v-model="filterModel.value" type="text" class="p-column-filter" placeholder="Search by Work Price Type " />
+            </template>
+    </Column>
+
+    <Column field="price_tarif" filterField="price_tarif" header="Price tarif" sortable> 
+            
+            <template #body="{ data }">
+                {{ data.price_tarif }} 
+            </template>
+            <template #filter="{ filterModel }">
+                <InputText v-model="filterModel.value" type="text" class="p-column-filter" placeholder="Search by " />
+            </template>
+    </Column>
+        <!-- tasks_of_type.code -->
+        <!-- tasks_of_type.name -->
+        <!-- done_type.code -->
+        <!-- done_type.name -->
+        <!-- "work_type_day" -->
+        <!-- "price_tarif" -->
         <!--Here add other columns-->
+
 
         <Column field="farmName" filterField="farm.name" header="Farm Name" sortable>
                 <template #body="{ data }">
@@ -140,18 +217,18 @@
                 </template>
             </Column>
 
-            <Column field="status" filterField="status.name" header="Status" sortable>
+            <!-- <Column field="status" filterField="status.name" header="Status" sortable>
                 <template #body="{ data }">
                     <Tag :value="data.status.name" :severity="'EFC88B'" />
                 </template>
                 <template #filter="{ filterModel }">
                     <InputText v-model="filterModel.value" type="text" class="p-column-filter" placeholder="Search by status" />
                 </template>
-            </Column>
+            </Column> -->
 
         </DataTable>
         <Dialog v-model:visible="formDialogNew" modal :header="formDialogNewTitle" class="p-fluid text-center mx-auto">
-                <div class="mb-3">
+                <!-- <div class="mb-3">
                     <div class="flex align-items-center gap-3 mb-1">
                         <label for="username" class="font-semibold w-6rem">Name :</label>
                         <InputText id="username" v-model="name" class="flex-auto" autocomplete="off" v-bind="nameProps" />
@@ -159,8 +236,8 @@
                     <small id="username-help" :class="{ 'p-invalid text-red-700': errorsNew['name'] }">
                         {{ errorsNew.name }}
                     </small>
-                </div>
-                <div class="mb-3">
+                </div> -->
+                <!-- <div class="mb-3">
                     <div class="flex align-items-center gap-3 mb-1">
                         <label for="username" class="font-semibold w-6rem">Code :</label>
                         <InputText id="username" v-model="codeV" class="flex-auto" autocomplete="off" v-bind="codeVProps" />
@@ -168,10 +245,73 @@
                     <small id="username-help" :class="{ 'p-invalid text-red-700': errorsNew['codeV'] }">
                         {{ errorsNew.codeV }}
                     </small>
+                </div> -->
+
+                <div class="mb-3">
+                    <div class=" flex align-items-center">
+                        <label for="username" class="font-semibold w-6rem">Type of task: </label>
+                    <AutoComplete v-model="tasks_of_typeV" dropdown :suggestions="taskOfTypesObject" field="name"  @complete="searchTaskOfTypes" />
+                    </div>
+                    <small id="username-help" :class="{ 'p-invalid text-red-700': errorsNew['tasks_of_typeV'] }">
+                        {{ errorsNew.tasks_of_typeV }}
+                    </small>
+                    
                 </div>
+
+
+
+
+                <div class="mb-3">
+                    <div class=" flex align-items-center">
+                        <label for="username" class="font-semibold w-6rem">Done Types: </label>
+                    <AutoComplete v-model="done_typeV" dropdown :suggestions="doneTypesObject" field="name"  @complete="searchDoneTypes" />
+                    </div>
+                    <small id="username-help" :class="{ 'p-invalid text-red-700': errorsNew['done_typeV'] }">
+                        {{ errorsNew.done_typeV }}
+                    </small>
+                    
+                </div>
+
+                <div class="mb-3">
+                    <div class=" flex align-items-center">
+                        <label for="username" class="font-semibold w-6rem">Work type day: </label>
+                    <AutoComplete v-model="work_type_dayV" dropdown :suggestions="work_type_dayObject" field="name"  @complete="searchTypeOfWorkTypeDay" />
+                    </div>
+                    <small id="username-help" :class="{ 'p-invalid text-red-700': errorsNew['work_type_dayV'] }">
+                        {{ errorsNew.work_type_dayV }}
+                    </small>
+                    
+                </div>
+
+
+                <div class="mb-3">
+                    <div class=" flex align-items-center">
+                        <label for="username" class="font-semibold w-6rem">Work type tarif: </label>
+                    <AutoComplete v-model="work_type_tarifV" dropdown :suggestions="work_type_tarifObject"  field="name" @complete="searchTypeOfWorkTarif" />
+                    </div>
+                    <small id="username-help" :class="{ 'p-invalid text-red-700': errorsNew['work_type_tarifV'] }">
+                        {{ errorsNew.work_type_tarifV}}
+                    </small>
+                    
+                </div>
+
+                <div class="mb-3">
+                    <div class=" flex align-items-center">
+                        <!-- <label for="minmax-buttons" class="font-bold block mb-2"> Price Tarif </label> -->
+                        <label for="username" class="font-semibold w-6rem">Price Tarif: </label>
+                        <InputNumber v-model="price_tarifV" inputId="minmax-buttons" mode="decimal" showButtons :min="0" :max="100" />
+                    </div>
+                    <small id="username-help" :class="{ 'p-invalid text-red-700': errorsNew['price_TarifV'] }">
+                        {{ errorsNew.price_tarifV }}
+                    </small>
+                    
+                </div>
+
+                
+                
                 <div class="mb-3">
                     <div class="flex align-items-center">
-                        <label for="username" class="font-semibold w-3">Farm :</label>
+                        <label for="username" class="font-semibold w-6rem">Farm: </label>
                         <AutoComplete v-model="farm" inputId="ac" :suggestions="farms" @complete="searchFarms" field="name" dropdown />
                     </div>
                     <small id="username-help" :class="{ 'p-invalid text-red-700': errorsNew['farm'] }">
@@ -180,7 +320,7 @@
                 </div>
                 <div class="mb-3">
                     <div class="flex align-items-center">
-                        <label for="username" class="font-semibold w-3">Companny:</label>
+                        <label for="username" class="font-semibold w-6rem">Company: </label>
                         <AutoComplete v-model="company" inputId="ac" :suggestions="compa" @complete="searchCompannies" field="name" dropdown />
                     </div>
                     <small id="username-help" :class="{ 'p-invalid text-red-700': errorsNew['company'] }">
@@ -195,73 +335,72 @@
             </Dialog>
 
             <Dialog v-model:visible="formDialogEdit" modal :header="formDialogEditTitle" class="p-fluid text-center mx-auto">
-                <div class="mb-3">
-                    <div class="flex align-items-center gap-3 mb-1">
-                        <label for="username" class="font-semibold w-6rem">Name :</label>
-                        <InputText id="username" v-model="name" class="flex-auto" autocomplete="off" v-bind="nameProps" />
-                    </div>
-                    <small id="username-help" :class="{ 'p-invalid text-red-700': errorsNew['name'] }">
-                        {{ errorsNew.name }}
-                    </small>
-                </div>
-                <div class="mb-3">
-                    <div class="flex align-items-center gap-3 mb-1">
-                        <label for="username" class="font-semibold w-6rem">Code :</label>
-                        <InputText id="username" v-model="codeV" class="flex-auto" autocomplete="off" v-bind="codeVProps" />
-                    </div>
-                    <small id="username-help" :class="{ 'p-invalid text-red-700': errorsNew['codeV'] }">
-                        {{ errorsNew.codeV }}
-                    </small>
-                </div>
-                <div class="mb-3">
-                <div class="flex align-items-center">
-                    <label for="username" class="font-semibold w-3">Farm :</label>
-                    <AutoComplete v-model="farm" inputId="ac" :suggestions="farms" @complete="searchFarms" field="name"
-                        dropdown />
-                </div>
-                <small id="username-help" :class="{ 'p-invalid text-red-700': errorsNew['farm'] }">
-                    {{ errorsNew.farm }}
-                </small>
-            </div>
-            <div class="mb-3">
-                <div class="flex align-items-center">
-                    <label for="username" class="font-semibold w-3">Companny:</label>
-                    <AutoComplete v-model="company" inputId="ac" :suggestions="compa" @complete="EditRecord"
-                        field="name" dropdown />
-                </div>
-                <small id="username-help" :class="{ 'p-invalid text-red-700': errorsNew['company'] }">
-                    {{ errorsNew.company }}
-                </small>
-            </div>
 
-                <div class="flex justify-content-end gap-2">
-                    <Button type="button" label="Cancel" severity="secondary" @click="formDialogEdit = false" />
-                    <Button type="button" label="Save" @click="EditRecord()" />
+                <div class="mb-3">
+                    <div class=" flex align-items-center">
+                        <label for="username" class="font-semibold w-6rem">Type of task: </label>
+                    <AutoComplete v-model="tasks_of_typeV" dropdown :suggestions="taskOfTypesObject" field="name"  @complete="searchTaskOfTypes" />
+                    </div>
+                    <small id="username-help" :class="{ 'p-invalid text-red-700': errorsNew['tasks_of_typeV'] }">
+                        {{ errorsNew.tasks_of_typeV }}
+                    </small>
+                    
                 </div>
-            </Dialog>
 
-            <Dialog v-model:visible="formDialogClone" modal :header="formDialogCloneTitle" class="p-fluid text-center mx-auto">
+
+
+
                 <div class="mb-3">
-                    <div class="flex align-items-center gap-3 mb-1">
-                        <label for="username" class="font-semibold w-6rem">Name :</label>
-                        <InputText id="username" v-model="name" class="flex-auto" autocomplete="off" v-bind="nameProps" />
+                    <div class=" flex align-items-center">
+                        <label for="username" class="font-semibold w-6rem">Done Types: </label>
+                    <AutoComplete v-model="done_typeV" dropdown :suggestions="doneTypesObject" field="name"  @complete="searchDoneTypes" />
                     </div>
-                    <small id="username-help" :class="{ 'p-invalid text-red-700': errorsNew['name'] }">
-                        {{ errorsNew.name }}
+                    <small id="username-help" :class="{ 'p-invalid text-red-700': errorsNew['done_typeV'] }">
+                        {{ errorsNew.done_typeV }}
                     </small>
+                    
                 </div>
+
                 <div class="mb-3">
-                    <div class="flex align-items-center gap-3 mb-1">
-                        <label for="username" class="font-semibold w-6rem">Code :</label>
-                        <InputText id="username" v-model="codeV" class="flex-auto" autocomplete="off" v-bind="codeVProps" />
+                    <div class=" flex align-items-center">
+                        <label for="username" class="font-semibold w-6rem">Work type day: </label>
+                    <AutoComplete v-model="work_type_dayV" dropdown :suggestions="work_type_dayObject" field="name"  @complete="searchTypeOfWorkTypeDay" />
                     </div>
-                    <small id="username-help" :class="{ 'p-invalid text-red-700': errorsNew['codeV'] }">
-                        {{ errorsNew.codeV }}
+                    <small id="username-help" :class="{ 'p-invalid text-red-700': errorsNew['work_type_dayV'] }">
+                        {{ errorsNew.work_type_dayV }}
                     </small>
+                    
                 </div>
+
+
+                <div class="mb-3">
+                    <div class=" flex align-items-center">
+                        <label for="username" class="font-semibold w-6rem">Work type tarif: </label>
+                    <AutoComplete v-model="work_type_tarifV" dropdown :suggestions="work_type_tarifObject"  field="name" @complete="searchTypeOfWorkTarif" />
+                    </div>
+                    <small id="username-help" :class="{ 'p-invalid text-red-700': errorsNew['work_type_tarifV'] }">
+                        {{ errorsNew.work_type_tarifV}}
+                    </small>
+                    
+                </div>
+
+                <div class="mb-3">
+                    <div class=" flex align-items-center">
+                        <!-- <label for="minmax-buttons" class="font-bold block mb-2"> Price Tarif </label> -->
+                        <label for="username" class="font-semibold w-6rem">Price Tarif: </label>
+                        <InputNumber v-model="price_tarifV" inputId="minmax-buttons" mode="decimal" showButtons :min="0" :max="100" />
+                    </div>
+                    <small id="username-help" :class="{ 'p-invalid text-red-700': errorsNew['price_TarifV'] }">
+                        {{ errorsNew.price_tarifV }}
+                    </small>
+                    
+                </div>
+
+                
+                
                 <div class="mb-3">
                     <div class="flex align-items-center">
-                        <label for="username" class="font-semibold w-3">Farm :</label>
+                        <label for="username" class="font-semibold w-6rem">Farm: </label>
                         <AutoComplete v-model="farm" inputId="ac" :suggestions="farms" @complete="searchFarms" field="name" dropdown />
                     </div>
                     <small id="username-help" :class="{ 'p-invalid text-red-700': errorsNew['farm'] }">
@@ -270,7 +409,7 @@
                 </div>
                 <div class="mb-3">
                     <div class="flex align-items-center">
-                        <label for="username" class="font-semibold w-3">Companny:</label>
+                        <label for="username" class="font-semibold w-6rem">Company: </label>
                         <AutoComplete v-model="company" inputId="ac" :suggestions="compa" @complete="searchCompannies" field="name" dropdown />
                     </div>
                     <small id="username-help" :class="{ 'p-invalid text-red-700': errorsNew['company'] }">
@@ -279,7 +418,96 @@
                 </div>
 
                 <div class="flex justify-content-end gap-2">
-                    <Button type="button" label="Cancel" severity="secondary" @click="formDialogClone = false" />
+                    <Button type="button" label="Cancel" severity="secondary" @click="formDialogNew = false" />
+                    <Button type="button" label="Save" @click="EditRecord()" />
+                </div>
+            </Dialog>
+
+            <Dialog v-model:visible="formDialogClone" modal :header="formDialogCloneTitle" class="p-fluid text-center mx-auto">
+
+                <div class="mb-3">
+                    <div class=" flex align-items-center">
+                        <label for="username" class="font-semibold w-6rem">Type of task: </label>
+                    <AutoComplete v-model="tasks_of_typeV" dropdown :suggestions="taskOfTypesObject" field="name"  @complete="searchTaskOfTypes" />
+                    </div>
+                    <small id="username-help" :class="{ 'p-invalid text-red-700': errorsNew['tasks_of_typeV'] }">
+                        {{ errorsNew.tasks_of_typeV }}
+                    </small>
+                    
+                </div>
+
+
+
+
+                <div class="mb-3">
+                    <div class=" flex align-items-center">
+                        <label for="username" class="font-semibold w-6rem">Done Types: </label>
+                    <AutoComplete v-model="done_typeV" dropdown :suggestions="doneTypesObject" field="name"  @complete="searchDoneTypes" />
+                    </div>
+                    <small id="username-help" :class="{ 'p-invalid text-red-700': errorsNew['done_typeV'] }">
+                        {{ errorsNew.done_typeV }}
+                    </small>
+                    
+                </div>
+
+                <div class="mb-3">
+                    <div class=" flex align-items-center">
+                        <label for="username" class="font-semibold w-6rem">Work type day: </label>
+                    <AutoComplete v-model="work_type_dayV" dropdown :suggestions="work_type_dayObject" field="name"  @complete="searchTypeOfWorkTypeDay" />
+                    </div>
+                    <small id="username-help" :class="{ 'p-invalid text-red-700': errorsNew['work_type_dayV'] }">
+                        {{ errorsNew.work_type_dayV }}
+                    </small>
+                    
+                </div>
+
+
+                <div class="mb-3">
+                    <div class=" flex align-items-center">
+                        <label for="username" class="font-semibold w-6rem">Work type tarif: </label>
+                    <AutoComplete v-model="work_type_tarifV" dropdown :suggestions="work_type_tarifObject"  field="name" @complete="searchTypeOfWorkTarif" />
+                    </div>
+                    <small id="username-help" :class="{ 'p-invalid text-red-700': errorsNew['work_type_tarifV'] }">
+                        {{ errorsNew.work_type_tarifV}}
+                    </small>
+                    
+                </div>
+
+                <div class="mb-3">
+                    <div class=" flex align-items-center">
+                        <!-- <label for="minmax-buttons" class="font-bold block mb-2"> Price Tarif </label> -->
+                        <label for="username" class="font-semibold w-6rem">Price Tarif: </label>
+                        <InputNumber v-model="price_tarifV" inputId="minmax-buttons" mode="decimal" showButtons :min="0" :max="100" />
+                    </div>
+                    <small id="username-help" :class="{ 'p-invalid text-red-700': errorsNew['price_TarifV'] }">
+                        {{ errorsNew.price_tarifV }}
+                    </small>
+                    
+                </div>
+
+                
+                
+                <div class="mb-3">
+                    <div class="flex align-items-center">
+                        <label for="username" class="font-semibold w-6rem">Farm: </label>
+                        <AutoComplete v-model="farm" inputId="ac" :suggestions="farms" @complete="searchFarms" field="name" dropdown />
+                    </div>
+                    <small id="username-help" :class="{ 'p-invalid text-red-700': errorsNew['farm'] }">
+                        {{ errorsNew.farm }}
+                    </small>
+                </div>
+                <div class="mb-3">
+                    <div class="flex align-items-center">
+                        <label for="username" class="font-semibold w-6rem">Company: </label>
+                        <AutoComplete v-model="company" inputId="ac" :suggestions="compa" @complete="searchCompannies" field="name" dropdown />
+                    </div>
+                    <small id="username-help" :class="{ 'p-invalid text-red-700': errorsNew['company'] }">
+                        {{ errorsNew.company }}
+                    </small>
+                </div>
+
+                <div class="flex justify-content-end gap-2">
+                    <Button type="button" label="Cancel" severity="secondary" @click="formDialogNew = false" />
                     <Button type="button" label="Save" @click="CloneRecord()" />
                 </div>
             </Dialog>
@@ -358,6 +586,22 @@ const Farms = ref([]);
 const farms = ref([]);
 const Compan = ref([]);
 const compa = ref([]);
+const selectedTaskOfType = ref();
+
+
+const taskOfTypes = ref([]);
+const taskOfTypesObject = ref([]);
+const doneTypes = ref([]);
+const doneTypesObject = ref([]);
+const work_type_day = ref([]);
+const work_type_dayObject = ref([]);
+const work_type_tarif = ref([]);
+const work_type_tarifObject = ref([]);
+const price_tarif = ref([]);
+const price_tarifObject = ref([]);
+
+
+
 
 const formDialogNew = ref(false);
 const formDialogNewTitle = 'Create new'+namePage;
@@ -413,8 +657,14 @@ const clearFilter = () => {
 const initFilters = () => {
     filters.value = {
         global: { value: null, matchMode: FilterMatchMode.CONTAINS },
-        code: { operator: FilterOperator.AND, constraints: [{ value: null, matchMode: FilterMatchMode.STARTS_WITH }] },
-        name: { operator: FilterOperator.AND, constraints: [{ value: null, matchMode: FilterMatchMode.STARTS_WITH }] },
+        // code: { operator: FilterOperator.AND, constraints: [{ value: null, matchMode: FilterMatchMode.STARTS_WITH }] },
+        // name: { operator: FilterOperator.AND, constraints: [{ value: null, matchMode: FilterMatchMode.STARTS_WITH }] },
+        'tasks_of_type.code': { operator: FilterOperator.AND, constraints: [{ value: null, matchMode: FilterMatchMode.STARTS_WITH }] },
+        'tasks_of_type.name': { operator: FilterOperator.AND, constraints: [{ value: null, matchMode: FilterMatchMode.STARTS_WITH }] },
+        'done_type.code': { operator: FilterOperator.AND, constraints: [{ value: null, matchMode: FilterMatchMode.STARTS_WITH }] },
+        'done_type.name': { operator: FilterOperator.AND, constraints: [{ value: null, matchMode: FilterMatchMode.STARTS_WITH }] },
+        work_type_day: { operator: FilterOperator.AND, constraints: [{ value: null, matchMode: FilterMatchMode.STARTS_WITH }] },
+        price_tarif: { operator: FilterOperator.AND, constraints: [{ value: null, matchMode: FilterMatchMode.STARTS_WITH }] },
         'status.name': { operator: FilterOperator.AND, constraints: [{ value: null, matchMode: FilterMatchMode.STARTS_WITH }] },
         'farm.name': { operator: FilterOperator.AND, constraints: [{ value: null, matchMode: FilterMatchMode.STARTS_WITH }] },
         'company.name': { operator: FilterOperator.AND, constraints: [{ value: null, matchMode: FilterMatchMode.STARTS_WITH }] },
@@ -426,6 +676,22 @@ const initFilters = () => {
 const documentFrozen = ref(false);
 const readAll = async () => {
     loadingData();
+    const respTaskOfType = await getRequest('/task_of_types');
+    if (!respTaskOfType.ok) toast.add({ severity: 'error', detail: 'Error' + respTaskOfType.error, life: 3000 });
+    taskOfTypes.value = respTaskOfType.data.data.map((taskOfTypesObject) => ({ id: taskOfTypesObject.uuid, name: taskOfTypesObject.name }));
+
+    const respDoneType = await getRequest('/done_types');
+    if (!respDoneType.ok) toast.add({ severity: 'error', detail: 'Error' + respDoneType.error, life: 3000 });
+    doneTypes.value = respDoneType.data.data.map((doneType) => ({ id: doneType.uuid, name: doneType.name }));
+
+    const respWorkTypeDay = await getRequest('/lists/workTypesDay');
+    if (!respWorkTypeDay.ok) toast.add({ severity: 'error', detail: 'Error' + respWorkTypeDay.error, life: 3000 });
+    work_type_day.value = respWorkTypeDay.data.map((workTypeDay) => ({ id: workTypeDay.id, name: workTypeDay.label }));
+
+    const respWorkTypeTarif = await getRequest('/lists/workTypeRate');
+    if (!respWorkTypeTarif.ok) toast.add({ severity: 'error', detail: 'Error' + respWorkTypeTarif.error, life: 3000 });
+    work_type_tarif.value = respWorkTypeTarif.data.map((workTypeTarif) => ({ id: workTypeTarif.id, name: workTypeTarif.label }));
+
     const respFarms = await getRequest('/farms');
     if (!respFarms.ok) toast.add({ severity: 'error', detail: 'Error' + respFarms.error, life: 3000 });
     Farms.value = respFarms.data.data.map((farm) => ({ id: farm.uuid, name: farm.name }));
@@ -459,8 +725,23 @@ const {
 } = useForm({
     validationSchema: toTypedSchema(
         z.object({
-            name: z.string().min(4),
-            codeV: z.string().min(4),
+            // name: z.string().min(4),
+            // codeV: z.string().min(4),
+            tasks_of_typeV: z.object({
+                name: z.string().min(4),
+                code: z.string().min(4)
+            }),
+            done_typeV: z.object({
+                name: z.string().min(4),
+                code: z.string().min(4)
+            }),
+            type_dateV: z.object({
+                name: z.string().min(4),
+                code: z.string().min(4)
+            }),
+            work_type_dayV: z.string().min(4),
+            work_type_tarifV: z.string().min(4),
+            price_tarifV: z.string().min(4),
             farm: z
                 .object({
                     name: z.string().min(4),
@@ -480,6 +761,12 @@ const [name, nameProps] = defineField('name');
 const [codeV, codeVProps] = defineField('codeV');
 const [farm] = defineField('farm');
 const [company] = defineField('company');
+const[tasks_of_typeV,tasks_of_typeVProps] = defineField('tasks_of_type');
+const [done_typeV,done_typeVProps] = defineField('done_type');
+const [work_type_dayV,work_type_dayVProps] = defineField('work_type_day');
+const [price_tarifV,price_tarifVProps] = defineField('price_tarif');
+const [work_type_tarifV,work_type_tarifVProps] = defineField('work_type_tarif');
+
 
 const extenciones = ref([{ name: 'CSV' }, { name: 'XLS' }]);
 const optionsEsport = ref([{ name: 'ALL' }, { name: 'SELECTED' }]);
@@ -506,6 +793,52 @@ const createRecord = handleSubmitNew(async (values) => {
     loadingData();
     formDialogNew.value = false;
 });
+const searchTaskOfTypes = (event) => {
+    setTimeout(() => {
+        if (!event.query.trim().length) {
+            taskOfTypesObject.value = [...taskOfTypes.value];
+        } else {
+            taskOfTypesObject.value = taskOfTypes.value.filter((task) => {
+                return task.name.toLowerCase().startsWith(event.query.toLowerCase());
+            });
+        }
+    }, 200);
+};
+const searchDoneTypes = (event) => {
+    setTimeout(() => {
+        if (!event.query.trim().length) {
+            doneTypesObject.value = [...doneTypes.value];
+        } else {
+            doneTypesObject.value = doneTypes.value.filter((task) => {
+                return task.name.toLowerCase().startsWith(event.query.toLowerCase());
+            });
+        }
+    }, 200);
+};
+
+const searchTypeOfWorkTypeDay = (event) => {
+    setTimeout(() => {
+        if (!event.query.trim().length) {
+            work_type_dayObject.value = [...work_type_day.value];
+        } else {
+            work_type_dayObject.value = work_type_day.value.filter((task) => {
+                return task.name.toLowerCase().startsWith(event.query.toLowerCase());
+            });
+        }
+    }, 200);
+};
+
+const searchTypeOfWorkTarif = (event) => {
+    setTimeout(() => {
+        if (!event.query.trim().length) {
+            work_type_tarifObject.value = [...work_type_tarif.value];
+        } else {
+            work_type_tarifObject.value = work_type_tarif.value.filter((task) => {
+                return task.name.toLowerCase().startsWith(event.query.toLowerCase());
+            });
+        }
+    }, 200);
+};
 
 const searchCompannies = (event) => {
     setTimeout(() => {

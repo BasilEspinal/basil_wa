@@ -415,6 +415,10 @@ const Farms = ref([]);
 const farms = ref([]);
 const Compan = ref([]);
 const compa = ref([]);
+const selectedTypeOfDate = ref();
+const typeOfDates = ref([
+    { name: 'Festivo', code: 'Festivo' },
+]);
 
 const formDialogNew = ref(false);
 const formDialogNewTitle = 'Create new'+namePage;
@@ -432,10 +436,7 @@ const isChanging = ref(false);
 const date = ref();
 let endpoint = ref('/calendars');  //replace endpoint with your endpoint
 
-const selectedTypeOfDate = ref();
-const typeOfDates = ref([
-    { name: 'Festivo', code: 'Festivo' },
-]);
+
 
 
 ////////////
