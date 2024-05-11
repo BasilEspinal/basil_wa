@@ -618,10 +618,9 @@ const openNew = () => {
 
 const openEdit = () => {
     resetForm();
-    const {  code, company: empresa, farm: farmParameter, name: nombre } = listRowSelect.value[0];
-
-    name.value = nombre;
-    codeV.value = code;
+    const {  code, company: empresa, farm: farmParameter, name: nombre,type_date:type,transaction_date:date } = listRowSelect.value[0];
+    transaction_dateV.value = new Date(date);
+    type_dateV.value = { name: type, code: type };
     company.value = { id: empresa.uuid, name: empresa.name };
     farm.value = { id: farmParameter.uuid, name: farmParameter.name };
 
@@ -630,9 +629,11 @@ const openEdit = () => {
 
 const openClone = () => {
     resetForm();
-    const { company: empresa, farm: farmParameter, name: nombre } = listRowSelect.value[0];
+    // const { company: empresa, farm: farmParameter, name: nombre } = listRowSelect.value[0];
 
-    name.value = nombre;
+    const {  code, company: empresa, farm: farmParameter, name: nombre,type_date:type,transaction_date:date } = listRowSelect.value[0];
+    transaction_dateV.value = new Date(date);
+    type_dateV.value = { name: type, code: type };
     company.value = { id: empresa.uuid, name: empresa.name };
     farm.value = { id: farmParameter.uuid, name: farmParameter.name };
     formDialogClone.value = true;
