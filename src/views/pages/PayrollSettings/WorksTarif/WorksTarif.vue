@@ -271,7 +271,7 @@
                 <div class="mb-3">
                     <div class=" flex align-items-center">
                         <label for="username" class="font-semibold w-6rem">Work type tarif: </label>
-                    <AutoComplete v-model="work_type_tarifV" dropdown :suggestions="work_type_tarifObject"  field="name" @complete="searchTypeOfWorkTarif" placeholder=" " />
+                    <AutoComplete v-model="work_type_tarifV" dropdown inputId="ac" :suggestions="work_type_tarifObject"  field="name" @complete="searchTypeOfWorkTarif" placeholder="Busca o selecciona " />
                     </div>
                     <small id="username-help" :class="{ 'p-invalid text-red-700': errorsNew['work_type_tarifV'] }">
                         {{ errorsNew.work_type_tarifV}}
@@ -712,21 +712,21 @@ const {
             
             tasks_of_typeV: z.object({
                 name: z.string().min(4),
-                code: z.string().min(2)
+                id: z.string().min(2)
             }),
             done_typeV: z.object({
                 name: z.string().min(4),
-                code: z.string().min(2)
+                id: z.string().min(2)
             }),
             work_type_dayV: z.object({
-                label: z.string().min(4),
+                name: z.string().min(4),
                 id: z.string().min(2)
             }),
             work_type_tarifV: z.object({
-                label: z.string().min(4),
+                name: z.string().min(4),
                 id: z.string().min(2)
             }),
-            price_tarifV: z.string().min(2),
+            price_tarifV: z.number().min(2),
             farm: z
                 .object({
                     name: z.string().min(4),
@@ -769,13 +769,18 @@ const createRecord = handleSubmitNew(async (values) => {
         // code: values.codeV,
         // name: values.name,
         tasks_of_type_uuid: values.tasks_of_typeV.id,
-        done_type_uuid: values.done_typeV.id,
-        work_type_day: values.work_type_dayV,
-        work_type_tarif: values.work_type_tarifV,
+        done_of_type_uuid: values.done_typeV.id,
+        work_type_day: values.work_type_dayV.id,
+        work_type_tarif: values.work_type_tarifV.id,
         price_tarif: values.price_tarifV,
-        company_uuid: values.company ? values.company.id : '25b4319c-e93f-4411-936c-118060f5e7c9',
+        // company_uuid: values.company ? values.company.id : '25b4319c-e93f-4411-936c-118060f5e7c9',
         farm_uuid: values.farm ? values.farm.id : '8ef93a7b-31bf-4233-af80-481020e9cf97'
     };
+        // Agrega company_uuid solo si company está presente
+        if (values.company) {
+        data.company_uuid = values.company.id;
+    }
+
     console.log(data)
     const restp = await postRequest(endpoint.value, data);
 
