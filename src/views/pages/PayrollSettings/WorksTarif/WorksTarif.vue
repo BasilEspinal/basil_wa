@@ -228,29 +228,13 @@
 
         </DataTable>
         <Dialog v-model:visible="formDialogNew" modal :header="formDialogNewTitle" class="p-fluid text-center mx-auto">
-                <!-- <div class="mb-3">
-                    <div class="flex align-items-center gap-3 mb-1">
-                        <label for="username" class="font-semibold w-6rem">Name :</label>
-                        <InputText id="username" v-model="name" class="flex-auto" autocomplete="off" v-bind="nameProps" />
-                    </div>
-                    <small id="username-help" :class="{ 'p-invalid text-red-700': errorsNew['name'] }">
-                        {{ errorsNew.name }}
-                    </small>
-                </div> -->
-                <!-- <div class="mb-3">
-                    <div class="flex align-items-center gap-3 mb-1">
-                        <label for="username" class="font-semibold w-6rem">Code :</label>
-                        <InputText id="username" v-model="codeV" class="flex-auto" autocomplete="off" v-bind="codeVProps" />
-                    </div>
-                    <small id="username-help" :class="{ 'p-invalid text-red-700': errorsNew['codeV'] }">
-                        {{ errorsNew.codeV }}
-                    </small>
-                </div> -->
 
+                <pre>{{errorsNew}}</pre>
                 <div class="mb-3">
+                    
                     <div class=" flex align-items-center">
                         <label for="username" class="font-semibold w-6rem">Type of task: </label>
-                    <AutoComplete v-model="tasks_of_typeV" dropdown :suggestions="taskOfTypesObject" field="name"  @complete="searchTaskOfTypes" />
+                    <AutoComplete v-model="tasks_of_typeV" dropdown :suggestions="taskOfTypesObject" field="name"  @complete="searchTaskOfTypes" placeholder=""/>
                     </div>
                     <small id="username-help" :class="{ 'p-invalid text-red-700': errorsNew['tasks_of_typeV'] }">
                         {{ errorsNew.tasks_of_typeV }}
@@ -264,7 +248,7 @@
                 <div class="mb-3">
                     <div class=" flex align-items-center">
                         <label for="username" class="font-semibold w-6rem">Done Types: </label>
-                    <AutoComplete v-model="done_typeV" dropdown :suggestions="doneTypesObject" field="name"  @complete="searchDoneTypes" />
+                    <AutoComplete v-model="done_typeV" dropdown :suggestions="doneTypesObject" field="name"  @complete="searchDoneTypes" placeholder="" />
                     </div>
                     <small id="username-help" :class="{ 'p-invalid text-red-700': errorsNew['done_typeV'] }">
                         {{ errorsNew.done_typeV }}
@@ -275,7 +259,7 @@
                 <div class="mb-3">
                     <div class=" flex align-items-center">
                         <label for="username" class="font-semibold w-6rem">Work type day: </label>
-                    <AutoComplete v-model="work_type_dayV" dropdown :suggestions="work_type_dayObject" field="name"  @complete="searchTypeOfWorkTypeDay" />
+                    <AutoComplete v-model="work_type_dayV" dropdown :suggestions="work_type_dayObject" field="name"  @complete="searchTypeOfWorkTypeDay" placeholder="" />
                     </div>
                     <small id="username-help" :class="{ 'p-invalid text-red-700': errorsNew['work_type_dayV'] }">
                         {{ errorsNew.work_type_dayV }}
@@ -287,7 +271,7 @@
                 <div class="mb-3">
                     <div class=" flex align-items-center">
                         <label for="username" class="font-semibold w-6rem">Work type tarif: </label>
-                    <AutoComplete v-model="work_type_tarifV" dropdown :suggestions="work_type_tarifObject"  field="name" @complete="searchTypeOfWorkTarif" />
+                    <AutoComplete v-model="work_type_tarifV" dropdown :suggestions="work_type_tarifObject"  field="name" @complete="searchTypeOfWorkTarif" placeholder=" " />
                     </div>
                     <small id="username-help" :class="{ 'p-invalid text-red-700': errorsNew['work_type_tarifV'] }">
                         {{ errorsNew.work_type_tarifV}}
@@ -298,7 +282,7 @@
                 <div class="mb-3">
                     <div class=" flex align-items-center">
                         <!-- <label for="minmax-buttons" class="font-bold block mb-2"> Price Tarif </label> -->
-                        <label for="username" class="font-semibold w-6rem">Price Tarif: </label>
+                        <label for="username" class="font-semibold w-6rem">Price Tarif:   </label>
                         <InputNumber v-model="price_tarifV" inputId="minmax-buttons" mode="decimal" showButtons :min="0" :max="100" />
                     </div>
                     <small id="username-help" :class="{ 'p-invalid text-red-700': errorsNew['price_TarifV'] }">
@@ -725,23 +709,24 @@ const {
 } = useForm({
     validationSchema: toTypedSchema(
         z.object({
-            // name: z.string().min(4),
-            // codeV: z.string().min(4),
+            
             tasks_of_typeV: z.object({
                 name: z.string().min(4),
-                code: z.string().min(4)
+                code: z.string().min(2)
             }),
             done_typeV: z.object({
                 name: z.string().min(4),
-                code: z.string().min(4)
+                code: z.string().min(2)
             }),
-            type_dateV: z.object({
-                name: z.string().min(4),
-                code: z.string().min(4)
+            work_type_dayV: z.object({
+                label: z.string().min(4),
+                id: z.string().min(2)
             }),
-            work_type_dayV: z.string().min(4),
-            work_type_tarifV: z.string().min(4),
-            price_tarifV: z.string().min(4),
+            work_type_tarifV: z.object({
+                label: z.string().min(4),
+                id: z.string().min(2)
+            }),
+            price_tarifV: z.string().min(2),
             farm: z
                 .object({
                     name: z.string().min(4),
@@ -757,15 +742,14 @@ const {
         })
     )
 });
-const [name, nameProps] = defineField('name');
-const [codeV, codeVProps] = defineField('codeV');
+
 const [farm] = defineField('farm');
 const [company] = defineField('company');
-const[tasks_of_typeV,tasks_of_typeVProps] = defineField('tasks_of_type');
-const [done_typeV,done_typeVProps] = defineField('done_type');
-const [work_type_dayV,work_type_dayVProps] = defineField('work_type_day');
-const [price_tarifV,price_tarifVProps] = defineField('price_tarif');
-const [work_type_tarifV,work_type_tarifVProps] = defineField('work_type_tarif');
+const[tasks_of_typeV,tasks_of_typeVProps] = defineField('tasks_of_typeV');
+const [done_typeV,done_typeVProps] = defineField('done_typeV');
+const [work_type_dayV,work_type_dayVProps] = defineField('work_type_dayV');
+const [price_tarifV,price_tarifVProps] = defineField('price_tarifV');
+const [work_type_tarifV,work_type_tarifVProps] = defineField('work_type_tarifV');
 
 
 const extenciones = ref([{ name: 'CSV' }, { name: 'XLS' }]);
@@ -782,11 +766,17 @@ watch(listRowSelect, RowSelect);
 
 const createRecord = handleSubmitNew(async (values) => {
     const data = {
-        code: values.codeV,
-        name: values.name,
+        // code: values.codeV,
+        // name: values.name,
+        tasks_of_type_uuid: values.tasks_of_typeV.id,
+        done_type_uuid: values.done_typeV.id,
+        work_type_day: values.work_type_dayV,
+        work_type_tarif: values.work_type_tarifV,
+        price_tarif: values.price_tarifV,
         company_uuid: values.company ? values.company.id : '25b4319c-e93f-4411-936c-118060f5e7c9',
         farm_uuid: values.farm ? values.farm.id : '8ef93a7b-31bf-4233-af80-481020e9cf97'
     };
+    console.log(data)
     const restp = await postRequest(endpoint.value, data);
 
     toast.add({ severity: restp.ok ? 'success' : 'error', summary: 'Create', detail: restp.ok ? 'Creado' : restp.error, life: 3000 });
