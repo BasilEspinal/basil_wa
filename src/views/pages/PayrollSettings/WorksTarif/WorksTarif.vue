@@ -271,7 +271,7 @@
                 <div class="mb-3">
                     <div class=" flex align-items-center">
                         <label for="username" class="font-semibold w-6rem">Work type tarif: </label>
-                    <AutoComplete v-model="work_type_tarifV" dropdown :suggestions="work_type_tarifObject"  field="name" @complete="searchTypeOfWorkTarif" placeholder=" " />
+                    <AutoComplete v-model="work_type_tarifV" dropdown inputId="ac" :suggestions="work_type_tarifObject"  field="name" @complete="searchTypeOfWorkTarif" placeholder="Busca o selecciona " />
                     </div>
                     <small id="username-help" :class="{ 'p-invalid text-red-700': errorsNew['work_type_tarifV'] }">
                         {{ errorsNew.work_type_tarifV}}
@@ -712,21 +712,21 @@ const {
             
             tasks_of_typeV: z.object({
                 name: z.string().min(4),
-                code: z.string().min(2)
+                id: z.string().min(2)
             }),
             done_typeV: z.object({
                 name: z.string().min(4),
-                code: z.string().min(2)
+                id: z.string().min(2)
             }),
             work_type_dayV: z.object({
-                label: z.string().min(4),
+                name: z.string().min(4),
                 id: z.string().min(2)
             }),
             work_type_tarifV: z.object({
-                label: z.string().min(4),
+                name: z.string().min(4),
                 id: z.string().min(2)
             }),
-            price_tarifV: z.string().min(2),
+            price_tarifV: z.number().min(2),
             farm: z
                 .object({
                     name: z.string().min(4),
@@ -769,13 +769,18 @@ const createRecord = handleSubmitNew(async (values) => {
         // code: values.codeV,
         // name: values.name,
         tasks_of_type_uuid: values.tasks_of_typeV.id,
-        done_type_uuid: values.done_typeV.id,
-        work_type_day: values.work_type_dayV,
-        work_type_tarif: values.work_type_tarifV,
+        done_of_type_uuid: values.done_typeV.id,
+        work_type_day: values.work_type_dayV.id,
+        work_type_tarif: values.work_type_tarifV.id,
         price_tarif: values.price_tarifV,
-        company_uuid: values.company ? values.company.id : '25b4319c-e93f-4411-936c-118060f5e7c9',
+        // company_uuid: values.company ? values.company.id : '25b4319c-e93f-4411-936c-118060f5e7c9',
         farm_uuid: values.farm ? values.farm.id : '8ef93a7b-31bf-4233-af80-481020e9cf97'
     };
+        // Agrega company_uuid solo si company está presente
+        if (values.company) {
+        data.company_uuid = values.company.id;
+    }
+
     console.log(data)
     const restp = await postRequest(endpoint.value, data);
 
@@ -849,10 +854,15 @@ const openNew = () => {
 
 const openEdit = () => {
     resetForm();
-    const { code, company: empresa, farm: farmParameter, name: nombre } = listRowSelect.value[0];
+    const { code, company: empresa, farm: farmParameter, name: nombre, tasks_of_type:task, done_type:done,work_type_day:work,work_type_tarif:tarif,price_tarif:price } = listRowSelect.value[0];
 
-    name.value = nombre;
-    codeV.value = code;
+    // name.value = nombre;
+    // codeV.value = code;
+    tasks_of_typeV.value={id:task.uuid, name:task.name}
+    done_typeV.value={id:done.uuid,name:done.name}
+    work_type_dayV.value={id:work,name:work}
+    work_type_tarifV.value = {id:tarif,name:tarif}
+    price_tarifV.value=Number(price)
     company.value = { id: empresa.uuid, name: empresa.name };
     farm.value = { id: farmParameter.uuid, name: farmParameter.name };
 
@@ -861,9 +871,17 @@ const openEdit = () => {
 
 const openClone = () => {
     resetForm();
-    const { company: empresa, farm: farmParameter, name: nombre } = listRowSelect.value[0];
+    // const { company: empresa, farm: farmParameter, name: nombre } = listRowSelect.value[0];
+    // name.value = nombre;
+    const { code, company: empresa, farm: farmParameter, name: nombre, tasks_of_type:task, done_type:done,work_type_day:work,work_type_tarif:tarif,price_tarif:price } = listRowSelect.value[0];
 
-    name.value = nombre;
+    // name.value = nombre;
+    // codeV.value = code;
+    tasks_of_typeV.value={id:task.uuid, name:task.name}
+    done_typeV.value={id:done.uuid,name:done.name}
+    work_type_dayV.value={id:work,name:work}
+    work_type_tarifV.value = {id:tarif,name:tarif}
+    price_tarifV.value=Number(price)
     company.value = { id: empresa.uuid, name: empresa.name };
     farm.value = { id: farmParameter.uuid, name: farmParameter.name };
     formDialogClone.value = true;
@@ -880,13 +898,30 @@ const openDelete = () => {
 
 const EditRecord = handleSubmitNew(async (values) => {
     const { uuid } = listRowSelect.value[0];
-    const data = {
-        code: values.codeV,
-        name: values.name,
-        company_uuid: values.company ? values.company.id : '25b4319c-e93f-4411-936c-118060f5e7c9',
-        farm_uuid: values.farm ? values.farm.id : values.farm
-    };
+    // const data = {
+    //     code: values.codeV,
+    //     name: values.name,
+    //     company_uuid: values.company ? values.company.id : '25b4319c-e93f-4411-936c-118060f5e7c9',
+    //     farm_uuid: values.farm ? values.farm.id : values.farm
+    // };
     
+
+    const data = {
+        // code: values.codeV,
+        // name: values.name,
+        tasks_of_type_uuid: values.tasks_of_typeV.id,
+        done_of_type_uuid: values.done_typeV.id,
+        work_type_day: values.work_type_dayV.id,
+        work_type_tarif: values.work_type_tarifV.id,
+        price_tarif: values.price_tarifV,
+        // company_uuid: values.company ? values.company.id : '25b4319c-e93f-4411-936c-118060f5e7c9',
+        farm_uuid: values.farm ? values.farm.id : '8ef93a7b-31bf-4233-af80-481020e9cf97'
+    };
+        // Agrega company_uuid solo si company está presente
+        if (values.company) {
+        data.company_uuid = values.company.id;
+    }
+
     const restp = await putRequest(endpoint.value, data, uuid);
     toast.add({ severity: restp.ok ? 'success' : 'error', summary: 'Edit', detail: restp.ok ? 'Editado' : restp.error, life: 3000 });
     loadingData();
@@ -894,12 +929,27 @@ const EditRecord = handleSubmitNew(async (values) => {
 });
 
 const CloneRecord = handleSubmitNew(async (values) => {
+    // const data = {
+    //     code: values.codeV,
+    //     name: values.name,
+    //     company_uuid: values.company ? values.company.id : '25b4319c-e93f-4411-936c-118060f5e7c9',
+    //     farm_uuid: values.farm ? values.farm.id : '8ef93a7b-31bf-4233-af80-481020e9cf97'
+    // };
     const data = {
-        code: values.codeV,
-        name: values.name,
-        company_uuid: values.company ? values.company.id : '25b4319c-e93f-4411-936c-118060f5e7c9',
+        // code: values.codeV,
+        // name: values.name,
+        tasks_of_type_uuid: values.tasks_of_typeV.id,
+        done_of_type_uuid: values.done_typeV.id,
+        work_type_day: values.work_type_dayV.id,
+        work_type_tarif: values.work_type_tarifV.id,
+        price_tarif: values.price_tarifV,
+        // company_uuid: values.company ? values.company.id : '25b4319c-e93f-4411-936c-118060f5e7c9',
         farm_uuid: values.farm ? values.farm.id : '8ef93a7b-31bf-4233-af80-481020e9cf97'
     };
+        // Agrega company_uuid solo si company está presente
+        if (values.company) {
+        data.company_uuid = values.company.id;
+    }
     const restp = await postRequest(endpoint.value, data);
     toast.add({ severity: restp.ok ? 'success' : 'error', summary: 'Clone', detail: restp.ok ? 'Clonado' : restp.error, life: 3000 });
     loadingData();
