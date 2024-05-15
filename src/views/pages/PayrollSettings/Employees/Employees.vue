@@ -224,7 +224,7 @@ const openEdit = () => {
     last_name_b.value = lastNameB;
     gender_id.value = { id: Gender.id, name: Gender.name };
     email.value = Email;
-    document_type.value = DocumentType;
+    document_type.value = DocumentTypeList.value.filter((a) => a.id == DocumentType.id)[0];
     bank_account_number.value = BankAccountNumber;
     bank_account_doc.value = BankAccountDoc;
     payment_type_uuid.value = { id: PaymentType.uuid, name: PaymentType.name };
@@ -233,8 +233,6 @@ const openEdit = () => {
 
     formDialogEdit.value = true;
 };
-
-
 
 const openClone = () => {
     resetForm();
@@ -259,7 +257,7 @@ const openClone = () => {
     last_name_b.value = lastNameB;
     gender_id.value = { id: Gender.id, name: Gender.name };
     email.value = Email;
-    document_type.value = DocumentType;
+    document_type.value = DocumDocumentTypeList.value.filter((a) => a.id == DocumentType.id)[0];entType;
     bank_account_number.value = Number(BankAccountNumber);
     bank_account_doc.value = BankAccountDoc;
     payment_type_uuid.value = { id: PaymentType.uuid, name: PaymentType.name };
@@ -643,11 +641,11 @@ const remove = (aver) => {
             <Dialog v-model:visible="formDialogNew" modal :header="formDialogNewTitle" class="p-fluid mx-auto">
                 <div class="flex flex-wrap gap-3 mb-3 p-fluid">
                     <div class="flex-auto">
-                        <label for="documento" class="font-bold block mb-2"> Document </label>
-                        <InputNumber v-model="documento" class="w-full md:w-15rem" inputId="documento" v-bind="documentoProps" />
+                        <label for="gender_id" class="font-bold block mb-2"> Gender </label>
+                        <Dropdown v-model="gender_id" :options="GenderList" optionLabel="name" class="w-full md:w-15rem" inputId="gender_id" v-bind="gender_idProps" />
                         <div class="flex-auto">
-                            <small id="username-help" :class="{ 'p-invalid text-red-700 ': errorsNew['documento'] }">
-                                {{ errorsNew.documento }}
+                            <small id="username-help" :class="{ 'p-invalid text-red-700': errorsNew['gender_id'] }">
+                                {{ errorsNew.gender_id }}
                             </small>
                         </div>
                     </div>
@@ -661,6 +659,7 @@ const remove = (aver) => {
                         </div>
                     </div>
                 </div>
+
                 <div class="flex flex-wrap gap-3 mb-3 p-fluid">
                     <div class="flex-auto">
                         <label for="last_name" class="font-bold block mb-2"> Surname </label>
@@ -681,46 +680,7 @@ const remove = (aver) => {
                         </div>
                     </div>
                 </div>
-                <div class="flex flex-wrap gap-3 mb-3 p-fluid">
-                    <div class="flex-auto">
-                        <label for="email" class="font-bold block mb-2"> Email </label>
-                        <InputText id="email" v-model="email" class="flex-auto md:w-15rem" autocomplete="off" v-bind="emailProps" inputId="email" :useGrouping="false" />
-                        <div class="flex-auto">
-                            <small id="username-help" :class="{ 'p-invalid text-red-700': errorsNew['email'] }">
-                                {{ errorsNew.email }}
-                            </small>
-                        </div>
-                    </div>
-                    <div class="flex-auto">
-                        <label for="bank_account_number" class="font-bold block mb-2"> Bank Account Number </label>
-                        <InputNumber v-model="bank_account_number" class="w-full md:w-15rem" inputId="bank_account_number" v-bind="bank_account_numberProps" />
-                        <div class="flex-auto">
-                            <small id="username-help" :class="{ 'p-invalid text-red-700': errorsNew['bank_account_number'] }">
-                                {{ errorsNew.bank_account_number }}
-                            </small>
-                        </div>
-                    </div>
-                </div>
-                <div class="flex flex-wrap gap-3 mb-3 p-fluid">
-                    <div class="flex-auto">
-                        <label for="bank_account_doc" class="font-bold block mb-2"> Bank Account Doc </label>
-                        <InputText id="bank_account_doc" v-model="bank_account_doc" class="flex-auto md:w-15rem" autocomplete="off" v-bind="bank_account_docProps" inputId="bank_account_doc" :useGrouping="false" />
-                        <div class="flex-auto">
-                            <small id="username-help" :class="{ 'p-invalid text-red-700': errorsNew['bank_account_doc'] }">
-                                {{ errorsNew.bank_account_doc }}
-                            </small>
-                        </div>
-                    </div>
-                    <div class="flex-auto">
-                        <label for="gender_id" class="font-bold block mb-2"> Gender </label>
-                        <Dropdown v-model="gender_id" :options="GenderList" optionLabel="name" class="w-full md:w-15rem" inputId="gender_id" v-bind="gender_idProps" />
-                        <div class="flex-auto">
-                            <small id="username-help" :class="{ 'p-invalid text-red-700': errorsNew['gender_id'] }">
-                                {{ errorsNew.gender_id }}
-                            </small>
-                        </div>
-                    </div>
-                </div>
+
                 <div class="flex flex-wrap gap-3 mb-3 p-fluid">
                     <div class="flex-auto">
                         <label for="document_type" class="font-bold block mb-2"> Document Type </label>
@@ -732,6 +692,38 @@ const remove = (aver) => {
                         </div>
                     </div>
                     <div class="flex-auto">
+                        <label for="documento" class="font-bold block mb-2"> Document </label>
+                        <InputNumber v-model="documento" class="w-full md:w-15rem" inputId="documento" v-bind="documentoProps" />
+                        <div class="flex-auto">
+                            <small id="username-help" :class="{ 'p-invalid text-red-700 ': errorsNew['documento'] }">
+                                {{ errorsNew.documento }}
+                            </small>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="flex flex-wrap gap-3 mb-3 p-fluid">
+                    <div class="flex-auto">
+                        <label for="bank_account_number" class="font-bold block mb-2"> Bank Account Number </label>
+                        <InputNumber v-model="bank_account_number" class="w-full md:w-15rem" inputId="bank_account_number" v-bind="bank_account_numberProps" />
+                        <div class="flex-auto">
+                            <small id="username-help" :class="{ 'p-invalid text-red-700': errorsNew['bank_account_number'] }">
+                                {{ errorsNew.bank_account_number }}
+                            </small>
+                        </div>
+                    </div>
+                    <div class="flex-auto">
+                        <label for="bank_account_doc" class="font-bold block mb-2"> Bank Account Doc </label>
+                        <InputText id="bank_account_doc" v-model="bank_account_doc" class="flex-auto md:w-15rem" autocomplete="off" v-bind="bank_account_docProps" inputId="bank_account_doc" :useGrouping="false" />
+                        <div class="flex-auto">
+                            <small id="username-help" :class="{ 'p-invalid text-red-700': errorsNew['bank_account_doc'] }">
+                                {{ errorsNew.bank_account_doc }}
+                            </small>
+                        </div>
+                    </div>
+                </div>
+                <div class="flex flex-wrap gap-3 mb-3 p-fluid">
+                    <div class="flex-auto">
                         <label for="payment_type_uuid" class="font-bold block mb-2"> Payment Type </label>
                         <Dropdown v-model="payment_type_uuid" :options="PaymentTypeList" optionLabel="name" class="w-full md:w-15rem" inputId="payment_type_uuid" v-bind="payment_typeProps" />
                         <div class="flex-auto">
@@ -740,14 +732,23 @@ const remove = (aver) => {
                             </small>
                         </div>
                     </div>
-                </div>
-                <div class="flex flex-wrap gap-3 mb-5 p-fluid">
                     <div class="flex-auto">
                         <label for="work_center_uuid" class="font-bold block mb-2"> Work Center </label>
                         <Dropdown v-model="work_center_uuid" :options="WorkCenterList" optionLabel="name" class="w-full md:w-15rem" inputId="work_center_uuid" />
                         <div class="flex-auto">
                             <small id="username-help" :class="{ 'p-invalid text-red-700': errorsNew['work_center_uuid'] }">
                                 {{ errorsNew.work_center_uuid }}
+                            </small>
+                        </div>
+                    </div>
+                </div>
+                <div class="flex flex-wrap gap-3 mb-5 p-fluid">
+                    <div class="flex-auto">
+                        <label for="email" class="font-bold block mb-2"> Email </label>
+                        <InputText id="email" v-model="email" class="flex-auto md:w-15rem" autocomplete="off" v-bind="emailProps" inputId="email" :useGrouping="false" />
+                        <div class="flex-auto">
+                            <small id="username-help" :class="{ 'p-invalid text-red-700': errorsNew['email'] }">
+                                {{ errorsNew.email }}
                             </small>
                         </div>
                     </div>
@@ -771,11 +772,11 @@ const remove = (aver) => {
             <Dialog v-model:visible="formDialogEdit" modal :header="formDialogEditTitle" class="p-fluid text-center mx-auto">
                 <div class="flex flex-wrap gap-3 mb-3 p-fluid">
                     <div class="flex-auto">
-                        <label for="documento" class="font-bold block mb-2"> Document </label>
-                        <InputNumber v-model="documento" class="w-full md:w-15rem" inputId="documento" v-bind="documentoProps" />
+                        <label for="gender_id" class="font-bold block mb-2"> Gender </label>
+                        <Dropdown v-model="gender_id" :options="GenderList" optionLabel="name" class="w-full md:w-15rem" inputId="gender_id" v-bind="gender_idProps" />
                         <div class="flex-auto">
-                            <small id="username-help" :class="{ 'p-invalid text-red-700 ': errorsNew['documento'] }">
-                                {{ errorsNew.documento }}
+                            <small id="username-help" :class="{ 'p-invalid text-red-700': errorsNew['gender_id'] }">
+                                {{ errorsNew.gender_id }}
                             </small>
                         </div>
                     </div>
@@ -789,6 +790,7 @@ const remove = (aver) => {
                         </div>
                     </div>
                 </div>
+
                 <div class="flex flex-wrap gap-3 mb-3 p-fluid">
                     <div class="flex-auto">
                         <label for="last_name" class="font-bold block mb-2"> Surname </label>
@@ -809,46 +811,7 @@ const remove = (aver) => {
                         </div>
                     </div>
                 </div>
-                <div class="flex flex-wrap gap-3 mb-3 p-fluid">
-                    <div class="flex-auto">
-                        <label for="email" class="font-bold block mb-2"> Email </label>
-                        <InputText id="email" v-model="email" class="flex-auto md:w-15rem" autocomplete="off" v-bind="emailProps" inputId="email" :useGrouping="false" />
-                        <div class="flex-auto">
-                            <small id="username-help" :class="{ 'p-invalid text-red-700': errorsNew['email'] }">
-                                {{ errorsNew.email }}
-                            </small>
-                        </div>
-                    </div>
-                    <div class="flex-auto">
-                        <label for="bank_account_number" class="font-bold block mb-2"> Bank Account Number </label>
-                        <InputNumber v-model="bank_account_number" class="w-full md:w-15rem" inputId="bank_account_number" v-bind="bank_account_numberProps" />
-                        <div class="flex-auto">
-                            <small id="username-help" :class="{ 'p-invalid text-red-700': errorsNew['bank_account_number'] }">
-                                {{ errorsNew.bank_account_number }}
-                            </small>
-                        </div>
-                    </div>
-                </div>
-                <div class="flex flex-wrap gap-3 mb-3 p-fluid">
-                    <div class="flex-auto">
-                        <label for="bank_account_doc" class="font-bold block mb-2"> Bank Account Doc </label>
-                        <InputText id="bank_account_doc" v-model="bank_account_doc" class="flex-auto md:w-15rem" autocomplete="off" v-bind="bank_account_docProps" inputId="bank_account_doc" :useGrouping="false" />
-                        <div class="flex-auto">
-                            <small id="username-help" :class="{ 'p-invalid text-red-700': errorsNew['bank_account_doc'] }">
-                                {{ errorsNew.bank_account_doc }}
-                            </small>
-                        </div>
-                    </div>
-                    <div class="flex-auto">
-                        <label for="gender_id" class="font-bold block mb-2"> Gender </label>
-                        <Dropdown v-model="gender_id" :options="GenderList" optionLabel="name" class="w-full md:w-15rem" inputId="gender_id" v-bind="gender_idProps" />
-                        <div class="flex-auto">
-                            <small id="username-help" :class="{ 'p-invalid text-red-700': errorsNew['gender_id'] }">
-                                {{ errorsNew.gender_id }}
-                            </small>
-                        </div>
-                    </div>
-                </div>
+
                 <div class="flex flex-wrap gap-3 mb-3 p-fluid">
                     <div class="flex-auto">
                         <label for="document_type" class="font-bold block mb-2"> Document Type </label>
@@ -860,6 +823,38 @@ const remove = (aver) => {
                         </div>
                     </div>
                     <div class="flex-auto">
+                        <label for="documento" class="font-bold block mb-2"> Document </label>
+                        <InputNumber v-model="documento" class="w-full md:w-15rem" inputId="documento" v-bind="documentoProps" />
+                        <div class="flex-auto">
+                            <small id="username-help" :class="{ 'p-invalid text-red-700 ': errorsNew['documento'] }">
+                                {{ errorsNew.documento }}
+                            </small>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="flex flex-wrap gap-3 mb-3 p-fluid">
+                    <div class="flex-auto">
+                        <label for="bank_account_number" class="font-bold block mb-2"> Bank Account Number </label>
+                        <InputNumber v-model="bank_account_number" class="w-full md:w-15rem" inputId="bank_account_number" v-bind="bank_account_numberProps" />
+                        <div class="flex-auto">
+                            <small id="username-help" :class="{ 'p-invalid text-red-700': errorsNew['bank_account_number'] }">
+                                {{ errorsNew.bank_account_number }}
+                            </small>
+                        </div>
+                    </div>
+                    <div class="flex-auto">
+                        <label for="bank_account_doc" class="font-bold block mb-2"> Bank Account Doc </label>
+                        <InputText id="bank_account_doc" v-model="bank_account_doc" class="flex-auto md:w-15rem" autocomplete="off" v-bind="bank_account_docProps" inputId="bank_account_doc" :useGrouping="false" />
+                        <div class="flex-auto">
+                            <small id="username-help" :class="{ 'p-invalid text-red-700': errorsNew['bank_account_doc'] }">
+                                {{ errorsNew.bank_account_doc }}
+                            </small>
+                        </div>
+                    </div>
+                </div>
+                <div class="flex flex-wrap gap-3 mb-3 p-fluid">
+                    <div class="flex-auto">
                         <label for="payment_type_uuid" class="font-bold block mb-2"> Payment Type </label>
                         <Dropdown v-model="payment_type_uuid" :options="PaymentTypeList" optionLabel="name" class="w-full md:w-15rem" inputId="payment_type_uuid" v-bind="payment_typeProps" />
                         <div class="flex-auto">
@@ -868,14 +863,23 @@ const remove = (aver) => {
                             </small>
                         </div>
                     </div>
-                </div>
-                <div class="flex flex-wrap gap-3 mb-5 p-fluid">
                     <div class="flex-auto">
                         <label for="work_center_uuid" class="font-bold block mb-2"> Work Center </label>
                         <Dropdown v-model="work_center_uuid" :options="WorkCenterList" optionLabel="name" class="w-full md:w-15rem" inputId="work_center_uuid" />
                         <div class="flex-auto">
                             <small id="username-help" :class="{ 'p-invalid text-red-700': errorsNew['work_center_uuid'] }">
                                 {{ errorsNew.work_center_uuid }}
+                            </small>
+                        </div>
+                    </div>
+                </div>
+                <div class="flex flex-wrap gap-3 mb-5 p-fluid">
+                    <div class="flex-auto">
+                        <label for="email" class="font-bold block mb-2"> Email </label>
+                        <InputText id="email" v-model="email" class="flex-auto md:w-15rem" autocomplete="off" v-bind="emailProps" inputId="email" :useGrouping="false" />
+                        <div class="flex-auto">
+                            <small id="username-help" :class="{ 'p-invalid text-red-700': errorsNew['email'] }">
+                                {{ errorsNew.email }}
                             </small>
                         </div>
                     </div>
@@ -898,17 +902,17 @@ const remove = (aver) => {
             <Dialog v-model:visible="formDialogClone" modal :header="formDialogCloneTitle" class="p-fluid text-center mx-auto">
                 <div class="flex flex-wrap gap-3 mb-3 p-fluid">
                     <div class="flex-auto">
-                        <label for="documento" class="font-bold block mb-2"> Document </label>
-                        <InputNumber v-model="documento" class="w-full md:w-15rem" inputId="documento" v-bind="documentoProps" />
+                        <label for="gender_id" class="font-bold block mb-2"> Gender </label>
+                        <Dropdown v-model="gender_id" :options="GenderList" optionLabel="name" class="w-full md:w-15rem" inputId="gender_id" v-bind="gender_idProps" />
                         <div class="flex-auto">
-                            <small id="username-help" :class="{ 'p-invalid text-red-700 ': errorsNew['documento'] }">
-                                {{ errorsNew.documento }}
+                            <small id="username-help" :class="{ 'p-invalid text-red-700': errorsNew['gender_id'] }">
+                                {{ errorsNew.gender_id }}
                             </small>
                         </div>
                     </div>
                     <div class="flex-auto">
                         <label for="first_name" class="font-bold block mb-2"> First Name </label>
-                        <InputText id="first_name" v-model="first_name" class="flex-auto md:w-15rem" autocomplete="off" v-bind="first_nameProps" inputId="first_name" :useGrouping="false" />
+                        <InputText id="username" v-model="first_name" class="flex-auto md:w-15rem" autocomplete="off" v-bind="first_nameProps" inputId="first_name" :useGrouping="false" />
                         <div class="flex-auto">
                             <small id="username-help" :class="{ 'p-invalid text-red-700': errorsNew['first_name'] }">
                                 {{ errorsNew.first_name }}
@@ -916,10 +920,11 @@ const remove = (aver) => {
                         </div>
                     </div>
                 </div>
+
                 <div class="flex flex-wrap gap-3 mb-3 p-fluid">
                     <div class="flex-auto">
                         <label for="last_name" class="font-bold block mb-2"> Surname </label>
-                        <InputText id="last_name" v-model="last_name" class="flex-auto md:w-15rem" autocomplete="off" v-bind="last_nameProps" inputId="last_name" :useGrouping="false" />
+                        <InputText id="username" v-model="last_name" class="flex-auto md:w-15rem" autocomplete="off" v-bind="last_nameProps" inputId="last_name" :useGrouping="false" />
                         <div class="flex-auto">
                             <small id="username-help" :class="{ 'p-invalid text-red-700': errorsNew['last_name'] }">
                                 {{ errorsNew.last_name }}
@@ -928,7 +933,7 @@ const remove = (aver) => {
                     </div>
                     <div class="flex-auto">
                         <label for="last_name_b" class="font-bold block mb-2"> Second Surname </label>
-                        <InputText id="last_name_b" v-model="last_name_b" class="flex-auto md:w-15rem" autocomplete="off" v-bind="last_name_bProps" inputId="last_name_b" :useGrouping="false" />
+                        <InputText id="username" v-model="last_name_b" class="flex-auto md:w-15rem" autocomplete="off" v-bind="last_name_bProps" inputId="last_name_b" :useGrouping="false" />
                         <div class="flex-auto">
                             <small id="username-help" :class="{ 'p-invalid text-red-700': errorsNew['last_name_b'] }">
                                 {{ errorsNew.last_name_b }}
@@ -936,7 +941,69 @@ const remove = (aver) => {
                         </div>
                     </div>
                 </div>
+
                 <div class="flex flex-wrap gap-3 mb-3 p-fluid">
+                    <div class="flex-auto">
+                        <label for="document_type" class="font-bold block mb-2"> Document Type </label>
+                        <Dropdown v-model="document_type" :options="DocumentTypeList" optionLabel="name" class="w-full md:w-15rem" inputId="document_type" v-bind="gender_idProps" />
+                        <div class="flex-auto">
+                            <small id="username-help" :class="{ 'p-invalid text-red-700': errorsNew['document_type'] }">
+                                {{ errorsNew.document_type }}
+                            </small>
+                        </div>
+                    </div>
+                    <div class="flex-auto">
+                        <label for="documento" class="font-bold block mb-2"> Document </label>
+                        <InputNumber v-model="documento" class="w-full md:w-15rem" inputId="documento" v-bind="documentoProps" />
+                        <div class="flex-auto">
+                            <small id="username-help" :class="{ 'p-invalid text-red-700 ': errorsNew['documento'] }">
+                                {{ errorsNew.documento }}
+                            </small>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="flex flex-wrap gap-3 mb-3 p-fluid">
+                    <div class="flex-auto">
+                        <label for="bank_account_number" class="font-bold block mb-2"> Bank Account Number </label>
+                        <InputNumber v-model="bank_account_number" class="w-full md:w-15rem" inputId="bank_account_number" v-bind="bank_account_numberProps" />
+                        <div class="flex-auto">
+                            <small id="username-help" :class="{ 'p-invalid text-red-700': errorsNew['bank_account_number'] }">
+                                {{ errorsNew.bank_account_number }}
+                            </small>
+                        </div>
+                    </div>
+                    <div class="flex-auto">
+                        <label for="bank_account_doc" class="font-bold block mb-2"> Bank Account Doc </label>
+                        <InputText id="bank_account_doc" v-model="bank_account_doc" class="flex-auto md:w-15rem" autocomplete="off" v-bind="bank_account_docProps" inputId="bank_account_doc" :useGrouping="false" />
+                        <div class="flex-auto">
+                            <small id="username-help" :class="{ 'p-invalid text-red-700': errorsNew['bank_account_doc'] }">
+                                {{ errorsNew.bank_account_doc }}
+                            </small>
+                        </div>
+                    </div>
+                </div>
+                <div class="flex flex-wrap gap-3 mb-3 p-fluid">
+                    <div class="flex-auto">
+                        <label for="payment_type_uuid" class="font-bold block mb-2"> Payment Type </label>
+                        <Dropdown v-model="payment_type_uuid" :options="PaymentTypeList" optionLabel="name" class="w-full md:w-15rem" inputId="payment_type_uuid" v-bind="payment_typeProps" />
+                        <div class="flex-auto">
+                            <small id="username-help" :class="{ 'p-invalid text-red-700': errorsNew['payment_type_uuid'] }">
+                                {{ errorsNew.payment_type_uuid }}
+                            </small>
+                        </div>
+                    </div>
+                    <div class="flex-auto">
+                        <label for="work_center_uuid" class="font-bold block mb-2"> Work Center </label>
+                        <Dropdown v-model="work_center_uuid" :options="WorkCenterList" optionLabel="name" class="w-full md:w-15rem" inputId="work_center_uuid" />
+                        <div class="flex-auto">
+                            <small id="username-help" :class="{ 'p-invalid text-red-700': errorsNew['work_center_uuid'] }">
+                                {{ errorsNew.work_center_uuid }}
+                            </small>
+                        </div>
+                    </div>
+                </div>
+                <div class="flex flex-wrap gap-3 mb-5 p-fluid">
                     <div class="flex-auto">
                         <label for="email" class="font-bold block mb-2"> Email </label>
                         <InputText id="email" v-model="email" class="flex-auto md:w-15rem" autocomplete="off" v-bind="emailProps" inputId="email" :useGrouping="false" />
@@ -947,71 +1014,11 @@ const remove = (aver) => {
                         </div>
                     </div>
                     <div class="flex-auto">
-                        <label for="bank_account_number" class="font-bold block mb-2"> Bank Account Number </label>
-                        <InputNumber v-model="bank_account_number" class="w-full md:w-15rem" inputId="bank_account_number" v-bind="bank_account_numberProps" />
-                        <div class="flex-auto">
-                            <small id="username-help" :class="{ 'p-invalid text-red-700': errorsNew['bank_account_number'] }">
-                                {{ errorsNew.bank_account_number }}
-                            </small>
-                        </div>
-                    </div>
-                </div>
-                <div class="flex flex-wrap gap-3 mb-3 p-fluid">
-                    <div class="flex-auto">
-                        <label for="bank_account_doc" class="font-bold block mb-2"> Bank Account Doc </label>
-                        <InputText id="bank_account_doc" v-model="bank_account_doc" class="flex-auto md:w-15rem" autocomplete="off" inputId="bank_account_doc" :useGrouping="false" />
-                        <div class="flex-auto">
-                            <small id="username-help" :class="{ 'p-invalid text-red-700': errorsNew['bank_account_doc'] }">
-                                {{ errorsNew.bank_account_doc }}
-                            </small>
-                        </div>
-                    </div>
-                    <div class="flex-auto">
-                        <label for="gender_id" class="font-bold block mb-2"> Gender </label>
-                        <Dropdown v-model="gender_id" :options="GenderList" optionLabel="name" class="w-full md:w-15rem" inputId="gender_id" />
-                        <div class="flex-auto">
-                            <small id="username-help" :class="{ 'p-invalid text-red-700': errorsNew['gender_id'] }">
-                                {{ errorsNew.gender_id }}
-                            </small>
-                        </div>
-                    </div>
-                </div>
-                <div class="flex flex-wrap gap-3 mb-3 p-fluid">
-                    <div class="flex-auto">
-                        <label for="document_type" class="font-bold block mb-2"> Document Type </label>
-                        <Dropdown v-model="document_type" :options="DocumentTypeList" optionLabel="name" class="w-full md:w-15rem" inputId="document_type"/>
-                        <div class="flex-auto">
-                            <small id="username-help" :class="{ 'p-invalid text-red-700': errorsNew['document_type'] }">
-                                {{ errorsNew.document_type }}
-                            </small>
-                        </div>
-                    </div>
-                    <div class="flex-auto">
-                        <label for="payment_type_uuid" class="font-bold block mb-2"> Payment Type </label>
-                        <Dropdown v-model="payment_type_uuid" :options="PaymentTypeList" optionLabel="name" class="w-full md:w-15rem" inputId="payment_type_uuid"/>
-                        <div class="flex-auto">
-                            <small id="username-help" :class="{ 'p-invalid text-red-700': errorsNew['payment_type_uuid'] }">
-                                {{ errorsNew.payment_type_uuid }}
-                            </small>
-                        </div>
-                    </div>
-                </div>
-                <div class="flex flex-wrap gap-3 mb-5 p-fluid">
-                    <div class="flex-auto">
-                        <label for="work_center_uuid" class="font-bold block mb-2"> Work Center </label>
-                        <Dropdown v-model="work_center_uuid" :options="WorkCenterList" optionLabel="name" class="w-full md:w-15rem" inputId="work_center_uuid" />
-                        <div class="flex-auto">
-                            <small id="username-help" :class="{ 'p-invalid text-red-700': errorsNew['work_center_uuid'] }">
-                                {{ errorsNew.work_center_uuid }}
-                            </small>
-                        </div>
-                    </div>
-                    <div class="flex-auto">
                         <label for="farm" class="font-bold block mb-2"> Farm </label>
                         <AutoComplete v-model="farm_uuid" class="w-full md:w-15rem" inputId="farm" :suggestions="farms" @complete="searchFarms" field="name" dropdown />
                         <div class="flex-auto">
-                            <small id="username-help" :class="{ 'p-invalid text-red-700': errorsNew['farm_uuid'] }">
-                                {{ errorsNew.farm_uuid }}
+                            <small id="username-help" :class="{ 'p-invalid text-red-700': errorsNew['farm'] }">
+                                {{ errorsNew.farm }}
                             </small>
                         </div>
                     </div>
@@ -1051,7 +1058,7 @@ const remove = (aver) => {
                 <label for="username" class="text-2xl font-medium w-6rem"> Are you sure you want to delete the selected ones? </label>
                 <div class="card flex flex-wrap mt-2 gap-2">
                     <div v-for="item in listRowSelect" :key="item.id">
-                        <Chip :label="item.first_name+' '+item.last_name" removable @remove="remove(item)" icon="pi pi-ban" />
+                        <Chip :label="item.first_name + ' ' + item.last_name" removable @remove="remove(item)" icon="pi pi-ban" />
                     </div>
                 </div>
                 <div class="flex justify-content-end gap-2">
