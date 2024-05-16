@@ -225,7 +225,7 @@ const openEdit = () => {
     gender_id.value = { id: Gender.id, name: Gender.name };
     email.value = Email;
     document_type.value = DocumentTypeList.value.filter((a) => a.id == DocumentType.id)[0];
-    bank_account_number.value = BankAccountNumber;
+    bank_account_number.value = Number(BankAccountNumber);
     bank_account_doc.value = BankAccountDoc;
     payment_type_uuid.value = { id: PaymentType.uuid, name: PaymentType.name };
     work_center_uuid.value = { id: WorkC.uuid, name: WorkC.name };
@@ -257,7 +257,7 @@ const openClone = () => {
     last_name_b.value = lastNameB;
     gender_id.value = { id: Gender.id, name: Gender.name };
     email.value = Email;
-    document_type.value = DocumDocumentTypeList.value.filter((a) => a.id == DocumentType.id)[0];entType;
+    document_type.value = DocumentTypeList.value.filter((a) => a.id == DocumentType.id)[0];
     bank_account_number.value = Number(BankAccountNumber);
     bank_account_doc.value = BankAccountDoc;
     payment_type_uuid.value = { id: PaymentType.uuid, name: PaymentType.name };
