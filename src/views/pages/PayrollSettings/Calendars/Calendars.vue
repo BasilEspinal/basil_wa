@@ -206,7 +206,7 @@
 
                 <div class="mb-3">
                     <div class=" flex align-items-center">
-                        <label for="username" class="font-semibold w-3">Type of Date :</label>
+                        <label for="username" class="font-semibold w-3">Type of Date:</label>
                         <Dropdown  v-model="type_dateV" :options="typeOfDates" optionLabel="name" placeholder="Select a type of date" class="flex-auto" v-bin="type_dateVProps"/>
                     </div>
                     <small id="username-help" :class="{ 'p-invalid text-red-700': errorsNew['type_dateV'] }">

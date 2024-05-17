@@ -229,7 +229,7 @@
         </DataTable>
         <Dialog v-model:visible="formDialogNew" modal :header="formDialogNewTitle" class="p-fluid text-center mx-auto">
 
-                <pre>{{errorsNew}}</pre>
+                
                 <div class="mb-3">
                     
                     <div class=" flex align-items-center">
@@ -566,12 +566,12 @@ import { AbilityBuilder} from '@casl/ability';
 const namePage = ' Works Tarif ';
 const titlePage = namePage+'information';
 const dataFromComponent = ref();
+
 const Farms = ref([]);
 const farms = ref([]);
+
 const Compan = ref([]);
 const compa = ref([]);
-const selectedTaskOfType = ref();
-
 
 const taskOfTypes = ref([]);
 const taskOfTypesObject = ref([]);
@@ -581,8 +581,7 @@ const work_type_day = ref([]);
 const work_type_dayObject = ref([]);
 const work_type_tarif = ref([]);
 const work_type_tarifObject = ref([]);
-const price_tarif = ref([]);
-const price_tarifObject = ref([]);
+
 
 
 
@@ -701,15 +700,67 @@ watch(
         console.log(oldValue);
     }
 );
+// const {
+//     handleSubmit: handleSubmitNew,
+//     errors: errorsNew,
+//     defineField,
+//     resetForm
+// } = useForm(
+//     {
+//     validationSchema: toTypedSchema(
+//         z.object({
+            
+//             tasks_of_typeV: z.object({
+//                 name: z.string().min(4),
+//                 id: z.string().min(2)
+//             }),
+//             done_typeV: z.object({
+//                 name: z.string().min(4),
+//                 id: z.string().min(2)
+//             }),
+//             work_type_dayV: z.object({
+//                 name: z.string().min(4),
+//                 id: z.string().min(2)
+//             }),
+//             work_type_tarifV: z
+//             .object({
+//                 name: z.string().min(4),
+//                 id: z.string().min(4)
+//             }),
+//             price_tarifV: z.number().min(2),
+//             farm: z
+//                 .object({
+//                     name: z.string().min(4),
+//                     id: z.string().min(4)
+//                 })
+//                 .optional(),
+//             company: z
+//                 .object({
+//                     name: z.string().min(4),
+//                     id: z.string().min(4)
+//                 })
+//                 .optional()
+//         })
+//     )
+// });
 const {
     handleSubmit: handleSubmitNew,
     errors: errorsNew,
     defineField,
-    resetForm
+    resetForm,
+    setValues
 } = useForm({
+    initialValues: {
+        tasks_of_typeV: { name: '', id: '' }, // Valores por defecto
+        done_typeV: { name: '', id: '' },
+        work_type_dayV: { name: '', id: '' },
+        work_type_tarifV: { name: '', id: '' },
+        price_tarifV: 0,
+        farm: { name: '', id: '' },
+        company: { name: '', id: '' }
+    },
     validationSchema: toTypedSchema(
         z.object({
-            
             tasks_of_typeV: z.object({
                 name: z.string().min(4),
                 id: z.string().min(2)
@@ -724,28 +775,24 @@ const {
             }),
             work_type_tarifV: z.object({
                 name: z.string().min(4),
-                id: z.string().min(2)
+                id: z.string().min(4)
             }),
             price_tarifV: z.number().min(2),
-            farm: z
-                .object({
-                    name: z.string().min(4),
-                    id: z.string().min(4)
-                })
-                .optional(),
-            company: z
-                .object({
-                    name: z.string().min(4),
-                    id: z.string().min(4)
-                })
-                .optional()
+            farm: z.object({
+                name: z.string().min(4),
+                id: z.string().min(4)
+            }).optional(),
+            company: z.object({
+                name: z.string().min(4),
+                id: z.string().min(4)
+            }).optional()
         })
     )
 });
 
 const [farm] = defineField('farm');
 const [company] = defineField('company');
-const[tasks_of_typeV,tasks_of_typeVProps] = defineField('tasks_of_typeV');
+const[tasks_of_typeV] = defineField('tasks_of_typeV');
 const [done_typeV,done_typeVProps] = defineField('done_typeV');
 const [work_type_dayV,work_type_dayVProps] = defineField('work_type_dayV');
 const [price_tarifV,price_tarifVProps] = defineField('price_tarifV');
@@ -799,6 +846,7 @@ const searchTaskOfTypes = (event) => {
         }
     }, 200);
 };
+
 const searchDoneTypes = (event) => {
     setTimeout(() => {
         if (!event.query.trim().length) {
@@ -834,7 +882,17 @@ const searchTypeOfWorkTarif = (event) => {
         }
     }, 200);
 };
-
+const searchFarms = (event) => {
+    setTimeout(() => {
+        if (!event.query.trim().length) {
+            farms.value = [...Farms.value];
+        } else {
+            farms.value = Farms.value.filter((fram) => {
+                return fram.name.toLowerCase().startsWith(event.query.toLowerCase());
+            });
+        }
+    }, 200);
+};
 const searchCompannies = (event) => {
     setTimeout(() => {
         if (!event.query.trim().length) {
@@ -849,6 +907,7 @@ const searchCompannies = (event) => {
 const openNew = () => {
     resetForm();
     formDialogNew.value = true;
+    
 
 };
 
@@ -956,17 +1015,7 @@ const CloneRecord = handleSubmitNew(async (values) => {
     formDialogClone.value = false;
 });
 
-const searchFarms = (event) => {
-    setTimeout(() => {
-        if (!event.query.trim().length) {
-            farms.value = [...Farms.value];
-        } else {
-            farms.value = Farms.value.filter((fram) => {
-                return fram.name.toLowerCase().startsWith(event.query.toLowerCase());
-            });
-        }
-    }, 200);
-};
+
 
 const ExportRecord = () => {
     const eventos = exportAll.value.name == 'ALL' ? dataFromComponent.value.map((data) => data) : listRowSelect.value.map((data) => data);
