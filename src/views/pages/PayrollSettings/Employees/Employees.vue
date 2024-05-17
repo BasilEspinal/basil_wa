@@ -1,112 +1,479 @@
+<script setup>
+import { ref, watch, provide, onBeforeMount, onMounted } from 'vue';
+import useDataAPI from '@/composables/DataAPI/FetchDataAPI.js';
+import { useToast } from 'primevue/usetoast';
+import { FilterMatchMode, FilterOperator } from 'primevue/api';
+import useData from '@/composables/DataAPI/FetchDataAPICopy.js';
+const { getRequest, postRequest, putRequest, deleteRequest } = useData();
+import { useRouter } from 'vue-router';
+import { useForm } from 'vee-validate';
+import { toTypedSchema } from '@vee-validate/zod';
+import * as XLSX from 'xlsx';
+import { saveAs } from 'file-saver';
+import { z } from 'zod';
+import ability from '@/service/ability.js';
+import { AbilityBuilder } from '@casl/ability';
+const namePage = ' Employees ';
+const titlePage = namePage + 'information';
+const dataFromComponent = ref();
+const Farms = ref([]);
+const farms = ref([]);
+const GenderList = ref([]);
+const DocumentTypeList = ref([]);
+const WorkCenterList = ref([]);
+const PaymentTypeList = ref([]);
+const taskTipesL = ref([]);
+
+const formDialogNew = ref(false);
+const formDialogNewTitle = 'Create new' + namePage;
+const formDialogEditTitle = 'Edit' + namePage;
+const formDialogCloneTitle = 'Clone' + namePage;
+const formDialogExportTitle = 'Export' + namePage;
+const formDialogDeleteTitle = 'Delete' + namePage;
+const formDialogEdit = ref(false);
+const formDialogClone = ref(false);
+const formDialogExport = ref(false);
+const formDialogDelete = ref(false);
+const toast = useToast();
+const filename = ref('table');
+const isChanging = ref(false);
+let endpoint = ref('/employees');
+const typeDateList = ref([]);
+
+const size = ref({ label: 'Normal', value: 'normal' });
+const sizeOptions = ref([
+    { label: 'Small', value: 'small', class: 'sm' },
+    { label: 'Normal', value: 'normal' },
+    { label: 'Large', value: 'large', class: 'lg' }
+]);
+
+onBeforeMount(() => {
+    readAll();
+    initFilters();
+});
+const listRowSelect = ref([]);
+const loading = ref(false);
+const onRowSelect = (data) => {
+    listRowSelect.value = data;
+    //assignValues(mode.value)
+};
+
+watch(listRowSelect, onRowSelect);
+
+const onSelectAllChange = () => {
+    onRowSelect();
+};
+const filters = ref();
+
+const clearFilter = () => {
+    initFilters();
+};
+
+const initFilters = () => {
+    filters.value = {
+        global: { value: null, matchMode: FilterMatchMode.CONTAINS },
+        document_type: { operator: FilterOperator.AND, constraints: [{ value: null, matchMode: FilterMatchMode.STARTS_WITH }] },
+        'workCenter.name': { operator: FilterOperator.AND, constraints: [{ value: null, matchMode: FilterMatchMode.STARTS_WITH }] },
+        document: { operator: FilterOperator.AND, constraints: [{ value: null, matchMode: FilterMatchMode.STARTS_WITH }] },
+        first_name: { operator: FilterOperator.AND, constraints: [{ value: null, matchMode: FilterMatchMode.STARTS_WITH }] },
+        last_name: { operator: FilterOperator.AND, constraints: [{ value: null, matchMode: FilterMatchMode.STARTS_WITH }] },
+        gender_id: { operator: FilterOperator.AND, constraints: [{ value: null, matchMode: FilterMatchMode.STARTS_WITH }] },
+        email: { operator: FilterOperator.AND, constraints: [{ value: null, matchMode: FilterMatchMode.STARTS_WITH }] },
+        bank_account_number: { operator: FilterOperator.AND, constraints: [{ value: null, matchMode: FilterMatchMode.STARTS_WITH }] },
+        bank_account_doc: { operator: FilterOperator.AND, constraints: [{ value: null, matchMode: FilterMatchMode.STARTS_WITH }] },
+        'payment_type.name': { operator: FilterOperator.AND, constraints: [{ value: null, matchMode: FilterMatchMode.STARTS_WITH }] },
+        'farm.name': { operator: FilterOperator.AND, constraints: [{ value: null, matchMode: FilterMatchMode.STARTS_WITH }] },
+        companyName: { operator: FilterOperator.AND, constraints: [{ value: null, matchMode: FilterMatchMode.STARTS_WITH }] },
+        created_at: { operator: FilterOperator.AND, constraints: [{ value: null, matchMode: FilterMatchMode.STARTS_WITH }] },
+        updated_at: { operator: FilterOperator.AND, constraints: [{ value: null, matchMode: FilterMatchMode.STARTS_WITH }] },
+        'status.name': { operator: FilterOperator.AND, constraints: [{ value: null, matchMode: FilterMatchMode.STARTS_WITH }] }
+    };
+};
+
+const documentFrozen = ref(false);
+const readAll = async () => {
+    loadingData();
+    const respFarms = await getRequest('/farms');
+    if (!respFarms.ok) toast.add({ severity: 'error', detail: 'Error' + respFarms.error, life: 3000 });
+    Farms.value = respFarms.data.data.map((farm) => ({ id: farm.uuid, name: farm.name }));
+
+    const respDocumentTypeList = await getRequest('/lists/documentType');
+    if (!respDocumentTypeList.ok) toast.add({ severity: 'error', detail: 'Error' + respDocumentTypeList.error, life: 3000 });
+    DocumentTypeList.value = respDocumentTypeList.data.map((comp) => ({ id: comp.id, name: comp.label }));
+
+    const respWorkCenter = await getRequest('/work_centers');
+    console.log('respWorkCenter', respWorkCenter);
+    if (!respWorkCenter.ok) toast.add({ severity: 'error', detail: 'Error' + respWorkCenter.error, life: 3000 });
+    WorkCenterList.value = respWorkCenter.data.data.map((comp) => ({ id: comp.uuid, name: comp.name }));
+
+    const respGenderList = await getRequest('/lists/genderType');
+    if (!respGenderList.ok) toast.add({ severity: 'error', detail: 'Error' + respGenderList.error, life: 3000 });
+    GenderList.value = respGenderList.data.map((comp) => ({ id: comp.id, name: comp.label }));
+
+    const respPaymentType = await getRequest('/payment_types');
+    if (!respPaymentType.ok) toast.add({ severity: 'error', detail: 'Error' + respPaymentType.error, life: 3000 });
+    PaymentTypeList.value = respPaymentType.data.data.map((comp) => ({ id: comp.uuid, name: comp.name }));
+};
+const loadingData = async () => {
+    const response = await getRequest(endpoint.value);
+    if (!response.ok) toast.add({ severity: 'error', detail: 'Error' + response.error, life: 3000 });
+    dataFromComponent.value = response.data.data;
+};
+watch(
+    () => dataFromComponent.value,
+    (newValue, oldValue) => {}
+);
+watch(
+    () => isChanging.value,
+    (newValue, oldValue) => {
+        readAll(endpoint.value);
+        console.log(newValue);
+        console.log(oldValue);
+    }
+);
+const {
+    handleSubmit: handleSubmitNew,
+    errors: errorsNew,
+    defineField,
+    resetForm
+} = useForm({
+    validationSchema: toTypedSchema(
+        z.object({
+            documento: z.number().min(10000000, 'min length 8').max(999999999999, 'max length 12'),
+            first_name: z.string().min(3),
+            last_name: z.string().min(3),
+            last_name_b: z.string().min(3),
+            gender_id: z.object({
+                id: z.string(),
+                name: z.string().min(3)
+            }),
+            email: z.string().email(),
+            document_type: z.object({
+                id: z.string(),
+                name: z.string().min(3)
+            }),
+            bank_account_number: z.number().min(10000000, 'min length 8'),
+            bank_account_doc: z.string().min(3),
+            payment_type_uuid: z.object({
+                id: z.string().min(3),
+                name: z.string().min(3)
+            }),
+            work_center_uuid: z.object({
+                id: z.string().min(3),
+                name: z.string().min(3)
+            }),
+            farm_uuid: z
+                .object({
+                    id: z.string().min(3),
+                    name: z.string().min(3)
+                })
+                .optional()
+        })
+    )
+});
+const [documento, documentoProps] = defineField('documento');
+const [first_name, first_nameProps] = defineField('first_name');
+const [last_name, last_nameProps] = defineField('last_name');
+const [last_name_b, last_name_bProps] = defineField('last_name_b');
+const [email, emailProps] = defineField('email');
+const [bank_account_number, bank_account_numberProps] = defineField('bank_account_number');
+const [bank_account_doc, bank_account_docProps] = defineField('bank_account_doc');
+const [gender_id] = defineField('gender_id');
+const [document_type] = defineField('document_type');
+const [payment_type_uuid] = defineField('payment_type_uuid');
+const [work_center_uuid] = defineField('work_center_uuid');
+const [farm_uuid] = defineField('farm_uuid');
+
+const extenciones = ref([{ name: 'CSV' }, { name: 'XLS' }]);
+const optionsEsport = ref([{ name: 'ALL' }, { name: 'SELECTED' }]);
+const format = ref({ name: 'CSV' });
+const exportAll = ref({ name: 'ALL' });
+const selectedRegisters = ref([]);
+const RowSelect = (data) => {
+    listRowSelect.value = data;
+};
+let headerNames = ref([]);
+provide('isChanging', isChanging);
+watch(listRowSelect, RowSelect);
+
+const openNew = () => {
+    resetForm();
+    formDialogNew.value = true;
+};
+
+const openEdit = () => {
+    resetForm();
+    const {
+        document: documentoN,
+        first_name: firstName,
+        last_name: lastName,
+        last_name_b: lastNameB,
+        email: Email,
+        gender: Gender,
+        document_type: DocumentType,
+        bank_account_number: BankAccountNumber,
+        bank_account_doc: BankAccountDoc,
+        payment_type: PaymentType,
+        workCenter: WorkC,
+        farm: Farm
+    } = listRowSelect.value[0];
+
+    documento.value = Number(documentoN);
+    first_name.value = firstName;
+    last_name.value = lastName;
+    last_name_b.value = lastNameB;
+    gender_id.value = { id: Gender.id, name: Gender.name };
+    email.value = Email;
+    document_type.value = DocumentTypeList.value.filter((a) => a.id == DocumentType.id)[0];
+    bank_account_number.value = Number(BankAccountNumber);
+    bank_account_doc.value = BankAccountDoc;
+    payment_type_uuid.value = { id: PaymentType.uuid, name: PaymentType.name };
+    work_center_uuid.value = { id: WorkC.uuid, name: WorkC.name };
+    farm_uuid.value = { id: Farm.id, name: Farm.name };
+
+    formDialogEdit.value = true;
+};
+
+const openClone = () => {
+    resetForm();
+    const {
+        document: documentoN,
+        first_name: firstName,
+        last_name: lastName,
+        last_name_b: lastNameB,
+        email: Email,
+        gender: Gender,
+        document_type: DocumentType,
+        bank_account_number: BankAccountNumber,
+        bank_account_doc: BankAccountDoc,
+        payment_type: PaymentType,
+        workCenter: WorkC,
+        farm: Farm
+    } = listRowSelect.value[0];
+
+    documento.value = Number(documentoN);
+    first_name.value = firstName;
+    last_name.value = lastName;
+    last_name_b.value = lastNameB;
+    gender_id.value = { id: Gender.id, name: Gender.name };
+    email.value = Email;
+    document_type.value = DocumentTypeList.value.filter((a) => a.id == DocumentType.id)[0];
+    bank_account_number.value = Number(BankAccountNumber);
+    bank_account_doc.value = BankAccountDoc;
+    payment_type_uuid.value = { id: PaymentType.uuid, name: PaymentType.name };
+    work_center_uuid.value = { id: WorkC.uuid, name: WorkC.name };
+    farm_uuid.value = { id: Farm.id, name: Farm.name };
+
+    formDialogClone.value = true;
+};
+
+const openExport = () => {
+    format.value = { name: 'CSV' };
+    formDialogExport.value = true;
+};
+
+const openDelete = () => {
+    formDialogDelete.value = true;
+};
+
+const createRecord = handleSubmitNew(async (values) => {
+    const data = {
+        document: values.documento + '',
+        first_name: values.first_name,
+        last_name: values.last_name,
+        last_name_b: values.last_name_b,
+        gender_id: values.gender_id.id,
+        email: values.email,
+        document_type: values.document_type.id,
+        bank_account_number: values.bank_account_number + '',
+        bank_account_doc: values.bank_account_doc,
+        payment_type_uuid: values.payment_type_uuid.id,
+        work_center_uuid: values.work_center_uuid.id,
+        farm_uuid: values.farm_uuid.id
+    };
+    console.log('data: ', data);
+    const restp = await postRequest(endpoint.value, data);
+
+    toast.add({ severity: restp.ok ? 'success' : 'error', summary: 'Create', detail: restp.ok ? 'Creado' : restp.error, life: 3000 });
+    loadingData();
+    formDialogNew.value = false;
+});
+
+const EditRecord = handleSubmitNew(async (values) => {
+    const { uuid } = listRowSelect.value[0];
+    const data = {
+        document: values.documento + '',
+        first_name: values.first_name,
+        last_name: values.last_name,
+        last_name_b: values.last_name_b,
+        gender_id: values.gender_id.id,
+        email: values.email,
+        document_type: values.document_type.id,
+        bank_account_number: values.bank_account_number + '',
+        bank_account_doc: values.bank_account_doc,
+        payment_type_uuid: values.payment_type_uuid.id,
+        work_center_uuid: values.work_center_uuid.id,
+        farm_uuid: values.farm_uuid.id
+    };
+    console.log('DATA: ', data);
+
+    const restp = await putRequest(endpoint.value, data, uuid);
+    toast.add({ severity: restp.ok ? 'success' : 'error', summary: 'Edit', detail: restp.ok ? 'Editado' : restp.error, life: 3000 });
+    loadingData();
+    formDialogEdit.value = false;
+});
+
+const cloneRecord = handleSubmitNew(async (values) => {
+    const data = {
+        document: values.documento + '',
+        first_name: values.first_name,
+        last_name: values.last_name,
+        last_name_b: values.last_name_b,
+        gender_id: values.gender_id.id,
+        email: values.email,
+        document_type: values.document_type.id,
+        bank_account_number: values.bank_account_number + '',
+        bank_account_doc: values.bank_account_doc,
+        payment_type_uuid: values.payment_type_uuid.id,
+        work_center_uuid: values.work_center_uuid.id,
+        farm_uuid: values.farm_uuid.id
+    };
+    console.log('data: ', data);
+    const restp = await postRequest(endpoint.value, data);
+
+    toast.add({ severity: restp.ok ? 'success' : 'error', summary: 'Create', detail: restp.ok ? 'Creado' : restp.error, life: 3000 });
+    loadingData();
+    formDialogClone.value = false;
+});
+
+const searchFarms = (event) => {
+    setTimeout(() => {
+        if (!event.query.trim().length) {
+            farms.value = [...Farms.value];
+        } else {
+            farms.value = Farms.value.filter((fram) => {
+                return fram.name.toLowerCase().startsWith(event.query.toLowerCase());
+            });
+        }
+    }, 200);
+};
+
+const ExportRecord = () => {
+    const eventos = exportAll.value.name == 'ALL' ? dataFromComponent.value.map((data) => data) : listRowSelect.value.map((data) => data);
+    formDialogExport.value = false;
+    if (!eventos.length) return;
+    if (format.value.name == 'CSV') formatCSV(eventos);
+    else formatXLS(eventos);
+};
+
+function formatCSV(eventos) {
+    const dataExport = [];
+    dataExport.push(',' + Object.keys(eventos[0]) + '\n');
+    dataExport.push(eventos.map((row) => Object.values(row) + '\n'));
+
+    const blob = new Blob([dataExport.toString()], { type: 'text/csv' });
+    const link = document.createElement('a');
+    link.href = URL.createObjectURL(blob);
+    link.download = filename.value;
+    link.click();
+}
+
+function formatXLS(eventos) {
+    const data = eventos.map((row) => Object.values(row));
+    const headers = Object.keys(eventos[0]);
+    const prueba = [headers, ...data];
+    const workbook = XLSX.utils.book_new();
+    const worksheet = XLSX.utils.aoa_to_sheet(prueba, { headers });
+    XLSX.utils.book_append_sheet(workbook, worksheet, 'Reporte');
+    const binaryData = XLSX.write(workbook, { type: 'array' });
+
+    const file = new File([binaryData], { type: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet' });
+    saveAs(file, filename.value + '.xlsx');
+}
+
+const DeleteRecord = async () => {
+    formDialogDelete.value = false;
+
+    try {
+        const deletePromises = [];
+        listRowSelect.value.forEach(async (item) => {
+            const deletePromise = await deleteRequest(endpoint.value, item.uuid);
+            deletePromises.push(deletePromise);
+        });
+        await Promise.all(deletePromises);
+        loadingData();
+        toast.add({ severity: 'success', summary: 'Deleted Record', detail: 'Deleted', life: 3000 });
+    } catch (error) {
+        console.error('Error deleting:', error);
+        toast.add({ severity: 'error', summary: 'Error', detail: 'Error deleting', life: 3000 });
+    } finally {
+        listRowSelect.value = [];
+    }
+};
+
+const remove = (aver) => {
+    const index = listRowSelect.value.findIndex((x) => x.id === aver.id);
+    if (index !== -1) listRowSelect.value.splice(index, 1);
+};
+</script>
+
 <template>
     <div>
         <div class="card">
-            <div>
-                <h1>Información de Empleados</h1>
-            </div>
+            <h1>{{ titlePage }}</h1>
         </div>
-
         <div class="card">
-            <div class="grid">
-                <div class="col-xs-12 col-sm-6 col-md-4 mb-2 text-center mx-auto">
-                    <Toolbar class="bg-gray-900 shadow-2" style="border-radius: 3rem; background-image: linear-gradient(to right, var(--green-100), var(--green-200))">
-                        <template v-slot:start>
-                            <div>
-                                
-                                
-                                <Button v-if = "ability.can('empleado_crear')" label="New" icon="pi pi-plus" class="p-button-success mr-2 ml-2 mb-2 mt-2" @click="openNew" size="large" />
-                                <!-- <i class="pi pi-bars p-toolbar-separator mr-2 ml-2 mb-2 mt-2"></i> -->
-                                <Button v-if = "ability.can('empleado_editar')" :disabled="!(listRowSelect.length > 0 && listRowSelect.length < 2)" label="Edit" icon="pi pi-file-edit" class="p-button-help mr-2 ml-2 mb-2 mt-2" @click="openEdit" size="large" />
-                                <Button :disabled="!(listRowSelect.length > 0 && listRowSelect.length < 2)" label="Clone" icon="pi pi-copy" class="p-button-secondary mr-2 ml-2 mb-2 mt-2" @click="openClone" size="large" />
-                                <Button label="Export" icon="pi pi-file-import" class="p-button-warning mr-2 ml-2 mb-2 mt-2" @click="openExport" size="large" />
-                                <Button v-if = "ability.can('empleado_eliminar')" :disabled="!(listRowSelect.length > 0 && listRowSelect.length < 2)" label="Delete" icon="pi pi-trash" class="p-button-danger mr-2 ml-2 mb-2 mt-2" @click="openDelete" size="large" />
-                            </div>
-                        </template>
-                    </Toolbar>
-                </div>
-            </div>
-            <div class="card" v-if = "ability.can('empleado_ver_detalles')">
-                <Button type="button" icon="pi pi-table" label="" class="p-button-outlined mb-2" @click="customTable" />
-                <h5 v-if="valueCustomTable.status">¿Which columns do you want to watch?</h5>
-                <MultiSelect v-if="valueCustomTable.status" v-model="column" :options="columnas" optionLabel="field" placeholder="Seleccione columnas" :filter="true" display="chip" class="w-full md:w-20rem" @change="onColumnsChange(column)">
-                    <template #value="slotProps">
-                        <div class="inline-flex align-items-center py-1 px-2 bg-primary text-primary border-round mr-2" v-for="option of slotProps.value" :key="option.header">
-                            <div>{{ option.header }}</div>
-                        </div>
-                    </template>
-
-                    <template #option="slotProps">
-                        <div class="flex align-items-center">
-                            <div>{{ slotProps.option.header }}</div>
-                        </div>
-                    </template>
-                </MultiSelect>
-            </div>
-
-            <!-- <div class="card">
-                <div v-if="valueCustomTable.status" class="flex justify-content-center mb-4">
-                    <SelectButton v-model="size" :options="sizeOptions" optionLabel="label" dataKey="label"> </SelectButton>
-                </div>
-            </div> -->
-
-            <!-- <div class="card" v-if="valueCustomTable.status">
-                <h5>¿Which columns do you want to watch?</h5>
-                <MultiSelect v-model="column" :options="columnas" optionLabel="field" placeholder="Seleccione columnas" :filter="true" display="chip" class="w-full md:w-50rem" @change="onColumnsChange(column)">
-                    <template #value="slotProps">
-                        <div class="inline-flex align-items-center py-1 px-2 bg-primary text-primary border-round mr-2" v-for="option of slotProps.value" :key="option.header">
-                            <div>{{ option.header }}</div>
-                        </div>
-                    </template>
-
-                    <template #option="slotProps">
-                        <div class="flex align-items-center">
-                            <div>{{ slotProps.option.header }}</div>
-                        </div>
-                    </template>
-                </MultiSelect>
-            </div> -->
-
-            <!-- <template v-if="$can('producto_listado')">  -->
-
-            <template>
-                <h1>No tienes permisos</h1>
-            </template>
-
+            <Toolbar>
+                <template #center>
+                    <Button v-if="ability.can('producto_crear')" label="New" icon="pi pi-plus" class="p-button-success mb-2 mt-2" @click="openNew" size="large" />
+                    <Divider v-if="ability.can('producto_crear')" layout="vertical" />
+                    <Button v-if="ability.can('producto_editar')" :disabled="!(selectedRegisters.length > 0 && selectedRegisters.length < 2)" label="Edit" icon="pi pi-file-edit" class="p-button-help mb-2 mt-2" @click="openEdit" size="large" />
+                    <Divider v-if="ability.can('producto_editar')" layout="vertical" />
+                    <Button :disabled="!(selectedRegisters.length > 0 && selectedRegisters.length < 2)" label="Clone" icon="pi pi-copy" class="p-button-secondary mb-2 mt-2" @click="openClone" size="large" />
+                    <Divider layout="vertical" />
+                    <Button :disabled="headerNames.length > 0" label="Export" icon="pi pi-file-import" class="p-button-warning mb-2 mt-2" @click="openExport" size="large" />
+                    <Divider layout="vertical" />
+                    <Button v-if="ability.can('producto_eliminar')" :disabled="!selectedRegisters.length > 0" label="Delete" icon="pi pi-trash" class="p-button-danger mb-2 mt-2" @click="openDelete" size="large" />
+                </template>
+            </Toolbar>
             <DataTable
-                id="tblData"
-                ref="dt"
-                v-model:selection="selectedRegisters"
-                v-model:filters="filters"
-                :class="`p-datatable-${size.class}`"
-                :value="dataResponseAPI.data"
-                showGridlines
-                :globalFilterFields="['workCenter.name', 'document', 'first_name', 'last_name','gender.name', 'email', 'bank_account_number', 'bank_account_doc', 'payment_type.name', 'farm.name', 'company.name', 'created_at', 'updated_at', 'status.name']"
-                tableStyle="min-width: 75rem"
+                :value="dataFromComponent"
                 dataKey="uuid"
-                :paginator="true"
+                tableStyle="min-width: 75rem"
+                showGridlines
                 :loading="loading"
-                :rows="20"
-                :rowsPerPageOptions="[5, 10, 20, 50]"
-                filterDisplay="menu"
                 scrollable
                 scrollHeight="600px"
                 resizableColumns
                 columnResizeMode="expand"
                 sortMode="multiple"
+                :paginator="true"
+                :rows="50"
+                :rowsPerPageOptions="[5, 10, 20, 50]"
+                :class="`p-datatable-${size.class} mt-3`"
                 @row-select="onRowSelect(selectedRegisters)"
                 @row-unselect="onRowSelect(selectedRegisters)"
                 @select-all-change="onSelectAllChange"
-                v-if = "ability.can('empleado_listado')"
+                v-model:selection="selectedRegisters"
+                filterDisplay="menu"
+                v-model:filters="filters"
+                :globalFilterFields="[
+                    'workCenter.name',
+                    'document',
+                    'first_name',
+                    'last_name',
+                    'gender.name',
+                    'email',
+                    'bank_account_number',
+                    'bank_account_doc',
+                    'payment_type.name',
+                    'farm.name',
+                    'company.name',
+                    'created_at',
+                    'updated_at',
+                    'status.name'
+                ]"
             >
-                <!-- <template #header>
-                <div class="flex justify-content-between flex-column sm:flex-row">
-                    <Button type="button" icon="pi pi-filter-slash" label="Limpiar" class="p-button-outlined mb-2" @click="clearFilter()" />
-                    <span class="p-input-icon-left mb-2">
-                        <i class="pi pi-search" />
-                        <InputText v-model="filters['global'].value" placeholder="Buscar" style="width: 100%" />
-                    </span>
-                </div>
-            </template> -->
                 <template #header>
                     <Toolbar class="mb-2">
                         <template v-slot:start>
@@ -234,9 +601,12 @@
                     </template>
                 </Column>
 
-                <Column field="companyName" header="Company Name" sortable>
+                <Column field="companyName" filterField="companyName" header="Company Name" sortable>
                     <template #body="{ data }">
                         {{ data.company.name }}
+                    </template>
+                    <template #filter="{ filterModel }">
+                        <InputText v-model="filterModel.value" type="text" class="p-column-filter" placeholder="Search by farm" />
                     </template>
                 </Column>
 
@@ -268,943 +638,437 @@
                 </Column>
             </DataTable>
 
-            <Dialog v-model:visible="formDialog" :style="{ width: '700px' }" :header="headerDialog" :modal="true" class=" text-center mx-auto">
-              <!-- <pre>{{ dataPost }}</pre>  
-                
-              <pre>{{ values }}</pre>
-                <pre>{{ errors }}</pre> -->
-                
-                <div class="col-12">
-            <div class="card">
-                
-                <div class="p-fluid formgrid grid">
-                    <div class="field col-12 md:col-6">
-                        <label for="document_id" class="p-d-block">Document</label>
-                        <InputText v-model="documentV" inputId="document_id" aria-labelledby="basic" placeholder="Type your document here" :class="{ 'p-invalid': errors['document'] }"/>
-                        <label for="document_id" class="block text-l mb-2" :class="{ 'p-invalid text-red-700': errors['document']}">
-                            {{ errors['document']  }}
-                        </label>
+            <Dialog v-model:visible="formDialogNew" modal :header="formDialogNewTitle" class="p-fluid mx-auto">
+                <div class="flex flex-wrap gap-3 mb-3 p-fluid">
+                    <div class="flex-auto">
+                        <label for="gender_id" class="font-bold block mb-2"> Gender </label>
+                        <Dropdown v-model="gender_id" :options="GenderList" optionLabel="name" class="w-full md:w-15rem" inputId="gender_id" v-bind="gender_idProps" />
+                        <div class="flex-auto">
+                            <small id="username-help" :class="{ 'p-invalid text-red-700': errorsNew['gender_id'] }">
+                                {{ errorsNew.gender_id }}
+                            </small>
+                        </div>
                     </div>
-                    <div class="field col-12 md:col-6">
-                        <label for="typeOfDocumentId" class="p-d-block">Type of documents</label>
-                        <Dropdown v-model="selectedDocumentType" :options="typesDocument" optionLabel="label" inputId="typeOfDocumentId" aria-labelledby="basic" :placeholder="selectedDocumentType.name" />
+                    <div class="flex-auto">
+                        <label for="first_name" class="font-bold block mb-2"> First Name </label>
+                        <InputText id="username" v-model="first_name" class="flex-auto md:w-15rem" autocomplete="off" v-bind="first_nameProps" inputId="first_name" :useGrouping="false" />
+                        <div class="flex-auto">
+                            <small id="username-help" :class="{ 'p-invalid text-red-700': errorsNew['first_name'] }">
+                                {{ errorsNew.first_name }}
+                            </small>
+                        </div>
                     </div>
-                    
-                    <!-- <div class="field col-12">
-                        <label for="address">Address</label>
-                        <Textarea id="address" rows="4" />
-                    </div> -->
-                    <div class="field col-12 md:col-6">
-                        <label for="name" class="p-d-block">Name</label>
-                        <InputText v-model="firstNameV" inputId="name" aria-labelledby="basic" placeholder="Type your name here" :class="{ 'p-invalid': errors['first_name'] }"/>
-                        <label for="name" class="block text-l mb-2" :class="{ 'text-red-700': errors['first_name'] }">
-                        {{ errors['first_name'] }}
-                        </label>
-                    </div>
-                    <div class="field col-12 md:col-3">
-                        <label for="lastName" class="p-d-block">Last Name</label>
-                        <InputText v-model="lastNameV" inputId="lastName" aria-labelledby="basic" placeholder="Type your last name here" :class="{ 'p-invalid': errors['last_name'] }"/>
-                        <label for="lastName" class="block text-l mb-2" :class="{ 'text-red-700': errors['last_name'] }">
-                        {{ errors['last_name'] }}
-                        </label>
-                    
-                    </div>
-                    <div class="field col-12 md:col-3">
-                        <label for="email" class="p-d-block">Email</label>
-                        <InputText v-model="emailV" inputId="email" aria-labelledby="basic" placeholder="Type your email here" :class="{ 'p-invalid': errors['email'] }" />
-                        <label for="email" class="block text-l mb-2" :class="{ 'text-red-700': errors['email'] }">
-                        {{ errors['email'] }}
-                        </label>
-                    </div>
-
-                    <div class="field col-12 md:col-6">
-                        <label for="bankAccountNumber" class="p-d-block">Account number</label>
-                        <InputText v-model="bankAccountNumberV" inputId="bankAccountNumber" aria-labelledby="basic" placeholder="Type your account here" :class="{ 'p-invalid': errors['bank_account_number'] }"/>
-                        <label for="bankAccountNumber" class="block text-l mb-2" :class="{ 'text-red-700': errors['bank_account_number'] }">
-                        {{ errors['bank_account_number'] }}
-                        </label>
-                    </div>
-                    <div class="field col-12 md:col-6">
-                        <label for="bankAccountDoc" class="p-d-block">Account Document</label>
-                        <InputText v-model="bankAccountDocV" inputId="bankAccountDoc" aria-labelledby="basic" placeholder="Type your account document here" :class="{ 'p-invalid': errors['bank_account_doc'] }"/>
-                        <label for="bankAccountDoc" class="block text-l mb-2" :class="{ 'text-red-700': errors['bank_account_doc'] }">
-                        {{ errors['bank_account_doc'] }}
-                        </label>
-                    </div>
-                        
-                    
-                    
-                        
-                    
-                        
-                    <div class="field col-12 md:col-6">
-                        <label for="genderType" class="p-d-block">Select gender</label>
-                        <Dropdown v-model="selectedGenderType" :options="genderTypes" optionLabel="label" inputId="genderType" aria-labelledby="basic" :placeholder="selectedGenderType.label" />
-                    </div>
-                    <div class="field col-12 md:col-3">
-                        <label for="paymentTypes" class="p-d-block">Payment types</label>
-                        <Dropdown v-model="selectedPaymentType" :options="paymentTypes" optionLabel="code" inputId="paymentType" aria-labelledby="basic" :placeholder="selectedPaymentType.code" />
-                    
-                    </div>
-                    <div class="field col-12 md:col-3">
-                        <label for="workCenter" class="p-d-block">Work Center</label>
-                        <Dropdown v-model="selectedWorkCenters" :options="workCenters" optionLabel="name" inputId="workCenter" aria-labelledby="basic" :placeholder="selectedWorkCenters.name" />
-                    </div>
-
                 </div>
-            </div>
-        </div>
 
-                <!-- <div class="grid grid-cols-2 gap-4">
-                    <form >
-                    
-                        <label for="typeOfDocumentId" class="p-d-block">Type of documents</label>
-                        <Dropdown v-model="selectedDocumentType" :options="typesDocument" optionLabel="label" inputId="typeOfDocumentId" aria-labelledby="basic" :placeholder="selectedDocumentType.name" />
-                        
-                        <label for="document_id" class="p-d-block">Document</label>
-                        <InputText v-model="documentV" inputId="document_id" aria-labelledby="basic" placeholder="Type your document here" :class="{ 'p-invalid': errors['document'] }"/>
-                        <label for="document_id" class="block text-l mb-2" :class="{ 'p-invalid text-red-700': errors['document']}">
-                            {{ errors['document']  }}
-                        </label>
-                    
-
-                    
-
-                    
-                        <label for="name" class="p-d-block">Name</label>
-                        <InputText v-model="firstNameV" inputId="name" aria-labelledby="basic" placeholder="Type your name here" :class="{ 'p-invalid': errors['first_name'] }"/>
-                        <label for="name" class="block text-l mb-2" :class="{ 'text-red-700': errors['first_name'] }">
-                        {{ errors['first_name'] }}
-                        </label>
-                    
-                    
-
-                    
-                        <label for="lastName" class="p-d-block">Last Name</label>
-                        <InputText v-model="lastNameV" inputId="lastName" aria-labelledby="basic" placeholder="Type your last name here" :class="{ 'p-invalid': errors['last_name'] }"/>
-                        <label for="lastName" class="block text-l mb-2" :class="{ 'text-red-700': errors['last_name'] }">
-                        {{ errors['last_name'] }}
-                        </label>
-                    
-
-                    
-                        <label for="email" class="p-d-block">Email</label>
-                        <InputText v-model="emailV" inputId="email" aria-labelledby="basic" placeholder="Type your email here" :class="{ 'p-invalid': errors['email'] }" />
-                        <label for="email" class="block text-l mb-2" :class="{ 'text-red-700': errors['email'] }">
-                        {{ errors['email'] }}
-                        </label>
-                    
-                        <label for="bankAccountNumber" class="p-d-block">Account number</label>
-                        <InputText v-model="bankAccountNumberV" inputId="bankAccountNumber" aria-labelledby="basic" placeholder="Type your account here" :class="{ 'p-invalid': errors['bank_account_number'] }"/>
-                        <label for="bankAccountNumber" class="block text-l mb-2" :class="{ 'text-red-700': errors['bank_account_number'] }">
-                        {{ errors['bank_account_number'] }}
-                        </label>
-                    
-                        <label for="bankAccountDoc" class="p-d-block">Account Document</label>
-                        <InputText v-model="bankAccountDocV" inputId="bankAccountDoc" aria-labelledby="basic" placeholder="Type your account document here" :class="{ 'p-invalid': errors['bank_account_doc'] }"/>
-                        <label for="bankAccountDoc" class="block text-l mb-2" :class="{ 'text-red-700': errors['bank_account_doc'] }">
-                        {{ errors['bank_account_doc'] }}
-                        </label>
-                    
-                        <label for="paymentTypes" class="p-d-block">Payment types</label>
-                        <Dropdown v-model="selectedPaymentType" :options="paymentTypes" optionLabel="code" inputId="paymentType" aria-labelledby="basic" :placeholder="selectedPaymentType.code" />
-                    
-                        <label for="workCenter" class="p-d-block">Work Center</label>
-                        <Dropdown v-model="selectedWorkCenters" :options="workCenters" optionLabel="name" inputId="workCenter" aria-labelledby="basic" :placeholder="selectedWorkCenters.name" />
-                    
-                        <label for="genderType" class="p-d-block">Select gender</label>
-                        <Dropdown v-model="selectedGenderType" :options="genderTypes" optionLabel="label" inputId="genderType" aria-labelledby="basic" :placeholder="selectedGenderType.label" />
-                    
-
-                    
-                </form>
-                </div> -->
-
-                <template #footer>
-                    <div>
-                        <Button label="Cancel" icon="pi pi-times" class="p-button-text" @click="hideDialog" />
-                        <Button label="Save" icon="pi pi-check" class="p-button-text" @click="saveRecord" />
-                    </div>
-                </template>
-            
-            </Dialog>
-            
-            <Toast />
-
-            <Dialog v-model:visible="deleteDialog" :style="{ width: '700px' }" :header="headerDialog" :modal="true" class="p-fluid text-center mx-auto">
-                <div class="flex align-items-center">
-                    <div class="p-grid">
-                        <div class="p-col-6 p-md-4 mb-2">
-                            <label> {{ recordsDelete[0].document }} </label>
-                        </div>
-                        <div>
-                            <label> {{ recordsDelete[0].first_name }} </label>
-                        </div>
-                        <div>
-                            <label> {{ recordsDelete[0].last_name }} </label>
+                <div class="flex flex-wrap gap-3 mb-3 p-fluid">
+                    <div class="flex-auto">
+                        <label for="last_name" class="font-bold block mb-2"> Surname </label>
+                        <InputText id="username" v-model="last_name" class="flex-auto md:w-15rem" autocomplete="off" v-bind="last_nameProps" inputId="last_name" :useGrouping="false" />
+                        <div class="flex-auto">
+                            <small id="username-help" :class="{ 'p-invalid text-red-700': errorsNew['last_name'] }">
+                                {{ errorsNew.last_name }}
+                            </small>
                         </div>
                     </div>
-
-                    <i class="pi pi-exclamation-triangle ml-3 mb-2" style="font-size: 2rem" />
+                    <div class="flex-auto">
+                        <label for="last_name_b" class="font-bold block mb-2"> Second Surname </label>
+                        <InputText id="username" v-model="last_name_b" class="flex-auto md:w-15rem" autocomplete="off" v-bind="last_name_bProps" inputId="last_name_b" :useGrouping="false" />
+                        <div class="flex-auto">
+                            <small id="username-help" :class="{ 'p-invalid text-red-700': errorsNew['last_name_b'] }">
+                                {{ errorsNew.last_name_b }}
+                            </small>
+                        </div>
+                    </div>
                 </div>
-                <template #footer>
-                    <div>
-                        <Button label="Cancel" icon="pi pi-times" class="p-button-text" @click="hideDialog" />
-                        <Button label="Save" icon="pi pi-check" class="p-button-text" @click="saveRecord" />
+
+                <div class="flex flex-wrap gap-3 mb-3 p-fluid">
+                    <div class="flex-auto">
+                        <label for="document_type" class="font-bold block mb-2"> Document Type </label>
+                        <Dropdown v-model="document_type" :options="DocumentTypeList" optionLabel="name" class="w-full md:w-15rem" inputId="document_type" v-bind="gender_idProps" />
+                        <div class="flex-auto">
+                            <small id="username-help" :class="{ 'p-invalid text-red-700': errorsNew['document_type'] }">
+                                {{ errorsNew.document_type }}
+                            </small>
+                        </div>
                     </div>
-                </template>
+                    <div class="flex-auto">
+                        <label for="documento" class="font-bold block mb-2"> Document </label>
+                        <InputNumber v-model="documento" class="w-full md:w-15rem" inputId="documento" v-bind="documentoProps" />
+                        <div class="flex-auto">
+                            <small id="username-help" :class="{ 'p-invalid text-red-700 ': errorsNew['documento'] }">
+                                {{ errorsNew.documento }}
+                            </small>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="flex flex-wrap gap-3 mb-3 p-fluid">
+                    <div class="flex-auto">
+                        <label for="bank_account_number" class="font-bold block mb-2"> Bank Account Number </label>
+                        <InputNumber v-model="bank_account_number" class="w-full md:w-15rem" inputId="bank_account_number" v-bind="bank_account_numberProps" />
+                        <div class="flex-auto">
+                            <small id="username-help" :class="{ 'p-invalid text-red-700': errorsNew['bank_account_number'] }">
+                                {{ errorsNew.bank_account_number }}
+                            </small>
+                        </div>
+                    </div>
+                    <div class="flex-auto">
+                        <label for="bank_account_doc" class="font-bold block mb-2"> Bank Account Doc </label>
+                        <InputText id="bank_account_doc" v-model="bank_account_doc" class="flex-auto md:w-15rem" autocomplete="off" v-bind="bank_account_docProps" inputId="bank_account_doc" :useGrouping="false" />
+                        <div class="flex-auto">
+                            <small id="username-help" :class="{ 'p-invalid text-red-700': errorsNew['bank_account_doc'] }">
+                                {{ errorsNew.bank_account_doc }}
+                            </small>
+                        </div>
+                    </div>
+                </div>
+                <div class="flex flex-wrap gap-3 mb-3 p-fluid">
+                    <div class="flex-auto">
+                        <label for="payment_type_uuid" class="font-bold block mb-2"> Payment Type </label>
+                        <Dropdown v-model="payment_type_uuid" :options="PaymentTypeList" optionLabel="name" class="w-full md:w-15rem" inputId="payment_type_uuid" v-bind="payment_typeProps" />
+                        <div class="flex-auto">
+                            <small id="username-help" :class="{ 'p-invalid text-red-700': errorsNew['payment_type_uuid'] }">
+                                {{ errorsNew.payment_type_uuid }}
+                            </small>
+                        </div>
+                    </div>
+                    <div class="flex-auto">
+                        <label for="work_center_uuid" class="font-bold block mb-2"> Work Center </label>
+                        <Dropdown v-model="work_center_uuid" :options="WorkCenterList" optionLabel="name" class="w-full md:w-15rem" inputId="work_center_uuid" />
+                        <div class="flex-auto">
+                            <small id="username-help" :class="{ 'p-invalid text-red-700': errorsNew['work_center_uuid'] }">
+                                {{ errorsNew.work_center_uuid }}
+                            </small>
+                        </div>
+                    </div>
+                </div>
+                <div class="flex flex-wrap gap-3 mb-5 p-fluid">
+                    <div class="flex-auto">
+                        <label for="email" class="font-bold block mb-2"> Email </label>
+                        <InputText id="email" v-model="email" class="flex-auto md:w-15rem" autocomplete="off" v-bind="emailProps" inputId="email" :useGrouping="false" />
+                        <div class="flex-auto">
+                            <small id="username-help" :class="{ 'p-invalid text-red-700': errorsNew['email'] }">
+                                {{ errorsNew.email }}
+                            </small>
+                        </div>
+                    </div>
+                    <div class="flex-auto">
+                        <label for="farm" class="font-bold block mb-2"> Farm </label>
+                        <AutoComplete v-model="farm_uuid" class="w-full md:w-15rem" inputId="farm" :suggestions="farms" @complete="searchFarms" field="name" dropdown />
+                        <div class="flex-auto">
+                            <small id="username-help" :class="{ 'p-invalid text-red-700': errorsNew['farm'] }">
+                                {{ errorsNew.farm }}
+                            </small>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="flex justify-content-end gap-2">
+                    <Button type="button" label="Cancel" severity="secondary" @click="formDialogNew = false" />
+                    <Button type="button" label="Save" @click="createRecord()" />
+                </div>
             </Dialog>
 
-            <Dialog v-model:visible="exportDialog" :style="{ width: '280px' }" :header=" headerDialog" :modal="true" class="p-fluid">
-                <div class="field col">
-                    <label>File name</label>
-                    <InputText id="name" v-model="filename" :required="true" integeronly />
-                    <span class="p-float-label mt-5">
-                        <Dropdown v-model="format" :options="ext_file" optionLabel="name" :class="{ 'p-invalid w-full md:w-14rem': format == '', ' w-full md:w-14rem': format != '' }" />
-                        <label for="cs-city">Format</label>
-                    </span>
+            <Dialog v-model:visible="formDialogEdit" modal :header="formDialogEditTitle" class="p-fluid text-center mx-auto">
+                <div class="flex flex-wrap gap-3 mb-3 p-fluid">
+                    <div class="flex-auto">
+                        <label for="gender_id" class="font-bold block mb-2"> Gender </label>
+                        <Dropdown v-model="gender_id" :options="GenderList" optionLabel="name" class="w-full md:w-15rem" inputId="gender_id" v-bind="gender_idProps" />
+                        <div class="flex-auto">
+                            <small id="username-help" :class="{ 'p-invalid text-red-700': errorsNew['gender_id'] }">
+                                {{ errorsNew.gender_id }}
+                            </small>
+                        </div>
+                    </div>
+                    <div class="flex-auto">
+                        <label for="first_name" class="font-bold block mb-2"> First Name </label>
+                        <InputText id="username" v-model="first_name" class="flex-auto md:w-15rem" autocomplete="off" v-bind="first_nameProps" inputId="first_name" :useGrouping="false" />
+                        <div class="flex-auto">
+                            <small id="username-help" :class="{ 'p-invalid text-red-700': errorsNew['first_name'] }">
+                                {{ errorsNew.first_name }}
+                            </small>
+                        </div>
+                    </div>
                 </div>
+
+                <div class="flex flex-wrap gap-3 mb-3 p-fluid">
+                    <div class="flex-auto">
+                        <label for="last_name" class="font-bold block mb-2"> Surname </label>
+                        <InputText id="username" v-model="last_name" class="flex-auto md:w-15rem" autocomplete="off" v-bind="last_nameProps" inputId="last_name" :useGrouping="false" />
+                        <div class="flex-auto">
+                            <small id="username-help" :class="{ 'p-invalid text-red-700': errorsNew['last_name'] }">
+                                {{ errorsNew.last_name }}
+                            </small>
+                        </div>
+                    </div>
+                    <div class="flex-auto">
+                        <label for="last_name_b" class="font-bold block mb-2"> Second Surname </label>
+                        <InputText id="username" v-model="last_name_b" class="flex-auto md:w-15rem" autocomplete="off" v-bind="last_name_bProps" inputId="last_name_b" :useGrouping="false" />
+                        <div class="flex-auto">
+                            <small id="username-help" :class="{ 'p-invalid text-red-700': errorsNew['last_name_b'] }">
+                                {{ errorsNew.last_name_b }}
+                            </small>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="flex flex-wrap gap-3 mb-3 p-fluid">
+                    <div class="flex-auto">
+                        <label for="document_type" class="font-bold block mb-2"> Document Type </label>
+                        <Dropdown v-model="document_type" :options="DocumentTypeList" optionLabel="name" class="w-full md:w-15rem" inputId="document_type" v-bind="gender_idProps" />
+                        <div class="flex-auto">
+                            <small id="username-help" :class="{ 'p-invalid text-red-700': errorsNew['document_type'] }">
+                                {{ errorsNew.document_type }}
+                            </small>
+                        </div>
+                    </div>
+                    <div class="flex-auto">
+                        <label for="documento" class="font-bold block mb-2"> Document </label>
+                        <InputNumber v-model="documento" class="w-full md:w-15rem" inputId="documento" v-bind="documentoProps" />
+                        <div class="flex-auto">
+                            <small id="username-help" :class="{ 'p-invalid text-red-700 ': errorsNew['documento'] }">
+                                {{ errorsNew.documento }}
+                            </small>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="flex flex-wrap gap-3 mb-3 p-fluid">
+                    <div class="flex-auto">
+                        <label for="bank_account_number" class="font-bold block mb-2"> Bank Account Number </label>
+                        <InputNumber v-model="bank_account_number" class="w-full md:w-15rem" inputId="bank_account_number" v-bind="bank_account_numberProps" />
+                        <div class="flex-auto">
+                            <small id="username-help" :class="{ 'p-invalid text-red-700': errorsNew['bank_account_number'] }">
+                                {{ errorsNew.bank_account_number }}
+                            </small>
+                        </div>
+                    </div>
+                    <div class="flex-auto">
+                        <label for="bank_account_doc" class="font-bold block mb-2"> Bank Account Doc </label>
+                        <InputText id="bank_account_doc" v-model="bank_account_doc" class="flex-auto md:w-15rem" autocomplete="off" v-bind="bank_account_docProps" inputId="bank_account_doc" :useGrouping="false" />
+                        <div class="flex-auto">
+                            <small id="username-help" :class="{ 'p-invalid text-red-700': errorsNew['bank_account_doc'] }">
+                                {{ errorsNew.bank_account_doc }}
+                            </small>
+                        </div>
+                    </div>
+                </div>
+                <div class="flex flex-wrap gap-3 mb-3 p-fluid">
+                    <div class="flex-auto">
+                        <label for="payment_type_uuid" class="font-bold block mb-2"> Payment Type </label>
+                        <Dropdown v-model="payment_type_uuid" :options="PaymentTypeList" optionLabel="name" class="w-full md:w-15rem" inputId="payment_type_uuid" v-bind="payment_typeProps" />
+                        <div class="flex-auto">
+                            <small id="username-help" :class="{ 'p-invalid text-red-700': errorsNew['payment_type_uuid'] }">
+                                {{ errorsNew.payment_type_uuid }}
+                            </small>
+                        </div>
+                    </div>
+                    <div class="flex-auto">
+                        <label for="work_center_uuid" class="font-bold block mb-2"> Work Center </label>
+                        <Dropdown v-model="work_center_uuid" :options="WorkCenterList" optionLabel="name" class="w-full md:w-15rem" inputId="work_center_uuid" />
+                        <div class="flex-auto">
+                            <small id="username-help" :class="{ 'p-invalid text-red-700': errorsNew['work_center_uuid'] }">
+                                {{ errorsNew.work_center_uuid }}
+                            </small>
+                        </div>
+                    </div>
+                </div>
+                <div class="flex flex-wrap gap-3 mb-5 p-fluid">
+                    <div class="flex-auto">
+                        <label for="email" class="font-bold block mb-2"> Email </label>
+                        <InputText id="email" v-model="email" class="flex-auto md:w-15rem" autocomplete="off" v-bind="emailProps" inputId="email" :useGrouping="false" />
+                        <div class="flex-auto">
+                            <small id="username-help" :class="{ 'p-invalid text-red-700': errorsNew['email'] }">
+                                {{ errorsNew.email }}
+                            </small>
+                        </div>
+                    </div>
+                    <div class="flex-auto">
+                        <label for="farm" class="font-bold block mb-2"> Farm </label>
+                        <AutoComplete v-model="farm_uuid" class="w-full md:w-15rem" inputId="farm" :suggestions="farms" @complete="searchFarms" field="name" dropdown />
+                        <div class="flex-auto">
+                            <small id="username-help" :class="{ 'p-invalid text-red-700': errorsNew['farm'] }">
+                                {{ errorsNew.farm }}
+                            </small>
+                        </div>
+                    </div>
+                </div>
+                <div class="flex justify-content-end gap-2">
+                    <Button type="button" label="Cancel" severity="secondary" @click="formDialogEdit = false" />
+                    <Button type="button" label="Save" @click="EditRecord()" />
+                </div>
+            </Dialog>
+
+            <Dialog v-model:visible="formDialogClone" modal :header="formDialogCloneTitle" class="p-fluid text-center mx-auto">
+                <div class="flex flex-wrap gap-3 mb-3 p-fluid">
+                    <div class="flex-auto">
+                        <label for="gender_id" class="font-bold block mb-2"> Gender </label>
+                        <Dropdown v-model="gender_id" :options="GenderList" optionLabel="name" class="w-full md:w-15rem" inputId="gender_id" v-bind="gender_idProps" />
+                        <div class="flex-auto">
+                            <small id="username-help" :class="{ 'p-invalid text-red-700': errorsNew['gender_id'] }">
+                                {{ errorsNew.gender_id }}
+                            </small>
+                        </div>
+                    </div>
+                    <div class="flex-auto">
+                        <label for="first_name" class="font-bold block mb-2"> First Name </label>
+                        <InputText id="username" v-model="first_name" class="flex-auto md:w-15rem" autocomplete="off" v-bind="first_nameProps" inputId="first_name" :useGrouping="false" />
+                        <div class="flex-auto">
+                            <small id="username-help" :class="{ 'p-invalid text-red-700': errorsNew['first_name'] }">
+                                {{ errorsNew.first_name }}
+                            </small>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="flex flex-wrap gap-3 mb-3 p-fluid">
+                    <div class="flex-auto">
+                        <label for="last_name" class="font-bold block mb-2"> Surname </label>
+                        <InputText id="username" v-model="last_name" class="flex-auto md:w-15rem" autocomplete="off" v-bind="last_nameProps" inputId="last_name" :useGrouping="false" />
+                        <div class="flex-auto">
+                            <small id="username-help" :class="{ 'p-invalid text-red-700': errorsNew['last_name'] }">
+                                {{ errorsNew.last_name }}
+                            </small>
+                        </div>
+                    </div>
+                    <div class="flex-auto">
+                        <label for="last_name_b" class="font-bold block mb-2"> Second Surname </label>
+                        <InputText id="username" v-model="last_name_b" class="flex-auto md:w-15rem" autocomplete="off" v-bind="last_name_bProps" inputId="last_name_b" :useGrouping="false" />
+                        <div class="flex-auto">
+                            <small id="username-help" :class="{ 'p-invalid text-red-700': errorsNew['last_name_b'] }">
+                                {{ errorsNew.last_name_b }}
+                            </small>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="flex flex-wrap gap-3 mb-3 p-fluid">
+                    <div class="flex-auto">
+                        <label for="document_type" class="font-bold block mb-2"> Document Type </label>
+                        <Dropdown v-model="document_type" :options="DocumentTypeList" optionLabel="name" class="w-full md:w-15rem" inputId="document_type" v-bind="gender_idProps" />
+                        <div class="flex-auto">
+                            <small id="username-help" :class="{ 'p-invalid text-red-700': errorsNew['document_type'] }">
+                                {{ errorsNew.document_type }}
+                            </small>
+                        </div>
+                    </div>
+                    <div class="flex-auto">
+                        <label for="documento" class="font-bold block mb-2"> Document </label>
+                        <InputNumber v-model="documento" class="w-full md:w-15rem" inputId="documento" v-bind="documentoProps" />
+                        <div class="flex-auto">
+                            <small id="username-help" :class="{ 'p-invalid text-red-700 ': errorsNew['documento'] }">
+                                {{ errorsNew.documento }}
+                            </small>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="flex flex-wrap gap-3 mb-3 p-fluid">
+                    <div class="flex-auto">
+                        <label for="bank_account_number" class="font-bold block mb-2"> Bank Account Number </label>
+                        <InputNumber v-model="bank_account_number" class="w-full md:w-15rem" inputId="bank_account_number" v-bind="bank_account_numberProps" />
+                        <div class="flex-auto">
+                            <small id="username-help" :class="{ 'p-invalid text-red-700': errorsNew['bank_account_number'] }">
+                                {{ errorsNew.bank_account_number }}
+                            </small>
+                        </div>
+                    </div>
+                    <div class="flex-auto">
+                        <label for="bank_account_doc" class="font-bold block mb-2"> Bank Account Doc </label>
+                        <InputText id="bank_account_doc" v-model="bank_account_doc" class="flex-auto md:w-15rem" autocomplete="off" v-bind="bank_account_docProps" inputId="bank_account_doc" :useGrouping="false" />
+                        <div class="flex-auto">
+                            <small id="username-help" :class="{ 'p-invalid text-red-700': errorsNew['bank_account_doc'] }">
+                                {{ errorsNew.bank_account_doc }}
+                            </small>
+                        </div>
+                    </div>
+                </div>
+                <div class="flex flex-wrap gap-3 mb-3 p-fluid">
+                    <div class="flex-auto">
+                        <label for="payment_type_uuid" class="font-bold block mb-2"> Payment Type </label>
+                        <Dropdown v-model="payment_type_uuid" :options="PaymentTypeList" optionLabel="name" class="w-full md:w-15rem" inputId="payment_type_uuid" v-bind="payment_typeProps" />
+                        <div class="flex-auto">
+                            <small id="username-help" :class="{ 'p-invalid text-red-700': errorsNew['payment_type_uuid'] }">
+                                {{ errorsNew.payment_type_uuid }}
+                            </small>
+                        </div>
+                    </div>
+                    <div class="flex-auto">
+                        <label for="work_center_uuid" class="font-bold block mb-2"> Work Center </label>
+                        <Dropdown v-model="work_center_uuid" :options="WorkCenterList" optionLabel="name" class="w-full md:w-15rem" inputId="work_center_uuid" />
+                        <div class="flex-auto">
+                            <small id="username-help" :class="{ 'p-invalid text-red-700': errorsNew['work_center_uuid'] }">
+                                {{ errorsNew.work_center_uuid }}
+                            </small>
+                        </div>
+                    </div>
+                </div>
+                <div class="flex flex-wrap gap-3 mb-5 p-fluid">
+                    <div class="flex-auto">
+                        <label for="email" class="font-bold block mb-2"> Email </label>
+                        <InputText id="email" v-model="email" class="flex-auto md:w-15rem" autocomplete="off" v-bind="emailProps" inputId="email" :useGrouping="false" />
+                        <div class="flex-auto">
+                            <small id="username-help" :class="{ 'p-invalid text-red-700': errorsNew['email'] }">
+                                {{ errorsNew.email }}
+                            </small>
+                        </div>
+                    </div>
+                    <div class="flex-auto">
+                        <label for="farm" class="font-bold block mb-2"> Farm </label>
+                        <AutoComplete v-model="farm_uuid" class="w-full md:w-15rem" inputId="farm" :suggestions="farms" @complete="searchFarms" field="name" dropdown />
+                        <div class="flex-auto">
+                            <small id="username-help" :class="{ 'p-invalid text-red-700': errorsNew['farm'] }">
+                                {{ errorsNew.farm }}
+                            </small>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="flex justify-content-end gap-2">
+                    <Button type="button" label="Cancel" severity="secondary" @click="formDialogClone = false" />
+                    <Button type="button" label="Save" @click="cloneRecord()" />
+                </div>
+            </Dialog>
+
+            <Dialog v-model:visible="formDialogExport" :style="{ width: '290px' }" :header="formDialogExportTitle" :modal="true" class="p-fluid">
+                <div class="mb-3">
+                    <div class="flex align-items-center gap-3 mb-1">
+                        <label for="username" class="font-semibold w-6rem">Filename:</label>
+                        <InputText id="username" v-model="filename" class="flex-auto" autocomplete="off" v-bind="nameProps" :required="true" />
+                    </div>
+                </div>
+                <div class="flex align-items-center gap-3">
+                    <div class="align-items-center gap-3">
+                        <label for="username" class="font-semibold">Format:</label>
+                        <Dropdown v-model="format" :options="extenciones" optionLabel="name" :class="' w-full'" />
+                    </div>
+                    <div class="align-items-center gap-3">
+                        <label for="username" class="font-semibold">Export:</label>
+                        <Dropdown v-model="exportAll" :options="optionsEsport" optionLabel="name" :class="' w-full md:w-10rem'" />
+                    </div>
+                </div>
+
                 <template #footer>
-                    <Button label="Cancel" icon="pi pi-times" class="p-button-text" @click="exportDialog = false" />
-                    <Button label="Export" icon="pi pi-check" class="p-button-text" @click="saveRecord" />
+                    <Button label="Cancel" icon="pi pi-times" class="p-button-text" @click="formDialogExport = false" />
+                    <Button label="Export" icon="pi pi-check" class="p-button-text" @click="ExportRecord" />
                 </template>
+            </Dialog>
+
+            <Dialog v-model:visible="formDialogDelete" :style="{ width: '450px' }" :header="formDialogDeleteTitle" :modal="true">
+                <label for="username" class="text-2xl font-medium w-6rem"> Are you sure you want to delete the selected ones? </label>
+                <div class="card flex flex-wrap mt-2 gap-2">
+                    <div v-for="item in listRowSelect" :key="item.id">
+                        <Chip :label="item.first_name + ' ' + item.last_name" removable @remove="remove(item)" icon="pi pi-ban" />
+                    </div>
+                </div>
+                <div class="flex justify-content-end gap-2">
+                    <Button type="button" label="Cancel" severity="secondary" @click="formDialogDelete = false" />
+                    <Button type="button" :disabled="!listRowSelect.length > 0" label="Delete" @click="DeleteRecord" />
+                </div>
             </Dialog>
             <Toast />
         </div>
     </div>
 </template>
 
-<script setup>
-import { ref, watch, onBeforeMount, onMounted,provide} from 'vue';
-import { useToast } from 'primevue/usetoast';
-import useDataAPI from '@/composables/DataAPI/FetchDataAPI.js';
-import { FilterMatchMode, FilterOperator } from 'primevue/api';
-import useEmployeesParameters from '@/composables/PayrollSettings/Employees/EmployeesParameters.js';
-import SelectButton from 'primevue/selectbutton';
-import { useRouter } from 'vue-router';
-import { useForm } from 'vee-validate';
-import { toTypedSchema } from '@vee-validate/zod';
-import { z } from 'zod';
-import ability from '@/service/ability.js';
-import { AbilityBuilder} from '@casl/ability';
-
-
-
-// const updateAbility = (token) => {
-//   const bearer = 'Bearer ' + token; 
-
-// fetch('http://164.90.146.196:81/api/v1/abilities', {
-//     headers: {
-//         Authorization: bearer,
-//         accept: 'application/json'
-//     }
-// })
-//     .then((response) => response.json())
-//     .then((permissions) => {
-//         const { can, rules } = new AbilityBuilder();
-
-//         can(permissions);
-//         console.log(permissions)
-//         ability.update(rules);
-//         console.log(ability.can('empleado_crear'))
-        
-//     });
-// };
-
-let endpoint = ref('/employees');
-const loading = ref(false);
-
-const router = useRouter();
-
-const { getAllResponseAPI, getAllResponsePermissionsAPI, getAllResponseListAPI, totalRecordsResponseAPI, currentPageResponseAPI, linksResponseAPI, postResponseAPI, putResponseAPI, deleteResponseAPI, errorResponseAPI, dataResponseAPI, dataResponseListAPI, statusCode } =
-    useDataAPI();
-const { conditionalColumns } = useEmployeesParameters();
-const toast = useToast();
-////////////////////////////////////////////
-let dataPost = ref({
-    document_type: '',
-    document: '4',
-    first_name: '',
-    last_name: '',
-    last_name_b: '',
-    gender_id: '',
-    email: '',
-    bank_account_number: '',
-    bank_account_doc: '',
-    work_center_id: '',
-    payment_type_id: '',
-    farm_id: ''
-});
-const {
-  values,
-  errors,
-  meta,
-  validate,
-  handleSubmit,
-  setFieldValue,
-  setErrors,
-  defineField,
-} = useForm({
-  validationSchema: toTypedSchema(
-    z.object({
-      document_type: z.string(),
-      document: z.string().nonempty('Field is required').min(3),
-      first_name: z.string().nonempty('Field is required').min(3),
-      last_name: z.string().nonempty('Field is required').min(3),
-      last_name_b: z.string().nonempty('Field is required').min(3),
-      gender_id: z.string(),
-      email: z.string().nonempty('Field is required').min(3).email(),
-      bank_account_number: z.string().min(3),
-      bank_account_doc: z.string().min(3),
-      work_center_id: z.string(),
-      payment_type_id: z.string(),
-      farm_id: z.string(),
-    })
-  ),
-});
-
-const [
-    documentTypeV,
-     documentTypeAttrs
-] = defineField('document_type', validate);
-const [
-    documentV,
-    documentAttrs
-] = defineField('document', validate);
-
-const [
-  firstNameV,
-  firstNameAttrs
-] = defineField('first_name', validate);
-
-const [
-  lastNameV,
-  lastNameAttrs
-] = defineField('last_name', validate);
-
-const [
-  lastNameBV,
-  lastNameBAttrs
-] = defineField('last_name_b', validate);
-
-const [
-  genderIdV,
-  genderIdAttrs
-] = defineField('gender_id', validate);
-
-const [emailV, emailAttrs] = defineField('email', validate);
-
-const [
-  bankAccountNumberV,
-  bankAccountNumberAttrs
-] = defineField('bank_account_number', validate);
-
-const [
-  bankAccountDocV,
-  bankAccountDocAttrs
-] = defineField('bank_account_doc', validate);
-
-const [
-  workCenterIdV,
-  workCenterIdAttrs
-] = defineField('work_center_id', validate);
-
-const [
-  paymentTypeIdV,
-  paymentTypeIdAttrs
-] = defineField('payment_type_id', validate);
-
-const [farmIdV, farmIdAttrs] = defineField('farm_id', validate);
-
-// Asignar valores y manejar cambios
-watch(
-  () => ({
-    // documentTypeV: documentTypeV.value,
-    documentV: documentV.value,
-    firstNameV: firstNameV.value,
-    lastNameV: lastNameV.value,
-    lastNameBV: lastNameBV.value,
-    // genderIdV: genderIdV.value,
-    emailV: emailV.value,
-    bankAccountNumberV: bankAccountNumberV.value,
-    bankAccountDocV: bankAccountDocV.value,
-    // workCenterIdV: workCenterIdV.value,
-    // paymentTypeIdV: paymentTypeIdV.value,
-    // farmIdV: farmIdV.value,
-  }),
-  (newValues) => {
-    // dataPost.value.document_type = newValues.documentTypeV;
-    dataPost.value.document = newValues.documentV;
-    dataPost.value.first_name = newValues.firstNameV;
-    dataPost.value.last_name = newValues.lastNameV;
-    dataPost.value.last_name_b = newValues.lastNameBV;
-    // dataPost.value.gender_id = newValues.genderIdV;
-    dataPost.value.email = newValues.emailV;
-    dataPost.value.bank_account_number = newValues.bankAccountNumberV;
-    dataPost.value.bank_account_doc = newValues.bankAccountDocV;
-    // dataPost.value.work_center_id = newValues.workCenterIdV;
-    // dataPost.value.payment_type_id = newValues.paymentTypeIdV;
-    // dataPost.value.farm_id = newValues.farmIdV;
-  },
-  { deep: true }
-);
-
-
-///////////////////////////////////////////
-// sizeOptionsButton
-const size = ref({ label: 'Normal', value: 'normal' });
-const sizeOptions = ref([
-    { label: 'Small', value: 'small', class: 'sm' },
-    { label: 'Normal', value: 'normal' },
-    { label: 'Large', value: 'large', class: 'lg' }
-]);
-
-onMounted(async () => {
-    //updateAbility(sessionStorage.getItem('accessSessionToken'));
-    await getAllResponsePermissionsAPI("/abilities");
-    console.log(ability.can('tiposDeTareas_vista'))
-    console.log(ability.can('rol_crear'))
-    loading.value = true;
-    lazyParams.value = {
-        //TODO
-        filters: filters.value
-    };
-    await loadLazyData();
-    console.log(dataResponseAPI.value.data);
-    selectedRegisters.value = [];
-    column.value = null;
-    fillHeaderCustom();
-
-    //selectedPaymentType.value.id = listRowSelect.value[0].payment_type.id;
-});
-const filters = ref();
-onBeforeMount(async () => {
-    
-    initFilters();
-});
-
-const clearFilter = () => {
-    initFilters();
-};
-
-const initFilters = () => {
-    filters.value = {
-        global: { value: null, matchMode: FilterMatchMode.CONTAINS },
-        document: { operator: FilterOperator.AND, constraints: [{ value: null, matchMode: FilterMatchMode.STARTS_WITH }] },
-        document_type: { operator: FilterOperator.AND, constraints: [{ value: null, matchMode: FilterMatchMode.STARTS_WITH }] },
-        first_name: { operator: FilterOperator.AND, constraints: [{ value: null, matchMode: FilterMatchMode.STARTS_WITH }] },
-        last_name: { operator: FilterOperator.AND, constraints: [{ value: null, matchMode: FilterMatchMode.STARTS_WITH }] },
-        'status.name': { operator: FilterOperator.AND, constraints: [{ value: null, matchMode: FilterMatchMode.STARTS_WITH }] },
-        email: { operator: FilterOperator.AND, constraints: [{ value: null, matchMode: FilterMatchMode.STARTS_WITH }] },
-        gender_id: { operator: FilterOperator.AND, constraints: [{ value: null, matchMode: FilterMatchMode.STARTS_WITH }] },
-        'workCenter.name': { operator: FilterOperator.AND, constraints: [{ value: null, matchMode: FilterMatchMode.STARTS_WITH }] },
-        bank_account_number: { operator: FilterOperator.AND, constraints: [{ value: null, matchMode: FilterMatchMode.STARTS_WITH }] },
-        bank_account_doc: { operator: FilterOperator.AND, constraints: [{ value: null, matchMode: FilterMatchMode.STARTS_WITH }] },
-        'farm.name': { operator: FilterOperator.AND, constraints: [{ value: null, matchMode: FilterMatchMode.STARTS_WITH }] },
-        //'company.name': { operator: FilterOperator.AND, constraints: [{ value: null, matchMode: FilterMatchMode.STARTS_WITH }] },
-        'payment_type.name': { operator: FilterOperator.AND, constraints: [{ value: null, matchMode: FilterMatchMode.STARTS_WITH }] },
-        created_at: { operator: FilterOperator.AND, constraints: [{ value: null, matchMode: FilterMatchMode.STARTS_WITH }] },
-        updated_at: { operator: FilterOperator.AND, constraints: [{ value: null, matchMode: FilterMatchMode.STARTS_WITH }] }
-    };
-};
-
-const loadLazyData = async (event) => {
-    //lazyParams.value = { ...lazyParams.value, first: event?.first || first.value };
-    endpoint.value = '/employees';
-    await getAllResponseAPI(endpoint.value);
-    loading.value = false;
-    // const workCentersItemId = await getListWorkCentersItemById('yourCodeToSearch');
-    await getListFarms();
-    await getListPaymentTypes();
-    await getListDocumentTypes();
-    await getListGenderTypes();
-    await getListWorkCenters();
-};
-
-const listRowSelect = ref([]);
-const selectedRegisters = ref([]);
-
-const onRowSelect = (data) => {
-    listRowSelect.value = data;
-
-    //assignValues(mode.value)
-};
-
-const mode = ref();
-const formDialog = ref(false);
-const deleteDialog = ref(false);
-const hideDialog = () => {
-    formDialog.value = false;
-    deleteDialog.value = false;
-    recordsDelete.value = [];
-    resetValues();
-};
-
-const resetValues = () => {
-    dataPost.value.document = '';
-    dataPost.value.first_name = '';
-    dataPost.value.last_name = '';
-    dataPost.value.last_name_b = '';
-    dataPost.value.gender_id = null;
-    dataPost.value.email = '';
-    dataPost.value.document_type = '';
-    dataPost.value.bank_account_number = '';
-    dataPost.value.bank_account_doc = '';
-    dataPost.value.work_center_id = '';
-    dataPost.value.farm_id = '';
-    dataPost.value.payment_type_id = '';
-};
-const iddd = ref();
-const assignValues = (modex) => {
-    if (modex === 'EDIT') {
-        selectedDocumentType.value.id = listRowSelect.value[0].document_type.id;
-        selectedDocumentType.value.name = listRowSelect.value[0].document_type.name;
-        dataPost.value.document_type = listRowSelect.value[0].document_type.id;
-
-        dataPost.value.document = listRowSelect.value[0].document;
-        //dataPost.value.first_name = listRowSelect.value[0].first_name;
-        dataPost.value.first_name = listRowSelect.value[0].first_name;
-        dataPost.value.last_name = listRowSelect.value[0].last_name;
-        dataPost.value.last_name_b = listRowSelect.value[0].last_name_b;
-
-        dataPost.value.email = listRowSelect.value[0].email;
-
-        dataPost.value.bank_account_number = listRowSelect.value[0].bank_account_number;
-        dataPost.value.bank_account_doc = listRowSelect.value[0].bank_account_doc;
-
-        selectedGenderType.value.id = listRowSelect.value[0].gender.id;
-        selectedGenderType.value.label = listRowSelect.value[0].gender.name;
-        dataPost.value.gender_id = listRowSelect.value[0].gender_id;
-
-        selectedWorkCenters.value.id = workCenters.value.find((type) => type.name === listRowSelect.value[0].workCenter.name)?.id || null;
-        selectedWorkCenters.value.name = listRowSelect.value[0].workCenter.name;
-
-        selectedPaymentType.value.id = paymentTypes.value.find((type) => type.code === listRowSelect.value[0].payment_type.name)?.id || null;
-        selectedPaymentType.value.code = listRowSelect.value[0].payment_type.name;
-
-        selectedFarm.value.id = farms.value.find((type) => type.name === listRowSelect.value[0].farm.name)?.id || null;
-        selectedFarm.value.name = listRowSelect.value[0].farm.name;
-
-        dataPost.value.employee_uuid = listRowSelect.value[0].uuid;
-    }
-    if (modex === 'CLONE') {
-        resetValues();
-        selectedDocumentType.value.id = '';
-        selectedDocumentType.value.name = '';
-        dataPost.value.document_type = '';
-
-        dataPost.value.document = '';
-
-        dataPost.value.first_name = listRowSelect.value[0].first_name;
-        dataPost.value.last_name = listRowSelect.value[0].last_name;
-        dataPost.value.last_name_b = listRowSelect.value[0].last_name_b;
-
-        //dataPost.value.email = listRowSelect.value[0].email;
-
-        //dataPost.value.bank_account_number = listRowSelect.value[0].bank_account_number;
-        dataPost.value.bank_account_doc = listRowSelect.value[0].bank_account_doc;
-
-        // selectedGenderType.value.id = listRowSelect.value[0].gender.id;
-        // selectedGenderType.value.label = listRowSelect.value[0].gender.name;
-        // dataPost.value.gender_id = listRowSelect.value[0].gender_id;
-
-        //selectedWorkCenters.value.id = workCenters.value.find(type => type.name === listRowSelect.value[0].workCenter.name)?.id || null;
-        //selectedWorkCenters.value.name = listRowSelect.value[0].workCenter.name;
-
-        //selectedPaymentType.value.id = paymentTypes.value.find(type => type.code === listRowSelect.value[0].payment_type.name)?.id || null;
-        //selectedPaymentType.value.code = listRowSelect.value[0].payment_type.name;
-
-        //selectedFarm.value.id = farms.value.find(type => type.name === listRowSelect.value[0].farm.name)?.id || null;
-        //selectedFarm.value.name = listRowSelect.value[0].farm.name;
-    }
-};
-
-const openNew = () => {
-    mode.value = 'NEW';
-    resetValues();
-    formDialog.value = true;
-    headerDialog.value = 'New employee record';
-};
-const openEdit = () => {
-    mode.value = 'EDIT';
-    formDialog.value = true;
-    headerDialog.value = 'Edit a employee record';
-    assignValues(mode.value);
-};
-
-const openClone = () => {
-    mode.value = 'CLONE';
-    headerDialog.value = 'Clone a employee record';
-    formDialog.value = true;
-    assignValues(mode.value);
-};
-
-const openExport = () => {
-    mode.value = 'EXPORT';
-    format.value = '';
-    headerDialog.value = 'Export a employee record';
-    exportDialog.value = true;
-    console.info("ClickBoton", mode.value);
-    resetValues();
-    
-};
-
-let recordsDelete = ref([]);
-const openDelete = () => {
-    mode.value = 'DELETE';
-    headerDialog.value = 'Delete a employee record';
-    resetValues();
-    deleteDialog.value = true;
-
-    for (let key in listRowSelect.value) {
-        recordsDelete.value.push({
-            uuid: listRowSelect.value[key].uuid,
-            document: listRowSelect.value[key].document,
-            first_name: listRowSelect.value[key].first_name,
-            last_name: listRowSelect.value[key].last_name
-        });
-    }
-};
-
-const newRecord = async (requestDataUnitTypes, endpoint) => {
-    await postResponseAPI(requestDataUnitTypes, endpoint);
-    console.log(requestDataUnitTypes);
-    recordsDelete.value = [];
-
-    switch (statusCode.value) {
-        case 201:
-            toast.add({ severity: 'success', summary: 'Successful', detail: 'Done', life: 3000 });
-            formDialog.value = false;
-            hideDialog();
-            router.go();
-            break;
-
-        case 422:
-            toast.add({ severity: 'error', summary: 'Validation Error', detail: 'There are validation errors', life: 3000 });
-            // Puedes agregar más casos según sea necesario
-            break;
-        case 200:
-            toast.add({ severity: 'warn', summary: 'xxxxxr', detail: 'There are validation errors', life: 3000 });
-            // Puedes agregar más casos según sea necesario
-            break;
-        default:
-            toast.add({ severity: 'error', summary: 'Error Message', detail: 'There was an error', life: 3000 });
-    }
-};
-const updateRecord = async (requestDataUnitTypes, id, endpoint) => {
-    await putResponseAPI(requestDataUnitTypes, endpoint, id);
-    recordsDelete.value = [];
-
-    switch (statusCode.value) {
-        case 202:
-            toast.add({ severity: 'success', summary: 'Successful', detail: 'Done', life: 3000 });
-
-            hideDialog();
-            router.go();
-            break;
-
-        case 422:
-            toast.add({ severity: 'error', summary: 'Validation Error', detail: 'There are validation errors', life: 3000 });
-            // Puedes agregar más casos según sea necesario
-            break;
-        case 200:
-            toast.add({ severity: 'warn', summary: 'xxxxxr', detail: 'There are validation errors', life: 3000 });
-            // Puedes agregar más casos según sea necesario
-            break;
-        default:
-            toast.add({ severity: 'error', summary: 'Error Message', detail: 'There was an error', life: 3000 });
-    }
-};
-const dropRecord = async (id, endpoint) => {
-    await deleteResponseAPI({}, endpoint, id);
-
-    switch (statusCode.value) {
-        case 204:
-            toast.add({ severity: 'success', summary: 'Successful', detail: 'Done', life: 3000 });
-            router.go();
-            hideDialog();
-            break;
-
-        case 422:
-            toast.add({ severity: 'error', summary: 'Validation Error', detail: 'There are validation errors', life: 3000 });
-            // Puedes agregar más casos según sea necesario
-            break;
-        case 200:
-            toast.add({ severity: 'warn', summary: 'xxxxxr', detail: 'There are validation errors', life: 3000 });
-            // Puedes agregar más casos según sea necesario
-            break;
-        default:
-            toast.add({ severity: 'error', summary: 'Error Message', detail: 'There was an error', life: 3000 });
-    }
-};
-const saveRecord = async () => {
-    let data = [];
-    switch (mode.value) {
-        case 'NEW':
-            await newRecord(dataPost.value, endpoint.value, statusCode.value);
-            break;
-        case 'EDIT':
-            await updateRecord(dataPost.value, listRowSelect.value[0].uuid, endpoint.value);
-            console.info(dataPost.value);
-            break;
-        case 'DELETE':
-            if (recordsDelete.value.length > 0 && recordsDelete.value.length < 2) await dropRecord(recordsDelete.value[0].uuid, endpoint.value);
-            else {
-                toast.add({ severity: 'error', summary: 'Error Message', detail: 'No puedes eliminar mas de un registro', life: 3000 });
-            }
-            break;
-        case 'CLONE':
-            await newRecord(dataPost.value, endpoint.value, statusCode.value);
-            break;
-        case 'EXPORT':
-            console.info("SaveRecord", mode.value);
-                if (format.value == '') {
-                    toast.add({ severity: 'error', summary: 'Select Format', detail: 'Must select a format', life: 3000 });
-                    return;
-                }
-                data = {
-                    data: format.value.code,
-                    name: filename.value + (format.value.code ? '.csv' : '.xls')
-            };
-            exportData(data);
-            exportDialog.value = false;
-            
-            break;    
-    }
-    mode.value = '';
-};
-///////////////////////////////////////////////////////////////////
-const selectedDocumentType = ref([
-    {
-        label: '',
-        id: ''
-    }
-]);
-const selectedFarm = ref({
-    id: '',
-    name: ''
-});
-const selectedGenderType = ref({
-    id: '',
-    label: ''
-});
-const selectedPaymentType = ref({
-    id: '',
-    code: ''
-});
-const selectedWorkCenters = ref({
-    id: '',
-    name: ''
-});
-const headerDialog = ref('');
-const companies = ref([
-    {
-        id: 1,
-        uuid: 'd9612b51-2966-4bac-b1f7-5a7718e0c95a',
-        name: 'Basil Farms',
-        code: '900137869'
-    }
-]);
-const typesDocument = ref([]);
-const genderTypes = ref([]);
-const paymentTypes = ref([]);
-const workCenters = ref([]);
-const farms = ref([]);
-
-async function getListFarms() {
-    await getAllResponseListAPI('/lists_farms');
-    farms.value = dataResponseListAPI.value.data;
-    console.log(farms.value);
-}
-async function getListPaymentTypes() {
-    await getAllResponseListAPI('/lists_payment_types');
-    paymentTypes.value = dataResponseListAPI.value.data;
-    console.log(paymentTypes.value);
-}
-async function getListDocumentTypes() {
-    await getAllResponseListAPI('/lists_document_types');
-    typesDocument.value = dataResponseListAPI.value;
-    console.log(typesDocument.value);
-}
-async function getListGenderTypes() {
-    await getAllResponseListAPI('/lists_gender_types');
-    genderTypes.value = dataResponseListAPI.value;
-    console.log(genderTypes.value);
-}
-async function getListWorkCenters() {
-    await getAllResponseListAPI('/lists_work_centers');
-    workCenters.value = dataResponseListAPI.value.data;
-    console.log(workCenters.value);
-}
-
-////////////////////////////////////////////////////////////////
-//Related to table properties
-const columnas = ref([]);
-const column = ref([]);
-const valueCustomTable = ref({ status: false, icon: 'pi pi-table', label: '' });
-const customTable = () => {
-    if (valueCustomTable.value.status) {
-        valueCustomTable.value.status = false;
-        //valueCustomTable.value.icon = 'pi pi-lock';
-    } else {
-        valueCustomTable.value.status = true;
-        //valueCustomTable.value.icon = 'pi pi-lock-open';
-    }
-};
-const documentFrozen = ref(false);
-
-const onSelectAllChange = () => {
-    onRowSelect();
-};
-
-const fillHeaderCustom = () => {
-    let mappedArray1 = [];
-
-    const types = ['string', 'number'];
-
-    for (let key in dataResponseAPI.value.data[0]) {
-        if (types.includes(typeof dataResponseAPI.value.data[0][key])) mappedArray1.push(key);
-    }
-
-    columnas.value = mappedArray1.map((item) => {
-        return {
-            field: item,
-            header: item.replaceAll('_', ' ').toUpperCase(),
-            position: mappedArray1.indexOf(item)
-        };
-    });
-
-    column.value = columnas.value;
-};
-const onColumnsChange = (column) => {
-    column.sort((a, b) => a.position - b.position);
-};
-
-const exportDialog = ref(false);
-const filename = ref('employees');
-const isChanging = ref(false);
-const dt = ref();
-const format = ref('');
-
-const ext_file = ref([
-    {
-        name: 'CSV',
-        code: true
-    },
-    {
-        name: 'XLS',
-        code: false
-    }
-]);
-
-provide('isChanging', isChanging);
-
-const exportCSV = () => {
-    dt.value.exportCSV();
-};
-
-const exportData = (data) => {
-    data.data ? exportTableToCSV(data.name) : exportExcel(data.name);
-};
-
-const exportExcel = (name) => {
-    const uri = 'data:application/vnd.ms-excel;base64,';
-    const template =
-        '<html xmlns:o="urn:schemas-microsoft-com:office:office" xmlns:x="urn:schemas-microsoft-com:office:excel" xmlns="http://www.w3.org/TR/REC-html40"><head><!--[if gte mso 9]><xml><x:ExcelWorkbook><x:ExcelWorksheets><x:ExcelWorksheet><x:Name>{worksheet}</x:Name><x:WorksheetOptions><x:DisplayGridlines/></x:WorksheetOptions></x:ExcelWorksheet></x:ExcelWorksheets></x:ExcelWorkbook></xml><![endif]--></head><body><table>{table}</table></body></html>';
-    const base64 = (s) => window.btoa(unescape(encodeURIComponent(s)));
-
-    const format = (s, c) => s.replace(/{(\w+)}/g, (m, p) => c[p]);
-
-    const htmls = document.getElementById('tblData').innerHTML;
-
-    const ctx = {
-        worksheet: 'Worksheet',
-        table: htmls
-    };
-
-    const link = document.createElement('a');
-    link.download = name;
-    link.href = uri + base64(format(template, ctx));
-    link.click();
-};
-
-function downloadCSV(csv, name) {
-    const csvFile = new Blob([csv], { type: 'text/csv' });
-    const downloadLink = document.createElement('a');
-    downloadLink.download = name;
-    downloadLink.href = window.URL.createObjectURL(csvFile);
-    downloadLink.style.display = 'none';
-    document.body.appendChild(downloadLink);
-    downloadLink.click();
-}
-
-function exportTableToCSV(name) {
-    let csv = [];
-    const rows = document.querySelectorAll('table tr');
-
-    for (let i = 0; i < rows.length; i++) {
-        let row = [],
-            cols = rows[i].querySelectorAll('td, th');
-
-        for (let j = 0; j < cols.length; j++) row.push(cols[j].innerText);
-
-        csv.push(row.join(','));
-    }
-
-    downloadCSV(csv.join('\n'), name);
-}
-
-const lazyParams = ref({});
-
-////////////////////////////////////////////////////////////////
-
-watch(
-    selectedFarm,
-    () => {
-        dataPost.value.farm_id = selectedFarm.value.id;
-    },
-    { deep: true }
-);
-watch(
-    selectedDocumentType,
-    () => {
-        dataPost.value.document_type = selectedDocumentType.value.id;
-    },
-    { deep: true }
-);
-watch(
-    selectedWorkCenters,
-    () => {
-        dataPost.value.work_center_id = selectedWorkCenters.value.id;
-    },
-    { deep: true }
-);
-watch(
-    selectedPaymentType,
-    () => {
-        dataPost.value.payment_type_id = selectedPaymentType.value.id;
-    },
-    { deep: true }
-);
-watch(
-    selectedGenderType,
-    () => {
-        dataPost.value.gender_id = selectedGenderType.value.id;
-    },
-    { deep: true }
-);
-watch(
-    () => dataResponseAPI.value,
-    (x, y) => {},
-    { immediate: true }
-);
-watch(listRowSelect, onRowSelect);
-
-</script>
-
-<style lang="scss" scoped>
-.flex-container {
-    display: flex;
-    justify-content: center;
-}
-</style>
+<style lang="scss" scoped></style>
