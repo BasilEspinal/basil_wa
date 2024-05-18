@@ -112,7 +112,7 @@ const fetchInfoPostLogin = async (data) => {
 
 
     let response = dataResponseAPI.value;
-
+    console.log(response)
     if (response['error']) throw response.error;
     if (!response['user']) throw response.error;
 

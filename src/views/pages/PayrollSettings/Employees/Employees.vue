@@ -40,7 +40,7 @@ const isChanging = ref(false);
 let endpoint = ref('/employees');
 const typeDateList = ref([]);
 
-const size = ref({ label: 'Normal', value: 'normal' });
+const size = ref({ label: 'Small', value: 'small',class:'sm' });
 const sizeOptions = ref([
     { label: 'Small', value: 'small', class: 'sm' },
     { label: 'Normal', value: 'normal' },
