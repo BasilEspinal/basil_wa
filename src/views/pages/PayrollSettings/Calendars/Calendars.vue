@@ -411,8 +411,10 @@ import { AbilityBuilder} from '@casl/ability';
 const namePage = ' Calendars ';
 const titlePage = namePage+'information';
 const dataFromComponent = ref();
+
 const Farms = ref([]);
 const farms = ref([]);
+
 const Compan = ref([]);
 const compa = ref([]);
 const selectedTypeOfDate = ref();
