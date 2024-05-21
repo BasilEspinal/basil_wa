@@ -1,238 +1,241 @@
 <template>
     <div>
-    <div class="card">
-        <div>
-            <h1>{{ titlePage }}</h1> 
+        <div class="card">
+            <div>
+                <h1>{{ titlePage }}</h1>
+            </div>
         </div>
-
-
-    </div>
-    <div class="card">
-        <div class="grid">
-            <div class="col-xs-12 col-sm-6 col-md-4 mb-2 text-center mx-auto">
-                <!--Uncomment when table is done-->
-                
+        <div class="card">
+            <div class="grid">
                 <div class="col-xs-12 col-sm-6 col-md-4 mb-2 text-center mx-auto">
-            <Toolbar style="margin-bottom: 1rem">
-                <template #center>
-                    <Button :disabled="headerNames.length > 0" label="New" icon="pi pi-plus" class="p-button-success mb-2 mt-2" @click="openNew" size="large" />
-                    <Divider layout="vertical" />
-                    <Button :disabled="!(listRowSelect.length > 0 && listRowSelect.length < 2)" label="Edit" icon="pi pi-file-edit" class="p-button-help mb-2 mt-2" @click="openEdit" size="large" />
-                    <Divider layout="vertical" />
-                    <Button :disabled="!(listRowSelect.length > 0 && listRowSelect.length < 2)" label="Clone" icon="pi pi-copy" class="p-button-secondary mb-2 mt-2" @click="openClone" size="large" />
-                    <Divider layout="vertical" />
-                    <Button :disabled="headerNames.length > 0" label="Export" icon="pi pi-file-import" class="p-button-warning mb-2 mt-2" @click="openExport" size="large" />
-                    <Divider layout="vertical" />
-                    <Button :disabled="!listRowSelect.length > 0" label="Delete" icon="pi pi-trash" class="p-button-danger mb-2 mt-2" @click="openDelete" size="large" />
-                </template>
-            </Toolbar>
+                    <!--Uncomment when table is done-->
+
+                    <div class="col-xs-12 col-sm-6 col-md-4 mb-2 text-center mx-auto">
+                        <Toolbar style="margin-bottom: 1rem">
+                            <template #center>
+                                <Button :disabled="headerNames.length > 0" label="New" icon="pi pi-plus" class="p-button-success mb-2 mt-2" @click="openNew" size="large" />
+                                <Divider layout="vertical" />
+                                <Button :disabled="!(listRowSelect.length > 0 && listRowSelect.length < 2)" label="Edit" icon="pi pi-file-edit" class="p-button-help mb-2 mt-2" @click="openEdit" size="large" />
+                                <Divider layout="vertical" />
+                                <Button :disabled="!(listRowSelect.length > 0 && listRowSelect.length < 2)" label="Clone" icon="pi pi-copy" class="p-button-secondary mb-2 mt-2" @click="openClone" size="large" />
+                                <Divider layout="vertical" />
+                                <Button :disabled="headerNames.length > 0" label="Export" icon="pi pi-file-import" class="p-button-warning mb-2 mt-2" @click="openExport" size="large" />
+                                <Divider layout="vertical" />
+                                <Button :disabled="!listRowSelect.length > 0" label="Delete" icon="pi pi-trash" class="p-button-danger mb-2 mt-2" @click="openDelete" size="large" />
+                            </template>
+                        </Toolbar>
+                    </div>
+                </div>
             </div>
+            <!-- <pre>{{ dataResponseAPI }}</pre> -->
+            <DataTable
+                :value="dataFromComponent"
+                dataKey="uuid"
+                tableStyle="min-width: 75rem"
+                showGridlines
+                :loading="loading"
+                scrollable
+                scrollHeight="600px"
+                resizableColumns
+                columnResizeMode="expand"
+                sortMode="multiple"
+                :paginator="true"
+                :rows="50"
+                :rowsPerPageOptions="[5, 10, 20, 50]"
+                :class="`p-datatable-${size.class}`"
+                @row-select="onRowSelect(selectedRegisters)"
+                @row-unselect="onRowSelect(selectedRegisters)"
+                @select-all-change="onSelectAllChange"
+                v-model:selection="selectedRegisters"
+                filterDisplay="menu"
+                v-model:filters="filters"
+                :globalFilterFields="['name', 'company.name', 'farm.name', 'status.name', 'created_at', 'updated_at']"
+            >
+                <template #header>
+                    <!--Uncomment when filters are done-->
 
-            </div>
-        </div>
-        <!-- <pre>{{ dataResponseAPI }}</pre> -->
-        <DataTable
-        :value="dataFromComponent"
-        dataKey="uuid"
-        tableStyle="min-width: 75rem"
-        showGridlines
-        :loading="loading"
-        scrollable
-        scrollHeight="600px"
-        resizableColumns
-        columnResizeMode="expand"
-        sortMode="multiple"
-        :paginator="true"
-        :rows="50"
-        :rowsPerPageOptions="[5, 10, 20, 50]"
-        :class="`p-datatable-${size.class}`"
-        @row-select="onRowSelect(selectedRegisters)"
-        @row-unselect="onRowSelect(selectedRegisters)"
-        @select-all-change="onSelectAllChange"
-        v-model:selection="selectedRegisters"
-        filterDisplay="menu"
-        v-model:filters="filters"
-        :globalFilterFields="['name', 'company.name', 'farm.name', 'status.name', 'created_at', 'updated_at']" 
-        >
-        <template #header>
-            <!--Uncomment when filters are done-->
-
-            <Toolbar class = "mb-2">
-                    <template v-slot:start>
-                        <Button type="button" icon="pi pi-filter-slash" label="Limpiar" class="p-button-outlined mb-2" @click="clearFilter()" />
+                    <Toolbar class="mb-2">
+                        <template v-slot:start>
+                            <Button type="button" icon="pi pi-filter-slash" label="Limpiar" class="p-button-outlined mb-2" @click="clearFilter()" />
+                        </template>
+                        <template v-slot:end>
+                            <span class="p-input-icon-left mb-2">
+                                <i class="pi pi-search" />
+                                <InputText v-model="filters['global'].value" placeholder="Buscar" style="width: 100%" />
+                            </span>
+                        </template>
+                        <template v-slot:center>
+                            <SelectButton v-model="size" :options="sizeOptions" optionLabel="label" dataKey="label"> </SelectButton>
+                        </template>
+                    </Toolbar>
+                </template>
+                <pre>{{valor}}</pre>
+                <template #empty> No customers found. </template>
+                <template #loading> Loading customers data. Please wait. </template>
+                <Column selectionMode="multiple" headerStyle="width: 3rem"></Column>
+                <Column field="tasks_of_type_name" filterField="tasks_of_type_name" header="Tasks of Type" sortable :frozen="documentFrozen">
+                    <template #header>
+                        <ToggleButton v-model="documentFrozen" onIcon="pi pi-lock" offIcon="pi pi-lock-open" onLabel="" offLabel="" />
+                        <div>&nbsp;</div>
                     </template>
-                    <template v-slot:end>
-                        <span class="p-input-icon-left mb-2">
-                        <i class="pi pi-search" />
-                        <InputText v-model="filters['global'].value" placeholder="Buscar" style="width: 100%" />
-                    </span>
+                    <template #body="{ data }">
+                        {{ data.tasks_of_type.name }}
                     </template>
-                    <template v-slot:center>
-                        
-                        <SelectButton v-model="size" :options="sizeOptions" optionLabel="label" dataKey="label"> </SelectButton>
-                        
-                    </template>       
-                </Toolbar>
-        </template>
+                    <template #filter="{ filterModel }">
+                        <InputText v-model="filterModel.value" type="text" class="p-column-filter" placeholder="Search by " />
+                    </template>
+                </Column>
 
-        <template #empty> No customers found. </template>
-        <template #loading> Loading customers data. Please wait. </template>
-        <Column selectionMode="multiple" headerStyle="width: 3rem"></Column>
-        <Column field="tasks_of_type_name" filterField="tasks_of_type_name" header="Tasks of Type" sortable :frozen="documentFrozen"> 
-            <template #header>
-                    <ToggleButton v-model="documentFrozen" onIcon="pi pi-lock" offIcon="pi pi-lock-open" onLabel="" offLabel="" />
-                    <div>&nbsp;</div>
-                </template>
-            <template #body="{ data }">
-                {{ data.tasks_of_type.name }} 
-            </template>
-            <template #filter="{ filterModel }">
-                <InputText v-model="filterModel.value" type="text" class="p-column-filter" placeholder="Search by " />
-            </template>
-        </Column>
-        
-        <Column field="crop_lots_code" filterField="crop_lots_code" header="Crop Lots Code" sortable > <!--Replace :frozen with the model-->
-            
+                <Column field="crop_lots_code" filterField="crop_lots_code" header="Crop Lots Code" sortable>
+                    <!--Replace :frozen with the model-->
 
-                <template #body="{ data }">
-                    {{ data.crop_lots.code }} 
-                </template>
-                <template #filter="{ filterModel }">
-                    <InputText v-model="filterModel.value" type="text" class="p-column-filter" placeholder="Search by " />
-                </template>
-        </Column>
+                    <template #body="{ data }">
+                        {{ data.crop_lots.code }}
+                    </template>
+                    <template #filter="{ filterModel }">
+                        <InputText v-model="filterModel.value" type="text" class="p-column-filter" placeholder="Search by " />
+                    </template>
+                </Column>
 
-        <Column field="transaction_date" filterField="transaction_date" header="Transaction date" sortable> 
-            
-            <template #body="{ data }">
-                {{ data.transaction_date }} 
-            </template>
-            <template #filter="{ filterModel }">
-                <InputText v-model="filterModel.value" type="text" class="p-column-filter" placeholder="Search by " />
-            </template>
-        </Column>
+                <Column field="transaction_date" filterField="transaction_date" header="Transaction date" sortable>
+                    <template #body="{ data }">
+                        {{ data.transaction_date }}
+                    </template>
+                    <template #filter="{ filterModel }">
+                        <InputText v-model="filterModel.value" type="text" class="p-column-filter" placeholder="Search by " />
+                    </template>
+                </Column>
 
-        <Column field="product_name" filterField="product_name" header="Product Name" sortable> 
-            
-                <template #body="{ data }">
-                    {{ data.product.name }} 
-                </template>
-                <template #filter="{ filterModel }">
-                    <InputText v-model="filterModel.value" type="text" class="p-column-filter" placeholder="Search by " />
-                </template>
-        </Column>
+                <Column field="product_name" filterField="product_name" header="Product Name" sortable>
+                    <template #body="{ data }">
+                        {{ data.product.name }}
+                    </template>
+                    <template #filter="{ filterModel }">
+                        <InputText v-model="filterModel.value" type="text" class="p-column-filter" placeholder="Search by " />
+                    </template>
+                </Column>
 
-        <Column field="product_type_name" filterField="product_type_name" header="Product Type Name" sortable> 
-            
-            <template #body="{ data }">
-                {{ data.product_type.name }} 
-            </template>
-            <template #filter="{ filterModel }">
-                <InputText v-model="filterModel.value" type="text" class="p-column-filter" placeholder="Search by " />
-            </template>
-        </Column>
+                <Column field="product_type_name" filterField="product_type_name" header="Product Type Name" sortable>
+                    <template #body="{ data }">
+                        {{ data.product_type.name }}
+                    </template>
+                    <template #filter="{ filterModel }">
+                        <InputText v-model="filterModel.value" type="text" class="p-column-filter" placeholder="Search by " />
+                    </template>
+                </Column>
 
-        <Column field="packing_type_name" filterField="packing_type_name" header="packing Type Name" sortable> 
-            
-            <template #body="{ data }">
-                {{ data.packing_type.name }} 
-            </template>
-            <template #filter="{ filterModel }">
-                <InputText v-model="filterModel.value" type="text" class="p-column-filter" placeholder="Search by " />
-            </template>
-        </Column>
+                <Column field="packing_type_name" filterField="packing_type_name" header="packing Type Name" sortable>
+                    <template #body="{ data }">
+                        {{ data.packing_type.name }}
+                    </template>
+                    <template #filter="{ filterModel }">
+                        <InputText v-model="filterModel.value" type="text" class="p-column-filter" placeholder="Search by " />
+                    </template>
+                </Column>
 
+                <Column field="variant" filterField="variant" header="Variant Name" sortable>
+                    <template #body="{ data }">
+                        {{ data.variant.name }}
+                    </template>
+                    <template #filter="{ filterModel }">
+                        <InputText v-model="filterModel.value" type="text" class="p-column-filter" placeholder="Search by " />
+                    </template>
+                </Column>
 
-        <Column field="variant" filterField="variant" header="Variant Name" sortable> 
-            
-            <template #body="{ data }">
-                {{ data.variant.name }} 
-            </template>
-            <template #filter="{ filterModel }">
-                <InputText v-model="filterModel.value" type="text" class="p-column-filter" placeholder="Search by " />
-            </template>
-        </Column>
+                <!--Here add other columns-->
 
+                <Column field="farmName" filterField="farm.name" header="Farm Name" sortable>
+                    <template #body="{ data }">
+                        {{ data.farm.name }}
+                    </template>
+                    <template #filter="{ filterModel }">
+                        <InputText v-model="filterModel.value" type="text" class="p-column-filter" placeholder="Search by farm" />
+                    </template>
+                </Column>
 
-        
-        <!--Here add other columns-->
+                <Column field="companyName" filterField="company.name" header="Company Name" sortable>
+                    <template #body="{ data }">
+                        {{ data.company.name }}
+                    </template>
+                    <template #filter="{ filterModel }">
+                        <InputText v-model="filterModel.value" type="text" class="p-column-filter" placeholder="Search by farm" />
+                    </template>
+                </Column>
 
-        <Column field="farmName" filterField="farm.name" header="Farm Name" sortable>
-                <template #body="{ data }">
-                    {{ data.farm.name }}
-                </template>
-                <template #filter="{ filterModel }">
-                    <InputText v-model="filterModel.value" type="text" class="p-column-filter" placeholder="Search by farm" />
-                </template>
-            </Column>
+                <Column field="createdAt" filterField="created_at" header="Creation date" sortable>
+                    <template #body="{ data }">
+                        {{ data.created_at }}
+                    </template>
+                    <template #filter="{ filterModel }">
+                        <InputText v-model="filterModel.value" type="text" class="p-column-filter" placeholder="Search by creation date" />
+                    </template>
+                </Column>
 
-            <Column field="companyName" filterField="company.name" header="Company Name" sortable>
-                <template #body="{ data }">
-                    {{ data.company.name }}
-                </template>
-                <template #filter="{ filterModel }">
-                    <InputText v-model="filterModel.value" type="text" class="p-column-filter" placeholder="Search by farm" />
-                </template>
-            </Column>
+                <Column field="updatedAt" filterField="updated_at" header="Modification date" sortable>
+                    <template #body="{ data }">
+                        {{ data.updated_at }}
+                    </template>
+                    <template #filter="{ filterModel }">
+                        <InputText v-model="filterModel.value" type="text" class="p-column-filter" placeholder="Search by modification date" />
+                    </template>
+                </Column>
 
-            <Column field="createdAt" filterField="created_at" header="Creation date" sortable>
-                <template #body="{ data }">
-                    {{ data.created_at }}
-                </template>
-                <template #filter="{ filterModel }">
-                    <InputText v-model="filterModel.value" type="text" class="p-column-filter" placeholder="Search by creation date" />
-                </template>
-            </Column>
-
-            <Column field="updatedAt" filterField="updated_at" header="Modification date" sortable>
-                <template #body="{ data }">
-                    {{ data.updated_at }}
-                </template>
-                <template #filter="{ filterModel }">
-                    <InputText v-model="filterModel.value" type="text" class="p-column-filter" placeholder="Search by modification date" />
-                </template>
-            </Column>
-
-            <Column field="status" filterField="status.name" header="Status" sortable>
-                <template #body="{ data }">
-                    <Tag :value="data.status.name" :severity="'EFC88B'" />
-                </template>
-                <template #filter="{ filterModel }">
-                    <InputText v-model="filterModel.value" type="text" class="p-column-filter" placeholder="Search by status" />
-                </template>
-            </Column>
-
-        </DataTable>
-        <Dialog v-model:visible="formDialogNew" modal :header="formDialogNewTitle" class="p-fluid text-center mx-auto">
-            <div class="mb-3">
-                    <div class=" flex align-items-center">
+                <Column field="status" filterField="status.name" header="Status" sortable>
+                    <template #body="{ data }">
+                        <Tag :value="data.status.name" :severity="'EFC88B'" />
+                    </template>
+                    <template #filter="{ filterModel }">
+                        <InputText v-model="filterModel.value" type="text" class="p-column-filter" placeholder="Search by status" />
+                    </template>
+                </Column>
+            </DataTable>
+            <Dialog v-model:visible="formDialogNew" modal :header="formDialogNewTitle" class="p-fluid text-center mx-auto">
+                <div class="mb-3">
+                    <div class="flex align-items-center">
                         <label for="username" class="font-semibold w-3">Transaction Date :</label>
                         <!-- <Calendar v-model="transaction_dateV" class="flex-auto" v-bind="transaction_dateVProps"/> -->
-                        <Calendar dateFormat="dd/mm/yy" v-model="transaction_dateV" class="flex-auto"  showIcon :showOnFocus="false" inputId="buttondisplay" />
+                        <Calendar dateFormat="dd/mm/yy" v-model="transaction_dateV" class="flex-auto" showIcon :showOnFocus="false" inputId="buttondisplay" placeholder="Select transaction date"  />
                     </div>
-                    
-                    
+
                     <small id="username-help" :class="{ 'p-invalid text-red-700': errorsNew['transaction_dateV'] }">
                         {{ errorsNew.transaction_dateV }}
                     </small>
                 </div>
 
-            <div class="mb-3">
+                <div class="mb-3">
                     <div class="flex align-items-center">
                         <label for="username" class="font-semibold w-3">Task of Type :</label>
-                        <AutoComplete v-model="tasks_of_typeV" inputId="ac" class="flex-auto" :suggestions="tasks_of_type" @complete="searchTaskOfType" field="name" dropdown />
+                        <AutoComplete v-model="task_of_typeV" inputId="ac" class="flex-auto" :suggestions="tasks_of_type" @complete="searchTaskOfType" field="name" dropdown placeholder="Select Task of Type"  />
                     </div>
                     <small id="username-help" :class="{ 'p-invalid text-red-700': errorsNew['tasks_of_typeV'] }">
-                        {{ errorsNew.tasks_of_typeV }}
+                        {{ errorsNew.task_of_typeV }}
                     </small>
                 </div>
 
-
-
-                <div class="mb-3">
+                <!-- <div class="mb-3">
+                    <pre>{{crop_lots_codeV }}</pre>
                     <div class="flex align-items-center">
                         <label for="username" class="font-semibold w-3">Crop Lots Code :</label>
                         <AutoComplete v-model="crop_lots_codeV" class="flex-auto" inputId="ac" :suggestions="crop_lots" @complete="searchCropLots" field="code" dropdown />
+                    </div>
+                    <small id="username-help" :class="{ 'p-invalid text-red-700': errorsNew['crop_lots_codeV'] }">
+                        {{ errorsNew.crop_lots_codeV }}
+                    </small>
+                </div> -->
+
+                <div class="mb-3">
+
+                    <div class="flex align-items-center">
+                        <label for="username" class="font-semibold w-3">Crop Lots Code :</label>
+                        <MultiSelect 
+                        v-model="crop_lots_codeV" 
+                        display="chip" 
+                        :options="CropLots" 
+                        optionLabel="code" 
+                        placeholder="Select Crop Lots" 
+                        :maxSelectedLabels="100" 
+                        class="flex-auto" />
+                        <!-- <AutoComplete v-model="crop_lots_codeV" class="flex-auto" inputId="ac" :suggestions="crop_lots" @complete="searchCropLots" field="code" dropdown /> -->
                     </div>
                     <small id="username-help" :class="{ 'p-invalid text-red-700': errorsNew['crop_lots_codeV'] }">
                         {{ errorsNew.crop_lots_codeV }}
@@ -241,15 +244,14 @@
 
                 <div class="mb-3">
                     <div class="flex align-items-center">
-                        <label for="username" class="font-semibold w-3">Product :</label>
+                        <label for="productV" class="font-semibold w-3">Product :</label>
                         <AutoComplete v-model="productV" class="flex-auto" inputId="ac" :suggestions="products" @complete="searchProduct" field="name" dropdown />
                     </div>
                     <small id="username-help" :class="{ 'p-invalid text-red-700': errorsNew['productV'] }">
                         {{ errorsNew.productV }}
                     </small>
                 </div>
-                
-                
+
                 <div class="mb-3">
                     <div class="flex align-items-center">
                         <label for="username" class="font-semibold w-3">Type of products:</label>
@@ -260,30 +262,36 @@
                     </small>
                 </div>
 
-
                 <div class="mb-3">
                     <div class="flex align-items-center">
                         <label for="username" class="font-semibold w-3">Packing types:</label>
-                        <AutoComplete v-model="packing_typeV" class="flex-auto" inputId="ac" :suggestions="packing_types" @complete="searchPackingType" field="name" dropdown />
+                        <AutoComplete v-model="packing_typeV" class="flex-auto" inputId="ac" :suggestions="packings_type" @complete="searchPackingType" field="name" dropdown />
                     </div>
                     <small id="username-help" :class="{ 'p-invalid text-red-700': errorsNew['packing_typeV'] }">
                         {{ errorsNew.packing_typeV }}
                     </small>
                 </div>
 
-
                 <div class="mb-3">
                     <div class="flex align-items-center">
                         <label for="username" class="font-semibold w-3">Variants:</label>
-                        <AutoComplete v-model="variantsV" class="flex-auto" inputId="ac" :suggestions="variants" @complete="searchVariant" field="name" dropdown />
+                        <AutoComplete v-model="variantV" class="flex-auto" inputId="ac" :suggestions="variants" @complete="searchVariant" field="name" dropdown />
                     </div>
-                    <small id="username-help" :class="{ 'p-invalid text-red-700': errorsNew['variantsV'] }">
-                        {{ errorsNew.variantsV }}
+                    <small id="username-help" :class="{ 'p-invalid text-red-700': errorsNew['variantV'] }">
+                        {{ errorsNew.variantV }}
                     </small>
                 </div>
 
-                
-                
+                <div class="mb-3">
+                    <div class="flex align-items-center">
+                        <label for="username" class="font-semibold w-3">Customer Request:</label>
+                        <AutoComplete v-model="customer_requestV" class="flex-auto" inputId="ac" :suggestions="customer_request" @complete="searchCustomerRequest" field="name" dropdown />
+                    </div>
+                    <small id="username-help" :class="{ 'p-invalid text-red-700': errorsNew['customer_requestV'] }">
+                        {{ errorsNew.customer_requestV }}
+                    </small>
+                </div>
+
                 <div class="mb-3">
                     <div class="flex align-items-center">
                         <label for="username" class="font-semibold w-3">Farm :</label>
@@ -329,25 +337,23 @@
                     </small>
                 </div>
                 <div class="mb-3">
-                <div class="flex align-items-center">
-                    <label for="username" class="font-semibold w-3">Farm :</label>
-                    <AutoComplete v-model="farm" inputId="ac" :suggestions="farms" @complete="searchFarms" field="name"
-                        dropdown />
+                    <div class="flex align-items-center">
+                        <label for="username" class="font-semibold w-3">Farm :</label>
+                        <AutoComplete v-model="farm" inputId="ac" :suggestions="farms" @complete="searchFarms" field="name" dropdown />
+                    </div>
+                    <small id="username-help" :class="{ 'p-invalid text-red-700': errorsNew['farm'] }">
+                        {{ errorsNew.farm }}
+                    </small>
                 </div>
-                <small id="username-help" :class="{ 'p-invalid text-red-700': errorsNew['farm'] }">
-                    {{ errorsNew.farm }}
-                </small>
-            </div>
-            <div class="mb-3">
-                <div class="flex align-items-center">
-                    <label for="username" class="font-semibold w-3">Companny:</label>
-                    <AutoComplete v-model="company" inputId="ac" :suggestions="compa" @complete="EditRecord"
-                        field="name" dropdown />
+                <div class="mb-3">
+                    <div class="flex align-items-center">
+                        <label for="username" class="font-semibold w-3">Companny:</label>
+                        <AutoComplete v-model="company" inputId="ac" :suggestions="compa" @complete="EditRecord" field="name" dropdown />
+                    </div>
+                    <small id="username-help" :class="{ 'p-invalid text-red-700': errorsNew['company'] }">
+                        {{ errorsNew.company }}
+                    </small>
                 </div>
-                <small id="username-help" :class="{ 'p-invalid text-red-700': errorsNew['company'] }">
-                    {{ errorsNew.company }}
-                </small>
-            </div>
 
                 <div class="flex justify-content-end gap-2">
                     <Button type="button" label="Cancel" severity="secondary" @click="formDialogEdit = false" />
@@ -437,9 +443,8 @@
             </Dialog>
 
             <Toast />
+        </div>
     </div>
-</div>
-    
 </template>
 
 <!-- 
@@ -465,9 +470,9 @@ import * as XLSX from 'xlsx';
 import { saveAs } from 'file-saver';
 import { z } from 'zod';
 import ability from '@/service/ability.js';
-import { AbilityBuilder} from '@casl/ability';
+import { AbilityBuilder } from '@casl/ability';
 const namePage = ' Planner tasks ';
-const titlePage = namePage+'information';
+const titlePage = namePage + 'information';
 const dataFromComponent = ref();
 const Farms = ref([]);
 const farms = ref([]);
@@ -485,14 +490,16 @@ const packings_type = ref([]);
 const Packings_type = ref([]);
 const variants = ref([]);
 const Variants = ref([]);
+const customer_request = ref([]);
+const Customer_request = ref([]);
 
 
 const formDialogNew = ref(false);
-const formDialogNewTitle = 'Create new'+namePage;
-const formDialogEditTitle = 'Edit'+namePage;
+const formDialogNewTitle = 'Create new' + namePage;
+const formDialogEditTitle = 'Edit' + namePage;
 const formDialogCloneTitle = 'Clone' + namePage;
 const formDialogExportTitle = 'Export' + namePage;
-const formDialogDeleteTitle = 'Delete'+namePage;
+const formDialogDeleteTitle = 'Delete' + namePage;
 const formDialogEdit = ref(false);
 const formDialogClone = ref(false);
 const formDialogExport = ref(false);
@@ -500,20 +507,17 @@ const formDialogDelete = ref(false);
 const toast = useToast();
 const filename = ref('table');
 const isChanging = ref(false);
-let endpoint = ref('/planner_tasks');  //replace endpoint with your endpoint
-
+let endpoint = ref('/planner_tasks'); //replace endpoint with your endpoint
 
 ////////////
- //Form here
- ////////////   
+//Form here
+////////////
 const size = ref({ label: 'Normal', value: 'normal' });
 const sizeOptions = ref([
     { label: 'Small', value: 'small', class: 'sm' },
     { label: 'Normal', value: 'normal' },
     { label: 'Large', value: 'large', class: 'lg' }
 ]);
-
-
 
 onBeforeMount(() => {
     readAll();
@@ -522,10 +526,8 @@ onBeforeMount(() => {
 const listRowSelect = ref([]);
 const loading = ref(false);
 const onRowSelect = (data) => {
-    
     listRowSelect.value = data;
     //assignValues(mode.value)
-    
 };
 
 watch(listRowSelect, onRowSelect);
@@ -561,30 +563,34 @@ const readAll = async () => {
     loadingData();
     const respProducts = await getRequest('/products');
     if (!respProducts.ok) toast.add({ severity: 'error', detail: 'Error' + respProducts.error, life: 3000 });
-    products.value = respProducts.data.data.map((product) => ({ id: product.uuid, name: product.name }));
+    Products.value = respProducts.data.data.map((product) => ({ id: product.uuid, name: product.name }));
+    console.log(products);
 
     const respProductsType = await getRequest('/product_types');
     if (!respProductsType.ok) toast.add({ severity: 'error', detail: 'Error' + respProductsType.error, life: 3000 });
-    products_type.value = respProductsType.data.data.map((product) => ({ id: product.uuid, name: product.name }));
+    Products_type.value = respProductsType.data.data.map((product) => ({ id: product.uuid, name: product.name }));
 
     const respTasksOfType = await getRequest('/task_of_types');
     if (!respTasksOfType.ok) toast.add({ severity: 'error', detail: 'Error' + respTasksOfType.error, life: 3000 });
-    tasks_of_type.value = respTasksOfType.data.data.map((task) => ({ id: task.uuid, name: task.name }));
-
+    Tasks_of_type.value = respTasksOfType.data.data.map((task) => ({ id: task.uuid, name: task.name }));
 
     const respPackingsType = await getRequest('/packing_types');
     if (!respPackingsType.ok) toast.add({ severity: 'error', detail: 'Error' + respPackingsType.error, life: 3000 });
-    packings_type.value = respPackingsType.data.data.map((packing) => ({ id: packing.uuid, name: packing.name }));
-
+    Packings_type.value = respPackingsType.data.data.map((packing) => ({ id: packing.uuid, name: packing.name }));
 
     const respVariants = await getRequest('/variants');
     if (!respVariants.ok) toast.add({ severity: 'error', detail: 'Error' + respVariants.error, life: 3000 });
-    variants.value = respVariants.data.data.map((variant) => ({ id: variant.uuid, name: variant.name }));
-
+    Variants.value = respVariants.data.data.map((variant) => ({ id: variant.uuid, name: variant.name }));
 
     const respCropLots = await getRequest('/lots');
-    if (!respCropLots.ok) toast.add({ severity: 'error', detail: 'Error' + respCropLots.error, life: 3000 });
-    crop_lots.value = respCropLots.data.data.map((crop) => ({ id: crop.uuid, code: crop.code }));
+    if (!respCropLots.ok) {
+        toast.add({ severity: 'error', detail: 'Error: ' + respCropLots.error, life: 3000 });
+    } else {
+        CropLots.value = respCropLots.data.data.map((crop) => ({
+            id: crop.id,
+            code: crop.code
+        }));
+    }
 
     const respFarms = await getRequest('/farms');
     if (!respFarms.ok) toast.add({ severity: 'error', detail: 'Error' + respFarms.error, life: 3000 });
@@ -593,9 +599,15 @@ const readAll = async () => {
     const respCompan = await getRequest('/companies');
     if (!respCompan.ok) toast.add({ severity: 'error', detail: 'Error' + respCompan.error, life: 3000 });
     Compan.value = respCompan.data.data.map((comp) => ({ id: comp.uuid, name: comp.name }));
+
+    const respCustomerRequest = await getRequest('/customers_requests');
+    if (!respCustomerRequest.ok) toast.add({ severity: 'error', detail: 'Error' + respCustomerRequest.error, life: 3000 });
+    Customer_request.value = respCustomerRequest.data.data.map((customer) => ({ id: customer.uuid, name: customer.dispatch_number_lot }));
+    console.log(Customer_request);
 };
 const loadingData = async () => {
     const response = await getRequest(endpoint.value);
+
     if (!response.ok) toast.add({ severity: 'error', detail: 'Error' + response.error, life: 3000 });
     dataFromComponent.value = response.data.data;
 };
@@ -617,14 +629,15 @@ const {
     defineField,
     resetForm
 } = useForm({
-    initialValues:{
+    initialValues: {
         tasks_of_typeV: { name: '', id: '' },
-        crop_lots_codeV: { code: '', id: '' },
+        crop_lots_codeV: [],
         productV: { name: '', id: '' },
         product_typeV: { name: '', id: '' },
         packing_typeV: { name: '', id: '' },
         variantV: { name: '', id: '' },
         transaction_dateV: '',
+        customer_requestV: { name: '', id: '' },
         farm: { name: '', id: '' },
         company: { name: '', id: '' }
     },
@@ -639,32 +652,33 @@ const {
                     id: z.string().min(4)
                 })
                 .optional(),
-            crop_lots_codeV: z
+            crop_lots_codeV:z.array(z.object({
+                code: z.string().min(2),
+                id: z.number().min(1)
+            })),
+            
+            productV: z.object({
+                name: z.string().min(4),
+                id: z.string().min(4)
+            }),
+            product_typeV: z.object({
+                name: z.string().min(4),
+                id: z.string().min(4)
+            }),
+            packing_typeV: z.object({
+                name: z.string().min(4),
+                id: z.string().min(4)
+            }),
+            variantV: z.object({
+                name: z.string().min(4),
+                id: z.string().min(4)
+            }),
+            customer_requestV: z
                 .object({
-                    code: z.string().min(4),
-                    id: z.string().min(4)
-                }),
-            productV: z
-                .object({
-                    name: z.string().min(4),
-                    id: z.string().min(4)
-                }),
-            product_typeV: z
-                .object({
-                    name: z.string().min(4),
-                    id: z.string().min(4)
-                }),
-            packing_typeV: z
-                .object({
-                    name: z.string().min(4),
-                    id: z.string().min(4)
-                }),
-            variantV: z
-                .object({
-                    name: z.string().min(4),
-                    id: z.string().min(4)
-                }),        
-
+                    name: z.string().min(4).optional(),
+                    id: z.string().min(4).optional()
+                })
+                .optional(),
             farm: z
                 .object({
                     name: z.string().min(4),
@@ -684,13 +698,14 @@ const [name, nameProps] = defineField('name');
 const [codeV, codeVProps] = defineField('codeV');
 const [farm] = defineField('farm');
 const [company] = defineField('company');
-const [transaction_dateV,transaction_dateVProps] = defineField('transaction_dateV');
-const [tasks_of_typeV] = defineField('tasks_of_typeV');
+const [transaction_dateV, transaction_dateVProps] = defineField('transaction_dateV');
+const [task_of_typeV] = defineField('task_of_typeV');
 const [crop_lots_codeV] = defineField('crop_lots_codeV');
 const [productV] = defineField('productV');
 const [product_typeV] = defineField('product_typeV');
 const [packing_typeV] = defineField('packing_typeV');
 const [variantV] = defineField('variantV');
+const [customer_requestV] = defineField('customer_requestV');
 
 const extenciones = ref([{ name: 'CSV' }, { name: 'XLS' }]);
 const optionsEsport = ref([{ name: 'ALL' }, { name: 'SELECTED' }]);
@@ -703,14 +718,34 @@ const RowSelect = (data) => {
 let headerNames = ref([]);
 provide('isChanging', isChanging);
 watch(listRowSelect, RowSelect);
+let valor = ref();
 
 const createRecord = handleSubmitNew(async (values) => {
+    const yyyy = values.transaction_dateV.getFullYear();
+    const mm = String(values.transaction_dateV.getMonth() + 1).padStart(2, '0'); // Los meses en JavaScript son 0-indexados
+    const dd = String(values.transaction_dateV.getDate()).padStart(2, '0');
+
+    // Formatear la fecha en formato YYYY-MM-DD
+    const formattedDate = `${yyyy}-${mm}-${dd}`;
+    console.log(formattedDate);
     const data = {
-        code: values.codeV,
-        name: values.name,
-        company_uuid: values.company ? values.company.id : '25b4319c-e93f-4411-936c-118060f5e7c9',
-        farm_uuid: values.farm ? values.farm.id : '8ef93a7b-31bf-4233-af80-481020e9cf97'
+        // code: values.codeV,
+        // name: values.name,
+
+        tasks_of_type_uuid: values.task_of_typeV ? values.task_of_typeV.id : 'Prueba',
+        // crop_lots: {"id": 1, "code": "L-1"},
+        crop_lots: values.crop_lots_codeV ? values.crop_lots_codeV : 'Prueba',
+        transaction_date: formattedDate,
+        product_uuid: values.productV ? values.productV.id : 'Prueba',
+        product_type_uuid: values.product_typeV ? values.product_typeV.id : 'Prueba',
+        packing_type_uuid: values.packing_typeV ? values.packing_typeV.id : 'Prueba',
+        variant_uuid: values.variantV ? values.variantV.id : 'Prueba',
+        customer_request_uuid: values.customer_requestV ? values.customer_requestV.id : 'Prueba',
+        company_uuid: values.company ? values.company.id : 'Prueba',
+        farm_uuid: values.farm ? values.farm.id : 'Prueba'
     };
+    valor.value = data;
+    console.log(data);
     const restp = await postRequest(endpoint.value, data);
 
     toast.add({ severity: restp.ok ? 'success' : 'error', summary: 'Create', detail: restp.ok ? 'Creado' : restp.error, life: 3000 });
@@ -732,7 +767,6 @@ const searchCompannies = (event) => {
 const openNew = () => {
     resetForm();
     formDialogNew.value = true;
-
 };
 
 const openEdit = () => {
@@ -774,7 +808,7 @@ const EditRecord = handleSubmitNew(async (values) => {
         company_uuid: values.company ? values.company.id : '25b4319c-e93f-4411-936c-118060f5e7c9',
         farm_uuid: values.farm ? values.farm.id : values.farm
     };
-    
+
     const restp = await putRequest(endpoint.value, data, uuid);
     toast.add({ severity: restp.ok ? 'success' : 'error', summary: 'Edit', detail: restp.ok ? 'Editado' : restp.error, life: 3000 });
     loadingData();
@@ -857,6 +891,17 @@ const searchVariant = (event) => {
             variants.value = [...Variants.value];
         } else {
             variants.value = Variants.value.filter((fram) => {
+                return fram.name.toLowerCase().startsWith(event.query.toLowerCase());
+            });
+        }
+    }, 200);
+};
+const searchCustomerRequest = (event) => {
+    setTimeout(() => {
+        if (!event.query.trim().length) {
+            customer_request.value = [...Customer_request.value];
+        } else {
+            customer_request.value = Customer_request.value.filter((fram) => {
                 return fram.name.toLowerCase().startsWith(event.query.toLowerCase());
             });
         }
