@@ -27,9 +27,9 @@
                     </div>
                 </div>
             </div>
-
-            <pre>{{ listRowSelect }}</pre>
-            <pre>{{ crop_lots_codeV }}</pre>
+        <pre> {{ listRowSelect }}</pre>
+            
+            
             <DataTable
                 :value="dataFromComponent"
                 dataKey="uuid"
@@ -217,7 +217,7 @@
 
 
                 <div class="mb-3">
-
+                    
                     <div class="flex align-items-center">
                         <label for="username" class="font-semibold w-3">Crop Lots Code :</label>
                         <MultiSelect 
@@ -454,6 +454,7 @@
 
 
                 <div class="mb-3">
+                    
 
                     <div class="flex align-items-center">
                         <label for="username" class="font-semibold w-3">Crop Lots Code :</label>
@@ -945,7 +946,7 @@ const openClone = () => {
     company.value = { id: empresa.uuid, name: empresa.name };
     farm.value = { id: farmParameter.uuid, name: farmParameter.name };
 
-    formDialogEdit.value = true;
+    formDialogClone.value = true;
 };
 
 const openExport = () => {
@@ -985,6 +986,8 @@ const EditRecord = handleSubmitNew(async (values) => {
 
     const restp = await putRequest(endpoint.value, data, uuid);
     toast.add({ severity: restp.ok ? 'success' : 'error', summary: 'Edit', detail: restp.ok ? 'Editado' : restp.error, life: 3000 });
+    console.log(JSON.stringify(data, null, 2))
+    console.log(restp);
     loadingData();
     formDialogEdit.value = false;
 });
