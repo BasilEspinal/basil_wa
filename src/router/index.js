@@ -143,6 +143,11 @@ const router = createRouter({
                     component: () => import('@/views/pages/Production/MetereologicalStation/metereologicalStation.vue')
                 },
                 {
+                    path: '/production/LotsSchedule',
+                    name: 'LotsSchedule',
+                    component: () => import('@/views/pages/Production/LotsSchedule/LotsSchedule.vue')
+                },
+                {
                     path: '/PayrollSettlement/DailyPlanner',
                     name: 'dailyplanner',
                     component: () => import('@/views/pages/PayrollSettlement/DailyPlanner/DailyPlanner.vue')

@@ -147,7 +147,7 @@ const model2 = ref([
                     },
                     {
                         label: 'Programación de Lotes',
-                        to: '/access',
+                        to: '/production/LotsSchedule',
                         icon: 'pi pi-calendar-minus',
                         gate: 'produccion_programaciondelotes_menu',
                     },
