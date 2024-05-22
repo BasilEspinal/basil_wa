@@ -13,21 +13,21 @@
                     <div class="col-xs-12 col-sm-6 col-md-4 mb-2 text-center mx-auto">
                         <Toolbar style="margin-bottom: 1rem">
                             <template #center>
-                                <Button :disabled="headerNames.length > 0" label="New" icon="pi pi-plus" class="p-button-success mb-2 mt-2" @click="openNew" size="large" />
-                                <Divider layout="vertical" />
-                                <Button :disabled="!(listRowSelect.length > 0 && listRowSelect.length < 2)" label="Edit" icon="pi pi-file-edit" class="p-button-help mb-2 mt-2" @click="openEdit" size="large" />
-                                <Divider layout="vertical" />
-                                <Button :disabled="!(listRowSelect.length > 0 && listRowSelect.length < 2)" label="Clone" icon="pi pi-copy" class="p-button-secondary mb-2 mt-2" @click="openClone" size="large" />
-                                <Divider layout="vertical" />
-                                <Button :disabled="headerNames.length > 0" label="Export" icon="pi pi-file-import" class="p-button-warning mb-2 mt-2" @click="openExport" size="large" />
-                                <Divider layout="vertical" />
-                                <Button :disabled="!listRowSelect.length > 0" label="Delete" icon="pi pi-trash" class="p-button-danger mb-2 mt-2" @click="openDelete" size="large" />
+                                <Button v-if="ability.can('planeacion_diaria_crear')" :disabled="headerNames.length > 0" label="New" icon="pi pi-plus" class="p-button-success mb-2 mt-2" @click="openNew" size="large" />
+                                <Divider v-if="ability.can('planeacion_diaria_crear')" layout="vertical" />
+                                <Button v-if="ability.can('planeacion_diaria_editar')" :disabled="!(listRowSelect.length > 0 && listRowSelect.length < 2)" label="Edit" icon="pi pi-file-edit" class="p-button-help mb-2 mt-2" @click="openEdit" size="large" />
+                                <Divider v-if="ability.can('planeacion_diaria_editar')" layout="vertical" />
+                                <Button v-if="ability.can('planeacion_diaria_crear')" :disabled="!(listRowSelect.length > 0 && listRowSelect.length < 2)" label="Clone" icon="pi pi-copy" class="p-button-secondary mb-2 mt-2" @click="openClone" size="large" />
+                                <Divider v-if="ability.can('planeacion_diaria_crear')" layout="vertical" />
+                                <Button v-if="ability.can('planeacion_diaria_editar')" :disabled="headerNames.length > 0" label="Export" icon="pi pi-file-import" class="p-button-warning mb-2 mt-2" @click="openExport" size="large" />
+                                <Divider v-if="ability.can('planeacion_diaria_editar')" layout="vertical" />
+                                <Button v-if="ability.can('planeacion_diaria_eliminar')" :disabled="!listRowSelect.length > 0" label="Delete" icon="pi pi-trash" class="p-button-danger mb-2 mt-2" @click="openDelete" size="large" />
                             </template>
                         </Toolbar>
                     </div>
                 </div>
             </div>
-        <pre> {{ listRowSelect }}</pre>
+        <!-- <pre> {{getType(listRowSelect[0].crop_lots) }}</pre> -->
             
             
             <DataTable
@@ -51,7 +51,8 @@
                 v-model:selection="selectedRegisters"
                 filterDisplay="menu"
                 v-model:filters="filters"
-                :globalFilterFields="['name', 'company.name', 'farm.name', 'status.name', 'created_at', 'updated_at']"
+                :globalFilterFields="['name', 'company.name', 'farm.name', 'status.name', 'created_at', 'updated_at', 'transaction_date', 'tasks_of_type.name', 'crop_lots.code', 'product.name', 'product_type.name', 'packing_type.name', 'variant.name']"
+                v-if="ability.can('planeacion_diaria_listado')"
             >
                 <template #header>
                     <!--Uncomment when filters are done-->
@@ -75,7 +76,7 @@
                 <template #empty> No customers found. </template>
                 <template #loading> Loading customers data. Please wait. </template>
                 <Column selectionMode="multiple" headerStyle="width: 3rem"></Column>
-                <Column field="tasks_of_type_name" filterField="tasks_of_type_name" header="Tasks of Type" sortable :frozen="documentFrozen">
+                <Column field="tasks_of_type_name" filterField="tasks_of_type.name" header="Tasks of Type" sortable :frozen="documentFrozen">
                     <template #header>
                         <ToggleButton v-model="documentFrozen" onIcon="pi pi-lock" offIcon="pi pi-lock-open" onLabel="" offLabel="" />
                         <div>&nbsp;</div>
@@ -88,11 +89,12 @@
                     </template>
                 </Column>
 
-                <Column field="crop_lots_code" filterField="crop_lots_code" header="Crop Lots Code" sortable>
+                <Column field="crop_lots_code" filterField="filtroCropLots" header="Crop Lots Code" sortable>
                     <!--Replace :frozen with the model-->
 
                     <template #body="{ data }">
-                        {{ data.crop_lots }}
+                        <!-- {{ data.crop_lots.map(item => item.code).join(', ') }} -->
+                        {{ cropLotsToString(data.crop_lots) }}
                     </template>
                     <template #filter="{ filterModel }">
                         <InputText v-model="filterModel.value" type="text" class="p-column-filter" placeholder="Search by " />
@@ -108,7 +110,7 @@
                     </template>
                 </Column>
 
-                <Column field="product_name" filterField="product_name" header="Product Name" sortable>
+                <Column field="product_name" filterField="product.name" header="Product Name" sortable>
                     <template #body="{ data }">
                         {{ data.product.name }}
                     </template>
@@ -117,7 +119,7 @@
                     </template>
                 </Column>
 
-                <Column field="product_type_name" filterField="product_type_name" header="Product Type Name" sortable>
+                <Column field="product_type_name" filterField="product_type.name" header="Product Type Name" sortable>
                     <template #body="{ data }">
                         {{ data.product_type.name }}
                     </template>
@@ -126,7 +128,7 @@
                     </template>
                 </Column>
 
-                <Column field="packing_type_name" filterField="packing_type_name" header="packing Type Name" sortable>
+                <Column field="packing_type_name" filterField="packing_type.name" header="packing Type Name" sortable>
                     <template #body="{ data }">
                         {{ data.packing_type.name }}
                     </template>
@@ -135,7 +137,7 @@
                     </template>
                 </Column>
 
-                <Column field="variant" filterField="variant" header="Variant Name" sortable>
+                <Column field="variant" filterField="variant.name" header="Variant Name" sortable>
                     <template #body="{ data }">
                         {{ data.variant.name }}
                     </template>
@@ -637,6 +639,7 @@ const customer_request = ref([]);
 const Customer_request = ref([]);
 
 
+
 const formDialogNew = ref(false);
 const formDialogNewTitle = 'Create new' + namePage;
 const formDialogEditTitle = 'Edit' + namePage;
@@ -683,10 +686,15 @@ const filters = ref();
 const clearFilter = () => {
     initFilters();
 };
+
+const cropLotsToString = (value) => {
+    return value.map(item => item.code).join(', ').toString();
+};
+
 const initFilters = () => {
     filters.value = {
         global: { value: null, matchMode: FilterMatchMode.CONTAINS },
-        'crop_lots.code': { operator: FilterOperator.AND, constraints: [{ value: null, matchMode: FilterMatchMode.STARTS_WITH }] },
+        'crop_lots[0].code': { operator: FilterOperator.AND, constraints: [{ value: null, matchMode: FilterMatchMode.CONTAINS }] },
         transaction_date: { operator: FilterOperator.AND, constraints: [{ value: null, matchMode: FilterMatchMode.STARTS_WITH }] },
         'product.name': { operator: FilterOperator.AND, constraints: [{ value: null, matchMode: FilterMatchMode.STARTS_WITH }] },
         'product_type.name': { operator: FilterOperator.AND, constraints: [{ value: null, matchMode: FilterMatchMode.STARTS_WITH }] },
@@ -699,6 +707,7 @@ const initFilters = () => {
         created_at: { operator: FilterOperator.AND, constraints: [{ value: null, matchMode: FilterMatchMode.STARTS_WITH }] },
         updated_at: { operator: FilterOperator.AND, constraints: [{ value: null, matchMode: FilterMatchMode.STARTS_WITH }] }
     };
+    
 };
 
 const documentFrozen = ref(false);
@@ -748,11 +757,18 @@ const readAll = async () => {
     Customer_request.value = respCustomerRequest.data.data.map((customer) => ({ id: customer.uuid, name: customer.dispatch_number_lot }));
     console.log(Customer_request);
 };
+
+const filtroCropLots = ref('')
 const loadingData = async () => {
     const response = await getRequest(endpoint.value);
 
+
     if (!response.ok) toast.add({ severity: 'error', detail: 'Error' + response.error, life: 3000 });
     dataFromComponent.value = response.data.data;
+    
+    filtroCropLots.value = cropLotsToString(dataFromComponent.value[0].crop_lots)
+    console.log(filtroCropLots.value);
+    console.log(typeof filtroCropLots.value);
 };
 watch(
     () => dataFromComponent.value,

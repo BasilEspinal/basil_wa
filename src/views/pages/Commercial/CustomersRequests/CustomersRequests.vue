@@ -15,15 +15,15 @@
                 <div class="col-xs-12 col-sm-6 col-md-4 mb-2 text-center mx-auto">
             <Toolbar style="margin-bottom: 1rem">
                 <template #center>
-                    <Button :disabled="headerNames.length > 0" label="New" icon="pi pi-plus" class="p-button-success mb-2 mt-2" @click="openNew" size="large" />
-                    <Divider layout="vertical" />
-                    <Button :disabled="!(listRowSelect.length > 0 && listRowSelect.length < 2)" label="Edit" icon="pi pi-file-edit" class="p-button-help mb-2 mt-2" @click="openEdit" size="large" />
-                    <Divider layout="vertical" />
-                    <Button :disabled="!(listRowSelect.length > 0 && listRowSelect.length < 2)" label="Clone" icon="pi pi-copy" class="p-button-secondary mb-2 mt-2" @click="openClone" size="large" />
-                    <Divider layout="vertical" />
-                    <Button :disabled="headerNames.length > 0" label="Export" icon="pi pi-file-import" class="p-button-warning mb-2 mt-2" @click="openExport" size="large" />
-                    <Divider layout="vertical" />
-                    <Button :disabled="!listRowSelect.length > 0" label="Delete" icon="pi pi-trash" class="p-button-danger mb-2 mt-2" @click="openDelete" size="large" />
+                    <Button v-if="ability.can('solicitud_cliente_crear')" :disabled="headerNames.length > 0" label="New" icon="pi pi-plus" class="p-button-success mb-2 mt-2" @click="openNew" size="large" />
+                    <Divider v-if="ability.can('solicitud_cliente_crear')" layout="vertical" />
+                    <Button v-if="ability.can('solicitud_cliente_editar')" :disabled="!(listRowSelect.length > 0 && listRowSelect.length < 2)" label="Edit" icon="pi pi-file-edit" class="p-button-help mb-2 mt-2" @click="openEdit" size="large" />
+                    <Divider v-if="ability.can('solicitud_cliente_editar')" layout="vertical" />
+                    <Button v-if="ability.can('solicitud_cliente_crear')" :disabled="!(listRowSelect.length > 0 && listRowSelect.length < 2)" label="Clone" icon="pi pi-copy" class="p-button-secondary mb-2 mt-2" @click="openClone" size="large" />
+                    <Divider v-if="ability.can('solicitud_cliente_editar')" layout="vertical" />
+                    <Button v-if="ability.can('solicitud_cliente_editar')" :disabled="headerNames.length > 0" label="Export" icon="pi pi-file-import" class="p-button-warning mb-2 mt-2" @click="openExport" size="large" />
+                    <Divider v-if="ability.can('solicitud_cliente_eliminar')" layout="vertical" />
+                    <Button v-if="ability.can('solicitud_cliente_eliminar')" :disabled="!listRowSelect.length > 0" label="Delete" icon="pi pi-trash" class="p-button-danger mb-2 mt-2" @click="openDelete" size="large" />
                 </template>
             </Toolbar>
             </div>
@@ -52,7 +52,8 @@
         v-model:selection="selectedRegisters"
         filterDisplay="menu"
         v-model:filters="filters"
-        :globalFilterFields="['name', 'company.name', 'farm.name', 'status.name', 'created_at', 'updated_at']" 
+        :globalFilterFields="['name', 'company.name', 'farm.name', 'status.name', 'created_at', 'updated_at', 'dispatch_number_lot', 'order_number_customer', 'invoice_number_customer', 'delivery_datetime', 'packaging_presentation']" 
+        v-if="ability.can('solicitud_cliente_listado')"
         >
         <template #header>
             <!--Uncomment when filters are done-->
