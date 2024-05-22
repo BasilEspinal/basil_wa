@@ -15,15 +15,15 @@
                 <div class="col-xs-12 col-sm-6 col-md-4 mb-2 text-center mx-auto">
             <Toolbar style="margin-bottom: 1rem">
                 <template #center>
-                    <Button :disabled="headerNames.length > 0" label="New" icon="pi pi-plus" class="p-button-success mb-2 mt-2" @click="openNew" size="large" />
-                    <Divider layout="vertical" />
-                    <Button :disabled="!(listRowSelect.length > 0 && listRowSelect.length < 2)" label="Edit" icon="pi pi-file-edit" class="p-button-help mb-2 mt-2" @click="openEdit" size="large" />
-                    <Divider layout="vertical" />
-                    <Button :disabled="!(listRowSelect.length > 0 && listRowSelect.length < 2)" label="Clone" icon="pi pi-copy" class="p-button-secondary mb-2 mt-2" @click="openClone" size="large" />
-                    <Divider layout="vertical" />
-                    <Button :disabled="headerNames.length > 0" label="Export" icon="pi pi-file-import" class="p-button-warning mb-2 mt-2" @click="openExport" size="large" />
-                    <Divider layout="vertical" />
-                    <Button :disabled="!listRowSelect.length > 0" label="Delete" icon="pi pi-trash" class="p-button-danger mb-2 mt-2" @click="openDelete" size="large" />
+                    <Button v-if = "ability.can('empresa_crear')" :disabled="headerNames.length > 0" label="New" icon="pi pi-plus" class="p-button-success mb-2 mt-2" @click="openNew" size="large" />
+                    <Divider v-if = "ability.can('empresa_crear')" layout="vertical" />
+                    <Button v-if = "ability.can('empresa_editar')" :disabled="!(listRowSelect.length > 0 && listRowSelect.length < 2)" label="Edit" icon="pi pi-file-edit" class="p-button-help mb-2 mt-2" @click="openEdit" size="large" />
+                    <Divider v-if = "ability.can('empresa_editar')" layout="vertical" />
+                    <Button v-if = "ability.can('empresa_crear')" :disabled="!(listRowSelect.length > 0 && listRowSelect.length < 2)" label="Clone" icon="pi pi-copy" class="p-button-secondary mb-2 mt-2" @click="openClone" size="large" />
+                    <Divider v-if = "ability.can('empresa_crear')" layout="vertical" />
+                    <Button v-if = "ability.can('empresa_crear')" :disabled="headerNames.length > 0" label="Export" icon="pi pi-file-import" class="p-button-warning mb-2 mt-2" @click="openExport" size="large" />
+                    <Divider v-if = "ability.can('empresa_crear')" layout="vertical" />
+                    <Button v-if = "ability.can('empresa_eliminar')" :disabled="!listRowSelect.length > 0" label="Delete" icon="pi pi-trash" class="p-button-danger mb-2 mt-2" @click="openDelete" size="large" />
                 </template>
             </Toolbar>
             </div>
@@ -52,7 +52,8 @@
         v-model:selection="selectedRegisters"
         filterDisplay="menu"
         v-model:filters="filters"
-        :globalFilterFields="['name', 'company.name', 'farm.name', 'status.name', 'created_at', 'updated_at']" 
+        :globalFilterFields="['name', 'status.name', 'created_at', 'updated_at', 'code', ]" 
+        v-if = "ability.can('empresa_listado')"
         >
         <template #header>
             <!--Uncomment when filters are done-->
@@ -101,7 +102,26 @@
                     <InputText v-model="filterModel.value" type="text" class="p-column-filter" placeholder="Search by " />
                 </template>
         </Column>
+        <Column field="url_path" filterField="url_path" header="URL Path" sortable> 
+            
+            <template #body="{ data }">
+                {{ data.url_path }} 
+            </template>
+            <template #filter="{ filterModel }">
+                <InputText v-model="filterModel.value" type="text" class="p-column-filter" placeholder="Search by " />
+            </template>
+    </Column>
 
+    <Column field="file_name" filterField="file_name" header="Logo" sortable> 
+            
+            <template #body="{ data }">
+                <!-- {{ data.file_name }}  -->
+                <Avatar :image="logoUrl" class="mr-2" size="xlarge" shape="circle" />
+            </template>
+            <template #filter="{ filterModel }">
+                <InputText v-model="filterModel.value" type="text" class="p-column-filter" placeholder="Search by " />
+            </template>
+    </Column>
         <!--Here add other columns-->
 
         <!-- <Column field="farmName" filterField="farm.name" header="Farm Name" sortable>
@@ -178,15 +198,7 @@
                         {{ errorsNew.farm }}
                     </small>
                 </div>
-                <div class="mb-3">
-                    <div class="flex align-items-center">
-                        <label for="username" class="font-semibold w-3">Companny:</label>
-                        <AutoComplete v-model="company" inputId="ac" :suggestions="compa" @complete="searchCompannies" field="name" dropdown />
-                    </div>
-                    <small id="username-help" :class="{ 'p-invalid text-red-700': errorsNew['company'] }">
-                        {{ errorsNew.company }}
-                    </small>
-                </div>
+                
 
                 <div class="flex justify-content-end gap-2">
                     <Button type="button" label="Cancel" severity="secondary" @click="formDialogNew = false" />
@@ -223,16 +235,7 @@
                     {{ errorsNew.farm }}
                 </small>
             </div>
-            <div class="mb-3">
-                <div class="flex align-items-center">
-                    <label for="username" class="font-semibold w-3">Companny:</label>
-                    <AutoComplete v-model="company" inputId="ac" :suggestions="compa" @complete="EditRecord"
-                        field="name" dropdown />
-                </div>
-                <small id="username-help" :class="{ 'p-invalid text-red-700': errorsNew['company'] }">
-                    {{ errorsNew.company }}
-                </small>
-            </div>
+            
 
                 <div class="flex justify-content-end gap-2">
                     <Button type="button" label="Cancel" severity="secondary" @click="formDialogEdit = false" />
@@ -268,15 +271,7 @@
                         {{ errorsNew.farm }}
                     </small>
                 </div>
-                <div class="mb-3">
-                    <div class="flex align-items-center">
-                        <label for="username" class="font-semibold w-3">Companny:</label>
-                        <AutoComplete v-model="company" inputId="ac" :suggestions="compa" @complete="searchCompannies" field="name" dropdown />
-                    </div>
-                    <small id="username-help" :class="{ 'p-invalid text-red-700': errorsNew['company'] }">
-                        {{ errorsNew.company }}
-                    </small>
-                </div>
+                
 
                 <div class="flex justify-content-end gap-2">
                     <Button type="button" label="Cancel" severity="secondary" @click="formDialogClone = false" />
@@ -351,16 +346,23 @@ import { saveAs } from 'file-saver';
 import { z } from 'zod';
 import ability from '@/service/ability.js';
 import { AbilityBuilder} from '@casl/ability';
-const namePage = ' Companies';
+import { useLayout } from '@/layout/composables/layout';
+import { computed } from 'vue';
+
+const { layoutConfig } = useLayout();
+const namePage = ' Companies ';
 const titlePage = namePage+'information';
 const dataFromComponent = ref();
 const Farms = ref([]);
 const farms = ref([]);
-const Compan = ref([]);
-const compa = ref([]);
 
+
+const logoUrl = computed(() => {
+    return `layout/images/${layoutConfig.darkTheme.value ? 'logo-white' : 'logo-dark'}.png`;
+});
 const formDialogNew = ref(false);
 const formDialogNewTitle = 'Create new'+namePage;
+
 const formDialogEditTitle = 'Edit'+namePage;
 const formDialogCloneTitle = 'Clone' + namePage;
 const formDialogExportTitle = 'Export' + namePage;
@@ -416,8 +418,8 @@ const initFilters = () => {
         code: { operator: FilterOperator.AND, constraints: [{ value: null, matchMode: FilterMatchMode.STARTS_WITH }] },
         name: { operator: FilterOperator.AND, constraints: [{ value: null, matchMode: FilterMatchMode.STARTS_WITH }] },
         'status.name': { operator: FilterOperator.AND, constraints: [{ value: null, matchMode: FilterMatchMode.STARTS_WITH }] },
-        // 'farm.name': { operator: FilterOperator.AND, constraints: [{ value: null, matchMode: FilterMatchMode.STARTS_WITH }] },
-        // 'company.name': { operator: FilterOperator.AND, constraints: [{ value: null, matchMode: FilterMatchMode.STARTS_WITH }] },
+        'farm.name': { operator: FilterOperator.AND, constraints: [{ value: null, matchMode: FilterMatchMode.STARTS_WITH }] },
+        
         created_at: { operator: FilterOperator.AND, constraints: [{ value: null, matchMode: FilterMatchMode.STARTS_WITH }] },
         updated_at: { operator: FilterOperator.AND, constraints: [{ value: null, matchMode: FilterMatchMode.STARTS_WITH }] }
     };
@@ -430,9 +432,7 @@ const readAll = async () => {
     if (!respFarms.ok) toast.add({ severity: 'error', detail: 'Error' + respFarms.error, life: 3000 });
     Farms.value = respFarms.data.data.map((farm) => ({ id: farm.uuid, name: farm.name }));
 
-    const respCompan = await getRequest('/companies');
-    if (!respCompan.ok) toast.add({ severity: 'error', detail: 'Error' + respCompan.error, life: 3000 });
-    Compan.value = respCompan.data.data.map((comp) => ({ id: comp.uuid, name: comp.name }));
+    
 };
 const loadingData = async () => {
     const response = await getRequest(endpoint.value);
@@ -467,19 +467,14 @@ const {
             //         id: z.string().min(4)
             //     })
             //     .optional(),
-            // company: z
-            //     .object({
-            //         name: z.string().min(4),
-            //         id: z.string().min(4)
-            //     })
-            //     .optional()
+            
         })
     )
 });
 const [name, nameProps] = defineField('name');
 const [codeV, codeVProps] = defineField('codeV');
-// const [farm] = defineField('farm');
-// const [company] = defineField('company');
+const [farm] = defineField('farm');
+
 
 const extenciones = ref([{ name: 'CSV' }, { name: 'XLS' }]);
 const optionsEsport = ref([{ name: 'ALL' }, { name: 'SELECTED' }]);
@@ -506,39 +501,27 @@ const createRecord = handleSubmitNew(async (values) => {
     loadingData();
     formDialogNew.value = false;
 });
-
-const searchCompannies = (event) => {
-    setTimeout(() => {
-        if (!event.query.trim().length) {
-            compa.value = [...Compan.value];
-        } else {
-            compa.value = Compan.value.filter((fram) => {
-                return fram.name.toLowerCase().startsWith(event.query.toLowerCase());
-            });
-        }
-    }, 200);
-};
 const openNew = () => {
     resetForm();
     formDialogNew.value = true;
 
 };
 
+
 const openEdit = () => {
     resetForm();
-    const { code, company: empresa, farm: farmParameter, name: nombre } = listRowSelect.value[0];
+    const { code,  farm: farmParameter, name: nombre } = listRowSelect.value[0];
 
     name.value = nombre;
     codeV.value = code;
-    company.value = { id: empresa.uuid, name: empresa.name };
-    farm.value = { id: farmParameter.uuid, name: farmParameter.name };
+    // farm.value = { id: farmParameter.uuid, name: farmParameter.name };
 
     formDialogEdit.value = true;
 };
 
 const openClone = () => {
     resetForm();
-    const { company: empresa, farm: farmParameter, name: nombre } = listRowSelect.value[0];
+    const { farm: farmParameter, name: nombre } = listRowSelect.value[0];
 
     name.value = nombre;
     // company.value = { id: empresa.uuid, name: empresa.name };

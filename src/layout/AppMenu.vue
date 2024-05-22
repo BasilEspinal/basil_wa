@@ -99,7 +99,7 @@ const model2 = ref([
                 items: [
                     {
                         label: 'Ofertas de producto',
-                        to: '/access',
+                        to: '/Commercial/ProductAvailability/ProductAvailability',
                         icon: 'pi pi-folder',
                         gate: 'comercial_ofertasdeproducto_menu',
                     },
@@ -117,7 +117,7 @@ const model2 = ref([
                     },
                     {
                         label: 'Despachos',
-                        to: '/access',
+                        to: '/Commercial/Delivery/Delivery',
                         icon: 'pi pi-bolt',
                         gate: 'comercial_despachos_menu,',
                     }
@@ -147,7 +147,7 @@ const model2 = ref([
                     },
                     {
                         label: 'Programación de Lotes',
-                        to: '/access',
+                        to: '/production/LotsSchedule',
                         icon: 'pi pi-calendar-minus',
                         gate: 'produccion_programaciondelotes_menu',
                     },

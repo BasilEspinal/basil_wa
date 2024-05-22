@@ -143,6 +143,11 @@ const router = createRouter({
                     component: () => import('@/views/pages/Production/MetereologicalStation/metereologicalStation.vue')
                 },
                 {
+                    path: '/production/LotsSchedule',
+                    name: 'LotsSchedule',
+                    component: () => import('@/views/pages/Production/LotsSchedule/LotsSchedule.vue')
+                },
+                {
                     path: '/PayrollSettlement/DailyPlanner',
                     name: 'dailyplanner',
                     component: () => import('@/views/pages/PayrollSettlement/DailyPlanner/DailyPlanner.vue')
@@ -180,6 +185,16 @@ const router = createRouter({
                     path: '/Commercial/CustomersRequests/CustomersRequests',
                     name: '/CustomersRequests',
                     component: () => import('@/views/pages/Commercial/CustomersRequests/CustomersRequests.vue')
+                },
+                {
+                    path: '/Commercial/Delivery/Delivery',
+                    name: '/Delivery',
+                    component: () => import('@/views/pages/Commercial/Delivery/Delivery.vue')
+                },
+                {
+                    path: '/Commercial/ProductAvailability/ProductAvailability',
+                    name: '/ProductAvailability',
+                    component: () => import('@/views/pages/Commercial/ProductAvailability/ProductAvailability.vue')
                 },
 
                 {

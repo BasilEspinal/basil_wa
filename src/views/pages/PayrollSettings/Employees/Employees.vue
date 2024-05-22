@@ -40,7 +40,7 @@ const isChanging = ref(false);
 let endpoint = ref('/employees');
 const typeDateList = ref([]);
 
-const size = ref({ label: 'Normal', value: 'normal' });
+const size = ref({ label: 'Small', value: 'small',class:'sm' });
 const sizeOptions = ref([
     { label: 'Small', value: 'small', class: 'sm' },
     { label: 'Normal', value: 'normal' },
@@ -425,15 +425,15 @@ const remove = (aver) => {
         <div class="card">
             <Toolbar>
                 <template #center>
-                    <Button v-if="ability.can('producto_crear')" label="New" icon="pi pi-plus" class="p-button-success mb-2 mt-2" @click="openNew" size="large" />
-                    <Divider v-if="ability.can('producto_crear')" layout="vertical" />
-                    <Button v-if="ability.can('producto_editar')" :disabled="!(selectedRegisters.length > 0 && selectedRegisters.length < 2)" label="Edit" icon="pi pi-file-edit" class="p-button-help mb-2 mt-2" @click="openEdit" size="large" />
-                    <Divider v-if="ability.can('producto_editar')" layout="vertical" />
-                    <Button :disabled="!(selectedRegisters.length > 0 && selectedRegisters.length < 2)" label="Clone" icon="pi pi-copy" class="p-button-secondary mb-2 mt-2" @click="openClone" size="large" />
-                    <Divider layout="vertical" />
-                    <Button :disabled="headerNames.length > 0" label="Export" icon="pi pi-file-import" class="p-button-warning mb-2 mt-2" @click="openExport" size="large" />
-                    <Divider layout="vertical" />
-                    <Button v-if="ability.can('producto_eliminar')" :disabled="!selectedRegisters.length > 0" label="Delete" icon="pi pi-trash" class="p-button-danger mb-2 mt-2" @click="openDelete" size="large" />
+                    <Button v-if="ability.can('empleado_crear')" label="New" icon="pi pi-plus" class="p-button-success mb-2 mt-2" @click="openNew" size="large" />
+                    <Divider v-if="ability.can('empleado_crear')" layout="vertical" />
+                    <Button v-if="ability.can('empleado_editar')" :disabled="!(selectedRegisters.length > 0 && selectedRegisters.length < 2)" label="Edit" icon="pi pi-file-edit" class="p-button-help mb-2 mt-2" @click="openEdit" size="large" />
+                    <Divider v-if="ability.can('empleado_editar')" layout="vertical" />
+                    <Button v-if="ability.can('empleado_crear')" :disabled="!(selectedRegisters.length > 0 && selectedRegisters.length < 2)" label="Clone" icon="pi pi-copy" class="p-button-secondary mb-2 mt-2" @click="openClone" size="large" />
+                    <Divider v-if="ability.can('empleado_crear')" layout="vertical" />
+                    <Button v-if="ability.can('empleado_crear')" :disabled="headerNames.length > 0" label="Export" icon="pi pi-file-import" class="p-button-warning mb-2 mt-2" @click="openExport" size="large" />
+                    <Divider v-if="ability.can('empleado_crear')" layout="vertical" />
+                    <Button v-if="ability.can('empleado_eliminar')" :disabled="!selectedRegisters.length > 0" label="Delete" icon="pi pi-trash" class="p-button-danger mb-2 mt-2" @click="openDelete" size="large" />
                 </template>
             </Toolbar>
             <DataTable
@@ -473,6 +473,7 @@ const remove = (aver) => {
                     'updated_at',
                     'status.name'
                 ]"
+                v-if="ability.can('empleado_listado')"
             >
                 <template #header>
                     <Toolbar class="mb-2">
