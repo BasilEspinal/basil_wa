@@ -192,10 +192,15 @@
 
         </DataTable>
         <Dialog v-model:visible="formDialogNew" modal :header="formDialogNewTitle" class="p-fluid text-center mx-auto">
+            
+            
+            
+
+
 
                 <div class="mb-3">
                     <div class="flex align-items-center gap-3 mb-1">
-                        <label for="username" class="font-semibold w-6rem">Dispatch Num Lot :</label>
+                        <label for="username" class="font-semibold w-6rem">Dispatch Num Lot</label>
                         <InputText id="username" v-model="dispatch_number_lotV" class="flex-auto" autocomplete="off" v-bind="dispatch_number_lotVProps" :frozen="documentFrozen"/>
                     </div>
                     <small id="username-help" :class="{ 'p-invalid text-red-700': errorsNew['dispatch_number_lotV'] }">
@@ -205,19 +210,58 @@
 
                 <div class="mb-3">
                     <div class="flex align-items-center gap-3 mb-1">
-                        <label for="username" class="font-semibold w-6rem">Name :</label>
-                        <InputText id="username" v-model="name" class="flex-auto" autocomplete="off" v-bind="nameProps" />
+                        <label for="order_number_customer" class="font-semibold w-6rem">Order Number Customer</label>
+                        <InputText id="username" v-model="order_number_customerV" class="flex-auto" autocomplete="off" v-bind="order_number_customerVProps" />
                     </div>
-                    <small id="username-help" :class="{ 'p-invalid text-red-700': errorsNew['name'] }">
-                        {{ errorsNew.name }}
+                    <small id="username-help" :class="{ 'p-invalid text-red-700': errorsNew['order_number_customerV'] }">
+                        {{ errorsNew.order_number_customerV }}
                     </small>
                 </div>
-                
+
+                <div class="mb-3">
+                    <div class="flex align-items-center gap-3 mb-1">
+                        <label for="order_number_customer" class="font-semibold w-6rem">Invoice Number Customer</label>
+                        <InputText id="username" v-model="invoice_number_customerV" class="flex-auto" autocomplete="off" v-bind="invoice_number_customerVProps" />
+                        
+                    </div>
+                    <small id="username-help" :class="{ 'p-invalid text-red-700': errorsNew['invoice_number_customerV'] }">
+                        {{ errorsNew.invoice_number_customerV }}
+                    </small>
+                </div>
+
+                <div class="mb-3">
+                    <div class="flex align-items-center">
+                        <label for="request_date" class="font-semibold w-6rem">Request Date</label>
+                        <!-- <Calendar v-model="transaction_dateV" class="flex-auto" v-bind="transaction_dateVProps"/> -->
+                        <Calendar dateFormat="dd/mm/yy" v-model="request_dateV" class="flex-auto" showIcon :showOnFocus="false" inputId="buttondisplay" placeholder="Select request date"  />
+                        
+                    </div>
+
+                    <small id="username-help" :class="{ 'p-invalid text-red-700': errorsNew['request_dateV'] }">
+                        {{ errorsNew.request_dateV }}
+                    </small>
+                </div>
+
+                <div class="mb-3">
+                    <div class="flex align-items-center">
+                        <label for="request_date" class="font-semibold w-6rem">Delivery Datetime :</label>
+                        <Calendar id="calendar-24h" v-model="delivery_datetimeV" showTime hourFormat="24" class="flex-auto" showIcon  inputId="buttondisplay"  />
+                    </div>
+                    
+                    <small id="username-help" :class="{ 'p-invalid text-red-700': errorsNew['delivery_datetimeV'] }">
+                        {{ errorsNew.delivery_datetimeV }}
+                    </small>
+                    
+                </div>
+
+                <!-- <InputText type="text" v-model="value" /> -->
+
+
                 
                 <div class="mb-3">
                     <div class="flex align-items-center">
-                        <label for="username" class="font-semibold w-3">Farm :</label>
-                        <AutoComplete v-model="farm" inputId="ac" :suggestions="farms" @complete="searchFarms" field="name" dropdown />
+                        <label for="username" class="font-semibold w-6rem">Farm :</label>
+                        <AutoComplete v-model="farm" class="flex-auto" inputId="ac" :suggestions="farms" @complete="searchFarms" field="name" dropdown />
                     </div>
                     <small id="username-help" :class="{ 'p-invalid text-red-700': errorsNew['farm'] }">
                         {{ errorsNew.farm }}
@@ -225,8 +269,8 @@
                 </div>
                 <div class="mb-3">
                     <div class="flex align-items-center">
-                        <label for="username" class="font-semibold w-3">Companny:</label>
-                        <AutoComplete v-model="company" inputId="ac" :suggestions="compa" @complete="searchCompannies" field="name" dropdown />
+                        <label for="username" class="font-semibold w-6rem">Company:</label>
+                        <AutoComplete v-model="company" class="flex-auto" inputId="ac" :suggestions="compa" @complete="searchCompannies" field="name" dropdown />
                     </div>
                     <small id="username-help" :class="{ 'p-invalid text-red-700': errorsNew['company'] }">
                         {{ errorsNew.company }}
@@ -399,10 +443,23 @@ import { AbilityBuilder} from '@casl/ability';
 const namePage = ' Customer Requests ';
 const titlePage = namePage+'information';
 const dataFromComponent = ref();
+const packing_type = ref([]);
+const Packing_type = ref([]);
+const products = ref([]);
+const Products = ref([]);
+const products_variants = ref([]);
+const Products_variants = ref([]);
+const employees = ref([]);
+const Employees = ref([]);
 const Farms = ref([]);
 const farms = ref([]);
 const Compan = ref([]);
 const compa = ref([]);
+
+
+
+
+
 
 const formDialogNew = ref(false);
 const formDialogNewTitle = 'Create new'+namePage;
@@ -507,7 +564,37 @@ const {
     validationSchema: toTypedSchema(
         z.object({
             name: z.string().min(4),
+            order_number_customerV: z.string().min(4),
+            
+            invoice_number_customerV: z.string().min(4),
+            customer_nameV: z.string().min(4),
+            request_dateV: z.date(),
+            delivery_datetimeV: z.date(),
+            place_of_deliveryV: z.string().min(4),
+            packing_typeV: z.object({
+                name: z.string().min(4),
+                id: z.string().min(4)
+            }),
+            productV: z.object({
+                name: z.string().min(4),
+                id: z.string().min(4)
+            }),
+            products_variantsV: z.object({
+                name: z.string().min(4),
+                id: z.string().min(4)
+            }),
             dispatch_number_lotV: z.string().min(4),
+            packaging_presentation_qty_V: z.string().min(4),
+            packaging_presentation_presentationType_V: z.string().min(4),
+            packaging_presentation_weight_V: z.string().min(4),
+            packaging_presentation_measuring_unit_V: z.string().min(4),
+            request_qty_V: z.string().min(4),
+            packing_type_nameV: z.string().min(4),
+            outlet_temperatureV: z.number().min(4),
+            employeeV: z.object({
+                name: z.string().min(4),
+                id: z.string().min(4)
+            }),
             farm: z
                 .object({
                     name: z.string().min(4),
@@ -525,6 +612,23 @@ const {
 });
 const [name, nameProps] = defineField('name');
 const [dispatch_number_lotV, dispatch_number_lotVProps] = defineField('dispatch_number_lotV');
+const [order_number_customerV, order_number_customerVProps] = defineField('order_number_customerV');
+const [invoice_number_customerV, invoice_number_customerVProps] = defineField('invoice_number_customerV');
+const [customer_nameV, customer_nameVProps] = defineField('customer_nameV');
+const [request_dateV, request_dateVProps] = defineField('request_dateV');
+const [delivery_datetimeV, delivery_datetimeVProps] = defineField('delivery_datetimeV');
+const [place_of_deliveryV, place_of_deliveryVProps] = defineField('place_of_deliveryV');
+const [packing_typeV, packing_typeVProps] = defineField('packing_typeV');
+const [productV, productVProps] = defineField('productV');
+const [products_variantsV, products_variantsVProps] = defineField('products_variantsV');
+const [packaging_presentation_qty_V, packaging_presentation_qty_VProps] = defineField('packaging_presentation_qty_V');
+const [packaging_presentation_presentationType_V, packaging_presentation_presentationType_VProps] = defineField('packaging_presentation_presentationType_V');
+const [packaging_presentation_weight_V, packaging_presentation_weight_VProps] = defineField('packaging_presentation_weight_V');
+const [packaging_presentation_measuring_unit_V, packaging_presentation_measuring_unit_VProps] = defineField('packaging_presentation_measuring_unit_V');
+const [request_qty_V, request_qty_VProps] = defineField('request_qty_V');
+const [packing_type_nameV, packing_type_nameVProps] = defineField('packing_type_nameV');
+const [outlet_temperatureV, outlet_temperatureVProps] = defineField('outlet_temperatureV');
+const [employeeV, employeeVProps] = defineField('employeeV');
 const [farm] = defineField('farm');
 const [company] = defineField('company');
 
@@ -636,6 +740,55 @@ const searchFarms = (event) => {
             farms.value = [...Farms.value];
         } else {
             farms.value = Farms.value.filter((fram) => {
+                return fram.name.toLowerCase().startsWith(event.query.toLowerCase());
+            });
+        }
+    }, 200);
+};
+
+const searchProduct = (event) => {
+    setTimeout(() => {
+        if (!event.query.trim().length) {
+            products.value = [...Products.value];
+        } else {
+            products.value = Products.value.filter((fram) => {
+                return fram.name.toLowerCase().startsWith(event.query.toLowerCase());
+            });
+        }
+    }, 200);
+};
+
+
+const searchPackingType = (event) => {
+    setTimeout(() => {
+        if (!event.query.trim().length) {
+            packing_type.value = [...Packing_type.value];
+        } else {
+            packing_type.value = Packing_type.value.filter((fram) => {
+                return fram.name.toLowerCase().startsWith(event.query.toLowerCase());
+            });
+        }
+    }, 200);
+};
+
+const searchVariant = (event) => {
+    setTimeout(() => {
+        if (!event.query.trim().length) {
+            products_variants.value = [...Products_variants.value];
+        } else {
+            products_variants.value = Products_variants.value.filter((fram) => {
+                return fram.name.toLowerCase().startsWith(event.query.toLowerCase());
+            });
+        }
+    }, 200);
+};
+
+const searchEmployee = (event) => {
+    setTimeout(() => {
+        if (!event.query.trim().length) {
+            employees.value = [...Employees.value];
+        } else {
+            employees.value = Employees.value.filter((fram) => {
                 return fram.name.toLowerCase().startsWith(event.query.toLowerCase());
             });
         }

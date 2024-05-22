@@ -27,7 +27,9 @@
                     </div>
                 </div>
             </div>
-            <!-- <pre>{{ dataResponseAPI }}</pre> -->
+
+            <pre>{{ listRowSelect }}</pre>
+            <pre>{{ crop_lots_codeV }}</pre>
             <DataTable
                 :value="dataFromComponent"
                 dataKey="uuid"
@@ -90,7 +92,7 @@
                     <!--Replace :frozen with the model-->
 
                     <template #body="{ data }">
-                        {{ data.crop_lots.code }}
+                        {{ data.crop_lots }}
                     </template>
                     <template #filter="{ filterModel }">
                         <InputText v-model="filterModel.value" type="text" class="p-column-filter" placeholder="Search by " />
@@ -212,16 +214,7 @@
                     </small>
                 </div>
 
-                <!-- <div class="mb-3">
-                    <pre>{{crop_lots_codeV }}</pre>
-                    <div class="flex align-items-center">
-                        <label for="username" class="font-semibold w-3">Crop Lots Code :</label>
-                        <AutoComplete v-model="crop_lots_codeV" class="flex-auto" inputId="ac" :suggestions="crop_lots" @complete="searchCropLots" field="code" dropdown />
-                    </div>
-                    <small id="username-help" :class="{ 'p-invalid text-red-700': errorsNew['crop_lots_codeV'] }">
-                        {{ errorsNew.crop_lots_codeV }}
-                    </small>
-                </div> -->
+
 
                 <div class="mb-3">
 
@@ -319,27 +312,102 @@
 
             <Dialog v-model:visible="formDialogEdit" modal :header="formDialogEditTitle" class="p-fluid text-center mx-auto">
                 <div class="mb-3">
-                    <div class="flex align-items-center gap-3 mb-1">
-                        <label for="username" class="font-semibold w-6rem">Name :</label>
-                        <InputText id="username" v-model="name" class="flex-auto" autocomplete="off" v-bind="nameProps" />
+                    <div class="flex align-items-center">
+                        <label for="username" class="font-semibold w-3">Transaction Date :</label>
+                        <!-- <Calendar v-model="transaction_dateV" class="flex-auto" v-bind="transaction_dateVProps"/> -->
+                        <Calendar dateFormat="dd/mm/yy" v-model="transaction_dateV" class="flex-auto" showIcon :showOnFocus="false" inputId="buttondisplay" placeholder="Select transaction date"  />
                     </div>
-                    <small id="username-help" :class="{ 'p-invalid text-red-700': errorsNew['name'] }">
-                        {{ errorsNew.name }}
+
+                    <small id="username-help" :class="{ 'p-invalid text-red-700': errorsNew['transaction_dateV'] }">
+                        {{ errorsNew.transaction_dateV }}
                     </small>
                 </div>
+
                 <div class="mb-3">
-                    <div class="flex align-items-center gap-3 mb-1">
-                        <label for="username" class="font-semibold w-6rem">Code :</label>
-                        <InputText id="username" v-model="codeV" class="flex-auto" autocomplete="off" v-bind="codeVProps" />
+                    <div class="flex align-items-center">
+                        <label for="username" class="font-semibold w-3">Task of Type :</label>
+                        <AutoComplete v-model="task_of_typeV" inputId="ac" class="flex-auto" :suggestions="tasks_of_type" @complete="searchTaskOfType" field="name" dropdown placeholder="Select Task of Type"  />
                     </div>
-                    <small id="username-help" :class="{ 'p-invalid text-red-700': errorsNew['codeV'] }">
-                        {{ errorsNew.codeV }}
+                    <small id="username-help" :class="{ 'p-invalid text-red-700': errorsNew['tasks_of_typeV'] }">
+                        {{ errorsNew.task_of_typeV }}
                     </small>
                 </div>
+
+
+
+                <div class="mb-3">
+
+                    <div class="flex align-items-center">
+                        <label for="username" class="font-semibold w-3">Crop Lots Code :</label>
+                        <MultiSelect 
+                        v-model="crop_lots_codeV" 
+                        display="chip" 
+                        :options="CropLots" 
+                        optionLabel="code" 
+                        placeholder="Select Crop Lots" 
+                        :maxSelectedLabels="100" 
+                        class="flex-auto" />
+                        <!-- <AutoComplete v-model="crop_lots_codeV" class="flex-auto" inputId="ac" :suggestions="crop_lots" @complete="searchCropLots" field="code" dropdown /> -->
+                    </div>
+                    <small id="username-help" :class="{ 'p-invalid text-red-700': errorsNew['crop_lots_codeV'] }">
+                        {{ errorsNew.crop_lots_codeV }}
+                    </small>
+                </div>
+
+                <div class="mb-3">
+                    <div class="flex align-items-center">
+                        <label for="productV" class="font-semibold w-3">Product :</label>
+                        <AutoComplete v-model="productV" class="flex-auto" inputId="ac" :suggestions="products" @complete="searchProduct" field="name" dropdown />
+                    </div>
+                    <small id="username-help" :class="{ 'p-invalid text-red-700': errorsNew['productV'] }">
+                        {{ errorsNew.productV }}
+                    </small>
+                </div>
+
+                <div class="mb-3">
+                    <div class="flex align-items-center">
+                        <label for="username" class="font-semibold w-3">Type of products:</label>
+                        <AutoComplete v-model="product_typeV" class="flex-auto" inputId="ac" :suggestions="products_type" @complete="searchProductType" field="name" dropdown />
+                    </div>
+                    <small id="username-help" :class="{ 'p-invalid text-red-700': errorsNew['product_typeV'] }">
+                        {{ errorsNew.product_typeV }}
+                    </small>
+                </div>
+
+                <div class="mb-3">
+                    <div class="flex align-items-center">
+                        <label for="username" class="font-semibold w-3">Packing types:</label>
+                        <AutoComplete v-model="packing_typeV" class="flex-auto" inputId="ac" :suggestions="packings_type" @complete="searchPackingType" field="name" dropdown />
+                    </div>
+                    <small id="username-help" :class="{ 'p-invalid text-red-700': errorsNew['packing_typeV'] }">
+                        {{ errorsNew.packing_typeV }}
+                    </small>
+                </div>
+
+                <div class="mb-3">
+                    <div class="flex align-items-center">
+                        <label for="username" class="font-semibold w-3">Variants:</label>
+                        <AutoComplete v-model="variantV" class="flex-auto" inputId="ac" :suggestions="variants" @complete="searchVariant" field="name" dropdown />
+                    </div>
+                    <small id="username-help" :class="{ 'p-invalid text-red-700': errorsNew['variantV'] }">
+                        {{ errorsNew.variantV }}
+                    </small>
+                </div>
+
+                <div class="mb-3">
+                    <div class="flex align-items-center">
+                        <label for="username" class="font-semibold w-3">Customer Request:</label>
+                        <AutoComplete v-model="customer_requestV" class="flex-auto" inputId="ac" :suggestions="customer_request" @complete="searchCustomerRequest" field="name" dropdown />
+                    </div>
+                    <small id="username-help" :class="{ 'p-invalid text-red-700': errorsNew['customer_requestV'] }">
+                        {{ errorsNew.customer_requestV }}
+                    </small>
+                </div>
+
                 <div class="mb-3">
                     <div class="flex align-items-center">
                         <label for="username" class="font-semibold w-3">Farm :</label>
-                        <AutoComplete v-model="farm" inputId="ac" :suggestions="farms" @complete="searchFarms" field="name" dropdown />
+                        <AutoComplete v-model="farm" class="flex-auto" inputId="ac" :suggestions="farms" @complete="searchFarms" field="name" dropdown />
                     </div>
                     <small id="username-help" :class="{ 'p-invalid text-red-700': errorsNew['farm'] }">
                         {{ errorsNew.farm }}
@@ -348,13 +416,12 @@
                 <div class="mb-3">
                     <div class="flex align-items-center">
                         <label for="username" class="font-semibold w-3">Companny:</label>
-                        <AutoComplete v-model="company" inputId="ac" :suggestions="compa" @complete="EditRecord" field="name" dropdown />
+                        <AutoComplete v-model="company" class="flex-auto" inputId="ac" :suggestions="compa" @complete="searchCompannies" field="name" dropdown />
                     </div>
                     <small id="username-help" :class="{ 'p-invalid text-red-700': errorsNew['company'] }">
                         {{ errorsNew.company }}
                     </small>
                 </div>
-
                 <div class="flex justify-content-end gap-2">
                     <Button type="button" label="Cancel" severity="secondary" @click="formDialogEdit = false" />
                     <Button type="button" label="Save" @click="EditRecord()" />
@@ -363,27 +430,102 @@
 
             <Dialog v-model:visible="formDialogClone" modal :header="formDialogCloneTitle" class="p-fluid text-center mx-auto">
                 <div class="mb-3">
-                    <div class="flex align-items-center gap-3 mb-1">
-                        <label for="username" class="font-semibold w-6rem">Name :</label>
-                        <InputText id="username" v-model="name" class="flex-auto" autocomplete="off" v-bind="nameProps" />
+                    <div class="flex align-items-center">
+                        <label for="username" class="font-semibold w-3">Transaction Date :</label>
+                        <!-- <Calendar v-model="transaction_dateV" class="flex-auto" v-bind="transaction_dateVProps"/> -->
+                        <Calendar dateFormat="dd/mm/yy" v-model="transaction_dateV" class="flex-auto" showIcon :showOnFocus="false" inputId="buttondisplay" placeholder="Select transaction date"  />
                     </div>
-                    <small id="username-help" :class="{ 'p-invalid text-red-700': errorsNew['name'] }">
-                        {{ errorsNew.name }}
+
+                    <small id="username-help" :class="{ 'p-invalid text-red-700': errorsNew['transaction_dateV'] }">
+                        {{ errorsNew.transaction_dateV }}
                     </small>
                 </div>
+
                 <div class="mb-3">
-                    <div class="flex align-items-center gap-3 mb-1">
-                        <label for="username" class="font-semibold w-6rem">Code :</label>
-                        <InputText id="username" v-model="codeV" class="flex-auto" autocomplete="off" v-bind="codeVProps" />
+                    <div class="flex align-items-center">
+                        <label for="username" class="font-semibold w-3">Task of Type :</label>
+                        <AutoComplete v-model="task_of_typeV" inputId="ac" class="flex-auto" :suggestions="tasks_of_type" @complete="searchTaskOfType" field="name" dropdown placeholder="Select Task of Type"  />
                     </div>
-                    <small id="username-help" :class="{ 'p-invalid text-red-700': errorsNew['codeV'] }">
-                        {{ errorsNew.codeV }}
+                    <small id="username-help" :class="{ 'p-invalid text-red-700': errorsNew['tasks_of_typeV'] }">
+                        {{ errorsNew.task_of_typeV }}
                     </small>
                 </div>
+
+
+
+                <div class="mb-3">
+
+                    <div class="flex align-items-center">
+                        <label for="username" class="font-semibold w-3">Crop Lots Code :</label>
+                        <MultiSelect 
+                        v-model="crop_lots_codeV" 
+                        display="chip" 
+                        :options="CropLots" 
+                        optionLabel="code" 
+                        placeholder="Select Crop Lots" 
+                        :maxSelectedLabels="100" 
+                        class="flex-auto" />
+                        <!-- <AutoComplete v-model="crop_lots_codeV" class="flex-auto" inputId="ac" :suggestions="crop_lots" @complete="searchCropLots" field="code" dropdown /> -->
+                    </div>
+                    <small id="username-help" :class="{ 'p-invalid text-red-700': errorsNew['crop_lots_codeV'] }">
+                        {{ errorsNew.crop_lots_codeV }}
+                    </small>
+                </div>
+
+                <div class="mb-3">
+                    <div class="flex align-items-center">
+                        <label for="productV" class="font-semibold w-3">Product :</label>
+                        <AutoComplete v-model="productV" class="flex-auto" inputId="ac" :suggestions="products" @complete="searchProduct" field="name" dropdown />
+                    </div>
+                    <small id="username-help" :class="{ 'p-invalid text-red-700': errorsNew['productV'] }">
+                        {{ errorsNew.productV }}
+                    </small>
+                </div>
+
+                <div class="mb-3">
+                    <div class="flex align-items-center">
+                        <label for="username" class="font-semibold w-3">Type of products:</label>
+                        <AutoComplete v-model="product_typeV" class="flex-auto" inputId="ac" :suggestions="products_type" @complete="searchProductType" field="name" dropdown />
+                    </div>
+                    <small id="username-help" :class="{ 'p-invalid text-red-700': errorsNew['product_typeV'] }">
+                        {{ errorsNew.product_typeV }}
+                    </small>
+                </div>
+
+                <div class="mb-3">
+                    <div class="flex align-items-center">
+                        <label for="username" class="font-semibold w-3">Packing types:</label>
+                        <AutoComplete v-model="packing_typeV" class="flex-auto" inputId="ac" :suggestions="packings_type" @complete="searchPackingType" field="name" dropdown />
+                    </div>
+                    <small id="username-help" :class="{ 'p-invalid text-red-700': errorsNew['packing_typeV'] }">
+                        {{ errorsNew.packing_typeV }}
+                    </small>
+                </div>
+
+                <div class="mb-3">
+                    <div class="flex align-items-center">
+                        <label for="username" class="font-semibold w-3">Variants:</label>
+                        <AutoComplete v-model="variantV" class="flex-auto" inputId="ac" :suggestions="variants" @complete="searchVariant" field="name" dropdown />
+                    </div>
+                    <small id="username-help" :class="{ 'p-invalid text-red-700': errorsNew['variantV'] }">
+                        {{ errorsNew.variantV }}
+                    </small>
+                </div>
+
+                <div class="mb-3">
+                    <div class="flex align-items-center">
+                        <label for="username" class="font-semibold w-3">Customer Request:</label>
+                        <AutoComplete v-model="customer_requestV" class="flex-auto" inputId="ac" :suggestions="customer_request" @complete="searchCustomerRequest" field="name" dropdown />
+                    </div>
+                    <small id="username-help" :class="{ 'p-invalid text-red-700': errorsNew['customer_requestV'] }">
+                        {{ errorsNew.customer_requestV }}
+                    </small>
+                </div>
+
                 <div class="mb-3">
                     <div class="flex align-items-center">
                         <label for="username" class="font-semibold w-3">Farm :</label>
-                        <AutoComplete v-model="farm" inputId="ac" :suggestions="farms" @complete="searchFarms" field="name" dropdown />
+                        <AutoComplete v-model="farm" class="flex-auto" inputId="ac" :suggestions="farms" @complete="searchFarms" field="name" dropdown />
                     </div>
                     <small id="username-help" :class="{ 'p-invalid text-red-700': errorsNew['farm'] }">
                         {{ errorsNew.farm }}
@@ -392,7 +534,7 @@
                 <div class="mb-3">
                     <div class="flex align-items-center">
                         <label for="username" class="font-semibold w-3">Companny:</label>
-                        <AutoComplete v-model="company" inputId="ac" :suggestions="compa" @complete="searchCompannies" field="name" dropdown />
+                        <AutoComplete v-model="company" class="flex-auto" inputId="ac" :suggestions="compa" @complete="searchCompannies" field="name" dropdown />
                     </div>
                     <small id="username-help" :class="{ 'p-invalid text-red-700': errorsNew['company'] }">
                         {{ errorsNew.company }}
@@ -771,10 +913,17 @@ const openNew = () => {
 
 const openEdit = () => {
     resetForm();
-    const { code, company: empresa, farm: farmParameter, name: nombre } = listRowSelect.value[0];
+    
+    const { code, company: empresa, farm: farmParameter, name: nombre,tasks_of_type:task,variant:variant,packing_type:packing,product_type:productType,product:productX,transaction_date:date,crop_lots:croplots } = listRowSelect.value[0];
 
-    name.value = nombre;
-    codeV.value = code;
+    transaction_dateV.value = new Date(date);
+    task_of_typeV.value = { id: task.uuid, name: task.name };
+    crop_lots_codeV.value = croplots
+    productV.value = { id: productX.uuid, name: productX.name };
+    product_typeV.value = { id: productType.uuid, name: productType.name };
+    packing_typeV.value = { id: packing.uuid, name: packing.name };
+    variantV.value = { id: variant.uuid, name: variant.name };
+    customer_requestV.value = { id: 'Falta GET', name: 'Falta GET' };
     company.value = { id: empresa.uuid, name: empresa.name };
     farm.value = { id: farmParameter.uuid, name: farmParameter.name };
 
@@ -783,12 +932,20 @@ const openEdit = () => {
 
 const openClone = () => {
     resetForm();
-    const { company: empresa, farm: farmParameter, name: nombre } = listRowSelect.value[0];
+    const { code, company: empresa, farm: farmParameter, name: nombre,tasks_of_type:task,variant:variant,packing_type:packing,product_type:productType,product:productX,transaction_date:date,crop_lots:croplots } = listRowSelect.value[0];
 
-    name.value = nombre;
+    transaction_dateV.value = new Date(date);
+    task_of_typeV.value = { id: task.uuid, name: task.name };
+    crop_lots_codeV.value = croplots
+    productV.value = { id: productX.uuid, name: productX.name };
+    product_typeV.value = { id: productType.uuid, name: productType.name };
+    packing_typeV.value = { id: packing.uuid, name: packing.name };
+    variantV.value = { id: variant.uuid, name: variant.name };
+    customer_requestV.value = { id: 'Falta GET', name: 'Falta GET' };
     company.value = { id: empresa.uuid, name: empresa.name };
     farm.value = { id: farmParameter.uuid, name: farmParameter.name };
-    formDialogClone.value = true;
+
+    formDialogEdit.value = true;
 };
 
 const openExport = () => {
@@ -802,11 +959,28 @@ const openDelete = () => {
 
 const EditRecord = handleSubmitNew(async (values) => {
     const { uuid } = listRowSelect.value[0];
+    const yyyy = values.transaction_dateV.getFullYear();
+    const mm = String(values.transaction_dateV.getMonth() + 1).padStart(2, '0'); // Los meses en JavaScript son 0-indexados
+    const dd = String(values.transaction_dateV.getDate()).padStart(2, '0');
+
+    // Formatear la fecha en formato YYYY-MM-DD
+    const formattedDate = `${yyyy}-${mm}-${dd}`;
+    console.log(formattedDate);
     const data = {
-        code: values.codeV,
-        name: values.name,
-        company_uuid: values.company ? values.company.id : '25b4319c-e93f-4411-936c-118060f5e7c9',
-        farm_uuid: values.farm ? values.farm.id : values.farm
+        // code: values.codeV,
+        // name: values.name,
+
+        tasks_of_type_uuid: values.task_of_typeV ? values.task_of_typeV.id : 'Prueba',
+        // crop_lots: {"id": 1, "code": "L-1"},
+        crop_lots: values.crop_lots_codeV ? values.crop_lots_codeV : 'Prueba',
+        transaction_date: formattedDate,
+        product_uuid: values.productV ? values.productV.id : 'Prueba',
+        product_type_uuid: values.product_typeV ? values.product_typeV.id : 'Prueba',
+        packing_type_uuid: values.packing_typeV ? values.packing_typeV.id : 'Prueba',
+        variant_uuid: values.variantV ? values.variantV.id : 'Prueba',
+        customer_request_uuid: values.customer_requestV ? values.customer_requestV.id : 'Prueba',
+        company_uuid: values.company ? values.company.id : 'Prueba',
+        farm_uuid: values.farm ? values.farm.id : 'Prueba'
     };
 
     const restp = await putRequest(endpoint.value, data, uuid);
@@ -816,11 +990,28 @@ const EditRecord = handleSubmitNew(async (values) => {
 });
 
 const CloneRecord = handleSubmitNew(async (values) => {
+    const yyyy = values.transaction_dateV.getFullYear();
+    const mm = String(values.transaction_dateV.getMonth() + 1).padStart(2, '0'); // Los meses en JavaScript son 0-indexados
+    const dd = String(values.transaction_dateV.getDate()).padStart(2, '0');
+
+    // Formatear la fecha en formato YYYY-MM-DD
+    const formattedDate = `${yyyy}-${mm}-${dd}`;
+    console.log(formattedDate);
     const data = {
-        code: values.codeV,
-        name: values.name,
-        company_uuid: values.company ? values.company.id : '25b4319c-e93f-4411-936c-118060f5e7c9',
-        farm_uuid: values.farm ? values.farm.id : '8ef93a7b-31bf-4233-af80-481020e9cf97'
+        // code: values.codeV,
+        // name: values.name,
+
+        tasks_of_type_uuid: values.task_of_typeV ? values.task_of_typeV.id : 'Prueba',
+        // crop_lots: {"id": 1, "code": "L-1"},
+        crop_lots: values.crop_lots_codeV ? values.crop_lots_codeV : 'Prueba',
+        transaction_date: formattedDate,
+        product_uuid: values.productV ? values.productV.id : 'Prueba',
+        product_type_uuid: values.product_typeV ? values.product_typeV.id : 'Prueba',
+        packing_type_uuid: values.packing_typeV ? values.packing_typeV.id : 'Prueba',
+        variant_uuid: values.variantV ? values.variantV.id : 'Prueba',
+        customer_request_uuid: values.customer_requestV ? values.customer_requestV.id : 'Prueba',
+        company_uuid: values.company ? values.company.id : 'Prueba',
+        farm_uuid: values.farm ? values.farm.id : 'Prueba'
     };
     const restp = await postRequest(endpoint.value, data);
     toast.add({ severity: restp.ok ? 'success' : 'error', summary: 'Clone', detail: restp.ok ? 'Clonado' : restp.error, life: 3000 });
