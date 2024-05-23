@@ -20,7 +20,7 @@
   // Ruta al logo SVG en el directorio público
   
   const logoSrc= computed(() => {
-    return `@/../public/layout/images/construction/under.jpg`;
+    return `/layout/images/construction/under.jpg`;
 });
   </script>
   
