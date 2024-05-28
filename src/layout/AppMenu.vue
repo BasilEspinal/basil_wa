@@ -61,12 +61,12 @@ const model2 = ref([
                         gate: 'producto_productos_menu',
                         
                     },
-                    {
-                        label: 'No-En-Uso-Variedades de producto',
-                        to: '/product/productvarieties',
-                        icon: 'pi pi-list',
-                        gate: 'producto_variedadesdeproducto_menu',
-                    },
+                    // {
+                    //     label: 'No-En-Uso-Variedades de producto',
+                    //     to: '/product/productvarieties',
+                    //     icon: 'pi pi-list',
+                    //     gate: 'producto_variedadesdeproducto_menu',
+                    // },
                     {
                         label: 'Tipos de productos',
                         icon: 'pi pi-bookmark',

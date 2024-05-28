@@ -363,12 +363,13 @@ const compa = ref([]);
 const farmDefault = sessionStorage.getItem('accessSessionFarm');
 const companyDefault = sessionStorage.getItem('accessSessionCompany');
 
-const formDialogNew = ref(false);
+
 const formDialogNewTitle = 'Create new '+namePage;
 const formDialogEditTitle = 'Edit '+namePage;
 const formDialogCloneTitle = 'Clone ' + namePage;
 const formDialogExportTitle = 'Export ' + namePage;
 const formDialogDeleteTitle = 'Delete '+namePage;
+const formDialogNew = ref(false);
 const formDialogEdit = ref(false);
 const formDialogClone = ref(false);
 const formDialogExport = ref(false);
