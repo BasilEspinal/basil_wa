@@ -334,7 +334,7 @@ const remove = (aver) => {
                 <Button v-if="ability.can('tipo_empaque_eliminar')" :disabled="!listRowSelect.length > 0" label="Delete" icon="pi pi-trash" class="p-button-danger mb-2 mt-2" @click="openDelete" size="large" />
             </template>
         </Toolbar>
-<pre>{{ prueba }}</pre>
+
         <DataTable
             v-if="ability.can('tipo_producto_listado')"
             :value="dataFromComponent"
