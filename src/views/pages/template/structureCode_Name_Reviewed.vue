@@ -358,6 +358,8 @@ const Farms = ref([]);
 const farms = ref([]);
 const Compan = ref([]);
 const compa = ref([]);
+const farmDefault = sessionStorage.getItem('accessSessionFarm');
+const companyDefault = sessionStorage.getItem('accessSessionCompany');
 
 const formDialogNew = ref(false);
 const formDialogNewTitle = 'Create new'+namePage;

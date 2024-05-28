@@ -61,12 +61,12 @@ const model2 = ref([
                         gate: 'producto_productos_menu',
                         
                     },
-                    {
-                        label: 'Variedades de producto',
-                        to: '/product/productvarieties',
-                        icon: 'pi pi-list',
-                        gate: 'producto_variedadesdeproducto_menu',
-                    },
+                    // {
+                    //     label: 'Variedades de producto',
+                    //     to: '/product/productvarieties',
+                    //     icon: 'pi pi-list',
+                    //     gate: 'producto_variedadesdeproducto_menu',
+                    // },
                     {
                         label: 'Tipos de productos',
                         icon: 'pi pi-bookmark',
@@ -366,6 +366,7 @@ const model2 = ref([
                 icon: 'pi pi-box',
                 gate: 'appmovil_menu',
                 items: [
+                    
                     {
                         label: 'Captura de corta',
                         to: '/AppMovil/Corta',
@@ -376,13 +377,13 @@ const model2 = ref([
                         label: 'Captura de Prefio',
                         to: '/AppMovil/PreFrio',
                         icon: 'pi pi-mobile',
-                        gate: 'appmovil_prefrio_menu,'
+                        gate: 'appmovil_prefrio_menu'
                     },
                     {
                         label: 'Captura de Seleccion',
                         to: '/AppMovil/Seleccion',
                         icon: 'pi pi-mobile',
-                        gate: ''
+                        gate: 'appmovil_prefrio_menu'
                     },
                      {
                         label: 'Captura de Contratista',

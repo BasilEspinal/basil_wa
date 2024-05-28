@@ -4,27 +4,13 @@
         <h1>Información de Estado de los Registros del Sistema </h1>
         
     </div>
-        </div>
+<UnderConstruction/>
+    </div>
 </template>
 
-<script>
-export default {
-    name: 'AgroOnlineVuePlatformRegisteringStatus',
+<script setup >
 
-    data() {
-        return {
-            
-        };
-    },
-
-    mounted() {
-        
-    },
-
-    methods: {
-        
-    },
-};
+import UnderConstruction from '@/components/UnderConstruction.vue';
 </script>
 
 <style lang="scss" scoped>

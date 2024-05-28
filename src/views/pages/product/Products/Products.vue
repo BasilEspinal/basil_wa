@@ -14,10 +14,9 @@ import * as XLSX from 'xlsx';
 import { z } from 'zod';
 import { saveAs } from 'file-saver';
 
+const prueba = ref({});
 const dataFromComponent = ref();
-const allLabels = ref([]);
-const { conditionsProducts } = useRestrictionProducts();
-allLabels.value = Object.values(conditionsProducts).map((condition) => condition.fieldName);
+
 let endpoint = ref('/products');
 const toast = useToast();
 const filename = ref('table');
@@ -32,6 +31,8 @@ const Farms = ref([]);
 const farms = ref([]);
 const Compan = ref([]);
 const compa = ref([]);
+const farmDefault = sessionStorage.getItem('accessSessionFarm');
+const companyDefault = sessionStorage.getItem('accessSessionCompany');
 
 const formDialogNew = ref(false);
 const formDialogEdit = ref(false);
@@ -156,12 +157,14 @@ watch(listRowSelect, RowSelect);
 //Functions for toolbar
 const openEdit = () => {
     resetForm();
-    const { slug: slugvalue, name: nombre, short_name, cultivated } = listRowSelect.value[0];
+    const { slug: slugvalue, name: nombre, short_name, cultivated, farm: finca, company: empresa } = listRowSelect.value[0];
 
     name.value = nombre;
     slug.value = slugvalue;
     cultivate.value = cultivated;
     shortname.value = short_name;
+    farm.value = { id: finca.uuid, name: finca.name };
+    company.value = { id: empresa.uuid, name: empresa.name };
 
     formDialogEdit.value = true;
 };
@@ -201,8 +204,8 @@ const createProducts = handleSubmitNew(async (values) => {
         slug: values.slug,
         short_name: values.shortname,
         cultivated: values.cultivate,
-        farm_uuid: values.farm ? values.farm.id : '8ef93a7b-31bf-4233-af80-481020e9cf97',
-        company_uuid: values.company ? values.company.id : '25b4319c-e93f-4411-936c-118060f5e7c9'
+        farm_uuid: values.farm ? values.farm.id : farmDefault,
+        company_uuid: values.company ? values.company.id : companyDefault
     };
     const restp = await postRequest(endpoint.value, data);
 
@@ -214,9 +217,12 @@ const createProducts = handleSubmitNew(async (values) => {
 const editProducts = handleSubmitNew(async (values) => {
     const { uuid } = listRowSelect.value[0];
     const data = {
-        slug: values.slug,
         name: values.name,
-        cultivated: values.cultivate
+        slug: values.slug,
+        short_name: values.shortname,
+        cultivated: values.cultivate,
+        farm_uuid: values.farm ? values.farm.id : farmDefault,
+        company_uuid: values.company ? values.company.id : companyDefault
     };
     const restp = await putRequest(endpoint.value, data, uuid);
     toast.add({ severity: restp.ok ? 'success' : 'error', summary: 'Edit', detail: restp.ok ? 'Editado' : restp.error, life: 3000 });
@@ -230,8 +236,8 @@ const cloneProducts = handleSubmitNew(async (values) => {
         slug: values.slug,
         short_name: values.shortname,
         cultivated: values.cultivate,
-        farm_uuid: values.farm ? values.farm.id : '8ef93a7b-31bf-4233-af80-481020e9cf97',
-        company_uuid: values.company ? values.company.id : '25b4319c-e93f-4411-936c-118060f5e7c9'
+        farm_uuid: values.farm ? values.farm.id : farmDefault,
+        company_uuid: values.company ? values.company.id : companyDefault
     };
     const restp = await postRequest(endpoint.value, data);
     toast.add({ severity: restp.ok ? 'success' : 'error', summary: 'Clone', detail: restp.ok ? 'Clonado' : restp.error, life: 3000 });
@@ -426,7 +432,7 @@ const remove = (aver) => {
 
                 <Column field="cultivated" filterField="cultivated" header="Cultivated" sortable>
                     <template #body="{ data }">
-                        <Tag :value="data.cultivated" :severity="'EFC88B'" />
+                        <Tag :value="data.cultivated" :severity="data.cultivated ? 'EFC88B' : 'danger'" />
                     </template>
                     <template #filter="{ filterModel }">
                         <InputText v-model="filterModel.value" type="text" class="p-column-filter" placeholder="Search by " />
@@ -493,7 +499,7 @@ const remove = (aver) => {
                     </div>
                     <div class="flex justify-content-end">
                         <div class="flex align-items-center">
-                            <label for="username" class="font-semibold mr-2">Companny:</label>
+                            <label for="username" class="font-semibold mr-2">Cultivated:</label>
                             <InputSwitch v-model="cultivate" />
                         </div>
                     </div>
@@ -545,38 +551,7 @@ const remove = (aver) => {
                 </div>
             </Dialog>
 
-            <Dialog v-model:visible="formDialogEdit" modal :header="'Edit product'" class="p-fluid text-center mx-auto">
-                <div class="mb-3">
-                    <div class="flex align-items-center gap-3 mb-1">
-                        <label for="username" class="font-semibold w-8rem">Name :</label>
-                        <InputText id="username" v-model="name" class="flex-auto" autocomplete="off" v-bind="nameProps" />
-                    </div>
-                    <small id="username-help" :class="{ 'p-invalid text-red-700': errorsNew['name'] }">
-                        {{ errorsNew.name }}
-                    </small>
-                </div>
-                <div class="mb-3">
-                    <div class="flex align-items-center gap-3 mb-1">
-                        <label for="username" class="font-semibold w-8rem">Slug :</label>
-                        <InputText id="username" v-model="slug" class="flex-auto" autocomplete="off" v-bind="slugProps" />
-                    </div>
-                    <small id="username-help" :class="{ 'p-invalid text-red-700': errorsNew['slug'] }">
-                        {{ errorsNew.slug }}
-                    </small>
-                </div>
-                <div class="justify-content-center mb-3">
-                    <div class="flex align-items-center gap-3 mb-1">
-                        <label for="username" class="font-semibold w-6rem mr-2">Companny:</label>
-                        <InputSwitch v-model="cultivate" />
-                    </div>
-                </div>
-                <div class="flex justify-content-end gap-2">
-                    <Button type="button" label="Cancel" severity="secondary" @click="formDialogEdit = false" />
-                    <Button type="button" label="Save" @click="editProducts()" />
-                </div>
-            </Dialog>
-
-            <Dialog v-model:visible="formDialogClone" :style="{ width: '500px' }" modal :header="'Clone Product'" class="p-fluid text-center mx-auto">
+            <Dialog v-model:visible="formDialogEdit" :style="{ width: '500px' }" modal :header="'Edit Product'" class="p-fluid text-center mx-auto">
                 <div class="flex mb-3">
                     <div>
                         <div class="flex align-items-center">
@@ -589,7 +564,7 @@ const remove = (aver) => {
                     </div>
                     <div class="flex justify-content-end">
                         <div class="flex align-items-center">
-                            <label for="username" class="font-semibold mr-2">Companny:</label>
+                            <label for="username" class="font-semibold mr-2">Cultivated:</label>
                             <InputSwitch v-model="cultivate" />
                         </div>
                     </div>
@@ -626,7 +601,7 @@ const remove = (aver) => {
                     </div>
                     <div class="ml-3">
                         <div class="flex align-items-center">
-                            <label for="username" class="font-semibold w-8rem">Companny:</label>
+                            <label for="username" class="font-semibold w-8rem">Company:</label>
                             <AutoComplete v-model="company" inputId="ac" :suggestions="compa" @complete="searchCompannies" field="name" dropdown />
                         </div>
                         <small id="username-help" :class="{ 'p-invalid text-red-700': errorsNew['company'] }">
@@ -634,6 +609,71 @@ const remove = (aver) => {
                         </small>
                     </div>
                 </div>
+                <div class="flex justify-content-end gap-2">
+                    <Button type="button" label="Cancel" severity="secondary" @click="formDialogEdit = false" />
+                    <Button type="button" label="Save" @click="editProducts()" />
+                </div>
+            </Dialog>
+
+            <Dialog v-model:visible="formDialogClone" :style="{ width: '500px' }" modal :header="'Clone Product'" class="p-fluid text-center mx-auto">
+            <div class="flex mb-3">
+                    <div>
+                        <div class="flex align-items-center">
+                            <label for="username" class="font-semibold mr-2">Name :</label>
+                            <InputText id="username" class="w-18rem mr-3" v-model="name" autocomplete="off" v-bind="nameProps" />
+                        </div>
+                        <small id="username-help" :class="{ 'p-invalid text-red-700': errorsNew['name'] }">
+                            {{ errorsNew.name }}
+                        </small>
+                    </div>
+                    <div class="flex justify-content-end">
+                        <div class="flex align-items-center">
+                            <label for="username" class="font-semibold mr-2">Cultivated:</label>
+                            <InputSwitch v-model="cultivate" />
+                        </div>
+                    </div>
+                </div>
+                <div class="flex mb-3">
+                    <div>
+                        <div class="flex align-items-center">
+                            <label for="username" class="font-semibold w-5rem">Slug:</label>
+                            <InputText id="username" v-model="slug" class="flex-auto" autocomplete="off" v-bind="codigoProps" />
+                        </div>
+                        <small id="username-help" :class="{ 'p-invalid text-red-700': errorsNew['slug'] }">
+                            {{ errorsNew.slug }}
+                        </small>
+                    </div>
+                    <div class="ml-3">
+                        <div class="flex align-items-center">
+                            <label for="username" class="font-semibold w-6rem mr-1">Shortname:</label>
+                            <InputText id="username" v-model="shortname" class="flex-auto" autocomplete="off" v-bind="shortnameProps" />
+                        </div>
+                        <small id="username-help" :class="{ 'p-invalid text-red-700': errorsNew['name'] }">
+                            {{ errorsNew.shortname }}
+                        </small>
+                    </div>
+                </div>
+                <div class="flex mb-3">
+                    <div>
+                        <div class="flex align-items-center">
+                            <label for="username" class="font-semibold w-5rem">Farm :</label>
+                            <AutoComplete v-model="farm" inputId="ac" :suggestions="farms" @complete="searchFarms" field="name" dropdown />
+                        </div>
+                        <small id="username-help" :class="{ 'p-invalid text-red-700': errorsNew['farm'] }">
+                            {{ errorsNew.farm }}
+                        </small>
+                    </div>
+                    <div class="ml-3">
+                        <div class="flex align-items-center">
+                            <label for="username" class="font-semibold w-8rem">Company:</label>
+                            <AutoComplete v-model="company" inputId="ac" :suggestions="compa" @complete="searchCompannies" field="name" dropdown />
+                        </div>
+                        <small id="username-help" :class="{ 'p-invalid text-red-700': errorsNew['company'] }">
+                            {{ errorsNew.company }}
+                        </small>
+                    </div>
+                </div>
+
 
                 <div class="flex justify-content-end gap-2">
                     <Button type="button" label="Cancel" severity="secondary" @click="formDialogClone = false" />
