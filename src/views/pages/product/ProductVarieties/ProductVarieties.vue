@@ -12,13 +12,17 @@ import { z } from 'zod';
 import { saveAs } from 'file-saver';
 import { FilterMatchMode, FilterOperator } from 'primevue/api';
 
+//
+const prueba = ref({});
 const dataFromComponent = ref();
-const { conditionsVarieties } = useRestrictionVarieties();
+
 
 const Farms = ref([]);
 const farms = ref([]);
 const Compan = ref([]);
 const compa = ref([]);
+const farmDefault = sessionStorage.getItem('accessSessionFarm');
+const companyDefault = sessionStorage.getItem('accessSessionCompany');
 
 const formDialogNew = ref(false);
 const formDialogEdit = ref(false);
@@ -26,11 +30,23 @@ const formDialogClone = ref(false);
 const formDialogExport = ref(false);
 const formDialogDelete = ref(false);
 
-const allLabels = ref([]);
-allLabels.value = Object.values(conditionsVarieties).map((condition) => condition.fieldName);
 const toast = useToast();
+
 const filename = ref('table');
+const headerNamesRow = ref([]);
 const isChanging = ref(false);
+let endpoint = ref('/variants');
+
+const getIndexByLabel = (fieldName) => {
+    const index = headerNamesRow.value.findIndex((objeto) => objeto.label === fieldName);
+    return index !== -1 ? index : null;
+};
+onBeforeMount(async () => {
+    readAll();
+    
+    console.log(farmDefault);
+    console.log(companyDefault);
+});
 
 const listRowSelect = ref([]);
 const loading = ref(false);
@@ -70,12 +86,6 @@ const initFilters = () => {
 };
 const documentFrozen = ref(false);
 
-let endpoint = ref('/product_types');
-
-onBeforeMount(async () => {
-    readAll();
-});
-
 const readAll = async () => {
     loadingData();
     const respFarms = await getRequest('/farms');
@@ -88,12 +98,23 @@ const readAll = async () => {
 };
 
 const loadingData = async () => {
-    loading.value = true;
     const response = await getRequest(endpoint.value);
     if (!response.ok) toast.add({ severity: 'error', detail: 'Error' + response.error, life: 3000 });
     dataFromComponent.value = response.data.data;
-    loading.value = false;
 };
+
+watch(
+    () => dataFromComponent.value,
+    (newValue, oldValue) => {}
+);
+watch(
+    () => isChanging.value,
+    (newValue, oldValue) => {
+        readAll(endpoint.value);
+        console.log(newValue);
+        console.log(oldValue);
+    }
+);
 
 const {
     handleSubmit: handleSubmitNew,
@@ -135,22 +156,11 @@ const RowSelect = (data) => {
     listRowSelect.value = data;
 };
 let headerNames = ref([]);
-//const onHeaderNames = (data) => (headerNames.value = data);
+const onHeaderNames = (data) => (headerNames.value = data);
 
 provide('isChanging', isChanging);
 watch(listRowSelect, RowSelect);
 
-const searchCompannies = (event) => {
-    setTimeout(() => {
-        if (!event.query.trim().length) {
-            compa.value = [...Compan.value];
-        } else {
-            compa.value = Compan.value.filter((fram) => {
-                return fram.name.toLowerCase().startsWith(event.query.toLowerCase());
-            });
-        }
-    }, 200);
-};
 
 const openNew = () => {
     resetForm();
@@ -187,44 +197,60 @@ const openExport = () => {
 const openDelete = () => {
     formDialogDelete.value = true;
 };
-
-const Create = handleSubmitNew(async (values) => {
+const createVarieties = handleSubmitNew(async (values) => {
     const data = {
         code: values.codigo,
         name: values.name,
-        company_uuid: values.company ? values.company.id : '25b4319c-e93f-4411-936c-118060f5e7c9',
-        farm_uuid: values.farm ? values.farm.id : '8ef93a7b-31bf-4233-af80-481020e9cf97'
+        company_uuid: values.company ? values.company.id : companyDefault,
+        farm_uuid: values.farm ? values.farm.id : farmDefault
     };
     const restp = await postRequest(endpoint.value, data);
+
     toast.add({ severity: restp.ok ? 'success' : 'error', summary: 'Create', detail: restp.ok ? 'Creado' : restp.error, life: 3000 });
     loadingData();
     formDialogNew.value = false;
 });
-
-const Edit = handleSubmitNew(async (values) => {
+const EditVarieties = handleSubmitNew(async (values) => {
     const { uuid } = listRowSelect.value[0];
     const data = {
         code: values.codigo,
-        name: values.name
+        name: values.name,
+        company_uuid: values.company ? values.company.id : companyDefault,
+        farm_uuid: values.farm ? values.farm.id : farmDefault,
     };
+    prueba.value = data
     const restp = await putRequest(endpoint.value, data, uuid);
     toast.add({ severity: restp.ok ? 'success' : 'error', summary: 'Edit', detail: restp.ok ? 'Editado' : restp.error, life: 3000 });
     loadingData();
     formDialogEdit.value = false;
 });
 
-const Clone = handleSubmitNew(async (values) => {
+const CloneVarieties = handleSubmitNew(async (values) => {
     const data = {
         code: values.codigo,
         name: values.name,
-        company_uuid: values.company ? values.company.id : '25b4319c-e93f-4411-936c-118060f5e7c9',
-        farm_uuid: values.farm ? values.farm.id : '8ef93a7b-31bf-4233-af80-481020e9cf97'
+        company_uuid: values.company ? values.company.id : companyDefault,
+        farm_uuid: values.farm ? values.farm.id : farmDefault,
     };
     const restp = await postRequest(endpoint.value, data);
     toast.add({ severity: restp.ok ? 'success' : 'error', summary: 'Clone', detail: restp.ok ? 'Clonado' : restp.error, life: 3000 });
     loadingData();
     formDialogClone.value = false;
 });
+
+
+const searchCompannies = (event) => {
+    setTimeout(() => {
+        if (!event.query.trim().length) {
+            compa.value = [...Compan.value];
+        } else {
+            compa.value = Compan.value.filter((fram) => {
+                return fram.name.toLowerCase().startsWith(event.query.toLowerCase());
+            });
+        }
+    }, 200);
+};
+
 
 const searchFarms = (event) => {
     setTimeout(() => {
@@ -238,7 +264,7 @@ const searchFarms = (event) => {
     }, 200);
 };
 
-const Export = () => {
+const ExportVarieties = () => {
     const eventos = exportAll.value.name == 'ALL' ? dataFromComponent.value.map((data) => data) : listRowSelect.value.map((data) => data);
     formDialogExport.value = false;
     if (!eventos.length) return;
@@ -302,8 +328,9 @@ const remove = (aver) => {
 <template>
     <div>
         <div class="card">
-            <h1>Información tipo de productos</h1>
+            <h1>Product Types Information</h1>
         </div>
+
         <div class="card">
             <Toolbar style="margin-bottom: 1rem">
                 <template #center>
@@ -318,8 +345,9 @@ const remove = (aver) => {
                     <Button v-if="ability.can('variante_producto_eliminar')" :disabled="!listRowSelect.length > 0" label="Delete" icon="pi pi-trash" class="p-button-danger mb-2 mt-2" @click="openDelete" size="large" />
                 </template>
             </Toolbar>
+            <!-- <pre>{{ prueba }}</pre> -->
             <DataTable
-                v-if="ability.can('variante_producto_listado')"
+                v-if="ability.can('variante_listado')"
                 :value="dataFromComponent"
                 dataKey="uuid"
                 tableStyle="min-width: 75rem"
@@ -341,8 +369,8 @@ const remove = (aver) => {
                 filterDisplay="menu"
                 v-model:filters="filters"
                 :globalFilterFields="['name', 'company.name', 'farm.name', 'status.name', 'created_at', 'updated_at']"
-                
             >
+            
                 <template #header>
                     <!--Uncomment when filters are done-->
 
@@ -437,7 +465,9 @@ const remove = (aver) => {
                 </Column>
             </DataTable>
 
-            <Dialog v-model:visible="formDialogNew" modal :header="'Create new varieties'" class="p-fluid text-center mx-auto">
+            <!-- <Table title="" path-api="/unit_types" @HeaderNames="onHeaderNames" @onRowSelect="RowSelect" :dataGot="dataFromComponent" :allLabels="allLabels" /> -->
+
+            <Dialog v-model:visible="formDialogNew" modal :header="'Create product types'" class="p-fluid text-center mx-auto">
                 <div class="mb-3">
                     <div class="flex align-items-center gap-3 mb-1">
                         <label for="username" class="font-semibold w-6rem">Name :</label>
@@ -477,11 +507,11 @@ const remove = (aver) => {
 
                 <div class="flex justify-content-end gap-2">
                     <Button type="button" label="Cancel" severity="secondary" @click="formDialogNew = false" />
-                    <Button type="button" label="Save" @click="Create()" />
+                    <Button type="button" label="Save" @click="createVarieties()" />
                 </div>
             </Dialog>
 
-            <Dialog v-model:visible="formDialogEdit" modal :header="'Edit varieties'" class="p-fluid text-center mx-auto">
+            <Dialog v-model:visible="formDialogEdit" modal :header="'Edit Create product types'" class="p-fluid text-center mx-auto">
                 <div class="mb-3">
                     <div class="flex align-items-center gap-3 mb-1">
                         <label for="username" class="font-semibold w-6rem">Name :</label>
@@ -513,7 +543,7 @@ const remove = (aver) => {
             <div class="mb-3">
                 <div class="flex align-items-center">
                     <label for="username" class="font-semibold w-3">Companny:</label>
-                    <AutoComplete v-model="company" inputId="ac" :suggestions="compa" @complete="Edit"
+                    <AutoComplete v-model="company" inputId="ac" :suggestions="compa" @complete="EditVarieties"
                         field="name" dropdown />
                 </div>
                 <small id="username-help" :class="{ 'p-invalid text-red-700': errorsNew['company'] }">
@@ -523,11 +553,11 @@ const remove = (aver) => {
 
                 <div class="flex justify-content-end gap-2">
                     <Button type="button" label="Cancel" severity="secondary" @click="formDialogEdit = false" />
-                    <Button type="button" label="Save" @click="Edit()" />
+                    <Button type="button" label="Save" @click="EditVarieties()" />
                 </div>
             </Dialog>
 
-            <Dialog v-model:visible="formDialogClone" modal :header="'Clone varieti'" class="p-fluid text-center mx-auto">
+            <Dialog v-model:visible="formDialogClone" modal :header="'Clone Create product types'" class="p-fluid text-center mx-auto">
                 <div class="mb-3">
                     <div class="flex align-items-center gap-3 mb-1">
                         <label for="username" class="font-semibold w-6rem">Name :</label>
@@ -567,7 +597,7 @@ const remove = (aver) => {
 
                 <div class="flex justify-content-end gap-2">
                     <Button type="button" label="Cancel" severity="secondary" @click="formDialogClone = false" />
-                    <Button type="button" label="Save" @click="Clone()" />
+                    <Button type="button" label="Save" @click="CloneVarieties()" />
                 </div>
             </Dialog>
 
@@ -591,7 +621,7 @@ const remove = (aver) => {
 
                 <template #footer>
                     <Button label="Cancel" icon="pi pi-times" class="p-button-text" @click="formDialogExport = false" />
-                    <Button label="Export" icon="pi pi-check" class="p-button-text" @click="Export" />
+                    <Button label="Export" icon="pi pi-check" class="p-button-text" @click="ExportVarieties" />
                 </template>
             </Dialog>
 
@@ -613,4 +643,8 @@ const remove = (aver) => {
     </div>
 </template>
 
-<style lang="scss" scoped></style>
+<style lang="scss" scoped>
+.text-danger {
+    color: red;
+}
+</style>

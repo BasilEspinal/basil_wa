@@ -118,10 +118,19 @@ const fetchInfoPostLogin = async (data) => {
 
     const token = response.token;
     const user = response.user.name;
+    const farm = response.farm_uuid;
+    const company = response.company_uuid;
+    console.log("farm", farm)
+    console.log("company", company)
 
     sessionStorage.setItem('accessSessionToken', token);
     sessionStorage.setItem('accessSessionUser', user);
+    sessionStorage.setItem('accessSessionFarm', farm);
+    sessionStorage.setItem('accessSessionCompany', company);
     localStorage.setItem('accesSessionTokens', token);
+    localStorage.setItem('accesSessionUsers', user);
+    localStorage.setItem('accesSessionFarms', farm);
+    localStorage.setItem('accesSessionCompanys', company);
 
     // updateAbility(token);
 

@@ -13,13 +13,16 @@ import { saveAs } from 'file-saver';
 import { FilterMatchMode, FilterOperator } from 'primevue/api';
 
 //
+const prueba = ref({});
 const dataFromComponent = ref();
-const { conditionsVarieties } = useRestrictionVarieties();
+
 
 const Farms = ref([]);
 const farms = ref([]);
 const Compan = ref([]);
 const compa = ref([]);
+const farmDefault = sessionStorage.getItem('accessSessionFarm');
+const companyDefault = sessionStorage.getItem('accessSessionCompany');
 
 const formDialogNew = ref(false);
 const formDialogEdit = ref(false);
@@ -27,8 +30,6 @@ const formDialogClone = ref(false);
 const formDialogExport = ref(false);
 const formDialogDelete = ref(false);
 
-const allLabels = ref([]);
-allLabels.value = Object.values(conditionsVarieties).map((condition) => condition.fieldName);
 const toast = useToast();
 
 const filename = ref('table');
@@ -42,6 +43,9 @@ const getIndexByLabel = (fieldName) => {
 };
 onBeforeMount(async () => {
     readAll();
+    
+    console.log(farmDefault);
+    console.log(companyDefault);
 });
 
 const listRowSelect = ref([]);
@@ -157,31 +161,6 @@ const onHeaderNames = (data) => (headerNames.value = data);
 provide('isChanging', isChanging);
 watch(listRowSelect, RowSelect);
 
-const createVarieties = handleSubmitNew(async (values) => {
-    const data = {
-        code: values.codigo,
-        name: values.name,
-        company_uuid: values.company ? values.company.id : '25b4319c-e93f-4411-936c-118060f5e7c9',
-        farm_uuid: values.farm ? values.farm.id : '8ef93a7b-31bf-4233-af80-481020e9cf97'
-    };
-    const restp = await postRequest(endpoint.value, data);
-
-    toast.add({ severity: restp.ok ? 'success' : 'error', summary: 'Create', detail: restp.ok ? 'Creado' : restp.error, life: 3000 });
-    loadingData();
-    formDialogNew.value = false;
-});
-
-const searchCompannies = (event) => {
-    setTimeout(() => {
-        if (!event.query.trim().length) {
-            compa.value = [...Compan.value];
-        } else {
-            compa.value = Compan.value.filter((fram) => {
-                return fram.name.toLowerCase().startsWith(event.query.toLowerCase());
-            });
-        }
-    }, 200);
-};
 
 const openNew = () => {
     resetForm();
@@ -218,33 +197,64 @@ const openExport = () => {
 const openDelete = () => {
     formDialogDelete.value = true;
 };
+const createVarieties = handleSubmitNew(async (values) => {
+    const data = {
+        code: values.codigo,
+        name: values.name,
+        company_uuid: values.company ? values.company.id : companyDefault,
+        farm_uuid: values.farm ? values.farm.id : farmDefault
+    };
+    const restp = await postRequest(endpoint.value, data);
 
+    toast.add({ severity: restp.ok ? 'success' : 'error', summary: 'Create', detail: restp.ok ? 'Creado' : restp.error, life: 3000 });
+    loadingData();
+    formDialogNew.value = false;
+});
 const EditVarieties = handleSubmitNew(async (values) => {
     const { uuid } = listRowSelect.value[0];
     const data = {
         code: values.codigo,
-        name: values.name
+        name: values.name,
+        company_uuid: values.company ? values.company.id : companyDefault,
+        farm_uuid: values.farm ? values.farm.id : farmDefault,
     };
-    // company_id: values.company ? values.company.id : '25b4319c-e93f-4411-936c-118060f5e7c9',
-    // farm_id: values.farm ? values.farm : '8ef93a7b-31bf-4233-af80-481020e9cf97'
+    prueba.value = data
     const restp = await putRequest(endpoint.value, data, uuid);
     toast.add({ severity: restp.ok ? 'success' : 'error', summary: 'Edit', detail: restp.ok ? 'Editado' : restp.error, life: 3000 });
     loadingData();
     formDialogEdit.value = false;
+    if(restp.ok) {listRowSelect.value = []}
+    else {listRowSelect.value = listRowSelect.value}
 });
 
 const CloneVarieties = handleSubmitNew(async (values) => {
     const data = {
         code: values.codigo,
         name: values.name,
-        company_uuid: values.company ? values.company.id : '25b4319c-e93f-4411-936c-118060f5e7c9',
-        farm_uuid: values.farm ? values.farm.id : '8ef93a7b-31bf-4233-af80-481020e9cf97'
+        company_uuid: values.company ? values.company.id : companyDefault,
+        farm_uuid: values.farm ? values.farm.id : farmDefault,
     };
     const restp = await postRequest(endpoint.value, data);
     toast.add({ severity: restp.ok ? 'success' : 'error', summary: 'Clone', detail: restp.ok ? 'Clonado' : restp.error, life: 3000 });
     loadingData();
     formDialogClone.value = false;
+    if(restp.ok) {listRowSelect.value = []}
+    else {listRowSelect.value = listRowSelect.value}
 });
+
+
+const searchCompannies = (event) => {
+    setTimeout(() => {
+        if (!event.query.trim().length) {
+            compa.value = [...Compan.value];
+        } else {
+            compa.value = Compan.value.filter((fram) => {
+                return fram.name.toLowerCase().startsWith(event.query.toLowerCase());
+            });
+        }
+    }, 200);
+};
+
 
 const searchFarms = (event) => {
     setTimeout(() => {
@@ -339,7 +349,7 @@ const remove = (aver) => {
                     <Button v-if="ability.can('variante_eliminar')" :disabled="!listRowSelect.length > 0" label="Delete" icon="pi pi-trash" class="p-button-danger mb-2 mt-2" @click="openDelete" size="large" />
                 </template>
             </Toolbar>
-
+            <!-- <pre>{{ prueba }}</pre> -->
             <DataTable
                 v-if="ability.can('variante_listado')"
                 :value="dataFromComponent"
@@ -364,6 +374,7 @@ const remove = (aver) => {
                 v-model:filters="filters"
                 :globalFilterFields="['name', 'company.name', 'farm.name', 'status.name', 'created_at', 'updated_at']"
             >
+            
                 <template #header>
                     <!--Uncomment when filters are done-->
 

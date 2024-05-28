@@ -109,6 +109,42 @@
                 
 
                 <div>
+
+                    <DataTable :value="worksDay" tableStyle="min-width: 50rem">
+                    <ColumnGroup type="header">
+                        <Row>
+                            <Column header="Empleado" :rowspan="3" />
+                        </Row>
+                        <Row>
+                            <Column header="Trabajos" :colspan="2" />
+                        </Row>
+                        <Row>
+                            <Column header="Cantidad" sortable field="lastYearProfit" />
+                            <Column header="Precio" sortable field="thisYearProfit" />
+                        </Row>
+                    </ColumnGroup>
+                    <Column field="employee" />
+
+                    <Column field="quantity">
+                        <template #body="slotProps">
+                            {{ formatCurrency(slotProps.data.quantity) }}
+                        </template>
+                    </Column>
+                    <Column field="totalPrice">
+                        <template #body="slotProps">
+                            {{ formatCurrency(slotProps.data.totalPrice) }}
+                        </template>
+                    </Column>
+
+                    <ColumnGroup type="footer">
+                        <Row>
+                            <Column footer="Totals:" :colspan="1" footerStyle="text-align:left" />
+                            <Column :footer="quantities" />
+                            <Column :footer="totalPrices" />
+                        </Row>
+                    </ColumnGroup>
+                </DataTable>
+
                     <h4>Supervisor : {{ data_planner.nameSupervisor }}</h4>
                     <div class="p-fluid formgrid grid">
                         <div class="field col-12 md:col-6">
@@ -230,6 +266,7 @@ const sales = ref([
     { product: 'Gaming Set', lastYearSale: 90, thisYearSale: 56, lastYearProfit: 765442, thisYearProfit: 296232 },
     { product: 'Gold Phone Case', lastYearSale: 75, thisYearSale: 54, lastYearProfit: 21212, thisYearProfit: 12533 }
 ]);
+
 
 const worksDay = ref([
     { employee: 'Empleado 1', quantity: 54406, totalPrice: 43342 },

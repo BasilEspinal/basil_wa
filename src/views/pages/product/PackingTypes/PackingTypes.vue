@@ -13,6 +13,7 @@ import { z } from 'zod';
 import { saveAs } from 'file-saver';
 import { FilterMatchMode, FilterOperator } from 'primevue/api';
 
+const prueba = ref({});
 const listRowSelect = ref([]);
 const loading = ref(false);
 const size = ref({ label: 'Normal', value: 'normal' });
@@ -59,6 +60,8 @@ const Farms = ref([]);
 const farms = ref([]);
 const Compan = ref([]);
 const compa = ref([]);
+const farmDefault = sessionStorage.getItem('accessSessionFarm');
+const companyDefault = sessionStorage.getItem('accessSessionCompany');
 
 const formDialogNew = ref(false);
 const formDialogEdit = ref(false);
@@ -66,8 +69,6 @@ const formDialogClone = ref(false);
 const formDialogExport = ref(false);
 const formDialogDelete = ref(false);
 
-const allLabels = ref([]);
-allLabels.value = Object.values(conditionsPackingTypes).map((condition) => condition.fieldName);
 const toast = useToast();
 const filename = ref('table');
 const isChanging = ref(false);
@@ -139,21 +140,6 @@ const onHeaderNames = (data) => (headerNames.value = data);
 provide('isChanging', isChanging);
 watch(listRowSelect, RowSelect);
 
-const create = handleSubmitNew(async (values) => {
-    const data = {
-        code: values.codigo,
-        name: values.name,
-        weight_tare: 1,
-        company_uuid: values.company ? values.company.id : '25b4319c-e93f-4411-936c-118060f5e7c9',
-        farm_uuid: values.farm ? values.farm.id : '8ef93a7b-31bf-4233-af80-481020e9cf97'
-    };
-    const restp = await postRequest(endpoint.value, data);
-
-    toast.add({ severity: restp.ok ? 'success' : 'error', summary: 'Create', detail: restp.ok ? 'Creado' : restp.error, life: 3000 });
-    loadingData();
-    formDialogNew.value = false;
-});
-
 const searchCompannies = (event) => {
     setTimeout(() => {
         if (!event.query.trim().length) {
@@ -202,43 +188,58 @@ const openDelete = () => {
     formDialogDelete.value = true;
 };
 
-/*
-{
-    "code": "CODE123",
-    "name": "prueba123",
-    "weight_tare": 1,
-    "company_id": "d0df10d0-7d64-4499-9e70-148a1bc70d43",
-    "farm_id": "b3fc0353-f306-4866-abf2-75f9e06dd662"
-}
-*/
 
+const create = handleSubmitNew(async (values) => {
+    
+    const data = {
+        code: values.codigo,
+        name: values.name,
+        weight_tare: 1,
+        company_uuid: values.company ? values.company.id : companyDefault,
+        farm_uuid: values.farm ? values.farm.id : farmDefault
+    };
+    const restp = await postRequest(endpoint.value, data);
+
+    toast.add({ severity: restp.ok ? 'success' : 'error', summary: 'Create', detail: restp.ok ? 'Creado' : restp.error, life: 3000 });
+    loadingData();
+    formDialogNew.value = false;
+    prueba.value = data
+});
 const edit = handleSubmitNew(async (values) => {
+
     const { uuid } = listRowSelect.value[0];
     const data = {
         code: values.codigo,
         name: values.name,
         weight_tare: 1,
-        company_uuid: values.company ? values.company.id : '25b4319c-e93f-4411-936c-118060f5e7c9',
-        farm_uuid: values.farm ? values.farm.id : '8ef93a7b-31bf-4233-af80-481020e9cf97'
+        company_uuid: values.company ? values.company.id : companyDefault,
+        farm_uuid: values.farm ? values.farm.id : farmDefault,
     };
     const restp = await putRequest(endpoint.value, data, uuid);
     toast.add({ severity: restp.ok ? 'success' : 'error', summary: 'Edit', detail: restp.ok ? 'Editado' : restp.error, life: 3000 });
     loadingData();
+    prueba.value = data
     formDialogEdit.value = false;
+    if(restp.ok) {listRowSelect.value = []}
+    else {listRowSelect.value = listRowSelect.value}
 });
 
 const clone = handleSubmitNew(async (values) => {
+    
     const data = {
         code: values.codigo,
         name: values.name,
         weight_tare: 1,
-        company_uuid: values.company ? values.company.id : '25b4319c-e93f-4411-936c-118060f5e7c9',
-        farm_uuid: values.farm ? values.farm.id : '8ef93a7b-31bf-4233-af80-481020e9cf97'
+        company_uuid: values.company ? values.company.id : companyDefault,
+        farm_uuid: values.farm ? values.farm.id : farmDefault,
     };
     const restp = await postRequest(endpoint.value, data);
     toast.add({ severity: restp.ok ? 'success' : 'error', summary: 'Clone', detail: restp.ok ? 'Clonado' : restp.error, life: 3000 });
     loadingData();
     formDialogClone.value = false;
+    prueba.value = data
+    if(restp.ok) {listRowSelect.value = []}
+    else {listRowSelect.value = listRowSelect.value}
 });
 
 const searchFarms = (event) => {
@@ -333,7 +334,7 @@ const remove = (aver) => {
                 <Button v-if="ability.can('tipo_empaque_eliminar')" :disabled="!listRowSelect.length > 0" label="Delete" icon="pi pi-trash" class="p-button-danger mb-2 mt-2" @click="openDelete" size="large" />
             </template>
         </Toolbar>
-
+<pre>{{ prueba }}</pre>
         <DataTable
             v-if="ability.can('tipo_producto_listado')"
             :value="dataFromComponent"
@@ -569,7 +570,7 @@ const remove = (aver) => {
             </div>
             <div class="mb-3">
                 <div class="flex align-items-center">
-                    <label for="username" class="font-semibold w-3">Companny:</label>
+                    <label for="username" class="font-semibold w-3">Company:</label>
                     <AutoComplete v-model="company" inputId="ac" :suggestions="compa" @complete="searchCompannies" field="name" dropdown />
                 </div>
                 <small id="username-help" :class="{ 'p-invalid text-red-700': errorsNew['company'] }">
