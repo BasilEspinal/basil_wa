@@ -300,7 +300,7 @@
                 </div>
                 <div class="mb-3">
                     <div class="flex align-items-center">
-                        <label for="username" class="font-semibold w-3">Companny:</label>
+                        <label for="username" class="font-semibold w-3">Company:</label>
                         <AutoComplete v-model="company" inputId="ac" :suggestions="compa" @complete="searchCompannies" field="name" dropdown />
                     </div>
                     <small id="username-help" :class="{ 'p-invalid text-red-700': errorsNew['company'] }">
@@ -344,7 +344,7 @@
                 <div class="mb-3">
                     <div class=" flex align-items-center">
                         <label for="periodNumberV" class="font-semibold w-3">Period Number:</label>
-                        <InputNumber v-model="periodNumberV" inputId="minmax" :min="0" :max="100" />
+                        <InputNumber v-model="periodNumberV" class="flex-auto" inputId="minmax" :min="0" :max="100" />
                     </div>
                     
                     
