@@ -501,7 +501,11 @@ watch(listRowSelect, RowSelect);
 
 
 
+const openNew = () => {
+    resetForm();
+    formDialogNew.value = true;
 
+};
 const openEdit = () => {
     resetForm();
     const { code, company: empresa, farm: farmParameter, name: nombre } = listRowSelect.value[0];
@@ -597,11 +601,7 @@ const searchCompannies = (event) => {
         }
     }, 200);
 };
-const openNew = () => {
-    resetForm();
-    formDialogNew.value = true;
 
-};
 
 const searchFarms = (event) => {
     setTimeout(() => {

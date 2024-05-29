@@ -1,4 +1,5 @@
 import useSettingsAPI from '@/composables/DataAPI/settings_API';
+import { ref } from 'vue';
 export default function useData() {
     const { pathAPI, APISettings } = useSettingsAPI();
     let base = pathAPI().base;
@@ -7,6 +8,7 @@ export default function useData() {
     APISettings.headers.set('Content-Type', 'application/json');
     APISettings.headers.set('Access-Control-Allow-Origin', '*');
     APISettings.headers.set('Authorization', 'Bearer ' + token);
+    let errorResponseAPI = ref('Error no filled');
 
     async function getRequest(endPoint) {
         let responseData = { data: {}, error: '', ok: false };
@@ -49,6 +51,7 @@ export default function useData() {
         } catch (e) {
             console.error('Error en la solicitud POST:', e.message);
             responseData.error += ' ' + e.message;
+            errorResponseAPI.value = response;
         }
         return responseData;
     }
@@ -63,15 +66,20 @@ export default function useData() {
         };
         try {
             const response = await fetch(baseUrl, requestOptions);
+            console.log('response', response)
             responseData.ok = response.ok;
             if (!response.ok) {
                 responseData.error = response.statusText;
+                console.log(response)
                 throw new Error(`Error ${response.status} al enviar datos.`);
+                
             }
             responseData.data = await response.json();
         } catch (e) {
             console.error('Error en la solicitud POST:', e.message);
             responseData.error += ' ' + e.message;
+            console.log(e)
+            //errorResponseAPI.value = response;
         }
         return responseData;
     }
@@ -103,6 +111,7 @@ export default function useData() {
         getRequest,
         postRequest,
         putRequest,
-        deleteRequest
+        deleteRequest,
+        errorResponseAPI
     };
 }

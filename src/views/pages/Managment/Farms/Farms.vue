@@ -321,18 +321,20 @@ import { saveAs } from 'file-saver';
 import { z } from 'zod';
 import ability from '@/service/ability.js';
 import { AbilityBuilder} from '@casl/ability';
+const prueba = ref({revisar: 'revisar GET-POST-PUT-DELETE'});
 const namePage = ' Farms ';
-const titlePage = namePage+'information';
+const titlePage = ' '+namePage+' information';
 const dataFromComponent = ref();
 const Compan = ref([]);
 const compa = ref([]);
+const companyDefault = sessionStorage.getItem('accessSessionCompany');
 
+const formDialogNewTitle = 'Create new '+namePage;
+const formDialogEditTitle = 'Edit '+namePage;
+const formDialogCloneTitle = 'Clone ' + namePage;
+const formDialogExportTitle = 'Export ' + namePage;
+const formDialogDeleteTitle = 'Delete '+namePage;
 const formDialogNew = ref(false);
-const formDialogNewTitle = 'Create new'+namePage;
-const formDialogEditTitle = 'Edit'+namePage;
-const formDialogCloneTitle = 'Clone' + namePage;
-const formDialogExportTitle = 'Export' + namePage;
-const formDialogDeleteTitle = 'Delete'+namePage;
 const formDialogEdit = ref(false);
 const formDialogClone = ref(false);
 const formDialogExport = ref(false);
@@ -450,36 +452,7 @@ let headerNames = ref([]);
 provide('isChanging', isChanging);
 watch(listRowSelect, RowSelect);
 
-const createRecord = handleSubmitNew(async (values) => {
-    const data = {
-        code: values.codeV,
-        name: values.name,
-        company_uuid: values.company ? values.company.id : '25b4319c-e93f-4411-936c-118060f5e7c9',
-        
-    };
-    const restp = await postRequest(endpoint.value, data);
 
-    toast.add({ severity: restp.ok ? 'success' : 'error', summary: 'Create', detail: restp.ok ? 'Creado' : restp.error, life: 3000 });
-    loadingData();
-    formDialogNew.value = false;
-});
-
-const searchCompannies = (event) => {
-    setTimeout(() => {
-        if (!event.query.trim().length) {
-            compa.value = [...Compan.value];
-        } else {
-            compa.value = Compan.value.filter((fram) => {
-                return fram.name.toLowerCase().startsWith(event.query.toLowerCase());
-            });
-        }
-    }, 200);
-};
-const openNew = () => {
-    resetForm();
-    formDialogNew.value = true;
-
-};
 
 const openEdit = () => {
     resetForm();
@@ -511,13 +484,38 @@ const openExport = () => {
 const openDelete = () => {
     formDialogDelete.value = true;
 };
+const createRecord = handleSubmitNew(async (values) => {
+    const data = {
+        code: values.codeV,
+        name: values.name,
+        company_uuid: values.company ? values.company.id : companyDefault,
+        
+    };
+    const restp = await postRequest(endpoint.value, data);
+
+    toast.add({ severity: restp.ok ? 'success' : 'error', summary: 'Create', detail: restp.ok ? 'Creado' : restp.error, life: 3000 });
+    loadingData();
+    formDialogNew.value = false;
+    prueba.value= data;
+    if(restp.ok) {listRowSelect.value = []
+    selectedRegisters.value = []
+    formDialogNew.value = false;
+}
+    else{
+        backendValidationFlag.value = true;
+        backendValidation.value = restp;
+        formDialogNew.value = true;
+    }
+
+});
+
 
 const EditRecord = handleSubmitNew(async (values) => {
     const { uuid } = listRowSelect.value[0];
     const data = {
         code: values.codeV,
         name: values.name,
-        company_uuid: values.company ? values.company.id : '25b4319c-e93f-4411-936c-118060f5e7c9',
+        company_uuid: values.company ? values.company.id : companyDefault,
         
     };
     
@@ -525,21 +523,60 @@ const EditRecord = handleSubmitNew(async (values) => {
     toast.add({ severity: restp.ok ? 'success' : 'error', summary: 'Edit', detail: restp.ok ? 'Editado' : restp.error, life: 3000 });
     loadingData();
     formDialogEdit.value = false;
+    prueba.value= data;
+    if(restp.ok) {listRowSelect.value = []
+    selectedRegisters.value = []
+    formDialogEdit.value = false;
+}
+    else{
+        backendValidationFlag.value = true;
+        backendValidation.value = restp;
+        formDialogEdit.value = true;
+    }
 });
 
 const CloneRecord = handleSubmitNew(async (values) => {
     const data = {
         code: values.codeV,
         name: values.name,
-        company_uuid: values.company ? values.company.id : '25b4319c-e93f-4411-936c-118060f5e7c9',
+        company_uuid: values.company ? values.company.id : companyDefault,
         
     };
     const restp = await postRequest(endpoint.value, data);
     toast.add({ severity: restp.ok ? 'success' : 'error', summary: 'Clone', detail: restp.ok ? 'Clonado' : restp.error, life: 3000 });
     loadingData();
     formDialogClone.value = false;
+    prueba.value= data;
+    if(restp.ok) {listRowSelect.value = []
+    selectedRegisters.value = []
+    formDialogClone.value = false;
+}
+    else{
+        backendValidationFlag.value = true;
+        backendValidation.value = restp;
+        formDialogClone.value = true;
+    }
 });
 
+const DeleteRecord = async () => {
+    formDialogDelete.value = false;
+
+    try {
+        const deletePromises = [];
+        listRowSelect.value.forEach(async (item) => {
+            const deletePromise = await deleteRequest(endpoint.value, item.uuid);
+            deletePromises.push(deletePromise);
+        });
+        await Promise.all(deletePromises);
+        loadingData();
+        toast.add({ severity: 'success', summary: 'Deleted Record', detail: 'Deleted', life: 3000 });
+    } catch (error) {
+        console.error('Error deleting:', error);
+        toast.add({ severity: 'error', summary: 'Error', detail: 'Error deleting', life: 3000 });
+    } finally {
+        listRowSelect.value = [];
+    }
+};
 
 const ExportRecord = () => {
     const eventos = exportAll.value.name == 'ALL' ? dataFromComponent.value.map((data) => data) : listRowSelect.value.map((data) => data);
@@ -574,24 +611,21 @@ function formatXLS(eventos) {
     saveAs(file, filename.value + '.xlsx');
 }
 
-const DeleteRecord = async () => {
-    formDialogDelete.value = false;
+const searchCompannies = (event) => {
+    setTimeout(() => {
+        if (!event.query.trim().length) {
+            compa.value = [...Compan.value];
+        } else {
+            compa.value = Compan.value.filter((fram) => {
+                return fram.name.toLowerCase().startsWith(event.query.toLowerCase());
+            });
+        }
+    }, 200);
+};
+const openNew = () => {
+    resetForm();
+    formDialogNew.value = true;
 
-    try {
-        const deletePromises = [];
-        listRowSelect.value.forEach(async (item) => {
-            const deletePromise = await deleteRequest(endpoint.value, item.uuid);
-            deletePromises.push(deletePromise);
-        });
-        await Promise.all(deletePromises);
-        loadingData();
-        toast.add({ severity: 'success', summary: 'Deleted Record', detail: 'Deleted', life: 3000 });
-    } catch (error) {
-        console.error('Error deleting:', error);
-        toast.add({ severity: 'error', summary: 'Error', detail: 'Error deleting', life: 3000 });
-    } finally {
-        listRowSelect.value = [];
-    }
 };
 
 const remove = (aver) => {

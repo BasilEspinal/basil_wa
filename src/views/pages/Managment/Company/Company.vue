@@ -124,24 +124,6 @@
     </Column>
         <!--Here add other columns-->
 
-        <!-- <Column field="farmName" filterField="farm.name" header="Farm Name" sortable>
-                <template #body="{ data }">
-                    {{ data.farm.name }}
-                </template>
-                <template #filter="{ filterModel }">
-                    <InputText v-model="filterModel.value" type="text" class="p-column-filter" placeholder="Search by farm" />
-                </template>
-            </Column>
-
-            <Column field="companyName" filterField="company.name" header="Company Name" sortable>
-                <template #body="{ data }">
-                    {{ data.company.name }}
-                </template>
-                <template #filter="{ filterModel }">
-                    <InputText v-model="filterModel.value" type="text" class="p-column-filter" placeholder="Search by farm" />
-                </template>
-            </Column> -->
-
             <Column field="createdAt" filterField="created_at" header="Creation date" sortable>
                 <template #body="{ data }">
                     {{ data.created_at }}
@@ -350,23 +332,19 @@ import { useLayout } from '@/layout/composables/layout';
 import { computed } from 'vue';
 
 const { layoutConfig } = useLayout();
+const prueba = ref({revisar: 'revisar GET-POST-PUT-DELETE'});
 const namePage = ' Companies ';
-const titlePage = namePage+'information';
+const titlePage = ' '+namePage+' information';
 const dataFromComponent = ref();
-const Farms = ref([]);
-const farms = ref([]);
-
-
 const logoUrl = computed(() => {
     return `layout/images/${layoutConfig.darkTheme.value ? 'logo-white' : 'logo-dark'}.png`;
 });
+const formDialogNewTitle = 'Create new '+namePage;
+const formDialogEditTitle = 'Edit '+namePage;
+const formDialogCloneTitle = 'Clone ' + namePage;
+const formDialogExportTitle = 'Export ' + namePage;
+const formDialogDeleteTitle = 'Delete '+namePage;
 const formDialogNew = ref(false);
-const formDialogNewTitle = 'Create new'+namePage;
-
-const formDialogEditTitle = 'Edit'+namePage;
-const formDialogCloneTitle = 'Clone' + namePage;
-const formDialogExportTitle = 'Export' + namePage;
-const formDialogDeleteTitle = 'Delete'+namePage;
 const formDialogEdit = ref(false);
 const formDialogClone = ref(false);
 const formDialogExport = ref(false);
@@ -419,7 +397,6 @@ const initFilters = () => {
         name: { operator: FilterOperator.AND, constraints: [{ value: null, matchMode: FilterMatchMode.STARTS_WITH }] },
         'status.name': { operator: FilterOperator.AND, constraints: [{ value: null, matchMode: FilterMatchMode.STARTS_WITH }] },
         'farm.name': { operator: FilterOperator.AND, constraints: [{ value: null, matchMode: FilterMatchMode.STARTS_WITH }] },
-        
         created_at: { operator: FilterOperator.AND, constraints: [{ value: null, matchMode: FilterMatchMode.STARTS_WITH }] },
         updated_at: { operator: FilterOperator.AND, constraints: [{ value: null, matchMode: FilterMatchMode.STARTS_WITH }] }
     };
@@ -461,12 +438,6 @@ const {
         z.object({
             name: z.string().min(4),
             codeV: z.string().min(4),
-            // farm: z
-            //     .object({
-            //         name: z.string().min(4),
-            //         id: z.string().min(4)
-            //     })
-            //     .optional(),
             
         })
     )
@@ -488,25 +459,11 @@ let headerNames = ref([]);
 provide('isChanging', isChanging);
 watch(listRowSelect, RowSelect);
 
-const createRecord = handleSubmitNew(async (values) => {
-    const data = {
-        code: values.codeV,
-        name: values.name,
-        // company_uuid: values.company ? values.company.id : '25b4319c-e93f-4411-936c-118060f5e7c9',
-        // farm_uuid: values.farm ? values.farm.id : '8ef93a7b-31bf-4233-af80-481020e9cf97'
-    };
-    const restp = await postRequest(endpoint.value, data);
-
-    toast.add({ severity: restp.ok ? 'success' : 'error', summary: 'Create', detail: restp.ok ? 'Creado' : restp.error, life: 3000 });
-    loadingData();
-    formDialogNew.value = false;
-});
 const openNew = () => {
     resetForm();
     formDialogNew.value = true;
 
 };
-
 
 const openEdit = () => {
     resetForm();
@@ -514,8 +471,6 @@ const openEdit = () => {
 
     name.value = nombre;
     codeV.value = code;
-    // farm.value = { id: farmParameter.uuid, name: farmParameter.name };
-
     formDialogEdit.value = true;
 };
 
@@ -524,8 +479,7 @@ const openClone = () => {
     const { farm: farmParameter, name: nombre } = listRowSelect.value[0];
 
     name.value = nombre;
-    // company.value = { id: empresa.uuid, name: empresa.name };
-    // farm.value = { id: farmParameter.uuid, name: farmParameter.name };
+    
     formDialogClone.value = true;
 };
 
@@ -538,33 +492,99 @@ const openDelete = () => {
     formDialogDelete.value = true;
 };
 
+const createRecord = handleSubmitNew(async (values) => {
+    const data = {
+        code: values.codeV,
+        name: values.name,
+    };
+    const restp = await postRequest(endpoint.value, data);
+
+    toast.add({ severity: restp.ok ? 'success' : 'error', summary: 'Create', detail: restp.ok ? 'Creado' : restp.error, life: 3000 });
+    loadingData();
+    prueba.value= data;
+    if(restp.ok) {listRowSelect.value = []
+    selectedRegisters.value = []
+    formDialogNew.value = false;
+}
+    else{
+        backendValidationFlag.value = true;
+        backendValidation.value = restp;
+        formDialogNew.value = true;
+    }
+});
+
 const EditRecord = handleSubmitNew(async (values) => {
     const { uuid } = listRowSelect.value[0];
     const data = {
         code: values.codeV,
         name: values.name,
-        // company_uuid: values.company ? values.company.id : '25b4319c-e93f-4411-936c-118060f5e7c9',
-        // farm_uuid: values.farm ? values.farm.id : values.farm
+        
+
     };
     
     const restp = await putRequest(endpoint.value, data, uuid);
     toast.add({ severity: restp.ok ? 'success' : 'error', summary: 'Edit', detail: restp.ok ? 'Editado' : restp.error, life: 3000 });
     loadingData();
+    prueba.value= data;
+    if(restp.ok) {listRowSelect.value = []
+    selectedRegisters.value = []
     formDialogEdit.value = false;
+}
+    else{
+        backendValidationFlag.value = true;
+        backendValidation.value = restp;
+        formDialogEdit.value = true;
+    }
 });
 
 const CloneRecord = handleSubmitNew(async (values) => {
     const data = {
         code: values.codeV,
         name: values.name,
-        // company_uuid: values.company ? values.company.id : '25b4319c-e93f-4411-936c-118060f5e7c9',
-        // farm_uuid: values.farm ? values.farm.id : '8ef93a7b-31bf-4233-af80-481020e9cf97'
+        
     };
     const restp = await postRequest(endpoint.value, data);
     toast.add({ severity: restp.ok ? 'success' : 'error', summary: 'Clone', detail: restp.ok ? 'Clonado' : restp.error, life: 3000 });
     loadingData();
+    prueba.value= data;
+    if(restp.ok) {listRowSelect.value = []
+    selectedRegisters.value = []
     formDialogClone.value = false;
+}
+    else{
+        backendValidationFlag.value = true;
+        backendValidation.value = restp;
+        formDialogClone.value = true;
+    }
 });
+
+const ExportRecord = () => {
+    const eventos = exportAll.value.name == 'ALL' ? dataFromComponent.value.map((data) => data) : listRowSelect.value.map((data) => data);
+    formDialogExport.value = false;
+    if (!eventos.length) return;
+    if (format.value.name == 'CSV') formatCSV(eventos);
+    else formatXLS(eventos);
+};
+
+const DeleteRecord = async () => {
+    formDialogDelete.value = false;
+
+    try {
+        const deletePromises = [];
+        listRowSelect.value.forEach(async (item) => {
+            const deletePromise = await deleteRequest(endpoint.value, item.uuid);
+            deletePromises.push(deletePromise);
+        });
+        await Promise.all(deletePromises);
+        loadingData();
+        toast.add({ severity: 'success', summary: 'Deleted Record', detail: 'Deleted', life: 3000 });
+    } catch (error) {
+        console.error('Error deleting:', error);
+        toast.add({ severity: 'error', summary: 'Error', detail: 'Error deleting', life: 3000 });
+    } finally {
+        listRowSelect.value = [];
+    }
+};
 
 const searchFarms = (event) => {
     setTimeout(() => {
@@ -576,14 +596,6 @@ const searchFarms = (event) => {
             });
         }
     }, 200);
-};
-
-const ExportRecord = () => {
-    const eventos = exportAll.value.name == 'ALL' ? dataFromComponent.value.map((data) => data) : listRowSelect.value.map((data) => data);
-    formDialogExport.value = false;
-    if (!eventos.length) return;
-    if (format.value.name == 'CSV') formatCSV(eventos);
-    else formatXLS(eventos);
 };
 
 function formatCSV(eventos) {
@@ -611,25 +623,6 @@ function formatXLS(eventos) {
     saveAs(file, filename.value + '.xlsx');
 }
 
-const DeleteRecord = async () => {
-    formDialogDelete.value = false;
-
-    try {
-        const deletePromises = [];
-        listRowSelect.value.forEach(async (item) => {
-            const deletePromise = await deleteRequest(endpoint.value, item.uuid);
-            deletePromises.push(deletePromise);
-        });
-        await Promise.all(deletePromises);
-        loadingData();
-        toast.add({ severity: 'success', summary: 'Deleted Record', detail: 'Deleted', life: 3000 });
-    } catch (error) {
-        console.error('Error deleting:', error);
-        toast.add({ severity: 'error', summary: 'Error', detail: 'Error deleting', life: 3000 });
-    } finally {
-        listRowSelect.value = [];
-    }
-};
 
 const remove = (aver) => {
     const index = listRowSelect.value.findIndex((x) => x.id === aver.id);

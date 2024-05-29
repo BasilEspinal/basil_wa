@@ -9,12 +9,16 @@ import { z } from 'zod';
 
 import useData from '@/composables/DataAPI/FetchDataAPICopy.js';
 const { getRequest, postRequest, putRequest, deleteRequest } = useData();
-
+const prueba = ref({revisar: 'revisar GET-POST-PUT-DELETE'});
 let endpoint = ref('/users');
 const loading = ref(false);
 const selectedRegisters = ref([]);
 const expandedRows = ref([]);
 const users = ref([]);
+
+const farmDefault = sessionStorage.getItem('accessSessionFarm');
+
+
 const headerDialogNew = ref('');
 const headerDialogEdit = ref('');
 const headerDialogClone = ref('');
@@ -96,7 +100,7 @@ const openEdit = () => {
 
 const openClone = () => {
     resetForm();
-    headerDialogClone.value = 'Clone a xx record';
+    headerDialogClone.value = 'Clone a user';
     const data = selectedRegisters.value[0];
     name.value = data.name;
     DialogClone.value = true;
@@ -107,7 +111,7 @@ const openDelete = () => {
 };
 
 const openExport = () => {
-    headerDialogExport.value = 'Export a xxx record';
+    headerDialogExport.value = 'Export users';
     DialogExport.value = true;
 };
 
@@ -117,7 +121,7 @@ const newUser = handleSubmit(async (values) => {
         name: values.name,
         email: values.email,
         password: values.password,
-        farm_uuid: '8ef93a7b-31bf-4233-af80-481020e9cf97',
+        farm_uuid: values.farm ? values.farm.uuid : farmDefault,
         roles: [{ id: 1 }]
     };
     const restp = await postRequest(endpoint.value, data);
@@ -130,7 +134,7 @@ const editUser = submitEdit(async (values) => {
     const data = {
         name: values.nameEdit,
         email: values.emailEdit,
-        farm_uuid: farm.uuid,
+        farm_uuid: values.farm ? values.farm.uuid : farmDefault,
         roles: roles.map((rol) => ({ id: rol.id }))
     };
     if (values.passwordEdit) {
@@ -161,25 +165,6 @@ const deleteUsers = async () => {
         selectedRegisters.value = [];
     }
 };
-// function exportToCSV() {
-//     const data = [];
-
-//     data.push(",ID,NOMBRE,ROLES\n");
-
-//     DataPrueba.value.map( user => {
-//         let roles = '';
-//         user.roles.forEach(rol => {
-//             roles += `${rol.name_rol}\n,,,`;
-//         });
-//         data.push(`${user.user_id},${user.user_name},${roles}\n`);
-//     });
-
-//     const blob = new Blob([data.toString()], { type: "text/csv" });
-//     const link = document.createElement("a");
-//     link.href = URL.createObjectURL(blob);
-//     link.download = "Eventos";
-//     link.click();
-// }
 
 const remove = (aver) => {
     const index = selectedRegisters.value.findIndex((x) => x.id === aver.id);
