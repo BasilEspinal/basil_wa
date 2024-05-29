@@ -13,23 +13,30 @@ import { saveAs } from 'file-saver';
 import { z } from 'zod';
 import ability from '@/service/ability.js';
 import { AbilityBuilder } from '@casl/ability';
+const prueba = ref({revisar: 'revisar GET-POST-PUT-DELETE'});
+const backendValidation = ref();
+const backendValidationFlag = ref(false);
 const namePage = ' Employees ';
-const titlePage = namePage + 'information';
+const titlePage = ' '+namePage+' information';
 const dataFromComponent = ref();
 const Farms = ref([]);
 const farms = ref([]);
+const Compan = ref([]);
+const compa = ref([]);
+const farmDefault = sessionStorage.getItem('accessSessionFarm');
+const companyDefault = sessionStorage.getItem('accessSessionCompany');
 const GenderList = ref([]);
 const DocumentTypeList = ref([]);
 const WorkCenterList = ref([]);
 const PaymentTypeList = ref([]);
 const taskTipesL = ref([]);
 
+const formDialogNewTitle = 'Create new '+namePage;
+const formDialogEditTitle = 'Edit '+namePage;
+const formDialogCloneTitle = 'Clone ' + namePage;
+const formDialogExportTitle = 'Export ' + namePage;
+const formDialogDeleteTitle = 'Delete '+namePage;
 const formDialogNew = ref(false);
-const formDialogNewTitle = 'Create new' + namePage;
-const formDialogEditTitle = 'Edit' + namePage;
-const formDialogCloneTitle = 'Clone' + namePage;
-const formDialogExportTitle = 'Export' + namePage;
-const formDialogDeleteTitle = 'Delete' + namePage;
 const formDialogEdit = ref(false);
 const formDialogClone = ref(false);
 const formDialogExport = ref(false);
@@ -83,6 +90,7 @@ const initFilters = () => {
         bank_account_doc: { operator: FilterOperator.AND, constraints: [{ value: null, matchMode: FilterMatchMode.STARTS_WITH }] },
         'payment_type.name': { operator: FilterOperator.AND, constraints: [{ value: null, matchMode: FilterMatchMode.STARTS_WITH }] },
         'farm.name': { operator: FilterOperator.AND, constraints: [{ value: null, matchMode: FilterMatchMode.STARTS_WITH }] },
+        'company.name': { operator: FilterOperator.AND, constraints: [{ value: null, matchMode: FilterMatchMode.STARTS_WITH }] },
         companyName: { operator: FilterOperator.AND, constraints: [{ value: null, matchMode: FilterMatchMode.STARTS_WITH }] },
         created_at: { operator: FilterOperator.AND, constraints: [{ value: null, matchMode: FilterMatchMode.STARTS_WITH }] },
         updated_at: { operator: FilterOperator.AND, constraints: [{ value: null, matchMode: FilterMatchMode.STARTS_WITH }] },
@@ -96,6 +104,10 @@ const readAll = async () => {
     const respFarms = await getRequest('/farms');
     if (!respFarms.ok) toast.add({ severity: 'error', detail: 'Error' + respFarms.error, life: 3000 });
     Farms.value = respFarms.data.data.map((farm) => ({ id: farm.uuid, name: farm.name }));
+
+    const respCompan = await getRequest('/companies');
+    if (!respCompan.ok) toast.add({ severity: 'error', detail: 'Error' + respCompan.error, life: 3000 });
+    Compan.value = respCompan.data.data.map((comp) => ({ id: comp.uuid, name: comp.name }));
 
     const respDocumentTypeList = await getRequest('/lists/documentType');
     if (!respDocumentTypeList.ok) toast.add({ severity: 'error', detail: 'Error' + respDocumentTypeList.error, life: 3000 });
@@ -167,7 +179,15 @@ const {
                     id: z.string().min(3),
                     name: z.string().min(3)
                 })
+                .optional(),
+
+            company: z
+                .object({
+                    name: z.string().min(4),
+                    id: z.string().min(4)
+                })
                 .optional()
+
         })
     )
 });
@@ -183,6 +203,7 @@ const [document_type] = defineField('document_type');
 const [payment_type_uuid] = defineField('payment_type_uuid');
 const [work_center_uuid] = defineField('work_center_uuid');
 const [farm_uuid] = defineField('farm_uuid');
+const [company] = defineField('company');
 
 const extenciones = ref([{ name: 'CSV' }, { name: 'XLS' }]);
 const optionsEsport = ref([{ name: 'ALL' }, { name: 'SELECTED' }]);
@@ -215,7 +236,8 @@ const openEdit = () => {
         bank_account_doc: BankAccountDoc,
         payment_type: PaymentType,
         workCenter: WorkC,
-        farm: Farm
+        farm: Farm,
+        company: empresa
     } = listRowSelect.value[0];
 
     documento.value = Number(documentoN);
@@ -229,7 +251,8 @@ const openEdit = () => {
     bank_account_doc.value = BankAccountDoc;
     payment_type_uuid.value = { id: PaymentType.uuid, name: PaymentType.name };
     work_center_uuid.value = { id: WorkC.uuid, name: WorkC.name };
-    farm_uuid.value = { id: Farm.id, name: Farm.name };
+    farm_uuid.value = { id: Farm.uuid, name: Farm.name };
+    company.value = { id: empresa.uuid, name: empresa.name };
 
     formDialogEdit.value = true;
 };
@@ -248,7 +271,8 @@ const openClone = () => {
         bank_account_doc: BankAccountDoc,
         payment_type: PaymentType,
         workCenter: WorkC,
-        farm: Farm
+        farm: Farm,
+        company: empresa
     } = listRowSelect.value[0];
 
     documento.value = Number(documentoN);
@@ -262,7 +286,8 @@ const openClone = () => {
     bank_account_doc.value = BankAccountDoc;
     payment_type_uuid.value = { id: PaymentType.uuid, name: PaymentType.name };
     work_center_uuid.value = { id: WorkC.uuid, name: WorkC.name };
-    farm_uuid.value = { id: Farm.id, name: Farm.name };
+    farm_uuid.value = { id: Farm.uuid, name: Farm.name };
+    company.value = { id: empresa.uuid, name: empresa.name };
 
     formDialogClone.value = true;
 };
@@ -289,14 +314,25 @@ const createRecord = handleSubmitNew(async (values) => {
         bank_account_doc: values.bank_account_doc,
         payment_type_uuid: values.payment_type_uuid.id,
         work_center_uuid: values.work_center_uuid.id,
-        farm_uuid: values.farm_uuid.id
+        company_uuid: values.company ? values.company.id : companyDefault,
+        farm_uuid: values.farm ? values.farm.id : farmDefault,
     };
-    console.log('data: ', data);
+    
     const restp = await postRequest(endpoint.value, data);
 
     toast.add({ severity: restp.ok ? 'success' : 'error', summary: 'Create', detail: restp.ok ? 'Creado' : restp.error, life: 3000 });
     loadingData();
+    prueba.value= data;
+    if(restp.ok) {listRowSelect.value = []
+    selectedRegisters.value = []
     formDialogNew.value = false;
+}
+    else{
+        backendValidationFlag.value = true;
+        backendValidation.value = restp;
+        formDialogNew.value = true;
+    }
+
 });
 
 const EditRecord = handleSubmitNew(async (values) => {
@@ -313,14 +349,25 @@ const EditRecord = handleSubmitNew(async (values) => {
         bank_account_doc: values.bank_account_doc,
         payment_type_uuid: values.payment_type_uuid.id,
         work_center_uuid: values.work_center_uuid.id,
-        farm_uuid: values.farm_uuid.id
+        company_uuid: values.company ? values.company.id : companyDefault,
+        farm_uuid: values.farm ? values.farm.id : farmDefault,
     };
-    console.log('DATA: ', data);
+    
 
     const restp = await putRequest(endpoint.value, data, uuid);
     toast.add({ severity: restp.ok ? 'success' : 'error', summary: 'Edit', detail: restp.ok ? 'Editado' : restp.error, life: 3000 });
     loadingData();
+    
+    prueba.value= data;
+    if(restp.ok) {listRowSelect.value = []
+    selectedRegisters.value = []
     formDialogEdit.value = false;
+}
+    else{
+        backendValidationFlag.value = true;
+        backendValidation.value = restp;
+        formDialogEdit.value = true;
+    }
 });
 
 const cloneRecord = handleSubmitNew(async (values) => {
@@ -336,15 +383,47 @@ const cloneRecord = handleSubmitNew(async (values) => {
         bank_account_doc: values.bank_account_doc,
         payment_type_uuid: values.payment_type_uuid.id,
         work_center_uuid: values.work_center_uuid.id,
-        farm_uuid: values.farm_uuid.id
+        company_uuid: values.company ? values.company.id : companyDefault,
+        farm_uuid: values.farm ? values.farm.id : farmDefault,
     };
     console.log('data: ', data);
     const restp = await postRequest(endpoint.value, data);
 
     toast.add({ severity: restp.ok ? 'success' : 'error', summary: 'Create', detail: restp.ok ? 'Creado' : restp.error, life: 3000 });
     loadingData();
+    
+    prueba.value= data;
+    if(restp.ok) {listRowSelect.value = []
+    selectedRegisters.value = []
     formDialogClone.value = false;
+}
+    else{
+        backendValidationFlag.value = true;
+        backendValidation.value = restp;
+        formDialogClone.value = true;
+    }
+    
 });
+
+const ExportRecord = () => {
+    const eventos = exportAll.value.name == 'ALL' ? dataFromComponent.value.map((data) => data) : listRowSelect.value.map((data) => data);
+    formDialogExport.value = false;
+    if (!eventos.length) return;
+    if (format.value.name == 'CSV') formatCSV(eventos);
+    else formatXLS(eventos);
+};
+
+const searchCompannies = (event) => {
+    setTimeout(() => {
+        if (!event.query.trim().length) {
+            compa.value = [...Compan.value];
+        } else {
+            compa.value = Compan.value.filter((fram) => {
+                return fram.name.toLowerCase().startsWith(event.query.toLowerCase());
+            });
+        }
+    }, 200);
+};
 
 const searchFarms = (event) => {
     setTimeout(() => {
@@ -356,14 +435,6 @@ const searchFarms = (event) => {
             });
         }
     }, 200);
-};
-
-const ExportRecord = () => {
-    const eventos = exportAll.value.name == 'ALL' ? dataFromComponent.value.map((data) => data) : listRowSelect.value.map((data) => data);
-    formDialogExport.value = false;
-    if (!eventos.length) return;
-    if (format.value.name == 'CSV') formatCSV(eventos);
-    else formatXLS(eventos);
 };
 
 function formatCSV(eventos) {
@@ -496,7 +567,8 @@ const remove = (aver) => {
                 <template #loading> Loading customers data. Please wait. </template>
 
                 <Column selectionMode="multiple" headerStyle="width: 3rem"></Column>
-                <Column v-if="column?.some((obj) => obj.field === 'document')" field="document" header=" Document" sortable :frozen="documentFrozen">
+                <!-- <Column v-if="column?.some((obj) => obj.field === 'document')" field="document" header=" Document" sortable :frozen="documentFrozen"> -->
+                    <Column field="document" header=" Document" sortable :frozen="documentFrozen">
                     <template #header>
                         <ToggleButton v-model="documentFrozen" onIcon="pi pi-lock" offIcon="pi pi-lock-open" onLabel="" offLabel="" />
                         <div>&nbsp;</div>
@@ -520,7 +592,8 @@ const remove = (aver) => {
                     </template>
                 </Column>
 
-                <Column v-if="column?.some((obj) => obj.field === 'first_name')" field="first_name" header="Name" sortable>
+                <!-- <Column v-if="column?.some((obj) => obj.field === 'first_name')" field="first_name" header="Name" sortable> -->
+                    <Column  field="first_name" header="Name" sortable>
                     <template #body="{ data }">
                         {{ data.first_name }}
                     </template>
@@ -607,7 +680,7 @@ const remove = (aver) => {
                         {{ data.company.name }}
                     </template>
                     <template #filter="{ filterModel }">
-                        <InputText v-model="filterModel.value" type="text" class="p-column-filter" placeholder="Search by farm" />
+                        <InputText v-model="filterModel.value" type="text" class="p-column-filter" placeholder="Search by companie" />
                     </template>
                 </Column>
 
@@ -640,6 +713,16 @@ const remove = (aver) => {
             </DataTable>
 
             <Dialog v-model:visible="formDialogNew" modal :header="formDialogNewTitle" class="p-fluid mx-auto">
+                <Card class="p-fluid text-center mx-auto flex flex-wrap gap-3 mb-3 p-fluid flex-auto" v-if="backendValidationFlag">
+                    <template #title>Please check this</template>
+                        <template #content>
+                            <div class="flex-auto">
+                                <small id="username-help" :class="{ 'p-invalid text-red-700': errorsNew['backendValidation'] }">
+                                {{ backendValidation.error }}
+                                </small>
+                            </div>
+                        </template>
+                </Card>
                 <div class="flex flex-wrap gap-3 mb-3 p-fluid">
                     <div class="flex-auto">
                         <label for="gender_id" class="font-bold block mb-2"> Gender </label>
@@ -763,6 +846,17 @@ const remove = (aver) => {
                         </div>
                     </div>
                 </div>
+
+                <div class="mb-3">
+                    <div class="flex align-items-center">
+                        <label for="username" class="font-semibold w-6rem">Company:</label>
+                        <AutoComplete v-model="company" inputId="ac" class="flex-auto" :suggestions="compa" @complete="searchCompannies" field="name" dropdown />
+                    </div>
+                    <small id="username-help" :class="{ 'p-invalid text-red-700': errorsNew['company'] }">
+                        {{ errorsNew.company }}
+                    </small>
+                </div>
+
 
                 <div class="flex justify-content-end gap-2">
                     <Button type="button" label="Cancel" severity="secondary" @click="formDialogNew = false" />
@@ -771,6 +865,16 @@ const remove = (aver) => {
             </Dialog>
 
             <Dialog v-model:visible="formDialogEdit" modal :header="formDialogEditTitle" class="p-fluid text-center mx-auto">
+                <Card class="p-fluid text-center mx-auto flex flex-wrap gap-3 mb-3 p-fluid flex-auto" v-if="backendValidationFlag">
+                    <template #title>Please check this</template>
+                        <template #content>
+                            <div class="flex-auto">
+                                <small id="username-help" :class="{ 'p-invalid text-red-700': errorsNew['backendValidation'] }">
+                                {{ backendValidation.error }}
+                                </small>
+                            </div>
+                        </template>
+                </Card>
                 <div class="flex flex-wrap gap-3 mb-3 p-fluid">
                     <div class="flex-auto">
                         <label for="gender_id" class="font-bold block mb-2"> Gender </label>
@@ -894,6 +998,18 @@ const remove = (aver) => {
                         </div>
                     </div>
                 </div>
+
+                <div class="mb-3">
+                    <div class="flex align-items-center">
+                        <label for="username" class="font-semibold w-6rem">Company:</label>
+                        <AutoComplete v-model="company" inputId="ac" class="flex-auto" :suggestions="compa" @complete="searchCompannies" field="name" dropdown />
+                    </div>
+                    <small id="username-help" :class="{ 'p-invalid text-red-700': errorsNew['company'] }">
+                        {{ errorsNew.company }}
+                    </small>
+                </div>
+
+
                 <div class="flex justify-content-end gap-2">
                     <Button type="button" label="Cancel" severity="secondary" @click="formDialogEdit = false" />
                     <Button type="button" label="Save" @click="EditRecord()" />
@@ -901,6 +1017,17 @@ const remove = (aver) => {
             </Dialog>
 
             <Dialog v-model:visible="formDialogClone" modal :header="formDialogCloneTitle" class="p-fluid text-center mx-auto">
+                <Card class="p-fluid text-center mx-auto flex flex-wrap gap-3 mb-3 p-fluid flex-auto" v-if="backendValidationFlag">
+                    <template #title>Please check this</template>
+                        <template #content>
+                            <div class="flex-auto">
+                                <small id="username-help" :class="{ 'p-invalid text-red-700': errorsNew['backendValidation'] }">
+                                {{ backendValidation }}
+                                </small>
+                                <pre>{{prueba}}</pre>
+                            </div>
+                        </template>
+                </Card>
                 <div class="flex flex-wrap gap-3 mb-3 p-fluid">
                     <div class="flex-auto">
                         <label for="gender_id" class="font-bold block mb-2"> Gender </label>
@@ -1024,6 +1151,17 @@ const remove = (aver) => {
                         </div>
                     </div>
                 </div>
+
+                <div class="mb-3">
+                    <div class="flex align-items-center">
+                        <label for="username" class="font-semibold w-6rem">Company:</label>
+                        <AutoComplete v-model="company" inputId="ac" class="flex-auto" :suggestions="compa" @complete="searchCompannies" field="name" dropdown />
+                    </div>
+                    <small id="username-help" :class="{ 'p-invalid text-red-700': errorsNew['company'] }">
+                        {{ errorsNew.company }}
+                    </small>
+                </div>
+
 
                 <div class="flex justify-content-end gap-2">
                     <Button type="button" label="Cancel" severity="secondary" @click="formDialogClone = false" />

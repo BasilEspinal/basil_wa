@@ -300,7 +300,7 @@
                 </div>
                 <div class="mb-3">
                     <div class="flex align-items-center">
-                        <label for="username" class="font-semibold w-3">Companny:</label>
+                        <label for="username" class="font-semibold w-3">Company:</label>
                         <AutoComplete v-model="company" inputId="ac" :suggestions="compa" @complete="searchCompannies" field="name" dropdown />
                     </div>
                     <small id="username-help" :class="{ 'p-invalid text-red-700': errorsNew['company'] }">
@@ -344,7 +344,7 @@
                 <div class="mb-3">
                     <div class=" flex align-items-center">
                         <label for="periodNumberV" class="font-semibold w-3">Period Number:</label>
-                        <InputNumber v-model="periodNumberV" inputId="minmax" :min="0" :max="100" />
+                        <InputNumber v-model="periodNumberV" class="flex-auto" inputId="minmax" :min="0" :max="100" />
                     </div>
                     
                     
@@ -449,20 +449,23 @@ import { saveAs } from 'file-saver';
 import { z } from 'zod';
 import ability from '@/service/ability.js';
 import { AbilityBuilder} from '@casl/ability';
+const prueba = ref({revisar: 'revisar GET-POST-PUT-DELETE'});
 const namePage = ' Payment Periods ';
-const titlePage = namePage+'information';
+const titlePage = ' '+namePage+' information';
 const dataFromComponent = ref();
 const Farms = ref([]);
 const farms = ref([]);
 const Compan = ref([]);
 const compa = ref([]);
+const farmDefault = sessionStorage.getItem('accessSessionFarm');
+const companyDefault = sessionStorage.getItem('accessSessionCompany');
 
+const formDialogNewTitle = 'Create new '+namePage;
+const formDialogEditTitle = 'Edit '+namePage;
+const formDialogCloneTitle = 'Clone ' + namePage;
+const formDialogExportTitle = 'Export ' + namePage;
+const formDialogDeleteTitle = 'Delete '+namePage;
 const formDialogNew = ref(false);
-const formDialogNewTitle = 'Create new'+namePage;
-const formDialogEditTitle = 'Edit'+namePage;
-const formDialogCloneTitle = 'Clone' + namePage;
-const formDialogExportTitle = 'Export' + namePage;
-const formDialogDeleteTitle = 'Delete'+namePage;
 const formDialogEdit = ref(false);
 const formDialogClone = ref(false);
 const formDialogExport = ref(false);
@@ -611,38 +614,7 @@ function formatTransactionDate(date) {
     return formattedDate;
 }
 
-const createRecord = handleSubmitNew(async (values) => {
-    
-    const start_dateFormatted  = formatTransactionDate(start_dateV.value);
-    const end_dateFormatted  = formatTransactionDate(end_dateV.value);
-    console.log(start_dateFormatted);
-    console.log(end_dateFormatted);
-    const data = {
-        start_date: start_dateFormatted,
-        end_date: end_dateFormatted,
-        period_num: values.periodNumberV,
-        // company_uuid: values.company ? values.company.id : '25b4319c-e93f-4411-936c-118060f5e7c9',
-        farm_uuid: values.farm ? values.farm.id : '8ef93a7b-31bf-4233-af80-481020e9cf97'
-    };
-    
-    const restp = await postRequest(endpoint.value, data);
 
-    toast.add({ severity: restp.ok ? 'success' : 'error', summary: 'Create', detail: restp.ok ? 'Creado' : restp.error, life: 3000 });
-    loadingData();
-    formDialogNew.value = false;
-});
-
-const searchCompannies = (event) => {
-    setTimeout(() => {
-        if (!event.query.trim().length) {
-            compa.value = [...Compan.value];
-        } else {
-            compa.value = Compan.value.filter((fram) => {
-                return fram.name.toLowerCase().startsWith(event.query.toLowerCase());
-            });
-        }
-    }, 200);
-};
 const openNew = () => {
     resetForm();
     formDialogNew.value = true;
@@ -666,14 +638,8 @@ const openEdit = () => {
 
 const openClone = () => {
     resetForm();
-    // const { company: empresa, farm: farmParameter, name: nombre } = listRowSelect.value[0];
 
-    // name.value = nombre;
-    // company.value = { id: empresa.uuid, name: empresa.name };
-    // farm.value = { id: farmParameter.uuid, name: farmParameter.name };
     const { period_num:periodNum, company: empresa, farm: farmParameter, start_date:startDate, end_date:endDate } = listRowSelect.value[0];
-
-    // start_dateV.value = new Date(start_date);
 
     start_dateV.value = new Date(startDate);
     end_dateV.value = new Date(endDate);
@@ -691,41 +657,71 @@ const openExport = () => {
 const openDelete = () => {
     formDialogDelete.value = true;
 };
+const createRecord = handleSubmitNew(async (values) => {
+    
+    const start_dateFormatted  = formatTransactionDate(start_dateV.value);
+    const end_dateFormatted  = formatTransactionDate(end_dateV.value);
+    console.log(start_dateFormatted);
+    console.log(end_dateFormatted);
+    const data = {
+        start_date: start_dateFormatted,
+        end_date: end_dateFormatted,
+        period_num: values.periodNumberV,
+        //company_uuid: values.company ? values.company.id : companyDefault,
+        farm_uuid: values.farm ? values.farm.id : farmDefault
+    };
+    
+    const restp = await postRequest(endpoint.value, data);
+
+    toast.add({ severity: restp.ok ? 'success' : 'error', summary: 'Create', detail: restp.ok ? 'Creado' : restp.error, life: 3000 });
+    loadingData();
+    formDialogNew.value = false;
+    prueba.value= data;
+    
+
+});
+
+
 
 const EditRecord = handleSubmitNew(async (values) => {
     const { uuid } = listRowSelect.value[0];
     const data = {
         code: values.codeV,
         name: values.name,
-        company_uuid: values.company ? values.company.id : '25b4319c-e93f-4411-936c-118060f5e7c9',
-        farm_uuid: values.farm ? values.farm.id : values.farm
+        //company_uuid: values.company ? values.company.id : companyDefault,
+        farm_uuid: values.farm ? values.farm.id : farmDefault
     };
     
     const restp = await putRequest(endpoint.value, data, uuid);
     toast.add({ severity: restp.ok ? 'success' : 'error', summary: 'Edit', detail: restp.ok ? 'Editado' : restp.error, life: 3000 });
     loadingData();
     formDialogEdit.value = false;
+    prueba.value= data;
+    if(restp.ok) {listRowSelect.value = []
+    selectedRegisters.value = []}
 });
 
 const CloneRecord = handleSubmitNew(async (values) => {
     const data = {
         code: values.codeV,
         name: values.name,
-        company_uuid: values.company ? values.company.id : '25b4319c-e93f-4411-936c-118060f5e7c9',
-        farm_uuid: values.farm ? values.farm.id : '8ef93a7b-31bf-4233-af80-481020e9cf97'
+        company_uuid: values.company ? values.company.id : companyDefault,
+        farm_uuid: values.farm ? values.farm.id : farmDefault
     };
     const restp = await postRequest(endpoint.value, data);
     toast.add({ severity: restp.ok ? 'success' : 'error', summary: 'Clone', detail: restp.ok ? 'Clonado' : restp.error, life: 3000 });
     loadingData();
     formDialogClone.value = false;
+    prueba.value= data;
+    if(restp.ok) {listRowSelect.value = []
+    selectedRegisters.value = []}
 });
-
-const searchFarms = (event) => {
+const searchCompannies = (event) => {
     setTimeout(() => {
         if (!event.query.trim().length) {
-            farms.value = [...Farms.value];
+            compa.value = [...Compan.value];
         } else {
-            farms.value = Farms.value.filter((fram) => {
+            compa.value = Compan.value.filter((fram) => {
                 return fram.name.toLowerCase().startsWith(event.query.toLowerCase());
             });
         }
@@ -739,6 +735,20 @@ const ExportRecord = () => {
     if (format.value.name == 'CSV') formatCSV(eventos);
     else formatXLS(eventos);
 };
+
+const searchFarms = (event) => {
+    setTimeout(() => {
+        if (!event.query.trim().length) {
+            farms.value = [...Farms.value];
+        } else {
+            farms.value = Farms.value.filter((fram) => {
+                return fram.name.toLowerCase().startsWith(event.query.toLowerCase());
+            });
+        }
+    }, 200);
+};
+
+
 
 function formatCSV(eventos) {
     const dataExport = [];

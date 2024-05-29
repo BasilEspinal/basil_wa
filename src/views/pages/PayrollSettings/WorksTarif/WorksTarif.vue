@@ -563,15 +563,16 @@ import { saveAs } from 'file-saver';
 import { z } from 'zod';
 import ability from '@/service/ability.js';
 import { AbilityBuilder} from '@casl/ability';
+const prueba = ref({revisar: 'revisar GET-POST-PUT-DELETE'});
 const namePage = ' Works Tarif ';
-const titlePage = namePage+'information';
+const titlePage = ' '+namePage+' information';
 const dataFromComponent = ref();
-
 const Farms = ref([]);
 const farms = ref([]);
-
 const Compan = ref([]);
 const compa = ref([]);
+const farmDefault = sessionStorage.getItem('accessSessionFarm');
+const companyDefault = sessionStorage.getItem('accessSessionCompany');
 
 const taskOfTypes = ref([]);
 const taskOfTypesObject = ref([]);
@@ -586,12 +587,13 @@ const work_type_tarifObject = ref([]);
 
 
 
+
+const formDialogNewTitle = 'Create new '+namePage;
+const formDialogEditTitle = 'Edit '+namePage;
+const formDialogCloneTitle = 'Clone ' + namePage;
+const formDialogExportTitle = 'Export ' + namePage;
+const formDialogDeleteTitle = 'Delete '+namePage;
 const formDialogNew = ref(false);
-const formDialogNewTitle = 'Create new'+namePage;
-const formDialogEditTitle = 'Edit'+namePage;
-const formDialogCloneTitle = 'Clone' + namePage;
-const formDialogExportTitle = 'Export' + namePage;
-const formDialogDeleteTitle = 'Delete'+namePage;
 const formDialogEdit = ref(false);
 const formDialogClone = ref(false);
 const formDialogExport = ref(false);
@@ -811,6 +813,59 @@ let headerNames = ref([]);
 provide('isChanging', isChanging);
 watch(listRowSelect, RowSelect);
 
+
+
+const openNew = () => {
+    resetForm();
+    formDialogNew.value = true;
+    
+
+};
+
+const openEdit = () => {
+    resetForm();
+    const { code, company: empresa, farm: farmParameter, name: nombre, tasks_of_type:task, done_type:done,work_type_day:work,work_type_tarif:tarif,price_tarif:price } = listRowSelect.value[0];
+
+    // name.value = nombre;
+    // codeV.value = code;
+    tasks_of_typeV.value={id:task.uuid, name:task.name}
+    done_typeV.value={id:done.uuid,name:done.name}
+    work_type_dayV.value={id:work,name:work}
+    work_type_tarifV.value = {id:tarif,name:tarif}
+    price_tarifV.value=Number(price)
+    company.value = { id: empresa.uuid, name: empresa.name };
+    farm.value = { id: farmParameter.uuid, name: farmParameter.name };
+
+    formDialogEdit.value = true;
+};
+
+const openClone = () => {
+    resetForm();
+    // const { company: empresa, farm: farmParameter, name: nombre } = listRowSelect.value[0];
+    // name.value = nombre;
+    const { code, company: empresa, farm: farmParameter, name: nombre, tasks_of_type:task, done_type:done,work_type_day:work,work_type_tarif:tarif,price_tarif:price } = listRowSelect.value[0];
+
+    // name.value = nombre;
+    // codeV.value = code;
+    tasks_of_typeV.value={id:task.uuid, name:task.name}
+    done_typeV.value={id:done.uuid,name:done.name}
+    work_type_dayV.value={id:work,name:work}
+    work_type_tarifV.value = {id:tarif,name:tarif}
+    price_tarifV.value=Number(price)
+    company.value = { id: empresa.uuid, name: empresa.name };
+    farm.value = { id: farmParameter.uuid, name: farmParameter.name };
+    formDialogClone.value = true;
+};
+
+const openExport = () => {
+    format.value = { name: 'CSV' };
+    formDialogExport.value = true;
+};
+
+const openDelete = () => {
+    formDialogDelete.value = true;
+};
+
 const createRecord = handleSubmitNew(async (values) => {
     const data = {
         // code: values.codeV,
@@ -820,8 +875,8 @@ const createRecord = handleSubmitNew(async (values) => {
         work_type_day: values.work_type_dayV.id,
         work_type_tarif: values.work_type_tarifV.id,
         price_tarif: values.price_tarifV,
-        // company_uuid: values.company ? values.company.id : '25b4319c-e93f-4411-936c-118060f5e7c9',
-        farm_uuid: values.farm ? values.farm.id : '8ef93a7b-31bf-4233-af80-481020e9cf97'
+        //company_uuid: values.company ? values.company.id : companyDefault,
+        farm_uuid: values.farm ? values.farm.id : farmDefault
     };
         // Agrega company_uuid solo si company está presente
         if (values.company) {
@@ -834,7 +889,85 @@ const createRecord = handleSubmitNew(async (values) => {
     toast.add({ severity: restp.ok ? 'success' : 'error', summary: 'Create', detail: restp.ok ? 'Creado' : restp.error, life: 3000 });
     loadingData();
     formDialogNew.value = false;
+    prueba.value= data;
+
 });
+
+const EditRecord = handleSubmitNew(async (values) => {
+    const { uuid } = listRowSelect.value[0];
+    // const data = {
+    //     code: values.codeV,
+    //     name: values.name,
+    //     company_uuid: values.company ? values.company.id : '25b4319c-e93f-4411-936c-118060f5e7c9',
+    //     farm_uuid: values.farm ? values.farm.id : values.farm
+    // };
+    
+
+    const data = {
+        // code: values.codeV,
+        // name: values.name,
+        tasks_of_type_uuid: values.tasks_of_typeV.id,
+        done_of_type_uuid: values.done_typeV.id,
+        work_type_day: values.work_type_dayV.id,
+        work_type_tarif: values.work_type_tarifV.id,
+        price_tarif: values.price_tarifV,
+        //company_uuid: values.company ? values.company.id : companyDefault,
+        farm_uuid: values.farm ? values.farm.id : farmDefault
+    };
+        // Agrega company_uuid solo si company está presente
+        if (values.company) {
+        data.company_uuid = values.company.id;
+    }
+
+    const restp = await putRequest(endpoint.value, data, uuid);
+    toast.add({ severity: restp.ok ? 'success' : 'error', summary: 'Edit', detail: restp.ok ? 'Editado' : restp.error, life: 3000 });
+    loadingData();
+    formDialogEdit.value = false;
+    prueba.value= data;
+    if(restp.ok) {listRowSelect.value = []
+    selectedRegisters.value = []}
+});
+
+const CloneRecord = handleSubmitNew(async (values) => {
+    // const data = {
+    //     code: values.codeV,
+    //     name: values.name,
+    //     company_uuid: values.company ? values.company.id : '25b4319c-e93f-4411-936c-118060f5e7c9',
+    //     farm_uuid: values.farm ? values.farm.id : '8ef93a7b-31bf-4233-af80-481020e9cf97'
+    // };
+    const data = {
+        // code: values.codeV,
+        // name: values.name,
+        tasks_of_type_uuid: values.tasks_of_typeV.id,
+        done_of_type_uuid: values.done_typeV.id,
+        work_type_day: values.work_type_dayV.id,
+        work_type_tarif: values.work_type_tarifV.id,
+        price_tarif: values.price_tarifV,
+        //company_uuid: values.company ? values.company.id : companyDefault,
+        farm_uuid: values.farm ? values.farm.id : farmDefault
+    };
+        // Agrega company_uuid solo si company está presente
+        if (values.company) {
+        data.company_uuid = values.company.id;
+    }
+    const restp = await postRequest(endpoint.value, data);
+    toast.add({ severity: restp.ok ? 'success' : 'error', summary: 'Clone', detail: restp.ok ? 'Clonado' : restp.error, life: 3000 });
+    loadingData();
+    formDialogClone.value = false;
+    prueba.value= data;
+    if(restp.ok) {listRowSelect.value = []
+    selectedRegisters.value = []}
+});
+
+
+
+const ExportRecord = () => {
+    const eventos = exportAll.value.name == 'ALL' ? dataFromComponent.value.map((data) => data) : listRowSelect.value.map((data) => data);
+    formDialogExport.value = false;
+    if (!eventos.length) return;
+    if (format.value.name == 'CSV') formatCSV(eventos);
+    else formatXLS(eventos);
+};
 const searchTaskOfTypes = (event) => {
     setTimeout(() => {
         if (!event.query.trim().length) {
@@ -903,126 +1036,6 @@ const searchCompannies = (event) => {
             });
         }
     }, 200);
-};
-const openNew = () => {
-    resetForm();
-    formDialogNew.value = true;
-    
-
-};
-
-const openEdit = () => {
-    resetForm();
-    const { code, company: empresa, farm: farmParameter, name: nombre, tasks_of_type:task, done_type:done,work_type_day:work,work_type_tarif:tarif,price_tarif:price } = listRowSelect.value[0];
-
-    // name.value = nombre;
-    // codeV.value = code;
-    tasks_of_typeV.value={id:task.uuid, name:task.name}
-    done_typeV.value={id:done.uuid,name:done.name}
-    work_type_dayV.value={id:work,name:work}
-    work_type_tarifV.value = {id:tarif,name:tarif}
-    price_tarifV.value=Number(price)
-    company.value = { id: empresa.uuid, name: empresa.name };
-    farm.value = { id: farmParameter.uuid, name: farmParameter.name };
-
-    formDialogEdit.value = true;
-};
-
-const openClone = () => {
-    resetForm();
-    // const { company: empresa, farm: farmParameter, name: nombre } = listRowSelect.value[0];
-    // name.value = nombre;
-    const { code, company: empresa, farm: farmParameter, name: nombre, tasks_of_type:task, done_type:done,work_type_day:work,work_type_tarif:tarif,price_tarif:price } = listRowSelect.value[0];
-
-    // name.value = nombre;
-    // codeV.value = code;
-    tasks_of_typeV.value={id:task.uuid, name:task.name}
-    done_typeV.value={id:done.uuid,name:done.name}
-    work_type_dayV.value={id:work,name:work}
-    work_type_tarifV.value = {id:tarif,name:tarif}
-    price_tarifV.value=Number(price)
-    company.value = { id: empresa.uuid, name: empresa.name };
-    farm.value = { id: farmParameter.uuid, name: farmParameter.name };
-    formDialogClone.value = true;
-};
-
-const openExport = () => {
-    format.value = { name: 'CSV' };
-    formDialogExport.value = true;
-};
-
-const openDelete = () => {
-    formDialogDelete.value = true;
-};
-
-const EditRecord = handleSubmitNew(async (values) => {
-    const { uuid } = listRowSelect.value[0];
-    // const data = {
-    //     code: values.codeV,
-    //     name: values.name,
-    //     company_uuid: values.company ? values.company.id : '25b4319c-e93f-4411-936c-118060f5e7c9',
-    //     farm_uuid: values.farm ? values.farm.id : values.farm
-    // };
-    
-
-    const data = {
-        // code: values.codeV,
-        // name: values.name,
-        tasks_of_type_uuid: values.tasks_of_typeV.id,
-        done_of_type_uuid: values.done_typeV.id,
-        work_type_day: values.work_type_dayV.id,
-        work_type_tarif: values.work_type_tarifV.id,
-        price_tarif: values.price_tarifV,
-        // company_uuid: values.company ? values.company.id : '25b4319c-e93f-4411-936c-118060f5e7c9',
-        farm_uuid: values.farm ? values.farm.id : '8ef93a7b-31bf-4233-af80-481020e9cf97'
-    };
-        // Agrega company_uuid solo si company está presente
-        if (values.company) {
-        data.company_uuid = values.company.id;
-    }
-
-    const restp = await putRequest(endpoint.value, data, uuid);
-    toast.add({ severity: restp.ok ? 'success' : 'error', summary: 'Edit', detail: restp.ok ? 'Editado' : restp.error, life: 3000 });
-    loadingData();
-    formDialogEdit.value = false;
-});
-
-const CloneRecord = handleSubmitNew(async (values) => {
-    // const data = {
-    //     code: values.codeV,
-    //     name: values.name,
-    //     company_uuid: values.company ? values.company.id : '25b4319c-e93f-4411-936c-118060f5e7c9',
-    //     farm_uuid: values.farm ? values.farm.id : '8ef93a7b-31bf-4233-af80-481020e9cf97'
-    // };
-    const data = {
-        // code: values.codeV,
-        // name: values.name,
-        tasks_of_type_uuid: values.tasks_of_typeV.id,
-        done_of_type_uuid: values.done_typeV.id,
-        work_type_day: values.work_type_dayV.id,
-        work_type_tarif: values.work_type_tarifV.id,
-        price_tarif: values.price_tarifV,
-        // company_uuid: values.company ? values.company.id : '25b4319c-e93f-4411-936c-118060f5e7c9',
-        farm_uuid: values.farm ? values.farm.id : '8ef93a7b-31bf-4233-af80-481020e9cf97'
-    };
-        // Agrega company_uuid solo si company está presente
-        if (values.company) {
-        data.company_uuid = values.company.id;
-    }
-    const restp = await postRequest(endpoint.value, data);
-    toast.add({ severity: restp.ok ? 'success' : 'error', summary: 'Clone', detail: restp.ok ? 'Clonado' : restp.error, life: 3000 });
-    loadingData();
-    formDialogClone.value = false;
-});
-
-
-
-const ExportRecord = () => {
-    const eventos = exportAll.value.name == 'ALL' ? dataFromComponent.value.map((data) => data) : listRowSelect.value.map((data) => data);
-    formDialogExport.value = false;
-    if (!eventos.length) return;
-    if (format.value.name == 'CSV') formatCSV(eventos);
-    else formatXLS(eventos);
 };
 
 function formatCSV(eventos) {

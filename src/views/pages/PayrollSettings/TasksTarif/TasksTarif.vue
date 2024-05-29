@@ -13,8 +13,9 @@ import { saveAs } from 'file-saver';
 import { z } from 'zod';
 import ability from '@/service/ability.js';
 import { AbilityBuilder } from '@casl/ability';
-const namePage = 'Tarif of Tasks ';
-const titlePage = namePage + 'information';
+const prueba = ref({revisar: 'revisar GET-POST-PUT-DELETE'});
+const namePage = 'Tarif of task';
+const titlePage = ' '+namePage+' information';
 const dataFromComponent = ref();
 const Farms = ref([]);
 const farms = ref([]);
@@ -22,13 +23,15 @@ const PackingTipeList = ref([]);
 const packingTipesL = ref([]);
 const TaskTipeList = ref([]);
 const taskTipesL = ref([]);
+const farmDefault = sessionStorage.getItem('accessSessionFarm');
+const companyDefault = sessionStorage.getItem('accessSessionCompany');
 
+const formDialogNewTitle = 'Create new '+namePage;
+const formDialogEditTitle = 'Edit '+namePage;
+const formDialogCloneTitle = 'Clone ' + namePage;
+const formDialogExportTitle = 'Export ' + namePage;
+const formDialogDeleteTitle = 'Delete '+namePage;
 const formDialogNew = ref(false);
-const formDialogNewTitle = 'Create new' + namePage;
-const formDialogEditTitle = 'Edit' + namePage;
-const formDialogCloneTitle = 'Clone' + namePage;
-const formDialogExportTitle = 'Export' + namePage;
-const formDialogDeleteTitle = 'Delete' + namePage;
 const formDialogEdit = ref(false);
 const formDialogClone = ref(false);
 const formDialogExport = ref(false);
@@ -174,29 +177,7 @@ let headerNames = ref([]);
 provide('isChanging', isChanging);
 watch(listRowSelect, RowSelect);
 
-const searchTaskType = (event) => {
-    setTimeout(() => {
-        if (!event.query.trim().length) {
-            taskTipesL.value = [...TaskTipeList.value];
-        } else {
-            taskTipesL.value = TaskTipeList.value.filter((fram) => {
-                return fram.name.toLowerCase().startsWith(event.query.toLowerCase());
-            });
-        }
-    }, 200);
-};
 
-const searchPackingType = (event) => {
-    setTimeout(() => {
-        if (!event.query.trim().length) {
-            packingTipesL.value = [...PackingTipeList.value];
-        } else {
-            packingTipesL.value = PackingTipeList.value.filter((fram) => {
-                return fram.name.toLowerCase().startsWith(event.query.toLowerCase());
-            });
-        }
-    }, 200);
-};
 const openNew = () => {
     resetForm();
     formDialogNew.value = true;
@@ -246,7 +227,8 @@ const createRecord = handleSubmitNew(async (values) => {
         price_tarif: values.price_tarif,
         tasks_of_type_uuid: values.tacksType ? values.tacksType.id : 'b545a934-7eb4-4bcc-adfb-cd70767419dd',
         packing_type_uuid: values.packingType ? values.packingType.id : 'b8379d76-526a-4b39-aacc-136918c5413f',
-        farm_uuid: values.farm ? values.farm.id : '8ef93a7b-31bf-4233-af80-481020e9cf97'
+        farm_uuid: values.farm ? values.farm.id : farmDefault,
+        //company_uuid: values.company ? values.company.id : companyDefault,
     };
     const restp = await postRequest(endpoint.value, data);
 
@@ -263,7 +245,8 @@ const EditRecord = handleSubmitNew(async (values) => {
         price_tarif: values.price_tarif,
         tasks_of_type_uuid: values.tacksType ? values.tacksType.id : 'b545a934-7eb4-4bcc-adfb-cd70767419dd',
         packing_type_uuid: values.packingType ? values.packingType.id : 'b8379d76-526a-4b39-aacc-136918c5413f',
-        farm_uuid: values.farm ? values.farm.id : '8ef93a7b-31bf-4233-af80-481020e9cf97'
+        farm_uuid: values.farm ? values.farm.id : farmDefault,
+        //company_uuid: values.company ? values.company.id : companyDefault,
     };
     console.log('DATA: ', data);
 
@@ -271,6 +254,8 @@ const EditRecord = handleSubmitNew(async (values) => {
     toast.add({ severity: restp.ok ? 'success' : 'error', summary: 'Edit', detail: restp.ok ? 'Editado' : restp.error, life: 3000 });
     loadingData();
     formDialogEdit.value = false;
+    if(restp.ok) {listRowSelect.value = []
+    selectedRegisters.value = []}
 });
 
 const CloneRecord = handleSubmitNew(async (values) => {
@@ -280,14 +265,48 @@ const CloneRecord = handleSubmitNew(async (values) => {
         price_tarif: values.price_tarif,
         tasks_of_type_uuid: values.tacksType ? values.tacksType.id : 'b545a934-7eb4-4bcc-adfb-cd70767419dd',
         packing_type_uuid: values.packingType ? values.packingType.id : 'b8379d76-526a-4b39-aacc-136918c5413f',
-        farm_uuid: values.farm ? values.farm.id : '8ef93a7b-31bf-4233-af80-481020e9cf97'
+        farm_uuid: values.farm ? values.farm.id : farmDefault,
+        //company_uuid: values.company ? values.company.id : companyDefault,
     };
     const restp = await postRequest(endpoint.value, data);
 
     toast.add({ severity: restp.ok ? 'success' : 'error', summary: 'Create', detail: restp.ok ? 'Creado' : restp.error, life: 3000 });
     loadingData();
     formDialogClone.value = false;
+    if(restp.ok) {listRowSelect.value = []
+    selectedRegisters.value = []}
 });
+
+const ExportRecord = () => {
+    const eventos = exportAll.value.name == 'ALL' ? dataFromComponent.value.map((data) => data) : listRowSelect.value.map((data) => data);
+    formDialogExport.value = false;
+    if (!eventos.length) return;
+    if (format.value.name == 'CSV') formatCSV(eventos);
+    else formatXLS(eventos);
+};
+const searchTaskType = (event) => {
+    setTimeout(() => {
+        if (!event.query.trim().length) {
+            taskTipesL.value = [...TaskTipeList.value];
+        } else {
+            taskTipesL.value = TaskTipeList.value.filter((fram) => {
+                return fram.name.toLowerCase().startsWith(event.query.toLowerCase());
+            });
+        }
+    }, 200);
+};
+
+const searchPackingType = (event) => {
+    setTimeout(() => {
+        if (!event.query.trim().length) {
+            packingTipesL.value = [...PackingTipeList.value];
+        } else {
+            packingTipesL.value = PackingTipeList.value.filter((fram) => {
+                return fram.name.toLowerCase().startsWith(event.query.toLowerCase());
+            });
+        }
+    }, 200);
+};
 
 const searchFarms = (event) => {
     setTimeout(() => {
@@ -301,13 +320,7 @@ const searchFarms = (event) => {
     }, 200);
 };
 
-const ExportRecord = () => {
-    const eventos = exportAll.value.name == 'ALL' ? dataFromComponent.value.map((data) => data) : listRowSelect.value.map((data) => data);
-    formDialogExport.value = false;
-    if (!eventos.length) return;
-    if (format.value.name == 'CSV') formatCSV(eventos);
-    else formatXLS(eventos);
-};
+
 
 function formatCSV(eventos) {
     const dataExport = [];

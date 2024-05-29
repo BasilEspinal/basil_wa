@@ -62,7 +62,7 @@ const model2 = ref([
                         
                     },
                     // {
-                    //     label: 'Variedades de producto',
+                    //     label: 'No-En-Uso-Variedades de producto',
                     //     to: '/product/productvarieties',
                     //     icon: 'pi pi-list',
                     //     gate: 'producto_variedadesdeproducto_menu',

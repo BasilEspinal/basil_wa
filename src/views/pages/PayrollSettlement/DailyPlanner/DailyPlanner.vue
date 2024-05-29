@@ -194,6 +194,16 @@
                 </Column>
             </DataTable>
             <Dialog v-model:visible="formDialogNew" modal :header="formDialogNewTitle" class="p-fluid text-center mx-auto">
+                <Card class="p-fluid text-center mx-auto flex flex-wrap gap-3 mb-3 p-fluid flex-auto" v-if="backendValidationFlag">
+                    <template #title>{{backendValidationMessage}}</template>
+                        <template #content>
+                            <div class="flex-auto">
+                                <small id="username-help" :class="{ 'p-invalid text-red-700': 'backendValidation' }">
+                                {{ backendValidation.error }}
+                                </small>
+                            </div>
+                        </template>
+                </Card>
                 <div class="mb-3">
                     <div class="flex align-items-center">
                         <label for="username" class="font-semibold w-3">Transaction Date :</label>
@@ -313,6 +323,16 @@
             </Dialog>
 
             <Dialog v-model:visible="formDialogEdit" modal :header="formDialogEditTitle" class="p-fluid text-center mx-auto">
+                <Card class="p-fluid text-center mx-auto flex flex-wrap gap-3 mb-3 p-fluid flex-auto" v-if="backendValidationFlag">
+                    <template #title>{{backendValidationMessage}}</template>
+                        <template #content>
+                            <div class="flex-auto">
+                                <small id="username-help" :class="{ 'p-invalid text-red-700': 'backendValidation' }">
+                                {{ backendValidation.error }}
+                                </small>
+                            </div>
+                        </template>
+                </Card>
                 <div class="mb-3">
                     <div class="flex align-items-center">
                         <label for="username" class="font-semibold w-3">Transaction Date :</label>
@@ -431,6 +451,16 @@
             </Dialog>
 
             <Dialog v-model:visible="formDialogClone" modal :header="formDialogCloneTitle" class="p-fluid text-center mx-auto">
+                <Card class="p-fluid text-center mx-auto flex flex-wrap gap-3 mb-3 p-fluid flex-auto" v-if="backendValidationFlag">
+                    <template #title>{{backendValidationMessage}}</template>
+                        <template #content>
+                            <div class="flex-auto">
+                                <small id="username-help" :class="{ 'p-invalid text-red-700': 'backendValidation' }">
+                                {{ backendValidation.error }}
+                                </small>
+                            </div>
+                        </template>
+                </Card>
                 <div class="mb-3">
                     <div class="flex align-items-center">
                         <label for="username" class="font-semibold w-3">Transaction Date :</label>
@@ -607,7 +637,7 @@ import useDataAPI from '@/composables/DataAPI/FetchDataAPI.js';
 import { useToast } from 'primevue/usetoast';
 import { FilterMatchMode, FilterOperator } from 'primevue/api';
 import useData from '@/composables/DataAPI/FetchDataAPICopy.js';
-const { getRequest, postRequest, putRequest, deleteRequest } = useData();
+const { getRequest, postRequest, putRequest, deleteRequest,errorResponseAPI } = useData();
 import { useRouter } from 'vue-router';
 import { useForm } from 'vee-validate';
 import { toTypedSchema } from '@vee-validate/zod';
@@ -616,13 +646,20 @@ import { saveAs } from 'file-saver';
 import { z } from 'zod';
 import ability from '@/service/ability.js';
 import { AbilityBuilder } from '@casl/ability';
+
+const prueba = ref({revisar: 'revisar GET-POST-PUT-DELETE'});
+const backendValidation = ref();
+const backendValidationFlag = ref(false);
+const backendValidationMessage = ref('Please check the following errors');
 const namePage = ' Planner tasks ';
-const titlePage = namePage + 'information';
+const titlePage = ' '+namePage+' information';
 const dataFromComponent = ref();
 const Farms = ref([]);
 const farms = ref([]);
 const Compan = ref([]);
 const compa = ref([]);
+const farmDefault = sessionStorage.getItem('accessSessionFarm');
+const companyDefault = sessionStorage.getItem('accessSessionCompany');
 const crop_lots = ref([]);
 const CropLots = ref([]);
 const products = ref([]);
@@ -638,14 +675,12 @@ const Variants = ref([]);
 const customer_request = ref([]);
 const Customer_request = ref([]);
 
-
-
+const formDialogNewTitle = 'Create new '+namePage;
+const formDialogEditTitle = 'Edit '+namePage;
+const formDialogCloneTitle = 'Clone ' + namePage;
+const formDialogExportTitle = 'Export ' + namePage;
+const formDialogDeleteTitle = 'Delete '+namePage;
 const formDialogNew = ref(false);
-const formDialogNewTitle = 'Create new' + namePage;
-const formDialogEditTitle = 'Edit' + namePage;
-const formDialogCloneTitle = 'Clone' + namePage;
-const formDialogExportTitle = 'Export' + namePage;
-const formDialogDeleteTitle = 'Delete' + namePage;
 const formDialogEdit = ref(false);
 const formDialogClone = ref(false);
 const formDialogExport = ref(false);
@@ -879,50 +914,6 @@ provide('isChanging', isChanging);
 watch(listRowSelect, RowSelect);
 let valor = ref();
 
-const createRecord = handleSubmitNew(async (values) => {
-    const yyyy = values.transaction_dateV.getFullYear();
-    const mm = String(values.transaction_dateV.getMonth() + 1).padStart(2, '0'); // Los meses en JavaScript son 0-indexados
-    const dd = String(values.transaction_dateV.getDate()).padStart(2, '0');
-
-    // Formatear la fecha en formato YYYY-MM-DD
-    const formattedDate = `${yyyy}-${mm}-${dd}`;
-    console.log(formattedDate);
-    const data = {
-        // code: values.codeV,
-        // name: values.name,
-
-        tasks_of_type_uuid: values.task_of_typeV ? values.task_of_typeV.id : 'Prueba',
-        // crop_lots: {"id": 1, "code": "L-1"},
-        crop_lots: values.crop_lots_codeV ? values.crop_lots_codeV : 'Prueba',
-        transaction_date: formattedDate,
-        product_uuid: values.productV ? values.productV.id : 'Prueba',
-        product_type_uuid: values.product_typeV ? values.product_typeV.id : 'Prueba',
-        packing_type_uuid: values.packing_typeV ? values.packing_typeV.id : 'Prueba',
-        variant_uuid: values.variantV ? values.variantV.id : 'Prueba',
-        customer_request_uuid: values.customer_requestV ? values.customer_requestV.id : 'Prueba',
-        company_uuid: values.company ? values.company.id : 'Prueba',
-        farm_uuid: values.farm ? values.farm.id : 'Prueba'
-    };
-    valor.value = data;
-    console.log(data);
-    const restp = await postRequest(endpoint.value, data);
-
-    toast.add({ severity: restp.ok ? 'success' : 'error', summary: 'Create', detail: restp.ok ? 'Creado' : restp.error, life: 3000 });
-    loadingData();
-    formDialogNew.value = false;
-});
-
-const searchCompannies = (event) => {
-    setTimeout(() => {
-        if (!event.query.trim().length) {
-            compa.value = [...Compan.value];
-        } else {
-            compa.value = Compan.value.filter((fram) => {
-                return fram.name.toLowerCase().startsWith(event.query.toLowerCase());
-            });
-        }
-    }, 200);
-};
 const openNew = () => {
     resetForm();
     formDialogNew.value = true;
@@ -974,6 +965,49 @@ const openDelete = () => {
     formDialogDelete.value = true;
 };
 
+const createRecord = handleSubmitNew(async (values) => {
+    const yyyy = values.transaction_dateV.getFullYear();
+    const mm = String(values.transaction_dateV.getMonth() + 1).padStart(2, '0'); // Los meses en JavaScript son 0-indexados
+    const dd = String(values.transaction_dateV.getDate()).padStart(2, '0');
+
+    // Formatear la fecha en formato YYYY-MM-DD
+    const formattedDate = `${yyyy}-${mm}-${dd}`;
+    console.log(formattedDate);
+    const data = {
+        // code: values.codeV,
+        // name: values.name,
+
+        tasks_of_type_uuid: values.task_of_typeV ? values.task_of_typeV.id : 'Prueba',
+        // crop_lots: {"id": 1, "code": "L-1"},
+        crop_lots: values.crop_lots_codeV ? values.crop_lots_codeV : 'Prueba',
+        transaction_date: formattedDate,
+        product_uuid: values.productV ? values.productV.id : 'Prueba',
+        product_type_uuid: values.product_typeV ? values.product_typeV.id : 'Prueba',
+        packing_type_uuid: values.packing_typeV ? values.packing_typeV.id : 'Prueba',
+        variant_uuid: values.variantV ? values.variantV.id : 'Prueba',
+        customer_request_uuid: values.customer_requestV ? values.customer_requestV.id : 'Prueba',
+        company_uuid: values.company ? values.company.id : companyDefault,
+        farm_uuid: values.farm ? values.farm.id : farmDefault
+    };
+    valor.value = data;
+    console.log(data);
+    const restp = await postRequest(endpoint.value, data);
+
+    toast.add({ severity: restp.ok ? 'success' : 'error', summary: 'Create', detail: restp.ok ? 'Creado' : restp.error, life: 3000 });
+    loadingData();
+    
+    prueba.value= data;
+    if(restp.ok) {listRowSelect.value = []
+    selectedRegisters.value = []
+    formDialogNew.value = false;
+}
+    else{
+        backendValidationFlag.value = true;
+        backendValidation.value = restp;
+        formDialogNew.value = true;
+    }
+});
+
 const EditRecord = handleSubmitNew(async (values) => {
     const { uuid } = listRowSelect.value[0];
     const yyyy = values.transaction_dateV.getFullYear();
@@ -996,8 +1030,8 @@ const EditRecord = handleSubmitNew(async (values) => {
         packing_type_uuid: values.packing_typeV ? values.packing_typeV.id : 'Prueba',
         variant_uuid: values.variantV ? values.variantV.id : 'Prueba',
         customer_request_uuid: values.customer_requestV ? values.customer_requestV.id : 'Prueba',
-        company_uuid: values.company ? values.company.id : 'Prueba',
-        farm_uuid: values.farm ? values.farm.id : 'Prueba'
+        company_uuid: values.company ? values.company.id : companyDefault,
+        farm_uuid: values.farm ? values.farm.id : farmDefault
     };
 
     const restp = await putRequest(endpoint.value, data, uuid);
@@ -1005,7 +1039,18 @@ const EditRecord = handleSubmitNew(async (values) => {
     console.log(JSON.stringify(data, null, 2))
     console.log(restp);
     loadingData();
+    if(restp.ok) {listRowSelect.value = []
+    selectedRegisters.value = []
     formDialogEdit.value = false;
+    
+}
+    else{
+        backendValidationFlag.value = true;
+        backendValidation.value = restp;
+        formDialogEdit.value = true;
+        console.log(errorResponseAPI);
+    }
+    
 });
 
 const CloneRecord = handleSubmitNew(async (values) => {
@@ -1029,14 +1074,44 @@ const CloneRecord = handleSubmitNew(async (values) => {
         packing_type_uuid: values.packing_typeV ? values.packing_typeV.id : 'Prueba',
         variant_uuid: values.variantV ? values.variantV.id : 'Prueba',
         customer_request_uuid: values.customer_requestV ? values.customer_requestV.id : 'Prueba',
-        company_uuid: values.company ? values.company.id : 'Prueba',
-        farm_uuid: values.farm ? values.farm.id : 'Prueba'
+        company_uuid: values.company ? values.company.id : companyDefault,
+        farm_uuid: values.farm ? values.farm.id : farmDefault
     };
     const restp = await postRequest(endpoint.value, data);
     toast.add({ severity: restp.ok ? 'success' : 'error', summary: 'Clone', detail: restp.ok ? 'Clonado' : restp.error, life: 3000 });
     loadingData();
+    prueba.value= data;
+    if(restp.ok) {listRowSelect.value = []
+    selectedRegisters.value = []
     formDialogClone.value = false;
+}
+    else{
+        backendValidationFlag.value = true;
+        backendValidation.value = restp;
+        formDialogClone.value = true;
+    }
 });
+
+const ExportRecord = () => {
+    const eventos = exportAll.value.name == 'ALL' ? dataFromComponent.value.map((data) => data) : listRowSelect.value.map((data) => data);
+    formDialogExport.value = false;
+    if (!eventos.length) return;
+    if (format.value.name == 'CSV') formatCSV(eventos);
+    else formatXLS(eventos);
+};
+
+
+const searchCompannies = (event) => {
+    setTimeout(() => {
+        if (!event.query.trim().length) {
+            compa.value = [...Compan.value];
+        } else {
+            compa.value = Compan.value.filter((fram) => {
+                return fram.name.toLowerCase().startsWith(event.query.toLowerCase());
+            });
+        }
+    }, 200);
+};
 
 const searchTaskOfType = (event) => {
     setTimeout(() => {
@@ -1127,14 +1202,6 @@ const searchFarms = (event) => {
             });
         }
     }, 200);
-};
-
-const ExportRecord = () => {
-    const eventos = exportAll.value.name == 'ALL' ? dataFromComponent.value.map((data) => data) : listRowSelect.value.map((data) => data);
-    formDialogExport.value = false;
-    if (!eventos.length) return;
-    if (format.value.name == 'CSV') formatCSV(eventos);
-    else formatXLS(eventos);
 };
 
 function formatCSV(eventos) {
