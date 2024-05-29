@@ -498,6 +498,11 @@ let headerNames = ref([]);
 provide('isChanging', isChanging);
 watch(listRowSelect, RowSelect);
 
+const openNew = () => {
+    resetForm();
+    formDialogNew.value = true;
+
+};
 
 const openEdit = () => {
     resetForm();
@@ -596,11 +601,6 @@ const searchCompannies = (event) => {
             });
         }
     }, 200);
-};
-const openNew = () => {
-    resetForm();
-    formDialogNew.value = true;
-
 };
 
 const searchFarms = (event) => {
