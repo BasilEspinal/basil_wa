@@ -154,7 +154,7 @@ const openEdit = () => {
 
     name.value = nombre;
     codigo.value = code;
-    weight_tareV.value = weight_tare;
+    weight_tareV.value = Number(weight_tare);
     company.value = { id: empresa.uuid, name: empresa.name };
     farm.value = { id: finca.uuid, name: finca.name };
 
@@ -167,7 +167,7 @@ const openClone = () => {
 
     codigo.value = code;
     name.value = nombre;
-    weight_tareV.value = weight_tare;
+    weight_tareV.value = Number(weight_tare);
     company.value = { id: empresa.uuid, name: empresa.name };
     
     farm.value = { id: finca.uuid, name: finca.name };
