@@ -13,6 +13,7 @@ import { z } from 'zod';
 import { saveAs } from 'file-saver';
 import { FilterMatchMode, FilterOperator } from 'primevue/api';
 
+const prueba = ref({revisar: 'revisar GET-POST-PUT-DELETE'});
 const dataFromComponent = ref();
 const { conditionsUnitType } = useRestrictionUnitTypes();
 
@@ -202,6 +203,7 @@ const createVarieties = handleSubmitNew(async (values) => {
     toast.add({ severity: restp.ok ? 'success' : 'error', summary: 'Create', detail: restp.ok ? 'Creado' : restp.error, life: 3000 });
     loadingData();
     formDialogNew.value = false;
+    prueba.value= data;
     
 });
 const EditVarieties = handleSubmitNew(async (values) => {
@@ -215,6 +217,7 @@ const EditVarieties = handleSubmitNew(async (values) => {
     const restp = await putRequest(endpoint.value, data, uuid);
     toast.add({ severity: restp.ok ? 'success' : 'error', summary: 'Edit', detail: restp.ok ? 'Editado' : restp.error, life: 3000 });
     loadingData();
+    prueba.value= data;
     formDialogEdit.value = false;
     if(restp.ok) {listRowSelect.value = []}
     else {listRowSelect.value = listRowSelect.value}
@@ -231,6 +234,7 @@ const CloneVarieties = handleSubmitNew(async (values) => {
     toast.add({ severity: restp.ok ? 'success' : 'error', summary: 'Clone', detail: restp.ok ? 'Clonado' : restp.error, life: 3000 });
     loadingData();
     formDialogClone.value = false;
+    prueba.value= data;
     if(restp.ok) {listRowSelect.value = []}
     else {listRowSelect.value = listRowSelect.value}
 });
@@ -328,6 +332,7 @@ const remove = (aver) => {
                 <Button v-if="ability.can('unidad_medida_eliminar')" :disabled="!listRowSelect.length > 0" label="Delete" icon="pi pi-trash" class="p-button-danger mb-2 mt-2" @click="openDelete" size="large" />
             </template>
         </Toolbar>
+        <!-- <pre>{{ prueba }}</pre> -->
         <DataTable
             v-if="ability.can('unidad_medida_listado')"
             :value="dataFromComponent"

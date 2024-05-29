@@ -13,7 +13,7 @@ import { z } from 'zod';
 import { saveAs } from 'file-saver';
 import { FilterMatchMode, FilterOperator } from 'primevue/api';
 
-const prueba = ref({});
+const prueba = ref({revisar: 'revisar GET-POST-PUT-DELETE'});
 const listRowSelect = ref([]);
 const loading = ref(false);
 const size = ref({ label: 'Normal', value: 'normal' });
@@ -43,6 +43,7 @@ const initFilters = () => {
         global: { value: null, matchMode: FilterMatchMode.CONTAINS },
         code: { operator: FilterOperator.AND, constraints: [{ value: null, matchMode: FilterMatchMode.STARTS_WITH }] },
         name: { operator: FilterOperator.AND, constraints: [{ value: null, matchMode: FilterMatchMode.STARTS_WITH }] },
+        'weight_tare': { operator: FilterOperator.AND, constraints: [{ value: null, matchMode: FilterMatchMode.STARTS_WITH }] },
         'status.name': { operator: FilterOperator.AND, constraints: [{ value: null, matchMode: FilterMatchMode.STARTS_WITH }] },
         'farm.name': { operator: FilterOperator.AND, constraints: [{ value: null, matchMode: FilterMatchMode.STARTS_WITH }] },
         'company.name': { operator: FilterOperator.AND, constraints: [{ value: null, matchMode: FilterMatchMode.STARTS_WITH }] },
@@ -105,6 +106,7 @@ const {
         z.object({
             name: z.string().min(4),
             codigo: z.string().min(4),
+            weight_tareV: z.number().min(1),
             farm: z
                 .object({
                     name: z.string().min(4),
@@ -123,6 +125,7 @@ const {
 
 const [name, nameProps] = defineField('name');
 const [codigo, codigoProps] = defineField('codigo');
+const [weight_tareV] = defineField('weight_tareV');
 const [farm] = defineField('farm');
 const [company] = defineField('company');
 
@@ -140,18 +143,6 @@ const onHeaderNames = (data) => (headerNames.value = data);
 provide('isChanging', isChanging);
 watch(listRowSelect, RowSelect);
 
-const searchCompannies = (event) => {
-    setTimeout(() => {
-        if (!event.query.trim().length) {
-            compa.value = [...Compan.value];
-        } else {
-            compa.value = Compan.value.filter((fram) => {
-                return fram.name.toLowerCase().startsWith(event.query.toLowerCase());
-            });
-        }
-    }, 200);
-};
-
 const openNew = () => {
     resetForm();
     formDialogNew.value = true;
@@ -159,10 +150,11 @@ const openNew = () => {
 
 const openEdit = () => {
     resetForm();
-    const { code, company: empresa, farm: finca, name: nombre } = listRowSelect.value[0];
+    const { company: empresa, code, farm: finca, name: nombre,weight_tare:weight_tare } = listRowSelect.value[0];
 
     name.value = nombre;
     codigo.value = code;
+    weight_tareV.value = weight_tare;
     company.value = { id: empresa.uuid, name: empresa.name };
     farm.value = { id: finca.uuid, name: finca.name };
 
@@ -171,10 +163,13 @@ const openEdit = () => {
 
 const openClone = () => {
     resetForm();
-    const { company: empresa, farm: finca, name: nombre } = listRowSelect.value[0];
+    const { company: empresa, code,farm: finca, name: nombre,weight_tare:weight_tare } = listRowSelect.value[0];
 
+    codigo.value = code;
     name.value = nombre;
+    weight_tareV.value = weight_tare;
     company.value = { id: empresa.uuid, name: empresa.name };
+    
     farm.value = { id: finca.uuid, name: finca.name };
     formDialogClone.value = true;
 };
@@ -194,7 +189,7 @@ const create = handleSubmitNew(async (values) => {
     const data = {
         code: values.codigo,
         name: values.name,
-        weight_tare: 1,
+        weight_tare: values.weight_tareV,
         company_uuid: values.company ? values.company.id : companyDefault,
         farm_uuid: values.farm ? values.farm.id : farmDefault
     };
@@ -211,7 +206,7 @@ const edit = handleSubmitNew(async (values) => {
     const data = {
         code: values.codigo,
         name: values.name,
-        weight_tare: 1,
+        weight_tare: values.weight_tareV,
         company_uuid: values.company ? values.company.id : companyDefault,
         farm_uuid: values.farm ? values.farm.id : farmDefault,
     };
@@ -229,7 +224,7 @@ const clone = handleSubmitNew(async (values) => {
     const data = {
         code: values.codigo,
         name: values.name,
-        weight_tare: 1,
+        weight_tare: values.weight_tareV,
         company_uuid: values.company ? values.company.id : companyDefault,
         farm_uuid: values.farm ? values.farm.id : farmDefault,
     };
@@ -241,6 +236,18 @@ const clone = handleSubmitNew(async (values) => {
     if(restp.ok) {listRowSelect.value = []}
     else {listRowSelect.value = listRowSelect.value}
 });
+
+const searchCompannies = (event) => {
+    setTimeout(() => {
+        if (!event.query.trim().length) {
+            compa.value = [...Compan.value];
+        } else {
+            compa.value = Compan.value.filter((fram) => {
+                return fram.name.toLowerCase().startsWith(event.query.toLowerCase());
+            });
+        }
+    }, 200);
+};
 
 const searchFarms = (event) => {
     setTimeout(() => {
@@ -334,7 +341,7 @@ const remove = (aver) => {
                 <Button v-if="ability.can('tipo_empaque_eliminar')" :disabled="!listRowSelect.length > 0" label="Delete" icon="pi pi-trash" class="p-button-danger mb-2 mt-2" @click="openDelete" size="large" />
             </template>
         </Toolbar>
-
+        <!-- <pre>{{ prueba }}</pre> -->
         <DataTable
             v-if="ability.can('tipo_producto_listado')"
             :value="dataFromComponent"
@@ -359,6 +366,7 @@ const remove = (aver) => {
             v-model:filters="filters"
             :globalFilterFields="['name', 'company.name', 'farm.name', 'status.name', 'created_at', 'updated_at']"
         >
+        
             <template #header>
                 <!--Uncomment when filters are done-->
 
@@ -390,6 +398,15 @@ const remove = (aver) => {
 
                 <template #body="{ data }">
                     {{ data.code }}
+                </template>
+                <template #filter="{ filterModel }">
+                    <InputText v-model="filterModel.value" type="text" class="p-column-filter" placeholder="Search by " />
+                </template>
+            </Column>
+
+            <Column field="weight_tare" filterField="weight_tare" header="Weight tare" sortable>
+                <template #body="{ data }">
+                    {{ data.weight_tare }}
                 </template>
                 <template #filter="{ filterModel }">
                     <InputText v-model="filterModel.value" type="text" class="p-column-filter" placeholder="Search by " />
@@ -455,13 +472,25 @@ const remove = (aver) => {
         <Dialog v-model:visible="formDialogNew" modal :header="'Create new varieties'" class="p-fluid text-center mx-auto">
             <div class="mb-3">
                 <div class="flex align-items-center gap-3 mb-1">
-                    <label for="username" class="font-semibold w-6rem">Name :</label>
+                    <label for="username" class="font-semibold w-3">Name :</label>
                     <InputText id="username" v-model="name" class="flex-auto" autocomplete="off" v-bind="nameProps" />
                 </div>
                 <small id="username-help" :class="{ 'p-invalid text-red-700': errorsNew['name'] }">
                     {{ errorsNew.name }}
                 </small>
             </div>
+
+            <div class="mb-3">
+                    <div class=" flex align-items-center gap-3 mb-1">
+                        <label for="weight_tareV" class="font-semibold w-3">Weight tare:</label>
+                        <InputNumber v-model="weight_tareV" class="flex-auto" inputId="minmax" :min="0" :max="100" />
+                    </div>
+                    
+                    
+                    <small id="username-help" :class="{ 'p-invalid text-red-700': errorsNew['weight_tareV'] }">
+                        {{ errorsNew.weight_tareV }}
+                    </small>
+                </div>
             <div class="mb-3">
                 <div class="flex align-items-center gap-3 mb-1">
                     <label for="username" class="font-semibold w-6rem">Code :</label>
@@ -515,6 +544,19 @@ const remove = (aver) => {
                     {{ errorsNew.codigo }}
                 </small>
             </div>
+
+            <div class="mb-3">
+                    <div class=" flex align-items-center gap-3 mb-1">
+                        <label for="weight_tareV" class="font-semibold w-3">Weight tare:</label>
+                        <InputNumber v-model="weight_tareV" class="flex-auto" inputId="minmax" :min="0" :max="100" />
+                    </div>
+                    
+                    
+                    <small id="username-help" :class="{ 'p-invalid text-red-700': errorsNew['weight_tareV'] }">
+                        {{ errorsNew.weight_tareV }}
+                    </small>
+                </div>
+
             <div class="mb-3">
                 <div class="flex align-items-center">
                     <label for="username" class="font-semibold w-3">Farm :</label>
@@ -559,6 +601,17 @@ const remove = (aver) => {
                     {{ errorsNew.codigo }}
                 </small>
             </div>
+            <div class="mb-3">
+                    <div class=" flex align-items-center gap-3 mb-1">
+                        <label for="weight_tareV" class="font-semibold w-3">Weight tare:</label>
+                        <InputNumber v-model="weight_tareV" class="flex-auto" inputId="minmax" :min="0" :max="100" />
+                    </div>
+                    
+                    
+                    <small id="username-help" :class="{ 'p-invalid text-red-700': errorsNew['weight_tareV'] }">
+                        {{ errorsNew.weight_tareV }}
+                    </small>
+                </div>
             <div class="mb-3">
                 <div class="flex align-items-center">
                     <label for="username" class="font-semibold w-3">Farm :</label>

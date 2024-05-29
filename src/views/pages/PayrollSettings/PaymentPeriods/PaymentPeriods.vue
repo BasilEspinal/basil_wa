@@ -638,14 +638,8 @@ const openEdit = () => {
 
 const openClone = () => {
     resetForm();
-    // const { company: empresa, farm: farmParameter, name: nombre } = listRowSelect.value[0];
 
-    // name.value = nombre;
-    // company.value = { id: empresa.uuid, name: empresa.name };
-    // farm.value = { id: farmParameter.uuid, name: farmParameter.name };
     const { period_num:periodNum, company: empresa, farm: farmParameter, start_date:startDate, end_date:endDate } = listRowSelect.value[0];
-
-    // start_dateV.value = new Date(start_date);
 
     start_dateV.value = new Date(startDate);
     end_dateV.value = new Date(endDate);
