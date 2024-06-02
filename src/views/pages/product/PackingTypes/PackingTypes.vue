@@ -172,7 +172,7 @@ const openClone = () => {
     
     farm.value = { id: finca.uuid, name: finca.name };
     formDialogClone.value = true;
-};visib
+};
 
 const openExport = () => {
     format.value = { name: 'CSV' };
