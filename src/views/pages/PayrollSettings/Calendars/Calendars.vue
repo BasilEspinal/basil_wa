@@ -191,7 +191,7 @@
                     </small>
                 </div> -->
 
-
+<pre>{{ prueba }}</pre>
                 <div class="mb-3">
                     <div class=" flex align-items-center">
                         <label for="username" class="font-semibold w-3">Transaction Date :</label>
@@ -409,6 +409,7 @@ import { saveAs } from 'file-saver';
 import { z } from 'zod';
 import ability from '@/service/ability.js';
 import { AbilityBuilder} from '@casl/ability';
+const prueba = ref({revisar: 'revisar GET-POST-PUT-DELETE'});
 const namePage = ' Calendars ';
 const titlePage = ' '+namePage+' information';
 const dataFromComponent = ref();
@@ -535,8 +536,7 @@ const {
 } = useForm({
     validationSchema: toTypedSchema(
         z.object({
-            // name: z.string().min(4),
-            // codeV: z.string().min(4),
+
             transaction_dateV: z.date(),
             type_dateV: z.object({
                 name: z.string().min(4),
@@ -557,8 +557,7 @@ const {
         })
     )
 });
-const [name, nameProps] = defineField('name');
-const [codeV, codeVProps] = defineField('codeV');
+
 const [farm] = defineField('farm');
 const [company] = defineField('company');
 const [transaction_dateV,transaction_dateVProps] = defineField('transaction_dateV');
@@ -641,6 +640,7 @@ const createRecord = handleSubmitNew(async (values) => {
 
     
 });
+
 
 const EditRecord = handleSubmitNew(async (values) => {
     const { uuid } = listRowSelect.value[0];
