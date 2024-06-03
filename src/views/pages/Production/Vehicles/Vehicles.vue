@@ -4,6 +4,7 @@
     <div class="card">
         <div>
             <h1>{{ titlePage }}</h1> 
+            
         </div>
 
 
@@ -16,8 +17,8 @@
                 <div class="col-xs-12 col-sm-6 col-md-4 mb-2 text-center mx-auto">
             <Toolbar style="margin-bottom: 1rem">
                 <template #center>
-                    <Button v-if = "ability.can('vehiculo_crear,')" :disabled="headerNames.length > 0" label="New" icon="pi pi-plus" class="p-button-success mb-2 mt-2" @click="openNew" size="large" />
-                    <Divider v-if = "ability.can('vehiculo_crear,')" layout="vertical" />
+                    <Button v-if = "ability.can('vehiculo_crear')" :disabled="headerNames.length > 0" :label="$t('toolbarCrud.titleCreate')" icon="pi pi-plus" class="p-button-success mb-2 mt-2" @click="openNew" size="large" />
+                    <Divider v-if = "ability.can('vehiculo_crear')" layout="vertical" />
                     <Button v-if = "ability.can('vehiculo_editar')" :disabled="!(listRowSelect.length > 0 && listRowSelect.length < 2)" label="Edit" icon="pi pi-file-edit" class="p-button-help mb-2 mt-2" @click="openEdit" size="large" />
                     <Divider v-if = "ability.can('vehiculo_editar')" layout="vertical" />
                     <Button v-if = "ability.can('vehiculo_crear')" :disabled="!(listRowSelect.length > 0 && listRowSelect.length < 2)" label="Clone" icon="pi pi-copy" class="p-button-secondary mb-2 mt-2" @click="openClone" size="large" />
@@ -53,7 +54,7 @@
         v-model:selection="selectedRegisters"
         filterDisplay="menu"
         v-model:filters="filters"
-        :globalFilterFields="['name', 'company.name', 'farm.name', 'status.name', 'created_at', 'updated_at']" 
+        :globalFilterFields="[ 'company.name', 'farm.name', 'status.name', 'created_at', 'updated_at', 'code', 'vehicle_type', 'quantity_available', 'weight_packing_type']" 
         v-if = "ability.can('vehiculo_listado')"
         >
         <template #header>
@@ -90,18 +91,38 @@
                     {{ data.code }} 
                 </template>
                 <template #filter="{ filterModel }">
-                    <InputText v-model="filterModel.value" type="text" class="p-column-filter" placeholder="Search by " />
+                    <InputText v-model="filterModel.value" type="text" class="p-column-filter" placeholder="Search by column " />
                 </template>
         </Column>
 
-        <Column field="name" filterField="name" header="Name" sortable> 
+        <Column field="vehicle_type" filterField="vehicle_type" header="Vehicle Type" sortable> 
             
                 <template #body="{ data }">
-                    {{ data.name }} 
+                    {{ data.vehicle_type }} 
                 </template>
                 <template #filter="{ filterModel }">
-                    <InputText v-model="filterModel.value" type="text" class="p-column-filter" placeholder="Search by " />
+                    <InputText v-model="filterModel.value" type="text" class="p-column-filter" placeholder="Search by column" />
                 </template>
+        </Column>
+
+        <Column field="quantity_available" filterField="quantity_available" header="Quantity Available" sortable> 
+            
+            <template #body="{ data }">
+                {{ data.quantity_available }} 
+            </template>
+            <template #filter="{ filterModel }">
+                <InputText v-model="filterModel.value" type="text" class="p-column-filter" placeholder="Search by column" />
+            </template>
+        </Column>
+
+        <Column field="weight_packing_type" filterField="weight_packing_type" header="Weight Packing Type" sortable> 
+            
+            <template #body="{ data }">
+                {{ data.weight_packing_type }} 
+            </template>
+            <template #filter="{ filterModel }">
+                <InputText v-model="filterModel.value" type="text" class="p-column-filter" placeholder="Search by column" />
+            </template>
         </Column>
 
         <!--Here add other columns-->
@@ -111,7 +132,7 @@
                     {{ data.farm.name }}
                 </template>
                 <template #filter="{ filterModel }">
-                    <InputText v-model="filterModel.value" type="text" class="p-column-filter" placeholder="Search by farm" />
+                    <InputText v-model="filterModel.value" type="text" class="p-column-filter" placeholder="Search by column" />
                 </template>
             </Column>
 
@@ -120,7 +141,7 @@
                     {{ data.company.name }}
                 </template>
                 <template #filter="{ filterModel }">
-                    <InputText v-model="filterModel.value" type="text" class="p-column-filter" placeholder="Search by farm" />
+                    <InputText v-model="filterModel.value" type="text" class="p-column-filter" placeholder="Search by column" />
                 </template>
             </Column>
 
@@ -182,7 +203,7 @@
                 </div>
                 <div class="mb-3">
                     <div class="flex align-items-center">
-                        <label for="username" class="font-semibold w-3">Companny:</label>
+                        <label for="username" class="font-semibold w-3">Company:</label>
                         <AutoComplete v-model="company" inputId="ac" :suggestions="compa" @complete="searchCompannies" field="name" dropdown />
                     </div>
                     <small id="username-help" :class="{ 'p-invalid text-red-700': errorsNew['company'] }">
@@ -227,7 +248,7 @@
             </div>
             <div class="mb-3">
                 <div class="flex align-items-center">
-                    <label for="username" class="font-semibold w-3">Companny:</label>
+                    <label for="username" class="font-semibold w-3">Company:</label>
                     <AutoComplete v-model="company" inputId="ac" :suggestions="compa" @complete="EditRecord"
                         field="name" dropdown />
                 </div>
@@ -272,7 +293,7 @@
                 </div>
                 <div class="mb-3">
                     <div class="flex align-items-center">
-                        <label for="username" class="font-semibold w-3">Companny:</label>
+                        <label for="username" class="font-semibold w-3">Company:</label>
                         <AutoComplete v-model="company" inputId="ac" :suggestions="compa" @complete="searchCompannies" field="name" dropdown />
                     </div>
                     <small id="username-help" :class="{ 'p-invalid text-red-700': errorsNew['company'] }">
@@ -353,20 +374,26 @@ import { saveAs } from 'file-saver';
 import { z } from 'zod';
 import ability from '@/service/ability.js';
 import { AbilityBuilder} from '@casl/ability';
+import { useI18n } from 'vue-i18n';
+const prueba = ref({revisar: 'revisar GET-POST-PUT-DELETE'});
 const namePage = ' Vehicles ';
-const titlePage = namePage+'information';
+// const titlePage = ' '+namePage+' Information';
+const { t } = useI18n();
+const titlePage = t('vehicle.titleCrud');
 const dataFromComponent = ref();
 const Farms = ref([]);
 const farms = ref([]);
 const Compan = ref([]);
 const compa = ref([]);
+const farmDefault = sessionStorage.getItem('accessSessionFarm');
+const companyDefault = sessionStorage.getItem('accessSessionCompany');
 
+const formDialogNewTitle = 'Create new '+namePage;
+const formDialogEditTitle = 'Edit '+namePage;
+const formDialogCloneTitle = 'Clone ' + namePage;
+const formDialogExportTitle = 'Export ' + namePage;
+const formDialogDeleteTitle = 'Delete '+namePage;
 const formDialogNew = ref(false);
-const formDialogNewTitle = 'Create new'+namePage;
-const formDialogEditTitle = 'Edit'+namePage;
-const formDialogCloneTitle = 'Clone' + namePage;
-const formDialogExportTitle = 'Export' + namePage;
-const formDialogDeleteTitle = 'Delete'+namePage;
 const formDialogEdit = ref(false);
 const formDialogClone = ref(false);
 const formDialogExport = ref(false);
@@ -416,7 +443,9 @@ const initFilters = () => {
     filters.value = {
         global: { value: null, matchMode: FilterMatchMode.CONTAINS },
         code: { operator: FilterOperator.AND, constraints: [{ value: null, matchMode: FilterMatchMode.STARTS_WITH }] },
-        name: { operator: FilterOperator.AND, constraints: [{ value: null, matchMode: FilterMatchMode.STARTS_WITH }] },
+        'vehicle_type': { operator: FilterOperator.AND, constraints: [{ value: null, matchMode: FilterMatchMode.STARTS_WITH }] },
+        'quantity_available': { operator: FilterOperator.AND, constraints: [{ value: null, matchMode: FilterMatchMode.STARTS_WITH }] },
+        'weight_packing_type': { operator: FilterOperator.AND, constraints: [{ value: null, matchMode: FilterMatchMode.STARTS_WITH }] },
         'status.name': { operator: FilterOperator.AND, constraints: [{ value: null, matchMode: FilterMatchMode.STARTS_WITH }] },
         'farm.name': { operator: FilterOperator.AND, constraints: [{ value: null, matchMode: FilterMatchMode.STARTS_WITH }] },
         'company.name': { operator: FilterOperator.AND, constraints: [{ value: null, matchMode: FilterMatchMode.STARTS_WITH }] },

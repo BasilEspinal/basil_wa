@@ -511,7 +511,7 @@ const remove = (aver) => {
             </div>
             <div class="mb-3">
                 <div class="flex align-items-center">
-                    <label for="username" class="font-semibold w-3">Companny:</label>
+                    <label for="username" class="font-semibold w-3">Company:</label>
                     <AutoComplete v-model="company" inputId="ac" :suggestions="compa" @complete="searchCompannies" field="name" dropdown />
                 </div>
                 <small id="username-help" :class="{ 'p-invalid text-red-700': errorsNew['company'] }">
@@ -568,7 +568,7 @@ const remove = (aver) => {
             </div>
             <div class="mb-3">
                 <div class="flex align-items-center">
-                    <label for="username" class="font-semibold w-3">Companny:</label>
+                    <label for="username" class="font-semibold w-3">Company:</label>
                     <AutoComplete v-model="company" inputId="ac" :suggestions="compa" @complete="searchCompannies" field="name" dropdown />
                 </div>
                 <small id="username-help" :class="{ 'p-invalid text-red-700': errorsNew['company'] }">

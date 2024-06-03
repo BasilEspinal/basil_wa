@@ -122,6 +122,8 @@ const savedLocale = localStorage.getItem('locale');
 
 
 const i18n = createI18n({
+    
+    legacy: false, // disable legacy mode because of vue 3
     locale: savedLocale,
     fallbackLocale: 'en',
     messages

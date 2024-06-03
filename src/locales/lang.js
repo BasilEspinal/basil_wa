@@ -30,7 +30,23 @@ export const messages = {
                 cultivated: "Cultited",
                
             }
+
             
+        },
+
+        vehicle:{
+            mnuMain: 'Vehicle',
+            mnuVehicles: 'Vehicles',
+            vehicles:"not vehicles|one vehicle|{count} vehicles",
+            titleCrud: "Vehicles to Information",
+           
+            appTable: {
+                name: "name",
+                shortname: "Short Name",
+                slug: "Code",
+                cultivated: "Cultited",
+               
+            }
         },
         
         company: {
