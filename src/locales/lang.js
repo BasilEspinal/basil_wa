@@ -95,6 +95,21 @@ export const messages = {
                 company_name: "Empresa",
             }
         },
+
+        vehicle:{
+            mnuMain: 'Vehículo',
+            mnuVehicles: 'Vehicles',
+            vehicles:"not vehicles|one vehicle|{count} vehicles",
+            titleCrud: "Información de Vehículos",
+           
+            appTable: {
+                name: "name",
+                shortname: "Short Name",
+                slug: "Code",
+                cultivated: "Cultited",
+               
+            }
+        },
         company: {
             name: "Empresa",
         },

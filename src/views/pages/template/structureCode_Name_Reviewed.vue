@@ -351,9 +351,12 @@ import { saveAs } from 'file-saver';
 import { z } from 'zod';
 import ability from '@/service/ability.js';
 import { AbilityBuilder} from '@casl/ability';
+import { useI18n } from 'vue-i18n';
 
+const { t } = useI18n();
 const prueba = ref({revisar: 'revisar GET-POST-PUT-DELETE'});
 const namePage = 'xxxxxxxxx';
+// const titlePage = t('jerarquia1.jerarquia2');
 const titlePage = ' '+namePage+' information';
 const dataFromComponent = ref();
 const Farms = ref([]);

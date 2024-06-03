@@ -174,28 +174,52 @@
 
         </DataTable>
         <Dialog v-model:visible="formDialogNew" modal :header="formDialogNewTitle" class="p-fluid text-center mx-auto">
-                <div class="mb-3">
-                    <div class="flex align-items-center gap-3 mb-1">
-                        <label for="username" class="font-semibold w-6rem">Name :</label>
-                        <InputText id="username" v-model="name" class="flex-auto" autocomplete="off" v-bind="nameProps" />
-                    </div>
-                    <small id="username-help" :class="{ 'p-invalid text-red-700': errorsNew['name'] }">
-                        {{ errorsNew.name }}
-                    </small>
-                </div>
+
                 <div class="mb-3">
                     <div class="flex align-items-center gap-3 mb-1">
                         <label for="username" class="font-semibold w-6rem">Code :</label>
-                        <InputText id="username" v-model="codeV" class="flex-auto" autocomplete="off" v-bind="codeVProps" />
+                        <InputText id="username" v-model="codeV" class="flex-auto" placeholder="Introduce the value" autocomplete="off" v-bind="codeVProps" />
                     </div>
                     <small id="username-help" :class="{ 'p-invalid text-red-700': errorsNew['codeV'] }">
                         {{ errorsNew.codeV }}
                     </small>
                 </div>
+
+                <div class="mb-3">
+                    <div class="flex align-items-center gap-3 mb-1">
+                        <label for="vehicle_type" class="font-semibold w-6rem">Vehicle Type:</label>
+                        <InputText id="vehicle_type" v-model="vehicle_typeV" class="flex-auto" placeholder="Introduce the value" autocomplete="off" v-bind="vehicle_typePropsV" />
+                    </div>
+                    <small id="username-help" :class="{ 'p-invalid text-red-700': errorsNew['vehicle_typeV'] }">
+                        {{ errorsNew.vehicle_typeV }}
+                    </small>
+                </div>
+
+                <div class="mb-3">
+                    <div class="flex align-items-center gap-3 mb-1">
+                        <label for="quantity_available" class="font-semibold w-6rem">Quantity Available</label>
+                        <InputNumber id="quantity_available" v-model="quantity_availableV" class="flex-auto"  placeholder="Introduce the value" inputId="minmax" :min="0" :max="1000" v-bind="quantity_availablePropsV" />
+                        
+                    </div>
+                    <small id="username-help" :class="{ 'p-invalid text-red-700': errorsNew['quantity_availableV'] }">
+                        {{ errorsNew.quantity_availableV }}
+                    </small>
+                </div>
+
+                <div class="mb-3">
+                    <div class="flex align-items-center gap-3 mb-1">
+                        <label for="weight_packing_type" class="font-semibold w-6rem">Weight Packing Type:</label>
+                        <InputText id="weight_packing_type" v-model="weight_packing_typeV" class="flex-auto" placeholder="Introduce the value" autocomplete="off" v-bind="weight_packing_typePropsV" />
+                    </div>
+                    <small id="username-help" :class="{ 'p-invalid text-red-700': errorsNew['weight_packing_type'] }">
+                        {{ errorsNew.weight_packing_typeV }}
+                    </small>
+                </div>
+
                 <div class="mb-3">
                     <div class="flex align-items-center">
                         <label for="username" class="font-semibold w-3">Farm :</label>
-                        <AutoComplete v-model="farm" inputId="ac" :suggestions="farms" @complete="searchFarms" field="name" dropdown />
+                        <AutoComplete v-model="farm" inputId="ac" :suggestions="farms" @complete="searchFarms" field="name" placeholder="Introduce the value" dropdown />
                     </div>
                     <small id="username-help" :class="{ 'p-invalid text-red-700': errorsNew['farm'] }">
                         {{ errorsNew.farm }}
@@ -204,7 +228,7 @@
                 <div class="mb-3">
                     <div class="flex align-items-center">
                         <label for="username" class="font-semibold w-3">Company:</label>
-                        <AutoComplete v-model="company" inputId="ac" :suggestions="compa" @complete="searchCompannies" field="name" dropdown />
+                        <AutoComplete v-model="company" inputId="ac" :suggestions="compa" @complete="searchCompannies" field="name" placeholder="Introduce the value" dropdown />
                     </div>
                     <small id="username-help" :class="{ 'p-invalid text-red-700': errorsNew['company'] }">
                         {{ errorsNew.company }}
@@ -220,42 +244,63 @@
             <Dialog v-model:visible="formDialogEdit" modal :header="formDialogEditTitle" class="p-fluid text-center mx-auto">
                 <div class="mb-3">
                     <div class="flex align-items-center gap-3 mb-1">
-                        <label for="username" class="font-semibold w-6rem">Name :</label>
-                        <InputText id="username" v-model="name" class="flex-auto" autocomplete="off" v-bind="nameProps" />
-                    </div>
-                    <small id="username-help" :class="{ 'p-invalid text-red-700': errorsNew['name'] }">
-                        {{ errorsNew.name }}
-                    </small>
-                </div>
-                <div class="mb-3">
-                    <div class="flex align-items-center gap-3 mb-1">
                         <label for="username" class="font-semibold w-6rem">Code :</label>
-                        <InputText id="username" v-model="codeV" class="flex-auto" autocomplete="off" v-bind="codeVProps" />
+                        <InputText id="username" v-model="codeV" class="flex-auto" placeholder="Introduce the value" autocomplete="off" v-bind="codeVProps" />
                     </div>
                     <small id="username-help" :class="{ 'p-invalid text-red-700': errorsNew['codeV'] }">
                         {{ errorsNew.codeV }}
                     </small>
                 </div>
+
                 <div class="mb-3">
-                <div class="flex align-items-center">
-                    <label for="username" class="font-semibold w-3">Farm :</label>
-                    <AutoComplete v-model="farm" inputId="ac" :suggestions="farms" @complete="searchFarms" field="name"
-                        dropdown />
+                    <div class="flex align-items-center gap-3 mb-1">
+                        <label for="vehicle_type" class="font-semibold w-6rem">Vehicle Type:</label>
+                        <InputText id="vehicle_type" v-model="vehicle_typeV" class="flex-auto" placeholder="Introduce the value" autocomplete="off" v-bind="vehicle_typePropsV" />
+                    </div>
+                    <small id="username-help" :class="{ 'p-invalid text-red-700': errorsNew['vehicle_typeV'] }">
+                        {{ errorsNew.vehicle_typeV }}
+                    </small>
                 </div>
-                <small id="username-help" :class="{ 'p-invalid text-red-700': errorsNew['farm'] }">
-                    {{ errorsNew.farm }}
-                </small>
-            </div>
-            <div class="mb-3">
-                <div class="flex align-items-center">
-                    <label for="username" class="font-semibold w-3">Company:</label>
-                    <AutoComplete v-model="company" inputId="ac" :suggestions="compa" @complete="EditRecord"
-                        field="name" dropdown />
+
+                <div class="mb-3">
+                    <div class="flex align-items-center gap-3 mb-1">
+                        <label for="quantity_available" class="font-semibold w-6rem">Quantity Available</label>
+                        <InputNumber id="quantity_available" v-model="quantity_availableV" class="flex-auto"  placeholder="Introduce the value" inputId="minmax" :min="0" :max="1000" v-bind="quantity_availablePropsV" />
+                        
+                    </div>
+                    <small id="username-help" :class="{ 'p-invalid text-red-700': errorsNew['quantity_availableV'] }">
+                        {{ errorsNew.quantity_availableV }}
+                    </small>
                 </div>
-                <small id="username-help" :class="{ 'p-invalid text-red-700': errorsNew['company'] }">
-                    {{ errorsNew.company }}
-                </small>
-            </div>
+
+                <div class="mb-3">
+                    <div class="flex align-items-center gap-3 mb-1">
+                        <label for="weight_packing_type" class="font-semibold w-6rem">Weight Packing Type:</label>
+                        <InputText id="weight_packing_type" v-model="weight_packing_typeV" class="flex-auto" placeholder="Introduce the value" autocomplete="off" v-bind="weight_packing_typePropsV" />
+                    </div>
+                    <small id="username-help" :class="{ 'p-invalid text-red-700': errorsNew['weight_packing_type'] }">
+                        {{ errorsNew.weight_packing_typeV }}
+                    </small>
+                </div>
+
+                <div class="mb-3">
+                    <div class="flex align-items-center">
+                        <label for="username" class="font-semibold w-3">Farm :</label>
+                        <AutoComplete v-model="farm" inputId="ac" :suggestions="farms" @complete="searchFarms" field="name" placeholder="Introduce the value" dropdown />
+                    </div>
+                    <small id="username-help" :class="{ 'p-invalid text-red-700': errorsNew['farm'] }">
+                        {{ errorsNew.farm }}
+                    </small>
+                </div>
+                <div class="mb-3">
+                    <div class="flex align-items-center">
+                        <label for="username" class="font-semibold w-3">Company:</label>
+                        <AutoComplete v-model="company" inputId="ac" :suggestions="compa" @complete="searchCompannies" field="name" placeholder="Introduce the value" dropdown />
+                    </div>
+                    <small id="username-help" :class="{ 'p-invalid text-red-700': errorsNew['company'] }">
+                        {{ errorsNew.company }}
+                    </small>
+                </div>
 
                 <div class="flex justify-content-end gap-2">
                     <Button type="button" label="Cancel" severity="secondary" @click="formDialogEdit = false" />
@@ -266,26 +311,49 @@
             <Dialog v-model:visible="formDialogClone" modal :header="formDialogCloneTitle" class="p-fluid text-center mx-auto">
                 <div class="mb-3">
                     <div class="flex align-items-center gap-3 mb-1">
-                        <label for="username" class="font-semibold w-6rem">Name :</label>
-                        <InputText id="username" v-model="name" class="flex-auto" autocomplete="off" v-bind="nameProps" />
-                    </div>
-                    <small id="username-help" :class="{ 'p-invalid text-red-700': errorsNew['name'] }">
-                        {{ errorsNew.name }}
-                    </small>
-                </div>
-                <div class="mb-3">
-                    <div class="flex align-items-center gap-3 mb-1">
                         <label for="username" class="font-semibold w-6rem">Code :</label>
-                        <InputText id="username" v-model="codeV" class="flex-auto" autocomplete="off" v-bind="codeVProps" />
+                        <InputText id="username" v-model="codeV" class="flex-auto" placeholder="Introduce the value" autocomplete="off" v-bind="codeVProps" />
                     </div>
                     <small id="username-help" :class="{ 'p-invalid text-red-700': errorsNew['codeV'] }">
                         {{ errorsNew.codeV }}
                     </small>
                 </div>
+
+                <div class="mb-3">
+                    <div class="flex align-items-center gap-3 mb-1">
+                        <label for="vehicle_type" class="font-semibold w-6rem">Vehicle Type:</label>
+                        <InputText id="vehicle_type" v-model="vehicle_typeV" class="flex-auto" placeholder="Introduce the value" autocomplete="off" v-bind="vehicle_typePropsV" />
+                    </div>
+                    <small id="username-help" :class="{ 'p-invalid text-red-700': errorsNew['vehicle_typeV'] }">
+                        {{ errorsNew.vehicle_typeV }}
+                    </small>
+                </div>
+
+                <div class="mb-3">
+                    <div class="flex align-items-center gap-3 mb-1">
+                        <label for="quantity_available" class="font-semibold w-6rem">Quantity Available</label>
+                        <InputNumber id="quantity_available" v-model="quantity_availableV" class="flex-auto"  placeholder="Introduce the value" inputId="minmax" :min="0" :max="1000" v-bind="quantity_availablePropsV" />
+                        
+                    </div>
+                    <small id="username-help" :class="{ 'p-invalid text-red-700': errorsNew['quantity_availableV'] }">
+                        {{ errorsNew.quantity_availableV }}
+                    </small>
+                </div>
+
+                <div class="mb-3">
+                    <div class="flex align-items-center gap-3 mb-1">
+                        <label for="weight_packing_type" class="font-semibold w-6rem">Weight Packing Type:</label>
+                        <InputText id="weight_packing_type" v-model="weight_packing_typeV" class="flex-auto" placeholder="Introduce the value" autocomplete="off" v-bind="weight_packing_typePropsV" />
+                    </div>
+                    <small id="username-help" :class="{ 'p-invalid text-red-700': errorsNew['weight_packing_type'] }">
+                        {{ errorsNew.weight_packing_typeV }}
+                    </small>
+                </div>
+
                 <div class="mb-3">
                     <div class="flex align-items-center">
                         <label for="username" class="font-semibold w-3">Farm :</label>
-                        <AutoComplete v-model="farm" inputId="ac" :suggestions="farms" @complete="searchFarms" field="name" dropdown />
+                        <AutoComplete v-model="farm" inputId="ac" :suggestions="farms" @complete="searchFarms" field="name" placeholder="Introduce the value" dropdown />
                     </div>
                     <small id="username-help" :class="{ 'p-invalid text-red-700': errorsNew['farm'] }">
                         {{ errorsNew.farm }}
@@ -294,7 +362,7 @@
                 <div class="mb-3">
                     <div class="flex align-items-center">
                         <label for="username" class="font-semibold w-3">Company:</label>
-                        <AutoComplete v-model="company" inputId="ac" :suggestions="compa" @complete="searchCompannies" field="name" dropdown />
+                        <AutoComplete v-model="company" inputId="ac" :suggestions="compa" @complete="searchCompannies" field="name" placeholder="Introduce the value" dropdown />
                     </div>
                     <small id="username-help" :class="{ 'p-invalid text-red-700': errorsNew['company'] }">
                         {{ errorsNew.company }}
@@ -490,8 +558,11 @@ const {
 } = useForm({
     validationSchema: toTypedSchema(
         z.object({
-            name: z.string().min(4),
+
             codeV: z.string().min(4),
+            vehicle_typeV: z.string().min(2),
+            quantity_availableV: z.number().min(1),
+            weight_packing_typeV: z.string().min(1),
             farm: z
                 .object({
                     name: z.string().min(4),
@@ -507,8 +578,11 @@ const {
         })
     )
 });
-const [name, nameProps] = defineField('name');
+
 const [codeV, codeVProps] = defineField('codeV');
+const [vehicle_typeV, vehicle_typePropsV] = defineField('vehicle_typeV');
+const [quantity_availableV, quantity_availablePropsV] = defineField('quantity_availableV');
+const [weight_packing_typeV, weight_packing_typePropsV] = defineField('weight_packing_typeV');
 const [farm] = defineField('farm');
 const [company] = defineField('company');
 
@@ -524,31 +598,9 @@ let headerNames = ref([]);
 provide('isChanging', isChanging);
 watch(listRowSelect, RowSelect);
 
-const createRecord = handleSubmitNew(async (values) => {
-    const data = {
-        code: values.codeV,
-        name: values.name,
-        company_uuid: values.company ? values.company.id : '25b4319c-e93f-4411-936c-118060f5e7c9',
-        farm_uuid: values.farm ? values.farm.id : '8ef93a7b-31bf-4233-af80-481020e9cf97'
-    };
-    const restp = await postRequest(endpoint.value, data);
 
-    toast.add({ severity: restp.ok ? 'success' : 'error', summary: 'Create', detail: restp.ok ? 'Creado' : restp.error, life: 3000 });
-    loadingData();
-    formDialogNew.value = false;
-});
 
-const searchCompannies = (event) => {
-    setTimeout(() => {
-        if (!event.query.trim().length) {
-            compa.value = [...Compan.value];
-        } else {
-            compa.value = Compan.value.filter((fram) => {
-                return fram.name.toLowerCase().startsWith(event.query.toLowerCase());
-            });
-        }
-    }, 200);
-};
+
 const openNew = () => {
     resetForm();
     formDialogNew.value = true;
@@ -557,10 +609,13 @@ const openNew = () => {
 
 const openEdit = () => {
     resetForm();
-    const { code, company: empresa, farm: farmParameter, name: nombre } = listRowSelect.value[0];
+    const { code, company: empresa, farm: farmParameter,vehicle_type:vehicle_type,quantity_available:quantity_available,weight_packing_type:weight_packing_type } = listRowSelect.value[0];
 
-    name.value = nombre;
+    
     codeV.value = code;
+    vehicle_typeV.value = vehicle_type;
+    quantity_availableV.value = quantity_available;
+    weight_packing_typeV.value = weight_packing_type;
     company.value = { id: empresa.uuid, name: empresa.name };
     farm.value = { id: farmParameter.uuid, name: farmParameter.name };
 
@@ -569,9 +624,13 @@ const openEdit = () => {
 
 const openClone = () => {
     resetForm();
-    const { company: empresa, farm: farmParameter, name: nombre } = listRowSelect.value[0];
+    const { code, company: empresa, farm: farmParameter,vehicle_type:vehicle_type,quantity_available:quantity_available,weight_packing_type:weight_packing_type } = listRowSelect.value[0];
 
-    name.value = nombre;
+    
+    codeV.value = code;
+    vehicle_typeV.value = vehicle_type;
+    quantity_availableV.value = quantity_available;
+    weight_packing_typeV.value = weight_packing_type;
     company.value = { id: empresa.uuid, name: empresa.name };
     farm.value = { id: farmParameter.uuid, name: farmParameter.name };
     formDialogClone.value = true;
@@ -586,33 +645,73 @@ const openDelete = () => {
     formDialogDelete.value = true;
 };
 
+const createRecord = handleSubmitNew(async (values) => {
+    const data = {
+        code: values.codeV,
+        vehicle_type: values.vehicle_typeV,
+        quantity_available: values.quantity_availableV,
+        weight_packing_type: values.weight_packing_typeV,
+        company_uuid: values.company ? values.company.id : companyDefault,
+        farm_uuid: values.farm ? values.farm.id : farmDefault
+    };
+    const restp = await postRequest(endpoint.value, data);
+
+    toast.add({ severity: restp.ok ? 'success' : 'error', summary: 'Create', detail: restp.ok ? 'Creado' : restp.error, life: 3000 });
+    loadingData();
+    formDialogNew.value = false;
+    prueba.value= data;
+    
+});
+
 const EditRecord = handleSubmitNew(async (values) => {
     const { uuid } = listRowSelect.value[0];
     const data = {
         code: values.codeV,
-        name: values.name,
-        company_uuid: values.company ? values.company.id : '25b4319c-e93f-4411-936c-118060f5e7c9',
-        farm_uuid: values.farm ? values.farm.id : values.farm
+        vehicle_type: values.vehicle_typeV,
+        quantity_available: values.quantity_availableV,
+        weight_packing_type: values.weight_packing_typeV,
+        company_uuid: values.company ? values.company.id : companyDefault,
+        farm_uuid: values.farm ? values.farm.id : farmDefault
     };
     
     const restp = await putRequest(endpoint.value, data, uuid);
     toast.add({ severity: restp.ok ? 'success' : 'error', summary: 'Edit', detail: restp.ok ? 'Editado' : restp.error, life: 3000 });
     loadingData();
     formDialogEdit.value = false;
+    prueba.value= data;
+    if(restp.ok) {listRowSelect.value = []
+    selectedRegisters.value = []}
 });
 
 const CloneRecord = handleSubmitNew(async (values) => {
     const data = {
         code: values.codeV,
-        name: values.name,
-        company_uuid: values.company ? values.company.id : '25b4319c-e93f-4411-936c-118060f5e7c9',
-        farm_uuid: values.farm ? values.farm.id : '8ef93a7b-31bf-4233-af80-481020e9cf97'
+        vehicle_type: values.vehicle_typeV,
+        quantity_available: values.quantity_availableV,
+        weight_packing_type: values.weight_packing_typeV,
+        company_uuid: values.company ? values.company.id : companyDefault,
+        farm_uuid: values.farm ? values.farm.id : farmDefault
     };
     const restp = await postRequest(endpoint.value, data);
     toast.add({ severity: restp.ok ? 'success' : 'error', summary: 'Clone', detail: restp.ok ? 'Clonado' : restp.error, life: 3000 });
     loadingData();
     formDialogClone.value = false;
+    prueba.value= data;
+    if(restp.ok) {listRowSelect.value = []
+    selectedRegisters.value = []}
 });
+
+const searchCompannies = (event) => {
+    setTimeout(() => {
+        if (!event.query.trim().length) {
+            compa.value = [...Compan.value];
+        } else {
+            compa.value = Compan.value.filter((fram) => {
+                return fram.name.toLowerCase().startsWith(event.query.toLowerCase());
+            });
+        }
+    }, 200);
+};
 
 const searchFarms = (event) => {
     setTimeout(() => {

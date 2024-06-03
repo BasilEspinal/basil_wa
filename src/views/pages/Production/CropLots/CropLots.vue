@@ -785,7 +785,11 @@ const EditRecord = handleSubmitNew(async (values) => {
     const { uuid } = listRowSelect.value[0];
     const data = {
         code: values.codeV,
-        
+        area_m2: values.area_m2V,
+        channel_average: values.channel_averageV,
+        zone: values.zoneV,
+        latitude: values.latitudeV,
+        longitude: values.longitudeV,
         company_uuid: values.company ? values.company.id : companyDefault,
         farm_uuid: values.farm ? values.farm.id : farmDefault,
     };
@@ -802,7 +806,11 @@ const EditRecord = handleSubmitNew(async (values) => {
 const CloneRecord = handleSubmitNew(async (values) => {
     const data = {
         code: values.codeV,
-        
+        area_m2: values.area_m2V,
+        channel_average: values.channel_averageV,
+        zone: values.zoneV,
+        latitude: values.latitudeV,
+        longitude: values.longitudeV,
         company_uuid: values.company ? values.company.id : companyDefault,
         farm_uuid: values.farm ? values.farm.id : farmDefault,
     };
