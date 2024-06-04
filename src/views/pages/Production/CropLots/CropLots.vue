@@ -556,7 +556,7 @@ const formDialogDelete = ref(false);
 const toast = useToast();
 const filename = ref('table');
 const isChanging = ref(false);
-let endpoint = ref('/lots');  //replace endpoint with your endpoint
+let endpoint = ref('/crop_lots');  //replace endpoint with your endpoint
 
 
 ////////////

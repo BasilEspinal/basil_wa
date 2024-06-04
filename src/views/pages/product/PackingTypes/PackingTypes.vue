@@ -43,6 +43,7 @@ const initFilters = () => {
         global: { value: null, matchMode: FilterMatchMode.CONTAINS },
         code: { operator: FilterOperator.AND, constraints: [{ value: null, matchMode: FilterMatchMode.STARTS_WITH }] },
         name: { operator: FilterOperator.AND, constraints: [{ value: null, matchMode: FilterMatchMode.STARTS_WITH }] },
+        'code_dispatch': { operator: FilterOperator.AND, constraints: [{ value: null, matchMode: FilterMatchMode.STARTS_WITH }] },
         'weight_tare': { operator: FilterOperator.AND, constraints: [{ value: null, matchMode: FilterMatchMode.STARTS_WITH }] },
         'status.name': { operator: FilterOperator.AND, constraints: [{ value: null, matchMode: FilterMatchMode.STARTS_WITH }] },
         'farm.name': { operator: FilterOperator.AND, constraints: [{ value: null, matchMode: FilterMatchMode.STARTS_WITH }] },
@@ -107,6 +108,7 @@ const {
             name: z.string().min(4),
             codigo: z.string().min(4),
             weight_tareV: z.number().min(1),
+            code_dispatchV: z.string().min(3).max(3),
             farm: z
                 .object({
                     name: z.string().min(4),
@@ -126,6 +128,7 @@ const {
 const [name, nameProps] = defineField('name');
 const [codigo, codigoProps] = defineField('codigo');
 const [weight_tareV] = defineField('weight_tareV');
+const [code_dispatchV,code_dispatchVProps] = defineField('code_dispatchV');
 const [farm] = defineField('farm');
 const [company] = defineField('company');
 
@@ -150,10 +153,11 @@ const openNew = () => {
 
 const openEdit = () => {
     resetForm();
-    const { company: empresa, code, farm: finca, name: nombre,weight_tare:weight_tare } = listRowSelect.value[0];
+    const { company: empresa, code, farm: finca, name: nombre,weight_tare:weight_tare,code_dispatch:code_dispatch } = listRowSelect.value[0];
 
     name.value = nombre;
     codigo.value = code;
+    code_dispatchV.value = code_dispatch;
     weight_tareV.value = Number(weight_tare);
     company.value = { id: empresa.uuid, name: empresa.name };
     farm.value = { id: finca.uuid, name: finca.name };
@@ -163,10 +167,11 @@ const openEdit = () => {
 
 const openClone = () => {
     resetForm();
-    const { company: empresa, code,farm: finca, name: nombre,weight_tare:weight_tare } = listRowSelect.value[0];
+    const { company: empresa, code,farm: finca, name: nombre,weight_tare:weight_tare,code_dispatch:code_dispatch } = listRowSelect.value[0];
 
     codigo.value = code;
     name.value = nombre;
+    code_dispatchV.value = code_dispatch;
     weight_tareV.value = Number(weight_tare);
     company.value = { id: empresa.uuid, name: empresa.name };
     
@@ -190,6 +195,7 @@ const create = handleSubmitNew(async (values) => {
         code: values.codigo,
         name: values.name,
         weight_tare: values.weight_tareV,
+        code_dispatch: values.code_dispatchV,
         company_uuid: values.company ? values.company.id : companyDefault,
         farm_uuid: values.farm ? values.farm.id : farmDefault
     };
@@ -207,6 +213,7 @@ const edit = handleSubmitNew(async (values) => {
         code: values.codigo,
         name: values.name,
         weight_tare: values.weight_tareV,
+        code_dispatch: values.code_dispatchV,
         company_uuid: values.company ? values.company.id : companyDefault,
         farm_uuid: values.farm ? values.farm.id : farmDefault,
     };
@@ -224,6 +231,7 @@ const clone = handleSubmitNew(async (values) => {
     const data = {
         code: values.codigo,
         name: values.name,
+        code_dispatch: values.code_dispatchV,
         weight_tare: values.weight_tareV,
         company_uuid: values.company ? values.company.id : companyDefault,
         farm_uuid: values.farm ? values.farm.id : farmDefault,
@@ -364,7 +372,7 @@ const remove = (aver) => {
             v-model:selection="listRowSelect"
             filterDisplay="menu"
             v-model:filters="filters"
-            :globalFilterFields="['name', 'company.name', 'farm.name', 'status.name', 'created_at', 'updated_at']"
+            :globalFilterFields="['name', 'company.name', 'farm.name', 'status.name', 'created_at', 'updated_at', 'code', 'code_dispatch', 'weight_tare']"
         >
         
             <template #header>
@@ -421,6 +429,16 @@ const remove = (aver) => {
                     <InputText v-model="filterModel.value" type="text" class="p-column-filter" placeholder="Search by " />
                 </template>
             </Column>
+
+            <Column field="code_dispatch" filterField="code_dispatch" header="Code Dispatch" sortable>
+                <template #body="{ data }">
+                    {{ data.code_dispatch }}
+                </template>
+                <template #filter="{ filterModel }">
+                    <InputText v-model="filterModel.value" type="text" class="p-column-filter" placeholder="Search by " />
+                </template>
+            </Column>
+            
 
             <!--Here add other columns-->
 
@@ -483,14 +501,25 @@ const remove = (aver) => {
             <div class="mb-3">
                     <div class=" flex align-items-center gap-3 mb-1">
                         <label for="weight_tareV" class="font-semibold w-3">Weight tare:</label>
-                        <InputNumber v-model="weight_tareV" class="flex-auto" inputId="minmax" :min="0" :max="100" />
+                        <InputNumber v-model="weight_tareV" class="flex-auto" inputId="minmaxfraction" :minFractionDigits="0" :maxFractionDigits="5" />
                     </div>
-                    
-                    
                     <small id="username-help" :class="{ 'p-invalid text-red-700': errorsNew['weight_tareV'] }">
                         {{ errorsNew.weight_tareV }}
                     </small>
                 </div>
+
+
+                <div class="mb-3">
+                <div class="flex align-items-center gap-3 mb-1">
+                    <label for="code_dispatch" class="font-semibold w-6rem">Code Dispatch :</label>
+                    <InputText id="code_dispatch" v-model="code_dispatchV"   class="flex-auto" autocomplete="off" v-bind="code_dispatchVProps" />
+                </div>
+                <small id="username-help" :class="{ 'p-invalid text-red-700': errorsNew['code_dispatchV'] }">
+                    {{ errorsNew.code_dispatchV }}
+                </small>
+            </div>
+
+
             <div class="mb-3">
                 <div class="flex align-items-center gap-3 mb-1">
                     <label for="username" class="font-semibold w-6rem">Code :</label>
@@ -544,6 +573,18 @@ const remove = (aver) => {
                     {{ errorsNew.codigo }}
                 </small>
             </div>
+
+            <div class="mb-3">
+                <div class="flex align-items-center gap-3 mb-1">
+                    <label for="code_dispatch" class="font-semibold w-6rem">Code Dispatch :</label>
+                    <InputText id="code_dispatch" v-model="code_dispatchV"   class="flex-auto" autocomplete="off" v-bind="code_dispatchVProps" />
+                </div>
+                <small id="username-help" :class="{ 'p-invalid text-red-700': errorsNew['code_dispatchV'] }">
+                    {{ errorsNew.code_dispatchV }}
+                </small>
+            </div>
+            
+
 
             <div class="mb-3">
                     <div class=" flex align-items-center gap-3 mb-1">
@@ -601,6 +642,17 @@ const remove = (aver) => {
                     {{ errorsNew.codigo }}
                 </small>
             </div>
+
+            <div class="mb-3">
+                <div class="flex align-items-center gap-3 mb-1">
+                    <label for="code_dispatch" class="font-semibold w-6rem">Code Dispatch :</label>
+                    <InputText id="code_dispatch" v-model="code_dispatchV"   class="flex-auto" autocomplete="off" v-bind="code_dispatchVProps" />
+                </div>
+                <small id="username-help" :class="{ 'p-invalid text-red-700': errorsNew['code_dispatchV'] }">
+                    {{ errorsNew.code_dispatchV }}
+                </small>
+            </div>
+
             <div class="mb-3">
                     <div class=" flex align-items-center gap-3 mb-1">
                         <label for="weight_tareV" class="font-semibold w-3">Weight tare:</label>
