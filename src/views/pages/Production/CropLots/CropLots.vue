@@ -52,7 +52,7 @@
         v-model:selection="selectedRegisters"
         filterDisplay="menu"
         v-model:filters="filters"
-        :globalFilterFields="['name', 'company.name', 'farm.name', 'status.name', 'created_at', 'updated_at']" 
+        :globalFilterFields="['company.name', 'farm.name', 'status.name', 'created_at', 'updated_at', 'code', 'area_m2', 'channel_average', 'zone', 'latitude', 'longitude']" 
         v-if = "ability.can('lote_listado')"
         >
         <template #header>
@@ -93,15 +93,55 @@
                 </template>
         </Column>
 
-        <Column field="name" filterField="name" header="Name" sortable> 
+        <Column field="area_m2" filterField="area_m2" header="Area (m2)" sortable> 
             
                 <template #body="{ data }">
-                    {{ data.name }} 
+                    {{ data.area_m2 }} 
                 </template>
                 <template #filter="{ filterModel }">
                     <InputText v-model="filterModel.value" type="text" class="p-column-filter" placeholder="Search by " />
                 </template>
         </Column>
+
+        <Column field="channel_average" filterField="channel_average" header="Channel Average" sortable> 
+            
+            <template #body="{ data }">
+                {{ data.channel_average }} 
+            </template>
+            <template #filter="{ filterModel }">
+                <InputText v-model="filterModel.value" type="text" class="p-column-filter" placeholder="Search by " />
+            </template>
+    </Column>
+
+    <Column field="zone" filterField="zone" header="Zone" sortable> 
+            
+            <template #body="{ data }">
+                {{ data.zone }} 
+            </template>
+            <template #filter="{ filterModel }">
+                <InputText v-model="filterModel.value" type="text" class="p-column-filter" placeholder="Search by " />
+            </template>
+    </Column>
+
+    <Column field="latitude" filterField="latitude" header="Latitude" sortable> 
+            
+            <template #body="{ data }">
+                {{ data.latitude }} 
+            </template>
+            <template #filter="{ filterModel }">
+                <InputText v-model="filterModel.value" type="text" class="p-column-filter" placeholder="Search by " />
+            </template>
+    </Column>
+
+    <Column field="longitude" filterField="longitude" header="Longitude" sortable> 
+            
+            <template #body="{ data }">
+                {{ data.longitude }} 
+            </template>
+            <template #filter="{ filterModel }">
+                <InputText v-model="filterModel.value" type="text" class="p-column-filter" placeholder="Search by " />
+            </template>
+    </Column>
 
         <!--Here add other columns-->
 
@@ -152,15 +192,8 @@
 
         </DataTable>
         <Dialog v-model:visible="formDialogNew" modal :header="formDialogNewTitle" class="p-fluid text-center mx-auto">
-                <div class="mb-3">
-                    <div class="flex align-items-center gap-3 mb-1">
-                        <label for="username" class="font-semibold w-6rem">Name :</label>
-                        <InputText id="username" v-model="name" class="flex-auto" autocomplete="off" v-bind="nameProps" />
-                    </div>
-                    <small id="username-help" :class="{ 'p-invalid text-red-700': errorsNew['name'] }">
-                        {{ errorsNew.name }}
-                    </small>
-                </div>
+            
+            
                 <div class="mb-3">
                     <div class="flex align-items-center gap-3 mb-1">
                         <label for="username" class="font-semibold w-6rem">Code :</label>
@@ -170,19 +203,74 @@
                         {{ errorsNew.codeV }}
                     </small>
                 </div>
+
                 <div class="mb-3">
-                    <div class="flex align-items-center">
+                    <div class="flex align-items-center gap-3 mb-1">
+                        <label for="area_m2V" class="font-semibold w-3">Area(m2):</label>
+                        <InputText id="area_m2V" v-model="area_m2V" class="flex-auto" autocomplete="off" v-bind="area_m2VProps" />
+                    </div>
+                    <small id="area_m2V-help" :class="{ 'p-invalid text-red-700': errorsNew['area_m2V'] }">
+                        {{ errorsNew.area_m2V }}
+                    </small>
+                </div>
+
+                <div class="mb-3">
+                    <div class="flex align-items-center gap-3 mb-1">
+                        <label for="channel_averageV" class="font-semibold">Channel avg:</label>
+                        <InputNumber id="channel_averageV" v-model="channel_averageV" class="flex-auto"  inputId="minmax" :min="0" :max="1000" />
+                        
+                    </div>
+                    <small id="username-help" :class="{ 'p-invalid text-red-700': errorsNew['channel_averageV'] }">
+                        {{ errorsNew.channel_averageV }}
+                    </small>
+                </div>
+
+                <div class="mb-3">
+                    <div class="flex align-items-center gap-3 mb-1">
+                        <label for="zoneV" class="font-semibold w-6rem">Zone :</label>
+                        <InputText id="zoneV" v-model="zoneV" class="flex-auto" autocomplete="off" v-bind="zonePropsV" />
+                    </div>
+                    <small id="username-help" :class="{ 'p-invalid text-red-700': errorsNew['zoneV'] }">
+                        {{ errorsNew.zoneV }}
+                    </small>
+                </div>
+
+                <div class="mb-3">
+                    <div class="flex align-items-center gap-3 mb-1">
+                        <label for="latitudeV" class="font-semibold">Latitude:</label>
+                        <InputText id="latitudeV" v-model="latitudeV" class="flex-auto" autocomplete="off" v-bind="latitudeVProps" />
+                        
+                    </div>
+                    <small id="username-help" :class="{ 'p-invalid text-red-700': errorsNew['latitudeV'] }">
+                        {{ errorsNew.latitudeV }}
+                    </small>
+                </div>
+
+                <div class="mb-3">
+                    <div class="flex align-items-center gap-3 mb-1">
+                        <label for="longitudeV" class="font-semibold">Longitude:</label>
+                        <InputText id="longitudeV" v-model="longitudeV" class="flex-auto" autocomplete="off" v-bind="longitudeVProps" />
+                        
+                    </div>
+                    <small id="username-help" :class="{ 'p-invalid text-red-700': errorsNew['longitudeV'] }">
+                        {{ errorsNew.longitudeV }}
+                    </small>
+                </div>
+
+
+                <div class="mb-3">
+                    <div class="flex align-items-center gap-3 mb-1">
                         <label for="username" class="font-semibold w-3">Farm :</label>
-                        <AutoComplete v-model="farm" inputId="ac" :suggestions="farms" @complete="searchFarms" field="name" dropdown />
+                        <AutoComplete v-model="farm" inputId="ac"  class="flex-auto" :suggestions="farms" @complete="searchFarms" field="name" dropdown />
                     </div>
                     <small id="username-help" :class="{ 'p-invalid text-red-700': errorsNew['farm'] }">
                         {{ errorsNew.farm }}
                     </small>
                 </div>
                 <div class="mb-3">
-                    <div class="flex align-items-center">
-                        <label for="username" class="font-semibold w-3">Companny:</label>
-                        <AutoComplete v-model="company" inputId="ac" :suggestions="compa" @complete="searchCompannies" field="name" dropdown />
+                    <div class="flex align-items-center gap-3 mb-1">
+                        <label for="username" class="font-semibold w-3">Company:</label>
+                        <AutoComplete v-model="company" inputId="ac"  class="flex-auto" :suggestions="compa" @complete="searchCompannies" field="name" dropdown />
                     </div>
                     <small id="username-help" :class="{ 'p-invalid text-red-700': errorsNew['company'] }">
                         {{ errorsNew.company }}
@@ -196,15 +284,7 @@
             </Dialog>
 
             <Dialog v-model:visible="formDialogEdit" modal :header="formDialogEditTitle" class="p-fluid text-center mx-auto">
-                <div class="mb-3">
-                    <div class="flex align-items-center gap-3 mb-1">
-                        <label for="username" class="font-semibold w-6rem">Name :</label>
-                        <InputText id="username" v-model="name" class="flex-auto" autocomplete="off" v-bind="nameProps" />
-                    </div>
-                    <small id="username-help" :class="{ 'p-invalid text-red-700': errorsNew['name'] }">
-                        {{ errorsNew.name }}
-                    </small>
-                </div>
+             
                 <div class="mb-3">
                     <div class="flex align-items-center gap-3 mb-1">
                         <label for="username" class="font-semibold w-6rem">Code :</label>
@@ -214,26 +294,79 @@
                         {{ errorsNew.codeV }}
                     </small>
                 </div>
+
                 <div class="mb-3">
-                <div class="flex align-items-center">
-                    <label for="username" class="font-semibold w-3">Farm :</label>
-                    <AutoComplete v-model="farm" inputId="ac" :suggestions="farms" @complete="searchFarms" field="name"
-                        dropdown />
+                    <div class="flex align-items-center gap-3 mb-1">
+                        <label for="area_m2V" class="font-semibold w-3">Area(m2):</label>
+                        <InputText id="area_m2V" v-model="area_m2V" class="flex-auto" autocomplete="off" v-bind="area_m2VProps" />
+                    </div>
+                    <small id="area_m2V-help" :class="{ 'p-invalid text-red-700': errorsNew['area_m2V'] }">
+                        {{ errorsNew.area_m2V }}
+                    </small>
                 </div>
-                <small id="username-help" :class="{ 'p-invalid text-red-700': errorsNew['farm'] }">
-                    {{ errorsNew.farm }}
-                </small>
-            </div>
-            <div class="mb-3">
-                <div class="flex align-items-center">
-                    <label for="username" class="font-semibold w-3">Companny:</label>
-                    <AutoComplete v-model="company" inputId="ac" :suggestions="compa" @complete="EditRecord"
-                        field="name" dropdown />
+
+                <div class="mb-3">
+                    <div class="flex align-items-center gap-3 mb-1">
+                        <label for="channel_averageV" class="font-semibold">Channel avg:</label>
+                        <InputNumber id="channel_averageV" v-model="channel_averageV" class="flex-auto"  inputId="minmax" :min="0" :max="1000" />
+                        
+                    </div>
+                    <small id="username-help" :class="{ 'p-invalid text-red-700': errorsNew['channel_averageV'] }">
+                        {{ errorsNew.channel_averageV }}
+                    </small>
                 </div>
-                <small id="username-help" :class="{ 'p-invalid text-red-700': errorsNew['company'] }">
-                    {{ errorsNew.company }}
-                </small>
-            </div>
+
+                <div class="mb-3">
+                    <div class="flex align-items-center gap-3 mb-1">
+                        <label for="zoneV" class="font-semibold w-6rem">Zone :</label>
+                        <InputText id="zoneV" v-model="zoneV" class="flex-auto" autocomplete="off" v-bind="zonePropsV" />
+                    </div>
+                    <small id="username-help" :class="{ 'p-invalid text-red-700': errorsNew['zoneV'] }">
+                        {{ errorsNew.zoneV }}
+                    </small>
+                </div>
+
+                <div class="mb-3">
+                    <div class="flex align-items-center gap-3 mb-1">
+                        <label for="latitudeV" class="font-semibold">Latitude:</label>
+                        <InputText id="latitudeV" v-model="latitudeV" class="flex-auto" autocomplete="off" v-bind="latitudeVProps" />
+                        
+                    </div>
+                    <small id="username-help" :class="{ 'p-invalid text-red-700': errorsNew['latitudeV'] }">
+                        {{ errorsNew.latitudeV }}
+                    </small>
+                </div>
+
+                <div class="mb-3">
+                    <div class="flex align-items-center gap-3 mb-1">
+                        <label for="longitudeV" class="font-semibold">Longitude:</label>
+                        <InputText id="longitudeV" v-model="longitudeV" class="flex-auto" autocomplete="off" v-bind="longitudeVProps" />
+                        
+                    </div>
+                    <small id="username-help" :class="{ 'p-invalid text-red-700': errorsNew['longitudeV'] }">
+                        {{ errorsNew.longitudeV }}
+                    </small>
+                </div>
+
+
+                <div class="mb-3">
+                    <div class="flex align-items-center gap-3 mb-1">
+                        <label for="username" class="font-semibold w-3">Farm :</label>
+                        <AutoComplete v-model="farm" inputId="ac"  class="flex-auto" :suggestions="farms" @complete="searchFarms" field="name" dropdown />
+                    </div>
+                    <small id="username-help" :class="{ 'p-invalid text-red-700': errorsNew['farm'] }">
+                        {{ errorsNew.farm }}
+                    </small>
+                </div>
+                <div class="mb-3">
+                    <div class="flex align-items-center gap-3 mb-1">
+                        <label for="username" class="font-semibold w-3">Company:</label>
+                        <AutoComplete v-model="company" inputId="ac"  class="flex-auto" :suggestions="compa" @complete="searchCompannies" field="name" dropdown />
+                    </div>
+                    <small id="username-help" :class="{ 'p-invalid text-red-700': errorsNew['company'] }">
+                        {{ errorsNew.company }}
+                    </small>
+                </div>
 
                 <div class="flex justify-content-end gap-2">
                     <Button type="button" label="Cancel" severity="secondary" @click="formDialogEdit = false" />
@@ -242,15 +375,7 @@
             </Dialog>
 
             <Dialog v-model:visible="formDialogClone" modal :header="formDialogCloneTitle" class="p-fluid text-center mx-auto">
-                <div class="mb-3">
-                    <div class="flex align-items-center gap-3 mb-1">
-                        <label for="username" class="font-semibold w-6rem">Name :</label>
-                        <InputText id="username" v-model="name" class="flex-auto" autocomplete="off" v-bind="nameProps" />
-                    </div>
-                    <small id="username-help" :class="{ 'p-invalid text-red-700': errorsNew['name'] }">
-                        {{ errorsNew.name }}
-                    </small>
-                </div>
+           
                 <div class="mb-3">
                     <div class="flex align-items-center gap-3 mb-1">
                         <label for="username" class="font-semibold w-6rem">Code :</label>
@@ -260,24 +385,79 @@
                         {{ errorsNew.codeV }}
                     </small>
                 </div>
+
                 <div class="mb-3">
-                    <div class="flex align-items-center">
+                    <div class="flex align-items-center gap-3 mb-1">
+                        <label for="area_m2V" class="font-semibold w-3">Area(m2):</label>
+                        <InputText id="area_m2V" v-model="area_m2V" class="flex-auto" autocomplete="off" v-bind="area_m2VProps" />
+                    </div>
+                    <small id="area_m2V-help" :class="{ 'p-invalid text-red-700': errorsNew['area_m2V'] }">
+                        {{ errorsNew.area_m2V }}
+                    </small>
+                </div>
+
+                <div class="mb-3">
+                    <div class="flex align-items-center gap-3 mb-1">
+                        <label for="channel_averageV" class="font-semibold">Channel avg:</label>
+                        <InputNumber id="channel_averageV" v-model="channel_averageV" class="flex-auto"  inputId="minmax" :min="0" :max="1000" />
+                        
+                    </div>
+                    <small id="username-help" :class="{ 'p-invalid text-red-700': errorsNew['channel_averageV'] }">
+                        {{ errorsNew.channel_averageV }}
+                    </small>
+                </div>
+
+                <div class="mb-3">
+                    <div class="flex align-items-center gap-3 mb-1">
+                        <label for="zoneV" class="font-semibold w-6rem">Zone :</label>
+                        <InputText id="zoneV" v-model="zoneV" class="flex-auto" autocomplete="off" v-bind="zonePropsV" />
+                    </div>
+                    <small id="username-help" :class="{ 'p-invalid text-red-700': errorsNew['zoneV'] }">
+                        {{ errorsNew.zoneV }}
+                    </small>
+                </div>
+
+                <div class="mb-3">
+                    <div class="flex align-items-center gap-3 mb-1">
+                        <label for="latitudeV" class="font-semibold">Latitude:</label>
+                        <InputText id="latitudeV" v-model="latitudeV" class="flex-auto" autocomplete="off" v-bind="latitudeVProps" />
+                        
+                    </div>
+                    <small id="username-help" :class="{ 'p-invalid text-red-700': errorsNew['latitudeV'] }">
+                        {{ errorsNew.latitudeV }}
+                    </small>
+                </div>
+
+                <div class="mb-3">
+                    <div class="flex align-items-center gap-3 mb-1">
+                        <label for="longitudeV" class="font-semibold">Longitude:</label>
+                        <InputText id="longitudeV" v-model="longitudeV" class="flex-auto" autocomplete="off" v-bind="longitudeVProps" />
+                        
+                    </div>
+                    <small id="username-help" :class="{ 'p-invalid text-red-700': errorsNew['longitudeV'] }">
+                        {{ errorsNew.longitudeV }}
+                    </small>
+                </div>
+
+
+                <div class="mb-3">
+                    <div class="flex align-items-center gap-3 mb-1">
                         <label for="username" class="font-semibold w-3">Farm :</label>
-                        <AutoComplete v-model="farm" inputId="ac" :suggestions="farms" @complete="searchFarms" field="name" dropdown />
+                        <AutoComplete v-model="farm" inputId="ac"  class="flex-auto" :suggestions="farms" @complete="searchFarms" field="name" dropdown />
                     </div>
                     <small id="username-help" :class="{ 'p-invalid text-red-700': errorsNew['farm'] }">
                         {{ errorsNew.farm }}
                     </small>
                 </div>
                 <div class="mb-3">
-                    <div class="flex align-items-center">
-                        <label for="username" class="font-semibold w-3">Companny:</label>
-                        <AutoComplete v-model="company" inputId="ac" :suggestions="compa" @complete="searchCompannies" field="name" dropdown />
+                    <div class="flex align-items-center gap-3 mb-1">
+                        <label for="username" class="font-semibold w-3">Company:</label>
+                        <AutoComplete v-model="company" inputId="ac"  class="flex-auto" :suggestions="compa" @complete="searchCompannies" field="name" dropdown />
                     </div>
                     <small id="username-help" :class="{ 'p-invalid text-red-700': errorsNew['company'] }">
                         {{ errorsNew.company }}
                     </small>
-                </div>
+                </div>      
 
                 <div class="flex justify-content-end gap-2">
                     <Button type="button" label="Cancel" severity="secondary" @click="formDialogClone = false" />
@@ -352,20 +532,23 @@ import { saveAs } from 'file-saver';
 import { z } from 'zod';
 import ability from '@/service/ability.js';
 import { AbilityBuilder} from '@casl/ability';
-const namePage = ' Información de lotes para Cultivo ';
-const titlePage = namePage+'information';
+const prueba = ref({revisar: 'revisar GET-POST-PUT-DELETE'});
+const namePage = 'Lotes para Cultivo ';
+const titlePage = ' '+namePage+' Information';
 const dataFromComponent = ref();
 const Farms = ref([]);
 const farms = ref([]);
 const Compan = ref([]);
 const compa = ref([]);
+const farmDefault = sessionStorage.getItem('accessSessionFarm');
+const companyDefault = sessionStorage.getItem('accessSessionCompany');
 
+const formDialogNewTitle = 'Create new '+namePage;
+const formDialogEditTitle = 'Edit '+namePage;
+const formDialogCloneTitle = 'Clone ' + namePage;
+const formDialogExportTitle = 'Export ' + namePage;
+const formDialogDeleteTitle = 'Delete '+namePage;
 const formDialogNew = ref(false);
-const formDialogNewTitle = 'Create new'+namePage;
-const formDialogEditTitle = 'Edit'+namePage;
-const formDialogCloneTitle = 'Clone' + namePage;
-const formDialogExportTitle = 'Export' + namePage;
-const formDialogDeleteTitle = 'Delete'+namePage;
 const formDialogEdit = ref(false);
 const formDialogClone = ref(false);
 const formDialogExport = ref(false);
@@ -373,7 +556,7 @@ const formDialogDelete = ref(false);
 const toast = useToast();
 const filename = ref('table');
 const isChanging = ref(false);
-let endpoint = ref('/lots');  //replace endpoint with your endpoint
+let endpoint = ref('/crop_lots');  //replace endpoint with your endpoint
 
 
 ////////////
@@ -415,7 +598,11 @@ const initFilters = () => {
     filters.value = {
         global: { value: null, matchMode: FilterMatchMode.CONTAINS },
         code: { operator: FilterOperator.AND, constraints: [{ value: null, matchMode: FilterMatchMode.STARTS_WITH }] },
-        name: { operator: FilterOperator.AND, constraints: [{ value: null, matchMode: FilterMatchMode.STARTS_WITH }] },
+        area_m2: { operator: FilterOperator.AND, constraints: [{ value: null, matchMode: FilterMatchMode.STARTS_WITH }] },
+        channel_average: { operator: FilterOperator.AND, constraints: [{ value: null, matchMode: FilterMatchMode.STARTS_WITH }] },
+        zone: { operator: FilterOperator.AND, constraints: [{ value: null, matchMode: FilterMatchMode.STARTS_WITH }] },
+        latitude: { operator: FilterOperator.AND, constraints: [{ value: null, matchMode: FilterMatchMode.STARTS_WITH }] },
+        longitude: { operator: FilterOperator.AND, constraints: [{ value: null, matchMode: FilterMatchMode.STARTS_WITH }] },
         'status.name': { operator: FilterOperator.AND, constraints: [{ value: null, matchMode: FilterMatchMode.STARTS_WITH }] },
         'farm.name': { operator: FilterOperator.AND, constraints: [{ value: null, matchMode: FilterMatchMode.STARTS_WITH }] },
         'company.name': { operator: FilterOperator.AND, constraints: [{ value: null, matchMode: FilterMatchMode.STARTS_WITH }] },
@@ -460,8 +647,13 @@ const {
 } = useForm({
     validationSchema: toTypedSchema(
         z.object({
-            name: z.string().min(4),
-            codeV: z.string().min(4),
+            
+            codeV: z.string().min(2),
+            area_m2V: z.string().min(1),
+            channel_averageV: z.number().min(1).max(100),
+            zoneV: z.string().min(2),
+            latitudeV: z.string().optional(),
+            longitudeV: z.string().optional(),
             farm: z
                 .object({
                     name: z.string().min(4),
@@ -477,8 +669,13 @@ const {
         })
     )
 });
-const [name, nameProps] = defineField('name');
+
 const [codeV, codeVProps] = defineField('codeV');
+const [area_m2V, area_m2VProps] = defineField('area_m2V');
+const [channel_averageV, channel_averageVProps] = defineField('channel_averageV');
+const [zoneV, zonePropsV] = defineField('zoneV');
+const [latitudeV, latitudeVProps] = defineField('latitudeV');
+const [longitudeV, longitudeVProps] = defineField('longitudeV');
 const [farm] = defineField('farm');
 const [company] = defineField('company');
 
@@ -494,31 +691,9 @@ let headerNames = ref([]);
 provide('isChanging', isChanging);
 watch(listRowSelect, RowSelect);
 
-const createRecord = handleSubmitNew(async (values) => {
-    const data = {
-        code: values.codeV,
-        name: values.name,
-        company_uuid: values.company ? values.company.id : '25b4319c-e93f-4411-936c-118060f5e7c9',
-        farm_uuid: values.farm ? values.farm.id : '8ef93a7b-31bf-4233-af80-481020e9cf97'
-    };
-    const restp = await postRequest(endpoint.value, data);
 
-    toast.add({ severity: restp.ok ? 'success' : 'error', summary: 'Create', detail: restp.ok ? 'Creado' : restp.error, life: 3000 });
-    loadingData();
-    formDialogNew.value = false;
-});
 
-const searchCompannies = (event) => {
-    setTimeout(() => {
-        if (!event.query.trim().length) {
-            compa.value = [...Compan.value];
-        } else {
-            compa.value = Compan.value.filter((fram) => {
-                return fram.name.toLowerCase().startsWith(event.query.toLowerCase());
-            });
-        }
-    }, 200);
-};
+
 const openNew = () => {
     resetForm();
     formDialogNew.value = true;
@@ -527,10 +702,25 @@ const openNew = () => {
 
 const openEdit = () => {
     resetForm();
-    const { code, company: empresa, farm: farmParameter, name: nombre } = listRowSelect.value[0];
+    const { 
+        code, 
+        area_m2: area_m2,
+        channel_average: channel_average,
+        zone: zone,
+        latitude: latitude,
+        longitude: longitude,
+        company: empresa, 
+        farm: farmParameter, 
+        
+    
+    } = listRowSelect.value[0];
 
-    name.value = nombre;
+    
     codeV.value = code;
+    area_m2V.value = area_m2;
+    channel_averageV.value = channel_average;
+    zoneV.value = zone;
+    latitudeV.value = latitude;
     company.value = { id: empresa.uuid, name: empresa.name };
     farm.value = { id: farmParameter.uuid, name: farmParameter.name };
 
@@ -539,9 +729,25 @@ const openEdit = () => {
 
 const openClone = () => {
     resetForm();
-    const { company: empresa, farm: farmParameter, name: nombre } = listRowSelect.value[0];
+    const { 
+        code, 
+        area_m2: area_m2,
+        channel_average: channel_average,
+        zone: zone,
+        latitude: latitude,
+        longitude: longitude,
+        company: empresa, 
+        farm: farmParameter, 
+        
+    
+    } = listRowSelect.value[0];
 
-    name.value = nombre;
+    
+    codeV.value = code;
+    area_m2V.value = area_m2;
+    channel_averageV.value = channel_average;
+    zoneV.value = zone;
+    latitudeV.value = latitude;
     company.value = { id: empresa.uuid, name: empresa.name };
     farm.value = { id: farmParameter.uuid, name: farmParameter.name };
     formDialogClone.value = true;
@@ -556,33 +762,86 @@ const openDelete = () => {
     formDialogDelete.value = true;
 };
 
+const createRecord = handleSubmitNew(async (values) => {
+    const data = {
+        code: values.codeV,
+        area_m2: values.area_m2V,
+        channel_average: values.channel_averageV,
+        zone: values.zoneV,
+        latitude: values.latitudeV,
+        longitude: values.longitudeV,
+        company_uuid: values.company ? values.company.id : companyDefault,
+        farm_uuid: values.farm ? values.farm.id : farmDefault,
+    };
+    const restp = await postRequest(endpoint.value, data);
+
+    toast.add({ severity: restp.ok ? 'success' : 'error', summary: 'Create', detail: restp.ok ? 'Creado' : restp.error, life: 3000 });
+    loadingData();
+    formDialogNew.value = false;
+    prueba.value= data;
+});
+
 const EditRecord = handleSubmitNew(async (values) => {
     const { uuid } = listRowSelect.value[0];
     const data = {
         code: values.codeV,
-        name: values.name,
-        company_uuid: values.company ? values.company.id : '25b4319c-e93f-4411-936c-118060f5e7c9',
-        farm_uuid: values.farm ? values.farm.id : values.farm
+        area_m2: values.area_m2V,
+        channel_average: values.channel_averageV,
+        zone: values.zoneV,
+        latitude: values.latitudeV,
+        longitude: values.longitudeV,
+        company_uuid: values.company ? values.company.id : companyDefault,
+        farm_uuid: values.farm ? values.farm.id : farmDefault,
     };
     
     const restp = await putRequest(endpoint.value, data, uuid);
     toast.add({ severity: restp.ok ? 'success' : 'error', summary: 'Edit', detail: restp.ok ? 'Editado' : restp.error, life: 3000 });
     loadingData();
     formDialogEdit.value = false;
+    prueba.value= data;
+    if(restp.ok) {listRowSelect.value = []
+    selectedRegisters.value = []}
 });
 
 const CloneRecord = handleSubmitNew(async (values) => {
     const data = {
         code: values.codeV,
-        name: values.name,
-        company_uuid: values.company ? values.company.id : '25b4319c-e93f-4411-936c-118060f5e7c9',
-        farm_uuid: values.farm ? values.farm.id : '8ef93a7b-31bf-4233-af80-481020e9cf97'
+        area_m2: values.area_m2V,
+        channel_average: values.channel_averageV,
+        zone: values.zoneV,
+        latitude: values.latitudeV,
+        longitude: values.longitudeV,
+        company_uuid: values.company ? values.company.id : companyDefault,
+        farm_uuid: values.farm ? values.farm.id : farmDefault,
     };
     const restp = await postRequest(endpoint.value, data);
     toast.add({ severity: restp.ok ? 'success' : 'error', summary: 'Clone', detail: restp.ok ? 'Clonado' : restp.error, life: 3000 });
     loadingData();
     formDialogClone.value = false;
+    prueba.value= data;
+    if(restp.ok) {listRowSelect.value = []
+    selectedRegisters.value = []}
 });
+
+const ExportRecord = () => {
+    const eventos = exportAll.value.name == 'ALL' ? dataFromComponent.value.map((data) => data) : listRowSelect.value.map((data) => data);
+    formDialogExport.value = false;
+    if (!eventos.length) return;
+    if (format.value.name == 'CSV') formatCSV(eventos);
+    else formatXLS(eventos);
+};
+
+const searchCompannies = (event) => {
+    setTimeout(() => {
+        if (!event.query.trim().length) {
+            compa.value = [...Compan.value];
+        } else {
+            compa.value = Compan.value.filter((fram) => {
+                return fram.name.toLowerCase().startsWith(event.query.toLowerCase());
+            });
+        }
+    }, 200);
+};
 
 const searchFarms = (event) => {
     setTimeout(() => {
@@ -596,13 +855,7 @@ const searchFarms = (event) => {
     }, 200);
 };
 
-const ExportRecord = () => {
-    const eventos = exportAll.value.name == 'ALL' ? dataFromComponent.value.map((data) => data) : listRowSelect.value.map((data) => data);
-    formDialogExport.value = false;
-    if (!eventos.length) return;
-    if (format.value.name == 'CSV') formatCSV(eventos);
-    else formatXLS(eventos);
-};
+
 
 function formatCSV(eventos) {
     const dataExport = [];

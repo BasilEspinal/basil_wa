@@ -113,7 +113,7 @@ const initFilters = () => {
     };
 };
 const documentFrozen = ref(false);
-
+// const tablename=ref($t("toolbarCrud.titleCrud") )
 
 const readAll = async () => {
     loadingData();
@@ -333,21 +333,22 @@ const remove = (aver) => {
 <template>
     <div>
         <div class="card">
-            <h1>Información de productos</h1>
+            <!-- <h1></h1> -->
+            <h1> {{ $t("toolbarCrud.titleCrud") }}</h1>
         </div>
 
         <div class="card">
             <Toolbar>
                 <template #center>
-                    <Button v-if="ability.can('producto_crear')" :disabled="headerNames.length > 0" label="New" icon="pi pi-plus" class="p-button-success mb-2 mt-2" @click="openNew" size="large" />
+                    <Button v-if="ability.can('producto_crear')" :disabled="headerNames.length > 0" :label="$t('toolbarCrud.titleCreate')" icon="pi pi-plus" class="p-button-success mb-2 mt-2" @click="openNew" size="large" />
                     <Divider v-if="ability.can('producto_crear')" layout="vertical" />
-                    <Button v-if="ability.can('producto_editar')" :disabled="!(listRowSelect.length > 0 && listRowSelect.length < 2)" label="Edit" icon="pi pi-file-edit" class="p-button-help mb-2 mt-2" @click="openEdit" size="large" />
+                    <Button v-if="ability.can('producto_editar')" :disabled="!(listRowSelect.length > 0 && listRowSelect.length < 2)" :label="$t('toolbarCrud.titleEdit')" icon="pi pi-file-edit" class="p-button-help mb-2 mt-2" @click="openEdit" size="large" />
                     <Divider v-if="ability.can('producto_editar')" layout="vertical" />
-                    <Button :disabled="!(listRowSelect.length > 0 && listRowSelect.length < 2)" label="Clone" icon="pi pi-copy" class="p-button-secondary mb-2 mt-2" @click="openClone" size="large" />
+                    <Button :disabled="!(listRowSelect.length > 0 && listRowSelect.length < 2)" :label="$t('toolbarCrud.titleClone')"  icon="pi pi-copy" class="p-button-secondary mb-2 mt-2" @click="openClone" size="large" />
                     <Divider layout="vertical" />
-                    <Button :disabled="headerNames.length > 0" label="Export" icon="pi pi-file-import" class="p-button-warning mb-2 mt-2" @click="openExport" size="large" />
+                    <Button :disabled="headerNames.length > 0" :label="$t('toolbarCrud.titleExport')" icon="pi pi-file-import" class="p-button-warning mb-2 mt-2" @click="openExport" size="large" />
                     <Divider layout="vertical" />
-                    <Button v-if="ability.can('producto_eliminar')" :disabled="!listRowSelect.length > 0" label="Delete" icon="pi pi-trash" class="p-button-danger mb-2 mt-2" @click="openDelete" size="large" />
+                    <Button v-if="ability.can('producto_eliminar')" :disabled="!listRowSelect.length > 0" :label="$t('toolbarCrud.titleDelete')" icon="pi pi-trash" class="p-button-danger mb-2 mt-2" @click="openDelete" size="large" />
                 </template>
             </Toolbar>
 
@@ -394,10 +395,10 @@ const remove = (aver) => {
                     </Toolbar>
                 </template>
 
-                <template #empty> No customers found. </template>
+                <template #empty> {{ $t("product.products",{count:10}) }} </template>
                 <template #loading> Loading customers data. Please wait. </template>
                 <Column selectionMode="multiple" headerStyle="width: 3rem"></Column>
-                <Column field="name" filterField="name" header="Name" sortable :frozen="documentFrozen">
+                <Column field="name" filterField="name" :header="$t('product.appTable.name')" sortable :frozen="documentFrozen">
                     <!--Replace :frozen with the model-->
                     <template #header>
                         <ToggleButton v-model="documentFrozen" onIcon="pi pi-lock" offIcon="pi pi-lock-open" onLabel="" offLabel="" />
@@ -412,7 +413,7 @@ const remove = (aver) => {
                     </template>
                 </Column>
 
-                <Column field="short_name" filterField="short_name" header="Short name" sortable>
+                <Column field="short_name" filterField="short_name" :header="$t('product.appTable.shortname')" sortable>
                     <template #body="{ data }">
                         {{ data.short_name }}
                     </template>
@@ -449,7 +450,7 @@ const remove = (aver) => {
                     </template>
                 </Column>
 
-                <Column field="companyName" filterField="company.name" header="Company Name" sortable>
+                <Column field="companyName" filterField="company.name" :header="$t('company.name')" sortable>
                     <template #body="{ data }">
                         {{ data.company.name }}
                     </template>

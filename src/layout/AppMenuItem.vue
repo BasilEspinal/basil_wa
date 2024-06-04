@@ -4,8 +4,10 @@ import { useRoute } from 'vue-router';
 import { useLayout } from '@/layout/composables/layout';
 import ability from '@/service/ability.js';
 import useDataAPI from '@/composables/DataAPI/FetchDataAPI.js';
-const { getAllResponseAPI, getAllResponsePermissionsAPI, getAllResponseListAPI, totalRecordsResponseAPI, currentPageResponseAPI, linksResponseAPI, postResponseAPI, putResponseAPI, deleteResponseAPI, errorResponseAPI, dataResponseAPI, dataResponseListAPI, statusCode } =
-    useDataAPI();
+const { getAllResponseAPI, getAllResponsePermissionsAPI, getAllResponseListAPI,
+    totalRecordsResponseAPI, currentPageResponseAPI, linksResponseAPI,
+    postResponseAPI, putResponseAPI, deleteResponseAPI, errorResponseAPI,
+    dataResponseAPI, dataResponseListAPI, statusCode } =    useDataAPI();
 const route = useRoute();
 
 const { layoutConfig, layoutState, setActiveMenuItem, onMenuToggle } = useLayout();

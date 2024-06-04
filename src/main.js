@@ -112,8 +112,25 @@ import SidebarItemSubGroup from './layout/SidebarPlugin/ItemSubGroup.vue';
 
 import { abilitiesPlugin } from '@casl/vue';
 import ability from '@/service/ability.js';
+import { createI18n } from 'vue-i18n'
+import { messages } from '@/locales/lang.js'
+
+const userLocale = navigator.language || navigator.userLanguage;
+const defaultLocale = userLocale.startsWith('es') ? 'es' : 'en';
+localStorage.setItem('locale', defaultLocale);
+const savedLocale = localStorage.getItem('locale');
+
+
+const i18n = createI18n({
+    
+    legacy: false, // disable legacy mode because of vue 3
+    locale: savedLocale,
+    fallbackLocale: 'en',
+    messages
+})
 
 const app = createApp(App);
+
 app.use(abilitiesPlugin, ability, { useGlobalProperties: true });
 app.provide('ability', ability);
 app.use(router);
@@ -121,6 +138,11 @@ app.use(PrimeVue, { ripple: true });
 app.use(ToastService);
 app.use(DialogService);
 app.use(ConfirmationService);
+app.use(i18n);
+
+
+
+
 app.component('SideBar', SideBar);
 app.component('SidebarLayout', SidebarLayout);
 app.component('SidebarLink', SidebarLink);

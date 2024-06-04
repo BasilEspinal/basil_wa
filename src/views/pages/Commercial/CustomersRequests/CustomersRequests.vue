@@ -196,10 +196,14 @@
             
             
             
+<!-- <pre>{{ prueba }}</pre> -->
+
+<div class="grid">
 
 
 
-                <div class="mb-3">
+
+                <div class="mb-3 col-12 md:col-6 lg:col-3">
                     <div class="flex align-items-center gap-3 mb-1">
                         <label for="username" class="font-semibold w-6rem">Dispatch Num Lot</label>
                         <InputText id="username" v-model="dispatch_number_lotV" class="flex-auto" autocomplete="off" v-bind="dispatch_number_lotVProps" :frozen="documentFrozen"/>
@@ -209,7 +213,7 @@
                     </small>
                 </div>
 
-                <div class="mb-3">
+                <div class="mb-3 col-12 md:col-6 lg:col-3">
                     <div class="flex align-items-center gap-3 mb-1">
                         <label for="order_number_customer" class="font-semibold w-6rem">Order Number Customer</label>
                         <InputText id="username" v-model="order_number_customerV" class="flex-auto" autocomplete="off" v-bind="order_number_customerVProps" />
@@ -219,10 +223,10 @@
                     </small>
                 </div>
 
-                <div class="mb-3">
+                <div class="mb-3 col-12 md:col-6 lg:col-3">
                     <div class="flex align-items-center gap-3 mb-1">
                         <label for="order_number_customer" class="font-semibold w-6rem">Invoice Number Customer</label>
-                        <InputText id="username" v-model="invoice_number_customerV" class="flex-auto" autocomplete="off" v-bind="invoice_number_customerVProps" />
+                        <InputText id="order_number_customer" v-model="invoice_number_customerV" class="flex-auto" autocomplete="off" v-bind="invoice_number_customerVProps" />
                         
                     </div>
                     <small id="username-help" :class="{ 'p-invalid text-red-700': errorsNew['invoice_number_customerV'] }">
@@ -230,7 +234,7 @@
                     </small>
                 </div>
 
-                <div class="mb-3">
+                <div class="mb-3 col-12 md:col-6 lg:col-3">
                     <div class="flex align-items-center">
                         <label for="request_date" class="font-semibold w-6rem">Request Date</label>
                         <!-- <Calendar v-model="transaction_dateV" class="flex-auto" v-bind="transaction_dateVProps"/> -->
@@ -243,7 +247,7 @@
                     </small>
                 </div>
 
-                <div class="mb-3">
+                <div class="mb-3 col-12 md:col-6 lg:col-3">
                     <div class="flex align-items-center">
                         <label for="request_date" class="font-semibold w-6rem">Delivery Datetime :</label>
                         <Calendar id="calendar-24h" v-model="delivery_datetimeV" showTime hourFormat="24" class="flex-auto" showIcon  inputId="buttondisplay"  />
@@ -255,11 +259,45 @@
                     
                 </div>
 
+                <div class="mb-3 col-12 md:col-6 lg:col-3">
+                    <div class="flex align-items-center gap-3 mb-1">
+                        <label for="outlet_temperatureV" class="font-semibold w-6rem">Outlet temperature:</label>
+                        <!-- <InputNumber id="outlet_temperatureV" v-model="outlet_temperatureV" class="flex-auto"  inputId="minmax" :min="0" :max="1000" />
+                         -->
+                         <InputNumber v-model="outlet_temperatureV" inputId="temperature" class="flex-auto" prefix="&uarr; " suffix="℃" :min="0" :max="40" />
+                        
+                    </div>
+                    <small id="username-help" :class="{ 'p-invalid text-red-700': errorsNew['outlet_temperatureV'] }">
+                        {{ errorsNew.outlet_temperatureV }}
+                    </small>
+                </div>
+
+                <div class="mb-3 col-12 md:col-6 lg:col-3">
+                    <div class="flex align-items-center gap-3 mb-1">
+                        <label for="request_qty_V" class="font-semibold w-6rem">Request qty:</label>
+                        <InputNumber id="request_qty_V" v-model="request_qty_V" class="flex-auto"  inputId="minmax" :min="0" :max="1000" />
+                    </div>
+                    <small id="username-help" :class="{ 'p-invalid text-red-700': errorsNew['request_qty_V'] }">
+                        {{ errorsNew.request_qty_V }}
+                    </small>
+                </div>
+
+                <div class="mb-3 col-12 md:col-6 lg:col-3">
+                    <div class="flex align-items-center gap-3 mb-1">
+                        <label for="place_of_deliveryV" class="font-semibold w-6rem">Place of Delivery</label>
+                        <InputText id="place_of_deliveryV" v-model="place_of_deliveryV" class="flex-auto" autocomplete="off" v-bind="place_of_deliveryVProps" />
+                        
+                    </div>
+                    <small id="username-help" :class="{ 'p-invalid text-red-700': errorsNew['place_of_deliveryV'] }">
+                        {{ errorsNew.place_of_deliveryV }}
+                    </small>
+                </div>
+
                 <!-- <InputText type="text" v-model="value" /> -->
 
 
                 
-                <div class="mb-3">
+                <div class="mb-3 col-12 md:col-6 lg:col-3">
                     <div class="flex align-items-center">
                         <label for="username" class="font-semibold w-6rem">Farm :</label>
                         <AutoComplete v-model="farm" class="flex-auto" inputId="ac" :suggestions="farms" @complete="searchFarms" field="name" dropdown />
@@ -268,7 +306,8 @@
                         {{ errorsNew.farm }}
                     </small>
                 </div>
-                <div class="mb-3">
+
+                <div class="mb-3 col-12 md:col-6 lg:col-3">
                     <div class="flex align-items-center">
                         <label for="username" class="font-semibold w-6rem">Company:</label>
                         <AutoComplete v-model="company" class="flex-auto" inputId="ac" :suggestions="compa" @complete="searchCompannies" field="name" dropdown />
@@ -278,6 +317,10 @@
                     </small>
                 </div>
 
+
+
+
+            </div>
                 <div class="flex justify-content-end gap-2">
                     <Button type="button" label="Cancel" severity="secondary" @click="formDialogNew = false" />
                     <Button type="button" label="Save" @click="createRecord()" />
@@ -315,7 +358,7 @@
             </div>
             <div class="mb-3">
                 <div class="flex align-items-center">
-                    <label for="username" class="font-semibold w-3">Companny:</label>
+                    <label for="username" class="font-semibold w-3">Company:</label>
                     <AutoComplete v-model="company" inputId="ac" :suggestions="compa" @complete="EditRecord"
                         field="name" dropdown />
                 </div>
@@ -360,7 +403,7 @@
                 </div>
                 <div class="mb-3">
                     <div class="flex align-items-center">
-                        <label for="username" class="font-semibold w-3">Companny:</label>
+                        <label for="username" class="font-semibold w-3">Company:</label>
                         <AutoComplete v-model="company" inputId="ac" :suggestions="compa" @complete="searchCompannies" field="name" dropdown />
                     </div>
                     <small id="username-help" :class="{ 'p-invalid text-red-700': errorsNew['company'] }">
@@ -441,8 +484,9 @@ import { saveAs } from 'file-saver';
 import { z } from 'zod';
 import ability from '@/service/ability.js';
 import { AbilityBuilder} from '@casl/ability';
+const prueba = ref({revisar: 'revisar GET-POST-PUT-DELETE'});
 const namePage = ' Customer Requests ';
-const titlePage = namePage+'information';
+const titlePage = ' '+namePage+' Information';
 const dataFromComponent = ref();
 const packing_type = ref([]);
 const Packing_type = ref([]);
@@ -456,6 +500,8 @@ const Farms = ref([]);
 const farms = ref([]);
 const Compan = ref([]);
 const compa = ref([]);
+const farmDefault = sessionStorage.getItem('accessSessionFarm');
+const companyDefault = sessionStorage.getItem('accessSessionCompany');
 
 
 
@@ -562,6 +608,9 @@ const {
     defineField,
     resetForm
 } = useForm({
+    initialValues:{
+        outlet_temperatureV: 0
+    },
     validationSchema: toTypedSchema(
         z.object({
             name: z.string().min(4),
@@ -576,7 +625,11 @@ const {
                 name: z.string().min(4),
                 id: z.string().min(4)
             }),
-            productV: z.object({
+            product_idV: z.object({
+                name: z.string().min(4),
+                id: z.string().min(4)
+            }),
+            product__type_idV: z.object({
                 name: z.string().min(4),
                 id: z.string().min(4)
             }),
@@ -620,7 +673,8 @@ const [request_dateV, request_dateVProps] = defineField('request_dateV');
 const [delivery_datetimeV, delivery_datetimeVProps] = defineField('delivery_datetimeV');
 const [place_of_deliveryV, place_of_deliveryVProps] = defineField('place_of_deliveryV');
 const [packing_typeV, packing_typeVProps] = defineField('packing_typeV');
-const [productV, productVProps] = defineField('productV');
+const [product_idV, product_idVProps] = defineField('product_idV');
+const [product__type_idV, product__type_idVProps] = defineField('product__type_idV');
 const [products_variantsV, products_variantsVProps] = defineField('products_variantsV');
 const [packaging_presentation_qty_V, packaging_presentation_qty_VProps] = defineField('packaging_presentation_qty_V');
 const [packaging_presentation_presentationType_V, packaging_presentation_presentationType_VProps] = defineField('packaging_presentation_presentationType_V');
@@ -645,31 +699,7 @@ let headerNames = ref([]);
 provide('isChanging', isChanging);
 watch(listRowSelect, RowSelect);
 
-const createRecord = handleSubmitNew(async (values) => {
-    const data = {
-        dispatch_number_lot: values.dispatch_number_lotV,
-        name: values.name,
-        company_uuid: values.company ? values.company.id : '25b4319c-e93f-4411-936c-118060f5e7c9',
-        farm_uuid: values.farm ? values.farm.id : '8ef93a7b-31bf-4233-af80-481020e9cf97'
-    };
-    const restp = await postRequest(endpoint.value, data);
 
-    toast.add({ severity: restp.ok ? 'success' : 'error', summary: 'Create', detail: restp.ok ? 'Creado' : restp.error, life: 3000 });
-    loadingData();
-    formDialogNew.value = false;
-});
-
-const searchCompannies = (event) => {
-    setTimeout(() => {
-        if (!event.query.trim().length) {
-            compa.value = [...Compan.value];
-        } else {
-            compa.value = Compan.value.filter((fram) => {
-                return fram.name.toLowerCase().startsWith(event.query.toLowerCase());
-            });
-        }
-    }, 200);
-};
 const openNew = () => {
     resetForm();
     formDialogNew.value = true;
@@ -707,33 +737,68 @@ const openDelete = () => {
     formDialogDelete.value = true;
 };
 
+const createRecord = handleSubmitNew(async (values) => {
+    const data = {
+        dispatch_number_lot: values.dispatch_number_lotV,
+        name: values.name,
+        company_uuid: values.company ? values.company.id : companyDefault,
+        farm_uuid: values.farm ? values.farm.id : farmDefault,
+    };
+    const restp = await postRequest(endpoint.value, data);
+
+    toast.add({ severity: restp.ok ? 'success' : 'error', summary: 'Create', detail: restp.ok ? 'Creado' : restp.error, life: 3000 });
+    loadingData();
+    formDialogNew.value = false;
+    prueba.value= data;
+    
+});
+
+
 const EditRecord = handleSubmitNew(async (values) => {
     const { uuid } = listRowSelect.value[0];
     const data = {
         dispatch_number_lot: values.dispatch_number_lotV,
         name: values.name,
-        company_uuid: values.company ? values.company.id : '25b4319c-e93f-4411-936c-118060f5e7c9',
-        farm_uuid: values.farm ? values.farm.id : values.farm
+        company_uuid: values.company ? values.company.id : companyDefault,
+        farm_uuid: values.farm ? values.farm.id : farmDefault,
     };
     
     const restp = await putRequest(endpoint.value, data, uuid);
     toast.add({ severity: restp.ok ? 'success' : 'error', summary: 'Edit', detail: restp.ok ? 'Editado' : restp.error, life: 3000 });
     loadingData();
     formDialogEdit.value = false;
+    prueba.value= data;
+    if(restp.ok) {listRowSelect.value = []
+    selectedRegisters.value = []}
 });
 
 const CloneRecord = handleSubmitNew(async (values) => {
     const data = {
         dispatch_number_lot: values.dispatch_number_lotV,
         name: values.name,
-        company_uuid: values.company ? values.company.id : '25b4319c-e93f-4411-936c-118060f5e7c9',
-        farm_uuid: values.farm ? values.farm.id : '8ef93a7b-31bf-4233-af80-481020e9cf97'
+        company_uuid: values.company ? values.company.id : companyDefault,
+        farm_uuid: values.farm ? values.farm.id : farmDefault,
     };
     const restp = await postRequest(endpoint.value, data);
     toast.add({ severity: restp.ok ? 'success' : 'error', summary: 'Clone', detail: restp.ok ? 'Clonado' : restp.error, life: 3000 });
     loadingData();
     formDialogClone.value = false;
+    prueba.value= data;
+    if(restp.ok) {listRowSelect.value = []
+    selectedRegisters.value = []}
 });
+
+const searchCompannies = (event) => {
+    setTimeout(() => {
+        if (!event.query.trim().length) {
+            compa.value = [...Compan.value];
+        } else {
+            compa.value = Compan.value.filter((fram) => {
+                return fram.name.toLowerCase().startsWith(event.query.toLowerCase());
+            });
+        }
+    }, 200);
+};
 
 const searchFarms = (event) => {
     setTimeout(() => {

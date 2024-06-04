@@ -16,7 +16,11 @@
         </div>
 
         <TabView class="tabview-custom">
+    
+
             <TabPanel>
+                 <hr>
+            {{ plannertask }}
                 <template #header>
                     <div class="flex align-items-center gap-2">
                         <!-- Empleado avatar-->
@@ -224,55 +228,24 @@ import { ref, computed, watch, provide, onBeforeMount, onMounted } from 'vue';
 import useDataAPI from '@/composables/DataAPI/FetchDataAPI.js';
 import { FilterMatchMode, FilterOperator } from 'primevue/api';
 import AppMovilCortaService from '@/service/AppMovilCorta.js';
-///Demo  App Movil
+import UseAppMovil from '@/composables/AppMovil/UseAppMovil.js';
 
-const selectedCountry = ref();
-const countries = ref([
-    { name: 'Australia', code: 'AU' },
-    { name: 'Brazil', code: 'BR' },
-    { name: 'China', code: 'CN' },
-    { name: 'Egypt', code: 'EG' },
-    { name: 'France', code: 'FR' },
-    { name: 'Germany', code: 'DE' },
-    { name: 'India', code: 'IN' },
-    { name: 'Japan', code: 'JP' },
-    { name: 'Spain', code: 'ES' },
-    { name: 'United States', code: 'US' }
-]);
+let endpoint = ref('/planner_tasks'); //replace endpoint with your endpoint
 
+const { availableAreaEmployees, worksDay, task_type, crops_lots, dones_work, size, sizeOptions, data_planner,
+    priceunit, plannertask, tasktarifs,areawork } = UseAppMovil();
+    
+const { getAllResponseAPI, getAllResponseListAPI, totalRecordsResponseAPI, currentPageResponseAPI, linksResponseAPI,
+        postResponseAPI, putResponseAPI, deleteResponseAPI, errorResponseAPI, dataResponseAPI, dataResponseListAPI, statusCode } =
+        useDataAPI();
+
+const quanty = ref();
+const pricetotal = ref();
+
+const selected_crops_lots = ref();
 const selectedEmployee = ref();
-const availableAreaEmployees = ref([
-    { name: 'Employee 1', code: 'AU', id: 1 },
-    { name: 'Employee 2', code: 'BR', id: 2 },
-    { name: 'Employee 3', code: 'CN', id: 3 },
-    { name: 'Employee 4', code: 'EG', id: 4 },
-    { name: 'Employee 5', code: 'FR', id: 5 },
-    { name: 'Employee 6', code: 'DE', id: 6 },
-    { name: 'Employee 7', code: 'IN', id: 7 },
-    { name: 'Employee 8', code: 'JP', id: 8 },
-    { name: 'Employee 9', code: 'ES', id: 9 },
-    { name: 'Employee 10', code: 'US', id: 10 }
-]);
-
-const sales = ref([
-    { product: 'Bamboo Watch', lastYearSale: 51, thisYearSale: 40, lastYearProfit: 54406, thisYearProfit: 43342 },
-    { product: 'Black Watch', lastYearSale: 83, thisYearSale: 9, lastYearProfit: 423132, thisYearProfit: 312122 },
-    { product: 'Blue Band', lastYearSale: 38, thisYearSale: 5, lastYearProfit: 12321, thisYearProfit: 8500 },
-    { product: 'Blue T-Shirt', lastYearSale: 49, thisYearSale: 22, lastYearProfit: 745232, thisYearProfit: 65323 },
-    { product: 'Brown Purse', lastYearSale: 17, thisYearSale: 79, lastYearProfit: 643242, thisYearProfit: 500332 },
-    { product: 'Chakra Bracelet', lastYearSale: 52, thisYearSale: 65, lastYearProfit: 421132, thisYearProfit: 150005 },
-    { product: 'Galaxy Earrings', lastYearSale: 82, thisYearSale: 12, lastYearProfit: 131211, thisYearProfit: 100214 },
-    { product: 'Game Controller', lastYearSale: 44, thisYearSale: 45, lastYearProfit: 66442, thisYearProfit: 53322 },
-    { product: 'Gaming Set', lastYearSale: 90, thisYearSale: 56, lastYearProfit: 765442, thisYearProfit: 296232 },
-    { product: 'Gold Phone Case', lastYearSale: 75, thisYearSale: 54, lastYearProfit: 21212, thisYearProfit: 12533 }
-]);
-
-
-const worksDay = ref([
-    { employee: 'Empleado 1', quantity: 54406, totalPrice: 43342 },
-    { employee: 'Empleado 1', quantity: 54406, totalPrice: 43342 },
-    { employee: 'Empleado 1', quantity: 54406, totalPrice: 43342 }
-]);
+const select_tasks_type = ref({ name: '', code: '' });
+const select_dones_work = ref();
 
 const formatCurrency = (value) => {
     return value.toLocaleString('en-US', { style: 'currency', currency: 'USD' });
@@ -295,6 +268,7 @@ const quantities = computed(() => {
 
     return total;
 });
+
 const thisYearTotal = computed(() => {
     let total = 0;
     for (let sale of sales.value) {
@@ -313,177 +287,18 @@ const totalPrices = computed(() => {
     return formatCurrency(total);
 });
 
-const data_planner = ref({
-    document: 'XXXXXX',
-    planner_date: '',
-    product_type: 'Albaca',
-    product_variant: 'Nufar',
-    packing_type: 'Icopor',
-    lot_dispatch: '20822-5589',
-    name_employee: 'Nombre del empleado',
-    nameSupervisor: 'Nombre Supervisor',
-    areawork: 'Corta',
-    day_type: 'Festivo',
-    day_price: 1500.0,
-    total_packing: 500
-});
-
-const quanty = ref();
-const pricetotal = ref();
-const priceunit = ref(1850);
-const selected_crops_lots = ref();
-const crops_lots = [
-    { name: 'L1', code: 'L1' },
-    { name: 'L2', code: 'L2' },
-    { name: 'L3', code: 'L3' }
-];
-
-const select_tasks_type = ref({ name: '', code: '' });
-
-const task_type = [
-    { name: 'Task', code: 'Task' },
-    { name: 'HoraExtra', code: 'HoraExtra' },
-    { name: 'Labor Contratista', code: 'Labor' }
-];
-
-const select_dones_work = ref();
-const dones_work = [
-    { name: 'ASEO', code: 'A01' },
-    { name: 'CANASTILLA', code: 'A02' },
-    { name: 'DESEMSEMILLADA', code: 'A03' },
-    { name: 'DESHIERBA', code: 'A04' }
-];
-
-const areawork = ref('Corta');
-
-const onSelectAllChangeItems = (event) => {
-    selectedItems.value = event.checked ? items.value.map((item) => item.value) : [];
-    selectAll.value = event.checked;
-};
-const onChange = (event) => {
-    selectAll.value = event.value.length === items.value.length;
-};
-
-const selectedItems = ref();
-const selectAll = ref(false);
-const items = ref(Array.from({ length: 100000 }, (_, i) => ({ label: `Item #${i}`, value: i })));
-
-//////
-const { getAllResponseAPI, getAllResponseListAPI, totalRecordsResponseAPI, currentPageResponseAPI, linksResponseAPI, postResponseAPI, putResponseAPI, deleteResponseAPI, errorResponseAPI, dataResponseAPI, dataResponseListAPI, statusCode } =
-    useDataAPI();
-
-let endpoint = ref('/planner_tasks'); //replace endpoint with your endpoint
-const loading = ref(false);
-
-const size = ref({ label: 'Normal', value: 'normal' });
-const sizeOptions = ref([
-    { label: 'Small', value: 'small', class: 'sm' },
-    { label: 'Normal', value: 'normal' },
-    { label: 'Large', value: 'large', class: 'lg' }
-]);
-
-const plannertask = ref();
-const workcenters = ref();
-const tasktarifs = ref();
 
 onMounted(async () => {
     const appmovilcortaService = new AppMovilCortaService(getAllResponseAPI);
     plannertask.value = await appmovilcortaService.getPlannerTask(4,1,1);
     workcenters.value = await appmovilcortaService.getEmployeesWorkCenter(2);
     tasktarifs.value = await appmovilcortaService.getTasksTarif(4, 1);
-
-    
     // await loadLazyData();
 });
 
-const filters = ref();
 
-onBeforeMount(() => {
-    initFilters();
-});
 
-const clearFilter = () => {
-    initFilters();
-};
-const initFilters = () => {
-    filters.value = {
-        global: { value: null, matchMode: FilterMatchMode.CONTAINS }
-        //xxxx: { operator: FilterOperator.AND, constraints: [{ value: null, matchMode: FilterMatchMode.STARTS_WITH }] },
-        // 'status.name': { operator: FilterOperator.AND, constraints: [{ value: null, matchMode: FilterMatchMode.STARTS_WITH }] },
-        // 'farm.name': { operator: FilterOperator.AND, constraints: [{ value: null, matchMode: FilterMatchMode.STARTS_WITH }] },
-        // created_at: { operator: FilterOperator.AND, constraints: [{ value: null, matchMode: FilterMatchMode.STARTS_WITH }] },
-        // updated_at: { operator: FilterOperator.AND, constraints: [{ value: null, matchMode: FilterMatchMode.STARTS_WITH }] },
-    };
-};
 
-const loadLazyData = async (event) => {
-    //lazyParams.value = { ...lazyParams.value, first: event?.first || first.value };
-
-    await getAllResponseAPI(endpoint.value);
-    loading.value = false;
-    data_planner.product_type.value = dataResponseAPI.data[0].product.name;
-};
-
-const listRowSelect = ref([]);
-const selectedRegisters = ref([]);
-const onRowSelect = (data) => {
-    listRowSelect.value = data;
-    //assignValues(mode.value)
-};
-//Cut and paste this at the end
-watch(listRowSelect, onRowSelect);
-const onSelectAllChange = () => {
-    onRowSelect();
-};
-
-const mode = ref();
-const formDialog = ref(false);
-const deleteDialog = ref(false);
-const headerDialog = ref('');
-const hideDialog = () => {
-    formDialog.value = false;
-    deleteDialog.value = false;
-    recordsDelete.value = [];
-    resetValues();
-};
-const resetValues = () => {};
-const assignValues = (modex) => {
-    if (modex === 'EDIT') {
-    }
-    if (modex === 'CLONE') {
-    }
-};
-const openNew = () => {
-    mode.value = 'NEW';
-    resetValues();
-    formDialog.value = true;
-    headerDialog.value = 'New xxxxxxx record';
-};
-const openEdit = () => {
-    mode.value = 'EDIT';
-    formDialog.value = true;
-    headerDialog.value = 'Edit a xxxxx record';
-    assignValues(mode.value);
-};
-const openClone = () => {
-    mode.value = 'CLONE';
-    headerDialog.value = 'Clone a xxxx record';
-    formDialog.value = true;
-    assignValues(mode.value);
-};
-let recordsDelete = ref([]);
-const openDelete = () => {
-    mode.value = 'DELETE';
-    headerDialog.value = 'Delete a xxxxx record';
-    resetValues();
-    deleteDialog.value = true;
-};
-const openExport = () => {
-    mode.value = 'EXPORT';
-    headerDialog.value = 'Export a xxxxx record';
-    resetValues();
-    formDialog.value = true;
-};
 </script>
 
 <style lang="scss" scoped></style>
