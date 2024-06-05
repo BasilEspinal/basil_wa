@@ -112,19 +112,21 @@ const fetchInfoPostLogin = async (data) => {
 
 
     let response = dataResponseAPI.value;
-    console.log(response)
+    
     if (response['error']) throw response.error;
     if (!response['user']) throw response.error;
 
     const token = response.token;
     const user = response.user.name;
+    const emailUser = response.user.email;
     const farm = response.farm_uuid;
     const company = response.company_uuid;
-    console.log("farm", farm)
-    console.log("company", company)
+    
+    
 
     sessionStorage.setItem('accessSessionToken', token);
     sessionStorage.setItem('accessSessionUser', user);
+    sessionStorage.setItem('accessSessionEmail', emailUser);
     sessionStorage.setItem('accessSessionFarm', farm);
     sessionStorage.setItem('accessSessionCompany', company);
     localStorage.setItem('accesSessionTokens', token);

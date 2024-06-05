@@ -203,15 +203,7 @@
 
 
 
-                <div class="mb-3 col-12 md:col-6 lg:col-3">
-                    <div class="flex align-items-center gap-3 mb-1">
-                        <label for="username" class="font-semibold w-6rem">Dispatch Num Lot</label>
-                        <InputText id="username" v-model="dispatch_number_lotV" class="flex-auto" autocomplete="off" v-bind="dispatch_number_lotVProps" :frozen="documentFrozen"/>
-                    </div>
-                    <small id="username-help" :class="{ 'p-invalid text-red-700': errorsNew['dispatch_number_lotV'] }">
-                        {{ errorsNew.dispatch_number_lotV }}
-                    </small>
-                </div>
+
 
                 <div class="mb-3 col-12 md:col-6 lg:col-3">
                     <div class="flex align-items-center gap-3 mb-1">
@@ -233,6 +225,22 @@
                         {{ errorsNew.invoice_number_customerV }}
                     </small>
                 </div>
+
+
+                <div class="mb-3 col-12 md:col-6 lg:col-3">
+                    <div class="flex align-items-center gap-3 mb-1">
+                        <label for="customer_nameV" class="font-semibold w-6rem">Customer Name</label>
+                        <InputText id="customer_nameV" v-model="invoice_number_customerV" class="flex-auto" autocomplete="off" v-bind="customer_nameVProps" />
+                        
+                    </div>
+                    <small id="username-help" :class="{ 'p-invalid text-red-700': errorsNew['customer_nameV'] }">
+                        {{ errorsNew.customer_nameV }}
+                    </small>
+                </div>
+
+
+
+
 
                 <div class="mb-3 col-12 md:col-6 lg:col-3">
                     <div class="flex align-items-center">
@@ -259,6 +267,48 @@
                     
                 </div>
 
+
+
+                <div class="mb-3 col-12 md:col-6 lg:col-3">
+                    <div class="flex align-items-center gap-3 mb-1">
+                        <label for="place_of_deliveryV" class="font-semibold w-6rem">Place of Delivery</label>
+                        <InputText id="place_of_deliveryV" v-model="place_of_deliveryV" class="flex-auto" autocomplete="off" v-bind="place_of_deliveryVProps" />
+                        
+                    </div>
+                    <small id="username-help" :class="{ 'p-invalid text-red-700': errorsNew['place_of_deliveryV'] }">
+                        {{ errorsNew.place_of_deliveryV }}
+                    </small>
+                </div>
+
+                <div class="mb-3 col-12 md:col-6 lg:col-3">
+                    <div class="flex align-items-center gap-3 mb-1">
+                        <label for="username" class="font-semibold w-6rem">Dispatch Number Lot</label>
+                        <InputText id="username" v-model="dispatch_number_lotV" class="flex-auto" autocomplete="off" v-bind="dispatch_number_lotVProps" :frozen="documentFrozen"/>
+                    </div>
+                    <small id="username-help" :class="{ 'p-invalid text-red-700': errorsNew['dispatch_number_lotV'] }">
+                        {{ errorsNew.dispatch_number_lotV }}
+                    </small>
+                </div>
+                <div class="mb-3 col-12 md:col-6 lg:col-3">
+                    <div class="flex align-items-center gap-3 mb-1">
+                        <label for="request_qty_V" class="font-semibold w-6rem">Request qty:</label>
+                        <InputNumber id="request_qty_V" v-model="request_qty_V" class="flex-auto"  inputId="minmax" :min="0" :max="1000" />
+                    </div>
+                    <small id="username-help" :class="{ 'p-invalid text-red-700': errorsNew['request_qty_V'] }">
+                        {{ errorsNew.request_qty_V }}
+                    </small>
+                </div>
+
+                <div class="mb-3 col-12 md:col-6 lg:col-3">
+                    <div class="flex align-items-center gap-3 mb-1">
+                        <label for="packing_name_customerV" class="font-semibold w-6rem">Packing Name Customer:</label>
+                        <InputText id="packing_name_customerV" v-model="packing_name_customerV" class="flex-auto" autocomplete="off" v-bind="packing_name_customerVProps"/>
+                    </div>
+                    <small id="username-help" :class="{ 'p-invalid text-red-700': errorsNew['packing_name_customerV'] }">
+                        {{ errorsNew.packing_name_customerV }}
+                    </small>
+                </div>
+
                 <div class="mb-3 col-12 md:col-6 lg:col-3">
                     <div class="flex align-items-center gap-3 mb-1">
                         <label for="outlet_temperatureV" class="font-semibold w-6rem">Outlet temperature:</label>
@@ -273,30 +323,45 @@
                 </div>
 
                 <div class="mb-3 col-12 md:col-6 lg:col-3">
-                    <div class="flex align-items-center gap-3 mb-1">
-                        <label for="request_qty_V" class="font-semibold w-6rem">Request qty:</label>
-                        <InputNumber id="request_qty_V" v-model="request_qty_V" class="flex-auto"  inputId="minmax" :min="0" :max="1000" />
+                    <div class="flex align-items-center">
+                        <label for="username" class="font-semibold w-6rem">Product:</label>
+                        <AutoComplete v-model="farm" class="flex-auto" inputId="ac" :suggestions="farms" @complete="searchFarms" field="name" dropdown />
                     </div>
-                    <small id="username-help" :class="{ 'p-invalid text-red-700': errorsNew['request_qty_V'] }">
-                        {{ errorsNew.request_qty_V }}
+                    <small id="username-help" :class="{ 'p-invalid text-red-700': errorsNew['farm'] }">
+                        {{ errorsNew.farm }}
                     </small>
                 </div>
 
                 <div class="mb-3 col-12 md:col-6 lg:col-3">
-                    <div class="flex align-items-center gap-3 mb-1">
-                        <label for="place_of_deliveryV" class="font-semibold w-6rem">Place of Delivery</label>
-                        <InputText id="place_of_deliveryV" v-model="place_of_deliveryV" class="flex-auto" autocomplete="off" v-bind="place_of_deliveryVProps" />
-                        
+                    <div class="flex align-items-center">
+                        <label for="username" class="font-semibold w-6rem">Product Type:</label>
+                        <AutoComplete v-model="farm" class="flex-auto" inputId="ac" :suggestions="farms" @complete="searchFarms" field="name" dropdown />
                     </div>
-                    <small id="username-help" :class="{ 'p-invalid text-red-700': errorsNew['place_of_deliveryV'] }">
-                        {{ errorsNew.place_of_deliveryV }}
+                    <small id="username-help" :class="{ 'p-invalid text-red-700': errorsNew['farm'] }">
+                        {{ errorsNew.farm }}
                     </small>
                 </div>
 
-                <!-- <InputText type="text" v-model="value" /> -->
+                <div class="mb-3 col-12 md:col-6 lg:col-3">
+                    <div class="flex align-items-center">
+                        <label for="username" class="font-semibold w-6rem">Variant:</label>
+                        <AutoComplete v-model="farm" class="flex-auto" inputId="ac" :suggestions="farms" @complete="searchFarms" field="name" dropdown />
+                    </div>
+                    <small id="username-help" :class="{ 'p-invalid text-red-700': errorsNew['farm'] }">
+                        {{ errorsNew.farm }}
+                    </small>
+                </div>
 
+                <div class="mb-3 col-12 md:col-6 lg:col-3">
+                    <div class="flex align-items-center">
+                        <label for="username" class="font-semibold w-6rem">Packing type:</label>
+                        <AutoComplete v-model="farm" class="flex-auto" inputId="ac" :suggestions="farms" @complete="searchFarms" field="name" dropdown />
+                    </div>
+                    <small id="username-help" :class="{ 'p-invalid text-red-700': errorsNew['farm'] }">
+                        {{ errorsNew.farm }}
+                    </small>
+                </div>
 
-                
                 <div class="mb-3 col-12 md:col-6 lg:col-3">
                     <div class="flex align-items-center">
                         <label for="username" class="font-semibold w-6rem">Farm :</label>
@@ -318,9 +383,95 @@
                 </div>
 
 
-
+                <div class="mb-3 col-12 md:col-12 lg:col-12">
+                    <div class="flex align-items-center">
+                        <label for="username" class="font-semibold w-6rem">Employee:</label>
+                        <AutoComplete v-model="farm" class="flex-auto" inputId="ac" :suggestions="farms" @complete="searchFarms" field="name" dropdown />
+                    </div>
+                    <small id="username-help" :class="{ 'p-invalid text-red-700': errorsNew['farm'] }">
+                        {{ errorsNew.farm }}
+                    </small>
+                </div>
 
             </div>
+
+            <Divider />
+
+
+            <Card>
+            
+                
+                    <template #header>
+                        
+                    </template>
+
+                    <template #title>Presentation</template>
+
+                    <template #content >
+
+                        <div class="grid"> 
+                        <div class="mb-3 col-12 md:col-6 lg:col-3">
+                    <div class="flex align-items-center">
+                        <label for="username" class="font-semibold w-6rem">Packing Quantity Dispatch:</label>
+                        <AutoComplete v-model="farm" class="flex-auto" inputId="ac" :suggestions="farms" @complete="searchFarms" field="name" dropdown />
+                    </div>
+                    <small id="username-help" :class="{ 'p-invalid text-red-700': errorsNew['farm'] }">
+                        {{ errorsNew.farm }}
+                    </small>
+                </div>
+                
+
+                <div class="mb-3 col-12 md:col-6 lg:col-3">
+                    <div class="flex align-items-center">
+                        <label for="username" class="font-semibold w-6rem">Packing Type Dispatch:</label>
+                        <AutoComplete v-model="farm" class="flex-auto" inputId="ac" :suggestions="farms" @complete="searchFarms" field="name" dropdown />
+                    </div>
+                    <small id="username-help" :class="{ 'p-invalid text-red-700': errorsNew['farm'] }">
+                        {{ errorsNew.farm }}
+                    </small>
+                </div>
+
+                <div class="mb-3 col-12 md:col-6 lg:col-3">
+                    <div class="flex align-items-center">
+                        <label for="username" class="font-semibold w-6rem">Packing Dispatch Weight:</label>
+                        <AutoComplete v-model="farm" class="flex-auto" inputId="ac" :suggestions="farms" @complete="searchFarms" field="name" dropdown />
+                    </div>
+                    <small id="username-help" :class="{ 'p-invalid text-red-700': errorsNew['farm'] }">
+                        {{ errorsNew.farm }}
+                    </small>
+                </div>
+
+                <div class="mb-3 col-12 md:col-6 lg:col-3">
+                    <div class="flex align-items-center">
+                        <label for="username" class="font-semibold w-6rem">Unit type Dispatch:</label>
+                        <AutoComplete v-model="farm" class="flex-auto" inputId="ac" :suggestions="farms" @complete="searchFarms" field="name" dropdown />
+                    </div>
+                    <small id="username-help" :class="{ 'p-invalid text-red-700': errorsNew['farm'] }">
+                        {{ errorsNew.farm }}
+                    </small>
+                </div>
+            </div>
+    </template>
+                    
+
+
+            
+            
+            
+        </Card>
+
+            <Divider />
+
+
+
+
+
+
+                <!-- <InputText type="text" v-model="value" /> -->
+
+
+                
+
                 <div class="flex justify-content-end gap-2">
                     <Button type="button" label="Cancel" severity="secondary" @click="formDialogNew = false" />
                     <Button type="button" label="Save" @click="createRecord()" />
@@ -471,6 +622,7 @@ const documentFrozen = ref(false); change name field
      -->
 <script setup>
 import { ref, watch, provide, onBeforeMount, onMounted } from 'vue';
+import Divider from 'primevue/divider';
 import useDataAPI from '@/composables/DataAPI/FetchDataAPI.js';
 import { useToast } from 'primevue/usetoast';
 import { FilterMatchMode, FilterOperator } from 'primevue/api';
@@ -521,7 +673,8 @@ const formDialogDelete = ref(false);
 const toast = useToast();
 const filename = ref('table');
 const isChanging = ref(false);
-let endpoint = ref('/customers_requests');  //replace endpoint with your endpoint
+let endpoint = ref('/customer_requests');  //replace endpoint with your endpoint
+
 
 
 ////////////
@@ -613,38 +766,50 @@ const {
     },
     validationSchema: toTypedSchema(
         z.object({
-            name: z.string().min(4),
+            // name: z.string().min(4),
             order_number_customerV: z.string().min(4),
-            
             invoice_number_customerV: z.string().min(4),
             customer_nameV: z.string().min(4),
             request_dateV: z.date(),
             delivery_datetimeV: z.date(),
             place_of_deliveryV: z.string().min(4),
+            dispatch_number_lotV: z.string().min(4),
+            request_qty_V: z.number().min(1).max(4),
+            packing_name_customerV: z.string().min(1),
+            outlet_temperatureV: z.number().min(4),
+            productV: z.object({
+                name: z.string().min(4),
+                id: z.string().min(4)
+            }),
+            product_typeV: z.object({
+                name: z.string().min(4),
+                id: z.string().min(4)
+            }),
+            variantV: z.object({
+                name: z.string().min(4),
+                id: z.string().min(4)
+            }),
+
             packing_typeV: z.object({
                 name: z.string().min(4),
                 id: z.string().min(4)
             }),
-            product_idV: z.object({
+
+            
+            packing_qty_dispatchV: z.string().min(4),
+            //Lista desplegable BOL etc
+            packing_type_dispatchV: z.object({
                 name: z.string().min(4),
                 id: z.string().min(4)
             }),
-            product__type_idV: z.object({
+            packing_dispatch_weight: z.string().min(4),
+
+            unit_type_dispatch_V: z.object({
                 name: z.string().min(4),
                 id: z.string().min(4)
             }),
-            products_variantsV: z.object({
-                name: z.string().min(4),
-                id: z.string().min(4)
-            }),
-            dispatch_number_lotV: z.string().min(4),
-            packaging_presentation_qty_V: z.string().min(4),
-            packaging_presentation_presentationType_V: z.string().min(4),
-            packaging_presentation_weight_V: z.string().min(4),
-            packaging_presentation_measuring_unit_V: z.string().min(4),
-            request_qty_V: z.string().min(4),
-            packing_type_nameV: z.string().min(4),
-            outlet_temperatureV: z.number().min(4),
+            
+            
             employeeV: z.object({
                 name: z.string().min(4),
                 id: z.string().min(4)
@@ -664,25 +829,26 @@ const {
         })
     )
 });
-const [name, nameProps] = defineField('name');
-const [dispatch_number_lotV, dispatch_number_lotVProps] = defineField('dispatch_number_lotV');
+// const [name, nameProps] = defineField('name');
+
 const [order_number_customerV, order_number_customerVProps] = defineField('order_number_customerV');
 const [invoice_number_customerV, invoice_number_customerVProps] = defineField('invoice_number_customerV');
 const [customer_nameV, customer_nameVProps] = defineField('customer_nameV');
 const [request_dateV, request_dateVProps] = defineField('request_dateV');
 const [delivery_datetimeV, delivery_datetimeVProps] = defineField('delivery_datetimeV');
 const [place_of_deliveryV, place_of_deliveryVProps] = defineField('place_of_deliveryV');
-const [packing_typeV, packing_typeVProps] = defineField('packing_typeV');
-const [product_idV, product_idVProps] = defineField('product_idV');
-const [product__type_idV, product__type_idVProps] = defineField('product__type_idV');
-const [products_variantsV, products_variantsVProps] = defineField('products_variantsV');
-const [packaging_presentation_qty_V, packaging_presentation_qty_VProps] = defineField('packaging_presentation_qty_V');
-const [packaging_presentation_presentationType_V, packaging_presentation_presentationType_VProps] = defineField('packaging_presentation_presentationType_V');
-const [packaging_presentation_weight_V, packaging_presentation_weight_VProps] = defineField('packaging_presentation_weight_V');
-const [packaging_presentation_measuring_unit_V, packaging_presentation_measuring_unit_VProps] = defineField('packaging_presentation_measuring_unit_V');
+const [dispatch_number_lotV, dispatch_number_lotVProps] = defineField('dispatch_number_lotV');
 const [request_qty_V, request_qty_VProps] = defineField('request_qty_V');
-const [packing_type_nameV, packing_type_nameVProps] = defineField('packing_type_nameV');
+const [packing_name_customerV, packing_name_customerVProps] = defineField('packing_name_customerV');
 const [outlet_temperatureV, outlet_temperatureVProps] = defineField('outlet_temperatureV');
+const [productV, productVProps] = defineField('productV');
+const [product_typeV, product_typeVProps] = defineField('product_typeV');
+const [variantV, variantVProps] = defineField('variantV');
+const [packing_typeV, packing_typeVProps] = defineField('packing_typeV');
+const [packing_qty_dispatchV, packing_qty_dispatchVProps] = defineField('packing_qty_dispatchV');
+const [packing_type_dispatchV, packing_type_dispatchVProps] = defineField('packing_type_dispatchV');
+const [packing_dispatch_weight, packing_dispatch_weightProps] = defineField('packing_dispatch_weight');
+const [unit_type_dispatch_V, unit_type_dispatch_VProps] = defineField('unit_type_dispatch_V');
 const [employeeV, employeeVProps] = defineField('employeeV');
 const [farm] = defineField('farm');
 const [company] = defineField('company');
