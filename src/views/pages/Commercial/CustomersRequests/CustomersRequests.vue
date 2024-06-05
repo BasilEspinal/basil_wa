@@ -197,19 +197,25 @@
             
             
 <!-- <pre>{{ prueba }}</pre> -->
-
+<pre>{{prueba}}</pre>
+<pre>{{errorsNew}}</pre>
+<Avatar icon="pi pi-user" class="mr-3" size="xlarge" shape="circle" />
+<span> Employee: {{ employeeNameDefault }} </span>
+<Divider />
+            
 <div class="grid">
 
 
 
-
+            
 
 
                 <div class="mb-3 col-12 md:col-6 lg:col-3">
                     <div class="flex align-items-center gap-3 mb-1">
-                        <label for="order_number_customer" class="font-semibold w-6rem">Order Number Customer</label>
+                        <label for="order_number_customerV" class="font-semibold w-6rem">Order Number Customer</label>
                         <InputText id="username" v-model="order_number_customerV" class="flex-auto" autocomplete="off" v-bind="order_number_customerVProps" />
                     </div>
+                    <pre>{{order_number_customerV}}</pre>
                     <small id="username-help" :class="{ 'p-invalid text-red-700': errorsNew['order_number_customerV'] }">
                         {{ errorsNew.order_number_customerV }}
                     </small>
@@ -217,10 +223,11 @@
 
                 <div class="mb-3 col-12 md:col-6 lg:col-3">
                     <div class="flex align-items-center gap-3 mb-1">
-                        <label for="order_number_customer" class="font-semibold w-6rem">Invoice Number Customer</label>
-                        <InputText id="order_number_customer" v-model="invoice_number_customerV" class="flex-auto" autocomplete="off" v-bind="invoice_number_customerVProps" />
+                        <label for="invoice_number_customerV" class="font-semibold w-6rem">Invoice Number Customer</label>
+                        <InputText id="invoice_number_customerV" v-model="invoice_number_customerV" class="flex-auto" autocomplete="off" v-bind="invoice_number_customerVProps" />
                         
                     </div>
+                    <pre>{{invoice_number_customerV}}</pre>
                     <small id="username-help" :class="{ 'p-invalid text-red-700': errorsNew['invoice_number_customerV'] }">
                         {{ errorsNew.invoice_number_customerV }}
                     </small>
@@ -230,9 +237,10 @@
                 <div class="mb-3 col-12 md:col-6 lg:col-3">
                     <div class="flex align-items-center gap-3 mb-1">
                         <label for="customer_nameV" class="font-semibold w-6rem">Customer Name</label>
-                        <InputText id="customer_nameV" v-model="invoice_number_customerV" class="flex-auto" autocomplete="off" v-bind="customer_nameVProps" />
+                        <InputText id="customer_nameV" v-model="customer_nameV" class="flex-auto" autocomplete="off" v-bind="customer_nameVProps" />
                         
                     </div>
+                    <pre>{{customer_nameV}}</pre>
                     <small id="username-help" :class="{ 'p-invalid text-red-700': errorsNew['customer_nameV'] }">
                         {{ errorsNew.customer_nameV }}
                     </small>
@@ -244,11 +252,12 @@
 
                 <div class="mb-3 col-12 md:col-6 lg:col-3">
                     <div class="flex align-items-center">
-                        <label for="request_date" class="font-semibold w-6rem">Request Date</label>
+                        <label for="request_dateV" class="font-semibold w-6rem">Request Date</label>
                         <!-- <Calendar v-model="transaction_dateV" class="flex-auto" v-bind="transaction_dateVProps"/> -->
                         <Calendar dateFormat="dd/mm/yy" v-model="request_dateV" class="flex-auto" showIcon :showOnFocus="false" inputId="buttondisplay" placeholder="Select request date"  />
                         
                     </div>
+                    <pre>{{request_dateV}}</pre>
 
                     <small id="username-help" :class="{ 'p-invalid text-red-700': errorsNew['request_dateV'] }">
                         {{ errorsNew.request_dateV }}
@@ -257,9 +266,10 @@
 
                 <div class="mb-3 col-12 md:col-6 lg:col-3">
                     <div class="flex align-items-center">
-                        <label for="request_date" class="font-semibold w-6rem">Delivery Datetime :</label>
-                        <Calendar id="calendar-24h" v-model="delivery_datetimeV" showTime hourFormat="24" class="flex-auto" showIcon  inputId="buttondisplay"  />
+                        <label for="delivery_datetimeV" class="font-semibold w-6rem">Delivery Datetime :</label>
+                        <Calendar id="delivery_datetimeV-24h" v-model="delivery_datetimeV" showTime hourFormat="24" class="flex-auto" showIcon  inputId="buttondisplay"  />
                     </div>
+                    <pre>{{delivery_datetimeV}}</pre>
                     
                     <small id="username-help" :class="{ 'p-invalid text-red-700': errorsNew['delivery_datetimeV'] }">
                         {{ errorsNew.delivery_datetimeV }}
@@ -275,6 +285,7 @@
                         <InputText id="place_of_deliveryV" v-model="place_of_deliveryV" class="flex-auto" autocomplete="off" v-bind="place_of_deliveryVProps" />
                         
                     </div>
+                    <pre>{{place_of_deliveryV}}</pre>
                     <small id="username-help" :class="{ 'p-invalid text-red-700': errorsNew['place_of_deliveryV'] }">
                         {{ errorsNew.place_of_deliveryV }}
                     </small>
@@ -282,9 +293,10 @@
 
                 <div class="mb-3 col-12 md:col-6 lg:col-3">
                     <div class="flex align-items-center gap-3 mb-1">
-                        <label for="username" class="font-semibold w-6rem">Dispatch Number Lot</label>
-                        <InputText id="username" v-model="dispatch_number_lotV" class="flex-auto" autocomplete="off" v-bind="dispatch_number_lotVProps" :frozen="documentFrozen"/>
+                        <label for="dispatch_number_lotV" class="font-semibold w-6rem">Dispatch Number Lot</label>
+                        <InputText id="dispatch_number_lotV" v-model="dispatch_number_lotV" class="flex-auto" autocomplete="off" v-bind="dispatch_number_lotVProps" :frozen="documentFrozen"/>
                     </div>
+                    <pre>{{dispatch_number_lotV}}</pre>
                     <small id="username-help" :class="{ 'p-invalid text-red-700': errorsNew['dispatch_number_lotV'] }">
                         {{ errorsNew.dispatch_number_lotV }}
                     </small>
@@ -294,6 +306,7 @@
                         <label for="request_qty_V" class="font-semibold w-6rem">Request qty:</label>
                         <InputNumber id="request_qty_V" v-model="request_qty_V" class="flex-auto"  inputId="minmax" :min="0" :max="1000" />
                     </div>
+                    <pre>{{request_qty_V}}</pre>
                     <small id="username-help" :class="{ 'p-invalid text-red-700': errorsNew['request_qty_V'] }">
                         {{ errorsNew.request_qty_V }}
                     </small>
@@ -304,6 +317,7 @@
                         <label for="packing_name_customerV" class="font-semibold w-6rem">Packing Name Customer:</label>
                         <InputText id="packing_name_customerV" v-model="packing_name_customerV" class="flex-auto" autocomplete="off" v-bind="packing_name_customerVProps"/>
                     </div>
+                    <pre>{{packing_name_customerV}}</pre>
                     <small id="username-help" :class="{ 'p-invalid text-red-700': errorsNew['packing_name_customerV'] }">
                         {{ errorsNew.packing_name_customerV }}
                     </small>
@@ -312,11 +326,11 @@
                 <div class="mb-3 col-12 md:col-6 lg:col-3">
                     <div class="flex align-items-center gap-3 mb-1">
                         <label for="outlet_temperatureV" class="font-semibold w-6rem">Outlet temperature:</label>
-                        <!-- <InputNumber id="outlet_temperatureV" v-model="outlet_temperatureV" class="flex-auto"  inputId="minmax" :min="0" :max="1000" />
-                         -->
+                        
                          <InputNumber v-model="outlet_temperatureV" inputId="temperature" class="flex-auto" prefix="&uarr; " suffix="℃" :min="0" :max="40" />
                         
                     </div>
+                    <pre>{{outlet_temperatureV}}</pre>
                     <small id="username-help" :class="{ 'p-invalid text-red-700': errorsNew['outlet_temperatureV'] }">
                         {{ errorsNew.outlet_temperatureV }}
                     </small>
@@ -324,9 +338,54 @@
 
                 <div class="mb-3 col-12 md:col-6 lg:col-3">
                     <div class="flex align-items-center">
-                        <label for="username" class="font-semibold w-6rem">Product:</label>
+                        <label for="productV" class="font-semibold w-6rem">Product:</label>
+                        <AutoComplete v-model="productV" class="flex-auto" inputId="ac" :suggestions="products" @complete="searchProduct" field="name" dropdown />
+                    </div>
+                    <pre>{{productV}}</pre>
+                    <small id="username-help" :class="{ 'p-invalid text-red-700': errorsNew['productV'] }">
+                        {{ errorsNew.productV }}
+                    </small>
+                </div>
+
+                <div class="mb-3 col-12 md:col-6 lg:col-3">
+                    <div class="flex align-items-center">
+                        <label for="product_typeV" class="font-semibold w-6rem">Product Type:</label>
+                        <AutoComplete v-model="product_typeV" class="flex-auto" inputId="ac" :suggestions="productsType" @complete="searchProductType" field="name" dropdown />
+                    </div>
+                    <pre>{{product_typeV}}</pre>
+                    <small id="username-help" :class="{ 'p-invalid text-red-700': errorsNew['product_typeV'] }">
+                        {{ errorsNew.product_typeV }}
+                    </small>
+                </div>
+
+                <div class="mb-3 col-12 md:col-6 lg:col-3">
+                    <div class="flex align-items-center">
+                        <label for="variantV" class="font-semibold w-6rem">Variant:</label>
+                        <AutoComplete v-model="variantV" class="flex-auto" inputId="ac" :suggestions="variants" @complete="searchVariant" field="name" dropdown />
+                    </div>
+                    <pre>{{variantV}}</pre>
+                    <small id="username-help" :class="{ 'p-invalid text-red-700': errorsNew['variantV'] }">
+                        {{ errorsNew.variantV }}
+                    </small>
+                </div>
+
+                <div class="mb-3 col-12 md:col-6 lg:col-3">
+                    <div class="flex align-items-center">
+                        <label for="packing_typeV" class="font-semibold w-6rem">Packing type:</label>
+                        <AutoComplete v-model="packing_typeV" class="flex-auto" inputId="ac" :suggestions="packingTypes" @complete="searchPackingType" field="name" dropdown />
+                    </div>
+                    <pre>{{packing_typeV}}</pre>
+                    <small id="username-help" :class="{ 'p-invalid text-red-700': errorsNew['packing_typeV'] }">
+                        {{ errorsNew.packing_typeV }}
+                    </small>
+                </div>
+
+                <div class="mb-3 col-12 md:col-6 lg:col-3">
+                    <div class="flex align-items-center">
+                        <label for="farm" class="font-semibold w-6rem">Farm :</label>
                         <AutoComplete v-model="farm" class="flex-auto" inputId="ac" :suggestions="farms" @complete="searchFarms" field="name" dropdown />
                     </div>
+                    <pre>{{farm}}</pre>
                     <small id="username-help" :class="{ 'p-invalid text-red-700': errorsNew['farm'] }">
                         {{ errorsNew.farm }}
                     </small>
@@ -334,64 +393,17 @@
 
                 <div class="mb-3 col-12 md:col-6 lg:col-3">
                     <div class="flex align-items-center">
-                        <label for="username" class="font-semibold w-6rem">Product Type:</label>
-                        <AutoComplete v-model="farm" class="flex-auto" inputId="ac" :suggestions="farms" @complete="searchFarms" field="name" dropdown />
-                    </div>
-                    <small id="username-help" :class="{ 'p-invalid text-red-700': errorsNew['farm'] }">
-                        {{ errorsNew.farm }}
-                    </small>
-                </div>
-
-                <div class="mb-3 col-12 md:col-6 lg:col-3">
-                    <div class="flex align-items-center">
-                        <label for="username" class="font-semibold w-6rem">Variant:</label>
-                        <AutoComplete v-model="farm" class="flex-auto" inputId="ac" :suggestions="farms" @complete="searchFarms" field="name" dropdown />
-                    </div>
-                    <small id="username-help" :class="{ 'p-invalid text-red-700': errorsNew['farm'] }">
-                        {{ errorsNew.farm }}
-                    </small>
-                </div>
-
-                <div class="mb-3 col-12 md:col-6 lg:col-3">
-                    <div class="flex align-items-center">
-                        <label for="username" class="font-semibold w-6rem">Packing type:</label>
-                        <AutoComplete v-model="farm" class="flex-auto" inputId="ac" :suggestions="farms" @complete="searchFarms" field="name" dropdown />
-                    </div>
-                    <small id="username-help" :class="{ 'p-invalid text-red-700': errorsNew['farm'] }">
-                        {{ errorsNew.farm }}
-                    </small>
-                </div>
-
-                <div class="mb-3 col-12 md:col-6 lg:col-3">
-                    <div class="flex align-items-center">
-                        <label for="username" class="font-semibold w-6rem">Farm :</label>
-                        <AutoComplete v-model="farm" class="flex-auto" inputId="ac" :suggestions="farms" @complete="searchFarms" field="name" dropdown />
-                    </div>
-                    <small id="username-help" :class="{ 'p-invalid text-red-700': errorsNew['farm'] }">
-                        {{ errorsNew.farm }}
-                    </small>
-                </div>
-
-                <div class="mb-3 col-12 md:col-6 lg:col-3">
-                    <div class="flex align-items-center">
-                        <label for="username" class="font-semibold w-6rem">Company:</label>
+                        <label for="company" class="font-semibold w-6rem">Company:</label>
                         <AutoComplete v-model="company" class="flex-auto" inputId="ac" :suggestions="compa" @complete="searchCompannies" field="name" dropdown />
                     </div>
+                    <pre>{{company}}</pre>
                     <small id="username-help" :class="{ 'p-invalid text-red-700': errorsNew['company'] }">
                         {{ errorsNew.company }}
                     </small>
                 </div>
 
 
-                <div class="mb-3 col-12 md:col-12 lg:col-12">
-                    <div class="flex align-items-center">
-                        <label for="username" class="font-semibold w-6rem">Employee:</label>
-                        <AutoComplete v-model="farm" class="flex-auto" inputId="ac" :suggestions="farms" @complete="searchFarms" field="name" dropdown />
-                    </div>
-                    <small id="username-help" :class="{ 'p-invalid text-red-700': errorsNew['farm'] }">
-                        {{ errorsNew.farm }}
-                    </small>
-                </div>
+
 
             </div>
 
@@ -410,47 +422,69 @@
                     <template #content >
 
                         <div class="grid"> 
+
                         <div class="mb-3 col-12 md:col-6 lg:col-3">
                     <div class="flex align-items-center">
-                        <label for="username" class="font-semibold w-6rem">Packing Quantity Dispatch:</label>
-                        <AutoComplete v-model="farm" class="flex-auto" inputId="ac" :suggestions="farms" @complete="searchFarms" field="name" dropdown />
+                        <label for="packing_qty_dispatchV" class="font-semibold w-6rem">Packing Quantity Dispatch:</label>
+                        <AutoComplete v-model="packing_qty_dispatchV" class="flex-auto" inputId="ac" :suggestions="packingsQtyDispatch" @complete="searchPackingQtyDispatch" field="name" dropdown />
                     </div>
-                    <small id="username-help" :class="{ 'p-invalid text-red-700': errorsNew['farm'] }">
-                        {{ errorsNew.farm }}
+                    <pre>{{packing_qty_dispatchV}}</pre>
+                    <small id="username-help" :class="{ 'p-invalid text-red-700': errorsNew['packing_qty_dispatchV'] }">
+                        {{ errorsNew.packing_qty_dispatchV }}
                     </small>
                 </div>
                 
 
                 <div class="mb-3 col-12 md:col-6 lg:col-3">
                     <div class="flex align-items-center">
-                        <label for="username" class="font-semibold w-6rem">Packing Type Dispatch:</label>
-                        <AutoComplete v-model="farm" class="flex-auto" inputId="ac" :suggestions="farms" @complete="searchFarms" field="name" dropdown />
+                        <label for="packing_type_dispatchV" class="font-semibold w-6rem">Packing Type Dispatch:</label>
+                        <AutoComplete v-model="packing_type_dispatchV" class="flex-auto" inputId="ac" :suggestions="packingsTypesDispatch" @complete="searchPackingTypeDispatch" field="name" dropdown />
                     </div>
-                    <small id="username-help" :class="{ 'p-invalid text-red-700': errorsNew['farm'] }">
-                        {{ errorsNew.farm }}
+                    <pre>{{packing_type_dispatchV}}</pre>
+                    <small id="username-help" :class="{ 'p-invalid text-red-700': errorsNew['packing_type_dispatchV'] }">
+                        {{ errorsNew.packing_type_dispatchV }}
                     </small>
                 </div>
 
                 <div class="mb-3 col-12 md:col-6 lg:col-3">
                     <div class="flex align-items-center">
-                        <label for="username" class="font-semibold w-6rem">Packing Dispatch Weight:</label>
-                        <AutoComplete v-model="farm" class="flex-auto" inputId="ac" :suggestions="farms" @complete="searchFarms" field="name" dropdown />
+                        <label for="packing_dispatch_weightV" class="font-semibold w-6rem">Packing Dispatch Weight:</label>
+                        <AutoComplete v-model="packing_dispatch_weightV" class="flex-auto" inputId="ac" :suggestions="packingsWeightDispatch" @complete="searchPackingWeightDispatch" field="name" dropdown />
                     </div>
-                    <small id="username-help" :class="{ 'p-invalid text-red-700': errorsNew['farm'] }">
-                        {{ errorsNew.farm }}
+                    <pre>{{packing_dispatch_weightV}}</pre>
+                    <small id="username-help" :class="{ 'p-invalid text-red-700': errorsNew['packing_dispatch_weightV'] }">
+                        {{ errorsNew.packing_dispatch_weightV }}
                     </small>
                 </div>
 
                 <div class="mb-3 col-12 md:col-6 lg:col-3">
                     <div class="flex align-items-center">
                         <label for="username" class="font-semibold w-6rem">Unit type Dispatch:</label>
-                        <AutoComplete v-model="farm" class="flex-auto" inputId="ac" :suggestions="farms" @complete="searchFarms" field="name" dropdown />
+                        <AutoComplete v-model="unit_type_dispatch_V" class="flex-auto" inputId="ac" :suggestions="unitsTypeDispatch" @complete="searchUnitsTypeDispatch" field="name" dropdown />
                     </div>
-                    <small id="username-help" :class="{ 'p-invalid text-red-700': errorsNew['farm'] }">
-                        {{ errorsNew.farm }}
+                    <pre>{{unit_type_dispatch_V}}</pre>
+                    <small id="username-help" :class="{ 'p-invalid text-red-700': errorsNew['unit_type_dispatch_V'] }">
+                        {{ errorsNew.unit_type_dispatch_V }}
                     </small>
                 </div>
+
+
+
+
             </div>
+
+    </template>
+    
+    <template #footer>
+
+
+        <Card>
+            <template #title> {{ packing_qty_dispatchV.name }} X {{ packing_type_dispatchV.name }} X {{ packing_dispatch_weightV.name }} X {{ unit_type_dispatch_V.name }}</template>
+            <template #content>
+
+            </template>
+        </Card>
+                
     </template>
                     
 
@@ -459,6 +493,8 @@
             
             
         </Card>
+
+        
 
             <Divider />
 
@@ -640,20 +676,38 @@ const prueba = ref({revisar: 'revisar GET-POST-PUT-DELETE'});
 const namePage = ' Customer Requests ';
 const titlePage = ' '+namePage+' Information';
 const dataFromComponent = ref();
-const packing_type = ref([]);
-const Packing_type = ref([]);
+
 const products = ref([]);
 const Products = ref([]);
-const products_variants = ref([]);
-const Products_variants = ref([]);
-const employees = ref([]);
-const Employees = ref([]);
+const productsType = ref([]);
+const ProductsType = ref([]);
+const variants = ref([]);
+const Variants = ref([]);
+const packingTypes = ref([]);
+const PackingTypes = ref([]);
+
+
+
+const packingsQtyDispatch = ref([]);
+const PackingsQtyDispatch = ref([]);
+const packingsTypesDispatch = ref([]);
+const PackingsTypesDispatch = ref([]);
+const packingsWeightDispatch = ref([]);
+const PackingsWeightDispatch = ref([]);
+const unitsTypeDispatch = ref([]);
+const UnitsTypeDispatch = ref([]);
+
+
 const Farms = ref([]);
 const farms = ref([]);
 const Compan = ref([]);
 const compa = ref([]);
 const farmDefault = sessionStorage.getItem('accessSessionFarm');
 const companyDefault = sessionStorage.getItem('accessSessionCompany');
+
+const employeeNameDefault = ref('')
+
+const employeeUuidDefault = ref('')
 
 
 
@@ -692,6 +746,10 @@ const sizeOptions = ref([
 onBeforeMount(() => {
     readAll();
     initFilters();
+    employeeNameDefault.value = sessionStorage.getItem('accessSessionEmployeeName');
+    employeeUuidDefault.value =localStorage.getItem('accessSessionEmployeeUuid');
+    
+    console.log(employeeNameDefault.value);
 });
 const listRowSelect = ref([]);
 const loading = ref(false);
@@ -716,9 +774,24 @@ const initFilters = () => {
     filters.value = {
         global: { value: null, matchMode: FilterMatchMode.CONTAINS },
         dispatch_number_lot: { operator: FilterOperator.AND, constraints: [{ value: null, matchMode: FilterMatchMode.STARTS_WITH }] },
-        name: { operator: FilterOperator.AND, constraints: [{ value: null, matchMode: FilterMatchMode.STARTS_WITH }] },
+        order_number_customer: { operator: FilterOperator.AND, constraints: [{ value: null, matchMode: FilterMatchMode.STARTS_WITH }] },
+        invoice_number_customer: { operator: FilterOperator.AND, constraints: [{ value: null, matchMode: FilterMatchMode.STARTS_WITH }] },
+        customer_name: { operator: FilterOperator.AND, constraints: [{ value: null, matchMode: FilterMatchMode.STARTS_WITH }] },
+        request_qty: { operator: FilterOperator.AND, constraints: [{ value: null, matchMode: FilterMatchMode.STARTS_WITH }] },
         delivery_datetime: { operator: FilterOperator.AND, constraints: [{ value: null, matchMode: FilterMatchMode.DATE_IS }] },
-        // delivery_datetime_time: { operator: FilterOperator.AND, constraints: [{ value: null, matchMode: FilterMatchMode.STARTS_WITH }] },
+        request_date: { operator: FilterOperator.AND, constraints: [{ value: null, matchMode: FilterMatchMode.DATE_IS }] },
+        place_of_delivery: { operator: FilterOperator.AND, constraints: [{ value: null, matchMode: FilterMatchMode.STARTS_WITH }] },
+        packing_name_customer: { operator: FilterOperator.AND, constraints: [{ value: null, matchMode: FilterMatchMode.STARTS_WITH }] },
+        outlet_temperature: { operator: FilterOperator.AND, constraints: [{ value: null, matchMode: FilterMatchMode.STARTS_WITH }] },
+        'product.name': { operator: FilterOperator.AND, constraints: [{ value: null, matchMode: FilterMatchMode.STARTS_WITH }] },
+        'product_type.name': { operator: FilterOperator.AND, constraints: [{ value: null, matchMode: FilterMatchMode.STARTS_WITH }] },
+        'variant.name': { operator: FilterOperator.AND, constraints: [{ value: null, matchMode: FilterMatchMode.STARTS_WITH }] },
+        'packing_type.name': { operator: FilterOperator.AND, constraints: [{ value: null, matchMode: FilterMatchMode.STARTS_WITH }] },
+        'packing_qty_dispatch.name': { operator: FilterOperator.AND, constraints: [{ value: null, matchMode: FilterMatchMode.STARTS_WITH }] },
+        'packing_type_dispatch.name': { operator: FilterOperator.AND, constraints: [{ value: null, matchMode: FilterMatchMode.STARTS_WITH }] },
+        'packing_dispatch_weight.name': { operator: FilterOperator.AND, constraints: [{ value: null, matchMode: FilterMatchMode.STARTS_WITH }] },
+        'unit_type_dispatch.name': { operator: FilterOperator.AND, constraints: [{ value: null, matchMode: FilterMatchMode.STARTS_WITH }] },
+        'employee.name': { operator: FilterOperator.AND, constraints: [{ value: null, matchMode: FilterMatchMode.STARTS_WITH }] },
         'status.name': { operator: FilterOperator.AND, constraints: [{ value: null, matchMode: FilterMatchMode.STARTS_WITH }] },
         'farm.name': { operator: FilterOperator.AND, constraints: [{ value: null, matchMode: FilterMatchMode.STARTS_WITH }] },
         'company.name': { operator: FilterOperator.AND, constraints: [{ value: null, matchMode: FilterMatchMode.STARTS_WITH }] },
@@ -728,8 +801,47 @@ const initFilters = () => {
 };
 
 const documentFrozen = ref(false);
+
+
 const readAll = async () => {
     loadingData();
+
+
+    const respProductType = await getRequest('/product_types');
+    if (!respProductType.ok) toast.add({ severity: 'error', detail: 'Error' + respProductType.error, life: 3000 });
+    ProductsType.value = respProductType.data.data.map((productType) => ({ id: productType.uuid, name: productType.name }));
+    console.log(productsType.value);
+
+    const respProduct = await getRequest('/products');
+    if (!respProduct.ok) toast.add({ severity: 'error', detail: 'Error' + respProduct.error, life: 3000 });
+    Products.value = respProduct.data.data.map((product) => ({ id: product.uuid, name: product.name }));
+    console.log(Products.value);
+
+    const respVariant = await getRequest('/variants');
+    if (!respVariant.ok) toast.add({ severity: 'error', detail: 'Error' + respVariant.error, life: 3000 });
+    Variants.value = respVariant.data.data.map((variant) => ({ id: variant.uuid, name: variant.name }));
+    console.log(Variants.value);
+
+    const packingType = await getRequest('/packing_types');
+    if (!packingType.ok) toast.add({ severity: 'error', detail: 'Error' + packingType.error, life: 3000 });
+    PackingTypes.value = packingType.data.data.map((packing) => ({ id: packing.uuid, name: packing.name }));
+
+    const respPackingQtyDispatch = await getRequest('/lists/packingQtyDispatch');
+    if (!respPackingQtyDispatch.ok) toast.add({ severity: 'error', detail: 'Error' + respPackingQtyDispatch.error, life: 3000 });
+    PackingsQtyDispatch.value = respPackingQtyDispatch.data.map((packingQtyDispatch) => ({ id: packingQtyDispatch.id, name: packingQtyDispatch.label }));
+
+    const respPackingTypeDispatch = await getRequest('/lists/packingTypeDispatch');
+    if (!respPackingTypeDispatch.ok) toast.add({ severity: 'error', detail: 'Error' + respPackingTypeDispatch.error, life: 3000 });
+    PackingsTypesDispatch.value = respPackingTypeDispatch.data.map((packingTypeDispatch) => ({ id: packingTypeDispatch.code, name: packingTypeDispatch.label }));
+
+    const respPackingWeightDispatch = await getRequest('/lists/packingWeightDispatch');
+    if (!respPackingWeightDispatch.ok) toast.add({ severity: 'error', detail: 'Error' + respPackingWeightDispatch.error, life: 3000 });
+    PackingsWeightDispatch.value = respPackingWeightDispatch.data.map((packingWeightDispatch) => ({ id: packingWeightDispatch.id, name: packingWeightDispatch.label }));
+
+    const respUnitsTypeDispatch = await getRequest('/lists/packingUnitDispatch');
+    if (!respUnitsTypeDispatch.ok) toast.add({ severity: 'error', detail: 'Error' + respUnitsTypeDispatch.error, life: 3000 });
+    UnitsTypeDispatch.value = respUnitsTypeDispatch.data.map((unitTypeDispatch) => ({ id: unitTypeDispatch.code, name: unitTypeDispatch.label }));
+
     const respFarms = await getRequest('/farms');
     if (!respFarms.ok) toast.add({ severity: 'error', detail: 'Error' + respFarms.error, life: 3000 });
     Farms.value = respFarms.data.data.map((farm) => ({ id: farm.uuid, name: farm.name }));
@@ -742,6 +854,7 @@ const loadingData = async () => {
     const response = await getRequest(endpoint.value);
     if (!response.ok) toast.add({ severity: 'error', detail: 'Error' + response.error, life: 3000 });
     dataFromComponent.value = response.data.data;
+
 };
 watch(
     () => dataFromComponent.value,
@@ -762,7 +875,17 @@ const {
     resetForm
 } = useForm({
     initialValues:{
+        productV: { name: '', id: '' },
+        product_typeV: { name: '', id: '' },
+        variantV: { name: '', id: '' },
+        packing_typeV: { name: '', id: '' },
+        employeeV: { name: '', id: '' },
+        packing_qty_dispatchV: { name: '', id: '' },
+        packing_type_dispatchV: { name: '', id: '' },
+        packing_dispatch_weightV: { name: '', id: '' },
+        unit_type_dispatch_V: { name: '', id: '' },
         outlet_temperatureV: 0
+
     },
     validationSchema: toTypedSchema(
         z.object({
@@ -791,29 +914,35 @@ const {
             }),
 
             packing_typeV: z.object({
-                name: z.string().min(4),
-                id: z.string().min(4)
+                name: z.string().min(1),
+                id: z.string().min(1)
             }),
 
             
-            packing_qty_dispatchV: z.string().min(4),
+            packing_qty_dispatchV: z.object({
+                name: z.number().min(1),
+                id: z.number().min(1)
+            }),
             //Lista desplegable BOL etc
             packing_type_dispatchV: z.object({
-                name: z.string().min(4),
-                id: z.string().min(4)
+                name: z.string().min(1),
+                id: z.string().min(1)
             }),
-            packing_dispatch_weight: z.string().min(4),
+            packing_dispatch_weightV: z.object({
+                name: z.number().min(1),
+                id: z.number().min(1)
+            }),
 
             unit_type_dispatch_V: z.object({
-                name: z.string().min(4),
-                id: z.string().min(4)
+                name: z.string().min(1),
+                id: z.string().min(1)
             }),
             
             
-            employeeV: z.object({
-                name: z.string().min(4),
-                id: z.string().min(4)
-            }),
+            // employeeV: z.object({
+            //     name: z.string().min(4),
+            //     id: z.string().min(4)
+            // }),
             farm: z
                 .object({
                     name: z.string().min(4),
@@ -847,7 +976,7 @@ const [variantV, variantVProps] = defineField('variantV');
 const [packing_typeV, packing_typeVProps] = defineField('packing_typeV');
 const [packing_qty_dispatchV, packing_qty_dispatchVProps] = defineField('packing_qty_dispatchV');
 const [packing_type_dispatchV, packing_type_dispatchVProps] = defineField('packing_type_dispatchV');
-const [packing_dispatch_weight, packing_dispatch_weightProps] = defineField('packing_dispatch_weight');
+const [packing_dispatch_weightV, packing_dispatch_weightProps] = defineField('packing_dispatch_weightV');
 const [unit_type_dispatch_V, unit_type_dispatch_VProps] = defineField('unit_type_dispatch_V');
 const [employeeV, employeeVProps] = defineField('employeeV');
 const [farm] = defineField('farm');
@@ -872,8 +1001,11 @@ const openNew = () => {
 
 };
 
+
+
 const openEdit = () => {
     resetForm();
+
     const { dispatch_number_lot, company: empresa, farm: farmParameter, name: nombre } = listRowSelect.value[0];
 
     name.value = nombre;
@@ -903,19 +1035,43 @@ const openDelete = () => {
     formDialogDelete.value = true;
 };
 
+
+
 const createRecord = handleSubmitNew(async (values) => {
     const data = {
+        order_number_customer: values.order_number_customerV,
+        invoice_number_customer: values.invoice_number_customerV,
+        customer_name: values.customer_nameV,
+        request_date: values.request_dateV,
+        delivery_datetime: values.delivery_datetimeV,
+        place_of_delivery: values.place_of_deliveryV,
         dispatch_number_lot: values.dispatch_number_lotV,
-        name: values.name,
+        request_qty: values.request_qty_V,
+        packing_name_customer: values.packing_name_customerV,
+        outlet_temperature: values.outlet_temperatureV,
+        product_uuid: values.productV ? values.productV.id : '',
+        product_type_uuid: values.product_typeV ? values.product_typeV.id : '',
+        variant_uuid: values.variantV ? values.variantV.id : '',
+        packing_type_uuid: values.packing_typeV ? values.packing_typeV.id : '',
+        employee_uuid: employeeUuidDefault.value,
+        packing_qty_dispatch_uuid: values.packing_qty_dispatchV ? values.packing_qty_dispatchV.id : '',
+        packing_type_dispatch_uuid: values.packing_type_dispatchV ? values.packing_type_dispatchV.id : '',
+        packing_dispatch_weight_uuid: values.packing_dispatch_weightV ? values.packing_dispatch_weightV.id : '',
+        unit_type_dispatch_uuid: values.unit_type_dispatch_V ? values.unit_type_dispatch_V.id : '',
         company_uuid: values.company ? values.company.id : companyDefault,
         farm_uuid: values.farm ? values.farm.id : farmDefault,
+        employee_uuid: 'dfghjkhghh'
     };
+    prueba.value= data;
     const restp = await postRequest(endpoint.value, data);
 
     toast.add({ severity: restp.ok ? 'success' : 'error', summary: 'Create', detail: restp.ok ? 'Creado' : restp.error, life: 3000 });
     loadingData();
-    formDialogNew.value = false;
-    prueba.value= data;
+
+    if(restp.ok) {
+    formDialogNew.value = false;}   
+    
+
     
 });
 
@@ -959,20 +1115,21 @@ const searchCompannies = (event) => {
         if (!event.query.trim().length) {
             compa.value = [...Compan.value];
         } else {
-            compa.value = Compan.value.filter((fram) => {
-                return fram.name.toLowerCase().startsWith(event.query.toLowerCase());
+            compa.value = Compan.value.filter((value) => {
+                return value.name.toLowerCase().startsWith(event.query.toLowerCase());
             });
         }
     }, 200);
 };
+
 
 const searchFarms = (event) => {
     setTimeout(() => {
         if (!event.query.trim().length) {
             farms.value = [...Farms.value];
         } else {
-            farms.value = Farms.value.filter((fram) => {
-                return fram.name.toLowerCase().startsWith(event.query.toLowerCase());
+            farms.value = Farms.value.filter((value) => {
+                return value.name.toLowerCase().startsWith(event.query.toLowerCase());
             });
         }
     }, 200);
@@ -983,45 +1140,90 @@ const searchProduct = (event) => {
         if (!event.query.trim().length) {
             products.value = [...Products.value];
         } else {
-            products.value = Products.value.filter((fram) => {
-                return fram.name.toLowerCase().startsWith(event.query.toLowerCase());
+            products.value = Products.value.filter((value) => {
+                return value.name.toLowerCase().startsWith(event.query.toLowerCase());
             });
         }
     }, 200);
 };
-
-
-const searchPackingType = (event) => {
+const searchProductType = (event) => {
     setTimeout(() => {
         if (!event.query.trim().length) {
-            packing_type.value = [...Packing_type.value];
+            productsType.value = [...ProductsType.value];
         } else {
-            packing_type.value = Packing_type.value.filter((fram) => {
-                return fram.name.toLowerCase().startsWith(event.query.toLowerCase());
+            productsType.value = ProductsType.value.filter((value) => {
+                return value.name.toLowerCase().startsWith(event.query.toLowerCase());
             });
         }
     }, 200);
 };
+
 
 const searchVariant = (event) => {
     setTimeout(() => {
         if (!event.query.trim().length) {
-            products_variants.value = [...Products_variants.value];
+            variants.value = [...Variants.value];
         } else {
-            products_variants.value = Products_variants.value.filter((fram) => {
-                return fram.name.toLowerCase().startsWith(event.query.toLowerCase());
+            variants.value = Variants.value.filter((value) => {
+                return value.name.toLowerCase().startsWith(event.query.toLowerCase());
             });
         }
     }, 200);
 };
 
-const searchEmployee = (event) => {
+const searchPackingType = (event) => {
     setTimeout(() => {
         if (!event.query.trim().length) {
-            employees.value = [...Employees.value];
+            packingTypes.value = [...PackingTypes.value];
         } else {
-            employees.value = Employees.value.filter((fram) => {
-                return fram.name.toLowerCase().startsWith(event.query.toLowerCase());
+            packingTypes.value = PackingTypes.value.filter((value) => {
+                return value.name.toLowerCase().startsWith(event.query.toLowerCase());
+            });
+        }
+    }, 200);
+};
+const searchPackingQtyDispatch = (event) => {
+    setTimeout(() => {
+        if (!event.query.trim().length) {
+            packingsQtyDispatch.value = [...PackingsQtyDispatch.value];
+        } else {
+            packingsQtyDispatch.value = PackingsQtyDispatch.value.filter((value) => {
+                return value.name.toLowerCase().startsWith(event.query.toLowerCase());
+            });
+        }
+    }, 200);
+};
+
+const searchPackingTypeDispatch = (event) => {
+    setTimeout(() => {
+        if (!event.query.trim().length) {
+            packingsTypesDispatch.value = [...PackingsTypesDispatch.value];
+        } else {
+            packingsTypesDispatch.value = PackingsTypesDispatch.value.filter((value) => {
+                return value.name.toLowerCase().startsWith(event.query.toLowerCase());
+            });
+        }
+    }, 200);
+};
+const searchPackingWeightDispatch = (event) => {
+    setTimeout(() => {
+        if (!event.query.trim().length) {
+            packingsWeightDispatch.value = [...PackingsWeightDispatch.value];
+        } else {
+            packingsWeightDispatch.value = PackingsWeightDispatch.value.filter((value) => {
+                return value.name.toLowerCase().startsWith(event.query.toLowerCase());
+            });
+        }
+    }, 200);
+};
+
+const searchUnitsTypeDispatch = (event) => {
+    setTimeout(() => {
+        if (!event.query.trim().length) {
+            unitsTypeDispatch.value = [...UnitsTypeDispatch.value];
+        } else {
+            unitsTypeDispatch.value = UnitsTypeDispatch.value.filter((value) => {
+                return value.name.toLowerCase().startsWith(event.query.toLowerCase());
             });
         }
     }, 200);
