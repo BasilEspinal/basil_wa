@@ -185,14 +185,19 @@ const members = ref([
     { name: 'Ioni Bowcher', image: 'ionibowcher.png', email: 'ioni@email.com', role: 'Viewer' }
 ]);
 
-const toggle = (event) => {
-    op.value.toggle(event);
-    opUser.value.toggle(event);
+// const toggle = (event) => {
+//     op.value.toggle(event);
+//     opUser.value.toggle(event);
 
-}
-const toggleUser = (event) => {
-    opUser.value.toggleUser(event);
-}
+// }
+const toggle = (event, panel) => {
+  if (panel === 'panelUser') {
+    op.value.toggle(event);
+  } else if (panel === 'panelLanguage') {
+    opUser.value.toggle(event);
+  }
+};
+
 const selectedCountry = ref();
 const countries = ref([
 
@@ -267,12 +272,12 @@ function toggleBrowserLanguage() {
         <div class="layout-topbar-menu" :class="topbarMenuClasses">
             <div class="flex flex-wrap align-items-center justify-content-center md:justify-content-start">
                 
-                <Button @click="toggle" icon="pi pi-user" severity="success" text rounded aria-label="User"   />
+                <Button @click="toggle(event, 'panelUser')" icon="pi pi-user" severity="success" text rounded aria-label="User"   />
 
                 <p>{{ dataUser }}</p>
             </div>
 
-            <OverlayPanel ref="opUser">
+            <OverlayPanel ref="opUser" :dismissable="true">
             <span class="font-medium text-900 block mb-2">Edit user</span>
 
             <div class="mb-3">
@@ -316,13 +321,13 @@ function toggleBrowserLanguage() {
 
 
         <!-- <Button type="button" icon="pi pi-language" label="Language" @click="toggle" /> -->
-            <Button @click="toggle"  rounded outlined class="p-link layout-topbar-button">
+            <Button @click="toggle(event, 'panelLanguage')"  rounded outlined class="p-link layout-topbar-button">
                 <i :class="{ 'pi pi-globe': !toggleValue, 'pi pi-sun': toggleValue }"></i>
             </Button>
 
 
 
-        <OverlayPanel ref="op">
+        <OverlayPanel ref="op" :dismissable="true">
             <span class="font-medium text-900 block mb-2">Change language</span>
 
         <Dropdown v-model="selectedCountry" :options="countries" optionLabel="name" placeholder="Change language" class="w-full">

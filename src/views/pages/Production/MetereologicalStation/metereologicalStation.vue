@@ -4,7 +4,7 @@
         <div>
             <h1>{{ titlePage }}</h1> 
         </div>
-<UnderConstruction />
+<!-- <UnderConstruction /> -->
 
     </div>
     <div class="card">
@@ -52,7 +52,7 @@
         v-model:selection="selectedRegisters"
         filterDisplay="menu"
         v-model:filters="filters"
-        :globalFilterFields="['name', 'company.name', 'farm.name', 'status.name', 'created_at', 'updated_at']" 
+        :globalFilterFields="[ 'records:_479_z6-20297_timestamp', 'atmos_14_port_1__c_air_temperature', 'atmos_14_port_1.1__rh_relative_humidity', 'atmos_14_port_1.2__kpa_atmospheric_pressure', 'ecrn-100_port_2__mm_precipitation', 'ecrn-100_port_2.1__mm/h_max_precip_rate', 'davis_cup_port_3__wind_direction', 'davis_cup_port_3.1__m/s_wind_speed', 'davis_cup_port_3.2__m/s_gust_speed', 'pyr_port_4__w/m2_solar_radiation', 'qso-s_port_5__umolm-2s-1_ppfd', 'teros_12_port_6__m3/m3_water_content', 'teros_12_port_6.1__c_soil_temperature', 'teros_12_port_6.2__ms/cm_bulk_ec', 'battery_port_7_%_battery_percent', 'battery_port_7.1__mv_battery_voltage', 'barometer_port_8__kpa_reference_pressure', 'barometer_port_8.1__c_logger_temperature' ]" 
         >
         <template #header>
             <!--Uncomment when filters are done-->
@@ -78,33 +78,198 @@
         <template #empty> No customers found. </template>
         <template #loading> Loading customers data. Please wait. </template>
         <Column selectionMode="multiple" headerStyle="width: 3rem"></Column>
-        <Column field="code" filterField="code" header="Code" sortable :frozen="documentFrozen"> <!--Replace :frozen with the model-->
+        <!-- <Column field="code" filterField="code" header="Code" sortable :frozen="documentFrozen"> 
             <template #header>
                     <ToggleButton v-model="documentFrozen" onIcon="pi pi-lock" offIcon="pi pi-lock-open" onLabel="" offLabel="" />
                     <div>&nbsp;</div>
                 </template>
 
                 <template #body="{ data }">
-                    {{ data.code }} 
+                    {{ data.atmos_14.port_1.c_air_temperature }} 
+                    
                 </template>
                 <template #filter="{ filterModel }">
                     <InputText v-model="filterModel.value" type="text" class="p-column-filter" placeholder="Search by " />
                 </template>
-        </Column>
+        </Column> -->
+        <Column field="records:_479_z6-20297_timestamp" filterField="records__479_z6_20297_timestamp" header="Timestamp" sortable> 
+    <template #body="{ data }">
+        {{ data["records:_479_z6-20297_timestamp"] }} 
+    </template>
+    <template #filter="{ filterModel }">
+        <InputText v-model="filterModel.value" type="text" class="p-column-filter" placeholder="Search by Timestamp" />
+    </template>
+</Column>
 
+<Column field="atmos_14_port_1__c_air_temperature" filterField="atmos_14_port_1__c_air_temperature" header="Port1-Atmos14-°C Air Temperature" sortable> 
+    <template #body="{ data }">
+        {{ data.atmos_14_port_1__c_air_temperature }} 
+    </template>
+    <template #filter="{ filterModel }">
+        <InputText v-model="filterModel.value" type="text" class="p-column-filter" placeholder="Search by Air Temperature" />
+    </template>
+</Column>
+
+<Column field="atmos_14_port_1.1__rh_relative_humidity" filterField="atmos_14_port_1.1__rh_relative_humidity" header="Port1-Atmos14-% RH Relative Humidity" sortable> 
+    <template #body="{ data }">
+        {{ data["atmos_14_port_1.1__rh_relative_humidity"] }} 
+    </template>
+    <template #filter="{ filterModel }">
+        <InputText v-model="filterModel.value" type="text" class="p-column-filter" placeholder="Search by RH Relative Humidity" />
+    </template>
+</Column>
+
+<Column field="atmos_14_port_1.2__kpa_atmospheric_pressure" filterField="atmos_14_port_1.2__kpa_atmospheric_pressure" header="Port1-Atmos14-kPa Atmospheric Pressure" sortable> 
+    <template #body="{ data }">
+        {{ data["atmos_14_port_1.2__kpa_atmospheric_pressure"] }} 
+    </template>
+    <template #filter="{ filterModel }">
+        <InputText v-model="filterModel.value" type="text" class="p-column-filter" placeholder="Search by Atmospheric Pressure" />
+    </template>
+</Column>
+
+<Column field="ecrn-100_port_2__mm_precipitation" filterField="ecrn-100_port_2__mm_precipitation" header="Port2-ECRN-100-mm Precipitation" sortable> 
+    <template #body="{ data }">
+        {{ data["ecrn-100_port_2__mm_precipitation"] }} 
+    </template>
+    <template #filter="{ filterModel }">
+        <InputText v-model="filterModel.value" type="text" class="p-column-filter" placeholder="Search by Precipitation" />
+    </template>
+</Column>
+
+<Column field="ecrn-100_port_2.1__mm/h_max_precip_rate" filterField="ecrn-100_port_2.1__mm/h_max_precip_rate" header="Port2-ECRN-100-mm/h Max Precip Rate" sortable> 
+    <template #body="{ data }">
+        {{ data["ecrn-100_port_2.1__mm/h_max_precip_rate"] }} 
+    </template>
+    <template #filter="{ filterModel }">
+        <InputText v-model="filterModel.value" type="text" class="p-column-filter" placeholder="Search by Max Precip Rate" />
+    </template>
+</Column>
+
+<Column field="davis_cup_port_3__wind_direction" filterField="davis_cup_port_3__wind_direction" header="Port3-Davis Cup-Wind Direction" sortable> 
+    <template #body="{ data }">
+        {{ data["davis_cup_port_3__wind_direction"] }} 
+    </template>
+    <template #filter="{ filterModel }">
+        <InputText v-model="filterModel.value" type="text" class="p-column-filter" placeholder="Search by Wind Direction" />
+    </template>
+</Column>
+
+<Column field="davis_cup_port_3.1__m/s_wind_speed" filterField="davis_cup_port_3.1__m/s_wind_speed" header="Port3-Davis Cup-m/s Wind Speed" sortable> 
+    <template #body="{ data }">
+        {{ data["davis_cup_port_3.1__m/s_wind_speed"] }} 
+    </template>
+    <template #filter="{ filterModel }">
+        <InputText v-model="filterModel.value" type="text" class="p-column-filter" placeholder="Search by Wind Speed" />
+    </template>
+</Column>
+
+<Column field="davis_cup_port_3.2__m/s_gust_speed" filterField="davis_cup_port_3.2__m/s_gust_speed" header="Port3-Davis Cup-m/s Gust Speed" sortable> 
+    <template #body="{ data }">
+        {{ data["davis_cup_port_3.2__m/s_gust_speed"] }} 
+    </template>
+    <template #filter="{ filterModel }">
+        <InputText v-model="filterModel.value" type="text" class="p-column-filter" placeholder="Search by Gust Speed" />
+    </template>
+</Column>
+
+<Column field="pyr_port_4__w/m2_solar_radiation" filterField="pyr_port_4__w/m2_solar_radiation" header="Port4-Pyr-W/m2 Solar Radiation" sortable> 
+    <template #body="{ data }">
+        {{ data["pyr_port_4__w/m2_solar_radiation"] }} 
+    </template>
+    <template #filter="{ filterModel }">
+        <InputText v-model="filterModel.value" type="text" class="p-column-filter" placeholder="Search by Solar Radiation" />
+    </template>
+</Column>
+
+<Column field="qso-s_port_5__umolm-2s-1_ppfd" filterField="qso-s_port_5__umolm-2s-1_ppfd" header="Port5-QSO-S-μmol·m-2·s-1 PPFD" sortable> 
+    <template #body="{ data }">
+        {{ data["qso-s_port_5__umolm-2s-1_ppfd"] }} 
+    </template>
+    <template #filter="{ filterModel }">
+        <InputText v-model="filterModel.value" type="text" class="p-column-filter" placeholder="Search by PPFD" />
+    </template>
+</Column>
+
+<Column field="teros_12_port_6__m3/m3_water_content" filterField="teros_12_port_6__m3/m3_water_content" header="Port6-Teros12-m3/m3 Water Content" sortable> 
+    <template #body="{ data }">
+        {{ data["teros_12_port_6__m3/m3_water_content"] }} 
+    </template>
+    <template #filter="{ filterModel }">
+        <InputText v-model="filterModel.value" type="text" class="p-column-filter" placeholder="Search by Water Content" />
+    </template>
+</Column>
+
+<Column field="teros_12_port_6.1__c_soil_temperature" filterField="teros_12_port_6.1__c_soil_temperature" header="Port6-Teros12-°C Soil Temperature" sortable> 
+    <template #body="{ data }">
+        {{ data["teros_12_port_6.1__c_soil_temperature"] }} 
+    </template>
+    <template #filter="{ filterModel }">
+        <InputText v-model="filterModel.value" type="text" class="p-column-filter" placeholder="Search by Soil Temperature" />
+    </template>
+</Column>
+
+<Column field="teros_12_port_6.2__ms/cm_bulk_ec" filterField="teros_12_port_6.2__ms/cm_bulk_ec" header="Port6-Teros12-mS/cm Bulk EC" sortable> 
+    <template #body="{ data }">
+        {{ data["teros_12_port_6.2__ms/cm_bulk_ec"] }} 
+    </template>
+    <template #filter="{ filterModel }">
+        <InputText v-model="filterModel.value" type="text" class="p-column-filter" placeholder="Search by Bulk EC" />
+    </template>
+</Column>
+
+<Column field="battery_port_7_%_battery_percent" filterField="battery_port_7_%_battery_percent" header="Port7-Battery-% Battery Percent" sortable> 
+    <template #body="{ data }">
+        {{ data["battery_port_7_%_battery_percent"] }} 
+    </template>
+    <template #filter="{ filterModel }">
+        <InputText v-model="filterModel.value" type="text" class="p-column-filter" placeholder="Search by Battery Percent" />
+    </template>
+</Column>
+
+<Column field="battery_port_7.1__mv_battery_voltage" filterField="battery_port_7.1__mv_battery_voltage" header="Port7-Battery-mV Battery Voltage" sortable> 
+    <template #body="{ data }">
+        {{ data["battery_port_7.1__mv_battery_voltage"] }} 
+    </template>
+    <template #filter="{ filterModel }">
+        <InputText v-model="filterModel.value" type="text" class="p-column-filter" placeholder="Search by Battery Voltage" />
+    </template>
+</Column>
+
+<Column field="barometer_port_8__kpa_reference_pressure" filterField="barometer_port_8__kpa_reference_pressure" header="Port8-Barometer-kPa Reference Pressure" sortable> 
+    <template #body="{ data }">
+        {{ data["barometer_port_8__kpa_reference_pressure"] }} 
+    </template>
+    <template #filter="{ filterModel }">
+        <InputText v-model="filterModel.value" type="text" class="p-column-filter" placeholder="Search by Reference Pressure" />
+    </template>
+</Column>
+
+<Column field="barometer_port_8.1__c_logger_temperature" filterField="barometer_port_8.1__c_logger_temperature" header="Port8-Barometer-°C Logger Temperature" sortable> 
+    <template #body="{ data }">
+        {{ data["barometer_port_8.1__c_logger_temperature"] }} 
+    </template>
+    <template #filter="{ filterModel }">
+        <InputText v-model="filterModel.value" type="text" class="p-column-filter" placeholder="Search by Logger Temperature" />
+    </template>
+</Column>
+
+
+
+        <!-- 
         <Column field="name" filterField="name" header="Name" sortable> 
             
-                <template #body="{ data }">
-                    {{ data.name }} 
-                </template>
-                <template #filter="{ filterModel }">
-                    <InputText v-model="filterModel.value" type="text" class="p-column-filter" placeholder="Search by " />
-                </template>
-        </Column>
-
+            <template #body="{ data }">
+                {{ data["Records: 479"] }} 
+            </template>
+            <template #filter="{ filterModel }">
+                <InputText v-model="filterModel.value" type="text" class="p-column-filter" placeholder="Search by " />
+            </template>
+    </Column> -->
+        
         <!--Here add other columns-->
 
-        <Column field="farmName" filterField="farm.name" header="Farm Name" sortable>
+        <!-- <Column field="farmName" filterField="farm.name" header="Farm Name" sortable>
                 <template #body="{ data }">
                     {{ data.farm.name }}
                 </template>
@@ -147,7 +312,7 @@
                 <template #filter="{ filterModel }">
                     <InputText v-model="filterModel.value" type="text" class="p-column-filter" placeholder="Search by status" />
                 </template>
-            </Column>
+            </Column> -->
 
         </DataTable>
         <Dialog v-model:visible="formDialogNew" modal :header="formDialogNewTitle" class="p-fluid text-center mx-auto">
@@ -351,7 +516,11 @@ import { saveAs } from 'file-saver';
 import { z } from 'zod';
 import ability from '@/service/ability.js';
 import { AbilityBuilder} from '@casl/ability';
+
+
 import UnderConstruction from '../../../../components/UnderConstruction.vue';
+
+
 const namePage = ' Metereological Station ';
 const titlePage = namePage+'information';
 const dataFromComponent = ref();
@@ -373,7 +542,7 @@ const formDialogDelete = ref(false);
 const toast = useToast();
 const filename = ref('table');
 const isChanging = ref(false);
-let endpoint = ref('/endpoint');  //replace endpoint with your endpoint
+let endpoint = ref('/demo/data/metereologicalStation.json');
 
 
 ////////////
@@ -388,9 +557,11 @@ const sizeOptions = ref([
 
 
 
-onBeforeMount(() => {
+onBeforeMount(async () => {
     readAll();
     initFilters();
+
+
 });
 const listRowSelect = ref([]);
 const loading = ref(false);
@@ -414,13 +585,26 @@ const clearFilter = () => {
 const initFilters = () => {
     filters.value = {
         global: { value: null, matchMode: FilterMatchMode.CONTAINS },
-        code: { operator: FilterOperator.AND, constraints: [{ value: null, matchMode: FilterMatchMode.STARTS_WITH }] },
-        name: { operator: FilterOperator.AND, constraints: [{ value: null, matchMode: FilterMatchMode.STARTS_WITH }] },
-        'status.name': { operator: FilterOperator.AND, constraints: [{ value: null, matchMode: FilterMatchMode.STARTS_WITH }] },
-        'farm.name': { operator: FilterOperator.AND, constraints: [{ value: null, matchMode: FilterMatchMode.STARTS_WITH }] },
-        'company.name': { operator: FilterOperator.AND, constraints: [{ value: null, matchMode: FilterMatchMode.STARTS_WITH }] },
-        created_at: { operator: FilterOperator.AND, constraints: [{ value: null, matchMode: FilterMatchMode.STARTS_WITH }] },
-        updated_at: { operator: FilterOperator.AND, constraints: [{ value: null, matchMode: FilterMatchMode.STARTS_WITH }] }
+        records__479_z6_20297_timestamp: { operator: FilterOperator.AND, constraints: [{ value: null, matchMode: FilterMatchMode.STARTS_WITH }] },
+        atmos_14_port_1__c_air_temperature: { operator: FilterOperator.AND, constraints: [{ value: null, matchMode: FilterMatchMode.STARTS_WITH }] },
+        atmos_14_port_1_1__rh_relative_humidity: { operator: FilterOperator.AND, constraints: [{ value: null, matchMode: FilterMatchMode.STARTS_WITH }] },
+        atmos_14_port_1_2__kpa_atmospheric_pressure: { operator: FilterOperator.AND, constraints: [{ value: null, matchMode: FilterMatchMode.STARTS_WITH }] },
+        ecrn_100_port_2__mm_precipitation: { operator: FilterOperator.AND, constraints: [{ value: null, matchMode: FilterMatchMode.STARTS_WITH }] },
+        ecrn_100_port_2_1__mm_h_max_precip_rate: { operator: FilterOperator.AND, constraints: [{ value: null, matchMode: FilterMatchMode.STARTS_WITH }] },
+        davis_cup_port_3__wind_direction: { operator: FilterOperator.AND, constraints: [{ value: null, matchMode: FilterMatchMode.STARTS_WITH }] },
+        davis_cup_port_3_1__m_s_wind_speed: { operator: FilterOperator.AND, constraints: [{ value: null, matchMode: FilterMatchMode.STARTS_WITH }] },
+        davis_cup_port_3_2__m_s_gust_speed: { operator: FilterOperator.AND, constraints: [{ value: null, matchMode: FilterMatchMode.STARTS_WITH }] },
+        pyr_port_4__w_m2_solar_radiation: { operator: FilterOperator.AND, constraints: [{ value: null, matchMode: FilterMatchMode.STARTS_WITH }] },
+        qso_s_port_5__umolm_2s_1_ppfd: { operator: FilterOperator.AND, constraints: [{ value: null, matchMode: FilterMatchMode.STARTS_WITH }] },
+        teros_12_port_6__m3_m3_water_content: { operator: FilterOperator.AND, constraints: [{ value: null, matchMode: FilterMatchMode.STARTS_WITH }] },
+        teros_12_port_6_1__c_soil_temperature: { operator: FilterOperator.AND, constraints: [{ value: null, matchMode: FilterMatchMode.STARTS_WITH }] },
+        teros_12_port_6_2__ms_cm_bulk_ec: { operator: FilterOperator.AND, constraints: [{ value: null, matchMode: FilterMatchMode.STARTS_WITH }] },
+        battery_port_7__battery_percent: { operator: FilterOperator.AND, constraints: [{ value: null, matchMode: FilterMatchMode.STARTS_WITH }] },
+        battery_port_7_1__mv_battery_voltage: { operator: FilterOperator.AND, constraints: [{ value: null, matchMode: FilterMatchMode.STARTS_WITH }] },
+        barometer_port_8__kpa_reference_pressure: { operator: FilterOperator.AND, constraints: [{ value: null, matchMode: FilterMatchMode.STARTS_WITH }] },
+        barometer_port_8_1__c_logger_temperature: { operator: FilterOperator.AND, constraints: [{ value: null, matchMode: FilterMatchMode.STARTS_WITH }] },
+
+        
     };
 };
 
@@ -436,9 +620,18 @@ const readAll = async () => {
     Compan.value = respCompan.data.data.map((comp) => ({ id: comp.uuid, name: comp.name }));
 };
 const loadingData = async () => {
-    const response = await getRequest(endpoint.value);
+    //const response = await getRequest(endpoint.value);
+    const response = await fetch('demo/data/metereologicalStation.json').then((res) => res.json())
     if (!response.ok) toast.add({ severity: 'error', detail: 'Error' + response.error, life: 3000 });
-    dataFromComponent.value = response.data.data;
+    // dataFromComponent.value = response.data.data;
+    dataFromComponent.value = response.data;
+    console.log(dataFromComponent.value[0].atmos_14_port_1__c_air_temperature)
+    // atmos_14_port_1__c_air_temperature
+
+    // const dataTest = await fetch('demo/data/metereologicalStation.json').then((res) => res.json())
+
+
+// console.log(dataTest.data[0].atmos_14.port_1)
 };
 watch(
     () => dataFromComponent.value,

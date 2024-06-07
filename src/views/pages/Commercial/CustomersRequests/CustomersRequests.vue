@@ -304,6 +304,20 @@
                     </template>
                 </Column>
 
+                <Column field="variant" filterField="variant"
+                    header="Variant" sortable>
+
+                    <template #body="{ data }">
+                        {{ data.variant.name }} 
+                    </template>
+                    <template #filter="{ filterModel }">
+                        <InputText v-model="filterModel.value" type="text" class="p-column-filter"
+                            placeholder="Search by Column" />
+                    </template>
+                </Column>
+
+                
+
 
 
 
@@ -372,6 +386,7 @@
                 <pre>{{ errorsNew }}</pre>
                 <Avatar icon="pi pi-user" class="mr-3" size="xlarge" shape="circle" />
                 <span> Employee: {{ employeeNameDefault }} </span>
+                <span> UUiid: {{ employeeUuidDefault }} </span>
 
 
                 <Divider />
@@ -1707,6 +1722,7 @@ const Farms = ref([]);
 const farms = ref([]);
 const Compan = ref([]);
 const compa = ref([]);
+
 const farmDefault = sessionStorage.getItem('accessSessionFarm');
 const companyDefault = sessionStorage.getItem('accessSessionCompany');
 
@@ -1752,7 +1768,7 @@ onBeforeMount(() => {
     readAll();
     initFilters();
     employeeNameDefault.value = sessionStorage.getItem('accessSessionEmployeeName');
-    employeeUuidDefault.value = localStorage.getItem('accessSessionEmployeeUuid');
+    employeeUuidDefault.value = localStorage.getItem('accesSessionEmployeeUuid');
 
     console.log(employeeNameDefault.value);
 });
@@ -2034,7 +2050,7 @@ const openEdit = () => {
     outlet_temperatureV.value = Number(outlet_temperature);
     productV.value = { id: product.uuid, name: product.name };
     product_typeV.value = { id: product_type.uuid, name: product_type.name };
-    // variantV.value = { id: variant.uuid, name: variant.name };
+    variantV.value = { id: variant.uuid, name: variant.name };
     packing_typeV.value = { id: packing_type.uuid, name: packing_type.name };
     packing_qty_dispatchV.value = { id: packing_qty_dispatch, name: packing_qty_dispatch };
     packing_type_dispatchV.value = { id: packing_type_dispatch.uuid, name: packing_type_dispatch.name };
@@ -2064,7 +2080,7 @@ const openClone = () => {
     outlet_temperatureV.value = Number(outlet_temperature);
     productV.value = { id: product.uuid, name: product.name };
     product_typeV.value = { id: product_type.uuid, name: product_type.name };
-    // variantV.value = { id: variant.uuid, name: variant.name };
+    variantV.value = { id: variant.uuid, name: variant.name };
     packing_typeV.value = { id: packing_type.uuid, name: packing_type.name };
     packing_qty_dispatchV.value = { id: packing_qty_dispatch, name: packing_qty_dispatch };
     packing_type_dispatchV.value = { id: packing_type_dispatch.uuid, name: packing_type_dispatch.name };
@@ -2128,14 +2144,14 @@ const createRecord = handleSubmitNew(async (values) => {
         packing_type_uuid: values.packing_typeV ? values.packing_typeV.id : '',
 
         packing_qty_dispatch: values.packing_qty_dispatchV ? values.packing_qty_dispatchV.id : '',
-        // packing_type_dispatch_uuid: values.packing_type_dispatchV ? values.packing_type_dispatchV.id : '',
-        packing_type_dispatch_uuid: "8b57a8ef-c0c7-4bee-8e75-6db8ffe44b48",
+        packing_type_dispatch_uuid: values.packing_type_dispatchV ? values.packing_type_dispatchV.id : '',
+        // packing_type_dispatch_uuid: "8b57a8ef-c0c7-4bee-8e75-6db8ffe44b48",
         packing_dispatch_weight: values.packing_dispatch_weightV ? values.packing_dispatch_weightV.id : '',
-        // unit_type_dispatch_uuid: values.unit_type_dispatch_V ? values.unit_type_dispatch_V.id : '',
-        unit_type_dispatch_uuid: "0d8695c0-0d1b-4827-ab53-d18ed2d7d2ca",
+        unit_type_dispatch_uuid: values.unit_type_dispatch_V ? values.unit_type_dispatch_V.id : '',
+        // unit_type_dispatch_uuid: "0d8695c0-0d1b-4827-ab53-d18ed2d7d2ca",
         company_uuid: values.company ? values.company.id : companyDefault,
         farm_uuid: values.farm ? values.farm.id : farmDefault,
-        employee_uuid: 'bb15cc28-39d7-4732-bf80-59567e79c759'
+        employee_uuid: values.employeeV ? values.employeeV.id : employeeUuidDefault
     };
     prueba.value = data;
     const restp = await postRequest(endpoint.value, data);
@@ -2171,14 +2187,14 @@ const EditRecord = handleSubmitNew(async (values) => {
         packing_type_uuid: values.packing_typeV ? values.packing_typeV.id : '',
 
         packing_qty_dispatch: values.packing_qty_dispatchV ? values.packing_qty_dispatchV.id : '',
-        // packing_type_dispatch_uuid: values.packing_type_dispatchV ? values.packing_type_dispatchV.id : '',
-        packing_type_dispatch_uuid: "8b57a8ef-c0c7-4bee-8e75-6db8ffe44b48",
+        packing_type_dispatch_uuid: values.packing_type_dispatchV ? values.packing_type_dispatchV.id : '',
+        // packing_type_dispatch_uuid: "8b57a8ef-c0c7-4bee-8e75-6db8ffe44b48",
         packing_dispatch_weight: values.packing_dispatch_weightV ? values.packing_dispatch_weightV.id : '',
-        // unit_type_dispatch_uuid: values.unit_type_dispatch_V ? values.unit_type_dispatch_V.id : '',
-        unit_type_dispatch_uuid: "0d8695c0-0d1b-4827-ab53-d18ed2d7d2ca",
+        unit_type_dispatch_uuid: values.unit_type_dispatch_V ? values.unit_type_dispatch_V.id : '',
+        // unit_type_dispatch_uuid: "0d8695c0-0d1b-4827-ab53-d18ed2d7d2ca",
         company_uuid: values.company ? values.company.id : companyDefault,
         farm_uuid: values.farm ? values.farm.id : farmDefault,
-        employee_uuid: 'bb15cc28-39d7-4732-bf80-59567e79c759'
+        employee_uuid: values.employeeV ? values.employeeV.id : employeeUuidDefault
     };
 
     const restp = await putRequest(endpoint.value, data, uuid);
@@ -2211,14 +2227,14 @@ const CloneRecord = handleSubmitNew(async (values) => {
         packing_type_uuid: values.packing_typeV ? values.packing_typeV.id : '',
 
         packing_qty_dispatch: values.packing_qty_dispatchV ? values.packing_qty_dispatchV.id : '',
-        // packing_type_dispatch_uuid: values.packing_type_dispatchV ? values.packing_type_dispatchV.id : '',
-        packing_type_dispatch_uuid: "8b57a8ef-c0c7-4bee-8e75-6db8ffe44b48",
+        packing_type_dispatch_uuid: values.packing_type_dispatchV ? values.packing_type_dispatchV.id : '',
+        // packing_type_dispatch_uuid: "8b57a8ef-c0c7-4bee-8e75-6db8ffe44b48",
         packing_dispatch_weight: values.packing_dispatch_weightV ? values.packing_dispatch_weightV.id : '',
-        // unit_type_dispatch_uuid: values.unit_type_dispatch_V ? values.unit_type_dispatch_V.id : '',
-        unit_type_dispatch_uuid: "0d8695c0-0d1b-4827-ab53-d18ed2d7d2ca",
+        unit_type_dispatch_uuid: values.unit_type_dispatch_V ? values.unit_type_dispatch_V.id : '',
+        // unit_type_dispatch_uuid: "0d8695c0-0d1b-4827-ab53-d18ed2d7d2ca",
         company_uuid: values.company ? values.company.id : companyDefault,
         farm_uuid: values.farm ? values.farm.id : farmDefault,
-        employee_uuid: 'bb15cc28-39d7-4732-bf80-59567e79c759'
+        employee_uuid: values.employeeV ? values.employeeV.id : employeeUuidDefault
     };
     const restp = await postRequest(endpoint.value, data);
     toast.add({ severity: restp.ok ? 'success' : 'error', summary: 'Clone', detail: restp.ok ? 'Clonado' : restp.error, life: 3000 });
