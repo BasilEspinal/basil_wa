@@ -4,7 +4,17 @@ import { useLayout } from '@/layout/composables/layout';
 import { useRouter } from 'vue-router';
 import useDataAPI from '@/composables/DataAPI/FetchDataAPI.js'
 
+
+import OverlayPanel from 'primevue/overlaypanel';
+import { useForm } from 'vee-validate';
+import { toTypedSchema } from '@vee-validate/zod';
+import { z } from 'zod';
+
+
 import ability from '@/service/ability.js';
+const userDefault = ref('')
+const emailDefault = ref('')
+
 const {getAllResponsePermissionsAPI ,dataResponsePermissionsAPI} =
     useDataAPI();
 const lengthPermissions = ref(0);
@@ -12,8 +22,44 @@ onMounted(async () => {
     await getAllResponsePermissionsAPI("/abilities");
     lengthPermissions.value = dataResponsePermissionsAPI.value.length;
 });
+const { handleSubmit, errors, defineField } = useForm({
+    validationSchema: toTypedSchema(
+        z.object({
+            name: z.string().min(6),
+            email: z.string().email(),
+            password: z.string().min(8),
+            confirmation: z
+                .string()
+                .min(8)
+                .refine((value) => password.value === value, { message: 'Different Passwords' })
+        })
+    )
+});
+const {
+    handleSubmit: submitEdit,
+    errors: errorEdit,
+    defineField: defineEdit,
+    resetForm
+} = useForm({
+    validationSchema: toTypedSchema(
+        z.object({
+            nameEdit: z.string().min(6),
+            emailEdit: z.string().email(),
+            passwordEdit: z
+                .string()
+                .refine((value) => !value.length || value.length >= 8, { message: 'String must contain at least 8 character(s)' })
+                .optional()
+        })
+    )
+});
 
-
+const [nameEdit, nameEditProps] = defineEdit('nameEdit');
+const [emailEdit, emailEditProps] = defineEdit('emailEdit');
+const [passwordEdit, passwordEditProps] = defineEdit('passwordEdit');
+const [name, nameProps] = defineField('name');
+const [email, emailProps] = defineField('email');
+const [password, passwordProps] = defineField('password');
+const [confirmation, confirmProps] = defineField('confirmation');
 const { layoutConfig, onMenuToggle, changeThemeSettings } = useLayout();
 const { getAllResponseAPI, totalRecordsResponseAPI, currentPageResponseAPI, linksResponseAPI, postResponseAPI, putResponseAPI, deleteResponseAPI, errorResponseAPI, dataResponseAPI } = useDataAPI();
 const outsideClickListener = ref(null);
@@ -21,6 +67,8 @@ const topbarMenuActive = ref(false);
 const dataUser = ref('');
 const router = useRouter();
 const toggleValue = ref(layoutConfig.darkTheme.value);
+const farmDefault = sessionStorage.getItem('accessSessionFarm');
+const companyDefault = sessionStorage.getItem('accessSessionCompany');
 
 const logout = async () => {    
     await postResponseAPI({}, "/logout");
@@ -28,11 +76,17 @@ const logout = async () => {
 
 onMounted(() => {
     dataUser.value = sessionStorage.getItem('accessSessionUser');
+    nameEdit.value = sessionStorage.getItem('accessSessionUser');
+    emailEdit.value = sessionStorage.getItem('accessSessionEmail');
+    console.log("nameEdit", nameEdit.value)
+    console.log("emailEdit", emailEdit.value)   
     bindOutsideClickListener();
 });
 
 onBeforeUnmount(() => {
     unbindOutsideClickListener();
+    
+
 });
 
 const logoUrl = computed(() => {
@@ -102,6 +156,101 @@ const Exit = () => {
     
 
 };
+
+const editUser = submitEdit(async (values) => {
+    // const { farm, roles, id } = selectedRegisters.value[0];
+    const data = {
+        name: values.nameEdit,
+        email: values.emailEdit,
+        farm_uuid: values.farm ? values.farm.uuid : farmDefault,
+        roles: roles.map((rol) => ({ id: rol.id }))
+    };
+    if (values.passwordEdit) {
+        data.password = values.passwordEdit;
+    }
+    const restp = await putRequest(endpoint.value, data, id);
+    
+    toast.add({ severity: restp.ok ? 'success' : 'error', summary: 'Edit', detail: restp.ok ? 'Editado' : restp.error, life: 3000 });
+    
+    
+});
+
+const op = ref();
+const opUser = ref()
+
+
+const members = ref([
+    { name: 'Amy Elsner', image: 'amyelsner.png', email: 'amy@email.com', role: 'Owner' },
+    { name: 'Bernardo Dominic', image: 'bernardodominic.png', email: 'bernardo@email.com', role: 'Editor' },
+    { name: 'Ioni Bowcher', image: 'ionibowcher.png', email: 'ioni@email.com', role: 'Viewer' }
+]);
+
+// const toggle = (event) => {
+//     op.value.toggle(event);
+//     opUser.value.toggle(event);
+
+// }
+const toggle = (event, panel) => {
+  if (panel === 'panelUser') {
+    op.value.toggle(event);
+  } else if (panel === 'panelLanguage') {
+    opUser.value.toggle(event);
+  }
+};
+
+const selectedCountry = ref();
+const countries = ref([
+
+    { name: 'ES', code: 'ES' },
+    { name: 'EN', code: 'US' }
+]);
+
+function toggleBrowserLanguage() {
+    // Define the language codes for English and Spanish
+    const englishLang = 'en-US';
+    const spanishLang = 'es-ES';
+
+    // Get the current language settings
+    const currentLanguage = navigator.language || navigator.languages[0];
+
+    // Determine the new language to set
+    let newLanguage;
+    if (currentLanguage.startsWith('es')) {
+        newLanguage = englishLang;
+    } else {
+        newLanguage = spanishLang;
+    }
+
+    // Check if the new language is already in the list of preferred languages
+    let languages = navigator.languages || [navigator.language];
+    if (!languages.includes(newLanguage)) {
+        // If the new language is not in the list, add it to the front
+        languages = [newLanguage, ...languages];
+    } else {
+        // If the new language is in the list, move it to the front
+        languages = [newLanguage, ...languages.filter(lang => lang !== newLanguage)];
+    }
+
+    // Set the new language preferences
+    const newLanguages = languages.join(', ');
+
+    // Try to set the language in different ways for different browsers
+    if (navigator.languages) {
+        Object.defineProperty(navigator, 'languages', {
+            get: function () { return newLanguages.split(', '); }
+        });
+    }
+
+    // Fallback for older browsers
+    if (navigator.language) {
+        Object.defineProperty(navigator, 'language', {
+            get: function () { return newLanguage; }
+        });
+    }
+
+    // Reload the page to apply the new language settings
+    window.location.reload();
+}
 </script>
 
 <template>
@@ -122,13 +271,91 @@ const Exit = () => {
 
         <div class="layout-topbar-menu" :class="topbarMenuClasses">
             <div class="flex flex-wrap align-items-center justify-content-center md:justify-content-start">
-                <i class="pi pi-user mr-2"></i>
+                
+                <Button @click="toggle(event, 'panelUser')" icon="pi pi-user" severity="success" text rounded aria-label="User"   />
+
                 <p>{{ dataUser }}</p>
             </div>
+
+            <OverlayPanel ref="opUser" :dismissable="true">
+            <span class="font-medium text-900 block mb-2">Edit user</span>
+
+            <div class="mb-3">
+                <div class="flex align-items-center gap-3 mb-1">
+                    <label for="username" class="font-semibold w-6rem">Name</label>
+                    <InputText id="username" v-model="nameEdit" class="flex-auto" :disabled="true" autocomplete="off" v-bind="nameEditProps" />
+                </div>
+                <small id="username-help" :class="{ 'p-invalid text-red-700': errorEdit['nameEdit'] }">
+                    {{ errorEdit.nameEdit }}
+                </small>
+            </div>
+            <div class="mb-3">
+                <div class="flex align-items-center gap-3 mb-1">
+                    <label for="email" class="font-semibold w-6rem">Email</label>
+                    <InputText id="email" v-model="emailEdit" class="flex-auto" autocomplete="off" v-bind="emailEditProps" />
+                </div>
+                <small id="username-help" :class="{ 'p-invalid text-red-700': errorEdit['emailEdit'] }">
+                    {{ errorEdit.emailEdit }}
+                </small>
+            </div>
+            <div class="mb-3" v-if="ability.can('editar_contrasena')">
+                <div class="flex align-items-center gap-3 mb-1">
+                    <label for="passwordEdit" class="font-semibold w-6rem">Password </label>
+                    <Password id="id" v-model="passwordEdit" :feedback="false" :toggleMask="true" v-bind="passwordEditProps" />
+                </div>
+                <small id="username-help" :class="{ 'p-invalid text-red-700': errorEdit['passwordEdit'] }">
+                    {{ errorEdit.passwordEdit }}
+                </small>
+            </div>
+            <div class="flex justify-content-end gap-2">
+                <Button type="button" label="Cancel" severity="secondary" @click="DialogEdit = false" />
+                <Button type="button" label="Save" @click="editUser()" />
+            </div>
+            
+        </OverlayPanel>
 
             <Button @click="onChangeTheme(!toggleValue)" v-model="toggleValue" rounded outlined class="p-link layout-topbar-button">
                 <i :class="{ 'pi pi-moon': !toggleValue, 'pi pi-sun': toggleValue }"></i>
             </Button>
+
+
+
+        <!-- <Button type="button" icon="pi pi-language" label="Language" @click="toggle" /> -->
+            <Button @click="toggle(event, 'panelLanguage')"  rounded outlined class="p-link layout-topbar-button">
+                <i :class="{ 'pi pi-globe': !toggleValue, 'pi pi-sun': toggleValue }"></i>
+            </Button>
+
+
+
+        <OverlayPanel ref="op" :dismissable="true">
+            <span class="font-medium text-900 block mb-2">Change language</span>
+
+        <Dropdown v-model="selectedCountry" :options="countries" optionLabel="name" placeholder="Change language" class="w-full">
+            <template #value="slotProps">
+                <div v-if="slotProps.value" class="flex align-items-center">
+                    <img :alt="slotProps.value.label" src="https://primefaces.org/cdn/primevue/images/flag/flag_placeholder.png" :class="`mr-2 flag flag-${slotProps.value.code.toLowerCase()}`" style="width: 18px" />
+                    <div>{{ slotProps.value.name }}</div>
+                </div>
+                <span v-else>
+                    {{ slotProps.placeholder }}
+                </span>
+            </template>
+            <template #option="slotProps">
+                <div class="flex align-items-center">
+                    <img :alt="slotProps.option.label" src="https://primefaces.org/cdn/primevue/images/flag/flag_placeholder.png" :class="`mr-2 flag flag-${slotProps.option.code.toLowerCase()}`" style="width: 18px" />
+                    <div>{{ slotProps.option.name }}</div>
+                </div>
+            </template>
+        </Dropdown>
+            
+        </OverlayPanel>
+    
+
+            
+            <!-- <Button @click="toggleBrowserLanguage()" v-model="toggleValue" rounded outlined class="p-link layout-topbar-button">
+                <i :class="{ 'pi pi-language': !toggleValue, 'pi pi-sun': toggleValue }"></i>
+            </Button> -->
+
 
             <Button @click="Exit()" rounded outlined class="p-link layout-topbar-button">
                 <i class="pi pi-sign-out"></i>
