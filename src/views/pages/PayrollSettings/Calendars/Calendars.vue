@@ -191,8 +191,8 @@
                     </small>
                 </div> -->
 
-<pre>{{ prueba }}</pre>
-<pre>{{ errorResponseAPI }}</pre>
+<!-- <pre>{{ prueba }}</pre>
+<pre>{{ errorResponseAPI }}</pre> -->
 
 
 

@@ -121,7 +121,7 @@ const fetchInfoPostLogin = async (data) => {
     const emailUser = response.user.email;
     const farm = response.farm_uuid;
     const company = response.company_uuid;
-    const employeeName = response.Employee.first_name+' '+response.Employee.last_name;
+    const employeeName = response.Employee.first_name+' '+response.Employee.lasts_names;
     const employeeUuid = response.Employee.uuid;
     console.log(response)
     console.log('Login')

@@ -382,11 +382,11 @@
             <Dialog v-model:visible="formDialogNew" modal :header="formDialogNewTitle"
                 class="p-fluid text-center mx-auto">
                 <!-- <pre>{{ prueba }}</pre> -->
-                <pre>{{ prueba }}</pre>
-                <pre>{{ errorsNew }}</pre>
+                <!-- <pre>{{ prueba }}</pre>
+                <pre>{{ errorsNew }}</pre> -->
                 <Avatar icon="pi pi-user" class="mr-3" size="xlarge" shape="circle" />
                 <span> Employee: {{ employeeNameDefault }} </span>
-                <span> UUiid: {{ employeeUuidDefault }} </span>
+                <!-- <span> Credencial: {{ employeeUuidDefault }} </span> -->
 
 
                 <Divider />
