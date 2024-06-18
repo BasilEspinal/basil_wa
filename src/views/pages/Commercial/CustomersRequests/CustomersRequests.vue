@@ -1851,17 +1851,24 @@ const readAll = async () => {
     if (!respPackingQtyDispatch.ok) toast.add({ severity: 'error', detail: 'Error' + respPackingQtyDispatch.error, life: 3000 });
     PackingsQtyDispatch.value = respPackingQtyDispatch.data.map((packingQtyDispatch) => ({ id: packingQtyDispatch.id, name: packingQtyDispatch.label }));
 
-    const respPackingTypeDispatch = await getRequest('/lists/packingTypeDispatch');
+    const respPackingTypeDispatch = await getRequest('/packing_types');
     if (!respPackingTypeDispatch.ok) toast.add({ severity: 'error', detail: 'Error' + respPackingTypeDispatch.error, life: 3000 });
-    PackingsTypesDispatch.value = respPackingTypeDispatch.data.map((packingTypeDispatch) => ({ id: packingTypeDispatch.code, name: packingTypeDispatch.label }));
+    // PackingsTypesDispatch.value = respPackingTypeDispatch.data.data.map((packingTypeDispatch) => ({ id: packingTypeDispatch.uuid, name: packingTypeDispatch.name }));
+    PackingsTypesDispatch.value = respPackingTypeDispatch.data.data
+    .map((packingTypeDispatch) => ({ id: packingTypeDispatch.uuid, name: packingTypeDispatch.name }))
+    .filter((packing) => packing.name === 'Bolsa');
+    ;
 
     const respPackingWeightDispatch = await getRequest('/lists/packingWeightDispatch');
     if (!respPackingWeightDispatch.ok) toast.add({ severity: 'error', detail: 'Error' + respPackingWeightDispatch.error, life: 3000 });
     PackingsWeightDispatch.value = respPackingWeightDispatch.data.map((packingWeightDispatch) => ({ id: packingWeightDispatch.id, name: packingWeightDispatch.label }));
 
-    const respUnitsTypeDispatch = await getRequest('/lists/packingUnitDispatch');
+    const respUnitsTypeDispatch = await getRequest('/unit_types');
     if (!respUnitsTypeDispatch.ok) toast.add({ severity: 'error', detail: 'Error' + respUnitsTypeDispatch.error, life: 3000 });
-    UnitsTypeDispatch.value = respUnitsTypeDispatch.data.map((unitTypeDispatch) => ({ id: unitTypeDispatch.code, name: unitTypeDispatch.label }));
+    // UnitsTypeDispatch.value = respUnitsTypeDispatch.data.data.map((unitTypeDispatch) => ({ id: unitTypeDispatch.uuid, name: unitTypeDispatch.name }));
+    UnitsTypeDispatch.value = respUnitsTypeDispatch.data.data
+        .map((unitTypeDispatch) => ({ id: unitTypeDispatch.uuid, name: unitTypeDispatch.name }))
+        .filter((unit) => unit.name === 'Gramo');
 
     const respFarms = await getRequest('/farms');
     if (!respFarms.ok) toast.add({ severity: 'error', detail: 'Error' + respFarms.error, life: 3000 });
@@ -2151,7 +2158,8 @@ const createRecord = handleSubmitNew(async (values) => {
         // unit_type_dispatch_uuid: "0d8695c0-0d1b-4827-ab53-d18ed2d7d2ca",
         company_uuid: values.company ? values.company.id : companyDefault,
         farm_uuid: values.farm ? values.farm.id : farmDefault,
-        employee_uuid: values.employeeV ? values.employeeV.id : employeeUuidDefault
+        employee_uuid: values.employeeV ? values.employeeV.id : employeeUuidDefault.value
+
     };
     prueba.value = data;
     const restp = await postRequest(endpoint.value, data);
@@ -2161,6 +2169,8 @@ const createRecord = handleSubmitNew(async (values) => {
 
     if (restp.ok) {
         formDialogNew.value = false;
+        console.log('data', data);
+        
     }
 
 
@@ -2194,7 +2204,7 @@ const EditRecord = handleSubmitNew(async (values) => {
         // unit_type_dispatch_uuid: "0d8695c0-0d1b-4827-ab53-d18ed2d7d2ca",
         company_uuid: values.company ? values.company.id : companyDefault,
         farm_uuid: values.farm ? values.farm.id : farmDefault,
-        employee_uuid: values.employeeV ? values.employeeV.id : employeeUuidDefault
+        employee_uuid: values.employeeV ? values.employeeV.id : employeeUuidDefault.value
     };
 
     const restp = await putRequest(endpoint.value, data, uuid);
@@ -2234,7 +2244,7 @@ const CloneRecord = handleSubmitNew(async (values) => {
         // unit_type_dispatch_uuid: "0d8695c0-0d1b-4827-ab53-d18ed2d7d2ca",
         company_uuid: values.company ? values.company.id : companyDefault,
         farm_uuid: values.farm ? values.farm.id : farmDefault,
-        employee_uuid: values.employeeV ? values.employeeV.id : employeeUuidDefault
+        employee_uuid: values.employeeV ? values.employeeV.id : employeeUuidDefault.value
     };
     const restp = await postRequest(endpoint.value, data);
     toast.add({ severity: restp.ok ? 'success' : 'error', summary: 'Clone', detail: restp.ok ? 'Clonado' : restp.error, life: 3000 });
