@@ -45,6 +45,14 @@ export default function useData() {
             responseData.ok = response.ok;
             if (!response.ok) {
                 responseData.error = response.statusText;
+
+
+                const errorBody = await response.text();
+                console.error(`Error ${response.status}: ${errorBody}`);
+                responseData.error += ` ${errorBody}`;
+                errorResponseAPI.value = ` ${errorBody}`;
+
+
                 throw new Error(`Error ${response.status} al enviar datos.`);
             }
             responseData.data = await response.json();
@@ -66,11 +74,19 @@ export default function useData() {
         };
         try {
             const response = await fetch(baseUrl, requestOptions);
-            console.log('response', response)
+            console.log('Response status:', response.status);
+            console.log('Response headers:', [...response.headers]);
+            
             responseData.ok = response.ok;
             if (!response.ok) {
                 responseData.error = response.statusText;
                 console.log(response)
+
+                const errorBody = await response.text();
+                console.error(`Error ${response.status}: ${errorBody}`);
+                responseData.error += ` ${errorBody}`;
+
+
                 throw new Error(`Error ${response.status} al enviar datos.`);
                 
             }

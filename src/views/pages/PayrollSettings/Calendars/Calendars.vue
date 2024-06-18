@@ -191,7 +191,11 @@
                     </small>
                 </div> -->
 
-<pre>{{ prueba }}</pre>
+<!-- <pre>{{ prueba }}</pre>
+<pre>{{ errorResponseAPI }}</pre> -->
+
+
+
                 <div class="mb-3">
                     <div class=" flex align-items-center">
                         <label for="username" class="font-semibold w-3">Transaction Date :</label>
@@ -254,6 +258,7 @@
                     <small id="username-help" :class="{ 'p-invalid text-red-700': errorsNew['transaction_dateV'] }">
                         {{ errorsNew.transaction_dateV }}
                     </small>
+
                 </div>
 
                 <div class="mb-3">
@@ -400,7 +405,7 @@ import useDataAPI from '@/composables/DataAPI/FetchDataAPI.js';
 import { useToast } from 'primevue/usetoast';
 import { FilterMatchMode, FilterOperator } from 'primevue/api';
 import useData from '@/composables/DataAPI/FetchDataAPICopy.js';
-const { getRequest, postRequest, putRequest, deleteRequest } = useData();
+const { getRequest, postRequest, putRequest, deleteRequest,errorResponseAPI } = useData();
 import { useRouter } from 'vue-router';
 import { useForm } from 'vee-validate';
 import { toTypedSchema } from '@vee-validate/zod';
@@ -633,9 +638,10 @@ const createRecord = handleSubmitNew(async (values) => {
     };
     const restp = await postRequest(endpoint.value, data);
     console.log(data)
+    
     toast.add({ severity: restp.ok ? 'success' : 'error', summary: 'Create', detail: restp.ok ? 'Creado' : restp.error, life: 3000 });
     loadingData();
-    formDialogNew.value = false;
+    // formDialogNew.value = false;
     prueba.value= data;
 
     
