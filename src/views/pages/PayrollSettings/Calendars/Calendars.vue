@@ -204,9 +204,21 @@
                     </div>
                     
                     
-                    <small id="username-help" :class="{ 'p-invalid text-red-700': errorsNew['transaction_dateV'] }">
-                        {{ errorsNew.transaction_dateV }}
+                    <small 
+                        id="username-help" 
+                        :class="{ 'p-invalid text-red-700': errorsNew['transaction_dateV'] || errorResponseAPI }">
+                        {{ errorsNew.transaction_dateV || errorResponseAPI }}
                     </small>
+                    
+                <pre>{{typeof errorResponseAPI}}</pre>
+                <div v-if="errorResponseAPI">
+                        <div v-for="(v, k) in errorResponseAPI" :key="k" class="bg-red-400 text-white rounded font-bold mb-4 shadow-lg py-2 px-4 pr-0">
+                        <p v-for="error in v" :key="error" class="text-sm">
+                        {{ error }}
+                        </p>
+                        </div>
+                    </div>
+
                 </div>
 
                 <div class="mb-3">

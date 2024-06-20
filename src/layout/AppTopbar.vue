@@ -175,8 +175,7 @@ const editUser = submitEdit(async (values) => {
     
 });
 
-const op = ref();
-const opUser = ref()
+
 
 
 const members = ref([
@@ -184,20 +183,14 @@ const members = ref([
     { name: 'Bernardo Dominic', image: 'bernardodominic.png', email: 'bernardo@email.com', role: 'Editor' },
     { name: 'Ioni Bowcher', image: 'ionibowcher.png', email: 'ioni@email.com', role: 'Viewer' }
 ]);
-
-// const toggle = (event) => {
-//     op.value.toggle(event);
-//     opUser.value.toggle(event);
-
-// }
-const toggle = (event, panel) => {
-  if (panel === 'panelUser') {
+const op = ref();
+const op2 = ref();
+const toggleOverlayPanel1 = (event) => {
     op.value.toggle(event);
-  } else if (panel === 'panelLanguage') {
-    opUser.value.toggle(event);
-  }
-};
-
+}
+const toggleOverlayPanel2 = (event) => {
+    op2.value.toggle(event);
+}
 const selectedCountry = ref();
 const countries = ref([
 
@@ -205,52 +198,7 @@ const countries = ref([
     { name: 'EN', code: 'US' }
 ]);
 
-function toggleBrowserLanguage() {
-    // Define the language codes for English and Spanish
-    const englishLang = 'en-US';
-    const spanishLang = 'es-ES';
 
-    // Get the current language settings
-    const currentLanguage = navigator.language || navigator.languages[0];
-
-    // Determine the new language to set
-    let newLanguage;
-    if (currentLanguage.startsWith('es')) {
-        newLanguage = englishLang;
-    } else {
-        newLanguage = spanishLang;
-    }
-
-    // Check if the new language is already in the list of preferred languages
-    let languages = navigator.languages || [navigator.language];
-    if (!languages.includes(newLanguage)) {
-        // If the new language is not in the list, add it to the front
-        languages = [newLanguage, ...languages];
-    } else {
-        // If the new language is in the list, move it to the front
-        languages = [newLanguage, ...languages.filter(lang => lang !== newLanguage)];
-    }
-
-    // Set the new language preferences
-    const newLanguages = languages.join(', ');
-
-    // Try to set the language in different ways for different browsers
-    if (navigator.languages) {
-        Object.defineProperty(navigator, 'languages', {
-            get: function () { return newLanguages.split(', '); }
-        });
-    }
-
-    // Fallback for older browsers
-    if (navigator.language) {
-        Object.defineProperty(navigator, 'language', {
-            get: function () { return newLanguage; }
-        });
-    }
-
-    // Reload the page to apply the new language settings
-    window.location.reload();
-}
 </script>
 
 <template>
@@ -271,13 +219,11 @@ function toggleBrowserLanguage() {
 
         <div class="layout-topbar-menu" :class="topbarMenuClasses">
             <div class="flex flex-wrap align-items-center justify-content-center md:justify-content-start">
-                
-                <Button @click="toggle(event, 'panelUser')" icon="pi pi-user" severity="success" text rounded aria-label="User"   />
-
+                <Button @click="toggleOverlayPanel1" icon="pi pi-user" severity="success" text rounded aria-label="User"   />
                 <p>{{ dataUser }}</p>
             </div>
 
-            <OverlayPanel ref="opUser" :dismissable="true">
+        <OverlayPanel ref="op" :dismissable="true">
             <span class="font-medium text-900 block mb-2">Edit user</span>
 
             <div class="mb-3">
@@ -318,16 +264,11 @@ function toggleBrowserLanguage() {
                 <i :class="{ 'pi pi-moon': !toggleValue, 'pi pi-sun': toggleValue }"></i>
             </Button>
 
-
-
-        <!-- <Button type="button" icon="pi pi-language" label="Language" @click="toggle" /> -->
-            <Button @click="toggle(event, 'panelLanguage')"  rounded outlined class="p-link layout-topbar-button">
+            <Button @click="toggleOverlayPanel2"  rounded outlined class="p-link layout-topbar-button">
                 <i :class="{ 'pi pi-globe': !toggleValue, 'pi pi-sun': toggleValue }"></i>
             </Button>
 
-
-
-        <OverlayPanel ref="op" :dismissable="true">
+        <OverlayPanel ref="op2" :dismissable="true">
             <span class="font-medium text-900 block mb-2">Change language</span>
 
         <Dropdown v-model="selectedCountry" :options="countries" optionLabel="name" placeholder="Change language" class="w-full">
@@ -350,13 +291,6 @@ function toggleBrowserLanguage() {
             
         </OverlayPanel>
     
-
-            
-            <!-- <Button @click="toggleBrowserLanguage()" v-model="toggleValue" rounded outlined class="p-link layout-topbar-button">
-                <i :class="{ 'pi pi-language': !toggleValue, 'pi pi-sun': toggleValue }"></i>
-            </Button> -->
-
-
             <Button @click="Exit()" rounded outlined class="p-link layout-topbar-button">
                 <i class="pi pi-sign-out"></i>
             </Button>
