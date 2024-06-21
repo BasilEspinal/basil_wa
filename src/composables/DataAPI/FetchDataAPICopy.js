@@ -48,9 +48,13 @@ export default function useData() {
 
 
                 const errorBody = await response.text();
+                const errorBodyObject = JSON.parse(errorBody);
+
                 console.error(`Error ${response.status}: ${errorBody}`);
+                console.log('response',typeof errorBodyObject, errorBodyObject)
                 responseData.error += ` ${errorBody}`;
-                errorResponseAPI.value = ` ${errorBody}`;
+                // errorResponseAPI.value = ` ${errorBody}`;
+                errorResponseAPI.value = errorBodyObject;
 
 
                 throw new Error(`Error ${response.status} al enviar datos.`);

@@ -207,12 +207,12 @@
                     <small 
                         id="username-help" 
                         :class="{ 'p-invalid text-red-700': errorsNew['transaction_dateV'] || errorResponseAPI }">
-                        {{ errorsNew.transaction_dateV || errorResponseAPI }}
+                        {{ errorsNew.transaction_dateV || errorResponseAPI.errors.transaction_date }}
                     </small>
-                    
+
                 <pre>{{typeof errorResponseAPI}}</pre>
                 <div v-if="errorResponseAPI">
-                        <div v-for="(v, k) in errorResponseAPI" :key="k" class="bg-red-400 text-white rounded font-bold mb-4 shadow-lg py-2 px-4 pr-0">
+                        <div v-for="(v, k) in errorResponseAPI.errors" :key="k" class="bg-red-400 text-white rounded font-bold mb-4 shadow-lg py-2 px-4 pr-0">
                         <p v-for="error in v" :key="error" class="text-sm">
                         {{ error }}
                         </p>
@@ -226,8 +226,8 @@
                         <label for="username" class="font-semibold w-3">Type of Date:</label>
                         <Dropdown  v-model="type_dateV" :options="typeOfDates" optionLabel="name" placeholder="Select a type of date" class="flex-auto" v-bin="type_dateVProps"/>
                     </div>
-                    <small id="username-help" :class="{ 'p-invalid text-red-700': errorsNew['type_dateV'] }">
-                        {{ errorsNew.type_dateV }}
+                    <small id="username-help" :class="{ 'p-invalid text-red-700': errorsNew['type_dateV']||errorResponseAPI }">
+                        {{ errorsNew.type_dateV||errorResponseAPI.errors.type_date }}
                     </small>
                     
                 </div>
@@ -237,8 +237,8 @@
                         <label for="username" class="font-semibold w-3">Farm :</label>
                         <AutoComplete v-model="farm" inputId="ac" class="flex-auto" :suggestions="farms" @complete="searchFarms" field="name" dropdown />
                     </div>
-                    <small id="username-help" :class="{ 'p-invalid text-red-700': errorsNew['farm'] }">
-                        {{ errorsNew.farm }}
+                    <small id="username-help" :class="{ 'p-invalid text-red-700': errorsNew['farm']||errorResponseAPI }">
+                        {{ errorsNew.farm||errorResponseAPI.errors.farm }}
                     </small>
                 </div>
 
@@ -247,8 +247,8 @@
                         <label for="username" class="font-semibold w-3">Company:</label>
                         <AutoComplete v-model="company" inputId="ac" class="flex-auto" :suggestions="compa" @complete="searchCompannies" field="name" dropdown />
                     </div>
-                    <small id="username-help" :class="{ 'p-invalid text-red-700': errorsNew['company'] }">
-                        {{ errorsNew.company }}
+                    <small id="username-help" :class="{ 'p-invalid text-red-700': errorsNew['company']||errorResponseAPI }">
+                        {{ errorsNew.company||errorResponseAPI.errors.company }}
                     </small>
                 </div>
 
@@ -267,8 +267,8 @@
                     </div>
                     
                     
-                    <small id="username-help" :class="{ 'p-invalid text-red-700': errorsNew['transaction_dateV'] }">
-                        {{ errorsNew.transaction_dateV }}
+                    <small id="username-help" :class="{ 'p-invalid text-red-700': errorsNew['transaction_dateV']||errorResponseAPI }">
+                        {{ errorsNew.transaction_dateV || errorResponseAPI.errors.transaction_date}}
                     </small>
 
                 </div>
@@ -278,8 +278,8 @@
                         <label for="username" class="font-semibold w-3">Type of Date :</label>
                         <Dropdown  v-model="type_dateV" :options="typeOfDates" optionLabel="name" placeholder="Select a type of date" class="flex-auto" v-bin="type_dateVProps"/>
                     </div>
-                    <small id="username-help" :class="{ 'p-invalid text-red-700': errorsNew['type_dateV'] }">
-                        {{ errorsNew.type_dateV }}
+                    <small id="username-help" :class="{ 'p-invalid text-red-700': errorsNew['type_dateV']||errorResponseAPI }">
+                        {{ errorsNew.type_dateV||errorResponseAPI.errors.type_date }}
                     </small>
                     
                 </div>
@@ -289,8 +289,8 @@
                     <AutoComplete v-model="farm" inputId="ac" class="flex-auto" :suggestions="farms" @complete="searchFarms" field="name"
                         dropdown />
                 </div>
-                <small id="username-help" :class="{ 'p-invalid text-red-700': errorsNew['farm'] }">
-                    {{ errorsNew.farm }}
+                <small id="username-help" :class="{ 'p-invalid text-red-700': errorsNew['farm']||errorResponseAPI }">
+                    {{ errorsNew.farm || errorResponseAPI.errors.farm}}
                 </small>
             </div>
             <div class="mb-3">
@@ -299,8 +299,8 @@
                     <AutoComplete v-model="company" inputId="ac" class="flex-auto" :suggestions="compa" @complete="EditRecord"
                         field="name" dropdown />
                 </div>
-                <small id="username-help" :class="{ 'p-invalid text-red-700': errorsNew['company'] }">
-                    {{ errorsNew.company }}
+                <small id="username-help" :class="{ 'p-invalid text-red-700': errorsNew['company']||errorResponseAPI }">
+                    {{ errorsNew.company||errorResponseAPI.errors.company }}
                 </small>
             </div>
 
@@ -319,8 +319,8 @@
                     </div>
                     
                     
-                    <small id="username-help" :class="{ 'p-invalid text-red-700': errorsNew['transaction_dateV'] }">
-                        {{ errorsNew.transaction_dateV }}
+                    <small id="username-help" :class="{ 'p-invalid text-red-700': errorsNew['transaction_dateV']||errorResponseAPI }">
+                        {{ errorsNew.transaction_dateV || errorResponseAPI.errors.transaction_date}}
                     </small>
                 </div>
 
@@ -329,8 +329,8 @@
                         <label for="username" class="font-semibold w-3">Type of Date :</label>
                         <Dropdown  v-model="type_dateV" :options="typeOfDates" optionLabel="name" placeholder="Select a type of date" class="flex-auto" v-bin="type_dateVProps"/>
                     </div>
-                    <small id="username-help" :class="{ 'p-invalid text-red-700': errorsNew['type_dateV'] }">
-                        {{ errorsNew.type_dateV }}
+                    <small id="username-help" :class="{ 'p-invalid text-red-700': errorsNew['type_dateV']||errorResponseAPI }">
+                        {{ errorsNew.type_dateV||errorResponseAPI.errors.type_date }}
                     </small>
                     
                 </div>
@@ -339,8 +339,8 @@
                         <label for="username" class="font-semibold w-3">Farm :</label>
                         <AutoComplete v-model="farm" inputId="ac" class="flex-auto" :suggestions="farms" @complete="searchFarms" field="name" dropdown />
                     </div>
-                    <small id="username-help" :class="{ 'p-invalid text-red-700': errorsNew['farm'] }">
-                        {{ errorsNew.farm }}
+                    <small id="username-help" :class="{ 'p-invalid text-red-700': errorsNew['farm'] ||errorResponseAPI}">
+                        {{ errorsNew.farm||errorResponseAPI.errors.farm }}
                     </small>
                 </div>
                 <div class="mb-3">
@@ -348,8 +348,8 @@
                         <label for="username" class="font-semibold w-3">Company:</label>
                         <AutoComplete v-model="company" inputId="ac" class="flex-auto" :suggestions="compa" @complete="searchCompannies" field="name" dropdown />
                     </div>
-                    <small id="username-help" :class="{ 'p-invalid text-red-700': errorsNew['company'] }">
-                        {{ errorsNew.company }}
+                    <small id="username-help" :class="{ 'p-invalid text-red-700': errorsNew['company']||errorResponseAPI }">
+                        {{ errorsNew.company||errorResponseAPI.errors.company }}
                     </small>
                 </div>
 
