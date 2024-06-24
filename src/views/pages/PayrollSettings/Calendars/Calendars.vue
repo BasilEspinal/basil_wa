@@ -172,104 +172,27 @@
 
         </DataTable>
         <Dialog v-model:visible="formDialogNew" modal :header="formDialogNewTitle" class="p-fluid text-center mx-auto">
-                <!-- <div class="mb-3">
-                    <div class="flex align-items-center gap-3 mb-1">
-                        <label for="username" class="font-semibold w-6rem">Name :</label>
-                        <InputText id="username" v-model="name" class="flex-auto" autocomplete="off" v-bind="nameProps" />
-                    </div>
-                    <small id="username-help" :class="{ 'p-invalid text-red-700': errorsNew['name'] }">
-                        {{ errorsNew.name }}
-                    </small>
-                </div>
-                <div class="mb-3">
-                    <div class="flex align-items-center gap-3 mb-1">
-                        <label for="username" class="font-semibold w-6rem">Code :</label>
-                        <InputText id="username" v-model="codeV" class="flex-auto" autocomplete="off" v-bind="codeVProps" />
-                    </div>
-                    <small id="username-help" :class="{ 'p-invalid text-red-700': errorsNew['codeV'] }">
-                        {{ errorsNew.codeV }}
-                    </small>
-                </div> -->
-
-<pre>{{ prueba }}</pre>
-<pre>{{ errorResponseAPI }}</pre>
 
 
 
-                <div class="mb-3">
-                    <div class=" flex align-items-center">
-                        <label for="username" class="font-semibold w-3">Transaction Date :</label>
-                        <!-- <Calendar v-model="transaction_dateV" class="flex-auto" v-bind="transaction_dateVProps"/> -->
-                        <Calendar dateFormat="dd/mm/yy" v-model="transaction_dateV" class="flex-auto"  showIcon :showOnFocus="false" inputId="buttondisplay" />
-                    </div>
-                    
-                    
-                    <small 
-                        id="username-help" 
-                        :class="{ 'p-invalid text-red-700': errorsNew['transaction_dateV'] || errorResponseAPI }">
-                        {{ errorsNew.transaction_dateV || errorResponseAPI.errors.transaction_date }}
-                    </small>
 
-                <pre>{{typeof errorResponseAPI}}</pre>
-                <div v-if="errorResponseAPI">
-                        <div v-for="(v, k) in errorResponseAPI.errors" :key="k" class="bg-red-400 text-white rounded font-bold mb-4 shadow-lg py-2 px-4 pr-0">
-                        <p v-for="error in v" :key="error" class="text-sm">
-                        {{ error }}
-                        </p>
-                        </div>
-                    </div>
-
-                </div>
-
-                <div class="mb-3">
-                    <div class=" flex align-items-center">
-                        <label for="username" class="font-semibold w-3">Type of Date:</label>
-                        <Dropdown  v-model="type_dateV" :options="typeOfDates" optionLabel="name" placeholder="Select a type of date" class="flex-auto" v-bin="type_dateVProps"/>
-                    </div>
-                    <small id="username-help" :class="{ 'p-invalid text-red-700': errorsNew['type_dateV']||errorResponseAPI }">
-                        {{ errorsNew.type_dateV||errorResponseAPI.errors.type_date }}
-                    </small>
-                    
-                </div>
-
-                <div class="mb-3">
-                    <div class="flex align-items-center">
-                        <label for="username" class="font-semibold w-3">Farm :</label>
-                        <AutoComplete v-model="farm" inputId="ac" class="flex-auto" :suggestions="farms" @complete="searchFarms" field="name" dropdown />
-                    </div>
-                    <small id="username-help" :class="{ 'p-invalid text-red-700': errorsNew['farm']||errorResponseAPI }">
-                        {{ errorsNew.farm||errorResponseAPI.errors.farm }}
-                    </small>
-                </div>
-
-                <div class="mb-3">
-                    <div class="flex align-items-center">
-                        <label for="username" class="font-semibold w-3">Company:</label>
-                        <AutoComplete v-model="company" inputId="ac" class="flex-auto" :suggestions="compa" @complete="searchCompannies" field="name" dropdown />
-                    </div>
-                    <small id="username-help" :class="{ 'p-invalid text-red-700': errorsNew['company']||errorResponseAPI }">
-                        {{ errorsNew.company||errorResponseAPI.errors.company }}
-                    </small>
-                </div>
-
-                <div class="flex justify-content-end gap-2">
-                    <Button type="button" label="Cancel" severity="secondary" @click="formDialogNew = false" />
-                    <Button type="button" label="Save" @click="createRecord()" />
-                </div>
-            </Dialog>
-
-            <Dialog v-model:visible="formDialogEdit" modal :header="formDialogEditTitle" class="p-fluid text-center mx-auto">
                 <div class="mb-3">
                     <div class=" flex align-items-center">
                         <label for="username" class="font-semibold w-3">Transaction Date :</label>
                         <!-- <Calendar v-model="transaction_dateV" class="flex-auto" v-bind="transaction_dateVProps"/> -->
                         <Calendar v-model="transaction_dateV" class="flex-auto"  showIcon :showOnFocus="false" inputId="buttondisplay" />
                     </div>
-                    
-                    
-                    <small id="username-help" :class="{ 'p-invalid text-red-700': errorsNew['transaction_dateV']||errorResponseAPI }">
-                        {{ errorsNew.transaction_dateV || errorResponseAPI.errors.transaction_date}}
+                    <small id="username-help" :class="{ 'p-invalid text-red-500': errorsNew['type_dateV'] }">
+                        {{ errorsNew.type_dateV }}
                     </small>
+
+                    <small id="username-help" :class="{ 'p-invalid text-red-500': errorResponseAPI?.errors?.transaction_date }">
+                    <div v-if="errorResponseAPI?.errors?.transaction_date">
+                        <div v-for="(error, index) in errorResponseAPI.errors.transaction_date" :key="index">
+                            {{ error }}
+                        </div>
+                    </div>
+                </small>
 
                 </div>
 
@@ -278,9 +201,17 @@
                         <label for="username" class="font-semibold w-3">Type of Date :</label>
                         <Dropdown  v-model="type_dateV" :options="typeOfDates" optionLabel="name" placeholder="Select a type of date" class="flex-auto" v-bin="type_dateVProps"/>
                     </div>
-                    <small id="username-help" :class="{ 'p-invalid text-red-700': errorsNew['type_dateV']||errorResponseAPI }">
-                        {{ errorsNew.type_dateV||errorResponseAPI.errors.type_date }}
+                    <small id="username-help" :class="{ 'p-invalid text-red-500': errorsNew['type_dateV']||errorResponseAPI?.errors?.type_date }">
+                        {{ errorsNew.type_dateV||errorResponseAPI?.errors?.type_date }}
                     </small>
+
+                    <small id="username-help" :class="{ 'p-invalid text-red-500': errorResponseAPI?.errors?.type_date }">
+                    <div v-if="errorResponseAPI?.errors?.type_date">
+                        <div v-for="(error, index) in errorResponseAPI?.errors?.type_date" :key="index">
+                            {{ error }}
+                        </div>
+                    </div>
+                </small>
                     
                 </div>
                 <div class="mb-3">
@@ -289,9 +220,18 @@
                     <AutoComplete v-model="farm" inputId="ac" class="flex-auto" :suggestions="farms" @complete="searchFarms" field="name"
                         dropdown />
                 </div>
-                <small id="username-help" :class="{ 'p-invalid text-red-700': errorsNew['farm']||errorResponseAPI }">
-                    {{ errorsNew.farm || errorResponseAPI.errors.farm}}
+                <small id="username-help" :class="{ 'p-invalid text-red-500': errorsNew['farm']|| errorResponseAPI?.errors?.farm }">
+                    {{ errorsNew.farm || errorResponseAPI?.errors?.farm}}
                 </small>
+
+                <small id="username-help" :class="{ 'p-invalid text-red-500': errorResponseAPI?.errors?.farm }">
+                    <div v-if="errorResponseAPI?.errors?.farm">
+                        <div v-for="(error, index) in errorResponseAPI?.errors?.farm" :key="index">
+                            {{ error }}
+                        </div>
+                    </div>
+                </small>
+
             </div>
             <div class="mb-3">
                 <div class="flex align-items-center">
@@ -299,8 +239,98 @@
                     <AutoComplete v-model="company" inputId="ac" class="flex-auto" :suggestions="compa" @complete="EditRecord"
                         field="name" dropdown />
                 </div>
-                <small id="username-help" :class="{ 'p-invalid text-red-700': errorsNew['company']||errorResponseAPI }">
-                    {{ errorsNew.company||errorResponseAPI.errors.company }}
+                <small id="username-help" :class="{ 'p-invalid text-red-500': errorsNew['company']||errorResponseAPI?.errors?.company }">
+                    {{ errorsNew.company||errorResponseAPI?.errors?.company }}
+                </small>
+                <small id="username-help" :class="{ 'p-invalid text-red-500': errorResponseAPI?.errors?.company }">
+                    <div v-if="errorResponseAPI?.errors?.company">
+                        <div v-for="(error, index) in errorResponseAPI?.errors?.company" :key="index">
+                            {{ error }}
+                        </div>
+                    </div>
+                </small>
+            </div>
+
+                <div class="flex justify-content-end gap-2">
+                    <Button type="button" label="Cancel" severity="secondary" @click="formDialogNew = false" />
+                    <Button type="button" label="Save" @click="createRecord()" />
+                </div>
+            </Dialog>
+
+            <Dialog v-model:visible="formDialogEdit" modal :header="formDialogEditTitle" class="p-fluid text-center mx-auto">
+                
+                <div class="mb-3">
+                    <div class=" flex align-items-center">
+                        <label for="username" class="font-semibold w-3">Transaction Date :</label>
+                        <!-- <Calendar v-model="transaction_dateV" class="flex-auto" v-bind="transaction_dateVProps"/> -->
+                        <Calendar v-model="transaction_dateV" class="flex-auto"  showIcon :showOnFocus="false" inputId="buttondisplay" />
+                    </div>
+                    <small id="username-help" :class="{ 'p-invalid text-red-500': errorsNew['type_dateV'] }">
+                        {{ errorsNew.type_dateV }}
+                    </small>
+
+                    <small id="username-help" :class="{ 'p-invalid text-red-500': errorResponseAPI?.errors?.transaction_date }">
+                    <div v-if="errorResponseAPI?.errors?.transaction_date">
+                        <div v-for="(error, index) in errorResponseAPI.errors.transaction_date" :key="index">
+                            {{ error }}
+                        </div>
+                    </div>
+                </small>
+
+                </div>
+
+                <div class="mb-3">
+                    <div class=" flex align-items-center">
+                        <label for="username" class="font-semibold w-3">Type of Date :</label>
+                        <Dropdown  v-model="type_dateV" :options="typeOfDates" optionLabel="name" placeholder="Select a type of date" class="flex-auto" v-bin="type_dateVProps"/>
+                    </div>
+                    <small id="username-help" :class="{ 'p-invalid text-red-500': errorsNew['type_dateV']||errorResponseAPI?.errors?.type_date }">
+                        {{ errorsNew.type_dateV||errorResponseAPI?.errors?.type_date }}
+                    </small>
+
+                    <small id="username-help" :class="{ 'p-invalid text-red-500': errorResponseAPI?.errors?.type_date }">
+                    <div v-if="errorResponseAPI?.errors?.type_date">
+                        <div v-for="(error, index) in errorResponseAPI?.errors?.type_date" :key="index">
+                            {{ error }}
+                        </div>
+                    </div>
+                </small>
+                    
+                </div>
+                <div class="mb-3">
+                <div class="flex align-items-center">
+                    <label for="username" class="font-semibold w-3">Farm :</label>
+                    <AutoComplete v-model="farm" inputId="ac" class="flex-auto" :suggestions="farms" @complete="searchFarms" field="name"
+                        dropdown />
+                </div>
+                <small id="username-help" :class="{ 'p-invalid text-red-500': errorsNew['farm']|| errorResponseAPI?.errors?.farm }">
+                    {{ errorsNew.farm || errorResponseAPI?.errors?.farm}}
+                </small>
+
+                <small id="username-help" :class="{ 'p-invalid text-red-500': errorResponseAPI?.errors?.farm }">
+                    <div v-if="errorResponseAPI?.errors?.farm">
+                        <div v-for="(error, index) in errorResponseAPI?.errors?.farm" :key="index">
+                            {{ error }}
+                        </div>
+                    </div>
+                </small>
+
+            </div>
+            <div class="mb-3">
+                <div class="flex align-items-center">
+                    <label for="username" class="font-semibold w-3">Company:</label>
+                    <AutoComplete v-model="company" inputId="ac" class="flex-auto" :suggestions="compa" @complete="EditRecord"
+                        field="name" dropdown />
+                </div>
+                <small id="username-help" :class="{ 'p-invalid text-red-500': errorsNew['company']||errorResponseAPI?.errors?.company }">
+                    {{ errorsNew.company||errorResponseAPI?.errors?.company }}
+                </small>
+                <small id="username-help" :class="{ 'p-invalid text-red-500': errorResponseAPI?.errors?.company }">
+                    <div v-if="errorResponseAPI?.errors?.company">
+                        <div v-for="(error, index) in errorResponseAPI?.errors?.company" :key="index">
+                            {{ error }}
+                        </div>
+                    </div>
                 </small>
             </div>
 
@@ -317,11 +347,18 @@
                         <!-- <Calendar v-model="transaction_dateV" class="flex-auto" v-bind="transaction_dateVProps"/> -->
                         <Calendar v-model="transaction_dateV" class="flex-auto"  showIcon :showOnFocus="false" inputId="buttondisplay" />
                     </div>
-                    
-                    
-                    <small id="username-help" :class="{ 'p-invalid text-red-700': errorsNew['transaction_dateV']||errorResponseAPI }">
-                        {{ errorsNew.transaction_dateV || errorResponseAPI.errors.transaction_date}}
+                    <small id="username-help" :class="{ 'p-invalid text-red-500': errorsNew['type_dateV'] }">
+                        {{ errorsNew.type_dateV }}
                     </small>
+
+                    <small id="username-help" :class="{ 'p-invalid text-red-500': errorResponseAPI?.errors?.transaction_date }">
+                    <div v-if="errorResponseAPI?.errors?.transaction_date">
+                        <div v-for="(error, index) in errorResponseAPI.errors.transaction_date" :key="index">
+                            {{ error }}
+                        </div>
+                    </div>
+                </small>
+
                 </div>
 
                 <div class="mb-3">
@@ -329,29 +366,55 @@
                         <label for="username" class="font-semibold w-3">Type of Date :</label>
                         <Dropdown  v-model="type_dateV" :options="typeOfDates" optionLabel="name" placeholder="Select a type of date" class="flex-auto" v-bin="type_dateVProps"/>
                     </div>
-                    <small id="username-help" :class="{ 'p-invalid text-red-700': errorsNew['type_dateV']||errorResponseAPI }">
-                        {{ errorsNew.type_dateV||errorResponseAPI.errors.type_date }}
+                    <small id="username-help" :class="{ 'p-invalid text-red-500': errorsNew['type_dateV']||errorResponseAPI?.errors?.type_date }">
+                        {{ errorsNew.type_dateV||errorResponseAPI?.errors?.type_date }}
                     </small>
+
+                    <small id="username-help" :class="{ 'p-invalid text-red-500': errorResponseAPI?.errors?.type_date }">
+                    <div v-if="errorResponseAPI?.errors?.type_date">
+                        <div v-for="(error, index) in errorResponseAPI?.errors?.type_date" :key="index">
+                            {{ error }}
+                        </div>
+                    </div>
+                </small>
                     
                 </div>
                 <div class="mb-3">
-                    <div class="flex align-items-center">
-                        <label for="username" class="font-semibold w-3">Farm :</label>
-                        <AutoComplete v-model="farm" inputId="ac" class="flex-auto" :suggestions="farms" @complete="searchFarms" field="name" dropdown />
-                    </div>
-                    <small id="username-help" :class="{ 'p-invalid text-red-700': errorsNew['farm'] ||errorResponseAPI}">
-                        {{ errorsNew.farm||errorResponseAPI.errors.farm }}
-                    </small>
+                <div class="flex align-items-center">
+                    <label for="username" class="font-semibold w-3">Farm :</label>
+                    <AutoComplete v-model="farm" inputId="ac" class="flex-auto" :suggestions="farms" @complete="searchFarms" field="name"
+                        dropdown />
                 </div>
-                <div class="mb-3">
-                    <div class="flex align-items-center">
-                        <label for="username" class="font-semibold w-3">Company:</label>
-                        <AutoComplete v-model="company" inputId="ac" class="flex-auto" :suggestions="compa" @complete="searchCompannies" field="name" dropdown />
+                <small id="username-help" :class="{ 'p-invalid text-red-500': errorsNew['farm']|| errorResponseAPI?.errors?.farm }">
+                    {{ errorsNew.farm || errorResponseAPI?.errors?.farm}}
+                </small>
+
+                <small id="username-help" :class="{ 'p-invalid text-red-500': errorResponseAPI?.errors?.farm }">
+                    <div v-if="errorResponseAPI?.errors?.farm">
+                        <div v-for="(error, index) in errorResponseAPI?.errors?.farm" :key="index">
+                            {{ error }}
+                        </div>
                     </div>
-                    <small id="username-help" :class="{ 'p-invalid text-red-700': errorsNew['company']||errorResponseAPI }">
-                        {{ errorsNew.company||errorResponseAPI.errors.company }}
-                    </small>
+                </small>
+
+            </div>
+            <div class="mb-3">
+                <div class="flex align-items-center">
+                    <label for="username" class="font-semibold w-3">Company:</label>
+                    <AutoComplete v-model="company" inputId="ac" class="flex-auto" :suggestions="compa" @complete="EditRecord"
+                        field="name" dropdown />
                 </div>
+                <small id="username-help" :class="{ 'p-invalid text-red-500': errorsNew['company']||errorResponseAPI?.errors?.company }">
+                    {{ errorsNew.company||errorResponseAPI?.errors?.company }}
+                </small>
+                <small id="username-help" :class="{ 'p-invalid text-red-500': errorResponseAPI?.errors?.company }">
+                    <div v-if="errorResponseAPI?.errors?.company">
+                        <div v-for="(error, index) in errorResponseAPI?.errors?.company" :key="index">
+                            {{ error }}
+                        </div>
+                    </div>
+                </small>
+            </div>
 
                 <div class="flex justify-content-end gap-2">
                     <Button type="button" label="Cancel" severity="secondary" @click="formDialogClone = false" />
@@ -653,8 +716,11 @@ const createRecord = handleSubmitNew(async (values) => {
     
     toast.add({ severity: restp.ok ? 'success' : 'error', summary: 'Create', detail: restp.ok ? 'Creado' : restp.error, life: 3000 });
     loadingData();
-    // formDialogNew.value = false;
+    
     prueba.value= data;
+    if(restp.ok) {
+        formDialogNew.value = false;
+    }
 
     
 });
@@ -678,10 +744,12 @@ const EditRecord = handleSubmitNew(async (values) => {
     const restp = await putRequest(endpoint.value, data, uuid);
     toast.add({ severity: restp.ok ? 'success' : 'error', summary: 'Edit', detail: restp.ok ? 'Editado' : restp.error, life: 3000 });
     loadingData();
-    formDialogEdit.value = false;
+    
     prueba.value= data;
     if(restp.ok) {listRowSelect.value = []
-    selectedRegisters.value = []}
+    selectedRegisters.value = []
+    formDialogEdit.value = false;
+}
 });
 
 const CloneRecord = handleSubmitNew(async (values) => {
@@ -702,11 +770,13 @@ const CloneRecord = handleSubmitNew(async (values) => {
     const restp = await postRequest(endpoint.value, data);
     toast.add({ severity: restp.ok ? 'success' : 'error', summary: 'Clone', detail: restp.ok ? 'Clonado' : restp.error, life: 3000 });
     loadingData();
-    formDialogClone.value = false;
+    
 
     prueba.value= data;
     if(restp.ok) {listRowSelect.value = []
-    selectedRegisters.value = []}
+    selectedRegisters.value = []
+    formDialogClone.value = false;
+}
 });
 
 const ExportRecord = () => {
