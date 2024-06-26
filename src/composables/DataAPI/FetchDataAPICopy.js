@@ -48,9 +48,13 @@ export default function useData() {
 
 
                 const errorBody = await response.text();
+                const errorBodyObject = JSON.parse(errorBody);
+
                 console.error(`Error ${response.status}: ${errorBody}`);
+                console.log('response',typeof errorBodyObject, errorBodyObject)
                 responseData.error += ` ${errorBody}`;
-                errorResponseAPI.value = ` ${errorBody}`;
+                // errorResponseAPI.value = ` ${errorBody}`;
+                errorResponseAPI.value = errorBodyObject;
 
 
                 throw new Error(`Error ${response.status} al enviar datos.`);
@@ -79,12 +83,23 @@ export default function useData() {
             
             responseData.ok = response.ok;
             if (!response.ok) {
-                responseData.error = response.statusText;
-                console.log(response)
+                // responseData.error = response.statusText;
+                // console.log(response)
+
+                // const errorBody = await response.text();
+                // console.error(`Error ${response.status}: ${errorBody}`);
+                // responseData.error += ` ${errorBody}`;
+
 
                 const errorBody = await response.text();
+                const errorBodyObject = JSON.parse(errorBody);
+
                 console.error(`Error ${response.status}: ${errorBody}`);
+                console.log('response',typeof errorBodyObject, errorBodyObject)
                 responseData.error += ` ${errorBody}`;
+                // errorResponseAPI.value = ` ${errorBody}`;
+                errorResponseAPI.value = errorBodyObject;
+
 
 
                 throw new Error(`Error ${response.status} al enviar datos.`);
