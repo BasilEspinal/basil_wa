@@ -100,8 +100,6 @@ export default function useData() {
                 // errorResponseAPI.value = ` ${errorBody}`;
                 errorResponseAPI.value = errorBodyObject;
 
-
-
                 throw new Error(`Error ${response.status} al enviar datos.`);
                 
             }
