@@ -28,8 +28,9 @@
                 </div>
             </div>
         
-        <pre>{{crop_lots_codeV}}</pre>
-            
+        <!-- <pre>{{crop_lots_codeV}}</pre>
+        <pre>{{ otherTestValue }}</pre>
+             -->
             
             <DataTable
                 :value="dataFromComponent"
@@ -148,14 +149,14 @@
                 </Column>
 
 
-                <!-- <Column field="customer_request.name" filterField="customer_request.name" header="Customer Request Name" sortable>
+                <Column field="customer_request.dispatch_number_lot" filterField="customer_request.dispatch_number_lot" header="Customer Request DNL" sortable>
                     <template #body="{ data }">
-                        {{ data.customer_request }}
+                        {{ data.customer_request.dispatch_number_lot }}
                     </template>
                     <template #filter="{ filterModel }">
                         <InputText v-model="filterModel.value" type="text" class="p-column-filter" placeholder="Search by " />
                     </template>
-                </Column> -->
+                </Column>
 
                 <!--Here add other columns-->
 
@@ -208,17 +209,6 @@
                 <pre>{{crop_lots_codeV}}</pre>
                 <pre>{{typeof crop_lots_codeV}}</pre>
                 
-                <!-- <Card class="p-fluid text-center mx-auto flex flex-wrap gap-3 mb-3 p-fluid flex-auto" v-if="errorResponseAPI">
-                    <pre>{{ valor }}</pre>
-                    <template #title>{{errorResponseAPI}}</template>
-                        <template #content>
-                            <div class="flex-auto">
-                                <small id="username-help" :class="{ 'p-invalid text-red-700': 'errorResponseAPI' }">
-                                {{ errorResponseAPI.errors.tasks_of_type_uuid }}
-                                </small>
-                            </div>
-                        </template>
-                </Card> -->
                 <div class="mb-3">
                     <div class="flex align-items-center">
                         <label for="username" class="font-semibold w-3">Transaction Date :</label>
@@ -268,7 +258,14 @@
                         optionLabel="code" 
                         placeholder="Select Crop Lots" 
                         :maxSelectedLabels="100" 
-                        class="flex-auto" />
+                        class="flex-auto">
+        
+                        <template #footer>
+                            <div class="py-2 px-4">
+                                <b>{{ crop_lots_codeV ? crop_lots_codeV.length : 0 }}</b> item{{ (crop_lots_codeV ? crop_lots_codeV.length : 0) > 1 ? 's' : '' }} selected.
+                            </div>
+                        </template>
+                    </MultiSelect>
                         <!-- <AutoComplete v-model="crop_lots_codeV" class="flex-auto" inputId="ac" :suggestions="crop_lots" @complete="searchCropLots" field="code" dropdown /> -->
                     </div>
                     <small id="username-help" :class="{ 'p-invalid text-red-700': errorsNew['crop_lots_codeV'] }">
@@ -417,6 +414,8 @@
             <Dialog v-model:visible="formDialogEdit" modal :header="formDialogEditTitle" class="p-fluid text-center mx-auto">
                 <!-- <pre>{{crop_lots_codeV}}</pre>
                 <pre>{{ testValue }}</pre> -->
+                <pre>{{ crop_lots_codeV }}</pre>
+                <pre>{{CropLots}}</pre>
                 
                 <div class="mb-3">
                     <div class="flex align-items-center">
@@ -467,7 +466,15 @@
                         optionLabel="code" 
                         placeholder="Select Crop Lots" 
                         :maxSelectedLabels="100" 
-                        class="flex-auto" />
+                        class="flex-auto" 
+                        >
+        
+                        <template #footer>
+                            <div class="py-2 px-4">
+                                <b>{{ crop_lots_codeV ? crop_lots_codeV.length : 0 }}</b> item{{ (crop_lots_codeV ? crop_lots_codeV.length : 0) > 1 ? 's' : '' }} selected.
+                            </div>
+                        </template>
+                    </MultiSelect>
                         <!-- <AutoComplete v-model="crop_lots_codeV" class="flex-auto" inputId="ac" :suggestions="crop_lots" @complete="searchCropLots" field="code" dropdown /> -->
                     </div>
                     <small id="username-help" :class="{ 'p-invalid text-red-700': errorsNew['crop_lots_codeV'] }">
@@ -892,7 +899,6 @@ const Compan = ref([]);
 const compa = ref([]);
 const farmDefault = sessionStorage.getItem('accessSessionFarm');
 const companyDefault = sessionStorage.getItem('accessSessionCompany');
-const crop_lots = ref([]);
 const CropLots = ref([]);
 const products = ref([]);
 const Products = ref([]);
@@ -969,7 +975,7 @@ const initFilters = () => {
         'product_type.name': { operator: FilterOperator.AND, constraints: [{ value: null, matchMode: FilterMatchMode.STARTS_WITH }] },
         'packing_type.name': { operator: FilterOperator.AND, constraints: [{ value: null, matchMode: FilterMatchMode.STARTS_WITH }] },
         'variant.name': { operator: FilterOperator.AND, constraints: [{ value: null, matchMode: FilterMatchMode.STARTS_WITH }] },
-        'customer_request.name': { operator: FilterOperator.AND, constraints: [{ value: null, matchMode: FilterMatchMode.STARTS_WITH }] },
+        'customer_request.dispatch_number_lot': { operator: FilterOperator.AND, constraints: [{ value: null, matchMode: FilterMatchMode.STARTS_WITH }] },
         'tasks_of_type.name': { operator: FilterOperator.AND, constraints: [{ value: null, matchMode: FilterMatchMode.STARTS_WITH }] },
         'status.name': { operator: FilterOperator.AND, constraints: [{ value: null, matchMode: FilterMatchMode.STARTS_WITH }] },
         'farm.name': { operator: FilterOperator.AND, constraints: [{ value: null, matchMode: FilterMatchMode.STARTS_WITH }] },
@@ -1083,8 +1089,9 @@ const {
                 .optional(),
             crop_lots_codeV:z.array(z.object({
                 code: z.string().min(2).optional(),
-                // id: z.number().min(1).optional()
+                
             })),
+            
             
             productV: z.object({
                 name: z.string().min(4),
@@ -1110,14 +1117,14 @@ const {
                 .optional(),
             farm: z
                 .object({
-                    name: z.string().min(4).optional(),
-                    id: z.string().min(4).optional()
+                    name: z.string().optional(),
+                    id: z.string().optional()
                 })
                 .optional(),
             company: z
                 .object({
-                    name: z.string().min(4).optional(),
-                    id: z.string().min(4).optional()
+                    name: z.string().optional(),
+                    id: z.string().optional()
                 })
                 .optional()
         })
@@ -1161,6 +1168,12 @@ watch(
         console.log(newValue);
     }
 );
+watch(
+    () => CropLots.value,
+    (newValue, oldValue) => {
+        console.log(newValue);
+    }
+);
 
 const openEdit = () => {
     resetForm();
@@ -1169,17 +1182,16 @@ const openEdit = () => {
     console.log(listRowSelect.value[0])
     transaction_dateV.value = new Date(date);
     task_of_typeV.value = { id: task.uuid, name: task.name };
-    // testValue.value = crop_lots
-    // console.log(typeof crop_lots)
-    // console.log(typeof crop_lots_codeV)
-    CropLots.value = crop_lots
+    // CropLots.value = crop_lots
+    
     crop_lots_codeV.value = crop_lots
+    
     productV.value = { id: productX.uuid, name: productX.name };
     product_typeV.value = { id: productType.uuid, name: productType.name };
     packing_typeV.value = { id: packing.uuid, name: packing.name };
     variantV.value = { id: variant.uuid, name: variant.name };
-    console.log(customer_request)
-    // customer_requestV.value = { id: customer_request.uuid, name: customer_request.name };
+    
+    customer_requestV.value = { id: customer_request.uuid, name: customer_request.dispatch_number_lot};
     company.value = { id: empresa.uuid, name: empresa.name };
     farm.value = { id: farmParameter.uuid, name: farmParameter.name };
 
@@ -1199,7 +1211,7 @@ const openClone = () => {
     product_typeV.value = { id: productType.uuid, name: productType.name };
     packing_typeV.value = { id: packing.uuid, name: packing.name };
     variantV.value = { id: variant.uuid, name: variant.name };
-    // customer_requestV.value = { id: customer.uuid, name: customer.name };
+    customer_requestV.value = { id: customer_request.uuid, name: customer_request.dispatch_number_lot};
     company.value = { id: empresa.uuid, name: empresa.name };
     farm.value = { id: farmParameter.uuid, name: farmParameter.name };
 
@@ -1217,7 +1229,7 @@ const openDelete = () => {
 
 const createRecord = handleSubmitNew(async (values) => {
     const yyyy = values.transaction_dateV.getFullYear();
-    const mm = String(values.transaction_dateV.getMonth() + 1).padStart(2, '0'); // Los meses en JavaScript son 0-indexados
+    const mm = String(values.transaction_dateV.getMonth() + 1).padStart(2, '0'); 
     const dd = String(values.transaction_dateV.getDate()).padStart(2, '0');
 
     // Formatear la fecha en formato YYYY-MM-DD
@@ -1251,6 +1263,7 @@ const createRecord = handleSubmitNew(async (values) => {
     selectedRegisters.value = []
     formDialogNew.value = false;
     errorResponseAPI.value = '';
+    otherTestValue.value = data;
 }
     else{
         backendValidationFlag.value = true;
