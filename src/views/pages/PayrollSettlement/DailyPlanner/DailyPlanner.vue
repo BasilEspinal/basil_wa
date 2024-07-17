@@ -27,8 +27,10 @@
                     </div>
                 </div>
             </div>
-        <!-- <pre> {{getType(listRowSelect[0].crop_lots) }}</pre> -->
-            
+        
+        <!-- <pre>{{crop_lots_codeV}}</pre>
+        <pre>{{ otherTestValue }}</pre>
+             -->
             
             <DataTable
                 :value="dataFromComponent"
@@ -72,7 +74,7 @@
                         </template>
                     </Toolbar>
                 </template>
-                <pre>{{valor}}</pre>
+                
                 <template #empty> No customers found. </template>
                 <template #loading> Loading customers data. Please wait. </template>
                 <Column selectionMode="multiple" headerStyle="width: 3rem"></Column>
@@ -146,6 +148,16 @@
                     </template>
                 </Column>
 
+
+                <Column field="customer_request.dispatch_number_lot" filterField="customer_request.dispatch_number_lot" header="Customer Request DNL" sortable>
+                    <template #body="{ data }">
+                        {{ data.customer_request.dispatch_number_lot }}
+                    </template>
+                    <template #filter="{ filterModel }">
+                        <InputText v-model="filterModel.value" type="text" class="p-column-filter" placeholder="Search by " />
+                    </template>
+                </Column>
+
                 <!--Here add other columns-->
 
                 <Column field="farmName" filterField="farm.name" header="Farm Name" sortable>
@@ -194,16 +206,8 @@
                 </Column>
             </DataTable>
             <Dialog v-model:visible="formDialogNew" modal :header="formDialogNewTitle" class="p-fluid text-center mx-auto">
-                <Card class="p-fluid text-center mx-auto flex flex-wrap gap-3 mb-3 p-fluid flex-auto" v-if="backendValidationFlag">
-                    <template #title>{{backendValidationMessage}}</template>
-                        <template #content>
-                            <div class="flex-auto">
-                                <small id="username-help" :class="{ 'p-invalid text-red-700': 'backendValidation' }">
-                                {{ backendValidation.error }}
-                                </small>
-                            </div>
-                        </template>
-                </Card>
+                
+                <pre>{{companyDefault}}</pre>
                 <div class="mb-3">
                     <div class="flex align-items-center">
                         <label for="username" class="font-semibold w-3">Transaction Date :</label>
@@ -214,6 +218,17 @@
                     <small id="username-help" :class="{ 'p-invalid text-red-700': errorsNew['transaction_dateV'] }">
                         {{ errorsNew.transaction_dateV }}
                     </small>
+
+                <!-- <small id="username-help" :class="{ 'p-invalid text-red-500': errorResponseAPI?.errors?.transaction_date }">
+                    <div v-if="errorResponseAPI?.errors?.transaction_date">
+                        <div v-for="(error, index) in errorResponseAPI.errors.transaction_date" :key="index">
+                            {{ error }}
+                        </div>
+                    </div>
+                </small> -->
+
+                <BackendErrors :name="errorResponseAPI?.errors?.transaction_date" />
+
                 </div>
 
                 <div class="mb-3">
@@ -224,9 +239,15 @@
                     <small id="username-help" :class="{ 'p-invalid text-red-700': errorsNew['tasks_of_typeV'] }">
                         {{ errorsNew.task_of_typeV }}
                     </small>
+
+                    <small id="username-help" :class="{ 'p-invalid text-red-500': errorResponseAPI?.errors?.tasks_of_type_uuid }">
+                    <div v-if="errorResponseAPI?.errors?.tasks_of_type_uuid">
+                        <div v-for="(error, index) in errorResponseAPI.errors.tasks_of_type_uuid" :key="index">
+                            {{ error }}
+                        </div>
+                    </div>
+                </small>
                 </div>
-
-
 
                 <div class="mb-3">
                     
@@ -239,12 +260,28 @@
                         optionLabel="code" 
                         placeholder="Select Crop Lots" 
                         :maxSelectedLabels="100" 
-                        class="flex-auto" />
+                        class="flex-auto">
+        
+                        <template #footer>
+                            <div class="py-2 px-4">
+                                <b>{{ crop_lots_codeV ? crop_lots_codeV.length : 0 }}</b> item{{ (crop_lots_codeV ? crop_lots_codeV.length : 0) > 1 ? 's' : '' }} selected.
+                            </div>
+                        </template>
+                    </MultiSelect>
                         <!-- <AutoComplete v-model="crop_lots_codeV" class="flex-auto" inputId="ac" :suggestions="crop_lots" @complete="searchCropLots" field="code" dropdown /> -->
                     </div>
                     <small id="username-help" :class="{ 'p-invalid text-red-700': errorsNew['crop_lots_codeV'] }">
                         {{ errorsNew.crop_lots_codeV }}
                     </small>
+
+                    <small id="username-help" :class="{ 'p-invalid text-red-500': errorResponseAPI?.errors?.crop_lots }">
+                    <div v-if="errorResponseAPI?.errors?.crop_lots">
+                        <div v-for="(error, index) in errorResponseAPI.errors.crop_lots" :key="index">
+                            {{ error }}
+                        </div>
+                    </div>
+                </small>
+
                 </div>
 
                 <div class="mb-3">
@@ -255,6 +292,13 @@
                     <small id="username-help" :class="{ 'p-invalid text-red-700': errorsNew['productV'] }">
                         {{ errorsNew.productV }}
                     </small>
+                    <small id="username-help" :class="{ 'p-invalid text-red-500': errorResponseAPI?.errors?.product_uuid }">
+                    <div v-if="errorResponseAPI?.errors?.product_uuid">
+                        <div v-for="(error, index) in errorResponseAPI.errors.product_uuid" :key="index">
+                            {{ error }}
+                        </div>
+                    </div>
+                </small>
                 </div>
 
                 <div class="mb-3">
@@ -265,6 +309,14 @@
                     <small id="username-help" :class="{ 'p-invalid text-red-700': errorsNew['product_typeV'] }">
                         {{ errorsNew.product_typeV }}
                     </small>
+                    <small id="username-help" :class="{ 'p-invalid text-red-500': errorResponseAPI?.errors?.product_type_uuid }">
+                    <div v-if="errorResponseAPI?.errors?.product_type_uuid">
+                        <div v-for="(error, index) in errorResponseAPI.errors.product_type_uuid" :key="index">
+                            {{ error }}
+                        </div>
+                    </div>
+                </small>
+
                 </div>
 
                 <div class="mb-3">
@@ -275,6 +327,13 @@
                     <small id="username-help" :class="{ 'p-invalid text-red-700': errorsNew['packing_typeV'] }">
                         {{ errorsNew.packing_typeV }}
                     </small>
+                    <small id="username-help" :class="{ 'p-invalid text-red-500': errorResponseAPI?.errors?.packing_type_uuid }">
+                    <div v-if="errorResponseAPI?.errors?.packing_type_uuid">
+                        <div v-for="(error, index) in errorResponseAPI.errors.packing_type_uuid" :key="index">
+                            {{ error }}
+                        </div>
+                    </div>
+                </small>
                 </div>
 
                 <div class="mb-3">
@@ -285,6 +344,15 @@
                     <small id="username-help" :class="{ 'p-invalid text-red-700': errorsNew['variantV'] }">
                         {{ errorsNew.variantV }}
                     </small>
+
+                    <small id="username-help" :class="{ 'p-invalid text-red-500': errorResponseAPI?.errors?.variant_uuid }">
+                    <div v-if="errorResponseAPI?.errors?.variant_uuid">
+                        <div v-for="(error, index) in errorResponseAPI.errors.variant_uuid" :key="index">
+                            {{ error }}
+                        </div>
+                    </div>
+                </small>
+
                 </div>
 
                 <div class="mb-3">
@@ -295,6 +363,13 @@
                     <small id="username-help" :class="{ 'p-invalid text-red-700': errorsNew['customer_requestV'] }">
                         {{ errorsNew.customer_requestV }}
                     </small>
+                    <small id="username-help" :class="{ 'p-invalid text-red-500': errorResponseAPI?.errors?.customer_request_uuid }">
+                    <div v-if="errorResponseAPI?.errors?.customer_request_uuid">
+                        <div v-for="(error, index) in errorResponseAPI.errors.customer_request_uuid" :key="index">
+                            {{ error }}
+                        </div>
+                    </div>
+                </small>
                 </div>
 
                 <div class="mb-3">
@@ -305,15 +380,31 @@
                     <small id="username-help" :class="{ 'p-invalid text-red-700': errorsNew['farm'] }">
                         {{ errorsNew.farm }}
                     </small>
+                    <small id="username-help" :class="{ 'p-invalid text-red-500': errorResponseAPI?.errors?.farm_uuid }">
+                    <div v-if="errorResponseAPI?.errors?.farm_uuid">
+                        <div v-for="(error, index) in errorResponseAPI.errors.farm_uuid" :key="index">
+                            {{ error }}
+                        </div>
+                    </div>
+                </small>
+                    
                 </div>
                 <div class="mb-3">
                     <div class="flex align-items-center">
-                        <label for="username" class="font-semibold w-3">Companny:</label>
+                        <label for="username" class="font-semibold w-3">Company:</label>
                         <AutoComplete v-model="company" class="flex-auto" inputId="ac" :suggestions="compa" @complete="searchCompannies" field="name" dropdown />
                     </div>
                     <small id="username-help" :class="{ 'p-invalid text-red-700': errorsNew['company'] }">
                         {{ errorsNew.company }}
                     </small>
+
+                    <small id="username-help" :class="{ 'p-invalid text-red-500': errorResponseAPI?.errors?.company_uuid }">
+                    <div v-if="errorResponseAPI?.errors?.company_uuid">
+                        <div v-for="(error, index) in errorResponseAPI.errors.company_uuid" :key="index">
+                            {{ error }}
+                        </div>
+                    </div>
+                </small>
                 </div>
 
                 <div class="flex justify-content-end gap-2">
@@ -323,17 +414,15 @@
             </Dialog>
 
             <Dialog v-model:visible="formDialogEdit" modal :header="formDialogEditTitle" class="p-fluid text-center mx-auto">
-                <Card class="p-fluid text-center mx-auto flex flex-wrap gap-3 mb-3 p-fluid flex-auto" v-if="backendValidationFlag">
-                    <template #title>{{backendValidationMessage}}</template>
-                        <template #content>
-                            <div class="flex-auto">
-                                <small id="username-help" :class="{ 'p-invalid text-red-700': 'backendValidation' }">
-                                {{ backendValidation.error }}
-                                </small>
-                            </div>
-                        </template>
-                </Card>
+                
+
+
                 <div class="mb-3">
+
+                
+
+                
+                
                     <div class="flex align-items-center">
                         <label for="username" class="font-semibold w-3">Transaction Date :</label>
                         <!-- <Calendar v-model="transaction_dateV" class="flex-auto" v-bind="transaction_dateVProps"/> -->
@@ -343,6 +432,14 @@
                     <small id="username-help" :class="{ 'p-invalid text-red-700': errorsNew['transaction_dateV'] }">
                         {{ errorsNew.transaction_dateV }}
                     </small>
+
+                    <small id="username-help" :class="{ 'p-invalid text-red-500': errorResponseAPI?.errors?.transaction_date }">
+                    <div v-if="errorResponseAPI?.errors?.transaction_date">
+                        <div v-for="(error, index) in errorResponseAPI.errors.transaction_date" :key="index">
+                            {{ error }}
+                        </div>
+                    </div>
+                </small>
                 </div>
 
                 <div class="mb-3">
@@ -353,12 +450,18 @@
                     <small id="username-help" :class="{ 'p-invalid text-red-700': errorsNew['tasks_of_typeV'] }">
                         {{ errorsNew.task_of_typeV }}
                     </small>
+
+                    <small id="username-help" :class="{ 'p-invalid text-red-500': errorResponseAPI?.errors?.tasks_of_type_uuid }">
+                    <div v-if="errorResponseAPI?.errors?.tasks_of_type_uuid">
+                        <div v-for="(error, index) in errorResponseAPI.errors.tasks_of_type_uuid" :key="index">
+                            {{ error }}
+                        </div>
+                    </div>
+                </small>
                 </div>
 
-
-
                 <div class="mb-3">
-
+                    
                     <div class="flex align-items-center">
                         <label for="username" class="font-semibold w-3">Crop Lots Code :</label>
                         <MultiSelect 
@@ -368,12 +471,29 @@
                         optionLabel="code" 
                         placeholder="Select Crop Lots" 
                         :maxSelectedLabels="100" 
-                        class="flex-auto" />
+                        class="flex-auto" 
+                        >
+        
+                        <template #footer>
+                            <div class="py-2 px-4">
+                                <b>{{ crop_lots_codeV ? crop_lots_codeV.length : 0 }}</b> item{{ (crop_lots_codeV ? crop_lots_codeV.length : 0) > 1 ? 's' : '' }} selected.
+                            </div>
+                        </template>
+                    </MultiSelect>
                         <!-- <AutoComplete v-model="crop_lots_codeV" class="flex-auto" inputId="ac" :suggestions="crop_lots" @complete="searchCropLots" field="code" dropdown /> -->
                     </div>
                     <small id="username-help" :class="{ 'p-invalid text-red-700': errorsNew['crop_lots_codeV'] }">
                         {{ errorsNew.crop_lots_codeV }}
                     </small>
+
+                    <small id="username-help" :class="{ 'p-invalid text-red-500': errorResponseAPI?.errors?.crop_lots }">
+                    <div v-if="errorResponseAPI?.errors?.crop_lots">
+                        <div v-for="(error, index) in errorResponseAPI.errors.crop_lots" :key="index">
+                            {{ error }}
+                        </div>
+                    </div>
+                </small>
+
                 </div>
 
                 <div class="mb-3">
@@ -384,6 +504,13 @@
                     <small id="username-help" :class="{ 'p-invalid text-red-700': errorsNew['productV'] }">
                         {{ errorsNew.productV }}
                     </small>
+                    <small id="username-help" :class="{ 'p-invalid text-red-500': errorResponseAPI?.errors?.product_uuid }">
+                    <div v-if="errorResponseAPI?.errors?.product_uuid">
+                        <div v-for="(error, index) in errorResponseAPI.errors.product_uuid" :key="index">
+                            {{ error }}
+                        </div>
+                    </div>
+                </small>
                 </div>
 
                 <div class="mb-3">
@@ -394,6 +521,14 @@
                     <small id="username-help" :class="{ 'p-invalid text-red-700': errorsNew['product_typeV'] }">
                         {{ errorsNew.product_typeV }}
                     </small>
+                    <small id="username-help" :class="{ 'p-invalid text-red-500': errorResponseAPI?.errors?.product_type_uuid }">
+                    <div v-if="errorResponseAPI?.errors?.product_type_uuid">
+                        <div v-for="(error, index) in errorResponseAPI.errors.product_type_uuid" :key="index">
+                            {{ error }}
+                        </div>
+                    </div>
+                </small>
+
                 </div>
 
                 <div class="mb-3">
@@ -404,6 +539,13 @@
                     <small id="username-help" :class="{ 'p-invalid text-red-700': errorsNew['packing_typeV'] }">
                         {{ errorsNew.packing_typeV }}
                     </small>
+                    <small id="username-help" :class="{ 'p-invalid text-red-500': errorResponseAPI?.errors?.packing_type_uuid }">
+                    <div v-if="errorResponseAPI?.errors?.packing_type_uuid">
+                        <div v-for="(error, index) in errorResponseAPI.errors.packing_type_uuid" :key="index">
+                            {{ error }}
+                        </div>
+                    </div>
+                </small>
                 </div>
 
                 <div class="mb-3">
@@ -414,6 +556,15 @@
                     <small id="username-help" :class="{ 'p-invalid text-red-700': errorsNew['variantV'] }">
                         {{ errorsNew.variantV }}
                     </small>
+
+                    <small id="username-help" :class="{ 'p-invalid text-red-500': errorResponseAPI?.errors?.variant_uuid }">
+                    <div v-if="errorResponseAPI?.errors?.variant_uuid">
+                        <div v-for="(error, index) in errorResponseAPI.errors.variant_uuid" :key="index">
+                            {{ error }}
+                        </div>
+                    </div>
+                </small>
+
                 </div>
 
                 <div class="mb-3">
@@ -424,6 +575,13 @@
                     <small id="username-help" :class="{ 'p-invalid text-red-700': errorsNew['customer_requestV'] }">
                         {{ errorsNew.customer_requestV }}
                     </small>
+                    <small id="username-help" :class="{ 'p-invalid text-red-500': errorResponseAPI?.errors?.customer_request_uuid }">
+                    <div v-if="errorResponseAPI?.errors?.customer_request_uuid">
+                        <div v-for="(error, index) in errorResponseAPI.errors.customer_request_uuid" :key="index">
+                            {{ error }}
+                        </div>
+                    </div>
+                </small>
                 </div>
 
                 <div class="mb-3">
@@ -434,16 +592,34 @@
                     <small id="username-help" :class="{ 'p-invalid text-red-700': errorsNew['farm'] }">
                         {{ errorsNew.farm }}
                     </small>
+                    <small id="username-help" :class="{ 'p-invalid text-red-500': errorResponseAPI?.errors?.farm_uuid }">
+                    <div v-if="errorResponseAPI?.errors?.farm_uuid">
+                        <div v-for="(error, index) in errorResponseAPI.errors.farm_uuid" :key="index">
+                            {{ error }}
+                        </div>
+                    </div>
+                </small>
+                    
                 </div>
                 <div class="mb-3">
                     <div class="flex align-items-center">
-                        <label for="username" class="font-semibold w-3">Companny:</label>
+                        <label for="username" class="font-semibold w-3">Company:</label>
                         <AutoComplete v-model="company" class="flex-auto" inputId="ac" :suggestions="compa" @complete="searchCompannies" field="name" dropdown />
                     </div>
                     <small id="username-help" :class="{ 'p-invalid text-red-700': errorsNew['company'] }">
                         {{ errorsNew.company }}
                     </small>
+
+                    <small id="username-help" :class="{ 'p-invalid text-red-500': errorResponseAPI?.errors?.company_uuid }">
+                    <div v-if="errorResponseAPI?.errors?.company_uuid">
+                        <div v-for="(error, index) in errorResponseAPI.errors.company_uuid" :key="index">
+                            {{ error }}
+                        </div>
+                    </div>
+                </small>
                 </div>
+
+
                 <div class="flex justify-content-end gap-2">
                     <Button type="button" label="Cancel" severity="secondary" @click="formDialogEdit = false" />
                     <Button type="button" label="Save" @click="EditRecord()" />
@@ -451,16 +627,7 @@
             </Dialog>
 
             <Dialog v-model:visible="formDialogClone" modal :header="formDialogCloneTitle" class="p-fluid text-center mx-auto">
-                <Card class="p-fluid text-center mx-auto flex flex-wrap gap-3 mb-3 p-fluid flex-auto" v-if="backendValidationFlag">
-                    <template #title>{{backendValidationMessage}}</template>
-                        <template #content>
-                            <div class="flex-auto">
-                                <small id="username-help" :class="{ 'p-invalid text-red-700': 'backendValidation' }">
-                                {{ backendValidation.error }}
-                                </small>
-                            </div>
-                        </template>
-                </Card>
+                <!-- <pre>{{listRowSelect[0]}}</pre> -->
                 <div class="mb-3">
                     <div class="flex align-items-center">
                         <label for="username" class="font-semibold w-3">Transaction Date :</label>
@@ -471,6 +638,14 @@
                     <small id="username-help" :class="{ 'p-invalid text-red-700': errorsNew['transaction_dateV'] }">
                         {{ errorsNew.transaction_dateV }}
                     </small>
+
+                    <small id="username-help" :class="{ 'p-invalid text-red-500': errorResponseAPI?.errors?.transaction_date }">
+                    <div v-if="errorResponseAPI?.errors?.transaction_date">
+                        <div v-for="(error, index) in errorResponseAPI.errors.transaction_date" :key="index">
+                            {{ error }}
+                        </div>
+                    </div>
+                </small>
                 </div>
 
                 <div class="mb-3">
@@ -481,13 +656,18 @@
                     <small id="username-help" :class="{ 'p-invalid text-red-700': errorsNew['tasks_of_typeV'] }">
                         {{ errorsNew.task_of_typeV }}
                     </small>
+
+                    <small id="username-help" :class="{ 'p-invalid text-red-500': errorResponseAPI?.errors?.tasks_of_type_uuid }">
+                    <div v-if="errorResponseAPI?.errors?.tasks_of_type_uuid">
+                        <div v-for="(error, index) in errorResponseAPI.errors.tasks_of_type_uuid" :key="index">
+                            {{ error }}
+                        </div>
+                    </div>
+                </small>
                 </div>
-
-
 
                 <div class="mb-3">
                     
-
                     <div class="flex align-items-center">
                         <label for="username" class="font-semibold w-3">Crop Lots Code :</label>
                         <MultiSelect 
@@ -503,6 +683,15 @@
                     <small id="username-help" :class="{ 'p-invalid text-red-700': errorsNew['crop_lots_codeV'] }">
                         {{ errorsNew.crop_lots_codeV }}
                     </small>
+
+                    <small id="username-help" :class="{ 'p-invalid text-red-500': errorResponseAPI?.errors?.crop_lots }">
+                    <div v-if="errorResponseAPI?.errors?.crop_lots">
+                        <div v-for="(error, index) in errorResponseAPI.errors.crop_lots" :key="index">
+                            {{ error }}
+                        </div>
+                    </div>
+                </small>
+
                 </div>
 
                 <div class="mb-3">
@@ -513,6 +702,13 @@
                     <small id="username-help" :class="{ 'p-invalid text-red-700': errorsNew['productV'] }">
                         {{ errorsNew.productV }}
                     </small>
+                    <small id="username-help" :class="{ 'p-invalid text-red-500': errorResponseAPI?.errors?.product_uuid }">
+                    <div v-if="errorResponseAPI?.errors?.product_uuid">
+                        <div v-for="(error, index) in errorResponseAPI.errors.product_uuid" :key="index">
+                            {{ error }}
+                        </div>
+                    </div>
+                </small>
                 </div>
 
                 <div class="mb-3">
@@ -523,6 +719,14 @@
                     <small id="username-help" :class="{ 'p-invalid text-red-700': errorsNew['product_typeV'] }">
                         {{ errorsNew.product_typeV }}
                     </small>
+                    <small id="username-help" :class="{ 'p-invalid text-red-500': errorResponseAPI?.errors?.product_type_uuid }">
+                    <div v-if="errorResponseAPI?.errors?.product_type_uuid">
+                        <div v-for="(error, index) in errorResponseAPI.errors.product_type_uuid" :key="index">
+                            {{ error }}
+                        </div>
+                    </div>
+                </small>
+
                 </div>
 
                 <div class="mb-3">
@@ -533,6 +737,13 @@
                     <small id="username-help" :class="{ 'p-invalid text-red-700': errorsNew['packing_typeV'] }">
                         {{ errorsNew.packing_typeV }}
                     </small>
+                    <small id="username-help" :class="{ 'p-invalid text-red-500': errorResponseAPI?.errors?.packing_type_uuid }">
+                    <div v-if="errorResponseAPI?.errors?.packing_type_uuid">
+                        <div v-for="(error, index) in errorResponseAPI.errors.packing_type_uuid" :key="index">
+                            {{ error }}
+                        </div>
+                    </div>
+                </small>
                 </div>
 
                 <div class="mb-3">
@@ -543,6 +754,15 @@
                     <small id="username-help" :class="{ 'p-invalid text-red-700': errorsNew['variantV'] }">
                         {{ errorsNew.variantV }}
                     </small>
+
+                    <small id="username-help" :class="{ 'p-invalid text-red-500': errorResponseAPI?.errors?.variant_uuid }">
+                    <div v-if="errorResponseAPI?.errors?.variant_uuid">
+                        <div v-for="(error, index) in errorResponseAPI.errors.variant_uuid" :key="index">
+                            {{ error }}
+                        </div>
+                    </div>
+                </small>
+
                 </div>
 
                 <div class="mb-3">
@@ -553,6 +773,13 @@
                     <small id="username-help" :class="{ 'p-invalid text-red-700': errorsNew['customer_requestV'] }">
                         {{ errorsNew.customer_requestV }}
                     </small>
+                    <small id="username-help" :class="{ 'p-invalid text-red-500': errorResponseAPI?.errors?.customer_request_uuid }">
+                    <div v-if="errorResponseAPI?.errors?.customer_request_uuid">
+                        <div v-for="(error, index) in errorResponseAPI.errors.customer_request_uuid" :key="index">
+                            {{ error }}
+                        </div>
+                    </div>
+                </small>
                 </div>
 
                 <div class="mb-3">
@@ -563,16 +790,33 @@
                     <small id="username-help" :class="{ 'p-invalid text-red-700': errorsNew['farm'] }">
                         {{ errorsNew.farm }}
                     </small>
+                    <small id="username-help" :class="{ 'p-invalid text-red-500': errorResponseAPI?.errors?.farm_uuid }">
+                    <div v-if="errorResponseAPI?.errors?.farm_uuid">
+                        <div v-for="(error, index) in errorResponseAPI.errors.farm_uuid" :key="index">
+                            {{ error }}
+                        </div>
+                    </div>
+                </small>
+                    
                 </div>
                 <div class="mb-3">
                     <div class="flex align-items-center">
-                        <label for="username" class="font-semibold w-3">Companny:</label>
+                        <label for="username" class="font-semibold w-3">Company:</label>
                         <AutoComplete v-model="company" class="flex-auto" inputId="ac" :suggestions="compa" @complete="searchCompannies" field="name" dropdown />
                     </div>
                     <small id="username-help" :class="{ 'p-invalid text-red-700': errorsNew['company'] }">
                         {{ errorsNew.company }}
                     </small>
+
+                    <small id="username-help" :class="{ 'p-invalid text-red-500': errorResponseAPI?.errors?.company_uuid }">
+                    <div v-if="errorResponseAPI?.errors?.company_uuid">
+                        <div v-for="(error, index) in errorResponseAPI.errors.company_uuid" :key="index">
+                            {{ error }}
+                        </div>
+                    </div>
+                </small>
                 </div>
+
 
                 <div class="flex justify-content-end gap-2">
                     <Button type="button" label="Cancel" severity="secondary" @click="formDialogClone = false" />
@@ -646,11 +890,11 @@ import { saveAs } from 'file-saver';
 import { z } from 'zod';
 import ability from '@/service/ability.js';
 import { AbilityBuilder } from '@casl/ability';
+import BackendErrors from '@/views/Errors/BackendErrors.vue';
 
 const prueba = ref({revisar: 'revisar GET-POST-PUT-DELETE'});
 const backendValidation = ref();
 const backendValidationFlag = ref(false);
-const backendValidationMessage = ref('Please check the following errors');
 const namePage = ' Planner tasks ';
 const titlePage = ' '+namePage+' information';
 const dataFromComponent = ref();
@@ -660,7 +904,6 @@ const Compan = ref([]);
 const compa = ref([]);
 const farmDefault = sessionStorage.getItem('accessSessionFarm');
 const companyDefault = sessionStorage.getItem('accessSessionCompany');
-const crop_lots = ref([]);
 const CropLots = ref([]);
 const products = ref([]);
 const Products = ref([]);
@@ -674,6 +917,8 @@ const variants = ref([]);
 const Variants = ref([]);
 const customer_request = ref([]);
 const Customer_request = ref([]);
+
+const otherTestValue = ref()
 
 const formDialogNewTitle = 'Create new '+namePage;
 const formDialogEditTitle = 'Edit '+namePage;
@@ -735,6 +980,7 @@ const initFilters = () => {
         'product_type.name': { operator: FilterOperator.AND, constraints: [{ value: null, matchMode: FilterMatchMode.STARTS_WITH }] },
         'packing_type.name': { operator: FilterOperator.AND, constraints: [{ value: null, matchMode: FilterMatchMode.STARTS_WITH }] },
         'variant.name': { operator: FilterOperator.AND, constraints: [{ value: null, matchMode: FilterMatchMode.STARTS_WITH }] },
+        'customer_request.dispatch_number_lot': { operator: FilterOperator.AND, constraints: [{ value: null, matchMode: FilterMatchMode.STARTS_WITH }] },
         'tasks_of_type.name': { operator: FilterOperator.AND, constraints: [{ value: null, matchMode: FilterMatchMode.STARTS_WITH }] },
         'status.name': { operator: FilterOperator.AND, constraints: [{ value: null, matchMode: FilterMatchMode.STARTS_WITH }] },
         'farm.name': { operator: FilterOperator.AND, constraints: [{ value: null, matchMode: FilterMatchMode.STARTS_WITH }] },
@@ -769,12 +1015,13 @@ const readAll = async () => {
     if (!respVariants.ok) toast.add({ severity: 'error', detail: 'Error' + respVariants.error, life: 3000 });
     Variants.value = respVariants.data.data.map((variant) => ({ id: variant.uuid, name: variant.name }));
 
-    const respCropLots = await getRequest('/lots');
+    const respCropLots = await getRequest('/crop_lots');
     if (!respCropLots.ok) {
         toast.add({ severity: 'error', detail: 'Error: ' + respCropLots.error, life: 3000 });
+        console.log(respCropLots)
     } else {
         CropLots.value = respCropLots.data.data.map((crop) => ({
-            id: crop.id,
+            
             code: crop.code
         }));
     }
@@ -787,7 +1034,7 @@ const readAll = async () => {
     if (!respCompan.ok) toast.add({ severity: 'error', detail: 'Error' + respCompan.error, life: 3000 });
     Compan.value = respCompan.data.data.map((comp) => ({ id: comp.uuid, name: comp.name }));
 
-    const respCustomerRequest = await getRequest('/customers_requests');
+    const respCustomerRequest = await getRequest('/customer_requests');
     if (!respCustomerRequest.ok) toast.add({ severity: 'error', detail: 'Error' + respCustomerRequest.error, life: 3000 });
     Customer_request.value = respCustomerRequest.data.data.map((customer) => ({ id: customer.uuid, name: customer.dispatch_number_lot }));
     console.log(Customer_request);
@@ -801,10 +1048,9 @@ const loadingData = async () => {
     if (!response.ok) toast.add({ severity: 'error', detail: 'Error' + response.error, life: 3000 });
     dataFromComponent.value = response.data.data;
     
-    filtroCropLots.value = cropLotsToString(dataFromComponent.value[0].crop_lots)
-    console.log(filtroCropLots.value);
-    console.log(typeof filtroCropLots.value);
 };
+
+
 watch(
     () => dataFromComponent.value,
     (newValue, oldValue) => {}
@@ -846,10 +1092,14 @@ const {
                     id: z.string().min(4)
                 })
                 .optional(),
-            crop_lots_codeV:z.array(z.object({
-                code: z.string().min(2),
-                id: z.number().min(1)
-            })),
+            // crop_lots_codeV:z.array(z.object({
+            //     code: z.string().min(2).optional(),
+                
+            // })),
+            crop_lots_codeV: z.array(z.object({
+            code: z.string().min(2).optional(),
+        })).min(1, { message: "You should select at least one crop lot" }),
+            
             
             productV: z.object({
                 name: z.string().min(4),
@@ -875,16 +1125,14 @@ const {
                 .optional(),
             farm: z
                 .object({
-                    name: z.string().min(4),
-                    id: z.string().min(4)
-                })
-                .optional(),
+                    name: z.string().optional(),
+                    id: z.string().optional()
+                }).optional(),
             company: z
                 .object({
-                    name: z.string().min(4),
-                    id: z.string().min(4)
-                })
-                .optional()
+                    name: z.string().optional(),
+                    id: z.string().optional()
+                }).optional()
         })
     )
 });
@@ -917,39 +1165,59 @@ let valor = ref();
 const openNew = () => {
     resetForm();
     formDialogNew.value = true;
+    console.log(CropLots.value);
 };
+
+watch(
+    () => crop_lots_codeV.value,
+    (newValue, oldValue) => {
+        console.log(newValue);
+    }
+);
+watch(
+    () => CropLots.value,
+    (newValue, oldValue) => {
+        console.log(newValue);
+    }
+);
+
+
+const varto = ref()
 
 const openEdit = () => {
     resetForm();
     
-    const { code, company: empresa, farm: farmParameter, name: nombre,tasks_of_type:task,variant:variant,packing_type:packing,product_type:productType,product:productX,transaction_date:date,crop_lots:croplots } = listRowSelect.value[0];
-
+    const { code, company: empresa, farm: farmParameter, name: nombre,tasks_of_type:task,variant:variant,packing_type:packing,product_type:productType,product:productX,transaction_date:date,crop_lots:crop_lots,customer_request:customer_request } = listRowSelect.value[0];
+    console.log(listRowSelect.value[0])
     transaction_dateV.value = new Date(date);
     task_of_typeV.value = { id: task.uuid, name: task.name };
-    crop_lots_codeV.value = croplots
+    crop_lots_codeV.value = crop_lots
     productV.value = { id: productX.uuid, name: productX.name };
     product_typeV.value = { id: productType.uuid, name: productType.name };
     packing_typeV.value = { id: packing.uuid, name: packing.name };
     variantV.value = { id: variant.uuid, name: variant.name };
-    customer_requestV.value = { id: 'Falta GET', name: 'Falta GET' };
+    
+    customer_requestV.value = { id: customer_request.uuid, name: customer_request.dispatch_number_lot};
     company.value = { id: empresa.uuid, name: empresa.name };
     farm.value = { id: farmParameter.uuid, name: farmParameter.name };
 
     formDialogEdit.value = true;
+
 };
+
 
 const openClone = () => {
     resetForm();
-    const { code, company: empresa, farm: farmParameter, name: nombre,tasks_of_type:task,variant:variant,packing_type:packing,product_type:productType,product:productX,transaction_date:date,crop_lots:croplots } = listRowSelect.value[0];
+    const { code, company: empresa, farm: farmParameter, name: nombre,tasks_of_type:task,variant:variant,packing_type:packing,product_type:productType,product:productX,transaction_date:date,crop_lots:crop_lots,customer_request:customer_request } = listRowSelect.value[0];
 
     transaction_dateV.value = new Date(date);
     task_of_typeV.value = { id: task.uuid, name: task.name };
-    crop_lots_codeV.value = croplots
+    crop_lots_codeV.value = crop_lots
     productV.value = { id: productX.uuid, name: productX.name };
     product_typeV.value = { id: productType.uuid, name: productType.name };
     packing_typeV.value = { id: packing.uuid, name: packing.name };
     variantV.value = { id: variant.uuid, name: variant.name };
-    customer_requestV.value = { id: 'Falta GET', name: 'Falta GET' };
+    customer_requestV.value = { id: customer_request.uuid, name: customer_request.dispatch_number_lot};
     company.value = { id: empresa.uuid, name: empresa.name };
     farm.value = { id: farmParameter.uuid, name: farmParameter.name };
 
@@ -967,18 +1235,16 @@ const openDelete = () => {
 
 const createRecord = handleSubmitNew(async (values) => {
     const yyyy = values.transaction_dateV.getFullYear();
-    const mm = String(values.transaction_dateV.getMonth() + 1).padStart(2, '0'); // Los meses en JavaScript son 0-indexados
+    const mm = String(values.transaction_dateV.getMonth() + 1).padStart(2, '0'); 
     const dd = String(values.transaction_dateV.getDate()).padStart(2, '0');
 
     // Formatear la fecha en formato YYYY-MM-DD
     const formattedDate = `${yyyy}-${mm}-${dd}`;
     console.log(formattedDate);
-    const data = {
-        // code: values.codeV,
-        // name: values.name,
+    const data = { 
 
         tasks_of_type_uuid: values.task_of_typeV ? values.task_of_typeV.id : 'Prueba',
-        // crop_lots: {"id": 1, "code": "L-1"},
+        
         crop_lots: values.crop_lots_codeV ? values.crop_lots_codeV : 'Prueba',
         transaction_date: formattedDate,
         product_uuid: values.productV ? values.productV.id : 'Prueba',
@@ -986,9 +1252,12 @@ const createRecord = handleSubmitNew(async (values) => {
         packing_type_uuid: values.packing_typeV ? values.packing_typeV.id : 'Prueba',
         variant_uuid: values.variantV ? values.variantV.id : 'Prueba',
         customer_request_uuid: values.customer_requestV ? values.customer_requestV.id : 'Prueba',
-        company_uuid: values.company ? values.company.id : companyDefault,
-        farm_uuid: values.farm ? values.farm.id : farmDefault
+        company_uuid: values.company && values.company.id ? values.company.id : companyDefault,
+        farm_uuid: values.farm && values.farm.id ? values.farm.id : farmDefault
+        
     };
+    console.log(data)
+    
     valor.value = data;
     console.log(data);
     const restp = await postRequest(endpoint.value, data);
@@ -1000,6 +1269,8 @@ const createRecord = handleSubmitNew(async (values) => {
     if(restp.ok) {listRowSelect.value = []
     selectedRegisters.value = []
     formDialogNew.value = false;
+    errorResponseAPI.value = '';
+    otherTestValue.value = data;
 }
     else{
         backendValidationFlag.value = true;
@@ -1030,8 +1301,8 @@ const EditRecord = handleSubmitNew(async (values) => {
         packing_type_uuid: values.packing_typeV ? values.packing_typeV.id : 'Prueba',
         variant_uuid: values.variantV ? values.variantV.id : 'Prueba',
         customer_request_uuid: values.customer_requestV ? values.customer_requestV.id : 'Prueba',
-        company_uuid: values.company ? values.company.id : companyDefault,
-        farm_uuid: values.farm ? values.farm.id : farmDefault
+        company_uuid: values.company && values.company.id ? values.company.id : companyDefault,
+        farm_uuid: values.farm && values.farm.id ? values.farm.id : farmDefault
     };
 
     const restp = await putRequest(endpoint.value, data, uuid);
@@ -1042,6 +1313,7 @@ const EditRecord = handleSubmitNew(async (values) => {
     if(restp.ok) {listRowSelect.value = []
     selectedRegisters.value = []
     formDialogEdit.value = false;
+    errorResponseAPI.value = '';
     
 }
     else{
@@ -1074,8 +1346,8 @@ const CloneRecord = handleSubmitNew(async (values) => {
         packing_type_uuid: values.packing_typeV ? values.packing_typeV.id : 'Prueba',
         variant_uuid: values.variantV ? values.variantV.id : 'Prueba',
         customer_request_uuid: values.customer_requestV ? values.customer_requestV.id : 'Prueba',
-        company_uuid: values.company ? values.company.id : companyDefault,
-        farm_uuid: values.farm ? values.farm.id : farmDefault
+        company_uuid: values.company && values.company.id ? values.company.id : companyDefault,
+        farm_uuid: values.farm && values.farm.id ? values.farm.id : farmDefault
     };
     const restp = await postRequest(endpoint.value, data);
     toast.add({ severity: restp.ok ? 'success' : 'error', summary: 'Clone', detail: restp.ok ? 'Clonado' : restp.error, life: 3000 });
@@ -1084,6 +1356,7 @@ const CloneRecord = handleSubmitNew(async (values) => {
     if(restp.ok) {listRowSelect.value = []
     selectedRegisters.value = []
     formDialogClone.value = false;
+    errorResponseAPI.value = '';
 }
     else{
         backendValidationFlag.value = true;
@@ -1124,17 +1397,17 @@ const searchTaskOfType = (event) => {
         }
     }, 200);
 };
-const searchCropLots = (event) => {
-    setTimeout(() => {
-        if (!event.query.trim().length) {
-            crop_lots.value = [...CropLots.value];
-        } else {
-            crop_lots.value = CropLots.value.filter((fram) => {
-                return fram.code.toLowerCase().startsWith(event.query.toLowerCase());
-            });
-        }
-    }, 200);
-};
+// const searchCropLots = (event) => {
+//     setTimeout(() => {
+//         if (!event.query.trim().length) {
+//             crop_lots.value = [...CropLots.value];
+//         } else {
+//             crop_lots.value = CropLots.value.filter((fram) => {
+//                 return fram.code.toLowerCase().startsWith(event.query.toLowerCase());
+//             });
+//         }
+//     }, 200);
+// };
 const searchProduct = (event) => {
     setTimeout(() => {
         if (!event.query.trim().length) {
