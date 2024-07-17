@@ -570,31 +570,7 @@
                                 </small>
                             </div>
 
-                            <div class="mb-3 col-12 md:col-6 lg:col-3">
-                                <div class="flex align-items-center">
-                                    <label for="productV" class="font-semibold w-6rem">Product:</label>
-                                    <AutoComplete v-model="productV" class="flex-auto" inputId="ac"
-                                        :suggestions="products" @complete="searchProduct" field="name" dropdown />
-                                </div>
-                                <!-- <pre>{{productV}}</pre> -->
-                                <small id="username-help" :class="{ 'p-invalid text-red-700': errorsNew['productV'] }">
-                                    {{ errorsNew.productV }}
-                                </small>
-                            </div>
 
-                            <div class="mb-3 col-12 md:col-6 lg:col-3">
-                                <div class="flex align-items-center">
-                                    <label for="product_typeV" class="font-semibold w-6rem">Product Type:</label>
-                                    <AutoComplete v-model="product_typeV" class="flex-auto" inputId="ac"
-                                        :suggestions="productsType" @complete="searchProductType" field="name"
-                                        dropdown />
-                                </div>
-                                <!-- <pre>{{product_typeV}}</pre> -->
-                                <small id="username-help"
-                                    :class="{ 'p-invalid text-red-700': errorsNew['product_typeV'] }">
-                                    {{ errorsNew.product_typeV }}
-                                </small>
-                            </div>
 
                             <div class="mb-3 col-12 md:col-6 lg:col-3">
                                 <div class="flex align-items-center">
@@ -608,43 +584,9 @@
                                 </small>
                             </div>
 
-                            <div class="mb-3 col-12 md:col-6 lg:col-3">
-                                <div class="flex align-items-center">
-                                    <label for="packing_typeV" class="font-semibold w-6rem">Packing type:</label>
-                                    <AutoComplete v-model="packing_typeV" class="flex-auto" inputId="ac"
-                                        :suggestions="packingTypes" @complete="searchPackingType" field="name"
-                                        dropdown />
-                                </div>
-                                <!-- <pre>{{packing_typeV}}</pre> -->
-                                <small id="username-help"
-                                    :class="{ 'p-invalid text-red-700': errorsNew['packing_typeV'] }">
-                                    {{ errorsNew.packing_typeV }}
-                                </small>
-                            </div>
 
-                            <div class="mb-3 col-12 md:col-6 lg:col-3">
-                                <div class="flex align-items-center">
-                                    <label for="farm" class="font-semibold w-6rem">Farm :</label>
-                                    <AutoComplete v-model="farm" class="flex-auto" inputId="ac" :suggestions="farms"
-                                        @complete="searchFarms" field="name" dropdown />
-                                </div>
-                                <!-- <pre>{{farm}}</pre> -->
-                                <small id="username-help" :class="{ 'p-invalid text-red-700': errorsNew['farm'] }">
-                                    {{ errorsNew.farm }}
-                                </small>
-                            </div>
 
-                            <div class="mb-3 col-12 md:col-6 lg:col-3">
-                                <div class="flex align-items-center">
-                                    <label for="company" class="font-semibold w-6rem">Company:</label>
-                                    <AutoComplete v-model="company" class="flex-auto" inputId="ac" :suggestions="compa"
-                                        @complete="searchCompannies" field="name" dropdown />
-                                </div>
-                                <!-- <pre>{{company}}</pre> -->
-                                <small id="username-help" :class="{ 'p-invalid text-red-700': errorsNew['company'] }">
-                                    {{ errorsNew.company }}
-                                </small>
-                            </div>
+
 
 
 
@@ -668,7 +610,85 @@
 
                             <template #content>
 
+
                                 <div class="grid">
+                                
+                                <div class="mb-3 col-12 md:col-6 lg:col-4">
+                                <div class="flex align-items-center">
+                                    <label for="packing_typeV" class="font-semibold w-6rem">Packing type:</label>
+                                    <AutoComplete v-model="packing_typeV" class="flex-auto" inputId="ac"
+                                        :suggestions="packingTypes" @complete="searchPackingType" field="name"
+                                        dropdown />
+                                </div>
+                                <!-- <pre>{{packing_typeV}}</pre> -->
+                                <small id="username-help"
+                                    :class="{ 'p-invalid text-red-700': errorsNew['packing_typeV'] }">
+                                    {{ errorsNew.packing_typeV }}
+                                </small>
+                            </div>
+
+                            <div class="mb-3 col-12 md:col-6 lg:col-4">
+                                <div class="flex align-items-center">
+                                    <label for="productV" class="font-semibold w-6rem">Product:</label>
+                                    <AutoComplete v-model="productV" class="flex-auto" inputId="ac"
+                                        :suggestions="products" @complete="searchProduct" field="name" dropdown />
+                                </div>
+                                <!-- <pre>{{productV}}</pre> -->
+                                <small id="username-help" :class="{ 'p-invalid text-red-700': errorsNew['productV'] }">
+                                    {{ errorsNew.productV }}
+                                </small>
+                            </div>
+
+                            <div class="mb-3 col-12 md:col-6 lg:col-4">
+                                <div class="flex align-items-center">
+                                    <label for="product_typeV" class="font-semibold w-6rem">Product Type:</label>
+                                    <AutoComplete v-model="product_typeV" class="flex-auto" inputId="ac"
+                                        :suggestions="productsType" @complete="searchProductType" field="name"
+                                        dropdown />
+                                </div>
+                                <!-- <pre>{{product_typeV}}</pre> -->
+                                <small id="username-help"
+                                    :class="{ 'p-invalid text-red-700': errorsNew['product_typeV'] }">
+                                    {{ errorsNew.product_typeV }}
+                                </small>
+                            </div>
+
+</div>
+
+<div class ="grid">
+
+<div class="mb-3 col-12 md:col-6 lg:col-6">
+        <div class="flex align-items-center">
+            <label for="farm" class="font-semibold w-6rem">Farm :</label>
+            <AutoComplete v-model="farm" class="flex-auto" inputId="ac" :suggestions="farms"
+                @complete="searchFarms" field="name" dropdown />
+        </div>
+        <!-- <pre>{{farm}}</pre> -->
+        <small id="username-help" :class="{ 'p-invalid text-red-700': errorsNew['farm'] }">
+            {{ errorsNew.farm }}
+        </small>
+    </div>
+
+    <div class="mb-3 col-12 md:col-6 lg:col-6">
+        <div class="flex align-items-center">
+            <label for="company" class="font-semibold w-6rem">Company:</label>
+            <AutoComplete v-model="company" class="flex-auto" inputId="ac" :suggestions="compa"
+                @complete="searchCompannies" field="name" dropdown />
+        </div>
+        <!-- <pre>{{company}}</pre> -->
+        <small id="username-help" :class="{ 'p-invalid text-red-700': errorsNew['company'] }">
+            {{ errorsNew.company }}
+        </small>
+    </div>
+</div>
+
+
+
+
+                                <div class="grid">
+
+
+                                    
 
                                     <div class="mb-3 col-12 md:col-6 lg:col-3">
                                         <div class="flex align-items-center">
@@ -988,13 +1008,13 @@
                                 </small>
                             </div>
 
-                            <div class="mb-3 col-12 md:col-6 lg:col-3">
+                            <!-- <div class="mb-3 col-12 md:col-6 lg:col-3">
                                 <div class="flex align-items-center">
                                     <label for="productV" class="font-semibold w-6rem">Product:</label>
                                     <AutoComplete v-model="productV" class="flex-auto" inputId="ac"
                                         :suggestions="products" @complete="searchProduct" field="name" dropdown />
                                 </div>
-                                <!-- <pre>{{productV}}</pre> -->
+                                
                                 <small id="username-help" :class="{ 'p-invalid text-red-700': errorsNew['productV'] }">
                                     {{ errorsNew.productV }}
                                 </small>
@@ -1007,12 +1027,12 @@
                                         :suggestions="productsType" @complete="searchProductType" field="name"
                                         dropdown />
                                 </div>
-                                <!-- <pre>{{product_typeV}}</pre> -->
+                                
                                 <small id="username-help"
                                     :class="{ 'p-invalid text-red-700': errorsNew['product_typeV'] }">
                                     {{ errorsNew.product_typeV }}
                                 </small>
-                            </div>
+                            </div> -->
 
                             <div class="mb-3 col-12 md:col-6 lg:col-3">
                                 <div class="flex align-items-center">
@@ -1026,14 +1046,14 @@
                                 </small>
                             </div>
 
-                            <div class="mb-3 col-12 md:col-6 lg:col-3">
+                            <!-- <div class="mb-3 col-12 md:col-6 lg:col-3">
                                 <div class="flex align-items-center">
                                     <label for="packing_typeV" class="font-semibold w-6rem">Packing type:</label>
                                     <AutoComplete v-model="packing_typeV" class="flex-auto" inputId="ac"
                                         :suggestions="packingTypes" @complete="searchPackingType" field="name"
                                         dropdown />
                                 </div>
-                                <!-- <pre>{{packing_typeV}}</pre> -->
+                                
                                 <small id="username-help"
                                     :class="{ 'p-invalid text-red-700': errorsNew['packing_typeV'] }">
                                     {{ errorsNew.packing_typeV }}
@@ -1046,7 +1066,7 @@
                                     <AutoComplete v-model="farm" class="flex-auto" inputId="ac" :suggestions="farms"
                                         @complete="searchFarms" field="name" dropdown />
                                 </div>
-                                <!-- <pre>{{farm}}</pre> -->
+                                
                                 <small id="username-help" :class="{ 'p-invalid text-red-700': errorsNew['farm'] }">
                                     {{ errorsNew.farm }}
                                 </small>
@@ -1058,11 +1078,11 @@
                                     <AutoComplete v-model="company" class="flex-auto" inputId="ac" :suggestions="compa"
                                         @complete="searchCompannies" field="name" dropdown />
                                 </div>
-                                <!-- <pre>{{company}}</pre> -->
+                                
                                 <small id="username-help" :class="{ 'p-invalid text-red-700': errorsNew['company'] }">
                                     {{ errorsNew.company }}
                                 </small>
-                            </div>
+                            </div> -->
 
 
 
@@ -1085,6 +1105,77 @@
                             <template #title>Presentation</template>
 
                             <template #content>
+
+                                <div class="grid">
+                                
+                                <div class="mb-3 col-12 md:col-6 lg:col-4">
+                                <div class="flex align-items-center">
+                                    <label for="packing_typeV" class="font-semibold w-6rem">Packing type:</label>
+                                    <AutoComplete v-model="packing_typeV" class="flex-auto" inputId="ac"
+                                        :suggestions="packingTypes" @complete="searchPackingType" field="name"
+                                        dropdown />
+                                </div>
+                                <!-- <pre>{{packing_typeV}}</pre> -->
+                                <small id="username-help"
+                                    :class="{ 'p-invalid text-red-700': errorsNew['packing_typeV'] }">
+                                    {{ errorsNew.packing_typeV }}
+                                </small>
+                            </div>
+
+                            <div class="mb-3 col-12 md:col-6 lg:col-4">
+                                <div class="flex align-items-center">
+                                    <label for="productV" class="font-semibold w-6rem">Product:</label>
+                                    <AutoComplete v-model="productV" class="flex-auto" inputId="ac"
+                                        :suggestions="products" @complete="searchProduct" field="name" dropdown />
+                                </div>
+                                <!-- <pre>{{productV}}</pre> -->
+                                <small id="username-help" :class="{ 'p-invalid text-red-700': errorsNew['productV'] }">
+                                    {{ errorsNew.productV }}
+                                </small>
+                            </div>
+
+                            <div class="mb-3 col-12 md:col-6 lg:col-4">
+                                <div class="flex align-items-center">
+                                    <label for="product_typeV" class="font-semibold w-6rem">Product Type:</label>
+                                    <AutoComplete v-model="product_typeV" class="flex-auto" inputId="ac"
+                                        :suggestions="productsType" @complete="searchProductType" field="name"
+                                        dropdown />
+                                </div>
+                                <!-- <pre>{{product_typeV}}</pre> -->
+                                <small id="username-help"
+                                    :class="{ 'p-invalid text-red-700': errorsNew['product_typeV'] }">
+                                    {{ errorsNew.product_typeV }}
+                                </small>
+                            </div>
+
+</div>
+
+<div class ="grid">
+
+<div class="mb-3 col-12 md:col-6 lg:col-6">
+        <div class="flex align-items-center">
+            <label for="farm" class="font-semibold w-6rem">Farm :</label>
+            <AutoComplete v-model="farm" class="flex-auto" inputId="ac" :suggestions="farms"
+                @complete="searchFarms" field="name" dropdown />
+        </div>
+        <!-- <pre>{{farm}}</pre> -->
+        <small id="username-help" :class="{ 'p-invalid text-red-700': errorsNew['farm'] }">
+            {{ errorsNew.farm }}
+        </small>
+    </div>
+
+    <div class="mb-3 col-12 md:col-6 lg:col-6">
+        <div class="flex align-items-center">
+            <label for="company" class="font-semibold w-6rem">Company:</label>
+            <AutoComplete v-model="company" class="flex-auto" inputId="ac" :suggestions="compa"
+                @complete="searchCompannies" field="name" dropdown />
+        </div>
+        <!-- <pre>{{company}}</pre> -->
+        <small id="username-help" :class="{ 'p-invalid text-red-700': errorsNew['company'] }">
+            {{ errorsNew.company }}
+        </small>
+    </div>
+</div>
 
                                 <div class="grid">
 
@@ -1396,13 +1487,13 @@
                                 </small>
                             </div>
 
-                            <div class="mb-3 col-12 md:col-6 lg:col-3">
+                            <!-- <div class="mb-3 col-12 md:col-6 lg:col-3">
                                 <div class="flex align-items-center">
                                     <label for="productV" class="font-semibold w-6rem">Product:</label>
                                     <AutoComplete v-model="productV" class="flex-auto" inputId="ac"
                                         :suggestions="products" @complete="searchProduct" field="name" dropdown />
                                 </div>
-                                <!-- <pre>{{productV}}</pre> -->
+                                
                                 <small id="username-help" :class="{ 'p-invalid text-red-700': errorsNew['productV'] }">
                                     {{ errorsNew.productV }}
                                 </small>
@@ -1415,12 +1506,12 @@
                                         :suggestions="productsType" @complete="searchProductType" field="name"
                                         dropdown />
                                 </div>
-                                <!-- <pre>{{product_typeV}}</pre> -->
+                                
                                 <small id="username-help"
                                     :class="{ 'p-invalid text-red-700': errorsNew['product_typeV'] }">
                                     {{ errorsNew.product_typeV }}
                                 </small>
-                            </div>
+                            </div> -->
 
                             <div class="mb-3 col-12 md:col-6 lg:col-3">
                                 <div class="flex align-items-center">
@@ -1434,14 +1525,14 @@
                                 </small>
                             </div>
 
-                            <div class="mb-3 col-12 md:col-6 lg:col-3">
+                            <!-- <div class="mb-3 col-12 md:col-6 lg:col-3">
                                 <div class="flex align-items-center">
                                     <label for="packing_typeV" class="font-semibold w-6rem">Packing type:</label>
                                     <AutoComplete v-model="packing_typeV" class="flex-auto" inputId="ac"
                                         :suggestions="packingTypes" @complete="searchPackingType" field="name"
                                         dropdown />
                                 </div>
-                                <!-- <pre>{{packing_typeV}}</pre> -->
+                                
                                 <small id="username-help"
                                     :class="{ 'p-invalid text-red-700': errorsNew['packing_typeV'] }">
                                     {{ errorsNew.packing_typeV }}
@@ -1454,7 +1545,7 @@
                                     <AutoComplete v-model="farm" class="flex-auto" inputId="ac" :suggestions="farms"
                                         @complete="searchFarms" field="name" dropdown />
                                 </div>
-                                <!-- <pre>{{farm}}</pre> -->
+                                
                                 <small id="username-help" :class="{ 'p-invalid text-red-700': errorsNew['farm'] }">
                                     {{ errorsNew.farm }}
                                 </small>
@@ -1466,11 +1557,11 @@
                                     <AutoComplete v-model="company" class="flex-auto" inputId="ac" :suggestions="compa"
                                         @complete="searchCompannies" field="name" dropdown />
                                 </div>
-                                <!-- <pre>{{company}}</pre> -->
+                                
                                 <small id="username-help" :class="{ 'p-invalid text-red-700': errorsNew['company'] }">
                                     {{ errorsNew.company }}
                                 </small>
-                            </div>
+                            </div> -->
 
 
 
@@ -1493,6 +1584,77 @@
                             <template #title>Presentation</template>
 
                             <template #content>
+
+                                <div class="grid">
+                                
+                                <div class="mb-3 col-12 md:col-6 lg:col-4">
+                                <div class="flex align-items-center">
+                                    <label for="packing_typeV" class="font-semibold w-6rem">Packing type:</label>
+                                    <AutoComplete v-model="packing_typeV" class="flex-auto" inputId="ac"
+                                        :suggestions="packingTypes" @complete="searchPackingType" field="name"
+                                        dropdown />
+                                </div>
+                                <!-- <pre>{{packing_typeV}}</pre> -->
+                                <small id="username-help"
+                                    :class="{ 'p-invalid text-red-700': errorsNew['packing_typeV'] }">
+                                    {{ errorsNew.packing_typeV }}
+                                </small>
+                            </div>
+
+                            <div class="mb-3 col-12 md:col-6 lg:col-4">
+                                <div class="flex align-items-center">
+                                    <label for="productV" class="font-semibold w-6rem">Product:</label>
+                                    <AutoComplete v-model="productV" class="flex-auto" inputId="ac"
+                                        :suggestions="products" @complete="searchProduct" field="name" dropdown />
+                                </div>
+                                <!-- <pre>{{productV}}</pre> -->
+                                <small id="username-help" :class="{ 'p-invalid text-red-700': errorsNew['productV'] }">
+                                    {{ errorsNew.productV }}
+                                </small>
+                            </div>
+
+                            <div class="mb-3 col-12 md:col-6 lg:col-4">
+                                <div class="flex align-items-center">
+                                    <label for="product_typeV" class="font-semibold w-6rem">Product Type:</label>
+                                    <AutoComplete v-model="product_typeV" class="flex-auto" inputId="ac"
+                                        :suggestions="productsType" @complete="searchProductType" field="name"
+                                        dropdown />
+                                </div>
+                                <!-- <pre>{{product_typeV}}</pre> -->
+                                <small id="username-help"
+                                    :class="{ 'p-invalid text-red-700': errorsNew['product_typeV'] }">
+                                    {{ errorsNew.product_typeV }}
+                                </small>
+                            </div>
+
+</div>
+
+<div class ="grid">
+
+<div class="mb-3 col-12 md:col-6 lg:col-6">
+        <div class="flex align-items-center">
+            <label for="farm" class="font-semibold w-6rem">Farm :</label>
+            <AutoComplete v-model="farm" class="flex-auto" inputId="ac" :suggestions="farms"
+                @complete="searchFarms" field="name" dropdown />
+        </div>
+        <!-- <pre>{{farm}}</pre> -->
+        <small id="username-help" :class="{ 'p-invalid text-red-700': errorsNew['farm'] }">
+            {{ errorsNew.farm }}
+        </small>
+    </div>
+
+    <div class="mb-3 col-12 md:col-6 lg:col-6">
+        <div class="flex align-items-center">
+            <label for="company" class="font-semibold w-6rem">Company:</label>
+            <AutoComplete v-model="company" class="flex-auto" inputId="ac" :suggestions="compa"
+                @complete="searchCompannies" field="name" dropdown />
+        </div>
+        <!-- <pre>{{company}}</pre> -->
+        <small id="username-help" :class="{ 'p-invalid text-red-700': errorsNew['company'] }">
+            {{ errorsNew.company }}
+        </small>
+    </div>
+</div>
 
                                 <div class="grid">
 
