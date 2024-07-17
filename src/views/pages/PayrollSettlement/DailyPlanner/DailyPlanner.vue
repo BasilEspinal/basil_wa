@@ -219,13 +219,16 @@
                         {{ errorsNew.transaction_dateV }}
                     </small>
 
-                    <small id="username-help" :class="{ 'p-invalid text-red-500': errorResponseAPI?.errors?.transaction_date }">
+                <!-- <small id="username-help" :class="{ 'p-invalid text-red-500': errorResponseAPI?.errors?.transaction_date }">
                     <div v-if="errorResponseAPI?.errors?.transaction_date">
                         <div v-for="(error, index) in errorResponseAPI.errors.transaction_date" :key="index">
                             {{ error }}
                         </div>
                     </div>
-                </small>
+                </small> -->
+
+                <BackendErrors :name="errorResponseAPI?.errors?.transaction_date" />
+
                 </div>
 
                 <div class="mb-3">
@@ -887,6 +890,7 @@ import { saveAs } from 'file-saver';
 import { z } from 'zod';
 import ability from '@/service/ability.js';
 import { AbilityBuilder } from '@casl/ability';
+import BackendErrors from '@/views/Errors/BackendErrors.vue';
 
 const prueba = ref({revisar: 'revisar GET-POST-PUT-DELETE'});
 const backendValidation = ref();
