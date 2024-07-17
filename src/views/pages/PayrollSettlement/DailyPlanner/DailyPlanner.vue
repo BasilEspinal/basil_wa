@@ -74,7 +74,7 @@
                         </template>
                     </Toolbar>
                 </template>
-                <pre>{{valor}}</pre>
+                
                 <template #empty> No customers found. </template>
                 <template #loading> Loading customers data. Please wait. </template>
                 <Column selectionMode="multiple" headerStyle="width: 3rem"></Column>
@@ -206,9 +206,8 @@
                 </Column>
             </DataTable>
             <Dialog v-model:visible="formDialogNew" modal :header="formDialogNewTitle" class="p-fluid text-center mx-auto">
-                <pre>{{crop_lots_codeV}}</pre>
-                <pre>{{typeof crop_lots_codeV}}</pre>
                 
+                <pre>{{companyDefault}}</pre>
                 <div class="mb-3">
                     <div class="flex align-items-center">
                         <label for="username" class="font-semibold w-3">Transaction Date :</label>
@@ -412,24 +411,13 @@
             </Dialog>
 
             <Dialog v-model:visible="formDialogEdit" modal :header="formDialogEditTitle" class="p-fluid text-center mx-auto">
-                <!-- <pre>{{crop_lots_codeV}}</pre>
-                <pre>{{ testValue }}</pre> -->
                 
-                <pre>{{ crop_lots_codeV }}</pre>
-                
-<!--                 
-                <pre>{{ selectedCities }}</pre>
-                
-                <pre>{{CropLots}}</pre> -->
 
 
                 <div class="mb-3">
 
                 
-                <div class="card flex justify-center">
-                    <MultiSelect v-model="selectedCities" :options="cities" optionLabel="name" filter placeholder="Select Cities"
-                        :maxSelectedLabels="3" class="w-full md:w-80" />
-                </div>
+
                 
                 
                     <div class="flex align-items-center">
@@ -903,7 +891,6 @@ import { AbilityBuilder } from '@casl/ability';
 const prueba = ref({revisar: 'revisar GET-POST-PUT-DELETE'});
 const backendValidation = ref();
 const backendValidationFlag = ref(false);
-const backendValidationMessage = ref('Please check the following errors');
 const namePage = ' Planner tasks ';
 const titlePage = ' '+namePage+' information';
 const dataFromComponent = ref();
@@ -914,7 +901,6 @@ const compa = ref([]);
 const farmDefault = sessionStorage.getItem('accessSessionFarm');
 const companyDefault = sessionStorage.getItem('accessSessionCompany');
 const CropLots = ref([]);
-const cropLotsSelected = ref([]);
 const products = ref([]);
 const Products = ref([]);
 const products_type = ref([]);
@@ -1102,10 +1088,13 @@ const {
                     id: z.string().min(4)
                 })
                 .optional(),
-            crop_lots_codeV:z.array(z.object({
-                code: z.string().min(2).optional(),
+            // crop_lots_codeV:z.array(z.object({
+            //     code: z.string().min(2).optional(),
                 
-            })),
+            // })),
+            crop_lots_codeV: z.array(z.object({
+            code: z.string().min(2).optional(),
+        })).min(1, { message: "You should select at least one crop lot" }),
             
             
             productV: z.object({
@@ -1134,14 +1123,12 @@ const {
                 .object({
                     name: z.string().optional(),
                     id: z.string().optional()
-                })
-                .optional(),
+                }).optional(),
             company: z
                 .object({
                     name: z.string().optional(),
                     id: z.string().optional()
-                })
-                .optional()
+                }).optional()
         })
     )
 });
@@ -1191,15 +1178,6 @@ watch(
 );
 
 
-const selectedCities = ref();
-const cities = ref([
-    { name: 'New York', code: 'NY' },
-    { name: 'Rome', code: 'RM' },
-    { name: 'London', code: 'LDN' },
-    { name: 'Istanbul', code: 'IST' },
-    { name: 'Paris', code: 'PRS' }
-]);
-
 const varto = ref()
 
 const openEdit = () => {
@@ -1209,22 +1187,7 @@ const openEdit = () => {
     console.log(listRowSelect.value[0])
     transaction_dateV.value = new Date(date);
     task_of_typeV.value = { id: task.uuid, name: task.name };
-    
     crop_lots_codeV.value = crop_lots
-    
-    console.log( crop_lots)
-    console.log( crop_lots_codeV.value)
-    console.log(CropLots.value)
-    
-
-//     selectedCities.value = [
-//     { name: 'New York', code: 'NY' },
-//     { name: 'Rome', code: 'RM' },
-//     { name: 'London', code: 'LDN' },
-//     { name: 'Istanbul', code: 'IST' },
-//     { name: 'Paris', code: 'PRS' }
-// ]
-    
     productV.value = { id: productX.uuid, name: productX.name };
     product_typeV.value = { id: productType.uuid, name: productType.name };
     packing_typeV.value = { id: packing.uuid, name: packing.name };
@@ -1245,7 +1208,6 @@ const openClone = () => {
 
     transaction_dateV.value = new Date(date);
     task_of_typeV.value = { id: task.uuid, name: task.name };
-    CropLots.value = crop_lots
     crop_lots_codeV.value = crop_lots
     productV.value = { id: productX.uuid, name: productX.name };
     product_typeV.value = { id: productType.uuid, name: productType.name };
@@ -1275,12 +1237,10 @@ const createRecord = handleSubmitNew(async (values) => {
     // Formatear la fecha en formato YYYY-MM-DD
     const formattedDate = `${yyyy}-${mm}-${dd}`;
     console.log(formattedDate);
-    const data = {
-        // code: values.codeV,
-        // name: values.name,
+    const data = { 
 
         tasks_of_type_uuid: values.task_of_typeV ? values.task_of_typeV.id : 'Prueba',
-        // crop_lots: {"id": 1, "code": "L-1"},
+        
         crop_lots: values.crop_lots_codeV ? values.crop_lots_codeV : 'Prueba',
         transaction_date: formattedDate,
         product_uuid: values.productV ? values.productV.id : 'Prueba',
@@ -1288,9 +1248,12 @@ const createRecord = handleSubmitNew(async (values) => {
         packing_type_uuid: values.packing_typeV ? values.packing_typeV.id : 'Prueba',
         variant_uuid: values.variantV ? values.variantV.id : 'Prueba',
         customer_request_uuid: values.customer_requestV ? values.customer_requestV.id : 'Prueba',
-        company_uuid: values.company ? values.company.id : companyDefault,
-        farm_uuid: values.farm ? values.farm.id : farmDefault
+        company_uuid: values.company && values.company.id ? values.company.id : companyDefault,
+        farm_uuid: values.farm && values.farm.id ? values.farm.id : farmDefault
+        
     };
+    console.log(data)
+    
     valor.value = data;
     console.log(data);
     const restp = await postRequest(endpoint.value, data);
@@ -1334,8 +1297,8 @@ const EditRecord = handleSubmitNew(async (values) => {
         packing_type_uuid: values.packing_typeV ? values.packing_typeV.id : 'Prueba',
         variant_uuid: values.variantV ? values.variantV.id : 'Prueba',
         customer_request_uuid: values.customer_requestV ? values.customer_requestV.id : 'Prueba',
-        company_uuid: values.company ? values.company.id : companyDefault,
-        farm_uuid: values.farm ? values.farm.id : farmDefault
+        company_uuid: values.company && values.company.id ? values.company.id : companyDefault,
+        farm_uuid: values.farm && values.farm.id ? values.farm.id : farmDefault
     };
 
     const restp = await putRequest(endpoint.value, data, uuid);
@@ -1379,8 +1342,8 @@ const CloneRecord = handleSubmitNew(async (values) => {
         packing_type_uuid: values.packing_typeV ? values.packing_typeV.id : 'Prueba',
         variant_uuid: values.variantV ? values.variantV.id : 'Prueba',
         customer_request_uuid: values.customer_requestV ? values.customer_requestV.id : 'Prueba',
-        company_uuid: values.company ? values.company.id : companyDefault,
-        farm_uuid: values.farm ? values.farm.id : farmDefault
+        company_uuid: values.company && values.company.id ? values.company.id : companyDefault,
+        farm_uuid: values.farm && values.farm.id ? values.farm.id : farmDefault
     };
     const restp = await postRequest(endpoint.value, data);
     toast.add({ severity: restp.ok ? 'success' : 'error', summary: 'Clone', detail: restp.ok ? 'Clonado' : restp.error, life: 3000 });
