@@ -414,10 +414,24 @@
             <Dialog v-model:visible="formDialogEdit" modal :header="formDialogEditTitle" class="p-fluid text-center mx-auto">
                 <!-- <pre>{{crop_lots_codeV}}</pre>
                 <pre>{{ testValue }}</pre> -->
-                <pre>{{ crop_lots_codeV }}</pre>
-                <pre>{{CropLots}}</pre>
                 
+                <pre>{{ crop_lots_codeV }}</pre>
+                
+<!--                 
+                <pre>{{ selectedCities }}</pre>
+                
+                <pre>{{CropLots}}</pre> -->
+
+
                 <div class="mb-3">
+
+                
+                <div class="card flex justify-center">
+                    <MultiSelect v-model="selectedCities" :options="cities" optionLabel="name" filter placeholder="Select Cities"
+                        :maxSelectedLabels="3" class="w-full md:w-80" />
+                </div>
+                
+                
                     <div class="flex align-items-center">
                         <label for="username" class="font-semibold w-3">Transaction Date :</label>
                         <!-- <Calendar v-model="transaction_dateV" class="flex-auto" v-bind="transaction_dateVProps"/> -->
@@ -900,6 +914,7 @@ const compa = ref([]);
 const farmDefault = sessionStorage.getItem('accessSessionFarm');
 const companyDefault = sessionStorage.getItem('accessSessionCompany');
 const CropLots = ref([]);
+const cropLotsSelected = ref([]);
 const products = ref([]);
 const Products = ref([]);
 const products_type = ref([]);
@@ -912,7 +927,7 @@ const variants = ref([]);
 const Variants = ref([]);
 const customer_request = ref([]);
 const Customer_request = ref([]);
-const testValue = ref([])
+
 const otherTestValue = ref()
 
 const formDialogNewTitle = 'Create new '+namePage;
@@ -1016,7 +1031,7 @@ const readAll = async () => {
         console.log(respCropLots)
     } else {
         CropLots.value = respCropLots.data.data.map((crop) => ({
-            id: crop.id,
+            
             code: crop.code
         }));
     }
@@ -1175,6 +1190,18 @@ watch(
     }
 );
 
+
+const selectedCities = ref();
+const cities = ref([
+    { name: 'New York', code: 'NY' },
+    { name: 'Rome', code: 'RM' },
+    { name: 'London', code: 'LDN' },
+    { name: 'Istanbul', code: 'IST' },
+    { name: 'Paris', code: 'PRS' }
+]);
+
+const varto = ref()
+
 const openEdit = () => {
     resetForm();
     
@@ -1182,9 +1209,21 @@ const openEdit = () => {
     console.log(listRowSelect.value[0])
     transaction_dateV.value = new Date(date);
     task_of_typeV.value = { id: task.uuid, name: task.name };
-    // CropLots.value = crop_lots
     
     crop_lots_codeV.value = crop_lots
+    
+    console.log( crop_lots)
+    console.log( crop_lots_codeV.value)
+    console.log(CropLots.value)
+    
+
+//     selectedCities.value = [
+//     { name: 'New York', code: 'NY' },
+//     { name: 'Rome', code: 'RM' },
+//     { name: 'London', code: 'LDN' },
+//     { name: 'Istanbul', code: 'IST' },
+//     { name: 'Paris', code: 'PRS' }
+// ]
     
     productV.value = { id: productX.uuid, name: productX.name };
     product_typeV.value = { id: productType.uuid, name: productType.name };
@@ -1198,6 +1237,7 @@ const openEdit = () => {
     formDialogEdit.value = true;
 
 };
+
 
 const openClone = () => {
     resetForm();
