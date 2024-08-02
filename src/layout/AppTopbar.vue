@@ -1,26 +1,33 @@
 <script setup>
-import { ref, computed, onMounted, onBeforeUnmount } from 'vue';
+import { ref, computed, onMounted, onBeforeUnmount, watch } from 'vue';
 import { useLayout } from '@/layout/composables/layout';
 import { useRouter } from 'vue-router';
-import useDataAPI from '@/composables/DataAPI/FetchDataAPI.js'
-
+import useDataAPI from '@/composables/DataAPI/FetchDataAPI.js';
 
 import OverlayPanel from 'primevue/overlaypanel';
 import { useForm } from 'vee-validate';
 import { toTypedSchema } from '@vee-validate/zod';
 import { z } from 'zod';
+import { useI18n } from 'vue-i18n';
 
+const { locale } = useI18n();
+const countries = ref([
+    { name: 'ES', code: 'ES', id: 'es' },
+    { name: 'EN', code: 'US', id: 'en' }
+]);
+
+const selectedCountry = ref();
 
 import ability from '@/service/ability.js';
-const userDefault = ref('')
-const emailDefault = ref('')
+const userDefault = ref('');
+const emailDefault = ref('');
 
-const {getAllResponsePermissionsAPI ,dataResponsePermissionsAPI} =
-    useDataAPI();
+const { getAllResponsePermissionsAPI, dataResponsePermissionsAPI } = useDataAPI();
 const lengthPermissions = ref(0);
 onMounted(async () => {
-    await getAllResponsePermissionsAPI("/abilities");
+    await getAllResponsePermissionsAPI('/abilities');
     lengthPermissions.value = dataResponsePermissionsAPI.value.length;
+    [selectedCountry.value] = countries.value.filter((lng) => lng.id === locale.value);
 });
 const { handleSubmit, errors, defineField } = useForm({
     validationSchema: toTypedSchema(
@@ -35,6 +42,11 @@ const { handleSubmit, errors, defineField } = useForm({
         })
     )
 });
+
+watch(selectedCountry, () => {
+    if (locale.value != selectedCountry.value.id) locale.value = selectedCountry.value.id ?? 'en';
+});
+
 const {
     handleSubmit: submitEdit,
     errors: errorEdit,
@@ -70,23 +82,21 @@ const toggleValue = ref(layoutConfig.darkTheme.value);
 const farmDefault = sessionStorage.getItem('accessSessionFarm');
 const companyDefault = sessionStorage.getItem('accessSessionCompany');
 
-const logout = async () => {    
-    await postResponseAPI({}, "/logout");
+const logout = async () => {
+    await postResponseAPI({}, '/logout');
 };
 
 onMounted(() => {
     dataUser.value = sessionStorage.getItem('accessSessionUser');
     nameEdit.value = sessionStorage.getItem('accessSessionUser');
     emailEdit.value = sessionStorage.getItem('accessSessionEmail');
-    console.log("nameEdit", nameEdit.value)
-    console.log("emailEdit", emailEdit.value)   
+    console.log('nameEdit', nameEdit.value);
+    console.log('emailEdit', emailEdit.value);
     bindOutsideClickListener();
 });
 
 onBeforeUnmount(() => {
     unbindOutsideClickListener();
-    
-
 });
 
 const logoUrl = computed(() => {
@@ -153,8 +163,6 @@ const Exit = () => {
     sessionStorage.clear();
     logout();
     router.push('/#');
-    
-
 };
 
 const editUser = submitEdit(async (values) => {
@@ -169,14 +177,9 @@ const editUser = submitEdit(async (values) => {
         data.password = values.passwordEdit;
     }
     const restp = await putRequest(endpoint.value, data, id);
-    
+
     toast.add({ severity: restp.ok ? 'success' : 'error', summary: 'Edit', detail: restp.ok ? 'Editado' : restp.error, life: 3000 });
-    
-    
 });
-
-
-
 
 const members = ref([
     { name: 'Amy Elsner', image: 'amyelsner.png', email: 'amy@email.com', role: 'Owner' },
@@ -187,18 +190,10 @@ const op = ref();
 const op2 = ref();
 const toggleOverlayPanel1 = (event) => {
     op.value.toggle(event);
-}
+};
 const toggleOverlayPanel2 = (event) => {
     op2.value.toggle(event);
-}
-const selectedCountry = ref();
-const countries = ref([
-
-    { name: 'ES', code: 'ES' },
-    { name: 'EN', code: 'US' }
-]);
-
-
+};
 </script>
 
 <template>
@@ -208,9 +203,8 @@ const countries = ref([
             <span>AgroOnline</span>
         </router-link>
 
-        
-        <button v-if="!(ability.can('agro_tv_menu') && lengthPermissions==1)" class="p-link layout-menu-button layout-topbar-button" @click="onMenuToggle()">
-            <i v-if="!(ability.can('agro_tv_menu') && lengthPermissions==1)" class="pi pi-bars"></i>
+        <button v-if="!(ability.can('agro_tv_menu') && lengthPermissions == 1)" class="p-link layout-menu-button layout-topbar-button" @click="onMenuToggle()">
+            <i v-if="!(ability.can('agro_tv_menu') && lengthPermissions == 1)" class="pi pi-bars"></i>
         </button>
 
         <button class="p-link layout-topbar-menu-button layout-topbar-button" @click="onTopBarMenuButton()">
@@ -219,78 +213,76 @@ const countries = ref([
 
         <div class="layout-topbar-menu" :class="topbarMenuClasses">
             <div class="flex flex-wrap align-items-center justify-content-center md:justify-content-start">
-                <Button @click="toggleOverlayPanel1" icon="pi pi-user" severity="success" text rounded aria-label="User"   />
+                <Button @click="toggleOverlayPanel1" icon="pi pi-user" severity="success" text rounded aria-label="User" />
                 <p>{{ dataUser }}</p>
             </div>
 
-        <OverlayPanel ref="op" :dismissable="true">
-            <span class="font-medium text-900 block mb-2">Edit user</span>
+            <OverlayPanel ref="op" :dismissable="true">
+                <span class="font-medium text-900 block mb-2">Edit user</span>
 
-            <div class="mb-3">
-                <div class="flex align-items-center gap-3 mb-1">
-                    <label for="username" class="font-semibold w-6rem">Name</label>
-                    <InputText id="username" v-model="nameEdit" class="flex-auto" :disabled="true" autocomplete="off" v-bind="nameEditProps" />
+                <div class="mb-3">
+                    <div class="flex align-items-center gap-3 mb-1">
+                        <label for="username" class="font-semibold w-6rem">Name</label>
+                        <InputText id="username" v-model="nameEdit" class="flex-auto" :disabled="true" autocomplete="off" v-bind="nameEditProps" />
+                    </div>
+                    <small id="username-help" :class="{ 'p-invalid text-red-700': errorEdit['nameEdit'] }">
+                        {{ errorEdit.nameEdit }}
+                    </small>
                 </div>
-                <small id="username-help" :class="{ 'p-invalid text-red-700': errorEdit['nameEdit'] }">
-                    {{ errorEdit.nameEdit }}
-                </small>
-            </div>
-            <div class="mb-3">
-                <div class="flex align-items-center gap-3 mb-1">
-                    <label for="email" class="font-semibold w-6rem">Email</label>
-                    <InputText id="email" v-model="emailEdit" class="flex-auto" autocomplete="off" v-bind="emailEditProps" />
+                <div class="mb-3">
+                    <div class="flex align-items-center gap-3 mb-1">
+                        <label for="email" class="font-semibold w-6rem">Email</label>
+                        <InputText id="email" v-model="emailEdit" class="flex-auto" autocomplete="off" v-bind="emailEditProps" />
+                    </div>
+                    <small id="username-help" :class="{ 'p-invalid text-red-700': errorEdit['emailEdit'] }">
+                        {{ errorEdit.emailEdit }}
+                    </small>
                 </div>
-                <small id="username-help" :class="{ 'p-invalid text-red-700': errorEdit['emailEdit'] }">
-                    {{ errorEdit.emailEdit }}
-                </small>
-            </div>
-            <div class="mb-3" v-if="ability.can('editar_contrasena')">
-                <div class="flex align-items-center gap-3 mb-1">
-                    <label for="passwordEdit" class="font-semibold w-6rem">Password </label>
-                    <Password id="id" v-model="passwordEdit" :feedback="false" :toggleMask="true" v-bind="passwordEditProps" />
+                <div class="mb-3" v-if="ability.can('editar_contrasena')">
+                    <div class="flex align-items-center gap-3 mb-1">
+                        <label for="passwordEdit" class="font-semibold w-6rem">Password </label>
+                        <Password id="id" v-model="passwordEdit" :feedback="false" :toggleMask="true" v-bind="passwordEditProps" />
+                    </div>
+                    <small id="username-help" :class="{ 'p-invalid text-red-700': errorEdit['passwordEdit'] }">
+                        {{ errorEdit.passwordEdit }}
+                    </small>
                 </div>
-                <small id="username-help" :class="{ 'p-invalid text-red-700': errorEdit['passwordEdit'] }">
-                    {{ errorEdit.passwordEdit }}
-                </small>
-            </div>
-            <div class="flex justify-content-end gap-2">
-                <Button type="button" label="Cancel" severity="secondary" @click="DialogEdit = false" />
-                <Button type="button" label="Save" @click="editUser()" />
-            </div>
-            
-        </OverlayPanel>
+                <div class="flex justify-content-end gap-2">
+                    <Button type="button" label="Cancel" severity="secondary" @click="DialogEdit = false" />
+                    <Button type="button" label="Save" @click="editUser()" />
+                </div>
+            </OverlayPanel>
 
             <Button @click="onChangeTheme(!toggleValue)" v-model="toggleValue" rounded outlined class="p-link layout-topbar-button">
                 <i :class="{ 'pi pi-moon': !toggleValue, 'pi pi-sun': toggleValue }"></i>
             </Button>
 
-            <Button @click="toggleOverlayPanel2"  rounded outlined class="p-link layout-topbar-button">
+            <Button @click="toggleOverlayPanel2" rounded outlined class="p-link layout-topbar-button">
                 <i :class="{ 'pi pi-globe': !toggleValue, 'pi pi-sun': toggleValue }"></i>
             </Button>
 
-        <OverlayPanel ref="op2" :dismissable="true">
-            <span class="font-medium text-900 block mb-2">Change language</span>
+            <OverlayPanel ref="op2" :dismissable="true">
+                <span class="font-medium text-900 block mb-2">Change language</span>
 
-        <Dropdown v-model="selectedCountry" :options="countries" optionLabel="name" placeholder="Change language" class="w-full">
-            <template #value="slotProps">
-                <div v-if="slotProps.value" class="flex align-items-center">
-                    <img :alt="slotProps.value.label" src="https://primefaces.org/cdn/primevue/images/flag/flag_placeholder.png" :class="`mr-2 flag flag-${slotProps.value.code.toLowerCase()}`" style="width: 18px" />
-                    <div>{{ slotProps.value.name }}</div>
-                </div>
-                <span v-else>
-                    {{ slotProps.placeholder }}
-                </span>
-            </template>
-            <template #option="slotProps">
-                <div class="flex align-items-center">
-                    <img :alt="slotProps.option.label" src="https://primefaces.org/cdn/primevue/images/flag/flag_placeholder.png" :class="`mr-2 flag flag-${slotProps.option.code.toLowerCase()}`" style="width: 18px" />
-                    <div>{{ slotProps.option.name }}</div>
-                </div>
-            </template>
-        </Dropdown>
-            
-        </OverlayPanel>
-    
+                <Dropdown v-model="selectedCountry" :options="countries" optionLabel="name" placeholder="Change language" class="w-full">
+                    <template #value="slotProps">
+                        <div v-if="slotProps.value" class="flex align-items-center">
+                            <img :alt="slotProps.value.label" src="https://primefaces.org/cdn/primevue/images/flag/flag_placeholder.png" :class="`mr-2 flag flag-${slotProps.value.code.toLowerCase()}`" style="width: 18px" />
+                            <div>{{ slotProps.value.name }}</div>
+                        </div>
+                        <span v-else>
+                            {{ slotProps.placeholder }}
+                        </span>
+                    </template>
+                    <template #option="slotProps">
+                        <div class="flex align-items-center">
+                            <img :alt="slotProps.option.label" src="https://primefaces.org/cdn/primevue/images/flag/flag_placeholder.png" :class="`mr-2 flag flag-${slotProps.option.code.toLowerCase()}`" style="width: 18px" />
+                            <div>{{ slotProps.option.name }}</div>
+                        </div>
+                    </template>
+                </Dropdown>
+            </OverlayPanel>
+
             <Button @click="Exit()" rounded outlined class="p-link layout-topbar-button">
                 <i class="pi pi-sign-out"></i>
             </Button>

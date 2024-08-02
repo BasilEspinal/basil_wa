@@ -239,6 +239,11 @@ const router = createRouter({
                 },
 
                 {
+                    path: '/AppMovil/General',
+                    name: 'captura de datos',
+                    component: () => import('@/views/pages/AppMovil/AppComponentWorkAreas.vue')
+                },
+                {
                     path: '/AppMovil/Corta',
                     name: 'appmovil_corta',
                     component: () => import('@/views/pages/AppMovil/AppMovilCorta.vue')
