@@ -666,14 +666,25 @@ const remove = (aver) => {
                     </template>
                 </Column>
 
-                <Column field="farmName" filterField="farm.name" header="Farm Name" sortable>
+                <!-- <Column field="farmName" filterField="farm.name" header="Farm Name" sortable>
                     <template #body="{ data }">
                         {{ data.farm.name }}
                     </template>
                     <template #filter="{ filterModel }">
                         <InputText v-model="filterModel.value" type="text" class="p-column-filter" placeholder="Search by farm" />
                     </template>
-                </Column>
+                </Column> -->
+
+
+            <Column field="farmName" filterField="farm.name" header="Farm Name" sortable>
+                <template #body="{ data }">
+                {{ data.farm ? data.farm.name : '' }}
+                </template>
+                <template #filter="{ filterModel }">
+                <InputText v-model="filterModel.value" type="text" class="p-column-filter" placeholder="Search by farm" />
+                </template>
+            </Column>
+
 
                 <Column field="companyName" filterField="companyName" header="Company Name" sortable>
                     <template #body="{ data }">
