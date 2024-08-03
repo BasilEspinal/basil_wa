@@ -107,19 +107,19 @@ const model2 = ref([
                         label: 'Solicitudes de Clientes',
                         to: '/Commercial/CustomersRequests/CustomersRequests',
                         icon: 'pi pi-bookmark',
-                        gate: 'comercial_solicitudesdeclientes_menu,',
+                        gate: 'comercial_solicitudesdeclientes_menu',
                     },
                     {
                         label: 'Clientes',
                         to: '/Commercial/Customers/Customers',
                         icon: 'pi pi-bookmark',
-                        gate: 'comercial_clientes_menu,',
+                        gate: 'comercial_clientes_menu',
                     },
                     {
                         label: 'Despachos',
                         to: '/Commercial/Delivery/Delivery',
                         icon: 'pi pi-bolt',
-                        gate: 'comercial_despachos_menu,',
+                        gate: 'comercial_despachos_menu',
                     }
                 ]
             }
@@ -143,7 +143,7 @@ const model2 = ref([
                         label: 'Vehículos',
                         to: '/production/vehicles',
                         icon: 'pi pi-car',
-                        gate: 'produccion_vehiculos_menu,',
+                        gate: 'produccion_vehiculos_menu',
                     },
                     {
                         label: 'Programación de Lotes',
@@ -192,7 +192,7 @@ const model2 = ref([
                         label: 'Tarifas por Tareas',
                         to: '/payrollsettings/taskstarif',
                         icon: 'pi pi-bookmark',
-                        gate: 'configuraciondepagos_tarifasportarea_menu,',
+                        gate: 'configuraciondepagos_tarifasportarea_menu',
                         
                     },
                     {
@@ -217,7 +217,7 @@ const model2 = ref([
                         label: 'Periodos de Pago',
                         to: '/payrollsettings/payperiods',
                         icon: 'pi pi-calendar-plus',
-                        gate: 'configuraciondepagos_periodosdepago_menu,',
+                        gate: 'configuraciondepagos_periodosdepago_menu',
                     },
                     {
                         label: 'Calendarios',
@@ -242,7 +242,7 @@ const model2 = ref([
                         label: 'Empleados',
                         to: '/payrollsettings/Employees',
                         icon: 'pi pi-users',
-                        gate: 'configuraciondepagos_empleados_menu,',
+                        gate: 'configuraciondepagos_empleados_menu',
                     }
                 ]
             }
@@ -383,7 +383,7 @@ const model2 = ref([
                         label: 'Captura de Seleccion',
                         to: '/AppMovil/Seleccion',
                         icon: 'pi pi-mobile',
-                        gate: 'appmovil_prefrio_menu'
+                        gate: 'appmovil_clasificacion_menu'
                     },
                      {
                         label: 'Captura de Contratista',

@@ -121,11 +121,14 @@ const fetchInfoPostLogin = async (data) => {
     const emailUser = response.user.email;
     const farm = response.farm_uuid;
     const company = response.company_uuid;
-    const employeeName = response.Employee.first_name+' '+response.Employee.lasts_names;
-    const employeeUuid = response.Employee.uuid;
+
+    // const employeeName = response.Employee.first_name+' '+response.Employee.lasts_names;
+    // const employeeUuid = response.Employee.uuid;
+
+
     console.log(response)
     console.log('Login')
-    console.log(employeeName, employeeUuid)
+    // console.log(employeeName, employeeUuid)
     
     
 
@@ -138,10 +141,12 @@ const fetchInfoPostLogin = async (data) => {
     localStorage.setItem('accesSessionUsers', user);
     localStorage.setItem('accesSessionFarms', farm);
     localStorage.setItem('accesSessionCompanys', company);
-    localStorage.setItem('accesSessionEmployeeName', employeeName);
-    sessionStorage.setItem('accessSessionEmployeeName', employeeName);
-    localStorage.setItem('accesSessionEmployeeUuid', employeeUuid);
-    sessionStorage.setItem('accesSessionEmployeeUuid', employeeUuid);
+
+
+    // localStorage.setItem('accesSessionEmployeeName', employeeName);
+    // sessionStorage.setItem('accessSessionEmployeeName', employeeName);
+    // localStorage.setItem('accesSessionEmployeeUuid', employeeUuid);
+    // sessionStorage.setItem('accesSessionEmployeeUuid', employeeUuid);
 
 
     // updateAbility(token);

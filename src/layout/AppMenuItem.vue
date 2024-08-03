@@ -82,22 +82,33 @@ const checkActiveRoute = (item) => {
         <a v-if="(!item.to || item.items) && item.visible !== false" :href="item.url"
             @click="itemClick($event, item, index)" :class="item.class" :target="item.target" tabindex="0">
             <i :class="item.icon" class="layout-menuitem-icon"></i>
-            <span class="layout-menuitem-text">{{ item.label }}</span>
+            <span  class="layout-menuitem-text">{{ item.label }}
+                
+            </span>
+            
             <i class="pi pi-fw pi-angle-down layout-submenu-toggler" v-if="item.items"></i>
+            
+            
         </a>
-        <router-link v-if="item.to && !item.items && item.visible !== false" @click="itemClick($event, item, index)"
+        
+        <router-link v-if="item.to && !item.items && item.visible !== false && (ability.can(item.gate))" @click="itemClick($event, item, index)"
             :class="[item.class, { 'active-route': checkActiveRoute(item) }]" tabindex="0" :to="item.to">
-            <i :class="item.icon" class="layout-menuitem-icon"></i>
-            <span class="layout-menuitem-text">{{ item.label }}</span>
+            <i   :class="item.icon" class="layout-menuitem-icon"></i>
+            <span  class="layout-menuitem-text">{{ item.label }}</span>
+            
+            <!-- v-if=" (ability.can(item.gate))" -->
             <i class="pi pi-fw pi-angle-down layout-submenu-toggler" v-if="item.items"></i>
+            
         </router-link>
         <Transition v-if="item.items && item.visible !== false" name="layout-submenu">
+            
             <ul v-show="root ? true : isActiveMenu" class="layout-submenu" v-if=" (ability.can(item.items[0].gate))">
-                <!-- <pre>{{ item.items[0].items.gate }}</pre> -->
-                <app-menu-item v-for="(child, i) in item.items" :key="child" :index="i" :item="child"
-                    :parentItemKey="itemKey" :root="false" >
-                    
+                <!-- <pre>{{item }}</pre>   -->
+                <!-- <pre>{{(ability.can(item.gate))}}</pre> -->
+                <app-menu-item v-for="(child, i) in item.items" :key="child" :index="i" :item="child" :parentItemKey="itemKey" :root="false" >
+                    <p>{{child}}</p>
                 </app-menu-item>
+                
                 
                 
                 
