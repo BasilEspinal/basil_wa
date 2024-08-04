@@ -4,13 +4,18 @@ export default function useData() {
     const { pathAPI, APISettings } = useSettingsAPI();
     let base = pathAPI().base;
     let api = pathAPI().apiVer;
-    const token = sessionStorage.getItem('accessSessionToken');
+    const token = ref();
+     token.value = sessionStorage.getItem('accessSessionToken');
+    // const token.value = localStorage.getItem('accessSessionToken');
+    console.log('Tokenxxxxx:', token.value);
     APISettings.headers.set('Content-Type', 'application/json');
     APISettings.headers.set('Access-Control-Allow-Origin', '*');
-    APISettings.headers.set('Authorization', 'Bearer ' + token);
+    APISettings.headers.set('Authorization', 'Bearer ' + token.value);
     let errorResponseAPI = ref('Error no filled');
 
     async function getRequest(endPoint) {
+        
+        console.log("El token.value es: ", token.value);
         let responseData = { data: {}, error: '', ok: false };
         let baseUrl = `${base}${api}${endPoint}`;
         const requestOptions = {

@@ -4,6 +4,9 @@ import ProductService from '@/service/ProductService';
 import { useLayout } from '@/layout/composables/layout';
 import ability from '@/service/ability.js';
 import { AbilityBuilder } from '@casl/ability';
+import useDataAPI from '@/composables/DataAPI/FetchDataAPI.js';
+import {fetchInfoDataLogged} from '@/composables/Login/InfoStorage.js';
+
 const { layoutConfig } = useLayout();
 let documentStyle = getComputedStyle(document.documentElement);
 let textColor = documentStyle.getPropertyValue('--text-color');
@@ -46,9 +49,11 @@ const updateAbility = async (token) => {
         
 //     });
 };
-onMounted(() => {
+onMounted(async () => {
+    // let b = await fetchInfoDataLogged('/appmovil/datastart');
     //updateAbility(sessionStorage.getItem('accessSessionToken'));
     //updateAbility();
+    fetchInfoDataLogged();
     
 
     

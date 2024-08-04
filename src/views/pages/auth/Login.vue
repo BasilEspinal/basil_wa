@@ -6,7 +6,9 @@ import { useRouter } from 'vue-router';
 import { useToast } from 'primevue/usetoast';
 import Toast from 'primevue/toast';
 import useDataAPI from '@/composables/DataAPI/FetchDataAPI.js';
+import {fetchInfoDataLogged} from '@/composables/Login/InfoStorage.js';
 
+import useData from '@/composables/DataAPI/FetchDataAPICopy.js';
 
 
 import { ABILITY_TOKEN } from '@casl/vue';
@@ -23,9 +25,15 @@ import elementosVista from '@/service/permissionsMenuTmp.js';
 
 const { getAllResponseAPI, getAllResponsePermissionsAPI, getAllResponseListAPI, totalRecordsResponseAPI, currentPageResponseAPI, linksResponseAPI, postResponseAPI, putResponseAPI, deleteResponseAPI, errorResponseAPI, dataResponseAPI, dataResponseListAPI, statusCode } =
   useDataAPI();
+
+const { getRequest, postRequest, putRequest, deleteRequest } = useData();
+
 const { layoutConfig } = useLayout();
 const toast = useToast();
 const count = ref(0);
+const token = ref('')
+const dataFromComponent = ref();
+let endpoint = ref('/appmovil/datastart');
 
 
 
@@ -100,58 +108,85 @@ const logoUrl = computed(() => {
 });
 
 
-const onSubmit = () => {
-  fetchInfoPostLogin();
+const onSubmit = async () => {
+  resp1 = await fetchInfoPostLogin();
+  if (resp1 == true)
+   {
+    await fetchInfoDataLogged();
+  } else {
+    console.log('false')
+  }
+  
+  
 };
+
+
 
 const fetchInfoPostLogin = async (data) => {
   try {
 
-    await postResponseAPI({ email: email.value, password: password.value }, '/login');
+  //  await postResponseAPI({ email: email.value, password: password.value }, '/login');
+    // await postResponseAPI({ email: email.value, password: password.value }, '/loginnew');
+    let response = await postRequest('/loginnew', { email: email.value, password: password.value });
+    response = response.data.data;
+    console.log('response',response)
+    
+    // fetchInfoDataLogged(dataResponseAPI.value.data.token);
+    // console.log(dataResponseAPI.value.data.token)  
     //await postResponseAPI({ email: "admin@admin.com", password: "password" }, '/login');
 
 
-    let response = dataResponseAPI.value;
     
     if (response['error']) throw response.error;
     if (!response['user']) throw response.error;
 
-    const token = response.token;
+    token.value = response.token;
     const user = response.user.name;
     const emailUser = response.user.email;
+    
     const farm = response.farm_uuid;
     const company = response.company_uuid;
-    const employeeName = response.Employee.first_name+' '+response.Employee.lasts_names;
-    const employeeUuid = response.Employee.uuid;
-    console.log(response)
-    console.log('Login')
-    console.log(employeeName, employeeUuid)
+    // const employeeName = response.Employee.first_name+' '+response.Employee.lasts_names;
+    // const employeeUuid = response.Employee.uuid;
     
+    // console.log(employeeName, employeeUuid)
     
+    sessionStorage.setItem('accessSessionToken', token.value);
+    const trueba = sessionStorage.getItem('accessSessionToken');
+    console.log(trueba)
 
-    sessionStorage.setItem('accessSessionToken', token);
+    // let b = await fetchInfoDataLogged();
+    // await getAllResponseAPI('/appmovil/datastart');
+
+
     sessionStorage.setItem('accessSessionUser', user);
-    sessionStorage.setItem('accessSessionEmail', emailUser);
-    sessionStorage.setItem('accessSessionFarm', farm);
-    sessionStorage.setItem('accessSessionCompany', company);
+    // sessionStorage.setItem('accessSessionEmail', emailUser);
+    // sessionStorage.setItem('accessSessionFarm', farm);
+    // sessionStorage.setItem('accessSessionCompany', company);
     localStorage.setItem('accesSessionTokens', token);
-    localStorage.setItem('accesSessionUsers', user);
-    localStorage.setItem('accesSessionFarms', farm);
-    localStorage.setItem('accesSessionCompanys', company);
-    localStorage.setItem('accesSessionEmployeeName', employeeName);
-    sessionStorage.setItem('accessSessionEmployeeName', employeeName);
-    localStorage.setItem('accesSessionEmployeeUuid', employeeUuid);
-    sessionStorage.setItem('accesSessionEmployeeUuid', employeeUuid);
+    // localStorage.setItem('accesSessionUsers', user);
+    // localStorage.setItem('accesSessionFarms', farm);
+    // localStorage.setItem('accesSessionCompanys', company);
+    // localStorage.setItem('accesSessionEmployeeName', employeeName);
+    // sessionStorage.setItem('accessSessionEmployeeName', employeeName);
+    // localStorage.setItem('accesSessionEmployeeUuid', employeeUuid);
+    // sessionStorage.setItem('accesSessionEmployeeUuid', employeeUuid);
 
 
     // updateAbility(token);
 
-    await getAllResponsePermissionsAPI("/abilities");
+
+    await getRequest('/abilities', token);
+    //await getAllResponsePermissionsAPI("/abilities");
+
+
     toast.add({ severity: 'success', detail: 'Success', content: 'Successful Login', id: count.value++ });
     router.push('/applayout');
+    return true;
   } catch (error) {
     toast.add({ severity: 'error', detail: 'Error Response', content: error, id: count.value++ });
     console.error('Error:', error);
+    return false;
   }
 };
 
