@@ -2,19 +2,29 @@ import useSettingsAPI from '@/composables/DataAPI/settings_API';
 import { ref } from 'vue';
 export default function useData() {
     const { pathAPI, APISettings } = useSettingsAPI();
+    const token = ref();
+    let errorResponseAPI = ref('Error no filled');
     let base = pathAPI().base;
     let api = pathAPI().apiVer;
-    const token = ref();
-     token.value = sessionStorage.getItem('accessSessionToken');
+
+    token.value = sessionStorage.getItem('accessSessionToken');
     // const token.value = localStorage.getItem('accessSessionToken');
-    console.log('Tokenxxxxx:', token.value);
+    
+    const initializeToken = () => {
+        token.value = sessionStorage.getItem('accessSessionToken');
+        if (token.value) {
+          APISettings.headers.set('Authorization', 'Bearer ' + token.value);
+        }
+      };
+      
+    initializeToken();
     APISettings.headers.set('Content-Type', 'application/json');
     APISettings.headers.set('Access-Control-Allow-Origin', '*');
-    APISettings.headers.set('Authorization', 'Bearer ' + token.value);
-    let errorResponseAPI = ref('Error no filled');
+    // APISettings.headers.set('Authorization', 'Bearer ' + token.value);
 
     async function getRequest(endPoint) {
         
+        initializeToken();
         console.log("El token.value es: ", token.value);
         let responseData = { data: {}, error: '', ok: false };
         let baseUrl = `${base}${api}${endPoint}`;

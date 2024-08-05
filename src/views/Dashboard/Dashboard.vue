@@ -53,7 +53,7 @@ onMounted(async () => {
     // let b = await fetchInfoDataLogged('/appmovil/datastart');
     //updateAbility(sessionStorage.getItem('accessSessionToken'));
     //updateAbility();
-    fetchInfoDataLogged();
+    
     
 
     

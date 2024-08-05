@@ -6,9 +6,9 @@ import { useRouter } from 'vue-router';
 import { useToast } from 'primevue/usetoast';
 import Toast from 'primevue/toast';
 import useDataAPI from '@/composables/DataAPI/FetchDataAPI.js';
-import {fetchInfoDataLogged} from '@/composables/Login/InfoStorage.js';
-
 import useData from '@/composables/DataAPI/FetchDataAPICopy.js';
+import {fetchInfoDataLogged} from '@/composables/Login/InfoStorage.js';
+import {fetchAbilities} from '@/composables/Abilities/Abilities.js';
 
 
 import { ABILITY_TOKEN } from '@casl/vue';
@@ -19,6 +19,9 @@ import { z } from 'zod';
 
 import { defineAbility } from '@casl/ability';
 import elementosVista from '@/service/permissionsMenuTmp.js';
+import { createMongoAbility } from '@casl/ability';
+import { AbilityBuilder } from '@casl/ability';
+import { provideAbility } from '@casl/vue';
 
 
 
@@ -51,9 +54,6 @@ let endpoint = ref('/appmovil/datastart');
 // console.log(ability.can('ver_empleado')); // true
 // console.log(ability.can('eliminar_empleado')); // true
 
-import { createMongoAbility } from '@casl/ability';
-import { AbilityBuilder } from '@casl/ability';
-import { provideAbility } from '@casl/vue';
 
 const { can, cannot, build } = new AbilityBuilder();
 
@@ -109,13 +109,15 @@ const logoUrl = computed(() => {
 
 
 const onSubmit = async () => {
-  resp1 = await fetchInfoPostLogin();
+  const resp1 = await fetchInfoPostLogin();
   if (resp1 == true)
    {
     await fetchInfoDataLogged();
+    await fetchAbilities();
   } else {
     console.log('false')
   }
+
   
   
 };
@@ -144,28 +146,22 @@ const fetchInfoPostLogin = async (data) => {
     const user = response.user.name;
     const emailUser = response.user.email;
     
-    const farm = response.farm_uuid;
-    const company = response.company_uuid;
+    
+    
     // const employeeName = response.Employee.first_name+' '+response.Employee.lasts_names;
     // const employeeUuid = response.Employee.uuid;
     
     // console.log(employeeName, employeeUuid)
     
     sessionStorage.setItem('accessSessionToken', token.value);
-    const trueba = sessionStorage.getItem('accessSessionToken');
-    console.log(trueba)
-
-    // let b = await fetchInfoDataLogged();
-    // await getAllResponseAPI('/appmovil/datastart');
-
-
     sessionStorage.setItem('accessSessionUser', user);
+    localStorage.setItem('accesSessionUsers', user);
+    
     // sessionStorage.setItem('accessSessionEmail', emailUser);
-    // sessionStorage.setItem('accessSessionFarm', farm);
     // sessionStorage.setItem('accessSessionCompany', company);
-    localStorage.setItem('accesSessionTokens', token);
     // localStorage.setItem('accesSessionUsers', user);
-    // localStorage.setItem('accesSessionFarms', farm);
+    localStorage.setItem('accesSessionTokens', token);
+
     // localStorage.setItem('accesSessionCompanys', company);
     // localStorage.setItem('accesSessionEmployeeName', employeeName);
     // sessionStorage.setItem('accessSessionEmployeeName', employeeName);
@@ -177,7 +173,7 @@ const fetchInfoPostLogin = async (data) => {
 
 
     await getRequest('/abilities', token);
-    //await getAllResponsePermissionsAPI("/abilities");
+    // await getAllResponsePermissionsAPI("/abilities");
 
 
     toast.add({ severity: 'success', detail: 'Success', content: 'Successful Login', id: count.value++ });
