@@ -3,13 +3,14 @@ import { ref, onMounted, watch } from 'vue';
 import InputNumber from 'primevue/inputnumber';
 import { useI18n } from 'vue-i18n';
 import UseAppMovil from '@/composables/AppMovil/UseAppMovil.js';
-import { number } from 'zod';
+import { boolean, number } from 'zod';
 const { availableAreaEmployees, worksDay, task_type, crops_lots, dones_work, size, sizeOptions, data_planner, priceunit, plannertask, tasktarifs, areawork } = UseAppMovil();
 
 const props = defineProps({
     dataUsers: { type: Array },
-    Taridf: { type: Object},
-    Lote: { type: Array }
+    Taridf: { type: Object },
+    Lote: { type: Array },
+    diaFestivo: {type: Boolean}
 });
 
 const { t } = useI18n();
@@ -24,7 +25,6 @@ const Notas = ref(null);
 const workView = ref(true);
 const tarifa = ref(0);
 
-
 const UpdateTotal = () => {
     Total.value = selected_quanty.value * priceunit.value;
 };
@@ -35,7 +35,7 @@ const changeWorkView = (event) => {
 };
 
 watch(props, () => {
-    if (props.Taridf){
+    if (props.Taridf) {
         const { price_tarif } = props.Taridf.data[0];
         tarifa.value = parseInt(price_tarif) ?? 0;
     }
@@ -52,11 +52,11 @@ const formatCurrency = (value) => {
             <AccordionTab v-for="slotProps in dataUsers" :key="slotProps.id" selectOnFocus>
                 <template #header>
                     <span class="flex align-items-center gap-2 w-full">
-                        <Avatar image="https://primefaces.org/cdn/primevue/images/avatar/amyelsner.png" shape="circle" />
-                        <span class="font-bold white-space-nowrap">{{ slotProps.first_name }}</span>
+                        <Avatar style="min-width: 2rem" image="https://primefaces.org/cdn/primevue/images/avatar/amyelsner.png" shape="circle" />
+                        <span class="responsive-text font-bold white-space-nowrap overflow-hidden w-full">{{ slotProps.first_name }}</span>
+                        <Button class="w-8rem" :label="t('appmovil.trabajos')" :disabled="workView" @click="changeWorkView" size="small" outlined />
+                        <Button class="w-8rem" :label="t('appmovil.detalles')" :disabled="!workView" @click="changeWorkView" size="small" severity="secondary" outlined />
                     </span>
-                    <Button class="col-12 md:col-2 mr-2" :label="t('appmovil.trabajos')" :disabled="workView" @click="changeWorkView" size="small" outlined />
-                    <Button class="col-12 md:col-2 mr-2" :label="t('appmovil.detalles')" :disabled="!workView" @click="changeWorkView" size="small" severity="secondary" outlined />
                 </template>
                 <div v-if="workView">
                     <div class="grid p-fluid mt-3">
@@ -124,21 +124,27 @@ const formatCurrency = (value) => {
                     </div>
                 </div>
                 <div v-else>
-                    <div class="p-fluid formgrid grid">
-                        <div class="field col-12">
-                            <h4>{{ t('appmovil.supervisor') }}: {{ data_planner.nameSupervisor }}</h4>
+                    <div class="p-fluid formgrid grid mb-3">
+                        <h4 class="col-12 m-3">{{ t('appmovil.supervisor') }}: {{ data_planner.nameSupervisor }}</h4>
+                        <div class="col-12 md:col-6">
+                            <Divider class="m-0"/>
+                            <pre class="m-1"><b>{{t('appmovil.loteDespacho')}}</b>: {{ data_planner.lot_dispatch }}</pre>
+                            <Divider class="m-0"/>
+                            <pre class="m-1"><b>{{t('appmovil.variedad')}}:</b> {{ data_planner.product_variant }}</pre>
+                            <Divider class="m-0"/>
+                            <pre class="m-1"><b>{{ t('appmovil.producto') }}:</b> {{ data_planner.product_type }}</pre>
                         </div>
-                        <div class="field col-12 md:col-6 gap-1">
-                            <pre><b>{{t('appmovil.loteDespacho')}}</b>: {{ data_planner.lot_dispatch }}</pre>
-                            <pre><b>{{t('appmovil.variedad')}}:</b> {{ data_planner.product_variant }}</pre>
-                            <pre>{{ t('appmovil.producto') }}:{{ data_planner.product_type }}</pre>
-                        </div>
-                        <div class="field col-12 md:col-6 gap-2">
-                            <pre>{{ t('appmovil.empaque') }}: {{ data_planner.packing_type }}</pre>
-                            <pre>{{ t('appmovil.fechaPlaneada') }}: {{ data_planner.planner_date }}</pre>
-                            <pre>{{ t('appmovil.dialaboral') }}: {{ data_planner.day_type }}</pre>
+                        <Divider layout="vertical" class="m-0"/>
+                        <div class="col-12 md:col-6">
+                            <Divider class="m-0"/>
+                            <pre class="m-1"><b>{{ t('appmovil.empaque') }}:</b> {{ data_planner.packing_type }}</pre>
+                            <Divider class="m-0"/>
+                            <pre class="m-1"><b>{{ t('appmovil.fechaPlaneada') }}:</b> {{ data_planner.planner_date }}</pre>
+                            <Divider class="m-0"/>
+                            <pre class="m-1"><b>{{ t('appmovil.dialaboral') }}:</b> {{ diaFestivo? t('appmovil.diaFestivo') : t('appmovil.diaNormal')}}</pre>
                         </div>
                     </div>
+
                     <DataTable :value="worksDay">
                         <ColumnGroup type="header">
                             <Row>
@@ -178,3 +184,9 @@ const formatCurrency = (value) => {
         </Accordion>
     </div>
 </template>
+
+<style lang="scss" scoped>
+.responsive-text {
+    text-overflow: ellipsis;
+}
+</style>

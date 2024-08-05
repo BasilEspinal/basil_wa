@@ -17,10 +17,12 @@ const totalPrices = ref(null);
 const CopanyId = ref(null);
 const FarmId = ref(null);
 const users = ref(null);
+const filterUsers = ref(null);
 const data = ref(null);
-const holiday = ref(null);
+const holiday = ref(false);
 const Tarif = ref(null);
 const lotes = ref(null);
+const search = ref(null);
 
 onMounted(async () => {
     workCenterData.value = JSON.parse(sessionStorage.getItem('accessSessionWorkCenter'));
@@ -35,20 +37,19 @@ const getUsers = async () => {
     const response = await getRequest(`/appmovil/employees?filter[work_center_id]=${workCenterData.value.id}`);
     if (!response.ok) toast.add({ severity: 'error', detail: 'Error' + response.error, life: 3000 });
     users.value = response.data.data;
+    filterUsers.value = response.data.data;
 };
 
 const getData = async () => {
     const response = await getRequest(`/appmovil/tasksplanner?filter[tasks_of_type_id]=${workCenterData.value.taskoftype_id.id}&filter[company_id]=${CopanyId.value}&filter[farm_id]=${FarmId.value}`);
-    console.log('data: ', response);
     if (!response.ok) toast.add({ severity: 'error', detail: 'Error' + response.error, life: 3000 });
     data.value = response.data.data[0];
 };
 
 const getHoliday = async () => {
     const response = await getRequest(`/appmovil/calendars?filter[company_id]=${CopanyId.value}&filter[farm_id]=${FarmId.value}`);
-    console.log('data: ', response);
     if (!response.ok) toast.add({ severity: 'error', detail: 'Error' + response.error, life: 3000 });
-    holiday.value = response.data.data == [] ? response.data.data : false;
+    holiday.value = response.data.data != [];
 };
 
 const getTarifa = async () => {
@@ -59,11 +60,15 @@ const getTarifa = async () => {
 };
 
 watch(data, () => {
-    titulo.value = workCenterData.value.name;
+    titulo.value = workCenterData.value.taskoftype_id.name;
     if (data.value) {
         getTarifa();
         lotes.value = data.value.crop_lots;
     }
+});
+
+watch(search, () => {
+    searchUsers();
 });
 
 const formatCurrency = (value) => {
@@ -77,14 +82,31 @@ const quantities = computed(() => {
     }
     return total;
 });
-// {{ workCenterData.name }}
+
+function searchUsers() {
+    if (search.value) {
+        filterUsers.value = users.value.filter((user) => user.first_name.toLowerCase().includes(search.value.toLowerCase()));
+    } else {
+        filterUsers.value = users.value;
+    }
+}
+
 </script>
 
 <template>
     <div class="card maxHeightY">
         <div class="flex">
-            <div class="col-12 md:col-8">
+            <div class="w-full">
                 <h2>{{ t('appmovil.titulo') }} {{ titulo }}</h2>
+            </div>
+            <div>
+                <div class="p-inputgroup">
+                    <span class="p-float-label">
+                        <InputText id="search" v-model="search"/>
+                        <label class="font-bold">{{ t('appmovil.users') }}</label>
+                    </span>
+                    <Button class="p-inputgroup-addon" @click="searchUsers" label="Search" />
+                </div>
             </div>
         </div>
         <TabView class="tabview-custom">
@@ -96,7 +118,7 @@ const quantities = computed(() => {
                     </div>
                 </template>
                 <ScrollPanel class="maxHeightC">
-                    <UserAppMovil :dataUsers="users" :Lote="lotes" :Taridf="Tarif" />
+                    <UserAppMovil :dataUsers="filterUsers" :Lote="lotes" :Taridf="Tarif" :diaFestivo="holiday"/>
                 </ScrollPanel>
             </TabPanel>
             <TabPanel>

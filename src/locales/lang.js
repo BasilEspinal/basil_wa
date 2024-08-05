@@ -73,7 +73,9 @@ export const messages = {
             fechaPlaneada: 'Planned date',
             dialaboral: 'Working day',
             empleado: 'Employee',
-            precio: 'Price'
+            precio: 'Price',
+            diaNormal: 'Normal day',
+            diaFestivo: 'Holiday'
         }
     },
     es: {
@@ -157,7 +159,9 @@ export const messages = {
             fechaPlaneada: 'Fecha Planeada',
             dialaboral: 'Dia laboral',
             empleado: 'Empleado',
-            precio: 'Precio'
+            precio: 'Precio',
+            diaNormal: 'Normal',
+            diaFestivo: 'Festivo'
         }
     }
 };
