@@ -115,7 +115,7 @@ const onSubmit = async () => {
     await fetchInfoDataLogged();
     await fetchAbilities();
   } else {
-    console.log('false')
+    console.log('Error')
   }
 
   
@@ -131,7 +131,7 @@ const fetchInfoPostLogin = async (data) => {
     // await postResponseAPI({ email: email.value, password: password.value }, '/loginnew');
     let response = await postRequest('/loginnew', { email: email.value, password: password.value });
     response = response.data.data;
-    console.log('response',response)
+    
     
     // fetchInfoDataLogged(dataResponseAPI.value.data.token);
     // console.log(dataResponseAPI.value.data.token)  
@@ -144,7 +144,7 @@ const fetchInfoPostLogin = async (data) => {
 
     token.value = response.token;
     const user = response.user.name;
-    const emailUser = response.user.email;
+    
     
     
     
@@ -157,7 +157,7 @@ const fetchInfoPostLogin = async (data) => {
     sessionStorage.setItem('accessSessionUser', user);
     localStorage.setItem('accesSessionUsers', user);
     
-    // sessionStorage.setItem('accessSessionEmail', emailUser);
+    
     // sessionStorage.setItem('accessSessionCompany', company);
     // localStorage.setItem('accesSessionUsers', user);
     localStorage.setItem('accesSessionTokens', token);

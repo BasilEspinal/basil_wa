@@ -7,11 +7,13 @@ const { getRequest } = useData();
 export const fetchInfoDataLogged = async () => {
   try {
     const response = await getRequest('/appmovil/datastart');
-    console.log('xxxxxxxxxxxxx',response.data.data.company.uuid)
     const farm = response.data.data.farm.uuid;
     const company = response.data.data.company.uuid;
     const employeeName = response.data.data.employee.first_name+' '+response.data.data.employee.lasts_names;
     const employeeUuid = response.data.data.employee.uuid;
+    const emailUser = response.data.data.user_email;
+    sessionStorage.setItem('accessSessionEmail', emailUser);
+    localStorage.setItem('accesSessionEmail', emailUser);
     localStorage.setItem('accesSessionFarms', farm);
     sessionStorage.setItem('accessSessionFarm', farm);
     sessionStorage.setItem('accessSessionCompany', company);

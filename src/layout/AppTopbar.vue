@@ -1,5 +1,5 @@
 <script setup>
-import { ref, computed, onMounted, onBeforeUnmount } from 'vue';
+import { ref, computed, onMounted, onBeforeUnmount, onBeforeMount } from 'vue';
 import { useLayout } from '@/layout/composables/layout';
 import { useRouter } from 'vue-router';
 import useDataAPI from '@/composables/DataAPI/FetchDataAPI.js'
@@ -68,18 +68,23 @@ const dataUser = ref('');
 const router = useRouter();
 const toggleValue = ref(layoutConfig.darkTheme.value);
 const farmDefault = sessionStorage.getItem('accessSessionFarm');
-const companyDefault = sessionStorage.getItem('accessSessionCompany');
+
 
 const logout = async () => {    
     await postResponseAPI({}, "/logout");
 };
 
-onMounted(() => {
+const initializeValues = async () => {
     dataUser.value = sessionStorage.getItem('accessSessionUser');
-    nameEdit.value = sessionStorage.getItem('accessSessionUser');
+    nameEdit.value = sessionStorage.getItem('accessSessionEmployeeName');
     emailEdit.value = sessionStorage.getItem('accessSessionEmail');
-    console.log("nameEdit", nameEdit.value)
-    console.log("emailEdit", emailEdit.value)   
+
+};
+onBeforeMount( () => {
+    initializeValues();
+    
+});
+onMounted(async () => {
     bindOutsideClickListener();
 });
 

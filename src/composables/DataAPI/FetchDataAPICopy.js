@@ -16,7 +16,7 @@ export default function useData() {
           APISettings.headers.set('Authorization', 'Bearer ' + token.value);
         }
       };
-      
+
     initializeToken();
     APISettings.headers.set('Content-Type', 'application/json');
     APISettings.headers.set('Access-Control-Allow-Origin', '*');
@@ -25,7 +25,7 @@ export default function useData() {
     async function getRequest(endPoint) {
         
         initializeToken();
-        console.log("El token.value es: ", token.value);
+        
         let responseData = { data: {}, error: '', ok: false };
         let baseUrl = `${base}${api}${endPoint}`;
         const requestOptions = {
