@@ -3,8 +3,6 @@ import { ref, computed, onMounted, onBeforeUnmount, onBeforeMount } from 'vue';
 import { useLayout } from '@/layout/composables/layout';
 import { useRouter } from 'vue-router';
 import useDataAPI from '@/composables/DataAPI/FetchDataAPI.js'
-
-
 import OverlayPanel from 'primevue/overlaypanel';
 import { useForm } from 'vee-validate';
 import { toTypedSchema } from '@vee-validate/zod';
@@ -14,6 +12,21 @@ import { z } from 'zod';
 import ability from '@/service/ability.js';
 const userDefault = ref('')
 const emailDefault = ref('')
+const props = defineProps({
+  userStoraged: {
+    type: Object,
+    required: true,
+  },
+  nameStoraged: {
+    type: String,
+    required: true,
+  },
+  emailStoraged: {
+    type: String,
+    required: true,
+  },
+});
+
 
 const {getAllResponsePermissionsAPI ,dataResponsePermissionsAPI} =
     useDataAPI();
@@ -70,19 +83,38 @@ const toggleValue = ref(layoutConfig.darkTheme.value);
 const farmDefault = sessionStorage.getItem('accessSessionFarm');
 
 
+
 const logout = async () => {    
     await postResponseAPI({}, "/logout");
 };
 
-const initializeValues = async () => {
-    dataUser.value = sessionStorage.getItem('accessSessionUser');
-    nameEdit.value = sessionStorage.getItem('accessSessionEmployeeName');
-    emailEdit.value = sessionStorage.getItem('accessSessionEmail');
-
+const checkStorageAndInitialize = async (key, callback, retries = 10, delay = 500) => {
+    let value = sessionStorage.getItem(key);
+    if (value) {
+        callback(value);
+    } else if (retries > 0) {
+        setTimeout(() => checkStorageAndInitialize(key, callback, retries - 1, delay), delay);
+    } else {
+        console.log(`No hay ${key}`);
+    }
 };
-onBeforeMount( () => {
-    initializeValues();
-    
+
+const initializeValues = async () => {
+    checkStorageAndInitialize('accessSessionUser', (value) => { dataUser.value = value; });
+    checkStorageAndInitialize('accessSessionEmployeeName', (value) => { nameEdit.value = value; });
+    checkStorageAndInitialize('accessSessionEmail', (value) => { emailEdit.value = value; });
+
+    // If you need to log the values only after they are set
+    await new Promise((resolve) => setTimeout(resolve, 5000)); // Adjust the timeout as needed
+
+    console.log(dataUser.value);
+    console.log(nameEdit.value);
+    console.log(emailEdit.value);
+};
+
+
+onBeforeMount(async () => {
+    await initializeValues();
 });
 onMounted(async () => {
     bindOutsideClickListener();

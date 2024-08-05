@@ -14,6 +14,9 @@ const { layoutConfig, layoutState, isSidebarActive } = useLayout();
 const outsideClickListener = ref(null);
 const router = useRouter();
 const lengthPermissions = ref(0);
+const userStoraged = ref('');
+const nameStoraged = ref('');
+const emailStoraged = ref('');
 onBeforeMount(async () => {
     
     await getAllResponsePermissionsAPI("/abilities");
@@ -26,14 +29,25 @@ watch(isSidebarActive, (newVal) => {
         bindOutsideClickListener();
     } else {
         unbindOutsideClickListener();
-    }
+    }D
 });
 
 onBeforeMount(() => {
     if (!sessionStorage.getItem('accessSessionToken')) {
         router.push('/auth/login');
     }
+    else{
+        
+    }
 });
+
+const initializeValues = async () => {
+    
+    userStoraged.value = sessionStorage.getItem('accessSessionUser');
+    nameStoraged.value = sessionStorage.getItem('accessSessionEmployeeName');
+    emailStoraged.value = sessionStorage.getItem('accessSessionEmail');
+};
+
 
 const containerClass = computed(() => {
     return {
@@ -83,7 +97,7 @@ const isOutsideClicked = (event) => {
     (ability.can('agro_tv_menu') && lengthPermissions==1) ||lengthPermissions==0 ? '' : 'layout-wrapper',
     containerClass
     ]" >
-        <app-topbar></app-topbar>
+        <app-topbar :userStoraged="userStoraged" :nameStoraged="nameStoraged" :emailStoraged="emailStoraged"></app-topbar>
         
         <div v-if="(ability.can('agro_tv_menu')&&lengthPermissions==1)||lengthPermissions==0"  >
             

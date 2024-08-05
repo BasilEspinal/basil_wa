@@ -178,6 +178,7 @@ const fetchInfoPostLogin = async (data) => {
 
     toast.add({ severity: 'success', detail: 'Success', content: 'Successful Login', id: count.value++ });
     router.push('/applayout');
+    
     return true;
   } catch (error) {
     toast.add({ severity: 'error', detail: 'Error Response', content: error, id: count.value++ });

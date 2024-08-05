@@ -50,7 +50,8 @@ const updateAbility = async (token) => {
 //     });
 };
 onMounted(async () => {
-    // let b = await fetchInfoDataLogged('/appmovil/datastart');
+    fetchInfoDataLogged();
+    
     //updateAbility(sessionStorage.getItem('accessSessionToken'));
     //updateAbility();
     
