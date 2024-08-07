@@ -383,7 +383,7 @@ const model2 = ref([
                         label: 'Captura de datos',
                         to: '/AppMovil/General',
                         icon: 'pi pi-mobile',
-                        gate: 'appmovil_corta_menu'
+                        gate: 'appmovil_data_capture'
                     },
                     {
                         label: 'Captura de corta',

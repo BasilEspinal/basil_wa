@@ -49,7 +49,8 @@ const getData = async () => {
 };
 
 const getHoliday = async () => {
-    const response = await getRequest(`/appmovil/calendars?filter[company_id]=${CopanyId.value}&filter[farm_id]=${FarmId.value}`);
+    // const response = await getRequest(`/appmovil/calendars?filter[company_id]=${CopanyId.value}&filter[farm_id]=${FarmId.value}`);
+    const response = await getRequest(`/appmovil/calendars?filter[company_id]=${CopanyId.value}`);
     if (!response.ok) toast.add({ severity: 'error', detail: 'Error' + response.error, life: 3000 });
     holiday.value = response.data.data != [];
 };
