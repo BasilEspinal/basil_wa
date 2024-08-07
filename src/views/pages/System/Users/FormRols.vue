@@ -64,7 +64,8 @@ const searchFarms = (event) => {
 const saveRoles = async () => {
     const dataJson = {
         name: props.data.name,
-        email: picklistValue.value[1].length + props.data.email,
+        // email: picklistValue.value[1].length + props.data.email,
+        email: props.data.email,
         farm_uuid: farm.value.id || '8ef93a7b-31bf-4233-af80-481020e9cf97',
         employee_uuid: employe.value.id || '',
         roles: picklistValue.value[1].map((rol) => ({ id: rol.id }))
