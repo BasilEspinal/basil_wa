@@ -111,7 +111,7 @@ const readAll = async () => {
 
     const respDocumentTypeList = await getRequest('/lists/documentType');
     if (!respDocumentTypeList.ok) toast.add({ severity: 'error', detail: 'Error' + respDocumentTypeList.error, life: 3000 });
-    DocumentTypeList.value = respDocumentTypeList.data.map((comp) => ({ id: comp.id, name: comp.label }));
+    DocumentTypeList.value = respDocumentTypeList.data.data.map((comp) => ({ id: comp.id, name: comp.label }));
 
     const respWorkCenter = await getRequest('/work_centers');
     console.log('respWorkCenter', respWorkCenter);
@@ -120,7 +120,7 @@ const readAll = async () => {
 
     const respGenderList = await getRequest('/lists/genderType');
     if (!respGenderList.ok) toast.add({ severity: 'error', detail: 'Error' + respGenderList.error, life: 3000 });
-    GenderList.value = respGenderList.data.map((comp) => ({ id: comp.id, name: comp.label }));
+    GenderList.value = respGenderList.data.data.map((comp) => ({ id: comp.id, name: comp.label }));
 
     const respPaymentType = await getRequest('/payment_types');
     if (!respPaymentType.ok) toast.add({ severity: 'error', detail: 'Error' + respPaymentType.error, life: 3000 });

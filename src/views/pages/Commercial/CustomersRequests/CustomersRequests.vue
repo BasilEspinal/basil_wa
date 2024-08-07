@@ -561,18 +561,7 @@
                                 </small>
                                 <BackendErrors :name="errorResponseAPI?.errors?.outlet_temperature" />
                             </div>
-                            <div class="mb-3 col-12 md:col-6 lg:col-3">
-                                <div class="flex align-items-center">
-                                    <label for="variantV" class="font-semibold w-6rem">Variant:</label>
-                                    <AutoComplete v-model="variantV" class="flex-auto" inputId="ac"
-                                        :suggestions="variants" @complete="searchVariant" field="name" dropdown />
-                                </div>
-                                <!-- <pre>{{variantV}}</pre> -->
-                                <small id="username-help" :class="{ 'p-invalid text-red-700': errorsNew['variantV'] }">
-                                    {{ errorsNew.variantV }}
-                                </small>
-                                <BackendErrors :name="errorResponseAPI?.errors?.variant_uuid" />
-                            </div>
+
                         </div>
 
                     </TabPanel>
@@ -593,7 +582,7 @@
 
                                 <div class="grid">
 
-                                    <div class="mb-3 col-12 md:col-6 lg:col-4">
+                                    <div class="mb-3 col-12 md:col-6 lg:col-3">
                                         <div class="flex align-items-center">
                                             <label for="packing_typeV" class="font-semibold w-6rem">Packing
                                                 type:</label>
@@ -609,7 +598,7 @@
                                         <BackendErrors :name="errorResponseAPI?.errors?.packing_type_uuid" />
                                     </div>
 
-                                    <div class="mb-3 col-12 md:col-6 lg:col-4">
+                                    <div class="mb-3 col-12 md:col-6 lg:col-3">
                                         <div class="flex align-items-center">
                                             <label for="productV" class="font-semibold w-6rem">Product:</label>
                                             <AutoComplete v-model="productV" class="flex-auto" inputId="ac"
@@ -624,7 +613,21 @@
                                         <BackendErrors :name="errorResponseAPI?.errors?.product_uuid" />
                                     </div>
 
-                                    <div class="mb-3 col-12 md:col-6 lg:col-4">
+                                    <div class="mb-3 col-12 md:col-6 lg:col-3">
+                                <div class="flex align-items-center">
+                                    <label for="variantV" class="font-semibold w-6rem">Variant:</label>
+                                    <AutoComplete v-model="variantV" class="flex-auto" inputId="ac"
+                                        :suggestions="variants" @complete="searchVariant" field="name" dropdown />
+                                </div>
+                                <!-- <pre>{{variantV}}</pre> -->
+                                <small id="username-help" :class="{ 'p-invalid text-red-700': errorsNew['variantV'] }">
+                                    {{ errorsNew.variantV }}
+                                </small>
+                                <BackendErrors :name="errorResponseAPI?.errors?.variant_uuid" />
+                            </div>
+
+
+                                    <div class="mb-3 col-12 md:col-6 lg:col-3">
                                         <div class="flex align-items-center">
                                             <label for="product_typeV" class="font-semibold w-6rem">Product
                                                 Type:</label>
@@ -1041,18 +1044,7 @@
                                 </small>
                             </div> -->
 
-                            <div class="mb-3 col-12 md:col-6 lg:col-3">
-                                <div class="flex align-items-center">
-                                    <label for="variantV" class="font-semibold w-6rem">Variant:</label>
-                                    <AutoComplete v-model="variantV" class="flex-auto" inputId="ac"
-                                        :suggestions="variants" @complete="searchVariant" field="name" dropdown />
-                                </div>
-                                <!-- <pre>{{variantV}}</pre> -->
-                                <small id="username-help" :class="{ 'p-invalid text-red-700': errorsNew['variantV'] }">
-                                    {{ errorsNew.variantV }}
-                                </small>
-                                <BackendErrors :name="errorResponseAPI?.errors?.variant_uuid" />
-                            </div>
+
 
                             <!-- <div class="mb-3 col-12 md:col-6 lg:col-3">
                                 <div class="flex align-items-center">
@@ -1116,7 +1108,9 @@
 
                                 <div class="grid">
 
-                                    <div class="mb-3 col-12 md:col-6 lg:col-4">
+
+
+                                    <div class="mb-3 col-12 md:col-6 lg:col-3">
                                         <div class="flex align-items-center">
                                             <label for="packing_typeV" class="font-semibold w-6rem">Packing
                                                 type:</label>
@@ -1132,7 +1126,7 @@
                                         <BackendErrors :name="errorResponseAPI?.errors?.packing_type_uuid" />
                                     </div>
 
-                                    <div class="mb-3 col-12 md:col-6 lg:col-4">
+                                    <div class="mb-3 col-12 md:col-6 lg:col-3">
                                         <div class="flex align-items-center">
                                             <label for="productV" class="font-semibold w-6rem">Product:</label>
                                             <AutoComplete v-model="productV" class="flex-auto" inputId="ac"
@@ -1147,7 +1141,20 @@
                                         <BackendErrors :name="errorResponseAPI?.errors?.product_uuid" />
                                     </div>
 
-                                    <div class="mb-3 col-12 md:col-6 lg:col-4">
+                                    <div class="mb-3 col-12 md:col-6 lg:col-3">
+                                <div class="flex align-items-center">
+                                    <label for="variantV" class="font-semibold w-6rem">Variant:</label>
+                                    <AutoComplete v-model="variantV" class="flex-auto" inputId="ac"
+                                        :suggestions="variants" @complete="searchVariant" field="name" dropdown />
+                                </div>
+                                <!-- <pre>{{variantV}}</pre> -->
+                                <small id="username-help" :class="{ 'p-invalid text-red-700': errorsNew['variantV'] }">
+                                    {{ errorsNew.variantV }}
+                                </small>
+                                <BackendErrors :name="errorResponseAPI?.errors?.variant_uuid" />
+                            </div>
+
+                                    <div class="mb-3 col-12 md:col-6 lg:col-3">
                                         <div class="flex align-items-center">
                                             <label for="product_typeV" class="font-semibold w-6rem">Product
                                                 Type:</label>
@@ -1156,12 +1163,17 @@
                                                 dropdown />
                                         </div>
                                         <!-- <pre>{{product_typeV}}</pre> -->
+
+
+
                                         <small id="username-help"
                                             :class="{ 'p-invalid text-red-700': errorsNew['product_typeV'] }">
                                             {{ errorsNew.product_typeV }}
                                         </small>
                                         <BackendErrors :name="errorResponseAPI?.errors?.product_type_uuid" />
                                     </div>
+
+
 
                                 </div>
 
@@ -1547,18 +1559,18 @@
                                 </small>
                             </div> -->
 
-                            <div class="mb-3 col-12 md:col-6 lg:col-3">
+                            <!-- <div class="mb-3 col-12 md:col-6 lg:col-3">
                                 <div class="flex align-items-center">
                                     <label for="variantV" class="font-semibold w-6rem">Variant:</label>
                                     <AutoComplete v-model="variantV" class="flex-auto" inputId="ac"
                                         :suggestions="variants" @complete="searchVariant" field="name" dropdown />
                                 </div>
-                                <!-- <pre>{{variantV}}</pre> -->
+                                
                                 <small id="username-help" :class="{ 'p-invalid text-red-700': errorsNew['variantV'] }">
                                     {{ errorsNew.variantV }}
                                 </small>
                                 <BackendErrors :name="errorResponseAPI?.errors?.variant_uuid" />
-                            </div>
+                            </div> -->
 
                             <!-- <div class="mb-3 col-12 md:col-6 lg:col-3">
                                 <div class="flex align-items-center">
@@ -1622,7 +1634,9 @@
 
                                 <div class="grid">
 
-                                    <div class="mb-3 col-12 md:col-6 lg:col-4">
+
+
+                                    <div class="mb-3 col-12 md:col-6 lg:col-3">
                                         <div class="flex align-items-center">
                                             <label for="packing_typeV" class="font-semibold w-6rem">Packing
                                                 type:</label>
@@ -1638,7 +1652,7 @@
                                         <BackendErrors :name="errorResponseAPI?.errors?.packing_type_uuid" />
                                     </div>
 
-                                    <div class="mb-3 col-12 md:col-6 lg:col-4">
+                                    <div class="mb-3 col-12 md:col-6 lg:col-3">
                                         <div class="flex align-items-center">
                                             <label for="productV" class="font-semibold w-6rem">Product:</label>
                                             <AutoComplete v-model="productV" class="flex-auto" inputId="ac"
@@ -1653,7 +1667,20 @@
                                         <BackendErrors :name="errorResponseAPI?.errors?.product_uuid" />
                                     </div>
 
-                                    <div class="mb-3 col-12 md:col-6 lg:col-4">
+                                    <div class="mb-3 col-12 md:col-6 lg:col-3">
+                                        <div class="flex align-items-center">
+                                            <label for="variantV" class="font-semibold w-6rem">Variant:</label>
+                                            <AutoComplete v-model="variantV" class="flex-auto" inputId="ac"
+                                                :suggestions="variants" @complete="searchVariant" field="name" dropdown />
+                                        </div>
+                                        
+                                        <small id="username-help" :class="{ 'p-invalid text-red-700': errorsNew['variantV'] }">
+                                            {{ errorsNew.variantV }}
+                                        </small>
+                                        <BackendErrors :name="errorResponseAPI?.errors?.variant_uuid" />
+                                    </div>
+
+                                    <div class="mb-3 col-12 md:col-6 lg:col-3">
                                         <div class="flex align-items-center">
                                             <label for="product_typeV" class="font-semibold w-6rem">Product
                                                 Type:</label>
@@ -2063,7 +2090,7 @@ const readAll = async () => {
 
     const respPackingQtyDispatch = await getRequest('/lists/packingQtyDispatch');
     if (!respPackingQtyDispatch.ok) toast.add({ severity: 'error', detail: 'Error' + respPackingQtyDispatch.error, life: 3000 });
-    PackingsQtyDispatch.value = respPackingQtyDispatch.data.map((packingQtyDispatch) => ({ id: packingQtyDispatch.id, name: packingQtyDispatch.label }));
+    PackingsQtyDispatch.value = respPackingQtyDispatch.data.data.map((packingQtyDispatch) => ({ id: packingQtyDispatch.id, name: packingQtyDispatch.label }));
 
     const respPackingTypeDispatch = await getRequest('/packing_types');
     if (!respPackingTypeDispatch.ok) toast.add({ severity: 'error', detail: 'Error' + respPackingTypeDispatch.error, life: 3000 });
@@ -2075,7 +2102,7 @@ const readAll = async () => {
 
     const respPackingWeightDispatch = await getRequest('/lists/packingWeightDispatch');
     if (!respPackingWeightDispatch.ok) toast.add({ severity: 'error', detail: 'Error' + respPackingWeightDispatch.error, life: 3000 });
-    PackingsWeightDispatch.value = respPackingWeightDispatch.data.map((packingWeightDispatch) => ({ id: packingWeightDispatch.id, name: packingWeightDispatch.label }));
+    PackingsWeightDispatch.value = respPackingWeightDispatch.data.data.map((packingWeightDispatch) => ({ id: packingWeightDispatch.id, name: packingWeightDispatch.label }));
 
     const respUnitsTypeDispatch = await getRequest('/unit_types');
     if (!respUnitsTypeDispatch.ok) toast.add({ severity: 'error', detail: 'Error' + respUnitsTypeDispatch.error, life: 3000 });
