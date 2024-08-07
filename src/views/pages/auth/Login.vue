@@ -63,14 +63,11 @@ const { can, cannot, build } = new AbilityBuilder();
 // });
 // provideAbility(ability)
 
-
 // const ability = createMongoAbility();
 import ability from '@/service/ability.js';
 
-
-
 // const updateAbility = (token) => {
-//   const bearer = 'Bearer ' + token; 
+//   const bearer = 'Bearer ' + token;
 
 // fetch('http://164.90.146.196:81/api/v1/abilities', {
 //     headers: {
@@ -92,21 +89,20 @@ import ability from '@/service/ability.js';
 
 // initPermissions();
 const { values, errors, defineField } = useForm({
-  validationSchema: toTypedSchema(
-    z.object({
-      email: z.string().min(3).email(),
-      password: z.string().min(6),
-    }),
-  ),
+    validationSchema: toTypedSchema(
+        z.object({
+            email: z.string().min(3).email(),
+            password: z.string().min(6)
+        })
+    )
 });
 const [email, emailAttrs] = defineField('email');
 const [password, passwordAttrs] = defineField('password');
 const router = useRouter();
 
 const logoUrl = computed(() => {
-  return `layout/images/${layoutConfig.darkTheme.value ? 'logo-white' : 'logo-dark'}.png`;
+    return `layout/images/${layoutConfig.darkTheme.value ? 'logo-white' : 'logo-dark'}.png`;
 });
-
 
 const onSubmit = async () => {
   const resp1 = await fetchInfoPostLogin();
@@ -169,7 +165,8 @@ const fetchInfoPostLogin = async (data) => {
     // sessionStorage.setItem('accesSessionEmployeeUuid', employeeUuid);
 
 
-    // updateAbility(token);
+        // updateAbility(token);
+        console.log("data: ", response);
 
 
     await getRequest('/abilities', token);
@@ -187,85 +184,75 @@ const fetchInfoPostLogin = async (data) => {
   }
 };
 
-onMounted(() => {
-
-})
-
-
-
-
+onMounted(() => {});
 </script>
 
 <template>
+    <div class="surface-ground flex align-items-center justify-content-center min-h-screen min-w-screen overflow-hidden" style="background: linear-gradient(180deg, var(--paleta-400) 5%, var(--paleta-100) 15%)">
+        <div class="flex flex-column align-items-center justify-content-center" @keyup.enter="onSubmit">
+            <router-link to="/" class="align-items-center mb-5">
+                <img :src="logoUrl" alt="Sakai logo" class="w-6rem flex-shrink-0" />
+                <span class="text-700 font-bold">AGRO-ONLINE</span>
+            </router-link>
+            <div style="border-radius: 56px; padding: 0.3rem; background: linear-gradient(160deg, var(--primary-color) 10%, var(--paleta-100) 60%, var(--primary-color) 100%)">
+                <div class="w-full py-7 px-3 sm:px-6" style="border-radius: 153px; background-color: var(--paleta-100)">
+                    <div class="text-center mb-5">
+                        <div class="text-900 text-4xl font-bold mb-3">Welcome!</div>
+                        <span class="text-600 font-medium">Sign in to continue</span>
+                    </div>
+                    <Toast />
 
+                    <transition-group name="p-message" tag="div" class="w-full">
+                        <Message v-for="msg of message" :severity="msg.severity" :key="msg.content" :sticky="false" :life="msg.life">{{ msg.content }}</Message>
+                    </transition-group>
+                    <div>
+                        <form>
+                            <label for="email1" class="block text-900 text-xl font-medium mb-2"> Email </label>
+                            <InputText id="email1" type="text" placeholder="Email address" style="width: 100%; padding: 1rem" v-model="email" />
 
-  <div class="surface-ground flex align-items-center justify-content-center min-h-screen min-w-screen overflow-hidden"
-    style="background: linear-gradient(180deg, var(--paleta-400) 5%, var(--paleta-100) 15%)">
+                            <label for="email1" class="block text-l mb-2" :class="{ 'text-red-700': errors.email }">
+                                {{ errors.email }}
+                            </label>
 
+                            <label for="password1" class="block text-900 font-medium text-xl mb-2">Password</label>
+                            <Password
+                                id="password1"
+                                v-model="password"
+                                placeholder="Password"
+                                :feedback="false"
+                                :toggleMask="true"
+                                inputClass="w-full"
+                                :inputStyle="{ padding: '1rem' }"
+                                style="width: 100%; padding: 0rem; color: rgb(0, 0, 0)"
+                            ></Password>
+                            <label for="password1" class="block text-l mb-2" :class="{ 'text-red-700': errors.password }">
+                                {{ errors.password }}
+                            </label>
+                            <div class="flex align-items-center justify-content-between mb-5 gap-5">
+                                <div class="flex align-items-center">
+                                    <Checkbox v-model="checked" id="rememberme1" binary class="mr-2"></Checkbox>
+                                    <label for="rememberme1">Remember me</label>
+                                </div>
+                                <a class="font-medium no-underline ml-2 text-right cursor-pointer" style="color: var(--primary-color)">Forgot password?</a>
+                            </div>
 
-    <div class="flex flex-column align-items-center justify-content-center" @keyup.enter="onSubmit">
-      <router-link to="/" class="align-items-center mb-5">
-        <img :src="logoUrl" alt="Sakai logo" class="w-6rem flex-shrink-0" />
-        <span class="text-700 font-bold">AGRO-ONLINE</span>
-      </router-link>
-      <div
-        style="border-radius: 56px; padding: 0.3rem; background: linear-gradient(160deg, var(--primary-color) 10%, var(--paleta-100) 60%, var(--primary-color) 100%)">
-        <div class="w-full py-7 px-3 sm:px-6" style="border-radius: 153px; background-color: var(--paleta-100)">
-          <div class="text-center mb-5">
-            <div class="text-900 text-4xl font-bold mb-3">Welcome!</div>
-            <span class="text-600 font-medium">Sign in to continue</span>
-          </div>
-          <Toast />
-
-          <transition-group name="p-message" tag="div" class="w-full">
-            <Message v-for="msg of message" :severity="msg.severity" :key="msg.content" :sticky="false"
-              :life="msg.life">{{ msg.content }}</Message>
-          </transition-group>
-          <div>
-            <form>
-              <label for="email1" class="block text-900 text-xl font-medium mb-2"> Email </label>
-              <InputText id="email1" type="text" placeholder="Email address" style="width: 100%; padding: 1rem;"
-                v-model="email" />
-
-              <label for="email1" class="block text-l mb-2" :class="{ 'text-red-700': errors.email }">
-                {{ errors.email }}
-              </label>
-
-              <label for="password1" class="block text-900 font-medium text-xl mb-2">Password</label>
-              <Password id="password1" v-model="password" placeholder="Password" :feedback="false" :toggleMask="true"
-                inputClass="w-full" :inputStyle="{ padding: '1rem' }"
-                style="width: 100%; padding: 0rem; color: rgb(0, 0, 0)"></Password>
-              <label for="password1" class="block text-l mb-2" :class="{ 'text-red-700': errors.password }">
-                {{ errors.password }}
-              </label>
-              <div class="flex align-items-center justify-content-between mb-5 gap-5">
-                <div class="flex align-items-center">
-                  <Checkbox v-model="checked" id="rememberme1" binary class="mr-2"></Checkbox>
-                  <label for="rememberme1">Remember me</label>
+                            <Button label="Sign In" class="w-full p-3 text-xl" @click="onSubmit"></Button>
+                        </form>
+                    </div>
                 </div>
-                <a class="font-medium no-underline ml-2 text-right cursor-pointer"
-                  style="color: var(--primary-color)">Forgot password?</a>
-              </div>
-
-              <Button label="Sign In" class="w-full p-3 text-xl" @click="onSubmit"></Button>
-            </form>
-          </div>
-
-
+            </div>
         </div>
-      </div>
     </div>
-  </div>
 </template>
 
 <style scoped>
 .pi-eye {
-  transform: scale(1.6);
-  margin-right: 1rem;
+    transform: scale(1.6);
+    margin-right: 1rem;
 }
 
 .pi-eye-slash {
-  transform: scale(1.6);
-  margin-right: 1rem;
+    transform: scale(1.6);
+    margin-right: 1rem;
 }
 </style>

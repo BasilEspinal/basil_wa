@@ -112,15 +112,22 @@
                     </template>
                 </Column>
 
-                <Column field="product_name" filterField="product.name" header="Product Name" sortable>
+                <!-- <Column field="product_name" filterField="product.name" header="Product Name" sortable>
                     <template #body="{ data }">
                         {{ data.product.name }}
                     </template>
                     <template #filter="{ filterModel }">
                         <InputText v-model="filterModel.value" type="text" class="p-column-filter" placeholder="Search by " />
                     </template>
+                </Column> -->
+                <Column field="product_name" filterField="product.name" header="Product Name" sortable>
+                    <template #body="{ data }">
+                    {{ data.product ? data.product.name : '' }}
+                    </template>
+                    <template #filter="{ filterModel }">
+                    <InputText v-model="filterModel.value" type="text" class="p-column-filter" placeholder="Search by product name" />
+                    </template>
                 </Column>
-
                 <Column field="product_type_name" filterField="product_type.name" header="Product Type Name" sortable>
                     <template #body="{ data }">
                         {{ data.product_type.name }}
