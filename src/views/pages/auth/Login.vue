@@ -40,7 +40,7 @@ let endpoint = ref('/appmovil/datastart');
 
 
 
-// define abilities
+// define login
 // const ability = defineAbility((can, cannot) => {
 //   can('read', 'Post');
 //   cannot('read', 'Post', { private: true });
@@ -129,7 +129,7 @@ const fetchInfoPostLogin = async (data) => {
 
   //  await postResponseAPI({ email: email.value, password: password.value }, '/login');
     // await postResponseAPI({ email: email.value, password: password.value }, '/loginnew');
-    let response = await postRequest('/loginnew', { email: email.value, password: password.value });
+    let response = await postRequest('/login', { email: email.value, password: password.value });
     response = response.data.data;
     
     
