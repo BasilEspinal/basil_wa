@@ -298,16 +298,13 @@
                 </Column>
 
                 <Column field="variant" filterField="variant" header="Variant" sortable>
-
                     <template #body="{ data }">
-                        {{ data.variant.name }}
+                        {{ data.variant && data.variant.name ? data.variant.name : 'N/A' }}
                     </template>
                     <template #filter="{ filterModel }">
-                        <InputText v-model="filterModel.value" type="text" class="p-column-filter"
-                            placeholder="Search by Column" />
+                        <InputText v-model="filterModel.value" type="text" class="p-column-filter" placeholder="Search by Column" />
                     </template>
                 </Column>
-
 
 
 
