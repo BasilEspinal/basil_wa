@@ -103,7 +103,7 @@ const readAll = async () => {
     const resptypeDate = await getRequest('/lists/workTypesDay');
     console.log('DATE ', resptypeDate);
     if (!resptypeDate.ok) toast.add({ severity: 'error', detail: 'Error' + resptypeDate.error, life: 3000 });
-    typeDateList.value = resptypeDate.data.map((comp) => ({ id: comp.id, name: comp.label }));
+    typeDateList.value = resptypeDate.data.data.map((comp) => ({ id: comp.id, name: comp.label }));
 };
 const loadingData = async () => {
     const response = await getRequest(endpoint.value);
