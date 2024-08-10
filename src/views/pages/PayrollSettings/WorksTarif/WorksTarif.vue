@@ -671,11 +671,11 @@ const readAll = async () => {
 
     const respWorkTypeDay = await getRequest('/lists/workTypesDay');
     if (!respWorkTypeDay.ok) toast.add({ severity: 'error', detail: 'Error' + respWorkTypeDay.error, life: 3000 });
-    work_type_day.value = respWorkTypeDay.data.map((workTypeDay) => ({ id: workTypeDay.id, name: workTypeDay.label }));
+    work_type_day.value = respWorkTypeDay.data.data.map((workTypeDay) => ({ id: workTypeDay.id, name: workTypeDay.label }));
 
     const respWorkTypeTarif = await getRequest('/lists/workTypeRate');
     if (!respWorkTypeTarif.ok) toast.add({ severity: 'error', detail: 'Error' + respWorkTypeTarif.error, life: 3000 });
-    work_type_tarif.value = respWorkTypeTarif.data.map((workTypeTarif) => ({ id: workTypeTarif.id, name: workTypeTarif.label }));
+    work_type_tarif.value = respWorkTypeTarif.data.data.map((workTypeTarif) => ({ id: workTypeTarif.id, name: workTypeTarif.label }));
 
     const respFarms = await getRequest('/farms');
     if (!respFarms.ok) toast.add({ severity: 'error', detail: 'Error' + respFarms.error, life: 3000 });
