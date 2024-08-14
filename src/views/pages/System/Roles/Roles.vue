@@ -9,15 +9,13 @@ import { z } from 'zod';
 import FormPermissions from './FormPermissions.vue';
 
 import useData from '@/composables/DataAPI/FetchDataAPICopy.js';
-const { getRequest, postRequest, putRequest, deleteRequest } = useData();
+const { getRequest, postRequest, deleteRequest } = useData();
 
 let endpoint = ref('/roles');
 const loading = ref(false);
-const { dataResponseAPI, getAllResponseAPI, getAllResponseListAPI, dataResponseListAPI, postResponseAPI, deleteResponseAPI, errorResponseAPI } = useDataAPI();
 const selectedRegisters = ref([]);
 const expandedRows = ref([]);
 const roles = ref([]);
-const permisos = ref([]);
 const headerDialogNew = ref('');
 const headerDialogClone = ref('');
 const headerDialogDelete = ref('');
@@ -69,14 +67,6 @@ const loadLazyData = async () => {
     if (!response.ok) toast.add({ severity: 'error', detail: 'Error' + response.error, life: 3000 });
     roles.value = response.data.data ?? [];
     loading.value = false;
-    
-    const permiss = await getRequest(`/permissions/without-roles/2`);
-    const newArray = permiss.data ?? [];
-    const listaDeObjetos = [];
-    for (const clave in newArray) {
-        listaDeObjetos.push({ id: clave, name: newArray[clave] });
-    }
-    permisos.value = listaDeObjetos;
 };
 
 const remove = (aver) => {
@@ -175,7 +165,7 @@ const deleteRoles = async () => {
                     </Column>
                 </template>
                 <template #expansion="{ data }">
-                    <FormPermissions :permiss="permisos" :data="data" @update="loadingData" />
+                    <FormPermissions :data="data" @update="loadingData" />
                 </template>
             </DataTable>
         </div>

@@ -5,11 +5,13 @@ import { useToast } from 'primevue/usetoast';
 import UserAppMovil from './UserAppMovil.vue';
 import { useI18n } from 'vue-i18n';
 import useData from '@/composables/DataAPI/FetchDataAPICopy.js';
+import { useLayout } from '@/layout/composables/layout';
 
 const { t } = useI18n();
 const toast = useToast();
 const { getRequest, postRequest, putRequest, deleteRequest } = useData();
 const { worksDay } = UseAppMovil();
+const { layoutConfig } = useLayout();
 
 const workCenterData = ref(null);
 const titulo = ref('');
@@ -33,17 +35,20 @@ onMounted(async () => {
     getHoliday();
 });
 
+const logoUrl = computed(() => {
+    return `layout/images/${layoutConfig.darkTheme.value ? 'logo-white' : 'logo-dark'}.png`;
+});
+
 const getUsers = async () => {
     const response = await getRequest(`/appmovil/employees?filter[work_center_id]=${workCenterData.value.id}`);
     if (!response.ok) toast.add({ severity: 'error', detail: 'Error' + response.error, life: 3000 });
-    users.value = response.data.data;
-    filterUsers.value = response.data.data;
+    users.value = response.data.data ?? null;
+    filterUsers.value = response.data.data ?? [];
 };
 
 const getData = async () => {
     console.log(workCenterData.value.taskoftype_id.id);
     const response = await getRequest(`/appmovil/tasksplanner?filter[tasks_of_type_id]=${workCenterData.value.taskoftype_id.id}&filter[company_id]=${CopanyId.value}&filter[farm_id]=${FarmId.value}`);
-    console.log(response);
     if (!response.ok) toast.add({ severity: 'error', detail: 'Error' + response.error, life: 3000 });
     data.value = response.data.data[0];
 };
@@ -68,7 +73,7 @@ watch(data, () => {
         getTarifa();
 
         lotes.value = data.value.crop_lots;
-        console.log(data)
+        console.log(data);
         console.log(lotes.value);
     }
 });
@@ -96,7 +101,6 @@ function searchUsers() {
         filterUsers.value = users.value;
     }
 }
-
 </script>
 
 <template>
@@ -108,7 +112,7 @@ function searchUsers() {
             <div>
                 <div class="p-inputgroup">
                     <span class="p-float-label">
-                        <InputText id="search" v-model="search"/>
+                        <InputText id="search" v-model="search" />
                         <label class="font-bold">{{ t('appmovil.users') }}</label>
                     </span>
                     <Button class="p-inputgroup-addon" @click="searchUsers" label="Search" />
@@ -124,7 +128,23 @@ function searchUsers() {
                     </div>
                 </template>
                 <ScrollPanel class="maxHeightC">
-                    <UserAppMovil :dataUsers="filterUsers" :Lote="lotes" :Taridf="Tarif" :diaFestivo="holiday"/>
+                    <div v-if="filterUsers">
+                        <UserAppMovil :dataUsers="filterUsers" :Lote="lotes" :Taridf="Tarif" :diaFestivo="holiday" />
+                    </div>
+                    <div v-else>
+                        <div class="flex flex-column align-items-center justify-content-center m-4">
+                            <div style="border-radius: 56px; padding: 0.3rem; background: linear-gradient(180deg, rgba(255, 30, 60, 0.4) 10%, rgba(33, 150, 243, 0) 40%, rgba(255, 30, 60, 0.4) 80%)">
+                                <div class="w-full surface-card py-5 px-5 sm:px-8 flex flex-column align-items-center" style="border-radius: 53px">
+                                    <div class="grid flex flex-column align-items-center">
+                                        <img :src="logoUrl" alt="logo" class="mb-2 w-4rem flex-shrink-0" />
+                                        <h1 class="text-900 font-bold text-3xl mb-1">{{ t('appmovil.usersAvailable') }}</h1>
+                                        <img src="/demo/images/error/asset-error.svg" alt="Error" class="mb-4" width="50%" />
+                                        <span class="text-700 mb-4">Requested resource is not available.</span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
                 </ScrollPanel>
             </TabPanel>
             <TabPanel>
