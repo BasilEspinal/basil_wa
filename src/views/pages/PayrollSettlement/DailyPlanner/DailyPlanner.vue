@@ -156,6 +156,17 @@
                 </Column>
 
 
+                <Column field="vehicle" filterField="vehicle.name" header="Vehicle Name" sortable>
+                    <template #body="{ data }">
+                        {{ data.vehicle ? data.vehicle.name : 'N/A' }}
+                    </template>
+                    <template #filter="{ filterModel }">
+                        <InputText v-model="filterModel.value" type="text" class="p-column-filter" placeholder="Search by Vehicle" />
+                    </template>
+                </Column>
+
+
+
                 <Column field="customer_request.dispatch_number_lot" filterField="customer_request.dispatch_number_lot" header="Customer Request DNL" sortable>
                     <template #body="{ data }">
                         {{ data.customer_request.dispatch_number_lot }}

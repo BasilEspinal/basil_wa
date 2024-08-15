@@ -194,6 +194,7 @@
                     <small id="start_dateV" :class="{ 'p-invalid text-red-700': errorsNew['transaction_dateV'] }">
                         {{ errorsNew.start_dateV }}
                     </small>
+                    <BackendErrors :name="errorResponseAPI?.errors?.start_date" />
                 </div>
 
                 <div class="mb-3">
@@ -207,9 +208,10 @@
                     <small id="username-help" :class="{ 'p-invalid text-red-700': errorsNew['transaction_dateV'] }">
                         {{ errorsNew.end_dateV }}
                     </small>
+                    <BackendErrors :name="errorResponseAPI?.errors?.end_date" />
                 </div>
 
-                <div class="mb-3">
+                <!-- <div class="mb-3">
                     <div class=" flex align-items-center">
                         <label for="periodNumberV" class="font-semibold w-3">Period Number:</label>
                         <InputNumber v-model="periodNumberV" inputId="minmax" :min="0" :max="100" />
@@ -219,6 +221,21 @@
                     <small id="username-help" :class="{ 'p-invalid text-red-700': errorsNew['transaction_dateV'] }">
                         {{ errorsNew.periodNumberV }}
                     </small>
+                    <BackendErrors :name="errorResponseAPI?.errors?.period_num" />
+                </div> -->
+
+                
+
+                <div class="mb-3">
+                    <div class=" flex align-items-center">
+                        <label for="username" class="font-semibold w-6rem">Period Number type day: </label>
+                    <AutoComplete v-model="periodNumberV" dropdown :suggestions="periodNumber" field="name"  @complete="searchPeriodNumber" placeholder="" />
+                    </div>
+                    <small id="username-help" :class="{ 'p-invalid text-red-700': errorsNew['periodNumberV'] }">
+                        {{ errorsNew.periodNumberV }}
+                    </small>
+                    <BackendErrors :name="errorResponseAPI?.errors?.period_num" />
+                    
                 </div>
 
                 
@@ -231,15 +248,17 @@
                     <small id="username-help" :class="{ 'p-invalid text-red-700': errorsNew['farm'] }">
                         {{ errorsNew.farm }}
                     </small>
+                    <BackendErrors :name="errorResponseAPI?.errors?.farm" />
                 </div>
                 <div class="mb-3">
                     <div class="flex align-items-center">
-                        <label for="username" class="font-semibold w-3">Companny:</label>
+                        <label for="username" class="font-semibold w-3">Company:</label>
                         <AutoComplete v-model="company" inputId="ac" :suggestions="compa" @complete="searchCompannies" field="name" dropdown />
                     </div>
                     <small id="username-help" :class="{ 'p-invalid text-red-700': errorsNew['company'] }">
                         {{ errorsNew.company }}
                     </small>
+                    <BackendErrors :name="errorResponseAPI?.errors?.company" />
                 </div>
 
                 <div class="flex justify-content-end gap-2">
@@ -366,7 +385,7 @@
                 </div>
                 <div class="mb-3">
                     <div class="flex align-items-center">
-                        <label for="username" class="font-semibold w-3">Companny:</label>
+                        <label for="username" class="font-semibold w-3">Company:</label>
                         <AutoComplete v-model="company" inputId="ac" :suggestions="compa" @complete="searchCompannies" field="name" dropdown />
                     </div>
                     <small id="username-help" :class="{ 'p-invalid text-red-700': errorsNew['company'] }">
@@ -440,7 +459,7 @@ import useDataAPI from '@/composables/DataAPI/FetchDataAPI.js';
 import { useToast } from 'primevue/usetoast';
 import { FilterMatchMode, FilterOperator } from 'primevue/api';
 import useData from '@/composables/DataAPI/FetchDataAPICopy.js';
-const { getRequest, postRequest, putRequest, deleteRequest } = useData();
+const { getRequest, postRequest, putRequest, deleteRequest,errorResponseAPI } = useData();
 import { useRouter } from 'vue-router';
 import { useForm } from 'vee-validate';
 import { toTypedSchema } from '@vee-validate/zod';
@@ -449,6 +468,8 @@ import { saveAs } from 'file-saver';
 import { z } from 'zod';
 import ability from '@/service/ability.js';
 import { AbilityBuilder} from '@casl/ability';
+import periodNumberValues from '@/composables/PayrollSettings/PaymentPeriods/periodNumbers.json';
+import BackendErrors from '@/views/Errors/BackendErrors.vue';
 const prueba = ref({revisar: 'revisar GET-POST-PUT-DELETE'});
 const namePage = ' Payment Periods ';
 const titlePage = ' '+namePage+' information';
@@ -459,6 +480,9 @@ const Compan = ref([]);
 const compa = ref([]);
 const farmDefault = sessionStorage.getItem('accessSessionFarm');
 const companyDefault = sessionStorage.getItem('accessSessionCompany');
+
+const PeriodNumber = ref([]);
+const periodNumber = ref(periodNumberValues);
 
 const formDialogNewTitle = 'Create new '+namePage;
 const formDialogEditTitle = 'Edit '+namePage;
@@ -537,6 +561,14 @@ const readAll = async () => {
     const respCompan = await getRequest('/companies');
     if (!respCompan.ok) toast.add({ severity: 'error', detail: 'Error' + respCompan.error, life: 3000 });
     Compan.value = respCompan.data.data.map((comp) => ({ id: comp.uuid, name: comp.name }));
+    console.log(Compan.value)
+        
+    const respPeriodNumbers = periodNumber.value; // Asignar el JSON importado
+
+    PeriodNumber.value = respPeriodNumbers.data.map((period) => ({ id: period.id, name: period.name }));
+
+    console.log(PeriodNumber.value);
+
 };
 const loadingData = async () => {
     const response = await getRequest(endpoint.value);
@@ -560,14 +592,27 @@ const {
     errors: errorsNew,
     defineField,
     resetForm
-} = useForm({
+} = useForm({initialValues:{
+    // name: '',
+    // codeV: '',
+    start_dateV: new Date(),
+    end_dateV: new Date(),
+    periodNumberV: '',
+    farm: '',
+    company: ''
+},
     validationSchema: toTypedSchema(
         z.object({
             // name: z.string().min(4),
             // codeV: z.string().min(4),
             start_dateV:z.date(),
             end_dateV:z.date(),
-            periodNumberV:z.number().min(0).max(31),
+            // periodNumberV:z.number().min(0).max(31),
+            periodNumberV: z
+                .object({
+                name: z.string().min(4),
+                id: z.number()
+            }),
             farm: z
                 .object({
                     name: z.string().min(4),
@@ -666,11 +711,11 @@ const createRecord = handleSubmitNew(async (values) => {
     const data = {
         start_date: start_dateFormatted,
         end_date: end_dateFormatted,
-        period_num: values.periodNumberV,
-        //company_uuid: values.company ? values.company.id : companyDefault,
+        period_num: values.periodNumberV.id,
+        company_uuid: values.company ? values.company.id : companyDefault,
         farm_uuid: values.farm ? values.farm.id : farmDefault
     };
-    
+    console.log(data);
     const restp = await postRequest(endpoint.value, data);
 
     toast.add({ severity: restp.ok ? 'success' : 'error', summary: 'Create', detail: restp.ok ? 'Creado' : restp.error, life: 3000 });
@@ -680,8 +725,6 @@ const createRecord = handleSubmitNew(async (values) => {
     
 
 });
-
-
 
 const EditRecord = handleSubmitNew(async (values) => {
     const { uuid } = listRowSelect.value[0];
@@ -728,13 +771,18 @@ const searchCompannies = (event) => {
     }, 200);
 };
 
-const ExportRecord = () => {
-    const eventos = exportAll.value.name == 'ALL' ? dataFromComponent.value.map((data) => data) : listRowSelect.value.map((data) => data);
-    formDialogExport.value = false;
-    if (!eventos.length) return;
-    if (format.value.name == 'CSV') formatCSV(eventos);
-    else formatXLS(eventos);
+const searchPeriodNumber = (event) => {
+    setTimeout(() => {
+        if (!event.query.trim().length) {
+            periodNumber.value = [...PeriodNumber.value];
+        } else {
+            periodNumber.value = PeriodNumber.value.filter((fram) => {
+                return fram.name.toLowerCase().startsWith(event.query.toLowerCase());
+            });
+        }
+    }, 200);
 };
+
 
 const searchFarms = (event) => {
     setTimeout(() => {
@@ -749,7 +797,13 @@ const searchFarms = (event) => {
 };
 
 
-
+const ExportRecord = () => {
+    const eventos = exportAll.value.name == 'ALL' ? dataFromComponent.value.map((data) => data) : listRowSelect.value.map((data) => data);
+    formDialogExport.value = false;
+    if (!eventos.length) return;
+    if (format.value.name == 'CSV') formatCSV(eventos);
+    else formatXLS(eventos);
+};
 function formatCSV(eventos) {
     const dataExport = [];
     dataExport.push(',' + Object.keys(eventos[0]) + '\n');
