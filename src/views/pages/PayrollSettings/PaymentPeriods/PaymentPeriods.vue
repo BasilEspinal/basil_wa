@@ -279,6 +279,7 @@
                     <small id="start_dateV" :class="{ 'p-invalid text-red-700': errorsNew['transaction_dateV'] }">
                         {{ errorsNew.start_dateV }}
                     </small>
+                    <BackendErrors :name="errorResponseAPI?.errors?.start_date" />
                 </div>
 
                 <div class="mb-3">
@@ -292,18 +293,19 @@
                     <small id="username-help" :class="{ 'p-invalid text-red-700': errorsNew['transaction_dateV'] }">
                         {{ errorsNew.end_dateV }}
                     </small>
+                    <BackendErrors :name="errorResponseAPI?.errors?.end_date" />
                 </div>
 
                 <div class="mb-3">
                     <div class=" flex align-items-center">
-                        <label for="periodNumberV" class="font-semibold w-3">Period Number:</label>
-                        <InputNumber v-model="periodNumberV" inputId="minmax" :min="0" :max="100" />
+                        <label for="username" class="font-semibold w-6rem">Period Number type day: </label>
+                    <AutoComplete v-model="periodNumberV" dropdown :suggestions="periodNumber" field="name"  @complete="searchPeriodNumber" placeholder="" />
                     </div>
-                    
-                    
-                    <small id="username-help" :class="{ 'p-invalid text-red-700': errorsNew['transaction_dateV'] }">
+                    <small id="username-help" :class="{ 'p-invalid text-red-700': errorsNew['periodNumberV'] }">
                         {{ errorsNew.periodNumberV }}
                     </small>
+                    <BackendErrors :name="errorResponseAPI?.errors?.period_num" />
+                    
                 </div>
 
                 
@@ -316,6 +318,7 @@
                     <small id="username-help" :class="{ 'p-invalid text-red-700': errorsNew['farm'] }">
                         {{ errorsNew.farm }}
                     </small>
+                    <BackendErrors :name="errorResponseAPI?.errors?.farm" />
                 </div>
                 <div class="mb-3">
                     <div class="flex align-items-center">
@@ -325,6 +328,7 @@
                     <small id="username-help" :class="{ 'p-invalid text-red-700': errorsNew['company'] }">
                         {{ errorsNew.company }}
                     </small>
+                    <BackendErrors :name="errorResponseAPI?.errors?.company" />
                 </div>
 
                 <div class="flex justify-content-end gap-2">
@@ -345,6 +349,7 @@
                     <small id="start_dateV" :class="{ 'p-invalid text-red-700': errorsNew['transaction_dateV'] }">
                         {{ errorsNew.start_dateV }}
                     </small>
+                    <BackendErrors :name="errorResponseAPI?.errors?.start_date" />
                 </div>
 
                 <div class="mb-3">
@@ -358,18 +363,20 @@
                     <small id="username-help" :class="{ 'p-invalid text-red-700': errorsNew['transaction_dateV'] }">
                         {{ errorsNew.end_dateV }}
                     </small>
+                    <BackendErrors :name="errorResponseAPI?.errors?.end_date" />
                 </div>
+
 
                 <div class="mb-3">
                     <div class=" flex align-items-center">
-                        <label for="periodNumberV" class="font-semibold w-3">Period Number:</label>
-                        <InputNumber v-model="periodNumberV" class="flex-auto" inputId="minmax" :min="0" :max="100" />
+                        <label for="username" class="font-semibold w-6rem">Period Number type day: </label>
+                    <AutoComplete v-model="periodNumberV" dropdown :suggestions="periodNumber" field="name"  @complete="searchPeriodNumber" placeholder="" />
                     </div>
-                    
-                    
-                    <small id="username-help" :class="{ 'p-invalid text-red-700': errorsNew['transaction_dateV'] }">
+                    <small id="username-help" :class="{ 'p-invalid text-red-700': errorsNew['periodNumberV'] }">
                         {{ errorsNew.periodNumberV }}
                     </small>
+                    <BackendErrors :name="errorResponseAPI?.errors?.period_num" />
+                    
                 </div>
 
                 
@@ -382,6 +389,7 @@
                     <small id="username-help" :class="{ 'p-invalid text-red-700': errorsNew['farm'] }">
                         {{ errorsNew.farm }}
                     </small>
+                    <BackendErrors :name="errorResponseAPI?.errors?.farm" />
                 </div>
                 <div class="mb-3">
                     <div class="flex align-items-center">
@@ -391,6 +399,7 @@
                     <small id="username-help" :class="{ 'p-invalid text-red-700': errorsNew['company'] }">
                         {{ errorsNew.company }}
                     </small>
+                    <BackendErrors :name="errorResponseAPI?.errors?.company" />
                 </div>
 
 
@@ -669,12 +678,12 @@ const openNew = () => {
 const openEdit = () => {
     resetForm();
     const { period_num:periodNum, company: empresa, farm: farmParameter, start_date:startDate, end_date:endDate } = listRowSelect.value[0];
-
+console.log(periodNumber.value)
     // start_dateV.value = new Date(start_date);
 
     start_dateV.value = new Date(startDate);
     end_dateV.value = new Date(endDate);
-    periodNumberV.value = periodNum;
+    periodNumberV.value = { id: periodNum, name: periodNumber.value.data.find(p => p.id === periodNum).name };
     company.value = { id: empresa.uuid, name: empresa.name };
     farm.value = { id: farmParameter.uuid, name: farmParameter.name };
 
@@ -688,7 +697,7 @@ const openClone = () => {
 
     start_dateV.value = new Date(startDate);
     end_dateV.value = new Date(endDate);
-    periodNumberV.value = periodNum;
+    periodNumberV.value = { id: periodNum, name: periodNumber.value.data.find(p => p.id === periodNum).name };
     company.value = { id: empresa.uuid, name: empresa.name };
     farm.value = { id: farmParameter.uuid, name: farmParameter.name };
     formDialogClone.value = true;
@@ -728,10 +737,13 @@ const createRecord = handleSubmitNew(async (values) => {
 
 const EditRecord = handleSubmitNew(async (values) => {
     const { uuid } = listRowSelect.value[0];
+    const start_dateFormatted  = formatTransactionDate(start_dateV.value);
+    const end_dateFormatted  = formatTransactionDate(end_dateV.value);
     const data = {
-        code: values.codeV,
-        name: values.name,
-        //company_uuid: values.company ? values.company.id : companyDefault,
+        start_date: start_dateFormatted,
+        end_date: end_dateFormatted,
+        period_num: values.periodNumberV.id,
+        company_uuid: values.company ? values.company.id : companyDefault,
         farm_uuid: values.farm ? values.farm.id : farmDefault
     };
     
@@ -745,9 +757,12 @@ const EditRecord = handleSubmitNew(async (values) => {
 });
 
 const CloneRecord = handleSubmitNew(async (values) => {
+    const start_dateFormatted  = formatTransactionDate(start_dateV.value);
+    const end_dateFormatted  = formatTransactionDate(end_dateV.value);
     const data = {
-        code: values.codeV,
-        name: values.name,
+        start_date: start_dateFormatted,
+        end_date: end_dateFormatted,
+        period_num: values.periodNumberV.id,
         company_uuid: values.company ? values.company.id : companyDefault,
         farm_uuid: values.farm ? values.farm.id : farmDefault
     };

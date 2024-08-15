@@ -11,12 +11,12 @@ const props = defineProps({
 const toast = useToast();
 
 onMounted(() => {
-  if (!props.name || props.name.length === 0) {
-    // Mostrar toast si name no está definido o está vacío
-    toast.add({ severity: 'warn', summary: 'Advertencia', detail: 'El nombre no está definido o está vacío', life: 3000 });
-  } else {
-    console.log('Component mounted');
-  }
+  // if (!props.name || props.name.length === 0) {
+  //   // Mostrar toast si name no está definido o está vacío
+  //   toast.add({ severity: 'warn', summary: 'Advertencia', detail: 'El nombre no está definido o está vacío', life: 3000 });
+  // } else {
+  //   console.log('Component mounted');
+  // }
 });
 
 onMounted(() => {
