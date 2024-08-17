@@ -20,17 +20,17 @@ const props = defineProps({
 });
 
 onMounted(async () => {
-    farm.value = props.data.farm.name;
-
+    
     const respRoles = await getRequest('/roles');
     if (!respRoles.ok) toast.add({ severity: 'error', detail: 'Error' + respRoles.error, life: 3000 });
     const rolsList = respRoles.data.data.map((role) => ({ id: role.id, name: role.name })) ?? [];
     
     picklistValue.value = [rolsList, props.data.roles];
-
+    
     const respFarms = await getRequest('/farms');
     if (!respFarms.ok) toast.add({ severity: 'error', detail: 'Error' + respFarms.error, life: 3000 });
     Farms.value = respFarms.data.data.map((farm) => ({ id: farm.uuid, name: farm.name }));
+    [farm.value] = respFarms.data.data.filter((farm) => farm.name === props.data.farm.name).map((farm) => ({ id: farm.uuid, name: farm.name}));
 
     const respEmployes = await getRequest('/employees');
     if (!respEmployes.ok) toast.add({ severity: 'error', detail: 'Error' + respEmployes.error, life: 3000 });

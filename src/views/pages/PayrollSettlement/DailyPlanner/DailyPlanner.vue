@@ -15,9 +15,25 @@
                             <template #center>
                                 <Button v-if="ability.can('planeacion_diaria_crear')" :disabled="headerNames.length > 0" label="New" icon="pi pi-plus" class="p-button-success mb-2 mt-2" @click="openNew" size="large" />
                                 <Divider v-if="ability.can('planeacion_diaria_crear')" layout="vertical" />
-                                <Button v-if="ability.can('planeacion_diaria_editar')" :disabled="!(listRowSelect.length > 0 && listRowSelect.length < 2)" label="Edit" icon="pi pi-file-edit" class="p-button-help mb-2 mt-2" @click="openEdit" size="large" />
+                                <Button
+                                    v-if="ability.can('planeacion_diaria_editar')"
+                                    :disabled="!(listRowSelect.length > 0 && listRowSelect.length < 2)"
+                                    label="Edit"
+                                    icon="pi pi-file-edit"
+                                    class="p-button-help mb-2 mt-2"
+                                    @click="openEdit"
+                                    size="large"
+                                />
                                 <Divider v-if="ability.can('planeacion_diaria_editar')" layout="vertical" />
-                                <Button v-if="ability.can('planeacion_diaria_crear')" :disabled="!(listRowSelect.length > 0 && listRowSelect.length < 2)" label="Clone" icon="pi pi-copy" class="p-button-secondary mb-2 mt-2" @click="openClone" size="large" />
+                                <Button
+                                    v-if="ability.can('planeacion_diaria_crear')"
+                                    :disabled="!(listRowSelect.length > 0 && listRowSelect.length < 2)"
+                                    label="Clone"
+                                    icon="pi pi-copy"
+                                    class="p-button-secondary mb-2 mt-2"
+                                    @click="openClone"
+                                    size="large"
+                                />
                                 <Divider v-if="ability.can('planeacion_diaria_crear')" layout="vertical" />
                                 <Button v-if="ability.can('planeacion_diaria_editar')" :disabled="headerNames.length > 0" label="Export" icon="pi pi-file-import" class="p-button-warning mb-2 mt-2" @click="openExport" size="large" />
                                 <Divider v-if="ability.can('planeacion_diaria_editar')" layout="vertical" />
@@ -27,11 +43,11 @@
                     </div>
                 </div>
             </div>
-        
-        <!-- <pre>{{crop_lots_codeV}}</pre>
+
+            <!-- <pre>{{crop_lots_codeV}}</pre>
         <pre>{{ otherTestValue }}</pre>
              -->
-            
+
             <DataTable
                 :value="dataFromComponent"
                 dataKey="uuid"
@@ -53,7 +69,21 @@
                 v-model:selection="selectedRegisters"
                 filterDisplay="menu"
                 v-model:filters="filters"
-                :globalFilterFields="['name', 'company.name', 'farm.name', 'status.name', 'created_at', 'updated_at', 'transaction_date', 'tasks_of_type.name', 'crop_lots.code', 'product.name', 'product_type.name', 'packing_type.name', 'variant.name']"
+                :globalFilterFields="[
+                    'name',
+                    'company.name',
+                    'farm.name',
+                    'status.name',
+                    'created_at',
+                    'updated_at',
+                    'transaction_date',
+                    'tasks_of_type.name',
+                    'crop_lots.code',
+                    'product.name',
+                    'product_type.name',
+                    'packing_type.name',
+                    'variant.name'
+                ]"
                 v-if="ability.can('planeacion_diaria_listado')"
             >
                 <template #header>
@@ -61,20 +91,24 @@
 
                     <Toolbar class="mb-2">
                         <template v-slot:start>
-                            <Button type="button" icon="pi pi-filter-slash" label="Limpiar" class="p-button-outlined mb-2" @click="clearFilter()" />
+                            <Button type="button" icon="pi pi-filter-slash" label="Limpiar" class="p-button-outlined" @click="clearFilter()" />
                         </template>
                         <template v-slot:end>
-                            <span class="p-input-icon-left mb-2">
+                            <span class="p-input-icon-left mr-2">
+                                <i class="pi pi-search" />
+                                <Dropdown v-model="filters['tasks_of_type.name'].constraints[0].value" :options="Tasks_of_type_filter" placeholder="Tasks of Type" class="w-full md:w-14rem" />
+                            </span>
+                            <span class="p-input-icon-left">
                                 <i class="pi pi-search" />
                                 <InputText v-model="filters['global'].value" placeholder="Buscar" style="width: 100%" />
                             </span>
                         </template>
                         <template v-slot:center>
-                            <SelectButton v-model="size" :options="sizeOptions" optionLabel="label" dataKey="label"> </SelectButton>
+                            <SelectButton v-model="size" :options="sizeOptions" optionLabel="label" dataKey="label"/> 
                         </template>
                     </Toolbar>
                 </template>
-                
+
                 <template #empty> No customers found. </template>
                 <template #loading> Loading customers data. Please wait. </template>
                 <Column selectionMode="multiple" headerStyle="width: 3rem"></Column>
@@ -122,10 +156,10 @@
                 </Column> -->
                 <Column field="product_name" filterField="product.name" header="Product Name" sortable>
                     <template #body="{ data }">
-                    {{ data.product ? data.product.name : '' }}
+                        {{ data.product ? data.product.name : '' }}
                     </template>
                     <template #filter="{ filterModel }">
-                    <InputText v-model="filterModel.value" type="text" class="p-column-filter" placeholder="Search by product name" />
+                        <InputText v-model="filterModel.value" type="text" class="p-column-filter" placeholder="Search by product name" />
                     </template>
                 </Column>
                 <Column field="product_type_name" filterField="product_type.name" header="Product Type Name" sortable>
@@ -224,20 +258,19 @@
                 </Column>
             </DataTable>
             <Dialog v-model:visible="formDialogNew" modal :header="formDialogNewTitle" class="p-fluid text-center mx-auto">
-                
-                <pre>{{companyDefault}}</pre>
+                <pre>{{ companyDefault }}</pre>
                 <div class="mb-3">
                     <div class="flex align-items-center">
                         <label for="username" class="font-semibold w-3">Transaction Date :</label>
                         <!-- <Calendar v-model="transaction_dateV" class="flex-auto" v-bind="transaction_dateVProps"/> -->
-                        <Calendar dateFormat="dd/mm/yy" v-model="transaction_dateV" class="flex-auto" showIcon :showOnFocus="false" inputId="buttondisplay" placeholder="Select transaction date"  />
+                        <Calendar dateFormat="dd/mm/yy" v-model="transaction_dateV" class="flex-auto" showIcon :showOnFocus="false" inputId="buttondisplay" placeholder="Select transaction date" />
                     </div>
 
                     <small id="username-help" :class="{ 'p-invalid text-red-700': errorsNew['transaction_dateV'] }">
                         {{ errorsNew.transaction_dateV }}
                     </small>
 
-                <!-- <small id="username-help" :class="{ 'p-invalid text-red-500': errorResponseAPI?.errors?.transaction_date }">
+                    <!-- <small id="username-help" :class="{ 'p-invalid text-red-500': errorResponseAPI?.errors?.transaction_date }">
                     <div v-if="errorResponseAPI?.errors?.transaction_date">
                         <div v-for="(error, index) in errorResponseAPI.errors.transaction_date" :key="index">
                             {{ error }}
@@ -245,47 +278,37 @@
                     </div>
                 </small> -->
 
-                <BackendErrors :name="errorResponseAPI?.errors?.transaction_date" />
-
+                    <BackendErrors :name="errorResponseAPI?.errors?.transaction_date" />
                 </div>
 
                 <div class="mb-3">
                     <div class="flex align-items-center">
                         <label for="username" class="font-semibold w-3">Task of Type :</label>
-                        <AutoComplete v-model="task_of_typeV" inputId="ac" class="flex-auto" :suggestions="tasks_of_type" @complete="searchTaskOfType" field="name" dropdown placeholder="Select Task of Type"  />
+                        <AutoComplete v-model="task_of_typeV" inputId="ac" class="flex-auto" :suggestions="tasks_of_type" @complete="searchTaskOfType" field="name" dropdown placeholder="Select Task of Type" />
                     </div>
                     <small id="username-help" :class="{ 'p-invalid text-red-700': errorsNew['tasks_of_typeV'] }">
                         {{ errorsNew.task_of_typeV }}
                     </small>
 
                     <small id="username-help" :class="{ 'p-invalid text-red-500': errorResponseAPI?.errors?.tasks_of_type_uuid }">
-                    <div v-if="errorResponseAPI?.errors?.tasks_of_type_uuid">
-                        <div v-for="(error, index) in errorResponseAPI.errors.tasks_of_type_uuid" :key="index">
-                            {{ error }}
+                        <div v-if="errorResponseAPI?.errors?.tasks_of_type_uuid">
+                            <div v-for="(error, index) in errorResponseAPI.errors.tasks_of_type_uuid" :key="index">
+                                {{ error }}
+                            </div>
                         </div>
-                    </div>
-                </small>
+                    </small>
                 </div>
 
                 <div class="mb-3">
-                    
                     <div class="flex align-items-center">
                         <label for="username" class="font-semibold w-3">Crop Lots Code :</label>
-                        <MultiSelect 
-                        v-model="crop_lots_codeV" 
-                        display="chip" 
-                        :options="CropLots" 
-                        optionLabel="code" 
-                        placeholder="Select Crop Lots" 
-                        :maxSelectedLabels="100" 
-                        class="flex-auto">
-        
-                        <template #footer>
-                            <div class="py-2 px-4">
-                                <b>{{ crop_lots_codeV ? crop_lots_codeV.length : 0 }}</b> item{{ (crop_lots_codeV ? crop_lots_codeV.length : 0) > 1 ? 's' : '' }} selected.
-                            </div>
-                        </template>
-                    </MultiSelect>
+                        <MultiSelect v-model="crop_lots_codeV" display="chip" :options="CropLots" optionLabel="code" placeholder="Select Crop Lots" :maxSelectedLabels="100" class="flex-auto">
+                            <template #footer>
+                                <div class="py-2 px-4">
+                                    <b>{{ crop_lots_codeV ? crop_lots_codeV.length : 0 }}</b> item{{ (crop_lots_codeV ? crop_lots_codeV.length : 0) > 1 ? 's' : '' }} selected.
+                                </div>
+                            </template>
+                        </MultiSelect>
                         <!-- <AutoComplete v-model="crop_lots_codeV" class="flex-auto" inputId="ac" :suggestions="crop_lots" @complete="searchCropLots" field="code" dropdown /> -->
                     </div>
                     <small id="username-help" :class="{ 'p-invalid text-red-700': errorsNew['crop_lots_codeV'] }">
@@ -293,13 +316,12 @@
                     </small>
 
                     <small id="username-help" :class="{ 'p-invalid text-red-500': errorResponseAPI?.errors?.crop_lots }">
-                    <div v-if="errorResponseAPI?.errors?.crop_lots">
-                        <div v-for="(error, index) in errorResponseAPI.errors.crop_lots" :key="index">
-                            {{ error }}
+                        <div v-if="errorResponseAPI?.errors?.crop_lots">
+                            <div v-for="(error, index) in errorResponseAPI.errors.crop_lots" :key="index">
+                                {{ error }}
+                            </div>
                         </div>
-                    </div>
-                </small>
-
+                    </small>
                 </div>
 
                 <div class="mb-3">
@@ -311,12 +333,12 @@
                         {{ errorsNew.productV }}
                     </small>
                     <small id="username-help" :class="{ 'p-invalid text-red-500': errorResponseAPI?.errors?.product_uuid }">
-                    <div v-if="errorResponseAPI?.errors?.product_uuid">
-                        <div v-for="(error, index) in errorResponseAPI.errors.product_uuid" :key="index">
-                            {{ error }}
+                        <div v-if="errorResponseAPI?.errors?.product_uuid">
+                            <div v-for="(error, index) in errorResponseAPI.errors.product_uuid" :key="index">
+                                {{ error }}
+                            </div>
                         </div>
-                    </div>
-                </small>
+                    </small>
                 </div>
 
                 <div class="mb-3">
@@ -328,13 +350,12 @@
                         {{ errorsNew.product_typeV }}
                     </small>
                     <small id="username-help" :class="{ 'p-invalid text-red-500': errorResponseAPI?.errors?.product_type_uuid }">
-                    <div v-if="errorResponseAPI?.errors?.product_type_uuid">
-                        <div v-for="(error, index) in errorResponseAPI.errors.product_type_uuid" :key="index">
-                            {{ error }}
+                        <div v-if="errorResponseAPI?.errors?.product_type_uuid">
+                            <div v-for="(error, index) in errorResponseAPI.errors.product_type_uuid" :key="index">
+                                {{ error }}
+                            </div>
                         </div>
-                    </div>
-                </small>
-
+                    </small>
                 </div>
 
                 <div class="mb-3">
@@ -346,12 +367,12 @@
                         {{ errorsNew.packing_typeV }}
                     </small>
                     <small id="username-help" :class="{ 'p-invalid text-red-500': errorResponseAPI?.errors?.packing_type_uuid }">
-                    <div v-if="errorResponseAPI?.errors?.packing_type_uuid">
-                        <div v-for="(error, index) in errorResponseAPI.errors.packing_type_uuid" :key="index">
-                            {{ error }}
+                        <div v-if="errorResponseAPI?.errors?.packing_type_uuid">
+                            <div v-for="(error, index) in errorResponseAPI.errors.packing_type_uuid" :key="index">
+                                {{ error }}
+                            </div>
                         </div>
-                    </div>
-                </small>
+                    </small>
                 </div>
 
                 <div class="mb-3">
@@ -364,13 +385,12 @@
                     </small>
 
                     <small id="username-help" :class="{ 'p-invalid text-red-500': errorResponseAPI?.errors?.variant_uuid }">
-                    <div v-if="errorResponseAPI?.errors?.variant_uuid">
-                        <div v-for="(error, index) in errorResponseAPI.errors.variant_uuid" :key="index">
-                            {{ error }}
+                        <div v-if="errorResponseAPI?.errors?.variant_uuid">
+                            <div v-for="(error, index) in errorResponseAPI.errors.variant_uuid" :key="index">
+                                {{ error }}
+                            </div>
                         </div>
-                    </div>
-                </small>
-
+                    </small>
                 </div>
 
                 <div class="mb-3">
@@ -382,12 +402,12 @@
                         {{ errorsNew.customer_requestV }}
                     </small>
                     <small id="username-help" :class="{ 'p-invalid text-red-500': errorResponseAPI?.errors?.customer_request_uuid }">
-                    <div v-if="errorResponseAPI?.errors?.customer_request_uuid">
-                        <div v-for="(error, index) in errorResponseAPI.errors.customer_request_uuid" :key="index">
-                            {{ error }}
+                        <div v-if="errorResponseAPI?.errors?.customer_request_uuid">
+                            <div v-for="(error, index) in errorResponseAPI.errors.customer_request_uuid" :key="index">
+                                {{ error }}
+                            </div>
                         </div>
-                    </div>
-                </small>
+                    </small>
                 </div>
 
                 <div class="mb-3">
@@ -399,13 +419,12 @@
                         {{ errorsNew.farm }}
                     </small>
                     <small id="username-help" :class="{ 'p-invalid text-red-500': errorResponseAPI?.errors?.farm_uuid }">
-                    <div v-if="errorResponseAPI?.errors?.farm_uuid">
-                        <div v-for="(error, index) in errorResponseAPI.errors.farm_uuid" :key="index">
-                            {{ error }}
+                        <div v-if="errorResponseAPI?.errors?.farm_uuid">
+                            <div v-for="(error, index) in errorResponseAPI.errors.farm_uuid" :key="index">
+                                {{ error }}
+                            </div>
                         </div>
-                    </div>
-                </small>
-                    
+                    </small>
                 </div>
                 <div class="mb-3">
                     <div class="flex align-items-center">
@@ -417,12 +436,12 @@
                     </small>
 
                     <small id="username-help" :class="{ 'p-invalid text-red-500': errorResponseAPI?.errors?.company_uuid }">
-                    <div v-if="errorResponseAPI?.errors?.company_uuid">
-                        <div v-for="(error, index) in errorResponseAPI.errors.company_uuid" :key="index">
-                            {{ error }}
+                        <div v-if="errorResponseAPI?.errors?.company_uuid">
+                            <div v-for="(error, index) in errorResponseAPI.errors.company_uuid" :key="index">
+                                {{ error }}
+                            </div>
                         </div>
-                    </div>
-                </small>
+                    </small>
                 </div>
 
                 <div class="flex justify-content-end gap-2">
@@ -432,19 +451,11 @@
             </Dialog>
 
             <Dialog v-model:visible="formDialogEdit" modal :header="formDialogEditTitle" class="p-fluid text-center mx-auto">
-                
-
-
                 <div class="mb-3">
-
-                
-
-                
-                
                     <div class="flex align-items-center">
                         <label for="username" class="font-semibold w-3">Transaction Date :</label>
                         <!-- <Calendar v-model="transaction_dateV" class="flex-auto" v-bind="transaction_dateVProps"/> -->
-                        <Calendar dateFormat="dd/mm/yy" v-model="transaction_dateV" class="flex-auto" showIcon :showOnFocus="false" inputId="buttondisplay" placeholder="Select transaction date"  />
+                        <Calendar dateFormat="dd/mm/yy" v-model="transaction_dateV" class="flex-auto" showIcon :showOnFocus="false" inputId="buttondisplay" placeholder="Select transaction date" />
                     </div>
 
                     <small id="username-help" :class="{ 'p-invalid text-red-700': errorsNew['transaction_dateV'] }">
@@ -452,52 +463,42 @@
                     </small>
 
                     <small id="username-help" :class="{ 'p-invalid text-red-500': errorResponseAPI?.errors?.transaction_date }">
-                    <div v-if="errorResponseAPI?.errors?.transaction_date">
-                        <div v-for="(error, index) in errorResponseAPI.errors.transaction_date" :key="index">
-                            {{ error }}
+                        <div v-if="errorResponseAPI?.errors?.transaction_date">
+                            <div v-for="(error, index) in errorResponseAPI.errors.transaction_date" :key="index">
+                                {{ error }}
+                            </div>
                         </div>
-                    </div>
-                </small>
+                    </small>
                 </div>
 
                 <div class="mb-3">
                     <div class="flex align-items-center">
                         <label for="username" class="font-semibold w-3">Task of Type :</label>
-                        <AutoComplete v-model="task_of_typeV" inputId="ac" class="flex-auto" :suggestions="tasks_of_type" @complete="searchTaskOfType" field="name" dropdown placeholder="Select Task of Type"  />
+                        <AutoComplete v-model="task_of_typeV" inputId="ac" class="flex-auto" :suggestions="tasks_of_type" @complete="searchTaskOfType" field="name" dropdown placeholder="Select Task of Type" />
                     </div>
                     <small id="username-help" :class="{ 'p-invalid text-red-700': errorsNew['tasks_of_typeV'] }">
                         {{ errorsNew.task_of_typeV }}
                     </small>
 
                     <small id="username-help" :class="{ 'p-invalid text-red-500': errorResponseAPI?.errors?.tasks_of_type_uuid }">
-                    <div v-if="errorResponseAPI?.errors?.tasks_of_type_uuid">
-                        <div v-for="(error, index) in errorResponseAPI.errors.tasks_of_type_uuid" :key="index">
-                            {{ error }}
+                        <div v-if="errorResponseAPI?.errors?.tasks_of_type_uuid">
+                            <div v-for="(error, index) in errorResponseAPI.errors.tasks_of_type_uuid" :key="index">
+                                {{ error }}
+                            </div>
                         </div>
-                    </div>
-                </small>
+                    </small>
                 </div>
 
                 <div class="mb-3">
-                    
                     <div class="flex align-items-center">
                         <label for="username" class="font-semibold w-3">Crop Lots Code :</label>
-                        <MultiSelect 
-                        v-model="crop_lots_codeV" 
-                        display="chip" 
-                        :options="CropLots" 
-                        optionLabel="code" 
-                        placeholder="Select Crop Lots" 
-                        :maxSelectedLabels="100" 
-                        class="flex-auto" 
-                        >
-        
-                        <template #footer>
-                            <div class="py-2 px-4">
-                                <b>{{ crop_lots_codeV ? crop_lots_codeV.length : 0 }}</b> item{{ (crop_lots_codeV ? crop_lots_codeV.length : 0) > 1 ? 's' : '' }} selected.
-                            </div>
-                        </template>
-                    </MultiSelect>
+                        <MultiSelect v-model="crop_lots_codeV" display="chip" :options="CropLots" optionLabel="code" placeholder="Select Crop Lots" :maxSelectedLabels="100" class="flex-auto">
+                            <template #footer>
+                                <div class="py-2 px-4">
+                                    <b>{{ crop_lots_codeV ? crop_lots_codeV.length : 0 }}</b> item{{ (crop_lots_codeV ? crop_lots_codeV.length : 0) > 1 ? 's' : '' }} selected.
+                                </div>
+                            </template>
+                        </MultiSelect>
                         <!-- <AutoComplete v-model="crop_lots_codeV" class="flex-auto" inputId="ac" :suggestions="crop_lots" @complete="searchCropLots" field="code" dropdown /> -->
                     </div>
                     <small id="username-help" :class="{ 'p-invalid text-red-700': errorsNew['crop_lots_codeV'] }">
@@ -505,13 +506,12 @@
                     </small>
 
                     <small id="username-help" :class="{ 'p-invalid text-red-500': errorResponseAPI?.errors?.crop_lots }">
-                    <div v-if="errorResponseAPI?.errors?.crop_lots">
-                        <div v-for="(error, index) in errorResponseAPI.errors.crop_lots" :key="index">
-                            {{ error }}
+                        <div v-if="errorResponseAPI?.errors?.crop_lots">
+                            <div v-for="(error, index) in errorResponseAPI.errors.crop_lots" :key="index">
+                                {{ error }}
+                            </div>
                         </div>
-                    </div>
-                </small>
-
+                    </small>
                 </div>
 
                 <div class="mb-3">
@@ -523,12 +523,12 @@
                         {{ errorsNew.productV }}
                     </small>
                     <small id="username-help" :class="{ 'p-invalid text-red-500': errorResponseAPI?.errors?.product_uuid }">
-                    <div v-if="errorResponseAPI?.errors?.product_uuid">
-                        <div v-for="(error, index) in errorResponseAPI.errors.product_uuid" :key="index">
-                            {{ error }}
+                        <div v-if="errorResponseAPI?.errors?.product_uuid">
+                            <div v-for="(error, index) in errorResponseAPI.errors.product_uuid" :key="index">
+                                {{ error }}
+                            </div>
                         </div>
-                    </div>
-                </small>
+                    </small>
                 </div>
 
                 <div class="mb-3">
@@ -540,13 +540,12 @@
                         {{ errorsNew.product_typeV }}
                     </small>
                     <small id="username-help" :class="{ 'p-invalid text-red-500': errorResponseAPI?.errors?.product_type_uuid }">
-                    <div v-if="errorResponseAPI?.errors?.product_type_uuid">
-                        <div v-for="(error, index) in errorResponseAPI.errors.product_type_uuid" :key="index">
-                            {{ error }}
+                        <div v-if="errorResponseAPI?.errors?.product_type_uuid">
+                            <div v-for="(error, index) in errorResponseAPI.errors.product_type_uuid" :key="index">
+                                {{ error }}
+                            </div>
                         </div>
-                    </div>
-                </small>
-
+                    </small>
                 </div>
 
                 <div class="mb-3">
@@ -558,12 +557,12 @@
                         {{ errorsNew.packing_typeV }}
                     </small>
                     <small id="username-help" :class="{ 'p-invalid text-red-500': errorResponseAPI?.errors?.packing_type_uuid }">
-                    <div v-if="errorResponseAPI?.errors?.packing_type_uuid">
-                        <div v-for="(error, index) in errorResponseAPI.errors.packing_type_uuid" :key="index">
-                            {{ error }}
+                        <div v-if="errorResponseAPI?.errors?.packing_type_uuid">
+                            <div v-for="(error, index) in errorResponseAPI.errors.packing_type_uuid" :key="index">
+                                {{ error }}
+                            </div>
                         </div>
-                    </div>
-                </small>
+                    </small>
                 </div>
 
                 <div class="mb-3">
@@ -576,13 +575,12 @@
                     </small>
 
                     <small id="username-help" :class="{ 'p-invalid text-red-500': errorResponseAPI?.errors?.variant_uuid }">
-                    <div v-if="errorResponseAPI?.errors?.variant_uuid">
-                        <div v-for="(error, index) in errorResponseAPI.errors.variant_uuid" :key="index">
-                            {{ error }}
+                        <div v-if="errorResponseAPI?.errors?.variant_uuid">
+                            <div v-for="(error, index) in errorResponseAPI.errors.variant_uuid" :key="index">
+                                {{ error }}
+                            </div>
                         </div>
-                    </div>
-                </small>
-
+                    </small>
                 </div>
 
                 <div class="mb-3">
@@ -594,12 +592,12 @@
                         {{ errorsNew.customer_requestV }}
                     </small>
                     <small id="username-help" :class="{ 'p-invalid text-red-500': errorResponseAPI?.errors?.customer_request_uuid }">
-                    <div v-if="errorResponseAPI?.errors?.customer_request_uuid">
-                        <div v-for="(error, index) in errorResponseAPI.errors.customer_request_uuid" :key="index">
-                            {{ error }}
+                        <div v-if="errorResponseAPI?.errors?.customer_request_uuid">
+                            <div v-for="(error, index) in errorResponseAPI.errors.customer_request_uuid" :key="index">
+                                {{ error }}
+                            </div>
                         </div>
-                    </div>
-                </small>
+                    </small>
                 </div>
 
                 <div class="mb-3">
@@ -611,13 +609,12 @@
                         {{ errorsNew.farm }}
                     </small>
                     <small id="username-help" :class="{ 'p-invalid text-red-500': errorResponseAPI?.errors?.farm_uuid }">
-                    <div v-if="errorResponseAPI?.errors?.farm_uuid">
-                        <div v-for="(error, index) in errorResponseAPI.errors.farm_uuid" :key="index">
-                            {{ error }}
+                        <div v-if="errorResponseAPI?.errors?.farm_uuid">
+                            <div v-for="(error, index) in errorResponseAPI.errors.farm_uuid" :key="index">
+                                {{ error }}
+                            </div>
                         </div>
-                    </div>
-                </small>
-                    
+                    </small>
                 </div>
                 <div class="mb-3">
                     <div class="flex align-items-center">
@@ -629,14 +626,13 @@
                     </small>
 
                     <small id="username-help" :class="{ 'p-invalid text-red-500': errorResponseAPI?.errors?.company_uuid }">
-                    <div v-if="errorResponseAPI?.errors?.company_uuid">
-                        <div v-for="(error, index) in errorResponseAPI.errors.company_uuid" :key="index">
-                            {{ error }}
+                        <div v-if="errorResponseAPI?.errors?.company_uuid">
+                            <div v-for="(error, index) in errorResponseAPI.errors.company_uuid" :key="index">
+                                {{ error }}
+                            </div>
                         </div>
-                    </div>
-                </small>
+                    </small>
                 </div>
-
 
                 <div class="flex justify-content-end gap-2">
                     <Button type="button" label="Cancel" severity="secondary" @click="formDialogEdit = false" />
@@ -650,7 +646,7 @@
                     <div class="flex align-items-center">
                         <label for="username" class="font-semibold w-3">Transaction Date :</label>
                         <!-- <Calendar v-model="transaction_dateV" class="flex-auto" v-bind="transaction_dateVProps"/> -->
-                        <Calendar dateFormat="dd/mm/yy" v-model="transaction_dateV" class="flex-auto" showIcon :showOnFocus="false" inputId="buttondisplay" placeholder="Select transaction date"  />
+                        <Calendar dateFormat="dd/mm/yy" v-model="transaction_dateV" class="flex-auto" showIcon :showOnFocus="false" inputId="buttondisplay" placeholder="Select transaction date" />
                     </div>
 
                     <small id="username-help" :class="{ 'p-invalid text-red-700': errorsNew['transaction_dateV'] }">
@@ -658,44 +654,36 @@
                     </small>
 
                     <small id="username-help" :class="{ 'p-invalid text-red-500': errorResponseAPI?.errors?.transaction_date }">
-                    <div v-if="errorResponseAPI?.errors?.transaction_date">
-                        <div v-for="(error, index) in errorResponseAPI.errors.transaction_date" :key="index">
-                            {{ error }}
+                        <div v-if="errorResponseAPI?.errors?.transaction_date">
+                            <div v-for="(error, index) in errorResponseAPI.errors.transaction_date" :key="index">
+                                {{ error }}
+                            </div>
                         </div>
-                    </div>
-                </small>
+                    </small>
                 </div>
 
                 <div class="mb-3">
                     <div class="flex align-items-center">
                         <label for="username" class="font-semibold w-3">Task of Type :</label>
-                        <AutoComplete v-model="task_of_typeV" inputId="ac" class="flex-auto" :suggestions="tasks_of_type" @complete="searchTaskOfType" field="name" dropdown placeholder="Select Task of Type"  />
+                        <AutoComplete v-model="task_of_typeV" inputId="ac" class="flex-auto" :suggestions="tasks_of_type" @complete="searchTaskOfType" field="name" dropdown placeholder="Select Task of Type" />
                     </div>
                     <small id="username-help" :class="{ 'p-invalid text-red-700': errorsNew['tasks_of_typeV'] }">
                         {{ errorsNew.task_of_typeV }}
                     </small>
 
                     <small id="username-help" :class="{ 'p-invalid text-red-500': errorResponseAPI?.errors?.tasks_of_type_uuid }">
-                    <div v-if="errorResponseAPI?.errors?.tasks_of_type_uuid">
-                        <div v-for="(error, index) in errorResponseAPI.errors.tasks_of_type_uuid" :key="index">
-                            {{ error }}
+                        <div v-if="errorResponseAPI?.errors?.tasks_of_type_uuid">
+                            <div v-for="(error, index) in errorResponseAPI.errors.tasks_of_type_uuid" :key="index">
+                                {{ error }}
+                            </div>
                         </div>
-                    </div>
-                </small>
+                    </small>
                 </div>
 
                 <div class="mb-3">
-                    
                     <div class="flex align-items-center">
                         <label for="username" class="font-semibold w-3">Crop Lots Code :</label>
-                        <MultiSelect 
-                        v-model="crop_lots_codeV" 
-                        display="chip" 
-                        :options="CropLots" 
-                        optionLabel="code" 
-                        placeholder="Select Crop Lots" 
-                        :maxSelectedLabels="100" 
-                        class="flex-auto" />
+                        <MultiSelect v-model="crop_lots_codeV" display="chip" :options="CropLots" optionLabel="code" placeholder="Select Crop Lots" :maxSelectedLabels="100" class="flex-auto" />
                         <!-- <AutoComplete v-model="crop_lots_codeV" class="flex-auto" inputId="ac" :suggestions="crop_lots" @complete="searchCropLots" field="code" dropdown /> -->
                     </div>
                     <small id="username-help" :class="{ 'p-invalid text-red-700': errorsNew['crop_lots_codeV'] }">
@@ -703,13 +691,12 @@
                     </small>
 
                     <small id="username-help" :class="{ 'p-invalid text-red-500': errorResponseAPI?.errors?.crop_lots }">
-                    <div v-if="errorResponseAPI?.errors?.crop_lots">
-                        <div v-for="(error, index) in errorResponseAPI.errors.crop_lots" :key="index">
-                            {{ error }}
+                        <div v-if="errorResponseAPI?.errors?.crop_lots">
+                            <div v-for="(error, index) in errorResponseAPI.errors.crop_lots" :key="index">
+                                {{ error }}
+                            </div>
                         </div>
-                    </div>
-                </small>
-
+                    </small>
                 </div>
 
                 <div class="mb-3">
@@ -721,12 +708,12 @@
                         {{ errorsNew.productV }}
                     </small>
                     <small id="username-help" :class="{ 'p-invalid text-red-500': errorResponseAPI?.errors?.product_uuid }">
-                    <div v-if="errorResponseAPI?.errors?.product_uuid">
-                        <div v-for="(error, index) in errorResponseAPI.errors.product_uuid" :key="index">
-                            {{ error }}
+                        <div v-if="errorResponseAPI?.errors?.product_uuid">
+                            <div v-for="(error, index) in errorResponseAPI.errors.product_uuid" :key="index">
+                                {{ error }}
+                            </div>
                         </div>
-                    </div>
-                </small>
+                    </small>
                 </div>
 
                 <div class="mb-3">
@@ -738,13 +725,12 @@
                         {{ errorsNew.product_typeV }}
                     </small>
                     <small id="username-help" :class="{ 'p-invalid text-red-500': errorResponseAPI?.errors?.product_type_uuid }">
-                    <div v-if="errorResponseAPI?.errors?.product_type_uuid">
-                        <div v-for="(error, index) in errorResponseAPI.errors.product_type_uuid" :key="index">
-                            {{ error }}
+                        <div v-if="errorResponseAPI?.errors?.product_type_uuid">
+                            <div v-for="(error, index) in errorResponseAPI.errors.product_type_uuid" :key="index">
+                                {{ error }}
+                            </div>
                         </div>
-                    </div>
-                </small>
-
+                    </small>
                 </div>
 
                 <div class="mb-3">
@@ -756,12 +742,12 @@
                         {{ errorsNew.packing_typeV }}
                     </small>
                     <small id="username-help" :class="{ 'p-invalid text-red-500': errorResponseAPI?.errors?.packing_type_uuid }">
-                    <div v-if="errorResponseAPI?.errors?.packing_type_uuid">
-                        <div v-for="(error, index) in errorResponseAPI.errors.packing_type_uuid" :key="index">
-                            {{ error }}
+                        <div v-if="errorResponseAPI?.errors?.packing_type_uuid">
+                            <div v-for="(error, index) in errorResponseAPI.errors.packing_type_uuid" :key="index">
+                                {{ error }}
+                            </div>
                         </div>
-                    </div>
-                </small>
+                    </small>
                 </div>
 
                 <div class="mb-3">
@@ -774,13 +760,12 @@
                     </small>
 
                     <small id="username-help" :class="{ 'p-invalid text-red-500': errorResponseAPI?.errors?.variant_uuid }">
-                    <div v-if="errorResponseAPI?.errors?.variant_uuid">
-                        <div v-for="(error, index) in errorResponseAPI.errors.variant_uuid" :key="index">
-                            {{ error }}
+                        <div v-if="errorResponseAPI?.errors?.variant_uuid">
+                            <div v-for="(error, index) in errorResponseAPI.errors.variant_uuid" :key="index">
+                                {{ error }}
+                            </div>
                         </div>
-                    </div>
-                </small>
-
+                    </small>
                 </div>
 
                 <div class="mb-3">
@@ -792,12 +777,12 @@
                         {{ errorsNew.customer_requestV }}
                     </small>
                     <small id="username-help" :class="{ 'p-invalid text-red-500': errorResponseAPI?.errors?.customer_request_uuid }">
-                    <div v-if="errorResponseAPI?.errors?.customer_request_uuid">
-                        <div v-for="(error, index) in errorResponseAPI.errors.customer_request_uuid" :key="index">
-                            {{ error }}
+                        <div v-if="errorResponseAPI?.errors?.customer_request_uuid">
+                            <div v-for="(error, index) in errorResponseAPI.errors.customer_request_uuid" :key="index">
+                                {{ error }}
+                            </div>
                         </div>
-                    </div>
-                </small>
+                    </small>
                 </div>
 
                 <div class="mb-3">
@@ -809,13 +794,12 @@
                         {{ errorsNew.farm }}
                     </small>
                     <small id="username-help" :class="{ 'p-invalid text-red-500': errorResponseAPI?.errors?.farm_uuid }">
-                    <div v-if="errorResponseAPI?.errors?.farm_uuid">
-                        <div v-for="(error, index) in errorResponseAPI.errors.farm_uuid" :key="index">
-                            {{ error }}
+                        <div v-if="errorResponseAPI?.errors?.farm_uuid">
+                            <div v-for="(error, index) in errorResponseAPI.errors.farm_uuid" :key="index">
+                                {{ error }}
+                            </div>
                         </div>
-                    </div>
-                </small>
-                    
+                    </small>
                 </div>
                 <div class="mb-3">
                     <div class="flex align-items-center">
@@ -827,14 +811,13 @@
                     </small>
 
                     <small id="username-help" :class="{ 'p-invalid text-red-500': errorResponseAPI?.errors?.company_uuid }">
-                    <div v-if="errorResponseAPI?.errors?.company_uuid">
-                        <div v-for="(error, index) in errorResponseAPI.errors.company_uuid" :key="index">
-                            {{ error }}
+                        <div v-if="errorResponseAPI?.errors?.company_uuid">
+                            <div v-for="(error, index) in errorResponseAPI.errors.company_uuid" :key="index">
+                                {{ error }}
+                            </div>
                         </div>
-                    </div>
-                </small>
+                    </small>
                 </div>
-
 
                 <div class="flex justify-content-end gap-2">
                     <Button type="button" label="Cancel" severity="secondary" @click="formDialogClone = false" />
@@ -899,7 +882,7 @@ import useDataAPI from '@/composables/DataAPI/FetchDataAPI.js';
 import { useToast } from 'primevue/usetoast';
 import { FilterMatchMode, FilterOperator } from 'primevue/api';
 import useData from '@/composables/DataAPI/FetchDataAPICopy.js';
-const { getRequest, postRequest, putRequest, deleteRequest,errorResponseAPI } = useData();
+const { getRequest, postRequest, putRequest, deleteRequest, errorResponseAPI } = useData();
 import { useRouter } from 'vue-router';
 import { useForm } from 'vee-validate';
 import { toTypedSchema } from '@vee-validate/zod';
@@ -910,11 +893,11 @@ import ability from '@/service/ability.js';
 import { AbilityBuilder } from '@casl/ability';
 import BackendErrors from '@/views/Errors/BackendErrors.vue';
 
-const prueba = ref({revisar: 'revisar GET-POST-PUT-DELETE'});
+const prueba = ref({ revisar: 'revisar GET-POST-PUT-DELETE' });
 const backendValidation = ref();
 const backendValidationFlag = ref(false);
 const namePage = ' Planner tasks ';
-const titlePage = ' '+namePage+' information';
+const titlePage = ' ' + namePage + ' information';
 const dataFromComponent = ref();
 const Farms = ref([]);
 const farms = ref([]);
@@ -929,6 +912,7 @@ const products_type = ref([]);
 const Products_type = ref([]);
 const tasks_of_type = ref([]);
 const Tasks_of_type = ref([]);
+const Tasks_of_type_filter = ref([]);
 const packings_type = ref([]);
 const Packings_type = ref([]);
 const variants = ref([]);
@@ -936,13 +920,13 @@ const Variants = ref([]);
 const customer_request = ref([]);
 const Customer_request = ref([]);
 
-const otherTestValue = ref()
+const otherTestValue = ref();
 
-const formDialogNewTitle = 'Create new '+namePage;
-const formDialogEditTitle = 'Edit '+namePage;
+const formDialogNewTitle = 'Create new ' + namePage;
+const formDialogEditTitle = 'Edit ' + namePage;
 const formDialogCloneTitle = 'Clone ' + namePage;
 const formDialogExportTitle = 'Export ' + namePage;
-const formDialogDeleteTitle = 'Delete '+namePage;
+const formDialogDeleteTitle = 'Delete ' + namePage;
 const formDialogNew = ref(false);
 const formDialogEdit = ref(false);
 const formDialogClone = ref(false);
@@ -986,7 +970,10 @@ const clearFilter = () => {
 };
 
 const cropLotsToString = (value) => {
-    return value.map(item => item.code).join(', ').toString();
+    return value
+        .map((item) => item.code)
+        .join(', ')
+        .toString();
 };
 
 const initFilters = () => {
@@ -1006,7 +993,6 @@ const initFilters = () => {
         created_at: { operator: FilterOperator.AND, constraints: [{ value: null, matchMode: FilterMatchMode.STARTS_WITH }] },
         updated_at: { operator: FilterOperator.AND, constraints: [{ value: null, matchMode: FilterMatchMode.STARTS_WITH }] }
     };
-    
 };
 
 const documentFrozen = ref(false);
@@ -1024,6 +1010,7 @@ const readAll = async () => {
     const respTasksOfType = await getRequest('/task_of_types');
     if (!respTasksOfType.ok) toast.add({ severity: 'error', detail: 'Error' + respTasksOfType.error, life: 3000 });
     Tasks_of_type.value = respTasksOfType.data.data.map((task) => ({ id: task.uuid, name: task.name }));
+    Tasks_of_type_filter.value = respTasksOfType.data.data.map((task) =>  task.name );
 
     const respPackingsType = await getRequest('/packing_types');
     if (!respPackingsType.ok) toast.add({ severity: 'error', detail: 'Error' + respPackingsType.error, life: 3000 });
@@ -1036,10 +1023,9 @@ const readAll = async () => {
     const respCropLots = await getRequest('/crop_lots');
     if (!respCropLots.ok) {
         toast.add({ severity: 'error', detail: 'Error: ' + respCropLots.error, life: 3000 });
-        console.log(respCropLots)
+        console.log(respCropLots);
     } else {
         CropLots.value = respCropLots.data.data.map((crop) => ({
-            
             code: crop.code
         }));
     }
@@ -1058,16 +1044,13 @@ const readAll = async () => {
     console.log(Customer_request);
 };
 
-const filtroCropLots = ref('')
+const filtroCropLots = ref('');
 const loadingData = async () => {
     const response = await getRequest(endpoint.value);
 
-
     if (!response.ok) toast.add({ severity: 'error', detail: 'Error' + response.error, life: 3000 });
     dataFromComponent.value = response.data.data;
-    
 };
-
 
 watch(
     () => dataFromComponent.value,
@@ -1112,13 +1095,16 @@ const {
                 .optional(),
             // crop_lots_codeV:z.array(z.object({
             //     code: z.string().min(2).optional(),
-                
+
             // })),
-            crop_lots_codeV: z.array(z.object({
-            code: z.string().min(2).optional(),
-        })).min(1, { message: "You should select at least one crop lot" }),
-            
-            
+            crop_lots_codeV: z
+                .array(
+                    z.object({
+                        code: z.string().min(2).optional()
+                    })
+                )
+                .min(1, { message: 'You should select at least one crop lot' }),
+
             productV: z.object({
                 name: z.string().min(4),
                 id: z.string().min(4)
@@ -1145,12 +1131,14 @@ const {
                 .object({
                     name: z.string().optional(),
                     id: z.string().optional()
-                }).optional(),
+                })
+                .optional(),
             company: z
                 .object({
                     name: z.string().optional(),
                     id: z.string().optional()
-                }).optional()
+                })
+                .optional()
         })
     )
 });
@@ -1199,43 +1187,66 @@ watch(
     }
 );
 
-
-const varto = ref()
+const varto = ref();
 
 const openEdit = () => {
     resetForm();
-    
-    const { code, company: empresa, farm: farmParameter, name: nombre,tasks_of_type:task,variant:variant,packing_type:packing,product_type:productType,product:productX,transaction_date:date,crop_lots:crop_lots,customer_request:customer_request } = listRowSelect.value[0];
-    console.log(listRowSelect.value[0])
+
+    const {
+        code,
+        company: empresa,
+        farm: farmParameter,
+        name: nombre,
+        tasks_of_type: task,
+        variant: variant,
+        packing_type: packing,
+        product_type: productType,
+        product: productX,
+        transaction_date: date,
+        crop_lots: crop_lots,
+        customer_request: customer_request
+    } = listRowSelect.value[0];
+    console.log(listRowSelect.value[0]);
     transaction_dateV.value = new Date(date);
     task_of_typeV.value = { id: task.uuid, name: task.name };
-    crop_lots_codeV.value = crop_lots
+    crop_lots_codeV.value = crop_lots;
     productV.value = { id: productX.uuid, name: productX.name };
     product_typeV.value = { id: productType.uuid, name: productType.name };
     packing_typeV.value = { id: packing.uuid, name: packing.name };
     variantV.value = { id: variant.uuid, name: variant.name };
-    
-    customer_requestV.value = { id: customer_request.uuid, name: customer_request.dispatch_number_lot};
+
+    customer_requestV.value = { id: customer_request.uuid, name: customer_request.dispatch_number_lot };
     company.value = { id: empresa.uuid, name: empresa.name };
     farm.value = { id: farmParameter.uuid, name: farmParameter.name };
 
     formDialogEdit.value = true;
-
 };
-
 
 const openClone = () => {
     resetForm();
-    const { code, company: empresa, farm: farmParameter, name: nombre,tasks_of_type:task,variant:variant,packing_type:packing,product_type:productType,product:productX,transaction_date:date,crop_lots:crop_lots,customer_request:customer_request } = listRowSelect.value[0];
+    const {
+        code,
+        company: empresa,
+        farm: farmParameter,
+        name: nombre,
+        tasks_of_type: task,
+        variant: variant,
+        packing_type: packing,
+        product_type: productType,
+        product: productX,
+        transaction_date: date,
+        crop_lots: crop_lots,
+        customer_request: customer_request
+    } = listRowSelect.value[0];
 
     transaction_dateV.value = new Date(date);
     task_of_typeV.value = { id: task.uuid, name: task.name };
-    crop_lots_codeV.value = crop_lots
+    crop_lots_codeV.value = crop_lots;
     productV.value = { id: productX.uuid, name: productX.name };
     product_typeV.value = { id: productType.uuid, name: productType.name };
     packing_typeV.value = { id: packing.uuid, name: packing.name };
     variantV.value = { id: variant.uuid, name: variant.name };
-    customer_requestV.value = { id: customer_request.uuid, name: customer_request.dispatch_number_lot};
+    customer_requestV.value = { id: customer_request.uuid, name: customer_request.dispatch_number_lot };
     company.value = { id: empresa.uuid, name: empresa.name };
     farm.value = { id: farmParameter.uuid, name: farmParameter.name };
 
@@ -1253,16 +1264,15 @@ const openDelete = () => {
 
 const createRecord = handleSubmitNew(async (values) => {
     const yyyy = values.transaction_dateV.getFullYear();
-    const mm = String(values.transaction_dateV.getMonth() + 1).padStart(2, '0'); 
+    const mm = String(values.transaction_dateV.getMonth() + 1).padStart(2, '0');
     const dd = String(values.transaction_dateV.getDate()).padStart(2, '0');
 
     // Formatear la fecha en formato YYYY-MM-DD
     const formattedDate = `${yyyy}-${mm}-${dd}`;
     console.log(formattedDate);
-    const data = { 
-
+    const data = {
         tasks_of_type_uuid: values.task_of_typeV ? values.task_of_typeV.id : 'Prueba',
-        
+
         crop_lots: values.crop_lots_codeV ? values.crop_lots_codeV : 'Prueba',
         transaction_date: formattedDate,
         product_uuid: values.productV ? values.productV.id : 'Prueba',
@@ -1272,25 +1282,24 @@ const createRecord = handleSubmitNew(async (values) => {
         customer_request_uuid: values.customer_requestV ? values.customer_requestV.id : 'Prueba',
         company_uuid: values.company && values.company.id ? values.company.id : companyDefault,
         farm_uuid: values.farm && values.farm.id ? values.farm.id : farmDefault
-        
     };
-    console.log(data)
-    
+    console.log(data);
+
     valor.value = data;
     console.log(data);
     const restp = await postRequest(endpoint.value, data);
 
     toast.add({ severity: restp.ok ? 'success' : 'error', summary: 'Create', detail: restp.ok ? 'Creado' : restp.error, life: 3000 });
     loadingData();
-    
-    prueba.value= data;
-    if(restp.ok) {listRowSelect.value = []
-    selectedRegisters.value = []
-    formDialogNew.value = false;
-    errorResponseAPI.value = '';
-    otherTestValue.value = data;
-}
-    else{
+
+    prueba.value = data;
+    if (restp.ok) {
+        listRowSelect.value = [];
+        selectedRegisters.value = [];
+        formDialogNew.value = false;
+        errorResponseAPI.value = '';
+        otherTestValue.value = data;
+    } else {
         backendValidationFlag.value = true;
         backendValidation.value = restp;
         formDialogNew.value = true;
@@ -1325,22 +1334,20 @@ const EditRecord = handleSubmitNew(async (values) => {
 
     const restp = await putRequest(endpoint.value, data, uuid);
     toast.add({ severity: restp.ok ? 'success' : 'error', summary: 'Edit', detail: restp.ok ? 'Editado' : restp.error, life: 3000 });
-    console.log(JSON.stringify(data, null, 2))
+    console.log(JSON.stringify(data, null, 2));
     console.log(restp);
     loadingData();
-    if(restp.ok) {listRowSelect.value = []
-    selectedRegisters.value = []
-    formDialogEdit.value = false;
-    errorResponseAPI.value = '';
-    
-}
-    else{
+    if (restp.ok) {
+        listRowSelect.value = [];
+        selectedRegisters.value = [];
+        formDialogEdit.value = false;
+        errorResponseAPI.value = '';
+    } else {
         backendValidationFlag.value = true;
         backendValidation.value = restp;
         formDialogEdit.value = true;
         console.log(errorResponseAPI);
     }
-    
 });
 
 const CloneRecord = handleSubmitNew(async (values) => {
@@ -1370,13 +1377,13 @@ const CloneRecord = handleSubmitNew(async (values) => {
     const restp = await postRequest(endpoint.value, data);
     toast.add({ severity: restp.ok ? 'success' : 'error', summary: 'Clone', detail: restp.ok ? 'Clonado' : restp.error, life: 3000 });
     loadingData();
-    prueba.value= data;
-    if(restp.ok) {listRowSelect.value = []
-    selectedRegisters.value = []
-    formDialogClone.value = false;
-    errorResponseAPI.value = '';
-}
-    else{
+    prueba.value = data;
+    if (restp.ok) {
+        listRowSelect.value = [];
+        selectedRegisters.value = [];
+        formDialogClone.value = false;
+        errorResponseAPI.value = '';
+    } else {
         backendValidationFlag.value = true;
         backendValidation.value = restp;
         formDialogClone.value = true;
@@ -1390,7 +1397,6 @@ const ExportRecord = () => {
     if (format.value.name == 'CSV') formatCSV(eventos);
     else formatXLS(eventos);
 };
-
 
 const searchCompannies = (event) => {
     setTimeout(() => {
@@ -1548,5 +1554,4 @@ const remove = (aver) => {
 };
 </script>
 
-<style lang="scss" scoped>
-</style>
+<style lang="scss" scoped></style>

@@ -3,14 +3,13 @@ import { ref, onMounted, watch } from 'vue';
 import InputNumber from 'primevue/inputnumber';
 import { useI18n } from 'vue-i18n';
 import UseAppMovil from '@/composables/AppMovil/UseAppMovil.js';
-import { boolean, number } from 'zod';
-const { availableAreaEmployees, worksDay, task_type, crops_lots, dones_work, size, sizeOptions, data_planner, priceunit, plannertask, tasktarifs, areawork } = UseAppMovil();
+const { worksDay, task_type, dones_work, data_planner, priceunit } = UseAppMovil();
 
 const props = defineProps({
     dataUsers: { type: Array },
     Taridf: { type: Object },
     Lote: { type: Array },
-    diaFestivo: {type: Boolean}
+    diaFestivo: { type: Boolean }
 });
 
 const { t } = useI18n();
@@ -24,6 +23,18 @@ const Total = ref(null);
 const Notas = ref(null);
 const workView = ref(true);
 const tarifa = ref(0);
+const supervisoName = ref('');
+const editingRows = ref([]);
+const editable = ref(true);
+const estilo = ref({
+    table: { style: `min-width: 25remP; background-color: var(--surface-300);` },
+    column: { bodycell: ({ state }) => ({ style: state['d_editing'] ? `padding-top: 0.2rem; padding-bottom: 0.2rem;` : `background-color: var(--surface-200);` }) }
+});
+
+onMounted(async () => {
+    supervisoName.value = await sessionStorage.getItem('accessSessionEmployeeName');
+    console.log('name ', sessionStorage.getItem('accessSessionEmployeeName'));
+});
 
 const UpdateTotal = () => {
     Total.value = selected_quanty.value * priceunit.value;
@@ -41,8 +52,9 @@ watch(props, () => {
     }
 });
 
-const formatCurrency = (value) => {
-    return value.toLocaleString('en-US', { style: 'currency', currency: 'USD' });
+const onRowEditSave = (event) => {
+    let { newData, index } = event;
+    worksDay.value[index] = newData;
 };
 </script>
 
@@ -123,59 +135,70 @@ const formatCurrency = (value) => {
                         </div>
                     </div>
                 </div>
-                <div v-else>
-                    <div class="p-fluid formgrid grid mb-3">
-                        <h4 class="col-12 m-3">{{ t('appmovil.supervisor') }}: {{ data_planner.nameSupervisor }}</h4>
+                <div v-else class="p-fluid">
+                    <div class="datalles-bacg p-fluid formgrid grid mb-3">
+                        <div class="datalles-header w-full">
+                            <h5 class="col-12 m-3">{{ t('appmovil.supervisor') }}: {{ supervisoName }}</h5>
+                        </div>
                         <div class="col-12 md:col-6">
-                            <Divider class="m-0"/>
+                            <Divider class="m-0" />
                             <pre class="m-1"><b>{{t('appmovil.loteDespacho')}}</b>: {{ data_planner.lot_dispatch }}</pre>
-                            <Divider class="m-0"/>
+                            <Divider class="m-0" />
                             <pre class="m-1"><b>{{t('appmovil.variedad')}}:</b> {{ data_planner.product_variant }}</pre>
-                            <Divider class="m-0"/>
+                            <Divider class="m-0" />
                             <pre class="m-1"><b>{{ t('appmovil.producto') }}:</b> {{ data_planner.product_type }}</pre>
                         </div>
-                        <Divider layout="vertical" class="m-0"/>
+                        <Divider layout="vertical" class="m-0" />
                         <div class="col-12 md:col-6">
-                            <Divider class="m-0"/>
+                            <Divider class="m-0" />
                             <pre class="m-1"><b>{{ t('appmovil.empaque') }}:</b> {{ data_planner.packing_type }}</pre>
-                            <Divider class="m-0"/>
+                            <Divider class="m-0" />
                             <pre class="m-1"><b>{{ t('appmovil.fechaPlaneada') }}:</b> {{ data_planner.planner_date }}</pre>
-                            <Divider class="m-0"/>
+                            <Divider class="m-0" />
                             <pre class="m-1"><b>{{ t('appmovil.dialaboral') }}:</b> {{ diaFestivo? t('appmovil.diaFestivo') : t('appmovil.diaNormal')}}</pre>
                         </div>
                     </div>
-
-                    <DataTable :value="worksDay">
+                    <DataTable v-model:editingRows="editingRows" size="small" :value="worksDay" editMode="row" dataKey="id" @row-edit-save="onRowEditSave" :pt="estilo">
                         <ColumnGroup type="header">
                             <Row>
-                                <Column :header="t('appmovil.empleado')" :rowspan="3" />
+                                <Column v-if="editable" :rowspan="3" style="background-color: var(--surface-300)" />
+                                <Column :header="t('appmovil.empleado')" :rowspan="3" style="background-color: var(--surface-300)" />
                             </Row>
                             <Row>
-                                <Column :header="t('appmovil.trabajos')" :colspan="2" />
+                                <Column :header="t('appmovil.trabajos')" :colspan="3" style="background-color: var(--surface-300)" />
                             </Row>
                             <Row>
-                                <Column :header="t('appmovil.cantidad')" sortable field="lastYearProfit" />
-                                <Column :header="t('appmovil.precio')" sortable field="thisYearProfit" />
+                                <Column :header="t('appmovil.cantidad')" sortable field="lastYearProfit" style="background-color: var(--surface-300)" />
+                                <Column :header="t('appmovil.precio')" sortable field="thisYearProfit" style="background-color: var(--surface-300)" />
+                                <Column :header="t('appmovil.notas')" sortable field="thisYearProfit" style="background-color: var(--surface-300)" />
                             </Row>
                         </ColumnGroup>
-                        <Column field="employee" />
-
-                        <Column field="quantity">
-                            <template #body="slotProps">
-                                {{ formatCurrency(slotProps.data.quantity) }}
+                        <Column v-if="editable" :rowEditor="editable" style="width: 4%; min-width: 4rem" bodyStyle="text-align:center" />
+                        <Column field="employee" header="employee" style="background-color: var(--surface-200)">
+                            <template #body="{ data, field }">
+                                {{ data[field] }}
                             </template>
                         </Column>
-                        <Column field="totalPrice">
-                            <template #body="slotProps">
-                                {{ formatCurrency(slotProps.data.totalPrice) }}
+                        <Column field="quantity" header="quantity">
+                            <template #editor="{ data, field }">
+                                <InputNumber v-model="data[field]" size="small" />
                             </template>
                         </Column>
-
+                        <Column field="totalPrice" header="totalPrice">
+                            <template #body="{ data, field }">
+                                {{ data[field] }}
+                            </template>
+                        </Column>
+                        <Column field="nota" header="nota">
+                            <template #editor="{ data, field }">
+                                <InputText v-model="data[field]" size="small" />
+                            </template>
+                        </Column>
                         <ColumnGroup type="footer">
                             <Row>
-                                <Column :footer="t('appmovil.total') + ' :'" :colspan="1" footerStyle="text-align:left" />
-                                <Column :footer="quantities" />
-                                <Column :footer="totalPrices" />
+                                <Column :footer="t('appmovil.total') + ' :'" :colspan="2" footerStyle="text-align:left" />
+                                <Column :footer="quantities" style="background-color: var(--surface-300)" />
+                                <Column :footer="totalPrices" :colspan="2" style="background-color: var(--surface-300)" />
                             </Row>
                         </ColumnGroup>
                     </DataTable>
@@ -188,5 +211,15 @@ const formatCurrency = (value) => {
 <style lang="scss" scoped>
 .responsive-text {
     text-overflow: ellipsis;
+}
+
+.datalles-bacg {
+    background-color: var(--surface-200);
+    border-radius: 5px;
+}
+.datalles-header {
+    background-color: var(--surface-300);
+    border-radius: 5px 5px 0 0;
+    margin-bottom: -1px;
 }
 </style>
