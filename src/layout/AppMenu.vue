@@ -277,29 +277,58 @@ const model2 = ref([
                         gate: 'liquidaciondenomina_planeaciondiaria_menu'
                     },
                     {
-                        label: 'Trabajos de Corta',
-                        to: '/PayrollSettlement/WorkRegisterCorta',
-                        icon: 'pi pi-percentage',
-                        gate: 'liquidaciondenomina_trabajosdecorta_menu'
+                        label: 'Transacciones del dia',
+                        to: '/PayrollSettlement/TransferTasks',
+                        icon: 'pi pi-bookmark',
+                        gate: 'liquidaciondenomina_trasladoaprefrio_menu'
                     },
+
+                    // {
+                    //     label: 'Trabajos de Corta',
+                    //     to: '/PayrollSettlement/WorkRegisterCorta',
+                    //     icon: 'pi pi-percentage',
+                    //     gate: 'liquidaciondenomina_trabajosdecorta_menu'
+                    // },
                     {
                         label: 'Traslado a Prefrio',
                         to: '/PayrollSettlement/TransferTasks',
                         icon: 'pi pi-bookmark',
                         gate: 'liquidaciondenomina_trasladoaprefrio_menu'
                     },
+
                     {
-                        label: 'Trabajos de Selección',
-                        to: '/PayrollSettlement/WorkRegisterSelection',
-                        icon: 'pi pi-tablet',
-                        gate: 'liquidaciondenomina_trabajosdeseleccion_menu'
+                        label: 'Liquidación Diaria',
+                        to: '/PayrollSettlement/TransferTasks',
+                        icon: 'pi pi-bookmark',
+                        gate: 'liquidaciondenomina_trasladoaprefrio_menu'
                     },
+
+
                     {
-                        label: 'Trabajos de Contratistas',
-                        to: '/PayrollSettlement/WorkRegisterDaily',
-                        icon: 'pi pi-share-alt',
-                        gate: 'liquidaciondenomina_laboresdecontratista_menu'
+                        label: 'Resumen de empleados',
+                        to: '/PayrollSettlement/TransferTasks',
+                        icon: 'pi pi-bookmark',
+                        gate: 'liquidaciondenomina_trasladoaprefrio_menu'
                     },
+
+                    {
+                        label: 'Resumen de periodo',
+                        to: '/PayrollSettlement/TransferTasks',
+                        icon: 'pi pi-bookmark',
+                        gate: 'liquidaciondenomina_trasladoaprefrio_menu'
+                    },
+                    // {
+                    //     label: 'Trabajos de Selección',
+                    //     to: '/PayrollSettlement/WorkRegisterSelection',
+                    //     icon: 'pi pi-tablet',
+                    //     gate: 'liquidaciondenomina_trabajosdeseleccion_menu'
+                    // },
+                    // {
+                    //     label: 'Trabajos de Contratistas',
+                    //     to: '/PayrollSettlement/WorkRegisterDaily',
+                    //     icon: 'pi pi-share-alt',
+                    //     gate: 'liquidaciondenomina_laboresdecontratista_menu'
+                    // },
 
                     {
                         label: 'Descuentos de Nómina',

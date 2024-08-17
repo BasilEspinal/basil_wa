@@ -27,8 +27,9 @@ export default function UseAppMovil() {
 
     const task_type = [
         { name: 'Task', code: 'Task' },
-        { name: 'HoraExtra', code: 'HoraExtra' },
-        { name: 'Labor Contratista', code: 'Labor' }
+        { name: 'Hora Extra', code: 'HoraExtra' },
+        { name: 'Contratista', code: 'Contractor' },
+        { name: 'Dia de trabajo', code: 'Journal' }
     ];
 
     const crops_lots = [
