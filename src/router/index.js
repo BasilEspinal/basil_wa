@@ -152,7 +152,28 @@ const router = createRouter({
                     name: 'dailyplanner',
                     component: () => import('@/views/pages/PayrollSettlement/DailyPlanner/DailyPlanner.vue')
                 },
+                {
+                    path: '/PayrollSettlement/DailyTransactions',
+                    name: 'dailytransactions',
+                    component: () => import('@/views/pages/PayrollSettlement/DailyTransactions/DailyTransactions.vue')
+                },
+                {
+                    path: '/PayrollSettlement/DailySettlement',
+                    name: 'dailysettlement',
+                    component: () => import('@/views/pages/PayrollSettlement/DailySettlement/DailySettlement.vue')
+                },
 
+                {
+                    path: '/PayrollSettlement/EmployeesInformation',
+                    name: 'employees_information',
+                    component: () => import('@/views/pages/PayrollSettlement/EmployeesInformation/EmployeesInformation.vue')
+                },
+
+                {
+                    path: '/PayrollSettlement/PaymentPeriodsInformation',
+                    name: 'payment_periods_information',
+                    component: () => import('@/views/pages/PayrollSettlement/PaymentsPeriodsInformation/PaymentPeriodsInformation.vue')
+                },
                 {
                     path: '/PayrollSettlement/WorkRegisterCorta',
                     name: 'workregistercorta',

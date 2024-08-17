@@ -2,7 +2,7 @@
     <div>
     <div class="card">
         <div>
-            <h1>Información de xxxxx</h1> 
+            <h1>{{ titlePage }}</h1> 
         </div>
     </div>
     <div class="card">
@@ -174,6 +174,35 @@ import { toTypedSchema } from '@vee-validate/zod';
 import { z } from 'zod';
 import ability from '@/service/ability.js';
 import { AbilityBuilder} from '@casl/ability';
+
+
+const prueba = ref({revisar: 'revisar GET-POST-PUT-DELETE'});
+const namePage = ' Change this by your name ';
+const titlePage = ' '+namePage+' information';
+const dataFromComponent = ref();
+const Farms = ref([]);
+const farms = ref([]);
+const Compan = ref([]);
+const compa = ref([]);
+const farmDefault = sessionStorage.getItem('accessSessionFarm');
+const companyDefault = sessionStorage.getItem('accessSessionCompany');
+
+const PeriodNumber = ref([]);
+const periodNumber = ref(periodNumberValues);
+
+const formDialogNewTitle = 'Create new '+namePage;
+const formDialogEditTitle = 'Edit '+namePage;
+const formDialogCloneTitle = 'Clone ' + namePage;
+const formDialogExportTitle = 'Export ' + namePage;
+const formDialogDeleteTitle = 'Delete '+namePage;
+const formDialogNew = ref(false);
+const formDialogEdit = ref(false);
+const formDialogClone = ref(false);
+const formDialogExport = ref(false);
+const formDialogDelete = ref(false);
+const toast = useToast();
+const filename = ref('table');
+const isChanging = ref(false);
 
 let endpoint = ref('/endpoint'); //replace endpoint with your endpoint
 const loading = ref(false);

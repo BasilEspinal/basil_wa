@@ -278,9 +278,9 @@ const model2 = ref([
                     },
                     {
                         label: 'Transacciones del dia',
-                        to: '/PayrollSettlement/TransferTasks',
+                        to: '/PayrollSettlement/DailyTransactions',
                         icon: 'pi pi-bookmark',
-                        gate: 'liquidaciondenomina_trasladoaprefrio_menu'
+                        gate: 'liquidaciondenomina_transacciones_diarias_menu'
                     },
 
                     // {
@@ -298,24 +298,24 @@ const model2 = ref([
 
                     {
                         label: 'Liquidación Diaria',
-                        to: '/PayrollSettlement/TransferTasks',
+                        to: '/PayrollSettlement/DailySettlement',
                         icon: 'pi pi-bookmark',
-                        gate: 'liquidaciondenomina_trasladoaprefrio_menu'
+                        gate: 'liquidaciondenomina_liquidacion_diaria_menu'
                     },
 
 
                     {
                         label: 'Resumen de empleados',
-                        to: '/PayrollSettlement/TransferTasks',
+                        to: '/PayrollSettlement/EmployeesInformation',
                         icon: 'pi pi-bookmark',
-                        gate: 'liquidaciondenomina_trasladoaprefrio_menu'
+                        gate: 'liquidaciondenomina_employees_information_menu'
                     },
 
                     {
                         label: 'Resumen de periodo',
-                        to: '/PayrollSettlement/TransferTasks',
+                        to: '/PayrollSettlement/PaymentPeriodsInformation',
                         icon: 'pi pi-bookmark',
-                        gate: 'liquidaciondenomina_trasladoaprefrio_menu'
+                        gate: 'liquidaciondenomina_payment_periods_information_menu'
                     },
                     // {
                     //     label: 'Trabajos de Selección',
