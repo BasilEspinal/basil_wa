@@ -19,6 +19,7 @@ export default function useDataAPI(datos) {
     let api = pathAPI().apiVer;
     const statusCode = ref([]);
     const token = sessionStorage.getItem('accessSessionToken');
+    // const token = localStorage.getItem('accessSessionToken');
     APISettings.headers.set('Content-Type', 'application/json');
     APISettings.headers.set('Access-Control-Allow-Origin', '*');
     APISettings.headers.set('Authorization', 'Bearer ' + token);

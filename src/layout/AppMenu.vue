@@ -5,24 +5,38 @@ import AppMenuItem from './AppMenuItem.vue';
 import ability from '@/service/ability.js';
 import useDataAPI from '@/composables/DataAPI/FetchDataAPI.js';
 
-const { getAllResponseAPI, getAllResponsePermissionsAPI, getAllResponseListAPI, totalRecordsResponseAPI, currentPageResponseAPI, linksResponseAPI, postResponseAPI, putResponseAPI, deleteResponseAPI, errorResponseAPI, dataResponseAPI, dataResponseListAPI, statusCode } =
-    useDataAPI();
+const {
+    getAllResponseAPI,
+    getAllResponsePermissionsAPI,
+    getAllResponseListAPI,
+    totalRecordsResponseAPI,
+    currentPageResponseAPI,
+    linksResponseAPI,
+    postResponseAPI,
+    putResponseAPI,
+    deleteResponseAPI,
+    errorResponseAPI,
+    dataResponseAPI,
+    dataResponseListAPI,
+    statusCode
+} = useDataAPI();
 
 //This is the model that will be used to create the menu
 const model2 = ref([
-    
     {
-        items:[
+        items: [
             {
-        label: 'Dashboards',
-        gate: 'monitor_menu',
-        items: [{ 
-            label: 'Centro de control', 
-            icon: 'pi pi-fw pi-home', 
-            to: '/applayout',
-            gate: 'monitor_menu',
-        }]
-    }
+                label: 'Dashboards',
+                gate: 'monitor_menu',
+                items: [
+                    {
+                        label: 'Centro de control',
+                        icon: 'pi pi-fw pi-home',
+                        to: '/applayout',
+                        gate: 'monitor_menu'
+                    }
+                ]
+            }
         ]
     },
     {
@@ -32,11 +46,14 @@ const model2 = ref([
                 icon: 'pi pi-desktop',
                 label: 'Monitor Online',
                 gate: 'monitor_corta_menu',
-                items: [{
-                    label: '10 de Mejor Rendimiento', icon: 'pi pi-fw pi-table',
-                    to: '/monitorCorta',
-                    gate: 'monitor_corta_menu'
-                }]
+                items: [
+                    {
+                        label: '10 de Mejor Rendimiento',
+                        icon: 'pi pi-fw pi-table',
+                        to: '/monitorCorta',
+                        gate: 'monitor_corta_menu'
+                    }
+                ]
             }
         ]
     },
@@ -58,8 +75,7 @@ const model2 = ref([
                         icon: 'pi pi-bars',
                         label: 'Productos',
                         to: '/product/products',
-                        gate: 'producto_productos_menu',
-                        
+                        gate: 'producto_productos_menu'
                     },
                     // {
                     //     label: 'No-En-Uso-Variedades de producto',
@@ -71,19 +87,19 @@ const model2 = ref([
                         label: 'Tipos de productos',
                         icon: 'pi pi-bookmark',
                         to: '/product/productTypes',
-                        gate: 'producto_tiposdeproducto_menu',
+                        gate: 'producto_tiposdeproducto_menu'
                     },
                     {
                         label: 'Tipos de Unidades',
                         to: '/product/unit_types',
                         icon: 'pi pi-bookmark',
-                        gate: 'producto_tiposdeunidades_menu',
+                        gate: 'producto_tiposdeunidades_menu'
                     },
                     {
                         label: 'Tipos de Empaque',
                         to: '/product/packing_types',
                         icon: 'pi pi-bookmark',
-                        gate: 'producto_tiposdeempaque_menu',
+                        gate: 'producto_tiposdeempaque_menu'
                     }
                 ]
             }
@@ -101,7 +117,7 @@ const model2 = ref([
                         label: 'Ofertas de producto',
                         to: '/Commercial/ProductAvailability/ProductAvailability',
                         icon: 'pi pi-folder',
-                        gate: 'comercial_ofertasdeproducto_menu',
+                        gate: 'comercial_ofertasdeproducto_menu'
                     },
                     {
                         label: 'Solicitudes de Clientes',
@@ -137,7 +153,7 @@ const model2 = ref([
                         label: 'Lotes para Cultivo ',
                         to: '/production/croplots',
                         icon: 'pi pi-bars',
-                        gate: 'produccion_lotesparacultivo_menu',
+                        gate: 'produccion_lotesparacultivo_menu'
                     },
                     {
                         label: 'Vehículos',
@@ -149,19 +165,19 @@ const model2 = ref([
                         label: 'Programación de Lotes',
                         to: '/production/LotsSchedule',
                         icon: 'pi pi-calendar-minus',
-                        gate: 'produccion_programaciondelotes_menu',
+                        gate: 'produccion_programaciondelotes_menu'
                     },
                     {
                         label: 'Control de temperatura',
                         to: '/production/TemperatureControl',
                         icon: 'pi pi-calendar-minus',
-                        gate: '',
+                        gate: ''
                     },
                     {
                         label: 'Estación metereológica',
                         to: '/production/MetereologicalStation',
                         icon: 'pi pi-calendar-minus',
-                        gate: '',
+                        gate: ''
                     }
                 ]
             }
@@ -179,14 +195,13 @@ const model2 = ref([
                         label: 'Tipos de Pago',
                         to: '/payrollsettings/PaymentTypes',
                         icon: 'pi pi-tablet',
-                        gate: 'configuraciondepagos_tiposdepago_menu',
-                    
+                        gate: 'configuraciondepagos_tiposdepago_menu'
                     },
                     {
                         label: 'Tipos de Tareas',
                         to: '/payrollsettings/taskstypes',
                         icon: 'pi pi-list',
-                        gate: 'configuraciondetiposdetareas_menu',
+                        gate: 'configuraciondetiposdetareas_menu'
                     },
                     {
                         label: 'Tarifas por Tareas',
@@ -199,7 +214,7 @@ const model2 = ref([
                         label: 'Tipos de Labores',
                         to: '/payrollsettings/donetypes',
                         icon: 'pi pi-list',
-                        gate: 'configuraciondetiposdetareas_menu',
+                        gate: 'configuraciondetiposdetareas_menu'
                     },
                     // {
                     //     label: 'Tipos de trabajo',
@@ -211,7 +226,7 @@ const model2 = ref([
                         label: 'Tarifas por Labores',
                         to: '/payrollsettings/workstarif',
                         icon: 'pi pi-briefcase',
-                        gate: 'configuraciondepagos_tarifasporlabores_menu',
+                        gate: 'configuraciondepagos_tarifasporlabores_menu'
                     },
                     {
                         label: 'Periodos de Pago',
@@ -223,26 +238,26 @@ const model2 = ref([
                         label: 'Calendarios',
                         to: '/payrollsettings/calendars',
                         icon: 'pi pi-calendar-times',
-                        gate: 'configuraciondepagos_calendarios_menu',
+                        gate: 'configuraciondepagos_calendarios_menu'
                     },
 
                     {
                         label: 'Centros de Trabajo',
                         to: '/payrollsettings/Workcenters',
                         icon: 'pi pi-bookmark',
-                        gate: 'configuraciondepagos_centrosdetrabajo_menu',
+                        gate: 'configuraciondepagos_centrosdetrabajo_menu'
                     },
                     {
                         label: 'Cargos',
                         to: '/payrollsettings/Jobtypes',
                         icon: 'pi pi-bolt',
-                        gate: 'configuraciondepagos_cargos_menu',
+                        gate: 'configuraciondepagos_cargos_menu'
                     },
                     {
                         label: 'Empleados',
                         to: '/payrollsettings/Employees',
                         icon: 'pi pi-users',
-                        gate: 'configuraciondepagos_empleados_menu',
+                        gate: 'configuraciondepagos_empleados_menu'
                     }
                 ]
             }
@@ -260,39 +275,38 @@ const model2 = ref([
                         label: 'Planeación Diaria',
                         to: '/PayrollSettlement/DailyPlanner',
                         icon: 'pi pi-tablet',
-                        gate: 'liquidaciondenomina_planeaciondiaria_menu',
+                        gate: 'liquidaciondenomina_planeaciondiaria_menu'
                     },
                     {
                         label: 'Trabajos de Corta',
                         to: '/PayrollSettlement/WorkRegisterCorta',
                         icon: 'pi pi-percentage',
-                        gate: 'liquidaciondenomina_trabajosdecorta_menu',
+                        gate: 'liquidaciondenomina_trabajosdecorta_menu'
                     },
                     {
                         label: 'Traslado a Prefrio',
                         to: '/PayrollSettlement/TransferTasks',
                         icon: 'pi pi-bookmark',
-                        gate: 'liquidaciondenomina_trasladoaprefrio_menu',
-
+                        gate: 'liquidaciondenomina_trasladoaprefrio_menu'
                     },
                     {
                         label: 'Trabajos de Selección',
                         to: '/PayrollSettlement/WorkRegisterSelection',
                         icon: 'pi pi-tablet',
-                        gate: 'liquidaciondenomina_trabajosdeseleccion_menu',
+                        gate: 'liquidaciondenomina_trabajosdeseleccion_menu'
                     },
                     {
                         label: 'Trabajos de Contratistas',
                         to: '/PayrollSettlement/WorkRegisterDaily',
                         icon: 'pi pi-share-alt',
-                        gate: 'liquidaciondenomina_laboresdecontratista_menu',
+                        gate: 'liquidaciondenomina_laboresdecontratista_menu'
                     },
 
                     {
                         label: 'Descuentos de Nómina',
                         to: '/PayrollSettlement/DiscountRegistering',
                         icon: 'pi pi-ticket',
-                        gate: 'liquidaciondenomina_descuentosdenomina_menu',
+                        gate: 'liquidaciondenomina_descuentosdenomina_menu'
                     }
                 ]
             }
@@ -310,13 +324,13 @@ const model2 = ref([
                         label: 'Empresa',
                         to: '/admon/companies',
                         icon: 'pi pi-folder',
-                        gate:'administracion_empresa_menu',
+                        gate: 'administracion_empresa_menu'
                     },
                     {
                         label: 'Fincas',
                         to: '/admon/farms',
                         icon: 'pi pi-bookmark',
-                        gate: 'administracion_fincas_menu',
+                        gate: 'administracion_fincas_menu'
                     }
                 ]
             }
@@ -328,25 +342,25 @@ const model2 = ref([
                 label: 'Sistema',
                 rol: 'admin',
                 icon: 'pi pi-desktop',
-                gate:'sistema_menu',
+                gate: 'sistema_menu',
                 items: [
                     {
                         label: 'Usuarios',
                         to: '/system/Users',
                         icon: 'pi pi-id-card',
-                        gate: 'sistema_usuarios_menu',
+                        gate: 'sistema_usuarios_menu'
                     },
                     {
                         label: 'Roles',
                         to: '/system/roles',
                         icon: 'pi pi-user-plus',
-                        gate: 'sistema_roles_menu',
+                        gate: 'sistema_roles_menu'
                     },
                     {
                         label: 'Permisos',
                         to: '/system/permissions',
                         icon: 'pi pi-eye-slash',
-                        gate: 'sistema_permisos_menu',
+                        gate: 'sistema_permisos_menu'
                     },
                     {
                         label: 'Estado de Registros',
@@ -366,7 +380,12 @@ const model2 = ref([
                 icon: 'pi pi-box',
                 gate: 'appmovil_menu',
                 items: [
-                    
+                    {
+                        label: 'Captura de datos',
+                        to: '/AppMovil/General',
+                        icon: 'pi pi-mobile',
+                        gate: 'appmovil_data_capture'
+                    },
                     {
                         label: 'Captura de corta',
                         to: '/AppMovil/Corta',
@@ -385,7 +404,7 @@ const model2 = ref([
                         icon: 'pi pi-mobile',
                         gate: 'appmovil_clasificacion_menu'
                     },
-                     {
+                    {
                         label: 'Captura de Contratista',
                         to: '/AppMovil/Contractor',
                         icon: 'pi pi-mobile',
@@ -396,14 +415,11 @@ const model2 = ref([
                         to: '/AppMovil/Agronomo',
                         icon: 'pi pi-mobile',
                         gate: 'appmovil_agronomia_menu'
-                    },
+                    }
                 ]
             }
         ]
     }
-
-
-
 ]);
 
 onBeforeMount(() => {
@@ -412,28 +428,24 @@ onBeforeMount(() => {
 
 async function fetchInfoAndUpdateValue() {
     try {
-        await getAllResponsePermissionsAPI("/abilities");
-        
+        await getAllResponsePermissionsAPI('/abilities');
     } catch (error) {
         console.error('Error:', error);
     }
 }
-
-
 </script>
 
 <!-- <template>
     <app-menu-item :model="oldModel" />
 </template> -->
 <template>
-    
     <ul class="layout-menu">
         <div v-for="item in model2" :key="item.label">
-  <!-- <p>{{ item.label }}</p> -->
-  <div v-for="nestedItem in item.items" :key="nestedItem.label">
-    <!-- <p>{{ nestedItem.label }} - Gate: {{ nestedItem.gate }}</p> -->
-  </div>
-</div>
+            <!-- <p>{{ item.label }}</p> -->
+            <div v-for="nestedItem in item.items" :key="nestedItem.label">
+                <!-- <p>{{ nestedItem.label }} - Gate: {{ nestedItem.gate }}</p> -->
+            </div>
+        </div>
         <template v-for="(item, i) in model2" :key="item">
             <!-- <div class="card"> -->
             <app-menu-item v-if="!item.separator" :item="item" :index="i"></app-menu-item>
