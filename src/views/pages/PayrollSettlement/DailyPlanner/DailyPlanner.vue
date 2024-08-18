@@ -13,7 +13,7 @@
                     <div class="col-xs-12 col-sm-6 col-md-4 mb-2 text-center mx-auto">
                         <Toolbar style="margin-bottom: 1rem">
                             <template #center>
-                                <Button v-if="ability.can('planeacion_diaria_crear')" :disabled="headerNames.length > 0" label="New" icon="pi pi-plus" class="p-button-success mb-2 mt-2" @click="openNew" size="large" />
+                                <!-- <Button v-if="ability.can('planeacion_diaria_crear')" :disabled="headerNames.length > 0" label="New" icon="pi pi-plus" class="p-button-success mb-2 mt-2" @click="openNew" size="large" />
                                 <Divider v-if="ability.can('planeacion_diaria_crear')" layout="vertical" />
                                 <Button
                                     v-if="ability.can('planeacion_diaria_editar')"
@@ -33,11 +33,23 @@
                                     class="p-button-secondary mb-2 mt-2"
                                     @click="openClone"
                                     size="large"
-                                />
-                                <Divider v-if="ability.can('planeacion_diaria_crear')" layout="vertical" />
+                                /> -->
+                                <!-- <Divider v-if="ability.can('planeacion_diaria_crear')" layout="vertical" />
                                 <Button v-if="ability.can('planeacion_diaria_editar')" :disabled="headerNames.length > 0" label="Export" icon="pi pi-file-import" class="p-button-warning mb-2 mt-2" @click="openExport" size="large" />
                                 <Divider v-if="ability.can('planeacion_diaria_editar')" layout="vertical" />
                                 <Button v-if="ability.can('planeacion_diaria_eliminar')" :disabled="!listRowSelect.length > 0" label="Delete" icon="pi pi-trash" class="p-button-danger mb-2 mt-2" @click="openDelete" size="large" />
+                                     -->
+
+                                    <Divider v-if="ability.can('planeacion_diaria_editar')" layout="vertical" />
+                                    <Button v-if="ability.can('planeacion_diaria_eliminar')" :disabled="!listRowSelect.length > 0" label="Liquidar" icon="pi pi-check" class="p-button-success mb-2 mt-2" @click="openDelete" size="large" />   
+
+
+                                    <Divider v-if="ability.can('planeacion_diaria_editar')" layout="vertical" />
+                                    <Button v-if="ability.can('planeacion_diaria_eliminar')" :disabled="!listRowSelect.length > 0" label="Cerrar" icon="pi pi-check" class="p-button-warning mb-2 mt-2" @click="openDelete" size="large" />   
+
+
+                                        <Divider v-if="ability.can('planeacion_diaria_editar')" layout="vertical" />
+                                        <Button v-if="ability.can('planeacion_diaria_eliminar')" :disabled="!listRowSelect.length > 0" label="Contabilizar" icon="pi pi-check" class="p-button-sucess mb-2 mt-2" @click="openDelete" size="large" />       
                             </template>
                         </Toolbar>
                     </div>
@@ -112,6 +124,18 @@
                 <template #empty> No customers found. </template>
                 <template #loading> Loading customers data. Please wait. </template>
                 <Column selectionMode="multiple" headerStyle="width: 3rem"></Column>
+                <Column field="transaction_date" filterField="transaction_date" header="Transaction date" sortable :frozen="documentFrozen">
+                    <template #header>
+                        <ToggleButton v-model="documentFrozen" onIcon="pi pi-lock" offIcon="pi pi-lock-open" onLabel="" offLabel="" />
+                        <div>&nbsp;</div>
+                    </template>
+                    <template #body="{ data }">
+                        {{ data.transaction_date }}
+                    </template>
+                    <template #filter="{ filterModel }">
+                        <InputText v-model="filterModel.value" type="text" class="p-column-filter" placeholder="Search by " />
+                    </template>
+                </Column>
                 <Column field="tasks_of_type_name" filterField="tasks_of_type.name" header="Tasks of Type" sortable :frozen="documentFrozen">
                     <template #header>
                         <ToggleButton v-model="documentFrozen" onIcon="pi pi-lock" offIcon="pi pi-lock-open" onLabel="" offLabel="" />
@@ -125,24 +149,9 @@
                     </template>
                 </Column>
 
-                <Column field="crop_lots_code" filterField="filtroCropLots" header="Crop Lots Code" sortable>
-                    <template #body="{ data }">
-                        <!-- {{ cropLotsToString(data.crop_lots) }} -->
-                         <!-- {{ data.crop_lots ? data.crop_lots : 'N/A' }} -->
-                    </template>
-                    <template #filter="{ filterModel }">
-                        <InputText v-model="filterModel.value" type="text" class="p-column-filter" placeholder="Search by " />
-                    </template>
-                </Column>
 
-                <Column field="transaction_date" filterField="transaction_date" header="Transaction date" sortable>
-                    <template #body="{ data }">
-                        {{ data.transaction_date }}
-                    </template>
-                    <template #filter="{ filterModel }">
-                        <InputText v-model="filterModel.value" type="text" class="p-column-filter" placeholder="Search by " />
-                    </template>
-                </Column>
+
+
 
                 <Column field="product_name" filterField="product.name" header="Product Name" sortable>
                     <template #body="{ data }">
@@ -154,26 +163,10 @@
                 </Column>
 
 
-                <Column field="product_name" filterField="product.name" header="Product Name" sortable>
-                    <template #body="{ data }">
-                        {{ data.product ? data.product.name : '' }}
-                    </template>
-                    <template #filter="{ filterModel }">
-                        <InputText v-model="filterModel.value" type="text" class="p-column-filter" placeholder="Search by product name" />
-                    </template>
-                </Column>
+
                 <Column field="product_type_name" filterField="product_type.name" header="Product Type Name" sortable>
                     <template #body="{ data }">
                         {{ data.product_type.name }}
-                    </template>
-                    <template #filter="{ filterModel }">
-                        <InputText v-model="filterModel.value" type="text" class="p-column-filter" placeholder="Search by " />
-                    </template>
-                </Column>
-
-                <Column field="packing_type_name" filterField="packing_type.name" header="packing Type Name" sortable>
-                    <template #body="{ data }">
-                        {{ data.packing_type.name }}
                     </template>
                     <template #filter="{ filterModel }">
                         <InputText v-model="filterModel.value" type="text" class="p-column-filter" placeholder="Search by " />
@@ -189,25 +182,15 @@
                     </template>
                 </Column>
 
-
-                <Column field="vehicle" filterField="vehicle.name" header="Vehicle Name" sortable>
+                <Column field="packing_type_name" filterField="packing_type.name" header="packing Type Name" sortable>
                     <template #body="{ data }">
-                        {{ data.vehicle ? data.vehicle.vehicle_type : 'N/A' }}
+                        {{ data.packing_type.name }}
                     </template>
                     <template #filter="{ filterModel }">
-                        <InputText v-model="filterModel.value" type="text" class="p-column-filter" placeholder="Search by Vehicle" />
+                        <InputText v-model="filterModel.value" type="text" class="p-column-filter" placeholder="Search by " />
                     </template>
                 </Column>
 
-
-                <Column field="vehicle" filterField="vehicle.name" header="Vehicle Name" sortable>
-                    <template #body="{ data }">
-                        {{ data.vehicle ? data.vehicle.vehicle_type : 'N/A' }}
-                    </template>
-                    <template #filter="{ filterModel }">
-                        <InputText v-model="filterModel.value" type="text" class="p-column-filter" placeholder="Search by Vehicle" />
-                    </template>
-                </Column>
 
 
                 <Column field="vehicle" filterField="vehicle.name" header="Vehicle Name" sortable>
@@ -232,6 +215,16 @@
                 </Column>
 
                 <!--Here add other columns-->
+
+                <Column field="crop_lots_code" filterField="filtroCropLots" header="Crop Lots Code" sortable>
+                    <template #body="{ data }">
+                        <!-- {{ cropLotsToString(data.crop_lots) }} -->
+                         {{ data.crop_lots ? data.crop_lots : 'N/A' }}
+                    </template>
+                    <template #filter="{ filterModel }">
+                        <InputText v-model="filterModel.value" type="text" class="p-column-filter" placeholder="Search by " />
+                    </template>
+                </Column>
 
                 <Column field="farmName" filterField="farm.name" header="Farm Name" sortable>
                     <template #body="{ data }">

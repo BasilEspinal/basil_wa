@@ -30,7 +30,7 @@
 
             </div>
         </div>
-        <!-- <pre>{{ dataResponseAPI }}</pre> -->
+        <pre>{{ dataFromComponent }}</pre>
         <DataTable
         :value="dataFromComponent"
         dataKey="uuid"
@@ -102,6 +102,12 @@
                 </template>
         </Column>
 
+        <!-- code_pays_period
+        type_day_tarif
+        type_price_task
+        price_tarif_task
+        task_total -->
+        
         <!--Here add other columns-->
 
         <Column field="farmName" filterField="farm.name" header="Farm Name" sortable>
@@ -342,7 +348,7 @@ import useDataAPI from '@/composables/DataAPI/FetchDataAPI.js';
 import { useToast } from 'primevue/usetoast';
 import { FilterMatchMode, FilterOperator } from 'primevue/api';
 import useData from '@/composables/DataAPI/FetchDataAPICopy.js';
-const { getRequest, postRequest, putRequest, deleteRequest } = useData();
+const { getRequest, postRequest, putRequest, deleteRequest,errorResponseAPI } = useData();
 import { useRouter } from 'vue-router';
 import { useForm } from 'vee-validate';
 import { toTypedSchema } from '@vee-validate/zod';
@@ -353,7 +359,7 @@ import ability from '@/service/ability.js';
 import { AbilityBuilder} from '@casl/ability';
 
 const prueba = ref({revisar: 'revisar GET-POST-PUT-DELETE'});
-const namePage = ' Change this by your name ';
+const namePage = ' Payment Periods Information ';
 const titlePage = ' '+namePage+' information';
 const dataFromComponent = ref();
 const Farms = ref([]);
@@ -376,7 +382,7 @@ const formDialogDelete = ref(false);
 const toast = useToast();
 const filename = ref('table');
 const isChanging = ref(false);
-let endpoint = ref('/endpoint');  //replace endpoint with your endpoint
+let endpoint = ref('/transactions/transcodepayperiod');  //replace endpoint with your endpoint
 
 
 ////////////
@@ -442,6 +448,8 @@ const loadingData = async () => {
     const response = await getRequest(endpoint.value);
     if (!response.ok) toast.add({ severity: 'error', detail: 'Error' + response.error, life: 3000 });
     dataFromComponent.value = response.data.data;
+    console.log(response);
+    console.log(dataFromComponent.value);
 };
 watch(
     () => dataFromComponent.value,

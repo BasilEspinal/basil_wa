@@ -78,7 +78,7 @@
         <template #empty> No customers found. </template>
         <template #loading> Loading customers data. Please wait. </template>
         <Column selectionMode="multiple" headerStyle="width: 3rem"></Column>
-        <Column field="code" filterField="code" header="Code" sortable :frozen="documentFrozen"> <!--Replace :frozen with the model-->
+        <Column field="code" filterField="code" header="Crop Lots" sortable :frozen="documentFrozen"> <!--Replace :frozen with the model-->
             <template #header>
                     <ToggleButton v-model="documentFrozen" onIcon="pi pi-lock" offIcon="pi pi-lock-open" onLabel="" offLabel="" />
                     <div>&nbsp;</div>
@@ -91,7 +91,7 @@
                     <InputText v-model="filterModel.value" type="text" class="p-column-filter" placeholder="Search by " />
                 </template>
         </Column>
-
+<!-- 
         <Column field="name" filterField="name" header="Name" sortable> 
             
                 <template #body="{ data }">
@@ -100,11 +100,123 @@
                 <template #filter="{ filterModel }">
                     <InputText v-model="filterModel.value" type="text" class="p-column-filter" placeholder="Search by " />
                 </template>
-        </Column>
+        </Column> -->
 
+        <Column field="planner_tasks.transaction_date" filterField="planner_tasks.transaction_date" header="Transaction Date" sortable> 
+        <template #body="{ data }">
+            {{ data.planner_tasks.transaction_date }} 
+        </template>
+        <template #filter="{ filterModel }">
+            <InputText v-model="filterModel.value" type="text" class="p-column-filter" placeholder="Search by Transaction Date" />
+        </template>
+    </Column>
+
+    <Column field="tasks_of_type.name" filterField="tasks_of_type.name" header="Task Type Name" sortable> 
+        <template #body="{ data }">
+            {{ data.tasks_of_type.name }} 
+        </template>
+        <template #filter="{ filterModel }">
+            <InputText v-model="filterModel.value" type="text" class="p-column-filter" placeholder="Search by Task Type Name" />
+        </template>
+    </Column>
+
+    <Column field="worker_employee.document" filterField="worker_employee.document" header="Document" sortable> 
+        <template #body="{ data }">
+            {{ data.worker_employee.document }} 
+        </template>
+        <template #filter="{ filterModel }">
+            <InputText v-model="filterModel.value" type="text" class="p-column-filter" placeholder="Search by Document" />
+        </template>
+    </Column>
+
+    <Column field="worker_employee.first_name" filterField="worker_employee.first_name" header="First Name" sortable> 
+        <template #body="{ data }">
+            {{ data.worker_employee.first_name }} 
+        </template>
+        <template #filter="{ filterModel }">
+            <InputText v-model="filterModel.value" type="text" class="p-column-filter" placeholder="Search by First Name" />
+        </template>
+    </Column>
+
+    <Column field="worker_employee.last_name" filterField="worker_employee.last_name" header="Last Name" sortable> 
+        <template #body="{ data }">
+            {{ data.worker_employee.last_name }} 
+        </template>
+        <template #filter="{ filterModel }">
+            <InputText v-model="filterModel.value" type="text" class="p-column-filter" placeholder="Search by Last Name" />
+        </template>
+    </Column>
+
+    <Column field="type_day_tarif" filterField="type_day_tarif" header="Type Day Tarif" sortable> 
+        <template #body="{ data }">
+            {{ data.type_day_tarif }} 
+        </template>
+        <template #filter="{ filterModel }">
+            <InputText v-model="filterModel.value" type="text" class="p-column-filter" placeholder="Search by Type Day Tarif" />
+        </template>
+    </Column>
+
+    <Column field="type_price_task" filterField="type_price_task" header="Type Price Task" sortable> 
+        <template #body="{ data }">
+            {{ data.type_price_task }} 
+        </template>
+        <template #filter="{ filterModel }">
+            <InputText v-model="filterModel.value" type="text" class="p-column-filter" placeholder="Search by Type Price Task" />
+        </template>
+    </Column>
+
+    <Column field="price_tarif_task" filterField="price_tarif_task" header="Price Tarif Task" sortable> 
+        <template #body="{ data }">
+            {{ data.price_tarif_task }} 
+        </template>
+        <template #filter="{ filterModel }">
+            <InputText v-model="filterModel.value" type="text" class="p-column-filter" placeholder="Search by Price Tarif Task" />
+        </template>
+    </Column>
+
+    <Column field="name" filterField="name" header="Name" sortable> 
+        <template #body="{ data }">
+            {{ data.name }} 
+        </template>
+        <template #filter="{ filterModel }">
+            <InputText v-model="filterModel.value" type="text" class="p-column-filter" placeholder="Search by Name" />
+        </template>
+    </Column>
+
+    <Column field="task_qty" filterField="task_qty" header="Task Quantity" sortable> 
+        <template #body="{ data }">
+            {{ data.task_qty }} 
+        </template>
+        <template #filter="{ filterModel }">
+            <InputText v-model="filterModel.value" type="text" class="p-column-filter" placeholder="Search by Task Quantity" />
+        </template>
+    </Column>
+
+    <Column field="task_total" filterField="task_total" header="Task Total" sortable> 
+        <template #body="{ data }">
+            {{ data.task_total }} 
+        </template>
+        <template #filter="{ filterModel }">
+            <InputText v-model="filterModel.value" type="text" class="p-column-filter" placeholder="Search by Task Total" />
+        </template>
+    </Column>
+
+        <!-- planner_tasks.transaction_date
+        tasks_of_type.name
+        worker_employee.document
+        worker_employee.first_name
+        worker_employee.last_name
+        type_day_tarif
+        type_price_task
+        price_tarif_task
+        name
+        task_qty
+        task_total -->
+
+        
         <!--Here add other columns-->
 
-        <Column field="farmName" filterField="farm.name" header="Farm Name" sortable>
+        <!-- <Column field="farmName" filterField="farm.name" header="Farm Name" sortable>
                 <template #body="{ data }">
                     {{ data.farm.name }}
                 </template>
@@ -147,7 +259,7 @@
                 <template #filter="{ filterModel }">
                     <InputText v-model="filterModel.value" type="text" class="p-column-filter" placeholder="Search by status" />
                 </template>
-            </Column>
+            </Column> -->
 
         </DataTable>
         <Dialog v-model:visible="formDialogNew" modal :header="formDialogNewTitle" class="p-fluid text-center mx-auto">
@@ -353,7 +465,7 @@ import ability from '@/service/ability.js';
 import { AbilityBuilder} from '@casl/ability';
 
 const prueba = ref({revisar: 'revisar GET-POST-PUT-DELETE'});
-const namePage = ' Change this by your name ';
+const namePage = ' Summary by employees information ';
 const titlePage = ' '+namePage+' information';
 const dataFromComponent = ref();
 const Farms = ref([]);
@@ -376,7 +488,7 @@ const formDialogDelete = ref(false);
 const toast = useToast();
 const filename = ref('table');
 const isChanging = ref(false);
-let endpoint = ref('/endpoint');  //replace endpoint with your endpoint
+let endpoint = ref('/transactions/transEmployee');  //replace endpoint with your endpoint
 
 
 ////////////

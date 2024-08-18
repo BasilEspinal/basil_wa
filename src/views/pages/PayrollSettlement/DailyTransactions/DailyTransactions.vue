@@ -79,7 +79,7 @@
         <template #loading> Loading customers data. Please wait. </template>
         <Column selectionMode="multiple" headerStyle="width: 3rem"></Column>
 
-        <Column field="planner_tasks.transaction_date" filterField="planner_tasks.transaction_date" header="Transaction Date" sortable :frozen="documentFrozen"> <!--Replace :frozen with the model-->
+        <Column field="planner_tasks.transaction_date" filterField="planner_tasks.transaction_date" header="Planner Date" sortable :frozen="documentFrozen"> <!--Replace :frozen with the model-->
             <template #header>
                     <ToggleButton v-model="documentFrozen" onIcon="pi pi-lock" offIcon="pi pi-lock-open" onLabel="" offLabel="" />
                     <div>&nbsp;</div>
@@ -87,6 +87,20 @@
 
                 <template #body="{ data }">
                     {{ data.planner_tasks.transaction_date }} 
+                </template>
+                <template #filter="{ filterModel }">
+                    <InputText v-model="filterModel.value" type="text" class="p-column-filter" placeholder="Search by " />
+                </template>
+        </Column>
+
+        <Column field="transaction_date" filterField="transaction_date" header="Transaction Date" sortable :frozen="documentFrozen"> <!--Replace :frozen with the model-->
+            <template #header>
+                    <ToggleButton v-model="documentFrozen" onIcon="pi pi-lock" offIcon="pi pi-lock-open" onLabel="" offLabel="" />
+                    <div>&nbsp;</div>
+                </template>
+
+                <template #body="{ data }">
+                    {{ data.transaction_date }} 
                 </template>
                 <template #filter="{ filterModel }">
                     <InputText v-model="filterModel.value" type="text" class="p-column-filter" placeholder="Search by " />
