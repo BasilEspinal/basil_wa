@@ -78,30 +78,150 @@
         <template #empty> No customers found. </template>
         <template #loading> Loading customers data. Please wait. </template>
         <Column selectionMode="multiple" headerStyle="width: 3rem"></Column>
-        <Column field="code" filterField="code" header="Code" sortable :frozen="documentFrozen"> <!--Replace :frozen with the model-->
+
+        <Column field="planner_tasks.transaction_date" filterField="planner_tasks.transaction_date" header="Transaction Date" sortable :frozen="documentFrozen"> <!--Replace :frozen with the model-->
             <template #header>
                     <ToggleButton v-model="documentFrozen" onIcon="pi pi-lock" offIcon="pi pi-lock-open" onLabel="" offLabel="" />
                     <div>&nbsp;</div>
                 </template>
 
                 <template #body="{ data }">
-                    {{ data.code }} 
+                    {{ data.planner_tasks.transaction_date }} 
                 </template>
                 <template #filter="{ filterModel }">
                     <InputText v-model="filterModel.value" type="text" class="p-column-filter" placeholder="Search by " />
                 </template>
         </Column>
 
-        <Column field="name" filterField="name" header="Name" sortable> 
+        <Column field="day_week_num" filterField="day_week_num" header="Day Week Number" sortable> 
             
                 <template #body="{ data }">
-                    {{ data.name }} 
+                    {{ data.day_week_num }} 
                 </template>
                 <template #filter="{ filterModel }">
                     <InputText v-model="filterModel.value" type="text" class="p-column-filter" placeholder="Search by " />
                 </template>
         </Column>
 
+        <Column field="tasks_of_type.name" filterField="tasks_of_type.name" header=" Name Task Of Type" sortable> 
+            
+            <template #body="{ data }">
+                {{ data.tasks_of_type.name }} 
+            </template>
+            <template #filter="{ filterModel }">
+                <InputText v-model="filterModel.value" type="text" class="p-column-filter" placeholder="Search by " />
+            </template>
+    </Column>
+
+    <Column field="packing_type_name" filterField="packing_type.name" header="packing Type Name" sortable>
+                    <template #body="{ data }">
+                        {{ data.packing_type.name }}
+                    </template>
+                    <template #filter="{ filterModel }">
+                        <InputText v-model="filterModel.value" type="text" class="p-column-filter" placeholder="Search by " />
+                    </template>
+                </Column>
+
+                <Column field="product_name" filterField="product.name" header="Product Name" sortable>
+                    <template #body="{ data }">
+                        {{ data.product ? data.product.name : '' }}
+                    </template>
+                    <template #filter="{ filterModel }">
+                        <InputText v-model="filterModel.value" type="text" class="p-column-filter" placeholder="Search by product name" />
+                    </template>
+                </Column>
+
+
+                <Column field="vehicle" filterField="vehicle.name" header="Vehicle Name" sortable>
+                    <template #body="{ data }">
+                        {{ data.vehicle ? data.vehicle.vehicle_type : 'N/A' }}
+                    </template>
+                    <template #filter="{ filterModel }">
+                        <InputText v-model="filterModel.value" type="text" class="p-column-filter" placeholder="Search by Vehicle" />
+                    </template>
+                </Column>
+
+                <Column field="supervisory_employee.document" filterField="supervisory_employee.document" header="Supervisor Document" sortable>
+                    <template #body="{ data }">
+                        {{ data.supervisory_employee ? data.supervisory_employee.document : 'N/A' }}
+                    </template>
+                    <template #filter="{ filterModel }">
+                        <InputText v-model="filterModel.value" type="text" class="p-column-filter" placeholder="Search by Vehicle" />
+                    </template>
+                </Column>
+
+                <Column field="supervisory_employee.first_name" filterField="supervisory_employee.first_name" header="Supervisor name" sortable>
+                    <template #body="{ data }">
+                        {{ data.supervisory_employee ? data.supervisory_employee.first_name : 'N/A' }}
+                    </template>
+                    <template #filter="{ filterModel }">
+                        <InputText v-model="filterModel.value" type="text" class="p-column-filter" placeholder="Search by supervisor name" />
+                    </template>
+                </Column>
+
+                <Column field="supervisory_employee.last_name" filterField="supervisory_employee.last_name" header="Supervisor last name" sortable>
+                    <template #body="{ data }">
+                        {{ data.supervisory_employee ? data.supervisory_employee.last_name : 'N/A' }}
+                    </template>
+                    <template #filter="{ filterModel }">
+                        <InputText v-model="filterModel.value" type="text" class="p-column-filter" placeholder="Search by supervisor name" />
+                    </template>
+                </Column>
+
+                <Column field="supervisory_jobtype.name" filterField="supervisory_jobtype.name" header="Supervisor job type" sortable>
+                    <template #body="{ data }">
+                        {{ data.supervisory_jobtype ? data.supervisory_jobtype.name : 'N/A' }}
+                    </template>
+                    <template #filter="{ filterModel }">
+                        <InputText v-model="filterModel.value" type="text" class="p-column-filter" placeholder="Search by supervisor name" />
+                    </template>
+                </Column>
+
+                <Column field="worker_employee.document" filterField="worker_employee.document" header="Worker Employee Document" sortable>
+                    <template #body="{ data }">
+                        {{ data.worker_employee ? data.worker_employee.document : 'N/A' }}
+                    </template>
+                    <template #filter="{ filterModel }">
+                        <InputText v-model="filterModel.value" type="text" class="p-column-filter" placeholder="Search by supervisor name" />
+                    </template>
+                </Column>
+
+                <Column field="worker_employee.first_name" filterField="worker_employee.first_name" header="Worker Employee First name" sortable>
+                    <template #body="{ data }">
+                        {{ data.worker_employee ? data.worker_employee.first_name : 'N/A' }}
+                    </template>
+                    <template #filter="{ filterModel }">
+                        <InputText v-model="filterModel.value" type="text" class="p-column-filter" placeholder="Search by supervisor name" />
+                    </template>
+                </Column>
+
+                <Column field="worker_employee.last_name" filterField="worker_employee.last_name" header="Worker Employee Last Name" sortable>
+                    <template #body="{ data }">
+                        {{ data.worker_employee ? data.worker_employee.last_name : 'N/A' }}
+                    </template>
+                    <template #filter="{ filterModel }">
+                        <InputText v-model="filterModel.value" type="text" class="p-column-filter" placeholder="Search by supervisor name" />
+                    </template>
+                </Column>
+
+                <Column field="worker_jobtype.name" filterField="worker_jobtype.name" header="Worker Employee Job Type" sortable>
+                    <template #body="{ data }">
+                        {{ data.worker_jobtype ? data.worker_jobtype.name : 'N/A' }}
+                    </template>
+                    <template #filter="{ filterModel }">
+                        <InputText v-model="filterModel.value" type="text" class="p-column-filter" placeholder="Search by supervisor name" />
+                    </template>
+                </Column>
+
+                <Column field="customer_request_id.dispatch_number_lot" filterField="customer_request_id.dispatch_number_lot" header="Dispatch Number Lot" sortable>
+                    <template #body="{ data }">
+                        {{ data.customer_request_id ? data.customer_request_id.dispatch_number_lot : 'N/A' }}
+                    </template>
+                    <template #filter="{ filterModel }">
+                        <InputText v-model="filterModel.value" type="text" class="p-column-filter" placeholder="Search by supervisor name" />
+                    </template>
+                </Column>
+                
         <!--Here add other columns-->
 
         <Column field="farmName" filterField="farm.name" header="Farm Name" sortable>
@@ -353,7 +473,7 @@ import ability from '@/service/ability.js';
 import { AbilityBuilder} from '@casl/ability';
 
 const prueba = ref({revisar: 'revisar GET-POST-PUT-DELETE'});
-const namePage = ' Change this by your name ';
+const namePage = ' Daily Transactions  ';
 const titlePage = ' '+namePage+' information';
 const dataFromComponent = ref();
 const Farms = ref([]);
@@ -376,7 +496,7 @@ const formDialogDelete = ref(false);
 const toast = useToast();
 const filename = ref('table');
 const isChanging = ref(false);
-let endpoint = ref('/endpoint');  //replace endpoint with your endpoint
+let endpoint = ref('/transactions/tasks');  //replace endpoint with your endpoint
 
 
 ////////////
