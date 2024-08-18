@@ -43,7 +43,7 @@
                     </div>
                 </div>
             </div>
-
+            
             <!-- <pre>{{crop_lots_codeV}}</pre>
         <pre>{{ otherTestValue }}</pre>
              -->
@@ -126,11 +126,9 @@
                 </Column>
 
                 <Column field="crop_lots_code" filterField="filtroCropLots" header="Crop Lots Code" sortable>
-                    <!--Replace :frozen with the model-->
-
                     <template #body="{ data }">
-                        <!-- {{ data.crop_lots.map(item => item.code).join(', ') }} -->
                         {{ cropLotsToString(data.crop_lots) }}
+                         <!-- {{ data.crop_lots ? data.crop_lots : 'N/A' }} -->
                     </template>
                     <template #filter="{ filterModel }">
                         <InputText v-model="filterModel.value" type="text" class="p-column-filter" placeholder="Search by " />
@@ -146,14 +144,16 @@
                     </template>
                 </Column>
 
-                <!-- <Column field="product_name" filterField="product.name" header="Product Name" sortable>
+                <Column field="product_name" filterField="product.name" header="Product Name" sortable>
                     <template #body="{ data }">
                         {{ data.product.name }}
                     </template>
                     <template #filter="{ filterModel }">
                         <InputText v-model="filterModel.value" type="text" class="p-column-filter" placeholder="Search by " />
                     </template>
-                </Column> -->
+                </Column>
+
+
                 <Column field="product_name" filterField="product.name" header="Product Name" sortable>
                     <template #body="{ data }">
                         {{ data.product ? data.product.name : '' }}
@@ -192,7 +192,7 @@
 
                 <Column field="vehicle" filterField="vehicle.name" header="Vehicle Name" sortable>
                     <template #body="{ data }">
-                        {{ data.vehicle ? data.vehicle.name : 'N/A' }}
+                        {{ data.vehicle ? data.vehicle.vehicle_type : 'N/A' }}
                     </template>
                     <template #filter="{ filterModel }">
                         <InputText v-model="filterModel.value" type="text" class="p-column-filter" placeholder="Search by Vehicle" />
@@ -258,7 +258,7 @@
                 </Column>
             </DataTable>
             <Dialog v-model:visible="formDialogNew" modal :header="formDialogNewTitle" class="p-fluid text-center mx-auto">
-                <pre>{{ companyDefault }}</pre>
+                
                 <div class="mb-3">
                     <div class="flex align-items-center">
                         <label for="username" class="font-semibold w-3">Transaction Date :</label>
@@ -269,14 +269,6 @@
                     <small id="username-help" :class="{ 'p-invalid text-red-700': errorsNew['transaction_dateV'] }">
                         {{ errorsNew.transaction_dateV }}
                     </small>
-
-                    <!-- <small id="username-help" :class="{ 'p-invalid text-red-500': errorResponseAPI?.errors?.transaction_date }">
-                    <div v-if="errorResponseAPI?.errors?.transaction_date">
-                        <div v-for="(error, index) in errorResponseAPI.errors.transaction_date" :key="index">
-                            {{ error }}
-                        </div>
-                    </div>
-                </small> -->
 
                     <BackendErrors :name="errorResponseAPI?.errors?.transaction_date" />
                 </div>
@@ -290,13 +282,8 @@
                         {{ errorsNew.task_of_typeV }}
                     </small>
 
-                    <small id="username-help" :class="{ 'p-invalid text-red-500': errorResponseAPI?.errors?.tasks_of_type_uuid }">
-                        <div v-if="errorResponseAPI?.errors?.tasks_of_type_uuid">
-                            <div v-for="(error, index) in errorResponseAPI.errors.tasks_of_type_uuid" :key="index">
-                                {{ error }}
-                            </div>
-                        </div>
-                    </small>
+
+                    <BackendErrors :name="errorResponseAPI?.errors?.tasks_of_type_uuid" />
                 </div>
 
                 <div class="mb-3">
@@ -315,13 +302,8 @@
                         {{ errorsNew.crop_lots_codeV }}
                     </small>
 
-                    <small id="username-help" :class="{ 'p-invalid text-red-500': errorResponseAPI?.errors?.crop_lots }">
-                        <div v-if="errorResponseAPI?.errors?.crop_lots">
-                            <div v-for="(error, index) in errorResponseAPI.errors.crop_lots" :key="index">
-                                {{ error }}
-                            </div>
-                        </div>
-                    </small>
+
+                    <BackendErrors :name="errorResponseAPI?.errors?.crop_lots" />
                 </div>
 
                 <div class="mb-3">
@@ -332,13 +314,7 @@
                     <small id="username-help" :class="{ 'p-invalid text-red-700': errorsNew['productV'] }">
                         {{ errorsNew.productV }}
                     </small>
-                    <small id="username-help" :class="{ 'p-invalid text-red-500': errorResponseAPI?.errors?.product_uuid }">
-                        <div v-if="errorResponseAPI?.errors?.product_uuid">
-                            <div v-for="(error, index) in errorResponseAPI.errors.product_uuid" :key="index">
-                                {{ error }}
-                            </div>
-                        </div>
-                    </small>
+                    <BackendErrors :name="errorResponseAPI?.errors?.product_uuid" />
                 </div>
 
                 <div class="mb-3">
@@ -356,6 +332,7 @@
                             </div>
                         </div>
                     </small>
+                    <BackendErrors :name="errorResponseAPI?.errors?.product_type_uuid" />
                 </div>
 
                 <div class="mb-3">
@@ -373,6 +350,20 @@
                             </div>
                         </div>
                     </small>
+                    <BackendErrors :name="errorResponseAPI?.errors?.packing_type_uuid" />
+                </div>
+
+                <div class="mb-3">
+                    <div class="flex align-items-center">
+                        <label for="username" class="font-semibold w-3">Vehicles:</label>
+                        <AutoComplete v-model="vehiclesV" class="flex-auto" inputId="ac" :suggestions="vehicles" @complete="searchVehicles" field="name" dropdown />
+                    </div>
+                    <small id="username-help" :class="{ 'p-invalid text-red-700': errorsNew['vehiclesV'] }">
+                        {{ errorsNew.vehiclesV }}
+                    </small>
+
+                    <BackendErrors :name="errorResponseAPI?.errors?.vehicle_uuid" />
+                    
                 </div>
 
                 <div class="mb-3">
@@ -384,13 +375,7 @@
                         {{ errorsNew.variantV }}
                     </small>
 
-                    <small id="username-help" :class="{ 'p-invalid text-red-500': errorResponseAPI?.errors?.variant_uuid }">
-                        <div v-if="errorResponseAPI?.errors?.variant_uuid">
-                            <div v-for="(error, index) in errorResponseAPI.errors.variant_uuid" :key="index">
-                                {{ error }}
-                            </div>
-                        </div>
-                    </small>
+                    <BackendErrors :name="errorResponseAPI?.errors?.variant_uuid" />
                 </div>
 
                 <div class="mb-3">
@@ -401,13 +386,7 @@
                     <small id="username-help" :class="{ 'p-invalid text-red-700': errorsNew['customer_requestV'] }">
                         {{ errorsNew.customer_requestV }}
                     </small>
-                    <small id="username-help" :class="{ 'p-invalid text-red-500': errorResponseAPI?.errors?.customer_request_uuid }">
-                        <div v-if="errorResponseAPI?.errors?.customer_request_uuid">
-                            <div v-for="(error, index) in errorResponseAPI.errors.customer_request_uuid" :key="index">
-                                {{ error }}
-                            </div>
-                        </div>
-                    </small>
+                    <BackendErrors :name="errorResponseAPI?.errors?.customer_request_uuid" />
                 </div>
 
                 <div class="mb-3">
@@ -418,13 +397,7 @@
                     <small id="username-help" :class="{ 'p-invalid text-red-700': errorsNew['farm'] }">
                         {{ errorsNew.farm }}
                     </small>
-                    <small id="username-help" :class="{ 'p-invalid text-red-500': errorResponseAPI?.errors?.farm_uuid }">
-                        <div v-if="errorResponseAPI?.errors?.farm_uuid">
-                            <div v-for="(error, index) in errorResponseAPI.errors.farm_uuid" :key="index">
-                                {{ error }}
-                            </div>
-                        </div>
-                    </small>
+                    <BackendErrors :name="errorResponseAPI?.errors?.farm_uuid" />
                 </div>
                 <div class="mb-3">
                     <div class="flex align-items-center">
@@ -442,6 +415,7 @@
                             </div>
                         </div>
                     </small>
+                    <BackendErrors :name="errorResponseAPI?.errors?.company_uuid" />
                 </div>
 
                 <div class="flex justify-content-end gap-2">
@@ -559,6 +533,23 @@
                     <small id="username-help" :class="{ 'p-invalid text-red-500': errorResponseAPI?.errors?.packing_type_uuid }">
                         <div v-if="errorResponseAPI?.errors?.packing_type_uuid">
                             <div v-for="(error, index) in errorResponseAPI.errors.packing_type_uuid" :key="index">
+                                {{ error }}
+                            </div>
+                        </div>
+                    </small>
+                </div>
+
+                <div class="mb-3">
+                    <div class="flex align-items-center">
+                        <label for="username" class="font-semibold w-3">Vehicles:</label>
+                        <AutoComplete v-model="vehiclesV" class="flex-auto" inputId="ac" :suggestions="vehicles" @complete="searchVehicles" field="name" dropdown />
+                    </div>
+                    <small id="username-help" :class="{ 'p-invalid text-red-700': errorsNew['vehiclesV'] }">
+                        {{ errorsNew.vehiclesV }}
+                    </small>
+                    <small id="username-help" :class="{ 'p-invalid text-red-500': errorResponseAPI?.errors?.vehicles_uuid }">
+                        <div v-if="errorResponseAPI?.errors?.vehicles_uuid">
+                            <div v-for="(error, index) in errorResponseAPI.errors.vehicles_uuid" :key="index">
                                 {{ error }}
                             </div>
                         </div>
@@ -752,6 +743,23 @@
 
                 <div class="mb-3">
                     <div class="flex align-items-center">
+                        <label for="username" class="font-semibold w-3">Vehicles:</label>
+                        <AutoComplete v-model="vehiclesV" class="flex-auto" inputId="ac" :suggestions="vehicles" @complete="searchVehicles" field="name" dropdown />
+                    </div>
+                    <small id="username-help" :class="{ 'p-invalid text-red-700': errorsNew['vehiclesV'] }">
+                        {{ errorsNew.vehiclesV }}
+                    </small>
+                    <small id="username-help" :class="{ 'p-invalid text-red-500': errorResponseAPI?.errors?.vehicles_uuid }">
+                        <div v-if="errorResponseAPI?.errors?.vehicles_uuid">
+                            <div v-for="(error, index) in errorResponseAPI.errors.vehicles_uuid" :key="index">
+                                {{ error }}
+                            </div>
+                        </div>
+                    </small>
+                </div>
+
+                <div class="mb-3">
+                    <div class="flex align-items-center">
                         <label for="username" class="font-semibold w-3">Variants:</label>
                         <AutoComplete v-model="variantV" class="flex-auto" inputId="ac" :suggestions="variants" @complete="searchVariant" field="name" dropdown />
                     </div>
@@ -919,6 +927,8 @@ const variants = ref([]);
 const Variants = ref([]);
 const customer_request = ref([]);
 const Customer_request = ref([]);
+const vehicles = ref([])
+const Vehicles = ref([])
 
 const otherTestValue = ref();
 
@@ -984,6 +994,7 @@ const initFilters = () => {
         'product.name': { operator: FilterOperator.AND, constraints: [{ value: null, matchMode: FilterMatchMode.STARTS_WITH }] },
         'product_type.name': { operator: FilterOperator.AND, constraints: [{ value: null, matchMode: FilterMatchMode.STARTS_WITH }] },
         'packing_type.name': { operator: FilterOperator.AND, constraints: [{ value: null, matchMode: FilterMatchMode.STARTS_WITH }] },
+        'vehicles.vehicle_type': { operator: FilterOperator.AND, constraints: [{ value: null, matchMode: FilterMatchMode.STARTS_WITH }] },
         'variant.name': { operator: FilterOperator.AND, constraints: [{ value: null, matchMode: FilterMatchMode.STARTS_WITH }] },
         'customer_request.dispatch_number_lot': { operator: FilterOperator.AND, constraints: [{ value: null, matchMode: FilterMatchMode.STARTS_WITH }] },
         'tasks_of_type.name': { operator: FilterOperator.AND, constraints: [{ value: null, matchMode: FilterMatchMode.STARTS_WITH }] },
@@ -1019,6 +1030,10 @@ const readAll = async () => {
     const respVariants = await getRequest('/variants');
     if (!respVariants.ok) toast.add({ severity: 'error', detail: 'Error' + respVariants.error, life: 3000 });
     Variants.value = respVariants.data.data.map((variant) => ({ id: variant.uuid, name: variant.name }));
+
+    const respVehicles = await getRequest('/vehicles');
+    if (!respVehicles.ok) toast.add({ severity: 'error', detail: 'Error' + respVehicles.error, life: 3000 });
+    Vehicles.value = respVehicles.data.data.map((vehicle) => ({ id: vehicle.uuid, name: vehicle.vehicle_type }));
 
     const respCropLots = await getRequest('/crop_lots');
     if (!respCropLots.ok) {
@@ -1076,6 +1091,7 @@ const {
         productV: { name: '', id: '' },
         product_typeV: { name: '', id: '' },
         packing_typeV: { name: '', id: '' },
+        vehiclesV: { name: '', id: '' },
         variantV: { name: '', id: '' },
         transaction_dateV: '',
         customer_requestV: { name: '', id: '' },
@@ -1117,6 +1133,10 @@ const {
                 name: z.string().min(4),
                 id: z.string().min(4)
             }),
+            vehiclesV: z.object({
+                name: z.string().min(4),
+                id: z.string().min(4)
+            }),
             variantV: z.object({
                 name: z.string().min(4),
                 id: z.string().min(4)
@@ -1153,6 +1173,7 @@ const [productV] = defineField('productV');
 const [product_typeV] = defineField('product_typeV');
 const [packing_typeV] = defineField('packing_typeV');
 const [variantV] = defineField('variantV');
+const[vehiclesV] = defineField('vehiclesV');
 const [customer_requestV] = defineField('customer_requestV');
 
 const extenciones = ref([{ name: 'CSV' }, { name: 'XLS' }]);
@@ -1204,7 +1225,8 @@ const openEdit = () => {
         product: productX,
         transaction_date: date,
         crop_lots: crop_lots,
-        customer_request: customer_request
+        customer_request: customer_request,
+        vehicle: vehicle
     } = listRowSelect.value[0];
     console.log(listRowSelect.value[0]);
     transaction_dateV.value = new Date(date);
@@ -1213,8 +1235,8 @@ const openEdit = () => {
     productV.value = { id: productX.uuid, name: productX.name };
     product_typeV.value = { id: productType.uuid, name: productType.name };
     packing_typeV.value = { id: packing.uuid, name: packing.name };
+    vehiclesV.value = { id: vehicle.uuid, name: vehicle.vehicle_type };
     variantV.value = { id: variant.uuid, name: variant.name };
-
     customer_requestV.value = { id: customer_request.uuid, name: customer_request.dispatch_number_lot };
     company.value = { id: empresa.uuid, name: empresa.name };
     farm.value = { id: farmParameter.uuid, name: farmParameter.name };
@@ -1236,7 +1258,8 @@ const openClone = () => {
         product: productX,
         transaction_date: date,
         crop_lots: crop_lots,
-        customer_request: customer_request
+        customer_request: customer_request,
+        vehicle: vehicle
     } = listRowSelect.value[0];
 
     transaction_dateV.value = new Date(date);
@@ -1245,6 +1268,7 @@ const openClone = () => {
     productV.value = { id: productX.uuid, name: productX.name };
     product_typeV.value = { id: productType.uuid, name: productType.name };
     packing_typeV.value = { id: packing.uuid, name: packing.name };
+    vehiclesV.value = { id: vehicle.uuid, name: vehicle.vehicle_type };
     variantV.value = { id: variant.uuid, name: variant.name };
     customer_requestV.value = { id: customer_request.uuid, name: customer_request.dispatch_number_lot };
     company.value = { id: empresa.uuid, name: empresa.name };
@@ -1278,6 +1302,7 @@ const createRecord = handleSubmitNew(async (values) => {
         product_uuid: values.productV ? values.productV.id : 'Prueba',
         product_type_uuid: values.product_typeV ? values.product_typeV.id : 'Prueba',
         packing_type_uuid: values.packing_typeV ? values.packing_typeV.id : 'Prueba',
+        vehicle_uuid: values.vehiclesV ? values.vehiclesV.id : 'Prueba',
         variant_uuid: values.variantV ? values.variantV.id : 'Prueba',
         customer_request_uuid: values.customer_requestV ? values.customer_requestV.id : 'Prueba',
         company_uuid: values.company && values.company.id ? values.company.id : companyDefault,
@@ -1326,6 +1351,7 @@ const EditRecord = handleSubmitNew(async (values) => {
         product_uuid: values.productV ? values.productV.id : 'Prueba',
         product_type_uuid: values.product_typeV ? values.product_typeV.id : 'Prueba',
         packing_type_uuid: values.packing_typeV ? values.packing_typeV.id : 'Prueba',
+        vehicle_uuid: values.vehiclesV ? values.vehiclesV.id : 'Prueba',
         variant_uuid: values.variantV ? values.variantV.id : 'Prueba',
         customer_request_uuid: values.customer_requestV ? values.customer_requestV.id : 'Prueba',
         company_uuid: values.company && values.company.id ? values.company.id : companyDefault,
@@ -1369,6 +1395,7 @@ const CloneRecord = handleSubmitNew(async (values) => {
         product_uuid: values.productV ? values.productV.id : 'Prueba',
         product_type_uuid: values.product_typeV ? values.product_typeV.id : 'Prueba',
         packing_type_uuid: values.packing_typeV ? values.packing_typeV.id : 'Prueba',
+        vehicle_uuid: values.vehiclesV ? values.vehiclesV.id : 'Prueba',
         variant_uuid: values.variantV ? values.variantV.id : 'Prueba',
         customer_request_uuid: values.customer_requestV ? values.customer_requestV.id : 'Prueba',
         company_uuid: values.company && values.company.id ? values.company.id : companyDefault,
@@ -1396,6 +1423,18 @@ const ExportRecord = () => {
     if (!eventos.length) return;
     if (format.value.name == 'CSV') formatCSV(eventos);
     else formatXLS(eventos);
+};
+
+const searchVehicles = (event) => {
+    setTimeout(() => {
+        if (!event.query.trim().length) {
+            vehicles.value = [...Vehicles.value];
+        } else {
+            vehicles.value = Vehicles.value.filter((fram) => {
+                return fram.name.toLowerCase().startsWith(event.query.toLowerCase());
+            });
+        }
+    }, 200);
 };
 
 const searchCompannies = (event) => {
