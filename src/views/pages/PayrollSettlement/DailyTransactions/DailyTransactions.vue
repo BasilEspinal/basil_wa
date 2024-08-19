@@ -15,15 +15,15 @@
                 <div class="col-xs-12 col-sm-6 col-md-4 mb-2 text-center mx-auto">
             <Toolbar style="margin-bottom: 1rem">
                 <template #center>
-                    <Button v-if='ability.can("periodo_pago_crear")' :disabled="headerNames.length > 0" label="New" icon="pi pi-plus" class="p-button-success mb-2 mt-2" @click="openNew" size="large" />
+                    <Button :disabled="headerNames.length > 0" label="New" icon="pi pi-plus" class="p-button-success mb-2 mt-2" @click="openNew" size="large" />
                     <Divider layout="vertical" />
-                    <Button v-if='ability.can("periodo_pago_editar")' :disabled="!(listRowSelect.length > 0 && listRowSelect.length < 2)" label="Edit" icon="pi pi-file-edit" class="p-button-help mb-2 mt-2" @click="openEdit" size="large" />
+                    <Button :disabled="!(listRowSelect.length > 0 && listRowSelect.length < 2)" label="Edit" icon="pi pi-file-edit" class="p-button-help mb-2 mt-2" @click="openEdit" size="large" />
                     <Divider layout="vertical" />
-                    <Button v-if='ability.can("periodo_pago_crear")' :disabled="!(listRowSelect.length > 0 && listRowSelect.length < 2)" label="Clone" icon="pi pi-copy" class="p-button-secondary mb-2 mt-2" @click="openClone" size="large" />
+                    <Button :disabled="!(listRowSelect.length > 0 && listRowSelect.length < 2)" label="Clone" icon="pi pi-copy" class="p-button-secondary mb-2 mt-2" @click="openClone" size="large" />
                     <Divider layout="vertical" />
-                    <Button v-if='ability.can("periodo_pago_editar")' :disabled="headerNames.length > 0" label="Export" icon="pi pi-file-import" class="p-button-warning mb-2 mt-2" @click="openExport" size="large" />
+                    <Button :disabled="headerNames.length > 0" label="Export" icon="pi pi-file-import" class="p-button-warning mb-2 mt-2" @click="openExport" size="large" />
                     <Divider layout="vertical" />
-                    <Button v-if='ability.can("periodo_pago_eliminar")' :disabled="!listRowSelect.length > 0" label="Delete" icon="pi pi-trash" class="p-button-danger mb-2 mt-2" @click="openDelete" size="large" />
+                    <Button :disabled="!listRowSelect.length > 0" label="Delete" icon="pi pi-trash" class="p-button-danger mb-2 mt-2" @click="openDelete" size="large" />
                 </template>
             </Toolbar>
             </div>
@@ -52,8 +52,7 @@
         v-model:selection="selectedRegisters"
         filterDisplay="menu"
         v-model:filters="filters"
-        :globalFilterFields="['name', 'company.name', 'farm.name', 'status.name', 'created_at', 'updated_at']" 
-        v-if='ability.can("periodo_pago_listado")'
+        :globalFilterFields="['name', 'company.name', 'farm.name', 'status.name', 'created_at', 'updated_at', 'codeV', 'planner_tasks.transaction_date', 'transaction_date', 'day_week_num', 'tasks_of_type.name', 'packing_type_name', 'product_name', 'vehicle', 'supervisory_employee.document', 'supervisory_employee.first_name', 'supervisory_employee.last_name', 'supervisory_jobtype.name', 'worker_employee.document', 'worker_employee.first_name', 'worker_employee.last_name', 'worker_jobtype.name', 'customer_request_id.dispatch_number_lot']" 
         >
         <template #header>
             <!--Uncomment when filters are done-->
@@ -79,60 +78,164 @@
         <template #empty> No customers found. </template>
         <template #loading> Loading customers data. Please wait. </template>
         <Column selectionMode="multiple" headerStyle="width: 3rem"></Column>
-        <Column field="code" filterField="code" header="Code" sortable :frozen="documentFrozen"> <!--Replace :frozen with the model-->
+
+        <Column field="planner_tasks.transaction_date" filterField="planner_tasks.transaction_date" header="Planner Date" sortable :frozen="documentFrozen"> <!--Replace :frozen with the model-->
             <template #header>
                     <ToggleButton v-model="documentFrozen" onIcon="pi pi-lock" offIcon="pi pi-lock-open" onLabel="" offLabel="" />
                     <div>&nbsp;</div>
                 </template>
 
                 <template #body="{ data }">
-                    {{ data.code }} 
+                    {{ data.planner_tasks.transaction_date }} 
                 </template>
                 <template #filter="{ filterModel }">
                     <InputText v-model="filterModel.value" type="text" class="p-column-filter" placeholder="Search by " />
                 </template>
         </Column>
 
-        <Column field="start_date" filterField="start_date" header="Start date" sortable> 
+        <Column field="transaction_date" filterField="transaction_date" header="Transaction Date" sortable :frozen="documentFrozen"> <!--Replace :frozen with the model-->
+            <template #header>
+                    <ToggleButton v-model="documentFrozen" onIcon="pi pi-lock" offIcon="pi pi-lock-open" onLabel="" offLabel="" />
+                    <div>&nbsp;</div>
+                </template>
+
+                <template #body="{ data }">
+                    {{ data.transaction_date }} 
+                </template>
+                <template #filter="{ filterModel }">
+                    <InputText v-model="filterModel.value" type="text" class="p-column-filter" placeholder="Search by " />
+                </template>
+        </Column>
+
+        <Column field="day_week_num" filterField="day_week_num" header="Day Week Number" sortable> 
             
                 <template #body="{ data }">
-                    {{ data.start_date }} 
+                    {{ data.day_week_num }} 
                 </template>
                 <template #filter="{ filterModel }">
                     <InputText v-model="filterModel.value" type="text" class="p-column-filter" placeholder="Search by " />
                 </template>
         </Column>
 
-        <Column field="end_date" filterField="end_date" header="End date" sortable> 
+        <Column field="tasks_of_type.name" filterField="tasks_of_type.name" header=" Name Task Of Type" sortable> 
             
             <template #body="{ data }">
-                {{ data.end_date }} 
+                {{ data.tasks_of_type.name }} 
             </template>
             <template #filter="{ filterModel }">
                 <InputText v-model="filterModel.value" type="text" class="p-column-filter" placeholder="Search by " />
             </template>
     </Column>
 
+    <Column field="packing_type_name" filterField="packing_type.name" header="packing Type Name" sortable>
+                    <template #body="{ data }">
+                        {{ data.packing_type.name }}
+                    </template>
+                    <template #filter="{ filterModel }">
+                        <InputText v-model="filterModel.value" type="text" class="p-column-filter" placeholder="Search by " />
+                    </template>
+                </Column>
 
-    <Column field="period_num" filterField="period_num" header="Period Number" sortable> 
-            
-            <template #body="{ data }">
-                {{ data.period_num }} 
-            </template>
-            <template #filter="{ filterModel }">
-                <InputText v-model="filterModel.value" type="text" class="p-column-filter" placeholder="Search by " />
-            </template>
-    </Column>
+                <Column field="product_name" filterField="product.name" header="Product Name" sortable>
+                    <template #body="{ data }">
+                        {{ data.product ? data.product.name : '' }}
+                    </template>
+                    <template #filter="{ filterModel }">
+                        <InputText v-model="filterModel.value" type="text" class="p-column-filter" placeholder="Search by product name" />
+                    </template>
+                </Column>
 
-    <Column field="quantity_days" filterField="quantity_days" header="Quantity days" sortable> 
-            
-            <template #body="{ data }">
-                {{ data.period_num }} 
-            </template>
-            <template #filter="{ filterModel }">
-                <InputText v-model="filterModel.value" type="text" class="p-column-filter" placeholder="Search by " />
-            </template>
-    </Column>
+
+                <Column field="vehicle" filterField="vehicle.name" header="Vehicle Name" sortable>
+                    <template #body="{ data }">
+                        {{ data.vehicle ? data.vehicle.vehicle_type : 'N/A' }}
+                    </template>
+                    <template #filter="{ filterModel }">
+                        <InputText v-model="filterModel.value" type="text" class="p-column-filter" placeholder="Search by Vehicle" />
+                    </template>
+                </Column>
+
+                <Column field="supervisory_employee.document" filterField="supervisory_employee.document" header="Supervisor Document" sortable>
+                    <template #body="{ data }">
+                        {{ data.supervisory_employee ? data.supervisory_employee.document : 'N/A' }}
+                    </template>
+                    <template #filter="{ filterModel }">
+                        <InputText v-model="filterModel.value" type="text" class="p-column-filter" placeholder="Search by Vehicle" />
+                    </template>
+                </Column>
+
+                <Column field="supervisory_employee.first_name" filterField="supervisory_employee.first_name" header="Supervisor name" sortable>
+                    <template #body="{ data }">
+                        {{ data.supervisory_employee ? data.supervisory_employee.first_name : 'N/A' }}
+                    </template>
+                    <template #filter="{ filterModel }">
+                        <InputText v-model="filterModel.value" type="text" class="p-column-filter" placeholder="Search by supervisor name" />
+                    </template>
+                </Column>
+
+                <Column field="supervisory_employee.last_name" filterField="supervisory_employee.last_name" header="Supervisor last name" sortable>
+                    <template #body="{ data }">
+                        {{ data.supervisory_employee ? data.supervisory_employee.last_name : 'N/A' }}
+                    </template>
+                    <template #filter="{ filterModel }">
+                        <InputText v-model="filterModel.value" type="text" class="p-column-filter" placeholder="Search by supervisor name" />
+                    </template>
+                </Column>
+
+                <Column field="supervisory_jobtype.name" filterField="supervisory_jobtype.name" header="Supervisor job type" sortable>
+                    <template #body="{ data }">
+                        {{ data.supervisory_jobtype ? data.supervisory_jobtype.name : 'N/A' }}
+                    </template>
+                    <template #filter="{ filterModel }">
+                        <InputText v-model="filterModel.value" type="text" class="p-column-filter" placeholder="Search by supervisor name" />
+                    </template>
+                </Column>
+
+                <Column field="worker_employee.document" filterField="worker_employee.document" header="Worker Employee Document" sortable>
+                    <template #body="{ data }">
+                        {{ data.worker_employee ? data.worker_employee.document : 'N/A' }}
+                    </template>
+                    <template #filter="{ filterModel }">
+                        <InputText v-model="filterModel.value" type="text" class="p-column-filter" placeholder="Search by supervisor name" />
+                    </template>
+                </Column>
+
+                <Column field="worker_employee.first_name" filterField="worker_employee.first_name" header="Worker Employee First name" sortable>
+                    <template #body="{ data }">
+                        {{ data.worker_employee ? data.worker_employee.first_name : 'N/A' }}
+                    </template>
+                    <template #filter="{ filterModel }">
+                        <InputText v-model="filterModel.value" type="text" class="p-column-filter" placeholder="Search by supervisor name" />
+                    </template>
+                </Column>
+
+                <Column field="worker_employee.last_name" filterField="worker_employee.last_name" header="Worker Employee Last Name" sortable>
+                    <template #body="{ data }">
+                        {{ data.worker_employee ? data.worker_employee.last_name : 'N/A' }}
+                    </template>
+                    <template #filter="{ filterModel }">
+                        <InputText v-model="filterModel.value" type="text" class="p-column-filter" placeholder="Search by supervisor name" />
+                    </template>
+                </Column>
+
+                <Column field="worker_jobtype.name" filterField="worker_jobtype.name" header="Worker Employee Job Type" sortable>
+                    <template #body="{ data }">
+                        {{ data.worker_jobtype ? data.worker_jobtype.name : 'N/A' }}
+                    </template>
+                    <template #filter="{ filterModel }">
+                        <InputText v-model="filterModel.value" type="text" class="p-column-filter" placeholder="Search by supervisor name" />
+                    </template>
+                </Column>
+
+                <Column field="customer_request_id.dispatch_number_lot" filterField="customer_request_id.dispatch_number_lot" header="Dispatch Number Lot" sortable>
+                    <template #body="{ data }">
+                        {{ data.customer_request_id ? data.customer_request_id.dispatch_number_lot : 'N/A' }}
+                    </template>
+                    <template #filter="{ filterModel }">
+                        <InputText v-model="filterModel.value" type="text" class="p-column-filter" placeholder="Search by supervisor name" />
+                    </template>
+                </Column>
+                
         <!--Here add other columns-->
 
         <Column field="farmName" filterField="farm.name" header="Farm Name" sortable>
@@ -182,64 +285,24 @@
 
         </DataTable>
         <Dialog v-model:visible="formDialogNew" modal :header="formDialogNewTitle" class="p-fluid text-center mx-auto">
-
                 <div class="mb-3">
-                    <div class=" flex align-items-center">
-                        <label for="start_date" class="font-semibold w-3">Start Date:</label>
-                        
-                        <Calendar dateFormat="dd/mm/yy" v-model="start_dateV" class="flex-auto"  showIcon :showOnFocus="false" inputId="buttondisplay" />
+                    <div class="flex align-items-center gap-3 mb-1">
+                        <label for="username" class="font-semibold w-6rem">Name :</label>
+                        <InputText id="username" v-model="name" class="flex-auto" autocomplete="off" v-bind="nameProps" />
                     </div>
-                    
-                    
-                    <small id="start_dateV" :class="{ 'p-invalid text-red-700': errorsNew['transaction_dateV'] }">
-                        {{ errorsNew.start_dateV }}
+                    <small id="username-help" :class="{ 'p-invalid text-red-700': errorsNew['name'] }">
+                        {{ errorsNew.name }}
                     </small>
-                    <BackendErrors :name="errorResponseAPI?.errors?.start_date" />
                 </div>
-
                 <div class="mb-3">
-                    <div class=" flex align-items-center">
-                        <label for="end_dateV" class="font-semibold w-3">End Date:</label>
-                        
-                        <Calendar dateFormat="dd/mm/yy" v-model="end_dateV" class="flex-auto"  showIcon :showOnFocus="false" inputId="buttondisplay" />
+                    <div class="flex align-items-center gap-3 mb-1">
+                        <label for="username" class="font-semibold w-6rem">Code :</label>
+                        <InputText id="username" v-model="codeV" class="flex-auto" autocomplete="off" v-bind="codeVProps" />
                     </div>
-                    
-                    
-                    <small id="username-help" :class="{ 'p-invalid text-red-700': errorsNew['transaction_dateV'] }">
-                        {{ errorsNew.end_dateV }}
+                    <small id="username-help" :class="{ 'p-invalid text-red-700': errorsNew['codeV'] }">
+                        {{ errorsNew.codeV }}
                     </small>
-                    <BackendErrors :name="errorResponseAPI?.errors?.end_date" />
                 </div>
-
-                <!-- <div class="mb-3">
-                    <div class=" flex align-items-center">
-                        <label for="periodNumberV" class="font-semibold w-3">Period Number:</label>
-                        <InputNumber v-model="periodNumberV" inputId="minmax" :min="0" :max="100" />
-                    </div>
-                    
-                    
-                    <small id="username-help" :class="{ 'p-invalid text-red-700': errorsNew['transaction_dateV'] }">
-                        {{ errorsNew.periodNumberV }}
-                    </small>
-                    <BackendErrors :name="errorResponseAPI?.errors?.period_num" />
-                </div> -->
-
-                
-
-                <div class="mb-3">
-                    <div class=" flex align-items-center">
-                        <label for="username" class="font-semibold w-6rem">Period Number type day: </label>
-                    <AutoComplete v-model="periodNumberV" dropdown :suggestions="periodNumber" field="name"  @complete="searchPeriodNumber" placeholder="" />
-                    </div>
-                    <small id="username-help" :class="{ 'p-invalid text-red-700': errorsNew['periodNumberV'] }">
-                        {{ errorsNew.periodNumberV }}
-                    </small>
-                    <BackendErrors :name="errorResponseAPI?.errors?.period_num" />
-                    
-                </div>
-
-                
-
                 <div class="mb-3">
                     <div class="flex align-items-center">
                         <label for="username" class="font-semibold w-3">Farm :</label>
@@ -248,17 +311,15 @@
                     <small id="username-help" :class="{ 'p-invalid text-red-700': errorsNew['farm'] }">
                         {{ errorsNew.farm }}
                     </small>
-                    <BackendErrors :name="errorResponseAPI?.errors?.farm" />
                 </div>
                 <div class="mb-3">
                     <div class="flex align-items-center">
-                        <label for="username" class="font-semibold w-3">Company:</label>
+                        <label for="username" class="font-semibold w-3">Companny:</label>
                         <AutoComplete v-model="company" inputId="ac" :suggestions="compa" @complete="searchCompannies" field="name" dropdown />
                     </div>
                     <small id="username-help" :class="{ 'p-invalid text-red-700': errorsNew['company'] }">
                         {{ errorsNew.company }}
                     </small>
-                    <BackendErrors :name="errorResponseAPI?.errors?.company" />
                 </div>
 
                 <div class="flex justify-content-end gap-2">
@@ -269,67 +330,43 @@
 
             <Dialog v-model:visible="formDialogEdit" modal :header="formDialogEditTitle" class="p-fluid text-center mx-auto">
                 <div class="mb-3">
-                    <div class=" flex align-items-center">
-                        <label for="start_date" class="font-semibold w-3">Start Date:</label>
-                        
-                        <Calendar dateFormat="dd/mm/yy" v-model="start_dateV" class="flex-auto"  showIcon :showOnFocus="false" inputId="buttondisplay" />
+                    <div class="flex align-items-center gap-3 mb-1">
+                        <label for="username" class="font-semibold w-6rem">Name :</label>
+                        <InputText id="username" v-model="name" class="flex-auto" autocomplete="off" v-bind="nameProps" />
                     </div>
-                    
-                    
-                    <small id="start_dateV" :class="{ 'p-invalid text-red-700': errorsNew['transaction_dateV'] }">
-                        {{ errorsNew.start_dateV }}
+                    <small id="username-help" :class="{ 'p-invalid text-red-700': errorsNew['name'] }">
+                        {{ errorsNew.name }}
                     </small>
-                    <BackendErrors :name="errorResponseAPI?.errors?.start_date" />
-                </div>
-
-                <div class="mb-3">
-                    <div class=" flex align-items-center">
-                        <label for="end_dateV" class="font-semibold w-3">End Date:</label>
-                        
-                        <Calendar dateFormat="dd/mm/yy" v-model="end_dateV" class="flex-auto"  showIcon :showOnFocus="false" inputId="buttondisplay" />
-                    </div>
-                    
-                    
-                    <small id="username-help" :class="{ 'p-invalid text-red-700': errorsNew['transaction_dateV'] }">
-                        {{ errorsNew.end_dateV }}
-                    </small>
-                    <BackendErrors :name="errorResponseAPI?.errors?.end_date" />
-                </div>
-
-                <div class="mb-3">
-                    <div class=" flex align-items-center">
-                        <label for="username" class="font-semibold w-6rem">Period Number type day: </label>
-                    <AutoComplete v-model="periodNumberV" dropdown :suggestions="periodNumber" field="name"  @complete="searchPeriodNumber" placeholder="" />
-                    </div>
-                    <small id="username-help" :class="{ 'p-invalid text-red-700': errorsNew['periodNumberV'] }">
-                        {{ errorsNew.periodNumberV }}
-                    </small>
-                    <BackendErrors :name="errorResponseAPI?.errors?.period_num" />
-                    
-                </div>
-
-                
-
-                <div class="mb-3">
-                    <div class="flex align-items-center">
-                        <label for="username" class="font-semibold w-3">Farm :</label>
-                        <AutoComplete v-model="farm" inputId="ac" :suggestions="farms" @complete="searchFarms" field="name" dropdown />
-                    </div>
-                    <small id="username-help" :class="{ 'p-invalid text-red-700': errorsNew['farm'] }">
-                        {{ errorsNew.farm }}
-                    </small>
-                    <BackendErrors :name="errorResponseAPI?.errors?.farm" />
                 </div>
                 <div class="mb-3">
-                    <div class="flex align-items-center">
-                        <label for="username" class="font-semibold w-3">Company:</label>
-                        <AutoComplete v-model="company" inputId="ac" :suggestions="compa" @complete="searchCompannies" field="name" dropdown />
+                    <div class="flex align-items-center gap-3 mb-1">
+                        <label for="username" class="font-semibold w-6rem">Code :</label>
+                        <InputText id="username" v-model="codeV" class="flex-auto" autocomplete="off" v-bind="codeVProps" />
                     </div>
-                    <small id="username-help" :class="{ 'p-invalid text-red-700': errorsNew['company'] }">
-                        {{ errorsNew.company }}
+                    <small id="username-help" :class="{ 'p-invalid text-red-700': errorsNew['codeV'] }">
+                        {{ errorsNew.codeV }}
                     </small>
-                    <BackendErrors :name="errorResponseAPI?.errors?.company" />
                 </div>
+                <!-- <div class="mb-3">
+                <div class="flex align-items-center">
+                    <label for="username" class="font-semibold w-3">Farm :</label>
+                    <AutoComplete v-model="farm" inputId="ac" :suggestions="farms" @complete="searchFarms" field="name"
+                        dropdown />
+                </div>
+                <small id="username-help" :class="{ 'p-invalid text-red-700': errorsNew['farm'] }">
+                    {{ errorsNew.farm }}
+                </small>
+            </div>
+            <div class="mb-3">
+                <div class="flex align-items-center">
+                    <label for="username" class="font-semibold w-3">Companny:</label>
+                    <AutoComplete v-model="company" inputId="ac" :suggestions="compa" @complete="EditRecord"
+                        field="name" dropdown />
+                </div>
+                <small id="username-help" :class="{ 'p-invalid text-red-700': errorsNew['company'] }">
+                    {{ errorsNew.company }}
+                </small>
+            </div> -->
 
                 <div class="flex justify-content-end gap-2">
                     <Button type="button" label="Cancel" severity="secondary" @click="formDialogEdit = false" />
@@ -339,48 +376,23 @@
 
             <Dialog v-model:visible="formDialogClone" modal :header="formDialogCloneTitle" class="p-fluid text-center mx-auto">
                 <div class="mb-3">
-                    <div class=" flex align-items-center">
-                        <label for="start_date" class="font-semibold w-3">Start Date:</label>
-                        
-                        <Calendar dateFormat="dd/mm/yy" v-model="start_dateV" class="flex-auto"  showIcon :showOnFocus="false" inputId="buttondisplay" />
+                    <div class="flex align-items-center gap-3 mb-1">
+                        <label for="username" class="font-semibold w-6rem">Name :</label>
+                        <InputText id="username" v-model="name" class="flex-auto" autocomplete="off" v-bind="nameProps" />
                     </div>
-                    
-                    
-                    <small id="start_dateV" :class="{ 'p-invalid text-red-700': errorsNew['transaction_dateV'] }">
-                        {{ errorsNew.start_dateV }}
+                    <small id="username-help" :class="{ 'p-invalid text-red-700': errorsNew['name'] }">
+                        {{ errorsNew.name }}
                     </small>
-                    <BackendErrors :name="errorResponseAPI?.errors?.start_date" />
                 </div>
-
                 <div class="mb-3">
-                    <div class=" flex align-items-center">
-                        <label for="end_dateV" class="font-semibold w-3">End Date:</label>
-                        
-                        <Calendar dateFormat="dd/mm/yy" v-model="end_dateV" class="flex-auto"  showIcon :showOnFocus="false" inputId="buttondisplay" />
+                    <div class="flex align-items-center gap-3 mb-1">
+                        <label for="username" class="font-semibold w-6rem">Code :</label>
+                        <InputText id="username" v-model="codeV" class="flex-auto" autocomplete="off" v-bind="codeVProps" />
                     </div>
-                    
-                    
-                    <small id="username-help" :class="{ 'p-invalid text-red-700': errorsNew['transaction_dateV'] }">
-                        {{ errorsNew.end_dateV }}
+                    <small id="username-help" :class="{ 'p-invalid text-red-700': errorsNew['codeV'] }">
+                        {{ errorsNew.codeV }}
                     </small>
-                    <BackendErrors :name="errorResponseAPI?.errors?.end_date" />
                 </div>
-
-
-                <div class="mb-3">
-                    <div class=" flex align-items-center">
-                        <label for="username" class="font-semibold w-6rem">Period Number type day: </label>
-                    <AutoComplete v-model="periodNumberV" dropdown :suggestions="periodNumber" field="name"  @complete="searchPeriodNumber" placeholder="" />
-                    </div>
-                    <small id="username-help" :class="{ 'p-invalid text-red-700': errorsNew['periodNumberV'] }">
-                        {{ errorsNew.periodNumberV }}
-                    </small>
-                    <BackendErrors :name="errorResponseAPI?.errors?.period_num" />
-                    
-                </div>
-
-                
-
                 <div class="mb-3">
                     <div class="flex align-items-center">
                         <label for="username" class="font-semibold w-3">Farm :</label>
@@ -389,20 +401,16 @@
                     <small id="username-help" :class="{ 'p-invalid text-red-700': errorsNew['farm'] }">
                         {{ errorsNew.farm }}
                     </small>
-                    <BackendErrors :name="errorResponseAPI?.errors?.farm" />
                 </div>
                 <div class="mb-3">
                     <div class="flex align-items-center">
-                        <label for="username" class="font-semibold w-3">Company:</label>
+                        <label for="username" class="font-semibold w-3">Companny:</label>
                         <AutoComplete v-model="company" inputId="ac" :suggestions="compa" @complete="searchCompannies" field="name" dropdown />
                     </div>
                     <small id="username-help" :class="{ 'p-invalid text-red-700': errorsNew['company'] }">
                         {{ errorsNew.company }}
                     </small>
-                    <BackendErrors :name="errorResponseAPI?.errors?.company" />
                 </div>
-
-
 
                 <div class="flex justify-content-end gap-2">
                     <Button type="button" label="Cancel" severity="secondary" @click="formDialogClone = false" />
@@ -468,7 +476,7 @@ import useDataAPI from '@/composables/DataAPI/FetchDataAPI.js';
 import { useToast } from 'primevue/usetoast';
 import { FilterMatchMode, FilterOperator } from 'primevue/api';
 import useData from '@/composables/DataAPI/FetchDataAPICopy.js';
-const { getRequest, postRequest, putRequest, deleteRequest,errorResponseAPI } = useData();
+const { getRequest, postRequest, putRequest, deleteRequest } = useData();
 import { useRouter } from 'vue-router';
 import { useForm } from 'vee-validate';
 import { toTypedSchema } from '@vee-validate/zod';
@@ -477,10 +485,9 @@ import { saveAs } from 'file-saver';
 import { z } from 'zod';
 import ability from '@/service/ability.js';
 import { AbilityBuilder} from '@casl/ability';
-import periodNumberValues from '@/composables/PayrollSettings/PaymentPeriods/periodNumbers.json';
-import BackendErrors from '@/views/Errors/BackendErrors.vue';
+
 const prueba = ref({revisar: 'revisar GET-POST-PUT-DELETE'});
-const namePage = ' Payment Periods ';
+const namePage = ' Daily Transactions  ';
 const titlePage = ' '+namePage+' information';
 const dataFromComponent = ref();
 const Farms = ref([]);
@@ -490,15 +497,12 @@ const compa = ref([]);
 const farmDefault = sessionStorage.getItem('accessSessionFarm');
 const companyDefault = sessionStorage.getItem('accessSessionCompany');
 
-const PeriodNumber = ref([]);
-const periodNumber = ref(periodNumberValues);
-
-const formDialogNewTitle = 'Create new '+namePage;
-const formDialogEditTitle = 'Edit '+namePage;
-const formDialogCloneTitle = 'Clone ' + namePage;
-const formDialogExportTitle = 'Export ' + namePage;
-const formDialogDeleteTitle = 'Delete '+namePage;
 const formDialogNew = ref(false);
+const formDialogNewTitle = 'Create new xxxxxxxxxx';
+const formDialogEditTitle = 'Edit xxxxxxxxxx';
+const formDialogCloneTitle = 'Clone xxxxxxxxxx';
+const formDialogExportTitle = 'Export xxxxxxxxxx';
+const formDialogDeleteTitle = 'Delete xxxxxxxxxx';
 const formDialogEdit = ref(false);
 const formDialogClone = ref(false);
 const formDialogExport = ref(false);
@@ -506,7 +510,7 @@ const formDialogDelete = ref(false);
 const toast = useToast();
 const filename = ref('table');
 const isChanging = ref(false);
-let endpoint = ref('/pay_periods');  //replace endpoint with your endpoint
+let endpoint = ref('/transactions/tasks');  //replace endpoint with your endpoint
 
 
 ////////////
@@ -548,10 +552,23 @@ const initFilters = () => {
     filters.value = {
         global: { value: null, matchMode: FilterMatchMode.CONTAINS },
         code: { operator: FilterOperator.AND, constraints: [{ value: null, matchMode: FilterMatchMode.STARTS_WITH }] },
-        start_date: { operator: FilterOperator.AND, constraints: [{ value: null, matchMode: FilterMatchMode.STARTS_WITH }] },
-        end_date: { operator: FilterOperator.AND, constraints: [{ value: null, matchMode: FilterMatchMode.STARTS_WITH }] },
-        period_num: { operator: FilterOperator.AND, constraints: [{ value: null, matchMode: FilterMatchMode.STARTS_WITH }] },
-        quantity_days: { operator: FilterOperator.AND, constraints: [{ value: null, matchMode: FilterMatchMode.STARTS_WITH }] },
+        name: { operator: FilterOperator.AND, constraints: [{ value: null, matchMode: FilterMatchMode.STARTS_WITH }] },
+        'planner_tasks.transaction_date': { operator: FilterOperator.AND, constraints: [{ value: null, matchMode: FilterMatchMode.STARTS_WITH }] },
+        'transaction_date': { operator: FilterOperator.AND, constraints: [{ value: null, matchMode: FilterMatchMode.STARTS_WITH }] },
+        day_week_num: { operator: FilterOperator.AND, constraints: [{ value: null, matchMode: FilterMatchMode.STARTS_WITH }] },
+        'tasks_of_type.name': { operator: FilterOperator.AND, constraints: [{ value: null, matchMode: FilterMatchMode.STARTS_WITH }] },
+        packing_type_name: { operator: FilterOperator.AND, constraints: [{ value: null, matchMode: FilterMatchMode.STARTS_WITH }] },
+        product_name: { operator: FilterOperator.AND, constraints: [{ value: null, matchMode: FilterMatchMode.STARTS_WITH }] },
+        vehicle: { operator: FilterOperator.AND, constraints: [{ value: null, matchMode: FilterMatchMode.STARTS_WITH }] },
+        'supervisory_employee.document': { operator: FilterOperator.AND, constraints: [{ value: null, matchMode: FilterMatchMode.STARTS_WITH }] },
+        'supervisory_employee.first_name': { operator: FilterOperator.AND, constraints: [{ value: null, matchMode: FilterMatchMode.STARTS_WITH }] },
+        'supervisory_employee.last_name': { operator: FilterOperator.AND, constraints: [{ value: null, matchMode: FilterMatchMode.STARTS_WITH }] },
+        'supervisory_jobtype.name': { operator: FilterOperator.AND, constraints: [{ value: null, matchMode: FilterMatchMode.STARTS_WITH }] },
+        'worker_employee.document': { operator: FilterOperator.AND, constraints: [{ value: null, matchMode: FilterMatchMode.STARTS_WITH }] },
+        'worker_employee.first_name': { operator: FilterOperator.AND, constraints: [{ value: null, matchMode: FilterMatchMode.STARTS_WITH }] },
+        'worker_employee.last_name': { operator: FilterOperator.AND, constraints: [{ value: null, matchMode: FilterMatchMode.STARTS_WITH }] },
+        'worker_jobtype.name': { operator: FilterOperator.AND, constraints: [{ value: null, matchMode: FilterMatchMode.STARTS_WITH }] },
+        'customer_request_id.dispatch_number_lot': { operator: FilterOperator.AND, constraints: [{ value: null, matchMode: FilterMatchMode.STARTS_WITH }] },
         'status.name': { operator: FilterOperator.AND, constraints: [{ value: null, matchMode: FilterMatchMode.STARTS_WITH }] },
         'farm.name': { operator: FilterOperator.AND, constraints: [{ value: null, matchMode: FilterMatchMode.STARTS_WITH }] },
         'company.name': { operator: FilterOperator.AND, constraints: [{ value: null, matchMode: FilterMatchMode.STARTS_WITH }] },
@@ -570,14 +587,6 @@ const readAll = async () => {
     const respCompan = await getRequest('/companies');
     if (!respCompan.ok) toast.add({ severity: 'error', detail: 'Error' + respCompan.error, life: 3000 });
     Compan.value = respCompan.data.data.map((comp) => ({ id: comp.uuid, name: comp.name }));
-    console.log(Compan.value)
-        
-    const respPeriodNumbers = periodNumber.value; // Asignar el JSON importado
-
-    PeriodNumber.value = respPeriodNumbers.data.map((period) => ({ id: period.id, name: period.name }));
-
-    console.log(PeriodNumber.value);
-
 };
 const loadingData = async () => {
     const response = await getRequest(endpoint.value);
@@ -601,27 +610,11 @@ const {
     errors: errorsNew,
     defineField,
     resetForm
-} = useForm({initialValues:{
-    // name: '',
-    // codeV: '',
-    start_dateV: new Date(),
-    end_dateV: new Date(),
-    periodNumberV: '',
-    farm: '',
-    company: ''
-},
+} = useForm({
     validationSchema: toTypedSchema(
         z.object({
-            // name: z.string().min(4),
-            // codeV: z.string().min(4),
-            start_dateV:z.date(),
-            end_dateV:z.date(),
-            // periodNumberV:z.number().min(0).max(31),
-            periodNumberV: z
-                .object({
-                name: z.string().min(4),
-                id: z.number()
-            }),
+            name: z.string().min(4),
+            codeV: z.string().min(4),
             farm: z
                 .object({
                     name: z.string().min(4),
@@ -637,11 +630,8 @@ const {
         })
     )
 });
-// const [name, nameProps] = defineField('name');
-// const [codeV, codeVProps] = defineField('codeV');
-const [start_dateV] = defineField('start_dateV');
-const [end_dateV] = defineField('end_dateV');
-const [periodNumberV] = defineField('periodNumberV');
+const [name, nameProps] = defineField('name');
+const [codeV, codeVProps] = defineField('codeV');
 const [farm] = defineField('farm');
 const [company] = defineField('company');
 
@@ -657,16 +647,6 @@ let headerNames = ref([]);
 provide('isChanging', isChanging);
 watch(listRowSelect, RowSelect);
 
-function formatTransactionDate(date) {
-    // Asegurarse de que el año, mes y día tienen el formato correcto
-    const yyyy = date.getFullYear();
-    const mm = String(date.getMonth() + 1).padStart(2, '0'); // Los meses en JavaScript son 0-indexados
-    const dd = String(date.getDate()).padStart(2, '0');
-
-    // Formatear la fecha en formato YYYY-MM-DD
-    const formattedDate = `${yyyy}-${mm}-${dd}`;
-    return formattedDate;
-}
 
 
 const openNew = () => {
@@ -677,13 +657,10 @@ const openNew = () => {
 
 const openEdit = () => {
     resetForm();
-    const { period_num:periodNum, company: empresa, farm: farmParameter, start_date:startDate, end_date:endDate } = listRowSelect.value[0];
-console.log(periodNumber.value)
-    // start_dateV.value = new Date(start_date);
+    const { code, company: empresa, farm: farmParameter, name: nombre } = listRowSelect.value[0];
 
-    start_dateV.value = new Date(startDate);
-    end_dateV.value = new Date(endDate);
-    periodNumberV.value = { id: periodNum, name: periodNumber.value.data.find(p => p.id === periodNum).name };
+    name.value = nombre;
+    codeV.value = code;
     company.value = { id: empresa.uuid, name: empresa.name };
     farm.value = { id: farmParameter.uuid, name: farmParameter.name };
 
@@ -692,12 +669,9 @@ console.log(periodNumber.value)
 
 const openClone = () => {
     resetForm();
+    const { company: empresa, farm: farmParameter, name: nombre } = listRowSelect.value[0];
 
-    const { period_num:periodNum, company: empresa, farm: farmParameter, start_date:startDate, end_date:endDate } = listRowSelect.value[0];
-
-    start_dateV.value = new Date(startDate);
-    end_dateV.value = new Date(endDate);
-    periodNumberV.value = { id: periodNum, name: periodNumber.value.data.find(p => p.id === periodNum).name };
+    name.value = nombre;
     company.value = { id: empresa.uuid, name: empresa.name };
     farm.value = { id: farmParameter.uuid, name: farmParameter.name };
     formDialogClone.value = true;
@@ -711,38 +685,27 @@ const openExport = () => {
 const openDelete = () => {
     formDialogDelete.value = true;
 };
+
 const createRecord = handleSubmitNew(async (values) => {
-    
-    const start_dateFormatted  = formatTransactionDate(start_dateV.value);
-    const end_dateFormatted  = formatTransactionDate(end_dateV.value);
-    console.log(start_dateFormatted);
-    console.log(end_dateFormatted);
     const data = {
-        start_date: start_dateFormatted,
-        end_date: end_dateFormatted,
-        period_num: values.periodNumberV.id,
+        code: values.codeV,
+        name: values.name,
         company_uuid: values.company ? values.company.id : companyDefault,
         farm_uuid: values.farm ? values.farm.id : farmDefault
     };
-    console.log(data);
     const restp = await postRequest(endpoint.value, data);
 
     toast.add({ severity: restp.ok ? 'success' : 'error', summary: 'Create', detail: restp.ok ? 'Creado' : restp.error, life: 3000 });
     loadingData();
     formDialogNew.value = false;
-    prueba.value= data;
-    
-
 });
+
 
 const EditRecord = handleSubmitNew(async (values) => {
     const { uuid } = listRowSelect.value[0];
-    const start_dateFormatted  = formatTransactionDate(start_dateV.value);
-    const end_dateFormatted  = formatTransactionDate(end_dateV.value);
     const data = {
-        start_date: start_dateFormatted,
-        end_date: end_dateFormatted,
-        period_num: values.periodNumberV.id,
+        code: values.codeV,
+        name: values.name,
         company_uuid: values.company ? values.company.id : companyDefault,
         farm_uuid: values.farm ? values.farm.id : farmDefault
     };
@@ -751,18 +714,12 @@ const EditRecord = handleSubmitNew(async (values) => {
     toast.add({ severity: restp.ok ? 'success' : 'error', summary: 'Edit', detail: restp.ok ? 'Editado' : restp.error, life: 3000 });
     loadingData();
     formDialogEdit.value = false;
-    prueba.value= data;
-    if(restp.ok) {listRowSelect.value = []
-    selectedRegisters.value = []}
 });
 
 const CloneRecord = handleSubmitNew(async (values) => {
-    const start_dateFormatted  = formatTransactionDate(start_dateV.value);
-    const end_dateFormatted  = formatTransactionDate(end_dateV.value);
     const data = {
-        start_date: start_dateFormatted,
-        end_date: end_dateFormatted,
-        period_num: values.periodNumberV.id,
+        code: values.codeV,
+        name: values.name,
         company_uuid: values.company ? values.company.id : companyDefault,
         farm_uuid: values.farm ? values.farm.id : farmDefault
     };
@@ -770,10 +727,8 @@ const CloneRecord = handleSubmitNew(async (values) => {
     toast.add({ severity: restp.ok ? 'success' : 'error', summary: 'Clone', detail: restp.ok ? 'Clonado' : restp.error, life: 3000 });
     loadingData();
     formDialogClone.value = false;
-    prueba.value= data;
-    if(restp.ok) {listRowSelect.value = []
-    selectedRegisters.value = []}
 });
+
 const searchCompannies = (event) => {
     setTimeout(() => {
         if (!event.query.trim().length) {
@@ -785,20 +740,6 @@ const searchCompannies = (event) => {
         }
     }, 200);
 };
-
-const searchPeriodNumber = (event) => {
-    setTimeout(() => {
-        if (!event.query.trim().length) {
-            periodNumber.value = [...PeriodNumber.value];
-        } else {
-            periodNumber.value = PeriodNumber.value.filter((fram) => {
-                return fram.name.toLowerCase().startsWith(event.query.toLowerCase());
-            });
-        }
-    }, 200);
-};
-
-
 const searchFarms = (event) => {
     setTimeout(() => {
         if (!event.query.trim().length) {
@@ -811,7 +752,6 @@ const searchFarms = (event) => {
     }, 200);
 };
 
-
 const ExportRecord = () => {
     const eventos = exportAll.value.name == 'ALL' ? dataFromComponent.value.map((data) => data) : listRowSelect.value.map((data) => data);
     formDialogExport.value = false;
@@ -819,6 +759,7 @@ const ExportRecord = () => {
     if (format.value.name == 'CSV') formatCSV(eventos);
     else formatXLS(eventos);
 };
+
 function formatCSV(eventos) {
     const dataExport = [];
     dataExport.push(',' + Object.keys(eventos[0]) + '\n');

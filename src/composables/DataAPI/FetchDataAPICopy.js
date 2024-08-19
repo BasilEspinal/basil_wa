@@ -9,13 +9,13 @@ export default function useData() {
 
     token.value = sessionStorage.getItem('accessSessionToken');
     // const token.value = localStorage.getItem('accessSessionToken');
-    
+
     const initializeToken = () => {
         token.value = sessionStorage.getItem('accessSessionToken');
         if (token.value) {
-          APISettings.headers.set('Authorization', 'Bearer ' + token.value);
+            APISettings.headers.set('Authorization', 'Bearer ' + token.value);
         }
-      };
+    };
 
     initializeToken();
     APISettings.headers.set('Content-Type', 'application/json');
@@ -23,9 +23,8 @@ export default function useData() {
     // APISettings.headers.set('Authorization', 'Bearer ' + token.value);
 
     async function getRequest(endPoint) {
-        
         initializeToken();
-        
+
         let responseData = { data: {}, error: '', ok: false };
         let baseUrl = `${base}${api}${endPoint}`;
         const requestOptions = {
@@ -61,16 +60,14 @@ export default function useData() {
             if (!response.ok) {
                 responseData.error = response.statusText;
 
-
                 const errorBody = await response.text();
                 const errorBodyObject = JSON.parse(errorBody);
 
                 console.error(`Error ${response.status}: ${errorBody}`);
-                console.log('response',typeof errorBodyObject, errorBodyObject)
+                console.log('response', typeof errorBodyObject, errorBodyObject);
                 responseData.error += ` ${errorBody}`;
                 // errorResponseAPI.value = ` ${errorBody}`;
                 errorResponseAPI.value = errorBodyObject;
-
 
                 throw new Error(`Error ${response.status} al enviar datos.`);
             }
@@ -83,7 +80,7 @@ export default function useData() {
         return responseData;
     }
 
-    async function putRequest(endPoint,data, id) {
+    async function putRequest(endPoint, data, id) {
         let responseData = { data: [], error: '', ok: false };
         let baseUrl = `${base}${api}${endPoint}/${id}`;
         const requestOptions = {
@@ -95,7 +92,7 @@ export default function useData() {
             const response = await fetch(baseUrl, requestOptions);
             console.log('Response status:', response.status);
             console.log('Response headers:', [...response.headers]);
-            
+
             responseData.ok = response.ok;
             if (!response.ok) {
                 // responseData.error = response.statusText;
@@ -105,30 +102,28 @@ export default function useData() {
                 // console.error(`Error ${response.status}: ${errorBody}`);
                 // responseData.error += ` ${errorBody}`;
 
-
                 const errorBody = await response.text();
                 const errorBodyObject = JSON.parse(errorBody);
 
                 console.error(`Error ${response.status}: ${errorBody}`);
-                console.log('response',typeof errorBodyObject, errorBodyObject)
+                console.log('response', typeof errorBodyObject, errorBodyObject);
                 responseData.error += ` ${errorBody}`;
                 // errorResponseAPI.value = ` ${errorBody}`;
                 errorResponseAPI.value = errorBodyObject;
 
                 throw new Error(`Error ${response.status} al enviar datos.`);
-                
             }
             responseData.data = await response.json();
         } catch (e) {
             console.error('Error en la solicitud POST:', e.message);
             responseData.error += ' ' + e.message;
-            console.log(e)
+            console.log(e);
             //errorResponseAPI.value = response;
         }
         return responseData;
     }
 
-    async function deleteRequest(endPoint,  id) {
+    async function deleteRequest(endPoint, id) {
         let responseData = { data: [], error: '', ok: false };
         let baseUrl = `${base}${api}${endPoint}/${id}`;
         const requestOptions = {
@@ -151,11 +146,43 @@ export default function useData() {
         return responseData;
     }
 
+    async function patchRequest(endPoint, data, id) {
+        let responseData = { data: [], error: '', ok: false };
+        let baseUrl = `${base}${api}${endPoint}/${id}`;
+        const requestOptions = {
+            method: 'PATCH',
+            headers: APISettings.headers,
+            body: JSON.stringify(data)
+        };
+        try {
+            const response = await fetch(baseUrl, requestOptions);
+            responseData.ok = response.ok;
+            if (!response.ok) {
+                const errorBody = await response.text();
+                const errorBodyObject = JSON.parse(errorBody);
+
+                console.error(`Error ${response.status}: ${errorBody}`);
+                console.log('response', typeof errorBodyObject, errorBodyObject);
+                responseData.error += ` ${errorBody}`;
+                errorResponseAPI.value = errorBodyObject;
+
+                throw new Error(`Error ${response.status} al enviar datos.`);
+            }
+            responseData.data = await response.json();
+        } catch (e) {
+            console.error('Error en la solicitud PATCH:', e.message);
+            responseData.error += ' ' + e.message;
+            console.log(e);
+        }
+        return responseData;
+    }
+
     return {
         getRequest,
         postRequest,
         putRequest,
         deleteRequest,
+        patchRequest,
         errorResponseAPI
     };
 }

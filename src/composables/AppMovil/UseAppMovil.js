@@ -1,8 +1,6 @@
-import { ref,reactive,toRefs,computed } from 'vue'
+import { ref, reactive, toRefs, computed } from 'vue';
 
-export default  function UseAppMovil()
-{
-
+export default function UseAppMovil() {
     const areawork = ref('Corta');
     const plannertask = ref();
     const workcenters = ref();
@@ -22,18 +20,18 @@ export default  function UseAppMovil()
     ]);
 
     const worksDay = ref([
-        { employee: 'Empleado 1', quantity: 38560, totalPrice: 43342 },
-        { employee: 'Empleado 1', quantity: 54406, totalPrice: 43342 },
-        { employee: 'Empleado 1', quantity: 54406, totalPrice: 43342 }
+        { id: 1, employee: 'Empleado 1', quantity: 38560, totalPrice: 4842, nota: 'pruebas con notas.' },
+        { id: 2, employee: 'Empleado 2', quantity: 54406, totalPrice: 5642, nota: 'pruebas con notas v2.' },
+        { id: 3, employee: 'Empleado 3', quantity: 64406, totalPrice: 8542, nota: 'pruebas con notas v3.' }
     ]);
-
 
     const task_type = [
         { name: 'Task', code: 'Task' },
-        { name: 'HoraExtra', code: 'HoraExtra' },
-        { name: 'Labor Contratista', code: 'Labor' }
+        { name: 'Hora Extra', code: 'HoraExtra' },
+        { name: 'Contratista', code: 'Contractor' },
+        { name: 'Dia de trabajo', code: 'Journal' }
     ];
-  
+
     const crops_lots = [
         { name: 'L1', code: 'L1' },
         { name: 'L2', code: 'L2' },
@@ -54,7 +52,6 @@ export default  function UseAppMovil()
         { label: 'Large', value: 'large', class: 'lg' }
     ]);
 
-
     const data_planner = ref({
         areawork: 'Corta',
         planner_date: '30/05/2024',
@@ -70,27 +67,26 @@ export default  function UseAppMovil()
         total_packing: 500
     });
 
-
     const priceunit = ref(1950);
 
     async function getPlannerTask(endPoint) {
-        isLoading.value = true
+        isLoading.value = true;
         try {
-            const response = await axios.get(`/api/products/${productId}`)
+            const response = await axios.get(`/api/products/${productId}`);
         } catch (e) {
-            error.value = e
+            error.value = e;
         } finally {
-            isLoading.value = false
+            isLoading.value = false;
         }
     }
     async function getEmployeesWorkCenter(endPoint) {
-        isLoading.value = true
+        isLoading.value = true;
         try {
-            const response = await axios.get(`/api/products/${productId}`)
+            const response = await axios.get(`/api/products/${productId}`);
         } catch (e) {
-            error.value = e
+            error.value = e;
         } finally {
-            isLoading.value = false
+            isLoading.value = false;
         }
     }
 
@@ -107,6 +103,5 @@ export default  function UseAppMovil()
         priceunit,
         plannertask,
         tasktarifs
-    }
-
+    };
 }

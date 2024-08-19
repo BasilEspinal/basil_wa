@@ -339,6 +339,12 @@ const dataFromComponent = ref();
 const logoUrl = computed(() => {
     return `layout/images/${layoutConfig.darkTheme.value ? 'logo-white' : 'logo-dark'}.png`;
 });
+
+const Farms = ref([]);
+const farms = ref([]);
+const Compan = ref([]);
+const compa = ref([]);
+
 const formDialogNewTitle = 'Create new '+namePage;
 const formDialogEditTitle = 'Edit '+namePage;
 const formDialogCloneTitle = 'Clone ' + namePage;

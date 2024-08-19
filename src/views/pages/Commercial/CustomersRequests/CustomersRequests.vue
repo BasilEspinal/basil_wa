@@ -4,8 +4,6 @@
             <div>
                 <h1>{{ titlePage }}</h1>
             </div>
-
-
         </div>
         <div class="card">
             <div class="grid">
@@ -14,49 +12,67 @@
                     <div class="col-xs-12 col-sm-6 col-md-4 mb-2 text-center mx-auto">
                         <Toolbar style="margin-bottom: 1rem">
                             <template #center>
-                                <Button v-if="ability.can('solicitud_cliente_crear')" :disabled="headerNames.length > 0"
-                                    label="New" icon="pi pi-plus" class="p-button-success mb-2 mt-2" @click="openNew"
-                                    size="large" />
+                                <Button v-if="ability.can('solicitud_cliente_crear')" :disabled="headerNames.length > 0" label="New" icon="pi pi-plus" class="p-button-success mb-2 mt-2" @click="openNew" size="large" />
                                 <Divider v-if="ability.can('solicitud_cliente_crear')" layout="vertical" />
-                                <Button v-if="ability.can('solicitud_cliente_editar')"
-                                    :disabled="!(listRowSelect.length > 0 && listRowSelect.length < 2)" label="Edit"
-                                    icon="pi pi-file-edit" class="p-button-help mb-2 mt-2" @click="openEdit"
-                                    size="large" />
+                                <Button
+                                    v-if="ability.can('solicitud_cliente_editar')"
+                                    :disabled="!(listRowSelect.length > 0 && listRowSelect.length < 2)"
+                                    label="Edit"
+                                    icon="pi pi-file-edit"
+                                    class="p-button-help mb-2 mt-2"
+                                    @click="openEdit"
+                                    size="large"
+                                />
                                 <Divider v-if="ability.can('solicitud_cliente_editar')" layout="vertical" />
-                                <Button v-if="ability.can('solicitud_cliente_crear')"
-                                    :disabled="!(listRowSelect.length > 0 && listRowSelect.length < 2)" label="Clone"
-                                    icon="pi pi-copy" class="p-button-secondary mb-2 mt-2" @click="openClone"
-                                    size="large" />
+                                <Button
+                                    v-if="ability.can('solicitud_cliente_crear')"
+                                    :disabled="!(listRowSelect.length > 0 && listRowSelect.length < 2)"
+                                    label="Clone"
+                                    icon="pi pi-copy"
+                                    class="p-button-secondary mb-2 mt-2"
+                                    @click="openClone"
+                                    size="large"
+                                />
                                 <Divider v-if="ability.can('solicitud_cliente_editar')" layout="vertical" />
-                                <Button v-if="ability.can('solicitud_cliente_editar')"
-                                    :disabled="headerNames.length > 0" label="Export" icon="pi pi-file-import"
-                                    class="p-button-warning mb-2 mt-2" @click="openExport" size="large" />
+                                <Button v-if="ability.can('solicitud_cliente_editar')" :disabled="headerNames.length > 0" label="Export" icon="pi pi-file-import" class="p-button-warning mb-2 mt-2" @click="openExport" size="large" />
                                 <Divider v-if="ability.can('solicitud_cliente_eliminar')" layout="vertical" />
-                                <Button v-if="ability.can('solicitud_cliente_eliminar')"
-                                    :disabled="!listRowSelect.length > 0" label="Delete" icon="pi pi-trash"
-                                    class="p-button-danger mb-2 mt-2" @click="openDelete" size="large" />
+                                <Button v-if="ability.can('solicitud_cliente_eliminar')" :disabled="!listRowSelect.length > 0" label="Delete" icon="pi pi-trash" class="p-button-danger mb-2 mt-2" @click="openDelete" size="large" />
                             </template>
                         </Toolbar>
                     </div>
-
                 </div>
             </div>
             <!-- <pre>{{ dataResponseAPI }}</pre> -->
-            <DataTable :value="dataFromComponent" dataKey="uuid" tableStyle="min-width: 75rem" showGridlines
-                :loading="loading" scrollable scrollHeight="600px" resizableColumns columnResizeMode="expand"
-                sortMode="multiple" :paginator="true" :rows="50" :rowsPerPageOptions="[5, 10, 20, 50]"
-                :class="`p-datatable-${size.class}`" @row-select="onRowSelect(selectedRegisters)"
-                @row-unselect="onRowSelect(selectedRegisters)" @select-all-change="onSelectAllChange"
-                v-model:selection="selectedRegisters" filterDisplay="menu" v-model:filters="filters"
+            <DataTable
+                :value="dataFromComponent"
+                dataKey="uuid"
+                tableStyle="min-width: 75rem"
+                showGridlines
+                :loading="loading"
+                scrollable
+                scrollHeight="600px"
+                resizableColumns
+                columnResizeMode="expand"
+                sortMode="multiple"
+                :paginator="true"
+                :rows="50"
+                :rowsPerPageOptions="[5, 10, 20, 50]"
+                :class="`p-datatable-${size.class}`"
+                @row-select="onRowSelect(selectedRegisters)"
+                @row-unselect="onRowSelect(selectedRegisters)"
+                @select-all-change="onSelectAllChange"
+                v-model:selection="selectedRegisters"
+                filterDisplay="menu"
+                v-model:filters="filters"
                 :globalFilterFields="['name', 'company.name', 'farm.name', 'status.name', 'created_at', 'updated_at', 'dispatch_number_lot', 'order_number_customer', 'invoice_number_customer', 'delivery_datetime', 'packaging_presentation']"
-                v-if="ability.can('solicitud_cliente_listado')">
+                v-if="ability.can('solicitud_cliente_listado')"
+            >
                 <template #header>
                     <!--Uncomment when filters are done-->
 
                     <Toolbar class="mb-2">
                         <template v-slot:start>
-                            <Button type="button" icon="pi pi-filter-slash" label="Limpiar"
-                                class="p-button-outlined mb-2" @click="clearFilter()" />
+                            <Button type="button" icon="pi pi-filter-slash" label="Limpiar" class="p-button-outlined mb-2" @click="clearFilter()" />
                         </template>
                         <template v-slot:end>
                             <span class="p-input-icon-left mb-2">
@@ -65,10 +81,7 @@
                             </span>
                         </template>
                         <template v-slot:center>
-
-                            <SelectButton v-model="size" :options="sizeOptions" optionLabel="label" dataKey="label">
-                            </SelectButton>
-
+                            <SelectButton v-model="size" :options="sizeOptions" optionLabel="label" dataKey="label"> </SelectButton>
                         </template>
                     </Toolbar>
                 </template>
@@ -76,11 +89,10 @@
                 <template #empty> No customers found. </template>
                 <template #loading> Loading customers data. Please wait. </template>
                 <Column selectionMode="multiple" headerStyle="width: 3rem"></Column>
-                <Column field="dispatch_number_lot" filterField="dispatch_number_lot" header="Dispatch Num Lot" sortable
-                    :frozen="documentFrozen"> <!--Replace :frozen with the model-->
+                <Column field="dispatch_number_lot" filterField="dispatch_number_lot" header="Dispatch Num Lot" sortable :frozen="documentFrozen">
+                    <!--Replace :frozen with the model-->
                     <template #header>
-                        <ToggleButton v-model="documentFrozen" onIcon="pi pi-lock" offIcon="pi pi-lock-open" onLabel=""
-                            offLabel="" />
+                        <ToggleButton v-model="documentFrozen" onIcon="pi pi-lock" offIcon="pi pi-lock-open" onLabel="" offLabel="" />
                         <div>&nbsp;</div>
                     </template>
 
@@ -88,211 +100,158 @@
                         {{ data.dispatch_number_lot }}
                     </template>
                     <template #filter="{ filterModel }">
-                        <InputText v-model="filterModel.value" type="text" class="p-column-filter"
-                            placeholder="Search by " />
+                        <InputText v-model="filterModel.value" type="text" class="p-column-filter" placeholder="Search by " />
                     </template>
                 </Column>
 
-                <Column field="order_number_customer" filterField="order_number_customer" header="Order Number Customer"
-                    sortable>
-
+                <Column field="order_number_customer" filterField="order_number_customer" header="Order Number Customer" sortable>
                     <template #body="{ data }">
                         {{ data.order_number_customer }}
                     </template>
                     <template #filter="{ filterModel }">
-                        <InputText v-model="filterModel.value" type="text" class="p-column-filter"
-                            placeholder="Search by order Number Customer" />
+                        <InputText v-model="filterModel.value" type="text" class="p-column-filter" placeholder="Search by order Number Customer" />
                     </template>
                 </Column>
 
-                <Column field="invoice_number_customer" filterField="invoice_number_customer"
-                    header="Invoice Number Customer" sortable>
-
+                <Column field="invoice_number_customer" filterField="invoice_number_customer" header="Invoice Number Customer" sortable>
                     <template #body="{ data }">
                         {{ data.invoice_number_customer }}
                     </template>
                     <template #filter="{ filterModel }">
-                        <InputText v-model="filterModel.value" type="text" class="p-column-filter"
-                            placeholder="Search by Inovice Customer" />
+                        <InputText v-model="filterModel.value" type="text" class="p-column-filter" placeholder="Search by Inovice Customer" />
                     </template>
                 </Column>
 
                 <Column field="customer_name" filterField="customer_name" header="Customer Name" sortable>
-
                     <template #body="{ data }">
                         {{ data.customer_name }}
                     </template>
                     <template #filter="{ filterModel }">
-                        <InputText v-model="filterModel.value" type="text" class="p-column-filter"
-                            placeholder="Search by Column" />
+                        <InputText v-model="filterModel.value" type="text" class="p-column-filter" placeholder="Search by Column" />
                     </template>
                 </Column>
 
-
                 <Column field="request_date" filterField="request_date" header="Request date" sortable>
-
                     <template #body="{ data }">
                         {{ data.request_date }}
                     </template>
                     <template #filter="{ filterModel }">
-                        <InputText v-model="filterModel.value" type="text" class="p-column-filter"
-                            placeholder="Search by column" />
+                        <InputText v-model="filterModel.value" type="text" class="p-column-filter" placeholder="Search by column" />
                     </template>
                 </Column>
 
-                <Column field="delivery_datetime" filterField="delivery_datetime" dataType="date"
-                    header="Delivery Datetime" sortable>
-
+                <Column field="delivery_datetime" filterField="delivery_datetime" dataType="date" header="Delivery Datetime" sortable>
                     <template #body="{ data }">
                         {{ data.delivery_datetime }}
                     </template>
                     <template #filter="{ filterModel }">
-                        <InputText v-model="filterModel.value" type="text" class="p-column-filter"
-                            placeholder="Search by Inovice Customer" />
+                        <InputText v-model="filterModel.value" type="text" class="p-column-filter" placeholder="Search by Inovice Customer" />
                     </template>
                 </Column>
 
-                <Column field="packaging_presentation" filterField="packaging_presentation"
-                    header="Packaging Presentation" sortable>
-
+                <Column field="packaging_presentation" filterField="packaging_presentation" header="Packaging Presentation" sortable>
                     <template #body="{ data }">
                         {{ data.packaging_presentation }}
                     </template>
                     <template #filter="{ filterModel }">
-                        <InputText v-model="filterModel.value" type="text" class="p-column-filter"
-                            placeholder="Search by Inovice Customer" />
+                        <InputText v-model="filterModel.value" type="text" class="p-column-filter" placeholder="Search by Inovice Customer" />
                     </template>
                 </Column>
 
-
-                <Column field="outlet_temperature" filterField="outlet_temperature" header="Outlet Temperature"
-                    sortable>
-
-                    <template #body="{ data }">
-                        {{ data.outlet_temperature }} °C
-                    </template>
+                <Column field="outlet_temperature" filterField="outlet_temperature" header="Outlet Temperature" sortable>
+                    <template #body="{ data }"> {{ data.outlet_temperature }} °C </template>
                     <template #filter="{ filterModel }">
-                        <InputText v-model="filterModel.value" type="text" class="p-column-filter"
-                            placeholder="Search by Column" />
+                        <InputText v-model="filterModel.value" type="text" class="p-column-filter" placeholder="Search by Column" />
                     </template>
                 </Column>
-
 
                 <Column field="request_qty" filterField="request_qty" header="Quantity requested" sortable>
-
                     <template #body="{ data }">
                         {{ data.request_qty }}
                     </template>
                     <template #filter="{ filterModel }">
-                        <InputText v-model="filterModel.value" type="text" class="p-column-filter"
-                            placeholder="Search by Column" />
+                        <InputText v-model="filterModel.value" type="text" class="p-column-filter" placeholder="Search by Column" />
                     </template>
                 </Column>
 
-                <Column field="packing_name_customer" filterField="packing_name_customer" header="Packing Name Customer"
-                    sortable>
-
+                <Column field="packing_name_customer" filterField="packing_name_customer" header="Packing Name Customer" sortable>
                     <template #body="{ data }">
                         {{ data.packing_name_customer }}
                     </template>
                     <template #filter="{ filterModel }">
-                        <InputText v-model="filterModel.value" type="text" class="p-column-filter"
-                            placeholder="Search by Column" />
+                        <InputText v-model="filterModel.value" type="text" class="p-column-filter" placeholder="Search by Column" />
                     </template>
                 </Column>
 
                 <Column field="place_of_delivery" filterField="place_of_delivery" header="Place of delivery" sortable>
-
                     <template #body="{ data }">
                         {{ data.place_of_delivery }}
                     </template>
                     <template #filter="{ filterModel }">
-                        <InputText v-model="filterModel.value" type="text" class="p-column-filter"
-                            placeholder="Search by Column" />
+                        <InputText v-model="filterModel.value" type="text" class="p-column-filter" placeholder="Search by Column" />
                     </template>
                 </Column>
 
-                <Column field="employee_id.document" filterField="employee_id.document" header="Document Employee"
-                    sortable>
-
+                <Column field="employee_id.document" filterField="employee_id.document" header="Document Employee" sortable>
                     <template #body="{ data }">
                         {{ data.employee_id.document }}
                     </template>
                     <template #filter="{ filterModel }">
-                        <InputText v-model="filterModel.value" type="text" class="p-column-filter"
-                            placeholder="Search by Column" />
+                        <InputText v-model="filterModel.value" type="text" class="p-column-filter" placeholder="Search by Column" />
                     </template>
                 </Column>
 
                 <Column field="employee_id.name" filterField="employee_id.name" header="Name Employee" sortable>
-
                     <template #body="{ data }">
                         {{ data.employee_id.first_name + ' ' + data.employee_id.last_name }}
                     </template>
                     <template #filter="{ filterModel }">
-                        <InputText v-model="filterModel.value" type="text" class="p-column-filter"
-                            placeholder="Search by Column" />
+                        <InputText v-model="filterModel.value" type="text" class="p-column-filter" placeholder="Search by Column" />
                     </template>
                 </Column>
 
-
-
-                <Column field="unit_type_dispatch.name" filterField="unit_type_dispatch.name"
-                    header="Dispatch Unit Type" sortable>
-
+                <Column field="unit_type_dispatch.name" filterField="unit_type_dispatch.name" header="Dispatch Unit Type" sortable>
                     <template #body="{ data }">
                         {{ data.unit_type_dispatch.name }}
                     </template>
                     <template #filter="{ filterModel }">
-                        <InputText v-model="filterModel.value" type="text" class="p-column-filter"
-                            placeholder="Search by Column" />
+                        <InputText v-model="filterModel.value" type="text" class="p-column-filter" placeholder="Search by Column" />
                     </template>
                 </Column>
 
-                <Column field="packing_type_dispatch.name" filterField="packing_type_dispatch.name"
-                    header="Packing Type Dispatch" sortable>
-
+                <Column field="packing_type_dispatch.name" filterField="packing_type_dispatch.name" header="Packing Type Dispatch" sortable>
                     <template #body="{ data }">
                         {{ data.packing_type_dispatch.name }}
                     </template>
                     <template #filter="{ filterModel }">
-                        <InputText v-model="filterModel.value" type="text" class="p-column-filter"
-                            placeholder="Search by Column" />
+                        <InputText v-model="filterModel.value" type="text" class="p-column-filter" placeholder="Search by Column" />
                     </template>
                 </Column>
 
-
                 <Column field="packing_type.name" filterField="packing_type.name" header="Packing Type" sortable>
-
                     <template #body="{ data }">
                         {{ data.packing_type.name }}
                     </template>
                     <template #filter="{ filterModel }">
-                        <InputText v-model="filterModel.value" type="text" class="p-column-filter"
-                            placeholder="Search by Column" />
+                        <InputText v-model="filterModel.value" type="text" class="p-column-filter" placeholder="Search by Column" />
                     </template>
                 </Column>
 
-
                 <Column field="product.name" filterField="product.name" header="Product" sortable>
-
                     <template #body="{ data }">
                         {{ data.product.name }}
                     </template>
                     <template #filter="{ filterModel }">
-                        <InputText v-model="filterModel.value" type="text" class="p-column-filter"
-                            placeholder="Search by Column" />
+                        <InputText v-model="filterModel.value" type="text" class="p-column-filter" placeholder="Search by Column" />
                     </template>
                 </Column>
 
                 <Column field="product_type.name" filterField="product_type.name" header="Product Type" sortable>
-
                     <template #body="{ data }">
                         {{ data.product_type.name }}
                     </template>
                     <template #filter="{ filterModel }">
-                        <InputText v-model="filterModel.value" type="text" class="p-column-filter"
-                            placeholder="Search by Column" />
+                        <InputText v-model="filterModel.value" type="text" class="p-column-filter" placeholder="Search by Column" />
                     </template>
                 </Column>
 
@@ -305,15 +264,6 @@
                     </template>
                 </Column>
 
-
-
-
-
-
-
-
-
-
                 <!--Here add other columns-->
 
                 <Column field="farmName" filterField="farm.name" header="Farm Name" sortable>
@@ -321,8 +271,7 @@
                         {{ data.farm.name }}
                     </template>
                     <template #filter="{ filterModel }">
-                        <InputText v-model="filterModel.value" type="text" class="p-column-filter"
-                            placeholder="Search by farm" />
+                        <InputText v-model="filterModel.value" type="text" class="p-column-filter" placeholder="Search by farm" />
                     </template>
                 </Column>
 
@@ -331,8 +280,7 @@
                         {{ data.company.name }}
                     </template>
                     <template #filter="{ filterModel }">
-                        <InputText v-model="filterModel.value" type="text" class="p-column-filter"
-                            placeholder="Search by farm" />
+                        <InputText v-model="filterModel.value" type="text" class="p-column-filter" placeholder="Search by farm" />
                     </template>
                 </Column>
 
@@ -341,8 +289,7 @@
                         {{ data.created_at }}
                     </template>
                     <template #filter="{ filterModel }">
-                        <InputText v-model="filterModel.value" type="text" class="p-column-filter"
-                            placeholder="Search by creation date" />
+                        <InputText v-model="filterModel.value" type="text" class="p-column-filter" placeholder="Search by creation date" />
                     </template>
                 </Column>
 
@@ -351,8 +298,7 @@
                         {{ data.updated_at }}
                     </template>
                     <template #filter="{ filterModel }">
-                        <InputText v-model="filterModel.value" type="text" class="p-column-filter"
-                            placeholder="Search by modification date" />
+                        <InputText v-model="filterModel.value" type="text" class="p-column-filter" placeholder="Search by modification date" />
                     </template>
                 </Column>
 
@@ -361,14 +307,11 @@
                         <Tag :value="data.status.name" :severity="'EFC88B'" />
                     </template>
                     <template #filter="{ filterModel }">
-                        <InputText v-model="filterModel.value" type="text" class="p-column-filter"
-                            placeholder="Search by status" />
+                        <InputText v-model="filterModel.value" type="text" class="p-column-filter" placeholder="Search by status" />
                     </template>
                 </Column>
-
             </DataTable>
-            <Dialog v-model:visible="formDialogNew" modal :header="formDialogNewTitle"
-                class="p-fluid text-center mx-auto">
+            <Dialog v-model:visible="formDialogNew" modal :header="formDialogNewTitle" class="p-fluid text-center mx-auto">
                 <!-- <pre>{{ prueba }}</pre> -->
                 <!-- <pre>{{ prueba }}</pre>
                 <pre>{{ errorsNew }}</pre> -->
@@ -376,9 +319,7 @@
                 <span> Employee: {{ employeeNameDefault }} </span>
                 <!-- <span> Credencial: {{ employeeUuidDefault }} </span> -->
 
-
                 <Divider />
-
 
                 <div class="flex mb-2 gap-2 justify-content-end">
                     <Button @click="active = 0" rounded label="1" class="w-2rem h-2rem p-0" :outlined="active !== 0" />
@@ -386,82 +327,57 @@
                     <Button @click="active = 2" rounded label="3" class="w-2rem h-2rem p-0" :outlined="active !== 2" />
                 </div>
 
-
-
                 <TabView v-model:activeIndex="active">
                     <TabPanel header="Request">
                         <div class="grid">
                             <div class="mb-3 col-12 md:col-6 lg:col-3">
                                 <div class="flex align-items-center gap-3 mb-1">
-                                    <label for="order_number_customerV" class="font-semibold w-6rem">Order Number
-                                        Customer</label>
-                                    <InputText id="username" v-model="order_number_customerV" class="flex-auto"
-                                        autocomplete="off" v-bind="order_number_customerVProps" />
+                                    <label for="order_number_customerV" class="font-semibold w-6rem">Order Number Customer</label>
+                                    <InputText id="username" v-model="order_number_customerV" class="flex-auto" autocomplete="off" v-bind="order_number_customerVProps" />
                                 </div>
                                 <!-- <pre>{{order_number_customerV}}</pre> -->
-                                <small id="username-help"
-                                    :class="{ 'p-invalid text-red-700': errorsNew['order_number_customerV'] }">
+                                <small id="username-help" :class="{ 'p-invalid text-red-700': errorsNew['order_number_customerV'] }">
                                     {{ errorsNew.order_number_customerV }}
                                 </small>
 
                                 <BackendErrors :name="errorResponseAPI?.errors?.order_number_customer" />
-
-
                             </div>
 
                             <div class="mb-3 col-12 md:col-6 lg:col-3">
                                 <div class="flex align-items-center gap-3 mb-1">
-                                    <label for="invoice_number_customerV" class="font-semibold w-6rem">Invoice Number
-                                        Customer</label>
-                                    <InputText id="invoice_number_customerV" v-model="invoice_number_customerV"
-                                        class="flex-auto" autocomplete="off" v-bind="invoice_number_customerVProps" />
-
+                                    <label for="invoice_number_customerV" class="font-semibold w-6rem">Invoice Number Customer</label>
+                                    <InputText id="invoice_number_customerV" v-model="invoice_number_customerV" class="flex-auto" autocomplete="off" v-bind="invoice_number_customerVProps" />
                                 </div>
                                 <!-- <pre>{{invoice_number_customerV}}</pre> -->
-                                <small id="username-help"
-                                    :class="{ 'p-invalid text-red-700': errorsNew['invoice_number_customerV'] }">
+                                <small id="username-help" :class="{ 'p-invalid text-red-700': errorsNew['invoice_number_customerV'] }">
                                     {{ errorsNew.invoice_number_customerV }}
                                 </small>
 
                                 <BackendErrors :name="errorResponseAPI?.errors?.invoice_number_customer" />
-
                             </div>
-
 
                             <div class="mb-3 col-12 md:col-6 lg:col-3">
                                 <div class="flex align-items-center gap-3 mb-1">
                                     <label for="customer_nameV" class="font-semibold w-6rem">Customer Name</label>
-                                    <InputText id="customer_nameV" v-model="customer_nameV" class="flex-auto"
-                                        autocomplete="off" v-bind="customer_nameVProps" />
-
+                                    <InputText id="customer_nameV" v-model="customer_nameV" class="flex-auto" autocomplete="off" v-bind="customer_nameVProps" />
                                 </div>
                                 <!-- <pre>{{customer_nameV}}</pre> -->
-                                <small id="username-help"
-                                    :class="{ 'p-invalid text-red-700': errorsNew['customer_nameV'] }">
+                                <small id="username-help" :class="{ 'p-invalid text-red-700': errorsNew['customer_nameV'] }">
                                     {{ errorsNew.customer_nameV }}
                                 </small>
 
                                 <BackendErrors :name="errorResponseAPI?.errors?.customer_name" />
-
                             </div>
-
-
-
-
 
                             <div class="mb-3 col-12 md:col-6 lg:col-3">
                                 <div class="flex align-items-center">
                                     <label for="request_dateV" class="font-semibold w-6rem">Request Date</label>
                                     <!-- <Calendar v-model="transaction_dateV" class="flex-auto" v-bind="transaction_dateVProps"/> -->
-                                    <Calendar dateFormat="dd/mm/yy" v-model="request_dateV" class="flex-auto" showIcon
-                                        :showOnFocus="false" inputId="buttondisplay"
-                                        placeholder="Select request date" />
-
+                                    <Calendar dateFormat="dd/mm/yy" v-model="request_dateV" class="flex-auto" showIcon :showOnFocus="false" inputId="buttondisplay" placeholder="Select request date" />
                                 </div>
                                 <!-- <pre>{{request_dateV}}</pre> -->
 
-                                <small id="username-help"
-                                    :class="{ 'p-invalid text-red-700': errorsNew['request_dateV'] }">
+                                <small id="username-help" :class="{ 'p-invalid text-red-700': errorsNew['request_dateV'] }">
                                     {{ errorsNew.request_dateV }}
                                 </small>
                                 <BackendErrors :name="errorResponseAPI?.errors?.request_date" />
@@ -469,15 +385,12 @@
 
                             <div class="mb-3 col-12 md:col-6 lg:col-3">
                                 <div class="flex align-items-center">
-                                    <label for="delivery_datetimeV" class="font-semibold w-6rem">Delivery Datetime
-                                        :</label>
-                                    <Calendar id="delivery_datetimeV-24h" v-model="delivery_datetimeV" showTime
-                                        hourFormat="24" class="flex-auto" showIcon inputId="buttondisplay" />
+                                    <label for="delivery_datetimeV" class="font-semibold w-6rem">Delivery Datetime :</label>
+                                    <Calendar id="delivery_datetimeV-24h" v-model="delivery_datetimeV" showTime hourFormat="24" class="flex-auto" showIcon inputId="buttondisplay" />
                                 </div>
                                 <!-- <pre>{{delivery_datetimeV}}</pre> -->
 
-                                <small id="username-help"
-                                    :class="{ 'p-invalid text-red-700': errorsNew['delivery_datetimeV'] }">
+                                <small id="username-help" :class="{ 'p-invalid text-red-700': errorsNew['delivery_datetimeV'] }">
                                     {{ errorsNew.delivery_datetimeV }}
                                 </small>
                                 <BackendErrors :name="errorResponseAPI?.errors?.delivery_datetime" />
@@ -485,14 +398,11 @@
 
                             <div class="mb-3 col-12 md:col-6 lg:col-3">
                                 <div class="flex align-items-center gap-3 mb-1">
-                                    <label for="place_of_deliveryV" class="font-semibold w-6rem">Place of
-                                        Delivery</label>
-                                    <InputText id="place_of_deliveryV" v-model="place_of_deliveryV" class="flex-auto"
-                                        autocomplete="off" v-bind="place_of_deliveryVProps" />
+                                    <label for="place_of_deliveryV" class="font-semibold w-6rem">Place of Delivery</label>
+                                    <InputText id="place_of_deliveryV" v-model="place_of_deliveryV" class="flex-auto" autocomplete="off" v-bind="place_of_deliveryVProps" />
                                 </div>
                                 <!-- <pre>{{place_of_deliveryV}}</pre> -->
-                                <small id="username-help"
-                                    :class="{ 'p-invalid text-red-700': errorsNew['place_of_deliveryV'] }">
+                                <small id="username-help" :class="{ 'p-invalid text-red-700': errorsNew['place_of_deliveryV'] }">
                                     {{ errorsNew.place_of_deliveryV }}
                                 </small>
                                 <BackendErrors :name="errorResponseAPI?.errors?.place_of_delivery" />
@@ -500,15 +410,11 @@
 
                             <div class="mb-3 col-12 md:col-6 lg:col-3">
                                 <div class="flex align-items-center gap-3 mb-1">
-                                    <label for="dispatch_number_lotV" class="font-semibold w-6rem">Dispatch Number
-                                        Lot</label>
-                                    <InputText id="dispatch_number_lotV" v-model="dispatch_number_lotV"
-                                        class="flex-auto" autocomplete="off" v-bind="dispatch_number_lotVProps"
-                                        :frozen="documentFrozen" />
+                                    <label for="dispatch_number_lotV" class="font-semibold w-6rem">Dispatch Number Lot</label>
+                                    <InputText id="dispatch_number_lotV" v-model="dispatch_number_lotV" class="flex-auto" autocomplete="off" v-bind="dispatch_number_lotVProps" :frozen="documentFrozen" />
                                 </div>
                                 <!-- <pre>{{dispatch_number_lotV}}</pre> -->
-                                <small id="username-help"
-                                    :class="{ 'p-invalid text-red-700': errorsNew['dispatch_number_lotV'] }">
+                                <small id="username-help" :class="{ 'p-invalid text-red-700': errorsNew['dispatch_number_lotV'] }">
                                     {{ errorsNew.dispatch_number_lotV }}
                                 </small>
                                 <BackendErrors :name="errorResponseAPI?.errors?.dispatch_number_lot" />
@@ -516,12 +422,10 @@
                             <div class="mb-3 col-12 md:col-6 lg:col-3">
                                 <div class="flex align-items-center gap-3 mb-1">
                                     <label for="request_qty_V" class="font-semibold w-6rem">Request qty:</label>
-                                    <InputNumber id="request_qty_V" v-model="request_qty_V" class="flex-auto"
-                                        inputId="minmax" :min="0" :max="1000" />
+                                    <InputNumber id="request_qty_V" v-model="request_qty_V" class="flex-auto" inputId="minmax" :min="0" :max="1000" />
                                 </div>
                                 <!-- <pre>{{request_qty_V}}</pre> -->
-                                <small id="username-help"
-                                    :class="{ 'p-invalid text-red-700': errorsNew['request_qty_V'] }">
+                                <small id="username-help" :class="{ 'p-invalid text-red-700': errorsNew['request_qty_V'] }">
                                     {{ errorsNew.request_qty_V }}
                                 </small>
                                 <BackendErrors :name="errorResponseAPI?.errors?.request_qty" />
@@ -529,14 +433,11 @@
 
                             <div class="mb-3 col-12 md:col-6 lg:col-3">
                                 <div class="flex align-items-center gap-3 mb-1">
-                                    <label for="packing_name_customerV" class="font-semibold w-6rem">Packing Name
-                                        Customer:</label>
-                                    <InputText id="packing_name_customerV" v-model="packing_name_customerV"
-                                        class="flex-auto" autocomplete="off" v-bind="packing_name_customerVProps" />
+                                    <label for="packing_name_customerV" class="font-semibold w-6rem">Packing Name Customer:</label>
+                                    <InputText id="packing_name_customerV" v-model="packing_name_customerV" class="flex-auto" autocomplete="off" v-bind="packing_name_customerVProps" />
                                 </div>
                                 <!-- <pre>{{packing_name_customerV}}</pre> -->
-                                <small id="username-help"
-                                    :class="{ 'p-invalid text-red-700': errorsNew['packing_name_customerV'] }">
+                                <small id="username-help" :class="{ 'p-invalid text-red-700': errorsNew['packing_name_customerV'] }">
                                     {{ errorsNew.packing_name_customerV }}
                                 </small>
                                 <BackendErrors :name="errorResponseAPI?.errors?.packing_name_customer" />
@@ -544,54 +445,48 @@
 
                             <div class="mb-3 col-12 md:col-6 lg:col-3">
                                 <div class="flex align-items-center gap-3 mb-1">
-                                    <label for="outlet_temperatureV" class="font-semibold w-6rem">Outlet
-                                        temperature:</label>
+                                    <label for="outlet_temperatureV" class="font-semibold w-6rem">Outlet temperature:</label>
 
-                                    <InputNumber v-model="outlet_temperatureV" inputId="temperature" class="flex-auto"
-                                        prefix="&uarr; " suffix="℃" :min="0" :max="40" :step="0.1"
-                                        :decimal-separator="','" locale="en-US" :minFractionDigits="2"
-                                        :maxFractionDigits="2" />
-
+                                    <InputNumber
+                                        v-model="outlet_temperatureV"
+                                        inputId="temperature"
+                                        class="flex-auto"
+                                        prefix="&uarr; "
+                                        suffix="℃"
+                                        :min="0"
+                                        :max="40"
+                                        :step="0.1"
+                                        :decimal-separator="','"
+                                        locale="en-US"
+                                        :minFractionDigits="2"
+                                        :maxFractionDigits="2"
+                                    />
                                 </div>
                                 <!-- <pre>{{outlet_temperatureV}}</pre> -->
-                                <small id="username-help"
-                                    :class="{ 'p-invalid text-red-700': errorsNew['outlet_temperatureV'] }">
+                                <small id="username-help" :class="{ 'p-invalid text-red-700': errorsNew['outlet_temperatureV'] }">
                                     {{ errorsNew.outlet_temperatureV }}
                                 </small>
                                 <BackendErrors :name="errorResponseAPI?.errors?.outlet_temperature" />
                             </div>
-
                         </div>
-
                     </TabPanel>
                     <TabPanel header="Presentation">
-
                         <Divider />
 
                         <Card>
-
-                            <template #header>
-
-                            </template>
+                            <template #header> </template>
 
                             <template #title>Presentation</template>
 
                             <template #content>
-
-
                                 <div class="grid">
-
                                     <div class="mb-3 col-12 md:col-6 lg:col-3">
                                         <div class="flex align-items-center">
-                                            <label for="packing_typeV" class="font-semibold w-6rem">Packing
-                                                type:</label>
-                                            <AutoComplete v-model="packing_typeV" class="flex-auto" inputId="ac"
-                                                :suggestions="packingTypes" @complete="searchPackingType" field="name"
-                                                dropdown />
+                                            <label for="packing_typeV" class="font-semibold w-6rem">Packing type:</label>
+                                            <AutoComplete v-model="packing_typeV" class="flex-auto" inputId="ac" :suggestions="packingTypes" @complete="searchPackingType" field="name" dropdown />
                                         </div>
                                         <!-- <pre>{{packing_typeV}}</pre> -->
-                                        <small id="username-help"
-                                            :class="{ 'p-invalid text-red-700': errorsNew['packing_typeV'] }">
+                                        <small id="username-help" :class="{ 'p-invalid text-red-700': errorsNew['packing_typeV'] }">
                                             {{ errorsNew.packing_typeV }}
                                         </small>
                                         <BackendErrors :name="errorResponseAPI?.errors?.packing_type_uuid" />
@@ -600,1067 +495,10 @@
                                     <div class="mb-3 col-12 md:col-6 lg:col-3">
                                         <div class="flex align-items-center">
                                             <label for="productV" class="font-semibold w-6rem">Product:</label>
-                                            <AutoComplete v-model="productV" class="flex-auto" inputId="ac"
-                                                :suggestions="products" @complete="searchProduct" field="name"
-                                                dropdown />
+                                            <AutoComplete v-model="productV" class="flex-auto" inputId="ac" :suggestions="products" @complete="searchProduct" field="name" dropdown />
                                         </div>
                                         <!-- <pre>{{productV}}</pre> -->
-                                        <small id="username-help"
-                                            :class="{ 'p-invalid text-red-700': errorsNew['productV'] }">
-                                            {{ errorsNew.productV }}
-                                        </small>
-                                        <BackendErrors :name="errorResponseAPI?.errors?.product_uuid" />
-                                    </div>
-
-                                    <div class="mb-3 col-12 md:col-6 lg:col-3">
-                                <div class="flex align-items-center">
-                                    <label for="variantV" class="font-semibold w-6rem">Variant:</label>
-                                    <AutoComplete v-model="variantV" class="flex-auto" inputId="ac"
-                                        :suggestions="variants" @complete="searchVariant" field="name" dropdown />
-                                </div>
-                                <!-- <pre>{{variantV}}</pre> -->
-                                <small id="username-help" :class="{ 'p-invalid text-red-700': errorsNew['variantV'] }">
-                                    {{ errorsNew.variantV }}
-                                </small>
-                                <BackendErrors :name="errorResponseAPI?.errors?.variant_uuid" />
-                            </div>
-
-
-                                    <div class="mb-3 col-12 md:col-6 lg:col-3">
-                                        <div class="flex align-items-center">
-                                            <label for="product_typeV" class="font-semibold w-6rem">Product
-                                                Type:</label>
-                                            <AutoComplete v-model="product_typeV" class="flex-auto" inputId="ac"
-                                                :suggestions="productsType" @complete="searchProductType" field="name"
-                                                dropdown />
-                                        </div>
-                                        <!-- <pre>{{product_typeV}}</pre> -->
-                                        <small id="username-help"
-                                            :class="{ 'p-invalid text-red-700': errorsNew['product_typeV'] }">
-                                            {{ errorsNew.product_typeV }}
-                                        </small>
-                                        <BackendErrors :name="errorResponseAPI?.errors?.product_type_uuid" />
-                                    </div>
-
-                                </div>
-
-                                <div class="grid">
-
-                                    <div class="mb-3 col-12 md:col-6 lg:col-6">
-                                        <div class="flex align-items-center">
-                                            <label for="farm" class="font-semibold w-6rem">Farm :</label>
-                                            <AutoComplete v-model="farm" class="flex-auto" inputId="ac"
-                                                :suggestions="farms" @complete="searchFarms" field="name" dropdown />
-                                        </div>
-                                        <!-- <pre>{{farm}}</pre> -->
-                                        <small id="username-help"
-                                            :class="{ 'p-invalid text-red-700': errorsNew['farm'] }">
-                                            {{ errorsNew.farm }}
-                                        </small>
-                                        <BackendErrors :name="errorResponseAPI?.errors?.farm_uuid" />
-                                    </div>
-
-                                    <div class="mb-3 col-12 md:col-6 lg:col-6">
-                                        <div class="flex align-items-center">
-                                            <label for="company" class="font-semibold w-6rem">Company:</label>
-                                            <AutoComplete v-model="company" class="flex-auto" inputId="ac"
-                                                :suggestions="compa" @complete="searchCompannies" field="name"
-                                                dropdown />
-                                        </div>
-                                        <!-- <pre>{{company}}</pre> -->
-                                        <small id="username-help"
-                                            :class="{ 'p-invalid text-red-700': errorsNew['company'] }">
-                                            {{ errorsNew.company }}
-                                        </small>
-                                        <BackendErrors :name="errorResponseAPI?.errors?.company_uuid" />
-                                    </div>
-                                </div>
-
-
-
-
-                                <div class="grid">
-
-
-
-
-                                    <div class="mb-3 col-12 md:col-6 lg:col-3">
-                                        <div class="flex align-items-center">
-                                            <label for="packing_qty_dispatchV" class="font-semibold w-6rem">Packing
-                                                Quantity Dispatch:</label>
-                                            <AutoComplete v-model="packing_qty_dispatchV" class="flex-auto" inputId="ac"
-                                                :suggestions="packingsQtyDispatch" @complete="searchPackingQtyDispatch"
-                                                field="name" dropdown />
-                                        </div>
-                                        <!-- <pre>{{packing_qty_dispatchV}}</pre> -->
-                                        <small id="username-help"
-                                            :class="{ 'p-invalid text-red-700': errorsNew['packing_qty_dispatchV'] }">
-                                            {{ errorsNew.packing_qty_dispatchV }}
-                                        </small>
-                                        <BackendErrors :name="errorResponseAPI?.errors?.packing_qty_dispatch" />
-
-                                    </div>
-
-
-                                    <div class="mb-3 col-12 md:col-6 lg:col-3">
-                                        <div class="flex align-items-center">
-                                            <label for="packing_type_dispatchV" class="font-semibold w-6rem">Packing
-                                                Type Dispatch:</label>
-                                            <AutoComplete v-model="packing_type_dispatchV" class="flex-auto"
-                                                inputId="ac" :suggestions="packingsTypesDispatch"
-                                                @complete="searchPackingTypeDispatch" field="name" dropdown />
-                                        </div>
-                                        <!-- <pre>{{packing_type_dispatchV}}</pre> -->
-                                        <small id="username-help"
-                                            :class="{ 'p-invalid text-red-700': errorsNew['packing_type_dispatchV'] }">
-                                            {{ errorsNew.packing_type_dispatchV }}
-                                        </small>
-                                        <BackendErrors :name="errorResponseAPI?.errors?.packing_type_dispatch_uuid" />
-                                    </div>
-
-                                    <div class="mb-3 col-12 md:col-6 lg:col-3">
-                                        <div class="flex align-items-center">
-                                            <label for="packing_dispatch_weightV" class="font-semibold w-6rem">Packing
-                                                Dispatch Weight:</label>
-                                            <AutoComplete v-model="packing_dispatch_weightV" class="flex-auto"
-                                                inputId="ac" :suggestions="packingsWeightDispatch"
-                                                @complete="searchPackingWeightDispatch" field="name" dropdown />
-                                        </div>
-                                        <!-- <pre>{{packing_dispatch_weightV}}</pre> -->
-                                        <small id="username-help"
-                                            :class="{ 'p-invalid text-red-700': errorsNew['packing_dispatch_weightV'] }">
-                                            {{ errorsNew.packing_dispatch_weightV }}
-                                        </small>
-                                        <BackendErrors :name="errorResponseAPI?.errors?.packing_dispatch_weight" />
-                                    </div>
-
-                                    <div class="mb-3 col-12 md:col-6 lg:col-3">
-                                        <div class="flex align-items-center">
-                                            <label for="username" class="font-semibold w-6rem">Unit type
-                                                Dispatch:</label>
-                                            <AutoComplete v-model="unit_type_dispatch_V" class="flex-auto" inputId="ac"
-                                                :suggestions="unitsTypeDispatch" @complete="searchUnitsTypeDispatch"
-                                                field="name" dropdown />
-                                        </div>
-                                        <!-- <pre>{{unit_type_dispatch_V}}</pre> -->
-                                        <small id="username-help"
-                                            :class="{ 'p-invalid text-red-700': errorsNew['unit_type_dispatch_V'] }">
-                                            {{ errorsNew.unit_type_dispatch_V }}
-                                        </small>
-                                        <BackendErrors :name="errorResponseAPI?.errors?.unit_type_dispatch_uuid" />
-                                    </div>
-
-
-
-
-                                </div>
-
-                            </template>
-
-                            <template #footer>
-
-
-                                <Card>
-                                    <template #title> {{ packing_qty_dispatchV.name }} X {{ packing_type_dispatchV.name
-                                        }} X {{ packing_dispatch_weightV.name }} X {{ unit_type_dispatch_V.name
-                                        }}</template>
-                                    <template #content>
-
-                                    </template>
-                                </Card>
-
-                            </template>
-
-
-
-
-
-
-                        </Card>
-
-
-
-                        <Divider />
-
-                    </TabPanel>
-                    <TabPanel header="Summarize">
-                        <Timeline :value="events" class="mb-3 col-12 md:col-12 lg:col-12">
-                            <template #opposite="slotProps">
-                                <small class="p-text-secondary">{{ slotProps.item.date }}</small>
-                            </template>
-                            <template #content="slotProps">
-                                {{ slotProps.item.status }}
-                            </template>
-                        </Timeline>
-
-                    </TabPanel>
-
-
-
-
-                </TabView>
-
-
-
-
-
-
-
-                <!-- <InputText type="text" v-model="value" /> -->
-
-
-
-
-                <div class="flex justify-content-end gap-2">
-                    <Button type="button" label="Cancel" severity="secondary" @click="formDialogNew = false" />
-                    <Button type="button" label="Save" @click="createRecord()" />
-                </div>
-            </Dialog>
-
-            <Dialog v-model:visible="formDialogEdit" modal :header="formDialogEditTitle"
-                class="p-fluid text-center mx-auto ">
-                <!-- <pre>{{ prueba }}</pre> -->
-                <pre>{{ prueba }}</pre>
-                <pre>{{ errorsNew }}</pre>
-                <Avatar icon="pi pi-user" class="mr-3" size="xlarge" shape="circle" />
-                <span> Employee: {{ employeeNameDefault }} </span>
-
-
-                <Divider />
-
-
-                <div class="flex mb-2 gap-2 justify-content-end">
-                    <Button @click="active = 0" rounded label="1" class="w-2rem h-2rem p-0" :outlined="active !== 0" />
-                    <Button @click="active = 1" rounded label="2" class="w-2rem h-2rem p-0" :outlined="active !== 1" />
-                    <Button @click="active = 2" rounded label="3" class="w-2rem h-2rem p-0" :outlined="active !== 2" />
-                </div>
-
-
-
-                <TabView v-model:activeIndex="active">
-                    <TabPanel header="Request">
-
-
-
-
-
-                        <div class="grid">
-
-
-
-
-
-                            <div class="mb-3 col-12 md:col-6 lg:col-3">
-                                <div class="flex align-items-center gap-3 mb-1">
-                                    <label for="order_number_customerV" class="font-semibold w-6rem">Order Number
-                                        Customer</label>
-                                    <InputText id="username" v-model="order_number_customerV" class="flex-auto"
-                                        autocomplete="off" v-bind="order_number_customerVProps" />
-                                </div>
-                                <!-- <pre>{{order_number_customerV}}</pre> -->
-                                <small id="username-help"
-                                    :class="{ 'p-invalid text-red-700': errorsNew['order_number_customerV'] }">
-                                    {{ errorsNew.order_number_customerV }}
-                                </small>
-                                <BackendErrors :name="errorResponseAPI?.errors?.order_number_customer" />
-                            </div>
-
-                            <div class="mb-3 col-12 md:col-6 lg:col-3">
-                                <div class="flex align-items-center gap-3 mb-1">
-                                    <label for="invoice_number_customerV" class="font-semibold w-6rem">Invoice Number
-                                        Customer</label>
-                                    <InputText id="invoice_number_customerV" v-model="invoice_number_customerV"
-                                        class="flex-auto" autocomplete="off" v-bind="invoice_number_customerVProps" />
-
-                                </div>
-                                <!-- <pre>{{invoice_number_customerV}}</pre> -->
-                                <small id="username-help"
-                                    :class="{ 'p-invalid text-red-700': errorsNew['invoice_number_customerV'] }">
-                                    {{ errorsNew.invoice_number_customerV }}
-                                </small>
-                                <BackendErrors :name="errorResponseAPI?.errors?.invoice_number_customer" />
-                            </div>
-
-
-                            <div class="mb-3 col-12 md:col-6 lg:col-3">
-                                <div class="flex align-items-center gap-3 mb-1">
-                                    <label for="customer_nameV" class="font-semibold w-6rem">Customer Name</label>
-                                    <InputText id="customer_nameV" v-model="customer_nameV" class="flex-auto"
-                                        autocomplete="off" v-bind="customer_nameVProps" />
-
-                                </div>
-                                <!-- <pre>{{customer_nameV}}</pre> -->
-                                <small id="username-help"
-                                    :class="{ 'p-invalid text-red-700': errorsNew['customer_nameV'] }">
-                                    {{ errorsNew.customer_nameV }}
-                                </small>
-                                <BackendErrors :name="errorResponseAPI?.errors?.customer_name" />
-                            </div>
-
-
-
-
-
-                            <div class="mb-3 col-12 md:col-6 lg:col-3">
-                                <div class="flex align-items-center">
-                                    <label for="request_dateV" class="font-semibold w-6rem">Request Date</label>
-                                    <!-- <Calendar v-model="transaction_dateV" class="flex-auto" v-bind="transaction_dateVProps"/> -->
-                                    <Calendar dateFormat="dd/mm/yy" v-model="request_dateV" class="flex-auto" showIcon
-                                        :showOnFocus="false" inputId="buttondisplay"
-                                        placeholder="Select request date" />
-
-                                </div>
-                                <!-- <pre>{{request_dateV}}</pre> -->
-
-                                <small id="username-help"
-                                    :class="{ 'p-invalid text-red-700': errorsNew['request_dateV'] }">
-                                    {{ errorsNew.request_dateV }}
-                                </small>
-                                <BackendErrors :name="errorResponseAPI?.errors?.request_date" />
-                            </div>
-
-                            <div class="mb-3 col-12 md:col-6 lg:col-3">
-                                <div class="flex align-items-center">
-                                    <label for="delivery_datetimeV" class="font-semibold w-6rem">Delivery Datetime
-                                        :</label>
-                                    <Calendar id="delivery_datetimeV-24h" v-model="delivery_datetimeV" showTime
-                                        hourFormat="24" class="flex-auto" showIcon inputId="buttondisplay" />
-                                </div>
-                                <!-- <pre>{{delivery_datetimeV}}</pre> -->
-
-                                <small id="username-help"
-                                    :class="{ 'p-invalid text-red-700': errorsNew['delivery_datetimeV'] }">
-                                    {{ errorsNew.delivery_datetimeV }}
-                                </small>
-                                <BackendErrors :name="errorResponseAPI?.errors?.delivery_datetime" />
-
-                            </div>
-
-
-
-                            <div class="mb-3 col-12 md:col-6 lg:col-3">
-                                <div class="flex align-items-center gap-3 mb-1">
-                                    <label for="place_of_deliveryV" class="font-semibold w-6rem">Place of
-                                        Delivery</label>
-                                    <InputText id="place_of_deliveryV" v-model="place_of_deliveryV" class="flex-auto"
-                                        autocomplete="off" v-bind="place_of_deliveryVProps" />
-
-                                </div>
-                                <!-- <pre>{{place_of_deliveryV}}</pre> -->
-                                <small id="username-help"
-                                    :class="{ 'p-invalid text-red-700': errorsNew['place_of_deliveryV'] }">
-                                    {{ errorsNew.place_of_deliveryV }}
-                                </small>
-                                <BackendErrors :name="errorResponseAPI?.errors?.place_of_delivery" />
-                            </div>
-
-                            <div class="mb-3 col-12 md:col-6 lg:col-3">
-                                <div class="flex align-items-center gap-3 mb-1">
-                                    <label for="dispatch_number_lotV" class="font-semibold w-6rem">Dispatch Number
-                                        Lot</label>
-                                    <InputText id="dispatch_number_lotV" v-model="dispatch_number_lotV"
-                                        class="flex-auto" autocomplete="off" v-bind="dispatch_number_lotVProps"
-                                        :frozen="documentFrozen" />
-                                </div>
-                                <!-- <pre>{{dispatch_number_lotV}}</pre> -->
-                                <small id="username-help"
-                                    :class="{ 'p-invalid text-red-700': errorsNew['dispatch_number_lotV'] }">
-                                    {{ errorsNew.dispatch_number_lotV }}
-                                </small>
-                                <BackendErrors :name="errorResponseAPI?.errors?.dispatch_number_lot" />
-                            </div>
-                            <div class="mb-3 col-12 md:col-6 lg:col-3">
-                                <div class="flex align-items-center gap-3 mb-1">
-                                    <label for="request_qty_V" class="font-semibold w-6rem">Request qty:</label>
-                                    <InputNumber id="request_qty_V" v-model="request_qty_V" class="flex-auto"
-                                        inputId="minmax" :min="0" :max="1000" />
-                                </div>
-                                <!-- <pre>{{request_qty_V}}</pre> -->
-                                <small id="username-help"
-                                    :class="{ 'p-invalid text-red-700': errorsNew['request_qty_V'] }">
-                                    {{ errorsNew.request_qty_V }}
-                                </small>
-                                <BackendErrors :name="errorResponseAPI?.errors?.request_qty" />
-                            </div>
-
-                            <div class="mb-3 col-12 md:col-6 lg:col-3">
-                                <div class="flex align-items-center gap-3 mb-1">
-                                    <label for="packing_name_customerV" class="font-semibold w-6rem">Packing Name
-                                        Customer:</label>
-                                    <InputText id="packing_name_customerV" v-model="packing_name_customerV"
-                                        class="flex-auto" autocomplete="off" v-bind="packing_name_customerVProps" />
-                                </div>
-                                <!-- <pre>{{packing_name_customerV}}</pre> -->
-                                <small id="username-help"
-                                    :class="{ 'p-invalid text-red-700': errorsNew['packing_name_customerV'] }">
-                                    {{ errorsNew.packing_name_customerV }}
-                                </small>
-                                <BackendErrors :name="errorResponseAPI?.errors?.packing_name_customer" />
-                            </div>
-
-                            <div class="mb-3 col-12 md:col-6 lg:col-3">
-                                <div class="flex align-items-center gap-3 mb-1">
-                                    <label for="outlet_temperatureV" class="font-semibold w-6rem">Outlet
-                                        temperature:</label>
-
-                                    <InputNumber v-model="outlet_temperatureV" inputId="temperature" class="flex-auto"
-                                        prefix="&uarr; " suffix="℃" :min="0" :max="40" :step="0.1"
-                                        :decimal-separator="','" locale="en-US" :minFractionDigits="2"
-                                        :maxFractionDigits="2" />
-
-                                </div>
-                                <!-- <pre>{{outlet_temperatureV}}</pre> -->
-                                <small id="username-help"
-                                    :class="{ 'p-invalid text-red-700': errorsNew['outlet_temperatureV'] }">
-                                    {{ errorsNew.outlet_temperatureV }}
-                                </small>
-                                <BackendErrors :name="errorResponseAPI?.errors?.outlet_temperature" />
-                            </div>
-
-                            <!-- <div class="mb-3 col-12 md:col-6 lg:col-3">
-                                <div class="flex align-items-center">
-                                    <label for="productV" class="font-semibold w-6rem">Product:</label>
-                                    <AutoComplete v-model="productV" class="flex-auto" inputId="ac"
-                                        :suggestions="products" @complete="searchProduct" field="name" dropdown />
-                                </div>
-                                
-                                <small id="username-help" :class="{ 'p-invalid text-red-700': errorsNew['productV'] }">
-                                    {{ errorsNew.productV }}
-                                </small>
-                            </div>
-
-                            <div class="mb-3 col-12 md:col-6 lg:col-3">
-                                <div class="flex align-items-center">
-                                    <label for="product_typeV" class="font-semibold w-6rem">Product Type:</label>
-                                    <AutoComplete v-model="product_typeV" class="flex-auto" inputId="ac"
-                                        :suggestions="productsType" @complete="searchProductType" field="name"
-                                        dropdown />
-                                </div>
-                                
-                                <small id="username-help"
-                                    :class="{ 'p-invalid text-red-700': errorsNew['product_typeV'] }">
-                                    {{ errorsNew.product_typeV }}
-                                </small>
-                            </div> -->
-
-
-
-                            <!-- <div class="mb-3 col-12 md:col-6 lg:col-3">
-                                <div class="flex align-items-center">
-                                    <label for="packing_typeV" class="font-semibold w-6rem">Packing type:</label>
-                                    <AutoComplete v-model="packing_typeV" class="flex-auto" inputId="ac"
-                                        :suggestions="packingTypes" @complete="searchPackingType" field="name"
-                                        dropdown />
-                                </div>
-                                
-                                <small id="username-help"
-                                    :class="{ 'p-invalid text-red-700': errorsNew['packing_typeV'] }">
-                                    {{ errorsNew.packing_typeV }}
-                                </small>
-                            </div>
-
-                            <div class="mb-3 col-12 md:col-6 lg:col-3">
-                                <div class="flex align-items-center">
-                                    <label for="farm" class="font-semibold w-6rem">Farm :</label>
-                                    <AutoComplete v-model="farm" class="flex-auto" inputId="ac" :suggestions="farms"
-                                        @complete="searchFarms" field="name" dropdown />
-                                </div>
-                                
-                                <small id="username-help" :class="{ 'p-invalid text-red-700': errorsNew['farm'] }">
-                                    {{ errorsNew.farm }}
-                                </small>
-                            </div>
-
-                            <div class="mb-3 col-12 md:col-6 lg:col-3">
-                                <div class="flex align-items-center">
-                                    <label for="company" class="font-semibold w-6rem">Company:</label>
-                                    <AutoComplete v-model="company" class="flex-auto" inputId="ac" :suggestions="compa"
-                                        @complete="searchCompannies" field="name" dropdown />
-                                </div>
-                                
-                                <small id="username-help" :class="{ 'p-invalid text-red-700': errorsNew['company'] }">
-                                    {{ errorsNew.company }}
-                                </small>
-                            </div> -->
-
-
-
-
-                        </div>
-
-                    </TabPanel>
-                    <TabPanel header="Presentation">
-
-                        <Divider />
-
-
-                        <Card>
-
-
-                            <template #header>
-
-                            </template>
-
-                            <template #title>Presentation</template>
-
-                            <template #content>
-
-                                <div class="grid">
-
-
-
-                                    <div class="mb-3 col-12 md:col-6 lg:col-3">
-                                        <div class="flex align-items-center">
-                                            <label for="packing_typeV" class="font-semibold w-6rem">Packing
-                                                type:</label>
-                                            <AutoComplete v-model="packing_typeV" class="flex-auto" inputId="ac"
-                                                :suggestions="packingTypes" @complete="searchPackingType" field="name"
-                                                dropdown />
-                                        </div>
-                                        <!-- <pre>{{packing_typeV}}</pre> -->
-                                        <small id="username-help"
-                                            :class="{ 'p-invalid text-red-700': errorsNew['packing_typeV'] }">
-                                            {{ errorsNew.packing_typeV }}
-                                        </small>
-                                        <BackendErrors :name="errorResponseAPI?.errors?.packing_type_uuid" />
-                                    </div>
-
-                                    <div class="mb-3 col-12 md:col-6 lg:col-3">
-                                        <div class="flex align-items-center">
-                                            <label for="productV" class="font-semibold w-6rem">Product:</label>
-                                            <AutoComplete v-model="productV" class="flex-auto" inputId="ac"
-                                                :suggestions="products" @complete="searchProduct" field="name"
-                                                dropdown />
-                                        </div>
-                                        <!-- <pre>{{productV}}</pre> -->
-                                        <small id="username-help"
-                                            :class="{ 'p-invalid text-red-700': errorsNew['productV'] }">
-                                            {{ errorsNew.productV }}
-                                        </small>
-                                        <BackendErrors :name="errorResponseAPI?.errors?.product_uuid" />
-                                    </div>
-
-                                    <div class="mb-3 col-12 md:col-6 lg:col-3">
-                                <div class="flex align-items-center">
-                                    <label for="variantV" class="font-semibold w-6rem">Variant:</label>
-                                    <AutoComplete v-model="variantV" class="flex-auto" inputId="ac"
-                                        :suggestions="variants" @complete="searchVariant" field="name" dropdown />
-                                </div>
-                                <!-- <pre>{{variantV}}</pre> -->
-                                <small id="username-help" :class="{ 'p-invalid text-red-700': errorsNew['variantV'] }">
-                                    {{ errorsNew.variantV }}
-                                </small>
-                                <BackendErrors :name="errorResponseAPI?.errors?.variant_uuid" />
-                            </div>
-
-                                    <div class="mb-3 col-12 md:col-6 lg:col-3">
-                                        <div class="flex align-items-center">
-                                            <label for="product_typeV" class="font-semibold w-6rem">Product
-                                                Type:</label>
-                                            <AutoComplete v-model="product_typeV" class="flex-auto" inputId="ac"
-                                                :suggestions="productsType" @complete="searchProductType" field="name"
-                                                dropdown />
-                                        </div>
-                                        <!-- <pre>{{product_typeV}}</pre> -->
-
-
-
-                                        <small id="username-help"
-                                            :class="{ 'p-invalid text-red-700': errorsNew['product_typeV'] }">
-                                            {{ errorsNew.product_typeV }}
-                                        </small>
-                                        <BackendErrors :name="errorResponseAPI?.errors?.product_type_uuid" />
-                                    </div>
-
-
-
-                                </div>
-
-                                <div class="grid">
-
-                                    <div class="mb-3 col-12 md:col-6 lg:col-6">
-                                        <div class="flex align-items-center">
-                                            <label for="farm" class="font-semibold w-6rem">Farm :</label>
-                                            <AutoComplete v-model="farm" class="flex-auto" inputId="ac"
-                                                :suggestions="farms" @complete="searchFarms" field="name" dropdown />
-                                        </div>
-                                        <!-- <pre>{{farm}}</pre> -->
-                                        <small id="username-help"
-                                            :class="{ 'p-invalid text-red-700': errorsNew['farm'] }">
-                                            {{ errorsNew.farm }}
-                                        </small>
-                                        <BackendErrors :name="errorResponseAPI?.errors?.farm_uuid" />
-                                    </div>
-
-                                    <div class="mb-3 col-12 md:col-6 lg:col-6">
-                                        <div class="flex align-items-center">
-                                            <label for="company" class="font-semibold w-6rem">Company:</label>
-                                            <AutoComplete v-model="company" class="flex-auto" inputId="ac"
-                                                :suggestions="compa" @complete="searchCompannies" field="name"
-                                                dropdown />
-                                        </div>
-                                        <!-- <pre>{{company}}</pre> -->
-                                        <small id="username-help"
-                                            :class="{ 'p-invalid text-red-700': errorsNew['company'] }">
-                                            {{ errorsNew.company }}
-                                        </small>
-                                        <BackendErrors :name="errorResponseAPI?.errors?.company_uuid" />
-                                    </div>
-                                </div>
-
-                                <div class="grid">
-
-                                    <div class="mb-3 col-12 md:col-6 lg:col-3">
-                                        <div class="flex align-items-center">
-                                            <label for="packing_qty_dispatchV" class="font-semibold w-6rem">Packing
-                                                Quantity Dispatch:</label>
-                                            <AutoComplete v-model="packing_qty_dispatchV" class="flex-auto" inputId="ac"
-                                                :suggestions="packingsQtyDispatch" @complete="searchPackingQtyDispatch"
-                                                field="name" dropdown />
-                                        </div>
-                                        <!-- <pre>{{packing_qty_dispatchV}}</pre> -->
-                                        <small id="username-help"
-                                            :class="{ 'p-invalid text-red-700': errorsNew['packing_qty_dispatchV'] }">
-                                            {{ errorsNew.packing_qty_dispatchV }}
-                                        </small>
-                                        <BackendErrors :name="errorResponseAPI?.errors?.packing_qty_dispatch" />
-                                    </div>
-
-
-                                    <div class="mb-3 col-12 md:col-6 lg:col-3">
-                                        <div class="flex align-items-center">
-                                            <label for="packing_type_dispatchV" class="font-semibold w-6rem">Packing
-                                                Type Dispatch:</label>
-                                            <AutoComplete v-model="packing_type_dispatchV" class="flex-auto"
-                                                inputId="ac" :suggestions="packingsTypesDispatch"
-                                                @complete="searchPackingTypeDispatch" field="name" dropdown />
-                                        </div>
-                                        <!-- <pre>{{packing_type_dispatchV}}</pre> -->
-                                        <small id="username-help"
-                                            :class="{ 'p-invalid text-red-700': errorsNew['packing_type_dispatchV'] }">
-                                            {{ errorsNew.packing_type_dispatchV }}
-                                        </small>
-                                        <BackendErrors :name="errorResponseAPI?.errors?.packing_type_dispatch_uuid" />
-                                    </div>
-
-                                    <div class="mb-3 col-12 md:col-6 lg:col-3">
-                                        <div class="flex align-items-center">
-                                            <label for="packing_dispatch_weightV" class="font-semibold w-6rem">Packing
-                                                Dispatch Weight:</label>
-                                            <AutoComplete v-model="packing_dispatch_weightV" class="flex-auto"
-                                                inputId="ac" :suggestions="packingsWeightDispatch"
-                                                @complete="searchPackingWeightDispatch" field="name" dropdown />
-                                        </div>
-                                        <!-- <pre>{{packing_dispatch_weightV}}</pre> -->
-                                        <small id="username-help"
-                                            :class="{ 'p-invalid text-red-700': errorsNew['packing_dispatch_weightV'] }">
-                                            {{ errorsNew.packing_dispatch_weightV }}
-                                        </small>
-                                        <BackendErrors :name="errorResponseAPI?.errors?.packing_dispatch_weight" />
-                                    </div>
-
-                                    <div class="mb-3 col-12 md:col-6 lg:col-3">
-                                        <div class="flex align-items-center">
-                                            <label for="username" class="font-semibold w-6rem">Unit type
-                                                Dispatch:</label>
-                                            <AutoComplete v-model="unit_type_dispatch_V" class="flex-auto" inputId="ac"
-                                                :suggestions="unitsTypeDispatch" @complete="searchUnitsTypeDispatch"
-                                                field="name" dropdown />
-                                        </div>
-                                        <!-- <pre>{{unit_type_dispatch_V}}</pre> -->
-                                        <small id="username-help"
-                                            :class="{ 'p-invalid text-red-700': errorsNew['unit_type_dispatch_V'] }">
-                                            {{ errorsNew.unit_type_dispatch_V }}
-                                        </small>
-                                        <BackendErrors :name="errorResponseAPI?.errors?.unit_type_dispatch_uuid" />
-                                    </div>
-
-
-
-
-                                </div>
-
-                            </template>
-
-                            <template #footer>
-
-
-                                <Card>
-                                    <template #title> {{ packing_qty_dispatchV.name }} X {{ packing_type_dispatchV.name
-                                        }} X {{ packing_dispatch_weightV.name }} X {{ unit_type_dispatch_V.name
-                                        }}</template>
-                                    <template #content>
-
-                                    </template>
-                                </Card>
-
-                            </template>
-
-
-
-
-
-
-                        </Card>
-
-
-
-                        <Divider />
-
-                    </TabPanel>
-                    <TabPanel header="Summarize">
-                        <Timeline :value="events" class="mb-3 col-12 md:col-12 lg:col-12">
-                            <template #opposite="slotProps">
-                                <small class="p-text-secondary">{{ slotProps.item.date }}</small>
-                            </template>
-                            <template #content="slotProps">
-                                {{ slotProps.item.status }}
-                            </template>
-                        </Timeline>
-
-                    </TabPanel>
-
-
-
-
-                </TabView>
-
-
-                <div class="flex justify-content-end gap-2">
-                    <Button type="button" label="Cancel" severity="secondary" @click="formDialogEdit = false" />
-                    <Button type="button" label="Save" @click="EditRecord()" />
-                </div>
-            </Dialog>
-
-            <Dialog v-model:visible="formDialogClone" modal :header="formDialogCloneTitle"
-                class="p-fluid text-center mx-auto">
-                <!-- <pre>{{ prueba }}</pre> -->
-                <pre>{{ prueba }}</pre>
-                <pre>{{ errorsNew }}</pre>
-                <Avatar icon="pi pi-user" class="mr-3" size="xlarge" shape="circle" />
-                <span> Employee: {{ employeeNameDefault }} </span>
-
-
-                <Divider />
-
-
-                <div class="flex mb-2 gap-2 justify-content-end">
-                    <Button @click="active = 0" rounded label="1" class="w-2rem h-2rem p-0" :outlined="active !== 0" />
-                    <Button @click="active = 1" rounded label="2" class="w-2rem h-2rem p-0" :outlined="active !== 1" />
-                    <Button @click="active = 2" rounded label="3" class="w-2rem h-2rem p-0" :outlined="active !== 2" />
-                </div>
-
-
-
-                <TabView v-model:activeIndex="active">
-                    <TabPanel header="Request">
-
-
-
-
-
-                        <div class="grid">
-
-
-
-
-
-                            <div class="mb-3 col-12 md:col-6 lg:col-3">
-                                <div class="flex align-items-center gap-3 mb-1">
-                                    <label for="order_number_customerV" class="font-semibold w-6rem">Order Number
-                                        Customer</label>
-                                    <InputText id="username" v-model="order_number_customerV" class="flex-auto"
-                                        autocomplete="off" v-bind="order_number_customerVProps" />
-                                </div>
-                                <!-- <pre>{{order_number_customerV}}</pre> -->
-                                <small id="username-help"
-                                    :class="{ 'p-invalid text-red-700': errorsNew['order_number_customerV'] }">
-                                    {{ errorsNew.order_number_customerV }}
-                                </small>
-                                <BackendErrors :name="errorResponseAPI?.errors?.order_number_customer" />
-                            </div>
-
-                            <div class="mb-3 col-12 md:col-6 lg:col-3">
-                                <div class="flex align-items-center gap-3 mb-1">
-                                    <label for="invoice_number_customerV" class="font-semibold w-6rem">Invoice Number
-                                        Customer</label>
-                                    <InputText id="invoice_number_customerV" v-model="invoice_number_customerV"
-                                        class="flex-auto" autocomplete="off" v-bind="invoice_number_customerVProps" />
-
-                                </div>
-                                <!-- <pre>{{invoice_number_customerV}}</pre> -->
-                                <small id="username-help"
-                                    :class="{ 'p-invalid text-red-700': errorsNew['invoice_number_customerV'] }">
-                                    {{ errorsNew.invoice_number_customerV }}
-                                </small>
-                                <BackendErrors :name="errorResponseAPI?.errors?.invoice_number_customer" />
-                            </div>
-
-
-                            <div class="mb-3 col-12 md:col-6 lg:col-3">
-                                <div class="flex align-items-center gap-3 mb-1">
-                                    <label for="customer_nameV" class="font-semibold w-6rem">Customer Name</label>
-                                    <InputText id="customer_nameV" v-model="customer_nameV" class="flex-auto"
-                                        autocomplete="off" v-bind="customer_nameVProps" />
-
-                                </div>
-                                <!-- <pre>{{customer_nameV}}</pre> -->
-                                <small id="username-help"
-                                    :class="{ 'p-invalid text-red-700': errorsNew['customer_nameV'] }">
-                                    {{ errorsNew.customer_nameV }}
-                                </small>
-                                <BackendErrors :name="errorResponseAPI?.errors?.customer_name" />
-                            </div>
-
-
-
-
-
-                            <div class="mb-3 col-12 md:col-6 lg:col-3">
-                                <div class="flex align-items-center">
-                                    <label for="request_dateV" class="font-semibold w-6rem">Request Date</label>
-                                    <!-- <Calendar v-model="transaction_dateV" class="flex-auto" v-bind="transaction_dateVProps"/> -->
-                                    <Calendar dateFormat="dd/mm/yy" v-model="request_dateV" class="flex-auto" showIcon
-                                        :showOnFocus="false" inputId="buttondisplay"
-                                        placeholder="Select request date" />
-
-                                </div>
-                                <!-- <pre>{{request_dateV}}</pre> -->
-
-                                <small id="username-help"
-                                    :class="{ 'p-invalid text-red-700': errorsNew['request_dateV'] }">
-                                    {{ errorsNew.request_dateV }}
-                                </small>
-                                <BackendErrors :name="errorResponseAPI?.errors?.request_date" />
-                            </div>
-
-                            <div class="mb-3 col-12 md:col-6 lg:col-3">
-                                <div class="flex align-items-center">
-                                    <label for="delivery_datetimeV" class="font-semibold w-6rem">Delivery Datetime
-                                        :</label>
-                                    <Calendar id="delivery_datetimeV-24h" v-model="delivery_datetimeV" showTime
-                                        hourFormat="24" class="flex-auto" showIcon inputId="buttondisplay" />
-                                </div>
-                                <!-- <pre>{{delivery_datetimeV}}</pre> -->
-
-                                <small id="username-help"
-                                    :class="{ 'p-invalid text-red-700': errorsNew['delivery_datetimeV'] }">
-                                    {{ errorsNew.delivery_datetimeV }}
-                                </small>
-                                <BackendErrors :name="errorResponseAPI?.errors?.delivery_datetime" />
-
-                            </div>
-
-
-
-                            <div class="mb-3 col-12 md:col-6 lg:col-3">
-                                <div class="flex align-items-center gap-3 mb-1">
-                                    <label for="place_of_deliveryV" class="font-semibold w-6rem">Place of
-                                        Delivery</label>
-                                    <InputText id="place_of_deliveryV" v-model="place_of_deliveryV" class="flex-auto"
-                                        autocomplete="off" v-bind="place_of_deliveryVProps" />
-
-                                </div>
-                                <!-- <pre>{{place_of_deliveryV}}</pre> -->
-                                <small id="username-help"
-                                    :class="{ 'p-invalid text-red-700': errorsNew['place_of_deliveryV'] }">
-                                    {{ errorsNew.place_of_deliveryV }}
-                                </small>
-                                <BackendErrors :name="errorResponseAPI?.errors?.place_of_delivery" />
-                            </div>
-
-                            <div class="mb-3 col-12 md:col-6 lg:col-3">
-                                <div class="flex align-items-center gap-3 mb-1">
-                                    <label for="dispatch_number_lotV" class="font-semibold w-6rem">Dispatch Number
-                                        Lot</label>
-                                    <InputText id="dispatch_number_lotV" v-model="dispatch_number_lotV"
-                                        class="flex-auto" autocomplete="off" v-bind="dispatch_number_lotVProps"
-                                        :frozen="documentFrozen" />
-                                </div>
-                                <!-- <pre>{{dispatch_number_lotV}}</pre> -->
-                                <small id="username-help"
-                                    :class="{ 'p-invalid text-red-700': errorsNew['dispatch_number_lotV'] }">
-                                    {{ errorsNew.dispatch_number_lotV }}
-                                </small>
-                                <BackendErrors :name="errorResponseAPI?.errors?.dispatch_number_lot" />
-                            </div>
-                            <div class="mb-3 col-12 md:col-6 lg:col-3">
-                                <div class="flex align-items-center gap-3 mb-1">
-                                    <label for="request_qty_V" class="font-semibold w-6rem">Request qty:</label>
-                                    <InputNumber id="request_qty_V" v-model="request_qty_V" class="flex-auto"
-                                        inputId="minmax" :min="0" :max="1000" />
-                                </div>
-                                <!-- <pre>{{request_qty_V}}</pre> -->
-                                <small id="username-help"
-                                    :class="{ 'p-invalid text-red-700': errorsNew['request_qty_V'] }">
-                                    {{ errorsNew.request_qty_V }}
-                                </small>
-                                <BackendErrors :name="errorResponseAPI?.errors?.request_qty" />
-                            </div>
-
-                            <div class="mb-3 col-12 md:col-6 lg:col-3">
-                                <div class="flex align-items-center gap-3 mb-1">
-                                    <label for="packing_name_customerV" class="font-semibold w-6rem">Packing Name
-                                        Customer:</label>
-                                    <InputText id="packing_name_customerV" v-model="packing_name_customerV"
-                                        class="flex-auto" autocomplete="off" v-bind="packing_name_customerVProps" />
-                                </div>
-                                <!-- <pre>{{packing_name_customerV}}</pre> -->
-                                <small id="username-help"
-                                    :class="{ 'p-invalid text-red-700': errorsNew['packing_name_customerV'] }">
-                                    {{ errorsNew.packing_name_customerV }}
-                                </small>
-                                <BackendErrors :name="errorResponseAPI?.errors?.packing_name_customer" />
-                            </div>
-
-                            <div class="mb-3 col-12 md:col-6 lg:col-3">
-                                <div class="flex align-items-center gap-3 mb-1">
-                                    <label for="outlet_temperatureV" class="font-semibold w-6rem">Outlet
-                                        temperature:</label>
-
-                                    <InputNumber v-model="outlet_temperatureV" inputId="temperature" class="flex-auto"
-                                        prefix="&uarr; " suffix="℃" :min="0" :max="40" :step="0.1"
-                                        :decimal-separator="','" locale="en-US" :minFractionDigits="2"
-                                        :maxFractionDigits="2" />
-
-                                </div>
-                                <!-- <pre>{{outlet_temperatureV}}</pre> -->
-                                <small id="username-help"
-                                    :class="{ 'p-invalid text-red-700': errorsNew['outlet_temperatureV'] }">
-                                    {{ errorsNew.outlet_temperatureV }}
-                                </small>
-                                <BackendErrors :name="errorResponseAPI?.errors?.outlet_temperature" />
-                            </div>
-
-                            <!-- <div class="mb-3 col-12 md:col-6 lg:col-3">
-                                <div class="flex align-items-center">
-                                    <label for="productV" class="font-semibold w-6rem">Product:</label>
-                                    <AutoComplete v-model="productV" class="flex-auto" inputId="ac"
-                                        :suggestions="products" @complete="searchProduct" field="name" dropdown />
-                                </div>
-                                
-                                <small id="username-help" :class="{ 'p-invalid text-red-700': errorsNew['productV'] }">
-                                    {{ errorsNew.productV }}
-                                </small>
-                            </div>
-
-                            <div class="mb-3 col-12 md:col-6 lg:col-3">
-                                <div class="flex align-items-center">
-                                    <label for="product_typeV" class="font-semibold w-6rem">Product Type:</label>
-                                    <AutoComplete v-model="product_typeV" class="flex-auto" inputId="ac"
-                                        :suggestions="productsType" @complete="searchProductType" field="name"
-                                        dropdown />
-                                </div>
-                                
-                                <small id="username-help"
-                                    :class="{ 'p-invalid text-red-700': errorsNew['product_typeV'] }">
-                                    {{ errorsNew.product_typeV }}
-                                </small>
-                            </div> -->
-
-                            <!-- <div class="mb-3 col-12 md:col-6 lg:col-3">
-                                <div class="flex align-items-center">
-                                    <label for="variantV" class="font-semibold w-6rem">Variant:</label>
-                                    <AutoComplete v-model="variantV" class="flex-auto" inputId="ac"
-                                        :suggestions="variants" @complete="searchVariant" field="name" dropdown />
-                                </div>
-                                
-                                <small id="username-help" :class="{ 'p-invalid text-red-700': errorsNew['variantV'] }">
-                                    {{ errorsNew.variantV }}
-                                </small>
-                                <BackendErrors :name="errorResponseAPI?.errors?.variant_uuid" />
-                            </div> -->
-
-                            <!-- <div class="mb-3 col-12 md:col-6 lg:col-3">
-                                <div class="flex align-items-center">
-                                    <label for="packing_typeV" class="font-semibold w-6rem">Packing type:</label>
-                                    <AutoComplete v-model="packing_typeV" class="flex-auto" inputId="ac"
-                                        :suggestions="packingTypes" @complete="searchPackingType" field="name"
-                                        dropdown />
-                                </div>
-                                
-                                <small id="username-help"
-                                    :class="{ 'p-invalid text-red-700': errorsNew['packing_typeV'] }">
-                                    {{ errorsNew.packing_typeV }}
-                                </small>
-                            </div>
-
-                            <div class="mb-3 col-12 md:col-6 lg:col-3">
-                                <div class="flex align-items-center">
-                                    <label for="farm" class="font-semibold w-6rem">Farm :</label>
-                                    <AutoComplete v-model="farm" class="flex-auto" inputId="ac" :suggestions="farms"
-                                        @complete="searchFarms" field="name" dropdown />
-                                </div>
-                                
-                                <small id="username-help" :class="{ 'p-invalid text-red-700': errorsNew['farm'] }">
-                                    {{ errorsNew.farm }}
-                                </small>
-                            </div>
-
-                            <div class="mb-3 col-12 md:col-6 lg:col-3">
-                                <div class="flex align-items-center">
-                                    <label for="company" class="font-semibold w-6rem">Company:</label>
-                                    <AutoComplete v-model="company" class="flex-auto" inputId="ac" :suggestions="compa"
-                                        @complete="searchCompannies" field="name" dropdown />
-                                </div>
-                                
-                                <small id="username-help" :class="{ 'p-invalid text-red-700': errorsNew['company'] }">
-                                    {{ errorsNew.company }}
-                                </small>
-                            </div> -->
-
-
-
-
-                        </div>
-
-                    </TabPanel>
-                    <TabPanel header="Presentation">
-
-                        <Divider />
-
-
-                        <Card>
-
-
-                            <template #header>
-
-                            </template>
-
-                            <template #title>Presentation</template>
-
-                            <template #content>
-
-                                <div class="grid">
-
-
-
-                                    <div class="mb-3 col-12 md:col-6 lg:col-3">
-                                        <div class="flex align-items-center">
-                                            <label for="packing_typeV" class="font-semibold w-6rem">Packing
-                                                type:</label>
-                                            <AutoComplete v-model="packing_typeV" class="flex-auto" inputId="ac"
-                                                :suggestions="packingTypes" @complete="searchPackingType" field="name"
-                                                dropdown />
-                                        </div>
-                                        <!-- <pre>{{packing_typeV}}</pre> -->
-                                        <small id="username-help"
-                                            :class="{ 'p-invalid text-red-700': errorsNew['packing_typeV'] }">
-                                            {{ errorsNew.packing_typeV }}
-                                        </small>
-                                        <BackendErrors :name="errorResponseAPI?.errors?.packing_type_uuid" />
-                                    </div>
-
-                                    <div class="mb-3 col-12 md:col-6 lg:col-3">
-                                        <div class="flex align-items-center">
-                                            <label for="productV" class="font-semibold w-6rem">Product:</label>
-                                            <AutoComplete v-model="productV" class="flex-auto" inputId="ac"
-                                                :suggestions="products" @complete="searchProduct" field="name"
-                                                dropdown />
-                                        </div>
-                                        <!-- <pre>{{productV}}</pre> -->
-                                        <small id="username-help"
-                                            :class="{ 'p-invalid text-red-700': errorsNew['productV'] }">
+                                        <small id="username-help" :class="{ 'p-invalid text-red-700': errorsNew['productV'] }">
                                             {{ errorsNew.productV }}
                                         </small>
                                         <BackendErrors :name="errorResponseAPI?.errors?.product_uuid" />
@@ -1669,10 +507,9 @@
                                     <div class="mb-3 col-12 md:col-6 lg:col-3">
                                         <div class="flex align-items-center">
                                             <label for="variantV" class="font-semibold w-6rem">Variant:</label>
-                                            <AutoComplete v-model="variantV" class="flex-auto" inputId="ac"
-                                                :suggestions="variants" @complete="searchVariant" field="name" dropdown />
+                                            <AutoComplete v-model="variantV" class="flex-auto" inputId="ac" :suggestions="variants" @complete="searchVariant" field="name" dropdown />
                                         </div>
-                                        
+                                        <!-- <pre>{{variantV}}</pre> -->
                                         <small id="username-help" :class="{ 'p-invalid text-red-700': errorsNew['variantV'] }">
                                             {{ errorsNew.variantV }}
                                         </small>
@@ -1681,33 +518,25 @@
 
                                     <div class="mb-3 col-12 md:col-6 lg:col-3">
                                         <div class="flex align-items-center">
-                                            <label for="product_typeV" class="font-semibold w-6rem">Product
-                                                Type:</label>
-                                            <AutoComplete v-model="product_typeV" class="flex-auto" inputId="ac"
-                                                :suggestions="productsType" @complete="searchProductType" field="name"
-                                                dropdown />
+                                            <label for="product_typeV" class="font-semibold w-6rem">Product Type:</label>
+                                            <AutoComplete v-model="product_typeV" class="flex-auto" inputId="ac" :suggestions="productsType" @complete="searchProductType" field="name" dropdown />
                                         </div>
                                         <!-- <pre>{{product_typeV}}</pre> -->
-                                        <small id="username-help"
-                                            :class="{ 'p-invalid text-red-700': errorsNew['product_typeV'] }">
+                                        <small id="username-help" :class="{ 'p-invalid text-red-700': errorsNew['product_typeV'] }">
                                             {{ errorsNew.product_typeV }}
                                         </small>
                                         <BackendErrors :name="errorResponseAPI?.errors?.product_type_uuid" />
                                     </div>
-
                                 </div>
 
                                 <div class="grid">
-
                                     <div class="mb-3 col-12 md:col-6 lg:col-6">
                                         <div class="flex align-items-center">
                                             <label for="farm" class="font-semibold w-6rem">Farm :</label>
-                                            <AutoComplete v-model="farm" class="flex-auto" inputId="ac"
-                                                :suggestions="farms" @complete="searchFarms" field="name" dropdown />
+                                            <AutoComplete v-model="farm" class="flex-auto" inputId="ac" :suggestions="farms" @complete="searchFarms" field="name" dropdown />
                                         </div>
                                         <!-- <pre>{{farm}}</pre> -->
-                                        <small id="username-help"
-                                            :class="{ 'p-invalid text-red-700': errorsNew['farm'] }">
+                                        <small id="username-help" :class="{ 'p-invalid text-red-700': errorsNew['farm'] }">
                                             {{ errorsNew.farm }}
                                         </small>
                                         <BackendErrors :name="errorResponseAPI?.errors?.farm_uuid" />
@@ -1716,13 +545,10 @@
                                     <div class="mb-3 col-12 md:col-6 lg:col-6">
                                         <div class="flex align-items-center">
                                             <label for="company" class="font-semibold w-6rem">Company:</label>
-                                            <AutoComplete v-model="company" class="flex-auto" inputId="ac"
-                                                :suggestions="compa" @complete="searchCompannies" field="name"
-                                                dropdown />
+                                            <AutoComplete v-model="company" class="flex-auto" inputId="ac" :suggestions="compa" @complete="searchCompannies" field="name" dropdown />
                                         </div>
                                         <!-- <pre>{{company}}</pre> -->
-                                        <small id="username-help"
-                                            :class="{ 'p-invalid text-red-700': errorsNew['company'] }">
+                                        <small id="username-help" :class="{ 'p-invalid text-red-700': errorsNew['company'] }">
                                             {{ errorsNew.company }}
                                         </small>
                                         <BackendErrors :name="errorResponseAPI?.errors?.company_uuid" />
@@ -1730,35 +556,25 @@
                                 </div>
 
                                 <div class="grid">
-
                                     <div class="mb-3 col-12 md:col-6 lg:col-3">
                                         <div class="flex align-items-center">
-                                            <label for="packing_qty_dispatchV" class="font-semibold w-6rem">Packing
-                                                Quantity Dispatch:</label>
-                                            <AutoComplete v-model="packing_qty_dispatchV" class="flex-auto" inputId="ac"
-                                                :suggestions="packingsQtyDispatch" @complete="searchPackingQtyDispatch"
-                                                field="name" dropdown />
+                                            <label for="packing_qty_dispatchV" class="font-semibold w-6rem">Packing Quantity Dispatch:</label>
+                                            <AutoComplete v-model="packing_qty_dispatchV" class="flex-auto" inputId="ac" :suggestions="packingsQtyDispatch" @complete="searchPackingQtyDispatch" field="name" dropdown />
                                         </div>
                                         <!-- <pre>{{packing_qty_dispatchV}}</pre> -->
-                                        <small id="username-help"
-                                            :class="{ 'p-invalid text-red-700': errorsNew['packing_qty_dispatchV'] }">
+                                        <small id="username-help" :class="{ 'p-invalid text-red-700': errorsNew['packing_qty_dispatchV'] }">
                                             {{ errorsNew.packing_qty_dispatchV }}
                                         </small>
                                         <BackendErrors :name="errorResponseAPI?.errors?.packing_qty_dispatch" />
                                     </div>
 
-
                                     <div class="mb-3 col-12 md:col-6 lg:col-3">
                                         <div class="flex align-items-center">
-                                            <label for="packing_type_dispatchV" class="font-semibold w-6rem">Packing
-                                                Type Dispatch:</label>
-                                            <AutoComplete v-model="packing_type_dispatchV" class="flex-auto"
-                                                inputId="ac" :suggestions="packingsTypesDispatch"
-                                                @complete="searchPackingTypeDispatch" field="name" dropdown />
+                                            <label for="packing_type_dispatchV" class="font-semibold w-6rem">Packing Type Dispatch:</label>
+                                            <AutoComplete v-model="packing_type_dispatchV" class="flex-auto" inputId="ac" :suggestions="packingsTypesDispatch" @complete="searchPackingTypeDispatch" field="name" dropdown />
                                         </div>
                                         <!-- <pre>{{packing_type_dispatchV}}</pre> -->
-                                        <small id="username-help"
-                                            :class="{ 'p-invalid text-red-700': errorsNew['packing_type_dispatchV'] }">
+                                        <small id="username-help" :class="{ 'p-invalid text-red-700': errorsNew['packing_type_dispatchV'] }">
                                             {{ errorsNew.packing_type_dispatchV }}
                                         </small>
                                         <BackendErrors :name="errorResponseAPI?.errors?.packing_type_dispatch_uuid" />
@@ -1766,15 +582,11 @@
 
                                     <div class="mb-3 col-12 md:col-6 lg:col-3">
                                         <div class="flex align-items-center">
-                                            <label for="packing_dispatch_weightV" class="font-semibold w-6rem">Packing
-                                                Dispatch Weight:</label>
-                                            <AutoComplete v-model="packing_dispatch_weightV" class="flex-auto"
-                                                inputId="ac" :suggestions="packingsWeightDispatch"
-                                                @complete="searchPackingWeightDispatch" field="name" dropdown />
+                                            <label for="packing_dispatch_weightV" class="font-semibold w-6rem">Packing Dispatch Weight:</label>
+                                            <AutoComplete v-model="packing_dispatch_weightV" class="flex-auto" inputId="ac" :suggestions="packingsWeightDispatch" @complete="searchPackingWeightDispatch" field="name" dropdown />
                                         </div>
                                         <!-- <pre>{{packing_dispatch_weightV}}</pre> -->
-                                        <small id="username-help"
-                                            :class="{ 'p-invalid text-red-700': errorsNew['packing_dispatch_weightV'] }">
+                                        <small id="username-help" :class="{ 'p-invalid text-red-700': errorsNew['packing_dispatch_weightV'] }">
                                             {{ errorsNew.packing_dispatch_weightV }}
                                         </small>
                                         <BackendErrors :name="errorResponseAPI?.errors?.packing_dispatch_weight" />
@@ -1782,52 +594,27 @@
 
                                     <div class="mb-3 col-12 md:col-6 lg:col-3">
                                         <div class="flex align-items-center">
-                                            <label for="username" class="font-semibold w-6rem">Unit type
-                                                Dispatch:</label>
-                                            <AutoComplete v-model="unit_type_dispatch_V" class="flex-auto" inputId="ac"
-                                                :suggestions="unitsTypeDispatch" @complete="searchUnitsTypeDispatch"
-                                                field="name" dropdown />
+                                            <label for="username" class="font-semibold w-6rem">Unit type Dispatch:</label>
+                                            <AutoComplete v-model="unit_type_dispatch_V" class="flex-auto" inputId="ac" :suggestions="unitsTypeDispatch" @complete="searchUnitsTypeDispatch" field="name" dropdown />
                                         </div>
                                         <!-- <pre>{{unit_type_dispatch_V}}</pre> -->
-                                        <small id="username-help"
-                                            :class="{ 'p-invalid text-red-700': errorsNew['unit_type_dispatch_V'] }">
+                                        <small id="username-help" :class="{ 'p-invalid text-red-700': errorsNew['unit_type_dispatch_V'] }">
                                             {{ errorsNew.unit_type_dispatch_V }}
                                         </small>
                                         <BackendErrors :name="errorResponseAPI?.errors?.unit_type_dispatch_uuid" />
                                     </div>
-
-
-
-
                                 </div>
-
                             </template>
 
                             <template #footer>
-
-
                                 <Card>
-                                    <template #title> {{ packing_qty_dispatchV.name }} X {{ packing_type_dispatchV.name
-                                        }} X {{ packing_dispatch_weightV.name }} X {{ unit_type_dispatch_V.name
-                                        }}</template>
-                                    <template #content>
-
-                                    </template>
+                                    <template #title> {{ packing_qty_dispatchV.name }} X {{ packing_type_dispatchV.name }} X {{ packing_dispatch_weightV.name }} X {{ unit_type_dispatch_V.name }}</template>
+                                    <template #content> </template>
                                 </Card>
-
                             </template>
-
-
-
-
-
-
                         </Card>
 
-
-
                         <Divider />
-
                     </TabPanel>
                     <TabPanel header="Summarize">
                         <Timeline :value="events" class="mb-3 col-12 md:col-12 lg:col-12">
@@ -1838,15 +625,790 @@
                                 {{ slotProps.item.status }}
                             </template>
                         </Timeline>
-
                     </TabPanel>
-
-
-
-
                 </TabView>
 
+                <!-- <InputText type="text" v-model="value" /> -->
 
+                <div class="flex justify-content-end gap-2">
+                    <Button type="button" label="Cancel" severity="secondary" @click="formDialogNew = false" />
+                    <Button type="button" label="Save" @click="createRecord()" />
+                </div>
+            </Dialog>
+
+            <Dialog v-model:visible="formDialogEdit" modal :header="formDialogEditTitle" class="p-fluid text-center mx-auto">
+                <!-- <pre>{{ prueba }}</pre> -->
+                <pre>{{ prueba }}</pre>
+                <pre>{{ errorsNew }}</pre>
+                <Avatar icon="pi pi-user" class="mr-3" size="xlarge" shape="circle" />
+                <span> Employee: {{ employeeNameDefault }} </span>
+
+                <Divider />
+
+                <div class="flex mb-2 gap-2 justify-content-end">
+                    <Button @click="active = 0" rounded label="1" class="w-2rem h-2rem p-0" :outlined="active !== 0" />
+                    <Button @click="active = 1" rounded label="2" class="w-2rem h-2rem p-0" :outlined="active !== 1" />
+                    <Button @click="active = 2" rounded label="3" class="w-2rem h-2rem p-0" :outlined="active !== 2" />
+                </div>
+
+                <TabView v-model:activeIndex="active">
+                    <TabPanel header="Request">
+                        <div class="grid">
+                            <div class="mb-3 col-12 md:col-6 lg:col-3">
+                                <div class="flex align-items-center gap-3 mb-1">
+                                    <label for="order_number_customerV" class="font-semibold w-6rem">Order Number Customer</label>
+                                    <InputText id="username" v-model="order_number_customerV" class="flex-auto" autocomplete="off" v-bind="order_number_customerVProps" />
+                                </div>
+                                <!-- <pre>{{order_number_customerV}}</pre> -->
+                                <small id="username-help" :class="{ 'p-invalid text-red-700': errorsNew['order_number_customerV'] }">
+                                    {{ errorsNew.order_number_customerV }}
+                                </small>
+                                <BackendErrors :name="errorResponseAPI?.errors?.order_number_customer" />
+                            </div>
+
+                            <div class="mb-3 col-12 md:col-6 lg:col-3">
+                                <div class="flex align-items-center gap-3 mb-1">
+                                    <label for="invoice_number_customerV" class="font-semibold w-6rem">Invoice Number Customer</label>
+                                    <InputText id="invoice_number_customerV" v-model="invoice_number_customerV" class="flex-auto" autocomplete="off" v-bind="invoice_number_customerVProps" />
+                                </div>
+                                <!-- <pre>{{invoice_number_customerV}}</pre> -->
+                                <small id="username-help" :class="{ 'p-invalid text-red-700': errorsNew['invoice_number_customerV'] }">
+                                    {{ errorsNew.invoice_number_customerV }}
+                                </small>
+                                <BackendErrors :name="errorResponseAPI?.errors?.invoice_number_customer" />
+                            </div>
+
+                            <div class="mb-3 col-12 md:col-6 lg:col-3">
+                                <div class="flex align-items-center gap-3 mb-1">
+                                    <label for="customer_nameV" class="font-semibold w-6rem">Customer Name</label>
+                                    <InputText id="customer_nameV" v-model="customer_nameV" class="flex-auto" autocomplete="off" v-bind="customer_nameVProps" />
+                                </div>
+                                <!-- <pre>{{customer_nameV}}</pre> -->
+                                <small id="username-help" :class="{ 'p-invalid text-red-700': errorsNew['customer_nameV'] }">
+                                    {{ errorsNew.customer_nameV }}
+                                </small>
+                                <BackendErrors :name="errorResponseAPI?.errors?.customer_name" />
+                            </div>
+
+                            <div class="mb-3 col-12 md:col-6 lg:col-3">
+                                <div class="flex align-items-center">
+                                    <label for="request_dateV" class="font-semibold w-6rem">Request Date</label>
+                                    <!-- <Calendar v-model="transaction_dateV" class="flex-auto" v-bind="transaction_dateVProps"/> -->
+                                    <Calendar dateFormat="dd/mm/yy" v-model="request_dateV" class="flex-auto" showIcon :showOnFocus="false" inputId="buttondisplay" placeholder="Select request date" />
+                                </div>
+                                <!-- <pre>{{request_dateV}}</pre> -->
+
+                                <small id="username-help" :class="{ 'p-invalid text-red-700': errorsNew['request_dateV'] }">
+                                    {{ errorsNew.request_dateV }}
+                                </small>
+                                <BackendErrors :name="errorResponseAPI?.errors?.request_date" />
+                            </div>
+
+                            <div class="mb-3 col-12 md:col-6 lg:col-3">
+                                <div class="flex align-items-center">
+                                    <label for="delivery_datetimeV" class="font-semibold w-6rem">Delivery Datetime :</label>
+                                    <Calendar id="delivery_datetimeV-24h" v-model="delivery_datetimeV" showTime hourFormat="24" class="flex-auto" showIcon inputId="buttondisplay" />
+                                </div>
+                                <!-- <pre>{{delivery_datetimeV}}</pre> -->
+
+                                <small id="username-help" :class="{ 'p-invalid text-red-700': errorsNew['delivery_datetimeV'] }">
+                                    {{ errorsNew.delivery_datetimeV }}
+                                </small>
+                                <BackendErrors :name="errorResponseAPI?.errors?.delivery_datetime" />
+                            </div>
+
+                            <div class="mb-3 col-12 md:col-6 lg:col-3">
+                                <div class="flex align-items-center gap-3 mb-1">
+                                    <label for="place_of_deliveryV" class="font-semibold w-6rem">Place of Delivery</label>
+                                    <InputText id="place_of_deliveryV" v-model="place_of_deliveryV" class="flex-auto" autocomplete="off" v-bind="place_of_deliveryVProps" />
+                                </div>
+                                <!-- <pre>{{place_of_deliveryV}}</pre> -->
+                                <small id="username-help" :class="{ 'p-invalid text-red-700': errorsNew['place_of_deliveryV'] }">
+                                    {{ errorsNew.place_of_deliveryV }}
+                                </small>
+                                <BackendErrors :name="errorResponseAPI?.errors?.place_of_delivery" />
+                            </div>
+
+                            <div class="mb-3 col-12 md:col-6 lg:col-3">
+                                <div class="flex align-items-center gap-3 mb-1">
+                                    <label for="dispatch_number_lotV" class="font-semibold w-6rem">Dispatch Number Lot</label>
+                                    <InputText id="dispatch_number_lotV" v-model="dispatch_number_lotV" class="flex-auto" autocomplete="off" v-bind="dispatch_number_lotVProps" :frozen="documentFrozen" />
+                                </div>
+                                <!-- <pre>{{dispatch_number_lotV}}</pre> -->
+                                <small id="username-help" :class="{ 'p-invalid text-red-700': errorsNew['dispatch_number_lotV'] }">
+                                    {{ errorsNew.dispatch_number_lotV }}
+                                </small>
+                                <BackendErrors :name="errorResponseAPI?.errors?.dispatch_number_lot" />
+                            </div>
+                            <div class="mb-3 col-12 md:col-6 lg:col-3">
+                                <div class="flex align-items-center gap-3 mb-1">
+                                    <label for="request_qty_V" class="font-semibold w-6rem">Request qty:</label>
+                                    <InputNumber id="request_qty_V" v-model="request_qty_V" class="flex-auto" inputId="minmax" :min="0" :max="1000" />
+                                </div>
+                                <!-- <pre>{{request_qty_V}}</pre> -->
+                                <small id="username-help" :class="{ 'p-invalid text-red-700': errorsNew['request_qty_V'] }">
+                                    {{ errorsNew.request_qty_V }}
+                                </small>
+                                <BackendErrors :name="errorResponseAPI?.errors?.request_qty" />
+                            </div>
+
+                            <div class="mb-3 col-12 md:col-6 lg:col-3">
+                                <div class="flex align-items-center gap-3 mb-1">
+                                    <label for="packing_name_customerV" class="font-semibold w-6rem">Packing Name Customer:</label>
+                                    <InputText id="packing_name_customerV" v-model="packing_name_customerV" class="flex-auto" autocomplete="off" v-bind="packing_name_customerVProps" />
+                                </div>
+                                <!-- <pre>{{packing_name_customerV}}</pre> -->
+                                <small id="username-help" :class="{ 'p-invalid text-red-700': errorsNew['packing_name_customerV'] }">
+                                    {{ errorsNew.packing_name_customerV }}
+                                </small>
+                                <BackendErrors :name="errorResponseAPI?.errors?.packing_name_customer" />
+                            </div>
+
+                            <div class="mb-3 col-12 md:col-6 lg:col-3">
+                                <div class="flex align-items-center gap-3 mb-1">
+                                    <label for="outlet_temperatureV" class="font-semibold w-6rem">Outlet temperature:</label>
+
+                                    <InputNumber
+                                        v-model="outlet_temperatureV"
+                                        inputId="temperature"
+                                        class="flex-auto"
+                                        prefix="&uarr; "
+                                        suffix="℃"
+                                        :min="0"
+                                        :max="40"
+                                        :step="0.1"
+                                        :decimal-separator="','"
+                                        locale="en-US"
+                                        :minFractionDigits="2"
+                                        :maxFractionDigits="2"
+                                    />
+                                </div>
+                                <!-- <pre>{{outlet_temperatureV}}</pre> -->
+                                <small id="username-help" :class="{ 'p-invalid text-red-700': errorsNew['outlet_temperatureV'] }">
+                                    {{ errorsNew.outlet_temperatureV }}
+                                </small>
+                                <BackendErrors :name="errorResponseAPI?.errors?.outlet_temperature" />
+                            </div>
+
+                            <!-- <div class="mb-3 col-12 md:col-6 lg:col-3">
+                                <div class="flex align-items-center">
+                                    <label for="productV" class="font-semibold w-6rem">Product:</label>
+                                    <AutoComplete v-model="productV" class="flex-auto" inputId="ac"
+                                        :suggestions="products" @complete="searchProduct" field="name" dropdown />
+                                </div>
+                                
+                                <small id="username-help" :class="{ 'p-invalid text-red-700': errorsNew['productV'] }">
+                                    {{ errorsNew.productV }}
+                                </small>
+                            </div>
+
+                            <div class="mb-3 col-12 md:col-6 lg:col-3">
+                                <div class="flex align-items-center">
+                                    <label for="product_typeV" class="font-semibold w-6rem">Product Type:</label>
+                                    <AutoComplete v-model="product_typeV" class="flex-auto" inputId="ac"
+                                        :suggestions="productsType" @complete="searchProductType" field="name"
+                                        dropdown />
+                                </div>
+                                
+                                <small id="username-help"
+                                    :class="{ 'p-invalid text-red-700': errorsNew['product_typeV'] }">
+                                    {{ errorsNew.product_typeV }}
+                                </small>
+                            </div> -->
+
+                            <!-- <div class="mb-3 col-12 md:col-6 lg:col-3">
+                                <div class="flex align-items-center">
+                                    <label for="packing_typeV" class="font-semibold w-6rem">Packing type:</label>
+                                    <AutoComplete v-model="packing_typeV" class="flex-auto" inputId="ac"
+                                        :suggestions="packingTypes" @complete="searchPackingType" field="name"
+                                        dropdown />
+                                </div>
+                                
+                                <small id="username-help"
+                                    :class="{ 'p-invalid text-red-700': errorsNew['packing_typeV'] }">
+                                    {{ errorsNew.packing_typeV }}
+                                </small>
+                            </div>
+
+                            <div class="mb-3 col-12 md:col-6 lg:col-3">
+                                <div class="flex align-items-center">
+                                    <label for="farm" class="font-semibold w-6rem">Farm :</label>
+                                    <AutoComplete v-model="farm" class="flex-auto" inputId="ac" :suggestions="farms"
+                                        @complete="searchFarms" field="name" dropdown />
+                                </div>
+                                
+                                <small id="username-help" :class="{ 'p-invalid text-red-700': errorsNew['farm'] }">
+                                    {{ errorsNew.farm }}
+                                </small>
+                            </div>
+
+                            <div class="mb-3 col-12 md:col-6 lg:col-3">
+                                <div class="flex align-items-center">
+                                    <label for="company" class="font-semibold w-6rem">Company:</label>
+                                    <AutoComplete v-model="company" class="flex-auto" inputId="ac" :suggestions="compa"
+                                        @complete="searchCompannies" field="name" dropdown />
+                                </div>
+                                
+                                <small id="username-help" :class="{ 'p-invalid text-red-700': errorsNew['company'] }">
+                                    {{ errorsNew.company }}
+                                </small>
+                            </div> -->
+                        </div>
+                    </TabPanel>
+                    <TabPanel header="Presentation">
+                        <Divider />
+
+                        <Card>
+                            <template #header> </template>
+
+                            <template #title>Presentation</template>
+
+                            <template #content>
+                                <div class="grid">
+                                    <div class="mb-3 col-12 md:col-6 lg:col-3">
+                                        <div class="flex align-items-center">
+                                            <label for="packing_typeV" class="font-semibold w-6rem">Packing type:</label>
+                                            <AutoComplete v-model="packing_typeV" class="flex-auto" inputId="ac" :suggestions="packingTypes" @complete="searchPackingType" field="name" dropdown />
+                                        </div>
+                                        <!-- <pre>{{packing_typeV}}</pre> -->
+                                        <small id="username-help" :class="{ 'p-invalid text-red-700': errorsNew['packing_typeV'] }">
+                                            {{ errorsNew.packing_typeV }}
+                                        </small>
+                                        <BackendErrors :name="errorResponseAPI?.errors?.packing_type_uuid" />
+                                    </div>
+
+                                    <div class="mb-3 col-12 md:col-6 lg:col-3">
+                                        <div class="flex align-items-center">
+                                            <label for="productV" class="font-semibold w-6rem">Product:</label>
+                                            <AutoComplete v-model="productV" class="flex-auto" inputId="ac" :suggestions="products" @complete="searchProduct" field="name" dropdown />
+                                        </div>
+                                        <!-- <pre>{{productV}}</pre> -->
+                                        <small id="username-help" :class="{ 'p-invalid text-red-700': errorsNew['productV'] }">
+                                            {{ errorsNew.productV }}
+                                        </small>
+                                        <BackendErrors :name="errorResponseAPI?.errors?.product_uuid" />
+                                    </div>
+
+                                    <div class="mb-3 col-12 md:col-6 lg:col-3">
+                                        <div class="flex align-items-center">
+                                            <label for="variantV" class="font-semibold w-6rem">Variant:</label>
+                                            <AutoComplete v-model="variantV" class="flex-auto" inputId="ac" :suggestions="variants" @complete="searchVariant" field="name" dropdown />
+                                        </div>
+                                        <!-- <pre>{{variantV}}</pre> -->
+                                        <small id="username-help" :class="{ 'p-invalid text-red-700': errorsNew['variantV'] }">
+                                            {{ errorsNew.variantV }}
+                                        </small>
+                                        <BackendErrors :name="errorResponseAPI?.errors?.variant_uuid" />
+                                    </div>
+
+                                    <div class="mb-3 col-12 md:col-6 lg:col-3">
+                                        <div class="flex align-items-center">
+                                            <label for="product_typeV" class="font-semibold w-6rem">Product Type:</label>
+                                            <AutoComplete v-model="product_typeV" class="flex-auto" inputId="ac" :suggestions="productsType" @complete="searchProductType" field="name" dropdown />
+                                        </div>
+                                        <!-- <pre>{{product_typeV}}</pre> -->
+
+                                        <small id="username-help" :class="{ 'p-invalid text-red-700': errorsNew['product_typeV'] }">
+                                            {{ errorsNew.product_typeV }}
+                                        </small>
+                                        <BackendErrors :name="errorResponseAPI?.errors?.product_type_uuid" />
+                                    </div>
+                                </div>
+
+                                <div class="grid">
+                                    <div class="mb-3 col-12 md:col-6 lg:col-6">
+                                        <div class="flex align-items-center">
+                                            <label for="farm" class="font-semibold w-6rem">Farm :</label>
+                                            <AutoComplete v-model="farm" class="flex-auto" inputId="ac" :suggestions="farms" @complete="searchFarms" field="name" dropdown />
+                                        </div>
+                                        <!-- <pre>{{farm}}</pre> -->
+                                        <small id="username-help" :class="{ 'p-invalid text-red-700': errorsNew['farm'] }">
+                                            {{ errorsNew.farm }}
+                                        </small>
+                                        <BackendErrors :name="errorResponseAPI?.errors?.farm_uuid" />
+                                    </div>
+
+                                    <div class="mb-3 col-12 md:col-6 lg:col-6">
+                                        <div class="flex align-items-center">
+                                            <label for="company" class="font-semibold w-6rem">Company:</label>
+                                            <AutoComplete v-model="company" class="flex-auto" inputId="ac" :suggestions="compa" @complete="searchCompannies" field="name" dropdown />
+                                        </div>
+                                        <!-- <pre>{{company}}</pre> -->
+                                        <small id="username-help" :class="{ 'p-invalid text-red-700': errorsNew['company'] }">
+                                            {{ errorsNew.company }}
+                                        </small>
+                                        <BackendErrors :name="errorResponseAPI?.errors?.company_uuid" />
+                                    </div>
+                                </div>
+
+                                <div class="grid">
+                                    <div class="mb-3 col-12 md:col-6 lg:col-3">
+                                        <div class="flex align-items-center">
+                                            <label for="packing_qty_dispatchV" class="font-semibold w-6rem">Packing Quantity Dispatch:</label>
+                                            <AutoComplete v-model="packing_qty_dispatchV" class="flex-auto" inputId="ac" :suggestions="packingsQtyDispatch" @complete="searchPackingQtyDispatch" field="name" dropdown />
+                                        </div>
+                                        <!-- <pre>{{packing_qty_dispatchV}}</pre> -->
+                                        <small id="username-help" :class="{ 'p-invalid text-red-700': errorsNew['packing_qty_dispatchV'] }">
+                                            {{ errorsNew.packing_qty_dispatchV }}
+                                        </small>
+                                        <BackendErrors :name="errorResponseAPI?.errors?.packing_qty_dispatch" />
+                                    </div>
+
+                                    <div class="mb-3 col-12 md:col-6 lg:col-3">
+                                        <div class="flex align-items-center">
+                                            <label for="packing_type_dispatchV" class="font-semibold w-6rem">Packing Type Dispatch:</label>
+                                            <AutoComplete v-model="packing_type_dispatchV" class="flex-auto" inputId="ac" :suggestions="packingsTypesDispatch" @complete="searchPackingTypeDispatch" field="name" dropdown />
+                                        </div>
+                                        <!-- <pre>{{packing_type_dispatchV}}</pre> -->
+                                        <small id="username-help" :class="{ 'p-invalid text-red-700': errorsNew['packing_type_dispatchV'] }">
+                                            {{ errorsNew.packing_type_dispatchV }}
+                                        </small>
+                                        <BackendErrors :name="errorResponseAPI?.errors?.packing_type_dispatch_uuid" />
+                                    </div>
+
+                                    <div class="mb-3 col-12 md:col-6 lg:col-3">
+                                        <div class="flex align-items-center">
+                                            <label for="packing_dispatch_weightV" class="font-semibold w-6rem">Packing Dispatch Weight:</label>
+                                            <AutoComplete v-model="packing_dispatch_weightV" class="flex-auto" inputId="ac" :suggestions="packingsWeightDispatch" @complete="searchPackingWeightDispatch" field="name" dropdown />
+                                        </div>
+                                        <!-- <pre>{{packing_dispatch_weightV}}</pre> -->
+                                        <small id="username-help" :class="{ 'p-invalid text-red-700': errorsNew['packing_dispatch_weightV'] }">
+                                            {{ errorsNew.packing_dispatch_weightV }}
+                                        </small>
+                                        <BackendErrors :name="errorResponseAPI?.errors?.packing_dispatch_weight" />
+                                    </div>
+
+                                    <div class="mb-3 col-12 md:col-6 lg:col-3">
+                                        <div class="flex align-items-center">
+                                            <label for="username" class="font-semibold w-6rem">Unit type Dispatch:</label>
+                                            <AutoComplete v-model="unit_type_dispatch_V" class="flex-auto" inputId="ac" :suggestions="unitsTypeDispatch" @complete="searchUnitsTypeDispatch" field="name" dropdown />
+                                        </div>
+                                        <!-- <pre>{{unit_type_dispatch_V}}</pre> -->
+                                        <small id="username-help" :class="{ 'p-invalid text-red-700': errorsNew['unit_type_dispatch_V'] }">
+                                            {{ errorsNew.unit_type_dispatch_V }}
+                                        </small>
+                                        <BackendErrors :name="errorResponseAPI?.errors?.unit_type_dispatch_uuid" />
+                                    </div>
+                                </div>
+                            </template>
+
+                            <template #footer>
+                                <Card>
+                                    <template #title> {{ packing_qty_dispatchV.name }} X {{ packing_type_dispatchV.name }} X {{ packing_dispatch_weightV.name }} X {{ unit_type_dispatch_V.name }}</template>
+                                    <template #content> </template>
+                                </Card>
+                            </template>
+                        </Card>
+
+                        <Divider />
+                    </TabPanel>
+                    <TabPanel header="Summarize">
+                        <Timeline :value="events" class="mb-3 col-12 md:col-12 lg:col-12">
+                            <template #opposite="slotProps">
+                                <small class="p-text-secondary">{{ slotProps.item.date }}</small>
+                            </template>
+                            <template #content="slotProps">
+                                {{ slotProps.item.status }}
+                            </template>
+                        </Timeline>
+                    </TabPanel>
+                </TabView>
+
+                <div class="flex justify-content-end gap-2">
+                    <Button type="button" label="Cancel" severity="secondary" @click="formDialogEdit = false" />
+                    <Button type="button" label="Save" @click="EditRecord()" />
+                </div>
+            </Dialog>
+
+            <Dialog v-model:visible="formDialogClone" modal :header="formDialogCloneTitle" class="p-fluid text-center mx-auto">
+                <!-- <pre>{{ prueba }}</pre> -->
+                <pre>{{ prueba }}</pre>
+                <pre>{{ errorsNew }}</pre>
+                <Avatar icon="pi pi-user" class="mr-3" size="xlarge" shape="circle" />
+                <span> Employee: {{ employeeNameDefault }} </span>
+
+                <Divider />
+
+                <div class="flex mb-2 gap-2 justify-content-end">
+                    <Button @click="active = 0" rounded label="1" class="w-2rem h-2rem p-0" :outlined="active !== 0" />
+                    <Button @click="active = 1" rounded label="2" class="w-2rem h-2rem p-0" :outlined="active !== 1" />
+                    <Button @click="active = 2" rounded label="3" class="w-2rem h-2rem p-0" :outlined="active !== 2" />
+                </div>
+
+                <TabView v-model:activeIndex="active">
+                    <TabPanel header="Request">
+                        <div class="grid">
+                            <div class="mb-3 col-12 md:col-6 lg:col-3">
+                                <div class="flex align-items-center gap-3 mb-1">
+                                    <label for="order_number_customerV" class="font-semibold w-6rem">Order Number Customer</label>
+                                    <InputText id="username" v-model="order_number_customerV" class="flex-auto" autocomplete="off" v-bind="order_number_customerVProps" />
+                                </div>
+                                <!-- <pre>{{order_number_customerV}}</pre> -->
+                                <small id="username-help" :class="{ 'p-invalid text-red-700': errorsNew['order_number_customerV'] }">
+                                    {{ errorsNew.order_number_customerV }}
+                                </small>
+                                <BackendErrors :name="errorResponseAPI?.errors?.order_number_customer" />
+                            </div>
+
+                            <div class="mb-3 col-12 md:col-6 lg:col-3">
+                                <div class="flex align-items-center gap-3 mb-1">
+                                    <label for="invoice_number_customerV" class="font-semibold w-6rem">Invoice Number Customer</label>
+                                    <InputText id="invoice_number_customerV" v-model="invoice_number_customerV" class="flex-auto" autocomplete="off" v-bind="invoice_number_customerVProps" />
+                                </div>
+                                <!-- <pre>{{invoice_number_customerV}}</pre> -->
+                                <small id="username-help" :class="{ 'p-invalid text-red-700': errorsNew['invoice_number_customerV'] }">
+                                    {{ errorsNew.invoice_number_customerV }}
+                                </small>
+                                <BackendErrors :name="errorResponseAPI?.errors?.invoice_number_customer" />
+                            </div>
+
+                            <div class="mb-3 col-12 md:col-6 lg:col-3">
+                                <div class="flex align-items-center gap-3 mb-1">
+                                    <label for="customer_nameV" class="font-semibold w-6rem">Customer Name</label>
+                                    <InputText id="customer_nameV" v-model="customer_nameV" class="flex-auto" autocomplete="off" v-bind="customer_nameVProps" />
+                                </div>
+                                <!-- <pre>{{customer_nameV}}</pre> -->
+                                <small id="username-help" :class="{ 'p-invalid text-red-700': errorsNew['customer_nameV'] }">
+                                    {{ errorsNew.customer_nameV }}
+                                </small>
+                                <BackendErrors :name="errorResponseAPI?.errors?.customer_name" />
+                            </div>
+
+                            <div class="mb-3 col-12 md:col-6 lg:col-3">
+                                <div class="flex align-items-center">
+                                    <label for="request_dateV" class="font-semibold w-6rem">Request Date</label>
+                                    <!-- <Calendar v-model="transaction_dateV" class="flex-auto" v-bind="transaction_dateVProps"/> -->
+                                    <Calendar dateFormat="dd/mm/yy" v-model="request_dateV" class="flex-auto" showIcon :showOnFocus="false" inputId="buttondisplay" placeholder="Select request date" />
+                                </div>
+                                <!-- <pre>{{request_dateV}}</pre> -->
+
+                                <small id="username-help" :class="{ 'p-invalid text-red-700': errorsNew['request_dateV'] }">
+                                    {{ errorsNew.request_dateV }}
+                                </small>
+                                <BackendErrors :name="errorResponseAPI?.errors?.request_date" />
+                            </div>
+
+                            <div class="mb-3 col-12 md:col-6 lg:col-3">
+                                <div class="flex align-items-center">
+                                    <label for="delivery_datetimeV" class="font-semibold w-6rem">Delivery Datetime :</label>
+                                    <Calendar id="delivery_datetimeV-24h" v-model="delivery_datetimeV" showTime hourFormat="24" class="flex-auto" showIcon inputId="buttondisplay" />
+                                </div>
+                                <!-- <pre>{{delivery_datetimeV}}</pre> -->
+
+                                <small id="username-help" :class="{ 'p-invalid text-red-700': errorsNew['delivery_datetimeV'] }">
+                                    {{ errorsNew.delivery_datetimeV }}
+                                </small>
+                                <BackendErrors :name="errorResponseAPI?.errors?.delivery_datetime" />
+                            </div>
+
+                            <div class="mb-3 col-12 md:col-6 lg:col-3">
+                                <div class="flex align-items-center gap-3 mb-1">
+                                    <label for="place_of_deliveryV" class="font-semibold w-6rem">Place of Delivery</label>
+                                    <InputText id="place_of_deliveryV" v-model="place_of_deliveryV" class="flex-auto" autocomplete="off" v-bind="place_of_deliveryVProps" />
+                                </div>
+                                <!-- <pre>{{place_of_deliveryV}}</pre> -->
+                                <small id="username-help" :class="{ 'p-invalid text-red-700': errorsNew['place_of_deliveryV'] }">
+                                    {{ errorsNew.place_of_deliveryV }}
+                                </small>
+                                <BackendErrors :name="errorResponseAPI?.errors?.place_of_delivery" />
+                            </div>
+
+                            <div class="mb-3 col-12 md:col-6 lg:col-3">
+                                <div class="flex align-items-center gap-3 mb-1">
+                                    <label for="dispatch_number_lotV" class="font-semibold w-6rem">Dispatch Number Lot</label>
+                                    <InputText id="dispatch_number_lotV" v-model="dispatch_number_lotV" class="flex-auto" autocomplete="off" v-bind="dispatch_number_lotVProps" :frozen="documentFrozen" />
+                                </div>
+                                <!-- <pre>{{dispatch_number_lotV}}</pre> -->
+                                <small id="username-help" :class="{ 'p-invalid text-red-700': errorsNew['dispatch_number_lotV'] }">
+                                    {{ errorsNew.dispatch_number_lotV }}
+                                </small>
+                                <BackendErrors :name="errorResponseAPI?.errors?.dispatch_number_lot" />
+                            </div>
+                            <div class="mb-3 col-12 md:col-6 lg:col-3">
+                                <div class="flex align-items-center gap-3 mb-1">
+                                    <label for="request_qty_V" class="font-semibold w-6rem">Request qty:</label>
+                                    <InputNumber id="request_qty_V" v-model="request_qty_V" class="flex-auto" inputId="minmax" :min="0" :max="1000" />
+                                </div>
+                                <!-- <pre>{{request_qty_V}}</pre> -->
+                                <small id="username-help" :class="{ 'p-invalid text-red-700': errorsNew['request_qty_V'] }">
+                                    {{ errorsNew.request_qty_V }}
+                                </small>
+                                <BackendErrors :name="errorResponseAPI?.errors?.request_qty" />
+                            </div>
+
+                            <div class="mb-3 col-12 md:col-6 lg:col-3">
+                                <div class="flex align-items-center gap-3 mb-1">
+                                    <label for="packing_name_customerV" class="font-semibold w-6rem">Packing Name Customer:</label>
+                                    <InputText id="packing_name_customerV" v-model="packing_name_customerV" class="flex-auto" autocomplete="off" v-bind="packing_name_customerVProps" />
+                                </div>
+                                <!-- <pre>{{packing_name_customerV}}</pre> -->
+                                <small id="username-help" :class="{ 'p-invalid text-red-700': errorsNew['packing_name_customerV'] }">
+                                    {{ errorsNew.packing_name_customerV }}
+                                </small>
+                                <BackendErrors :name="errorResponseAPI?.errors?.packing_name_customer" />
+                            </div>
+
+                            <div class="mb-3 col-12 md:col-6 lg:col-3">
+                                <div class="flex align-items-center gap-3 mb-1">
+                                    <label for="outlet_temperatureV" class="font-semibold w-6rem">Outlet temperature:</label>
+
+                                    <InputNumber
+                                        v-model="outlet_temperatureV"
+                                        inputId="temperature"
+                                        class="flex-auto"
+                                        prefix="&uarr; "
+                                        suffix="℃"
+                                        :min="0"
+                                        :max="40"
+                                        :step="0.1"
+                                        :decimal-separator="','"
+                                        locale="en-US"
+                                        :minFractionDigits="2"
+                                        :maxFractionDigits="2"
+                                    />
+                                </div>
+                                <!-- <pre>{{outlet_temperatureV}}</pre> -->
+                                <small id="username-help" :class="{ 'p-invalid text-red-700': errorsNew['outlet_temperatureV'] }">
+                                    {{ errorsNew.outlet_temperatureV }}
+                                </small>
+                                <BackendErrors :name="errorResponseAPI?.errors?.outlet_temperature" />
+                            </div>
+
+                            <!-- <div class="mb-3 col-12 md:col-6 lg:col-3">
+                                <div class="flex align-items-center">
+                                    <label for="productV" class="font-semibold w-6rem">Product:</label>
+                                    <AutoComplete v-model="productV" class="flex-auto" inputId="ac"
+                                        :suggestions="products" @complete="searchProduct" field="name" dropdown />
+                                </div>
+                                
+                                <small id="username-help" :class="{ 'p-invalid text-red-700': errorsNew['productV'] }">
+                                    {{ errorsNew.productV }}
+                                </small>
+                            </div>
+
+                            <div class="mb-3 col-12 md:col-6 lg:col-3">
+                                <div class="flex align-items-center">
+                                    <label for="product_typeV" class="font-semibold w-6rem">Product Type:</label>
+                                    <AutoComplete v-model="product_typeV" class="flex-auto" inputId="ac"
+                                        :suggestions="productsType" @complete="searchProductType" field="name"
+                                        dropdown />
+                                </div>
+                                
+                                <small id="username-help"
+                                    :class="{ 'p-invalid text-red-700': errorsNew['product_typeV'] }">
+                                    {{ errorsNew.product_typeV }}
+                                </small>
+                            </div> -->
+
+                            <!-- <div class="mb-3 col-12 md:col-6 lg:col-3">
+                                <div class="flex align-items-center">
+                                    <label for="variantV" class="font-semibold w-6rem">Variant:</label>
+                                    <AutoComplete v-model="variantV" class="flex-auto" inputId="ac"
+                                        :suggestions="variants" @complete="searchVariant" field="name" dropdown />
+                                </div>
+                                
+                                <small id="username-help" :class="{ 'p-invalid text-red-700': errorsNew['variantV'] }">
+                                    {{ errorsNew.variantV }}
+                                </small>
+                                <BackendErrors :name="errorResponseAPI?.errors?.variant_uuid" />
+                            </div> -->
+
+                            <!-- <div class="mb-3 col-12 md:col-6 lg:col-3">
+                                <div class="flex align-items-center">
+                                    <label for="packing_typeV" class="font-semibold w-6rem">Packing type:</label>
+                                    <AutoComplete v-model="packing_typeV" class="flex-auto" inputId="ac"
+                                        :suggestions="packingTypes" @complete="searchPackingType" field="name"
+                                        dropdown />
+                                </div>
+                                
+                                <small id="username-help"
+                                    :class="{ 'p-invalid text-red-700': errorsNew['packing_typeV'] }">
+                                    {{ errorsNew.packing_typeV }}
+                                </small>
+                            </div>
+
+                            <div class="mb-3 col-12 md:col-6 lg:col-3">
+                                <div class="flex align-items-center">
+                                    <label for="farm" class="font-semibold w-6rem">Farm :</label>
+                                    <AutoComplete v-model="farm" class="flex-auto" inputId="ac" :suggestions="farms"
+                                        @complete="searchFarms" field="name" dropdown />
+                                </div>
+                                
+                                <small id="username-help" :class="{ 'p-invalid text-red-700': errorsNew['farm'] }">
+                                    {{ errorsNew.farm }}
+                                </small>
+                            </div>
+
+                            <div class="mb-3 col-12 md:col-6 lg:col-3">
+                                <div class="flex align-items-center">
+                                    <label for="company" class="font-semibold w-6rem">Company:</label>
+                                    <AutoComplete v-model="company" class="flex-auto" inputId="ac" :suggestions="compa"
+                                        @complete="searchCompannies" field="name" dropdown />
+                                </div>
+                                
+                                <small id="username-help" :class="{ 'p-invalid text-red-700': errorsNew['company'] }">
+                                    {{ errorsNew.company }}
+                                </small>
+                            </div> -->
+                        </div>
+                    </TabPanel>
+                    <TabPanel header="Presentation">
+                        <Divider />
+
+                        <Card>
+                            <template #header> </template>
+
+                            <template #title>Presentation</template>
+
+                            <template #content>
+                                <div class="grid">
+                                    <div class="mb-3 col-12 md:col-6 lg:col-3">
+                                        <div class="flex align-items-center">
+                                            <label for="packing_typeV" class="font-semibold w-6rem">Packing type:</label>
+                                            <AutoComplete v-model="packing_typeV" class="flex-auto" inputId="ac" :suggestions="packingTypes" @complete="searchPackingType" field="name" dropdown />
+                                        </div>
+                                        <!-- <pre>{{packing_typeV}}</pre> -->
+                                        <small id="username-help" :class="{ 'p-invalid text-red-700': errorsNew['packing_typeV'] }">
+                                            {{ errorsNew.packing_typeV }}
+                                        </small>
+                                        <BackendErrors :name="errorResponseAPI?.errors?.packing_type_uuid" />
+                                    </div>
+
+                                    <div class="mb-3 col-12 md:col-6 lg:col-3">
+                                        <div class="flex align-items-center">
+                                            <label for="productV" class="font-semibold w-6rem">Product:</label>
+                                            <AutoComplete v-model="productV" class="flex-auto" inputId="ac" :suggestions="products" @complete="searchProduct" field="name" dropdown />
+                                        </div>
+                                        <!-- <pre>{{productV}}</pre> -->
+                                        <small id="username-help" :class="{ 'p-invalid text-red-700': errorsNew['productV'] }">
+                                            {{ errorsNew.productV }}
+                                        </small>
+                                        <BackendErrors :name="errorResponseAPI?.errors?.product_uuid" />
+                                    </div>
+
+                                    <div class="mb-3 col-12 md:col-6 lg:col-3">
+                                        <div class="flex align-items-center">
+                                            <label for="variantV" class="font-semibold w-6rem">Variant:</label>
+                                            <AutoComplete v-model="variantV" class="flex-auto" inputId="ac" :suggestions="variants" @complete="searchVariant" field="name" dropdown />
+                                        </div>
+
+                                        <small id="username-help" :class="{ 'p-invalid text-red-700': errorsNew['variantV'] }">
+                                            {{ errorsNew.variantV }}
+                                        </small>
+                                        <BackendErrors :name="errorResponseAPI?.errors?.variant_uuid" />
+                                    </div>
+
+                                    <div class="mb-3 col-12 md:col-6 lg:col-3">
+                                        <div class="flex align-items-center">
+                                            <label for="product_typeV" class="font-semibold w-6rem">Product Type:</label>
+                                            <AutoComplete v-model="product_typeV" class="flex-auto" inputId="ac" :suggestions="productsType" @complete="searchProductType" field="name" dropdown />
+                                        </div>
+                                        <!-- <pre>{{product_typeV}}</pre> -->
+                                        <small id="username-help" :class="{ 'p-invalid text-red-700': errorsNew['product_typeV'] }">
+                                            {{ errorsNew.product_typeV }}
+                                        </small>
+                                        <BackendErrors :name="errorResponseAPI?.errors?.product_type_uuid" />
+                                    </div>
+                                </div>
+
+                                <div class="grid">
+                                    <div class="mb-3 col-12 md:col-6 lg:col-6">
+                                        <div class="flex align-items-center">
+                                            <label for="farm" class="font-semibold w-6rem">Farm :</label>
+                                            <AutoComplete v-model="farm" class="flex-auto" inputId="ac" :suggestions="farms" @complete="searchFarms" field="name" dropdown />
+                                        </div>
+                                        <!-- <pre>{{farm}}</pre> -->
+                                        <small id="username-help" :class="{ 'p-invalid text-red-700': errorsNew['farm'] }">
+                                            {{ errorsNew.farm }}
+                                        </small>
+                                        <BackendErrors :name="errorResponseAPI?.errors?.farm_uuid" />
+                                    </div>
+
+                                    <div class="mb-3 col-12 md:col-6 lg:col-6">
+                                        <div class="flex align-items-center">
+                                            <label for="company" class="font-semibold w-6rem">Company:</label>
+                                            <AutoComplete v-model="company" class="flex-auto" inputId="ac" :suggestions="compa" @complete="searchCompannies" field="name" dropdown />
+                                        </div>
+                                        <!-- <pre>{{company}}</pre> -->
+                                        <small id="username-help" :class="{ 'p-invalid text-red-700': errorsNew['company'] }">
+                                            {{ errorsNew.company }}
+                                        </small>
+                                        <BackendErrors :name="errorResponseAPI?.errors?.company_uuid" />
+                                    </div>
+                                </div>
+
+                                <div class="grid">
+                                    <div class="mb-3 col-12 md:col-6 lg:col-3">
+                                        <div class="flex align-items-center">
+                                            <label for="packing_qty_dispatchV" class="font-semibold w-6rem">Packing Quantity Dispatch:</label>
+                                            <AutoComplete v-model="packing_qty_dispatchV" class="flex-auto" inputId="ac" :suggestions="packingsQtyDispatch" @complete="searchPackingQtyDispatch" field="name" dropdown />
+                                        </div>
+                                        <!-- <pre>{{packing_qty_dispatchV}}</pre> -->
+                                        <small id="username-help" :class="{ 'p-invalid text-red-700': errorsNew['packing_qty_dispatchV'] }">
+                                            {{ errorsNew.packing_qty_dispatchV }}
+                                        </small>
+                                        <BackendErrors :name="errorResponseAPI?.errors?.packing_qty_dispatch" />
+                                    </div>
+
+                                    <div class="mb-3 col-12 md:col-6 lg:col-3">
+                                        <div class="flex align-items-center">
+                                            <label for="packing_type_dispatchV" class="font-semibold w-6rem">Packing Type Dispatch:</label>
+                                            <AutoComplete v-model="packing_type_dispatchV" class="flex-auto" inputId="ac" :suggestions="packingsTypesDispatch" @complete="searchPackingTypeDispatch" field="name" dropdown />
+                                        </div>
+                                        <!-- <pre>{{packing_type_dispatchV}}</pre> -->
+                                        <small id="username-help" :class="{ 'p-invalid text-red-700': errorsNew['packing_type_dispatchV'] }">
+                                            {{ errorsNew.packing_type_dispatchV }}
+                                        </small>
+                                        <BackendErrors :name="errorResponseAPI?.errors?.packing_type_dispatch_uuid" />
+                                    </div>
+
+                                    <div class="mb-3 col-12 md:col-6 lg:col-3">
+                                        <div class="flex align-items-center">
+                                            <label for="packing_dispatch_weightV" class="font-semibold w-6rem">Packing Dispatch Weight:</label>
+                                            <AutoComplete v-model="packing_dispatch_weightV" class="flex-auto" inputId="ac" :suggestions="packingsWeightDispatch" @complete="searchPackingWeightDispatch" field="name" dropdown />
+                                        </div>
+                                        <!-- <pre>{{packing_dispatch_weightV}}</pre> -->
+                                        <small id="username-help" :class="{ 'p-invalid text-red-700': errorsNew['packing_dispatch_weightV'] }">
+                                            {{ errorsNew.packing_dispatch_weightV }}
+                                        </small>
+                                        <BackendErrors :name="errorResponseAPI?.errors?.packing_dispatch_weight" />
+                                    </div>
+
+                                    <div class="mb-3 col-12 md:col-6 lg:col-3">
+                                        <div class="flex align-items-center">
+                                            <label for="username" class="font-semibold w-6rem">Unit type Dispatch:</label>
+                                            <AutoComplete v-model="unit_type_dispatch_V" class="flex-auto" inputId="ac" :suggestions="unitsTypeDispatch" @complete="searchUnitsTypeDispatch" field="name" dropdown />
+                                        </div>
+                                        <!-- <pre>{{unit_type_dispatch_V}}</pre> -->
+                                        <small id="username-help" :class="{ 'p-invalid text-red-700': errorsNew['unit_type_dispatch_V'] }">
+                                            {{ errorsNew.unit_type_dispatch_V }}
+                                        </small>
+                                        <BackendErrors :name="errorResponseAPI?.errors?.unit_type_dispatch_uuid" />
+                                    </div>
+                                </div>
+                            </template>
+
+                            <template #footer>
+                                <Card>
+                                    <template #title> {{ packing_qty_dispatchV.name }} X {{ packing_type_dispatchV.name }} X {{ packing_dispatch_weightV.name }} X {{ unit_type_dispatch_V.name }}</template>
+                                    <template #content> </template>
+                                </Card>
+                            </template>
+                        </Card>
+
+                        <Divider />
+                    </TabPanel>
+                    <TabPanel header="Summarize">
+                        <Timeline :value="events" class="mb-3 col-12 md:col-12 lg:col-12">
+                            <template #opposite="slotProps">
+                                <small class="p-text-secondary">{{ slotProps.item.date }}</small>
+                            </template>
+                            <template #content="slotProps">
+                                {{ slotProps.item.status }}
+                            </template>
+                        </Timeline>
+                    </TabPanel>
+                </TabView>
 
                 <div class="flex justify-content-end gap-2">
                     <Button type="button" label="Cancel" severity="secondary" @click="formDialogClone = false" />
@@ -1854,13 +1416,11 @@
                 </div>
             </Dialog>
 
-            <Dialog v-model:visible="formDialogExport" :style="{ width: '290px' }" :header="formDialogExportTitle"
-                :modal="true" class="p-fluid">
+            <Dialog v-model:visible="formDialogExport" :style="{ width: '290px' }" :header="formDialogExportTitle" :modal="true" class="p-fluid">
                 <div class="mb-3">
                     <div class="flex align-items-center gap-3 mb-1">
                         <label for="username" class="font-semibold w-6rem">Filename:</label>
-                        <InputText id="username" v-model="filename" class="flex-auto" autocomplete="off"
-                            v-bind="nameProps" :required="true" />
+                        <InputText id="username" v-model="filename" class="flex-auto" autocomplete="off" v-bind="nameProps" :required="true" />
                     </div>
                 </div>
                 <div class="flex align-items-center gap-3">
@@ -1870,8 +1430,7 @@
                     </div>
                     <div class="align-items-center gap-3">
                         <label for="username" class="font-semibold">Export:</label>
-                        <Dropdown v-model="exportAll" :options="optionsEsport" optionLabel="name"
-                            :class="' w-full md:w-10rem'" />
+                        <Dropdown v-model="exportAll" :options="optionsEsport" optionLabel="name" :class="' w-full md:w-10rem'" />
                     </div>
                 </div>
 
@@ -1881,11 +1440,8 @@
                 </template>
             </Dialog>
 
-            <Dialog v-model:visible="formDialogDelete" :style="{ width: '450px' }" :header="formDialogDeleteTitle"
-                :modal="true">
-                <label for="username" class="text-2xl font-medium w-6rem"> Are you sure you want to delete the selected
-                    ones?
-                </label>
+            <Dialog v-model:visible="formDialogDelete" :style="{ width: '450px' }" :header="formDialogDeleteTitle" :modal="true">
+                <label for="username" class="text-2xl font-medium w-6rem"> Are you sure you want to delete the selected ones? </label>
                 <div class="card flex flex-wrap mt-2 gap-2">
                     <div v-for="item in listRowSelect" :key="item.id">
                         <Chip :label="item.name" removable @remove="remove(item)" icon="pi pi-ban" />
@@ -1900,7 +1456,6 @@
             <Toast />
         </div>
     </div>
-
 </template>
 
 <!-- 
@@ -1935,8 +1490,6 @@ const titlePage = ' ' + namePage + ' Information';
 const dataFromComponent = ref();
 const active = ref(0);
 
-
-
 const products = ref([]);
 const Products = ref([]);
 const productsType = ref([]);
@@ -1945,8 +1498,6 @@ const variants = ref([]);
 const Variants = ref([]);
 const packingTypes = ref([]);
 const PackingTypes = ref([]);
-
-
 
 const packingsQtyDispatch = ref([]);
 const PackingsQtyDispatch = ref([]);
@@ -1957,7 +1508,6 @@ const PackingsWeightDispatch = ref([]);
 const unitsTypeDispatch = ref([]);
 const UnitsTypeDispatch = ref([]);
 
-
 const Farms = ref([]);
 const farms = ref([]);
 const Compan = ref([]);
@@ -1966,14 +1516,9 @@ const compa = ref([]);
 const farmDefault = sessionStorage.getItem('accessSessionFarm');
 const companyDefault = sessionStorage.getItem('accessSessionCompany');
 
-const employeeNameDefault = ref('')
+const employeeNameDefault = ref('');
 
-const employeeUuidDefault = ref('')
-
-
-
-
-
+const employeeUuidDefault = ref('');
 
 const formDialogNew = ref(false);
 const formDialogNewTitle = 'Create new' + namePage;
@@ -1988,21 +1533,17 @@ const formDialogDelete = ref(false);
 const toast = useToast();
 const filename = ref('table');
 const isChanging = ref(false);
-let endpoint = ref('/customer_requests');  //replace endpoint with your endpoint
-
-
+let endpoint = ref('/customer_requests'); //replace endpoint with your endpoint
 
 ////////////
 //Form here
-////////////   
+////////////
 const size = ref({ label: 'Normal', value: 'normal' });
 const sizeOptions = ref([
     { label: 'Small', value: 'small', class: 'sm' },
     { label: 'Normal', value: 'normal' },
     { label: 'Large', value: 'large', class: 'lg' }
 ]);
-
-
 
 onBeforeMount(() => {
     readAll();
@@ -2015,10 +1556,8 @@ onBeforeMount(() => {
 const listRowSelect = ref([]);
 const loading = ref(false);
 const onRowSelect = (data) => {
-
     listRowSelect.value = data;
     //assignValues(mode.value)
-
 };
 
 watch(listRowSelect, onRowSelect);
@@ -2063,10 +1602,8 @@ const initFilters = () => {
 
 const documentFrozen = ref(false);
 
-
 const readAll = async () => {
     loadingData();
-
 
     const respProductType = await getRequest('/product_types');
     if (!respProductType.ok) toast.add({ severity: 'error', detail: 'Error' + respProductType.error, life: 3000 });
@@ -2094,11 +1631,7 @@ const readAll = async () => {
     const respPackingTypeDispatch = await getRequest('/packing_types');
     if (!respPackingTypeDispatch.ok) toast.add({ severity: 'error', detail: 'Error' + respPackingTypeDispatch.error, life: 3000 });
     // PackingsTypesDispatch.value = respPackingTypeDispatch.data.data.map((packingTypeDispatch) => ({ id: packingTypeDispatch.uuid, name: packingTypeDispatch.name }));
-    PackingsTypesDispatch.value = respPackingTypeDispatch.data.data
-        .map((packingTypeDispatch) => ({ id: packingTypeDispatch.uuid, name: packingTypeDispatch.name }))
-        .filter((packing) => packing.name === 'Bolsa');
-    ;
-
+    PackingsTypesDispatch.value = respPackingTypeDispatch.data.data.map((packingTypeDispatch) => ({ id: packingTypeDispatch.uuid, name: packingTypeDispatch.name })).filter((packing) => packing.name === 'Bolsa');
     const respPackingWeightDispatch = await getRequest('/lists/packingWeightDispatch');
     if (!respPackingWeightDispatch.ok) toast.add({ severity: 'error', detail: 'Error' + respPackingWeightDispatch.error, life: 3000 });
     PackingsWeightDispatch.value = respPackingWeightDispatch.data.data.map((packingWeightDispatch) => ({ id: packingWeightDispatch.id, name: packingWeightDispatch.label }));
@@ -2106,9 +1639,7 @@ const readAll = async () => {
     const respUnitsTypeDispatch = await getRequest('/unit_types');
     if (!respUnitsTypeDispatch.ok) toast.add({ severity: 'error', detail: 'Error' + respUnitsTypeDispatch.error, life: 3000 });
     // UnitsTypeDispatch.value = respUnitsTypeDispatch.data.data.map((unitTypeDispatch) => ({ id: unitTypeDispatch.uuid, name: unitTypeDispatch.name }));
-    UnitsTypeDispatch.value = respUnitsTypeDispatch.data.data
-        .map((unitTypeDispatch) => ({ id: unitTypeDispatch.uuid, name: unitTypeDispatch.name }))
-        .filter((unit) => unit.name === 'Gramo');
+    UnitsTypeDispatch.value = respUnitsTypeDispatch.data.data.map((unitTypeDispatch) => ({ id: unitTypeDispatch.uuid, name: unitTypeDispatch.name })).filter((unit) => unit.name === 'Gramo');
 
     const respFarms = await getRequest('/farms');
     if (!respFarms.ok) toast.add({ severity: 'error', detail: 'Error' + respFarms.error, life: 3000 });
@@ -2122,11 +1653,10 @@ const loadingData = async () => {
     const response = await getRequest(endpoint.value);
     if (!response.ok) toast.add({ severity: 'error', detail: 'Error' + response.error, life: 3000 });
     dataFromComponent.value = response.data.data;
-
 };
 watch(
     () => dataFromComponent.value,
-    (newValue, oldValue) => { }
+    (newValue, oldValue) => {}
 );
 watch(
     () => isChanging.value,
@@ -2153,7 +1683,6 @@ const {
         packing_dispatch_weightV: { name: '', id: '' },
         unit_type_dispatch_V: { name: '', id: '' },
         outlet_temperatureV: 0
-
     },
     validationSchema: toTypedSchema(
         z.object({
@@ -2186,7 +1715,6 @@ const {
                 id: z.string().min(1)
             }),
 
-
             packing_qty_dispatchV: z.object({
                 name: z.number().min(1),
                 id: z.number().min(1)
@@ -2205,7 +1733,6 @@ const {
                 name: z.string().min(1),
                 id: z.string().min(1)
             }),
-
 
             // employeeV: z.object({
             //     name: z.string().min(4),
@@ -2258,7 +1785,6 @@ const events = ref([
     { status: 'Delivered', date: '16/10/2020 10:00', icon: 'pi pi-check', color: '#607D8B' }
 ]);
 
-
 const extenciones = ref([{ name: 'CSV' }, { name: 'XLS' }]);
 const optionsEsport = ref([{ name: 'ALL' }, { name: 'SELECTED' }]);
 const format = ref({ name: 'CSV' });
@@ -2271,19 +1797,36 @@ let headerNames = ref([]);
 provide('isChanging', isChanging);
 watch(listRowSelect, RowSelect);
 
-
 const openNew = () => {
     resetForm();
     formDialogNew.value = true;
-
 };
-
-
 
 const openEdit = () => {
     resetForm();
 
-    const { dispatch_number_lot, company: empresa, farm: farmParameter, order_number_customer: order_number_customer, invoice_number_customer: invoice_number_customer, customer_name: customer_name, request_date: request_date, delivery_datetime: delivery_datetime, place_of_delivery: place_of_delivery, request_qty: request_qty, packing_name_customer: packing_name_customer, outlet_temperature: outlet_temperature, product: product, product_type: product_type, variant: variant, packing_type: packing_type, packing_qty_dispatch: packing_qty_dispatch, packing_type_dispatch: packing_type_dispatch, packing_dispatch_weight: packing_dispatch_weight, unit_type_dispatch: unit_type_dispatch } = listRowSelect.value[0];
+    const {
+        dispatch_number_lot,
+        company: empresa,
+        farm: farmParameter,
+        order_number_customer: order_number_customer,
+        invoice_number_customer: invoice_number_customer,
+        customer_name: customer_name,
+        request_date: request_date,
+        delivery_datetime: delivery_datetime,
+        place_of_delivery: place_of_delivery,
+        request_qty: request_qty,
+        packing_name_customer: packing_name_customer,
+        outlet_temperature: outlet_temperature,
+        product: product,
+        product_type: product_type,
+        variant: variant,
+        packing_type: packing_type,
+        packing_qty_dispatch: packing_qty_dispatch,
+        packing_type_dispatch: packing_type_dispatch,
+        packing_dispatch_weight: packing_dispatch_weight,
+        unit_type_dispatch: unit_type_dispatch
+    } = listRowSelect.value[0];
 
     order_number_customerV.value = order_number_customer;
     invoice_number_customerV.value = invoice_number_customer;
@@ -2313,7 +1856,28 @@ const openEdit = () => {
 
 const openClone = () => {
     resetForm();
-    const { dispatch_number_lot, company: empresa, farm: farmParameter, order_number_customer: order_number_customer, invoice_number_customer: invoice_number_customer, customer_name: customer_name, request_date: request_date, delivery_datetime: delivery_datetime, place_of_delivery: place_of_delivery, request_qty: request_qty, packing_name_customer: packing_name_customer, outlet_temperature: outlet_temperature, product: product, product_type: product_type, variant: variant, packing_type: packing_type, packing_qty_dispatch: packing_qty_dispatch, packing_type_dispatch: packing_type_dispatch, packing_dispatch_weight: packing_dispatch_weight, unit_type_dispatch: unit_type_dispatch } = listRowSelect.value[0];
+    const {
+        dispatch_number_lot,
+        company: empresa,
+        farm: farmParameter,
+        order_number_customer: order_number_customer,
+        invoice_number_customer: invoice_number_customer,
+        customer_name: customer_name,
+        request_date: request_date,
+        delivery_datetime: delivery_datetime,
+        place_of_delivery: place_of_delivery,
+        request_qty: request_qty,
+        packing_name_customer: packing_name_customer,
+        outlet_temperature: outlet_temperature,
+        product: product,
+        product_type: product_type,
+        variant: variant,
+        packing_type: packing_type,
+        packing_qty_dispatch: packing_qty_dispatch,
+        packing_type_dispatch: packing_type_dispatch,
+        packing_dispatch_weight: packing_dispatch_weight,
+        unit_type_dispatch: unit_type_dispatch
+    } = listRowSelect.value[0];
 
     order_number_customerV.value = order_number_customer;
     invoice_number_customerV.value = invoice_number_customer;
@@ -2370,10 +1934,7 @@ function formatTransactionDateTime(date) {
     return { formattedDateTime: formattedDateTime, formattedDate: formattedDate, formattedTime: formattedTime };
 }
 
-
-
 const createRecord = handleSubmitNew(async (values) => {
-
     const data = {
         order_number_customer: values.order_number_customerV,
         invoice_number_customer: values.invoice_number_customerV,
@@ -2399,7 +1960,6 @@ const createRecord = handleSubmitNew(async (values) => {
         company_uuid: values.company ? values.company.id : companyDefault,
         farm_uuid: values.farm ? values.farm.id : farmDefault,
         employee_uuid: values.employeeV ? values.employeeV.id : employeeUuidDefault.value
-
     };
     prueba.value = data;
     const restp = await postRequest(endpoint.value, data);
@@ -2410,13 +1970,8 @@ const createRecord = handleSubmitNew(async (values) => {
     if (restp.ok) {
         formDialogNew.value = false;
         console.log('data', data);
-
     }
-
-
-
 });
-
 
 const EditRecord = handleSubmitNew(async (values) => {
     const { uuid } = listRowSelect.value[0];
@@ -2454,8 +2009,8 @@ const EditRecord = handleSubmitNew(async (values) => {
     prueba.value = data;
     if (restp.ok) {
         formDialogEdit.value = false;
-        listRowSelect.value = []
-        selectedRegisters.value = []
+        listRowSelect.value = [];
+        selectedRegisters.value = [];
     }
 });
 
@@ -2486,6 +2041,7 @@ const CloneRecord = handleSubmitNew(async (values) => {
         farm_uuid: values.farm ? values.farm.id : farmDefault,
         employee_uuid: values.employeeV ? values.employeeV.id : employeeUuidDefault.value
     };
+    console.log('DATA: ', data);
     const restp = await postRequest(endpoint.value, data);
     toast.add({ severity: restp.ok ? 'success' : 'error', summary: 'Clone', detail: restp.ok ? 'Clonado' : restp.error, life: 3000 });
     loadingData();
@@ -2493,8 +2049,8 @@ const CloneRecord = handleSubmitNew(async (values) => {
     prueba.value = data;
     if (restp.ok) {
         formDialogClone.value = false;
-        listRowSelect.value = []
-        selectedRegisters.value = []
+        listRowSelect.value = [];
+        selectedRegisters.value = [];
     }
 });
 
@@ -2509,7 +2065,6 @@ const searchCompannies = (event) => {
         }
     }, 200);
 };
-
 
 const searchFarms = (event) => {
     setTimeout(() => {
@@ -2545,7 +2100,6 @@ const searchProductType = (event) => {
         }
     }, 200);
 };
-
 
 const searchVariant = (event) => {
     setTimeout(() => {

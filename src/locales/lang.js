@@ -75,7 +75,8 @@ export const messages = {
             empleado: 'Employee',
             precio: 'Price',
             diaNormal: 'Normal day',
-            diaFestivo: 'Holiday'
+            diaFestivo: 'Holiday',
+            usersAvailable: 'Users not available'
         }
     },
     es: {
@@ -161,7 +162,8 @@ export const messages = {
             empleado: 'Empleado',
             precio: 'Precio',
             diaNormal: 'Normal',
-            diaFestivo: 'Festivo'
+            diaFestivo: 'Festivo',
+            usersAvailable: 'Usuarios no disponibles'
         }
     }
 };
