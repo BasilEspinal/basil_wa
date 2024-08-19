@@ -252,6 +252,131 @@
             </Column> -->
 
         </DataTable>
+
+        <DataTable :value="dataFromComponent" tableStyle="min-width: 50rem">
+        <ColumnGroup type="header">
+            <Row>
+                <Column header="Employees" :rowspan="3" />
+                <Column header="Cortar" :colspan="4" />
+            </Row>
+            <Row>
+                <Column header="Task" :colspan="2" />
+                <Column header="Labor" :colspan="2" />
+                <Column header="Journal" :colspan="2" />
+                <Column header="Hora Extra" :colspan="2" />
+            </Row>
+            <Row>
+                <Column header="Quantity" sortable field="lastYearSale"/>
+                <Column header="Total" sortable field="thisYearSale"/>
+                <Column header="Quantity" sortable field="lastYearProfit"/>
+                <Column header="Total" sortable field="thisYearProfit"/>
+
+                <Column header="Quantity" sortable field="journal_quantity"/>
+                <Column header="Total" sortable field="journal_total"/>
+
+                <Column header="Quantity" sortable field="hora_extra_quantity"/>
+                <Column header="Total" sortable field="hora_extra_total"/>
+            </Row>
+        </ColumnGroup>
+        <Column field="name" />
+        <Column field="lastYearSale">
+            <template #body="slotProps">
+                {{slotProps.data.lastYearSale}}%
+            </template>
+        </Column>
+        <Column field="thisYearSale">
+            <template #body="slotProps">
+                {{slotProps.data.thisYearSale}}%
+            </template>
+        </Column>
+        <Column field="lastYearProfit">
+            <template #body="slotProps">
+                {{formatCurrency(slotProps.data.lastYearProfit)}}
+            </template>
+        </Column>
+        <Column field="thisYearProfit">
+            <template #body="slotProps">
+                {{formatCurrency(slotProps.data.thisYearProfit)}}
+            </template>
+        </Column>
+
+        <Column field="journal_quantity">
+            <template #body="slotProps">
+                {{formatCurrency(slotProps.data.lastYearProfit)}}
+            </template>
+        </Column>
+        <Column field="journal_total">
+            <template #body="slotProps">
+                {{formatCurrency(slotProps.data.thisYearProfit)}}
+            </template>
+        </Column>
+
+        <Column field="hora_extra_quantity">
+            <template #body="slotProps">
+                {{formatCurrency(slotProps.data.lastYearProfit)}}
+            </template>
+        </Column>
+        <Column field="hora_extra_total">
+            <template #body="slotProps">
+                {{formatCurrency(slotProps.data.thisYearProfit)}}
+            </template>
+        </Column>
+        <ColumnGroup type="footer">
+            <Row>
+                <Column footer="Totals:" :colspan="3" footerStyle="text-align:right"/>
+                <Column :footer="lastYearTotal" />
+                <Column :footer="thisYearTotal" />
+            </Row>
+        </ColumnGroup>
+    </DataTable>
+
+        <DataTable :value="dataFromComponent" responsiveLayout="scroll">
+    <ColumnGroup type="header">
+        <Row>
+            <Column header="Employees" :rowspan="3" />
+            <Column header="Task of Type" :colspan="4" />
+        </Row>
+        <Row>
+            <Column header="Task" :colspan="2" />
+            <Column header="Journal" :colspan="2" />
+            <Column header="HoraExtra" :colspan="2" />
+        </Row>
+        <Row>
+            <Column header="Quanty" :sortable="true" field="task_qty"/>
+            <Column header="Total" :sortable="true" field="task_total"/>
+        </Row>
+    </ColumnGroup>
+    <Column field="data.worker_employee.first_name" />
+    <Column field="task_qty">
+        <template #body="slotProps">
+            {{slotProps.task_qty}}%
+        </template>
+    </Column>
+    <Column field="task_total">
+        <template #body="slotProps">
+            {{slotProps.task_total}}%
+        </template>
+    </Column>
+    <Column field="task_qty">
+        <template #body="slotProps">
+            {{formatCurrency(slotProps.task_qty)}}
+        </template>
+    </Column>
+    <Column field="task_total">
+        <template #body="slotProps">
+            {{formatCurrency(slotProps.task_total)}}
+        </template>
+    </Column>
+    <ColumnGroup type="footer">
+        <Row>
+            <Column footer="Totals:" :colspan="3" :footerStyle="{'text-align':'right'}"/>
+            <Column :footer="task_qty" />
+            <Column :footer="task_total" />
+        </Row>
+    </ColumnGroup>
+</DataTable>
+
+
         <Dialog v-model:visible="formDialogNew" modal :header="formDialogNewTitle" class="p-fluid text-center mx-auto">
                 <div class="mb-3">
                     <div class="flex align-items-center gap-3 mb-1">
@@ -439,7 +564,7 @@ const documentFrozen = ref(false); change name field
 <DataTable id="tblData"
      -->
 <script setup>
-import { ref, watch, provide, onBeforeMount, onMounted } from 'vue';
+import { ref, watch, provide, onBeforeMount, onMounted,computed } from 'vue';
 import useDataAPI from '@/composables/DataAPI/FetchDataAPI.js';
 import { useToast } from 'primevue/usetoast';
 import { FilterMatchMode, FilterOperator } from 'primevue/api';
@@ -453,7 +578,40 @@ import { saveAs } from 'file-saver';
 import { z } from 'zod';
 import ability from '@/service/ability.js';
 import { AbilityBuilder} from '@casl/ability';
+const sales = ref([
+    {product: 'Bamboo Watch', lastYearSale: 51, thisYearSale: 40, lastYearProfit: 54406, thisYearProfit: 43342},
+    {product: 'Black Watch', lastYearSale: 83, thisYearSale: 9, lastYearProfit: 423132, thisYearProfit: 312122},
+    {product: 'Blue Band', lastYearSale: 38, thisYearSale: 5, lastYearProfit: 12321, thisYearProfit: 8500},
+    {product: 'Blue T-Shirt', lastYearSale: 49, thisYearSale: 22, lastYearProfit: 745232, thisYearProfit: 65323},
+    {product: 'Brown Purse', lastYearSale: 17, thisYearSale: 79, lastYearProfit: 643242, thisYearProfit: 500332},
+    {product: 'Chakra Bracelet', lastYearSale: 52, thisYearSale:  65, lastYearProfit: 421132, thisYearProfit: 150005},
+    {product: 'Galaxy Earrings', lastYearSale: 82, thisYearSale: 12, lastYearProfit: 131211, thisYearProfit: 100214},
+    {product: 'Game Controller', lastYearSale: 44, thisYearSale: 45, lastYearProfit: 66442, thisYearProfit: 53322},
+    {product: 'Gaming Set', lastYearSale: 90, thisYearSale: 56, lastYearProfit: 765442, thisYearProfit: 296232},
+    {product: 'Gold Phone Case', lastYearSale: 75, thisYearSale: 54, lastYearProfit: 21212, thisYearProfit: 12533}
+]);
 
+const formatCurrency = (value) => {
+    return value.toLocaleString('en-US', {style: 'currency', currency: 'USD'});
+};
+
+const lastYearTotal = computed(() => {
+    let total = 0;
+    for(let sale of sales.value) {
+        total += sale.lastYearProfit;
+    }
+
+    return formatCurrency(total);
+});
+
+const thisYearTotal = computed(() => {
+    let total = 0;
+    for(let sale of sales.value) {
+        total += sale.thisYearProfit;
+    }
+
+    return formatCurrency(total);
+});
 const prueba = ref({revisar: 'revisar GET-POST-PUT-DELETE'});
 const namePage = ' Summary by employees information ';
 const titlePage = ' '+namePage+' information';
