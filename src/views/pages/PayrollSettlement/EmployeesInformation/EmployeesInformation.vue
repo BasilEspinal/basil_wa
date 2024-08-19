@@ -253,10 +253,15 @@
 
         </DataTable>
 
-        <DataTable :value="dataFromComponent" tableStyle="min-width: 50rem">
+        
+
+        <DataTable :value="summary" tableStyle="min-width: 50rem">
         <ColumnGroup type="header">
             <Row>
                 <Column header="Employees" :rowspan="3" />
+                <Column header="Type price task" :rowspan="3" />
+                <Column header="Type Day Tarif" :rowspan="3" />
+                
                 <Column header="Cortar" :colspan="4" />
             </Row>
             <Row>
@@ -266,41 +271,80 @@
                 <Column header="Hora Extra" :colspan="2" />
             </Row>
             <Row>
-                <Column header="Quantity" sortable field="lastYearSale"/>
-                <Column header="Total" sortable field="thisYearSale"/>
-                <Column header="Quantity" sortable field="lastYearProfit"/>
-                <Column header="Total" sortable field="thisYearProfit"/>
+                <Column header="Quantity" sortable field="task_qty_task"/>
+                <Column header="Total" sortable field="total_task"/>
 
-                <Column header="Quantity" sortable field="journal_quantity"/>
-                <Column header="Total" sortable field="journal_total"/>
+                 <Column header="Quantity" sortable field="task_qty_labor"/>
+                <Column header="Total" sortable field="total_labor"/>
 
-                <Column header="Quantity" sortable field="hora_extra_quantity"/>
-                <Column header="Total" sortable field="hora_extra_total"/>
+                <Column header="Quantity" sortable field="task_qty_journal"/>
+                <Column header="Total" sortable field="total_journal"/>
+
+                <Column header="Quantity" sortable field="task_qty_hora_extra"/>
+                <Column header="Total" sortable field="total_hora_extra"/> 
             </Row>
         </ColumnGroup>
-        <Column field="name" />
-        <Column field="lastYearSale">
+        <Column field="worker_employee.first_name" />
+        <Column field="type_price_task" />
+        <Column field="type_day_tarif" />
+        
+        
+        <Column field="task_qty_task">
             <template #body="slotProps">
-                {{slotProps.data.lastYearSale}}%
+                {{slotProps.data.task_qty_task}}
             </template>
         </Column>
-        <Column field="thisYearSale">
+        <Column field="total_task">
             <template #body="slotProps">
-                {{slotProps.data.thisYearSale}}%
+                {{formatCurrency(slotProps.data.total_task)}}
             </template>
         </Column>
-        <Column field="lastYearProfit">
+
+        <Column field="task_qty_labor">
             <template #body="slotProps">
-                {{formatCurrency(slotProps.data.lastYearProfit)}}
+                {{slotProps.data.task_qty_hora_extra}}
             </template>
         </Column>
+
+        <Column field="total_labor">
+            <template #body="slotProps">
+                {{formatCurrency(slotProps.data.total_hora_extra)}}
+            </template>
+        </Column>
+
+        <Column field="task_qty_journal">
+            <template #body="slotProps">
+                {{slotProps.data.task_qty_hora_extra}}
+            </template>
+        </Column>
+
+        <Column field="total_journal">
+            <template #body="slotProps">
+                {{formatCurrency(slotProps.data.total_hora_extra)}}
+            </template>
+        </Column>
+
+         <Column field="task_qty_hora_extra">
+            <template #body="slotProps">
+                {{slotProps.data.task_qty_hora_extra}}
+            </template>
+        </Column>
+
+        <Column field="total_hora_extra">
+            <template #body="slotProps">
+                {{formatCurrency(slotProps.data.total_hora_extra)}}
+            </template>
+        </Column>
+        <!-- 
+
+
         <Column field="thisYearProfit">
             <template #body="slotProps">
                 {{formatCurrency(slotProps.data.thisYearProfit)}}
             </template>
-        </Column>
+        </Column> -->
 
-        <Column field="journal_quantity">
+        <!-- <Column field="journal_quantity">
             <template #body="slotProps">
                 {{formatCurrency(slotProps.data.lastYearProfit)}}
             </template>
@@ -320,61 +364,22 @@
             <template #body="slotProps">
                 {{formatCurrency(slotProps.data.thisYearProfit)}}
             </template>
-        </Column>
+        </Column> -->
         <ColumnGroup type="footer">
             <Row>
                 <Column footer="Totals:" :colspan="3" footerStyle="text-align:right"/>
                 <Column :footer="lastYearTotal" />
+                <Column :footer="lastYearTotal" />
+                <Column :footer="lastYearTotal" />
+                <Column :footer="thisYearTotal" />
+                <Column :footer="lastYearTotal" />
+                <Column :footer="thisYearTotal" />
+                <Column :footer="thisYearTotal" />
                 <Column :footer="thisYearTotal" />
             </Row>
         </ColumnGroup>
     </DataTable>
 
-        <DataTable :value="dataFromComponent" responsiveLayout="scroll">
-    <ColumnGroup type="header">
-        <Row>
-            <Column header="Employees" :rowspan="3" />
-            <Column header="Task of Type" :colspan="4" />
-        </Row>
-        <Row>
-            <Column header="Task" :colspan="2" />
-            <Column header="Journal" :colspan="2" />
-            <Column header="HoraExtra" :colspan="2" />
-        </Row>
-        <Row>
-            <Column header="Quanty" :sortable="true" field="task_qty"/>
-            <Column header="Total" :sortable="true" field="task_total"/>
-        </Row>
-    </ColumnGroup>
-    <Column field="data.worker_employee.first_name" />
-    <Column field="task_qty">
-        <template #body="slotProps">
-            {{slotProps.task_qty}}%
-        </template>
-    </Column>
-    <Column field="task_total">
-        <template #body="slotProps">
-            {{slotProps.task_total}}%
-        </template>
-    </Column>
-    <Column field="task_qty">
-        <template #body="slotProps">
-            {{formatCurrency(slotProps.task_qty)}}
-        </template>
-    </Column>
-    <Column field="task_total">
-        <template #body="slotProps">
-            {{formatCurrency(slotProps.task_total)}}
-        </template>
-    </Column>
-    <ColumnGroup type="footer">
-        <Row>
-            <Column footer="Totals:" :colspan="3" :footerStyle="{'text-align':'right'}"/>
-            <Column :footer="task_qty" />
-            <Column :footer="task_total" />
-        </Row>
-    </ColumnGroup>
-</DataTable>
 
 
         <Dialog v-model:visible="formDialogNew" modal :header="formDialogNewTitle" class="p-fluid text-center mx-auto">
@@ -578,6 +583,8 @@ import { saveAs } from 'file-saver';
 import { z } from 'zod';
 import ability from '@/service/ability.js';
 import { AbilityBuilder} from '@casl/ability';
+const dataFromComponent = ref();
+const summary = ref()
 const sales = ref([
     {product: 'Bamboo Watch', lastYearSale: 51, thisYearSale: 40, lastYearProfit: 54406, thisYearProfit: 43342},
     {product: 'Black Watch', lastYearSale: 83, thisYearSale: 9, lastYearProfit: 423132, thisYearProfit: 312122},
@@ -591,9 +598,82 @@ const sales = ref([
     {product: 'Gold Phone Case', lastYearSale: 75, thisYearSale: 54, lastYearProfit: 21212, thisYearProfit: 12533}
 ]);
 
+
+
 const formatCurrency = (value) => {
     return value.toLocaleString('en-US', {style: 'currency', currency: 'USD'});
 };
+
+const totalTaskQtyTask = computed((summary) => {
+    let total = 0;
+    for(let item of summary.value) {
+        total += item.task_qty_task;
+    }
+    return total;
+});
+
+// Computed function for total_task
+const totalTaskTotal = computed((summary) => {
+    let total = 0;
+    for(let item of summary.value) {
+        total += item.total_task;
+    }
+    return total;
+});
+
+// Computed function for task_qty_hora_extra
+const totalTaskQtyHoraExtra = computed((data) => {
+    let total = 0;
+    for(let item of data.value) {
+        total += item.task_qty_hora_extra;
+    }
+    return total;
+});
+
+// Computed function for total_hora_extra
+const totalHoraExtraTotal = computed((summary) => {
+    let total = 0;
+    for(let item of summary.value) {
+        total += item.total_hora_extra;
+    }
+    return total;
+});
+
+// Computed function for task_qty_labor
+const totalTaskQtyLabor = computed((summary) => {
+    let total = 0;
+    for(let item of summary.value) {
+        total += item.task_qty_labor;
+    }
+    return total;
+});
+
+// Computed function for total_labor
+const totalLaborTotal = computed((summary) => {
+    let total = 0;
+    for(let item of summary.value) {
+        total += item.total_labor;
+    }
+    return total;
+});
+
+// Computed function for task_qty_journal
+const totalTaskQtyJournal = computed((summary) => {
+    let total = 0;
+    for(let item of summary.value) {
+        total += item.task_qty_journal;
+    }
+    return total;
+});
+
+// Computed function for total_journal
+const totalJournalTotal = computed((summary) => {
+    let total = 0;
+    for(let item of summary.value) {
+        total += item.total_journal;
+    }
+    return total;
+});
 
 const lastYearTotal = computed(() => {
     let total = 0;
@@ -615,7 +695,7 @@ const thisYearTotal = computed(() => {
 const prueba = ref({revisar: 'revisar GET-POST-PUT-DELETE'});
 const namePage = ' Summary by employees information ';
 const titlePage = ' '+namePage+' information';
-const dataFromComponent = ref();
+
 const Farms = ref([]);
 const farms = ref([]);
 const Compan = ref([]);
@@ -708,11 +788,32 @@ const readAll = async () => {
     if (!respCompan.ok) toast.add({ severity: 'error', detail: 'Error' + respCompan.error, life: 3000 });
     Compan.value = respCompan.data.data.map((comp) => ({ id: comp.uuid, name: comp.name }));
 };
+
+const totals = ref()
 const loadingData = async () => {
     const response = await getRequest(endpoint.value);
     if (!response.ok) toast.add({ severity: 'error', detail: 'Error' + response.error, life: 3000 });
     dataFromComponent.value = response.data.data;
+
+    const response2 = await getRequest('/transactions/transemployeegroupperiod');
+    if (!response2.ok) toast.add({ severity: 'error', detail: 'Error' + response2.error, life: 3000 });
+    summary.value = response2.data.data;
+
+    console.log( typeof totalHoraExtraTotal.value);
+    console.log(totalLaborTotal.value);
+    console.log(totalJournalTotal.value);
+    console.log(totalTaskQtyJournal.value);
+    console.log(totalTaskQtyLabor.value);
+    console.log(totalTaskQtyHoraExtra.value);
+    console.log(totalTaskQtyTask.value);
+    console.log(totalTaskTotal.value);
+    console.log(lastYearTotal.value);
+    console.log(thisYearTotal.value);
+
+
 };
+
+
 watch(
     () => dataFromComponent.value,
     (newValue, oldValue) => {}
