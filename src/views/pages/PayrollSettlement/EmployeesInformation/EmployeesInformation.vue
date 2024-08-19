@@ -52,7 +52,7 @@
         v-model:selection="selectedRegisters"
         filterDisplay="menu"
         v-model:filters="filters"
-        :globalFilterFields="['name', 'company.name', 'farm.name', 'status.name', 'created_at', 'updated_at']" 
+        :globalFilterFields="['name', 'company.name', 'farm.name', 'status.name', 'created_at', 'updated_at', 'worker_employee.document', 'worker_employee.first_name', 'worker_employee.last_name', 'planner_tasks.transaction_date', 'tasks_of_type.name', 'type_day_tarif', 'type_price_task', 'price_tarif_task', 'name', 'task_qty', 'task_total']" 
         >
         <template #header>
             <!--Uncomment when filters are done-->
@@ -78,38 +78,56 @@
         <template #empty> No customers found. </template>
         <template #loading> Loading customers data. Please wait. </template>
         <Column selectionMode="multiple" headerStyle="width: 3rem"></Column>
-        <Column field="code" filterField="code" header="Crop Lots" sortable :frozen="documentFrozen"> <!--Replace :frozen with the model-->
-            <template #header>
+
+
+
+
+    <Column field="worker_employee.document" filterField="worker_employee.document" header="Document" sortable :frozen="documentFrozen"> <!--Replace :frozen with the model-->
+        <template #header>
                     <ToggleButton v-model="documentFrozen" onIcon="pi pi-lock" offIcon="pi pi-lock-open" onLabel="" offLabel="" />
                     <div>&nbsp;</div>
                 </template>
+        <template #body="{ data }">
+            {{ data.worker_employee.document }} 
+        </template>
+        <template #filter="{ filterModel }">
+            <InputText v-model="filterModel.value" type="text" class="p-column-filter" placeholder="Search by Document" />
+        </template>
+    </Column>
 
-                <template #body="{ data }">
-                    {{ data.code }} 
+    <Column field="worker_employee.first_name" filterField="worker_employee.first_name" header="First Name" sortable :frozen="documentFrozen"> <!--Replace :frozen with the model-->
+        <template #header>
+                    <ToggleButton v-model="documentFrozen" onIcon="pi pi-lock" offIcon="pi pi-lock-open" onLabel="" offLabel="" />
+                    <div>&nbsp;</div>
                 </template>
-                <template #filter="{ filterModel }">
-                    <InputText v-model="filterModel.value" type="text" class="p-column-filter" placeholder="Search by " />
-                </template>
-        </Column>
-<!-- 
-        <Column field="name" filterField="name" header="Name" sortable> 
-            
-                <template #body="{ data }">
-                    {{ data.name }} 
-                </template>
-                <template #filter="{ filterModel }">
-                    <InputText v-model="filterModel.value" type="text" class="p-column-filter" placeholder="Search by " />
-                </template>
-        </Column> -->
+        <template #body="{ data }">
+            {{ data.worker_employee.first_name }} 
+        </template>
+        <template #filter="{ filterModel }">
+            <InputText v-model="filterModel.value" type="text" class="p-column-filter" placeholder="Search by First Name" />
+        </template>
+    </Column>
 
-        <Column field="planner_tasks.transaction_date" filterField="planner_tasks.transaction_date" header="Transaction Date" sortable> 
+    <Column field="worker_employee.last_name" filterField="worker_employee.last_name" header="Last Name" sortable :frozen="documentFrozen"> <!--Replace :frozen with the model-->
+        <template #header>
+                    <ToggleButton v-model="documentFrozen" onIcon="pi pi-lock" offIcon="pi pi-lock-open" onLabel="" offLabel="" />
+                    <div>&nbsp;</div>
+                </template>
+        <template #body="{ data }">
+            {{ data.worker_employee.last_name }} 
+        </template>
+        <template #filter="{ filterModel }">
+            <InputText v-model="filterModel.value" type="text" class="p-column-filter" placeholder="Search by Last Name" />
+        </template>
+    </Column>
+    <Column field="planner_tasks.transaction_date" filterField="planner_tasks.transaction_date" header="Transaction Date" sortable> 
         <template #body="{ data }">
             {{ data.planner_tasks.transaction_date }} 
         </template>
         <template #filter="{ filterModel }">
             <InputText v-model="filterModel.value" type="text" class="p-column-filter" placeholder="Search by Transaction Date" />
         </template>
-    </Column>
+        </Column>
 
     <Column field="tasks_of_type.name" filterField="tasks_of_type.name" header="Task Type Name" sortable> 
         <template #body="{ data }">
@@ -119,34 +137,6 @@
             <InputText v-model="filterModel.value" type="text" class="p-column-filter" placeholder="Search by Task Type Name" />
         </template>
     </Column>
-
-    <Column field="worker_employee.document" filterField="worker_employee.document" header="Document" sortable> 
-        <template #body="{ data }">
-            {{ data.worker_employee.document }} 
-        </template>
-        <template #filter="{ filterModel }">
-            <InputText v-model="filterModel.value" type="text" class="p-column-filter" placeholder="Search by Document" />
-        </template>
-    </Column>
-
-    <Column field="worker_employee.first_name" filterField="worker_employee.first_name" header="First Name" sortable> 
-        <template #body="{ data }">
-            {{ data.worker_employee.first_name }} 
-        </template>
-        <template #filter="{ filterModel }">
-            <InputText v-model="filterModel.value" type="text" class="p-column-filter" placeholder="Search by First Name" />
-        </template>
-    </Column>
-
-    <Column field="worker_employee.last_name" filterField="worker_employee.last_name" header="Last Name" sortable> 
-        <template #body="{ data }">
-            {{ data.worker_employee.last_name }} 
-        </template>
-        <template #filter="{ filterModel }">
-            <InputText v-model="filterModel.value" type="text" class="p-column-filter" placeholder="Search by Last Name" />
-        </template>
-    </Column>
-
     <Column field="type_day_tarif" filterField="type_day_tarif" header="Type Day Tarif" sortable> 
         <template #body="{ data }">
             {{ data.type_day_tarif }} 
@@ -529,8 +519,18 @@ const clearFilter = () => {
 const initFilters = () => {
     filters.value = {
         global: { value: null, matchMode: FilterMatchMode.CONTAINS },
-        code: { operator: FilterOperator.AND, constraints: [{ value: null, matchMode: FilterMatchMode.STARTS_WITH }] },
-        name: { operator: FilterOperator.AND, constraints: [{ value: null, matchMode: FilterMatchMode.STARTS_WITH }] },
+        
+        'worker_employee.document': { operator: FilterOperator.AND, constraints: [{ value: null, matchMode: FilterMatchMode.STARTS_WITH }] },
+        'worker_employee.first_name': { operator: FilterOperator.AND, constraints: [{ value: null, matchMode: FilterMatchMode.STARTS_WITH }] },
+        'worker_employee.last_name': { operator: FilterOperator.AND, constraints: [{ value: null, matchMode: FilterMatchMode.STARTS_WITH }] },
+        'planner_tasks.transaction_date': { operator: FilterOperator.AND, constraints: [{ value: null, matchMode: FilterMatchMode.STARTS_WITH }] },
+        'tasks_of_type.name': { operator: FilterOperator.AND, constraints: [{ value: null, matchMode: FilterMatchMode.STARTS_WITH }] },
+        'type_day_tarif': { operator: FilterOperator.AND, constraints: [{ value: null, matchMode: FilterMatchMode.STARTS_WITH }] },
+        'type_price_task': { operator: FilterOperator.AND, constraints: [{ value: null, matchMode: FilterMatchMode.STARTS_WITH }] },
+        'price_tarif_task': { operator: FilterOperator.AND, constraints: [{ value: null, matchMode: FilterMatchMode.STARTS_WITH }] },
+        'name': { operator: FilterOperator.AND, constraints: [{ value: null, matchMode: FilterMatchMode.STARTS_WITH }] },
+        'task_qty': { operator: FilterOperator.AND, constraints: [{ value: null, matchMode: FilterMatchMode.STARTS_WITH }] },
+        'task_total': { operator: FilterOperator.AND, constraints: [{ value: null, matchMode: FilterMatchMode.STARTS_WITH }] },
         'status.name': { operator: FilterOperator.AND, constraints: [{ value: null, matchMode: FilterMatchMode.STARTS_WITH }] },
         'farm.name': { operator: FilterOperator.AND, constraints: [{ value: null, matchMode: FilterMatchMode.STARTS_WITH }] },
         'company.name': { operator: FilterOperator.AND, constraints: [{ value: null, matchMode: FilterMatchMode.STARTS_WITH }] },
