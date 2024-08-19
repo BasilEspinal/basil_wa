@@ -4,7 +4,8 @@ import useDataAPI from '@/composables/DataAPI/FetchDataAPI.js';
 import { useToast } from 'primevue/usetoast';
 import { FilterMatchMode, FilterOperator } from 'primevue/api';
 import useData from '@/composables/DataAPI/FetchDataAPICopy.js';
-const { getRequest, postRequest, putRequest, deleteRequest } = useData();
+const { getRequest, postRequest, putRequest, deleteRequest, errorResponseAPI } = useData();
+import BackendErrors from '@/views/Errors/BackendErrors.vue';
 import { useRouter } from 'vue-router';
 import { useForm } from 'vee-validate';
 import { toTypedSchema } from '@vee-validate/zod';
@@ -742,6 +743,7 @@ const remove = (aver) => {
                             <small id="username-help" :class="{ 'p-invalid text-red-700': errorsNew['gender_id'] }">
                                 {{ errorsNew.gender_id }}
                             </small>
+                            <BackendErrors :name="errorResponseAPI?.errors?.gender_id"/>
                         </div>
                     </div>
                     <div class="flex-auto">
@@ -751,6 +753,7 @@ const remove = (aver) => {
                             <small id="username-help" :class="{ 'p-invalid text-red-700': errorsNew['first_name'] }">
                                 {{ errorsNew.first_name }}
                             </small>
+                            <BackendErrors :name="errorResponseAPI?.errors?.first_name"/>
                         </div>
                     </div>
                 </div>
@@ -763,6 +766,7 @@ const remove = (aver) => {
                             <small id="username-help" :class="{ 'p-invalid text-red-700': errorsNew['last_name'] }">
                                 {{ errorsNew.last_name }}
                             </small>
+                            <BackendErrors :name="errorResponseAPI?.errors?.last_name"/>
                         </div>
                     </div>
                     <div class="flex-auto">
@@ -784,6 +788,7 @@ const remove = (aver) => {
                             <small id="username-help" :class="{ 'p-invalid text-red-700': errorsNew['document_type'] }">
                                 {{ errorsNew.document_type }}
                             </small>
+                            <BackendErrors :name="errorResponseAPI?.errors?.document_type"/>  
                         </div>
                     </div>
                     <div class="flex-auto">
@@ -793,6 +798,7 @@ const remove = (aver) => {
                             <small id="username-help" :class="{ 'p-invalid text-red-700 ': errorsNew['documento'] }">
                                 {{ errorsNew.documento }}
                             </small>
+                            <BackendErrors :name="errorResponseAPI?.errors?.document"/>  
                         </div>
                     </div>
                 </div>
@@ -804,7 +810,7 @@ const remove = (aver) => {
                         <div class="flex-auto">
                             <small id="username-help" :class="{ 'p-invalid text-red-700': errorsNew['bank_account_number'] }">
                                 {{ errorsNew.bank_account_number }}
-                            </small>
+                            </small> 
                         </div>
                     </div>
                     <div class="flex-auto">
@@ -825,6 +831,7 @@ const remove = (aver) => {
                             <small id="username-help" :class="{ 'p-invalid text-red-700': errorsNew['payment_type_uuid'] }">
                                 {{ errorsNew.payment_type_uuid }}
                             </small>
+                            <BackendErrors :name="errorResponseAPI?.errors?.payment_type_uuid"/> 
                         </div>
                     </div>
                     <div class="flex-auto">
@@ -834,6 +841,7 @@ const remove = (aver) => {
                             <small id="username-help" :class="{ 'p-invalid text-red-700': errorsNew['work_center_uuid'] }">
                                 {{ errorsNew.work_center_uuid }}
                             </small>
+                            <BackendErrors :name="errorResponseAPI?.errors?.work_center_uuid"/> 
                         </div>
                     </div>
                 </div>
@@ -854,6 +862,7 @@ const remove = (aver) => {
                             <small id="username-help" :class="{ 'p-invalid text-red-700': errorsNew['farm'] }">
                                 {{ errorsNew.farm }}
                             </small>
+                            <BackendErrors :name="errorResponseAPI?.errors?.farm_uuid"/> 
                         </div>
                     </div>
                 </div>
@@ -894,6 +903,7 @@ const remove = (aver) => {
                             <small id="username-help" :class="{ 'p-invalid text-red-700': errorsNew['gender_id'] }">
                                 {{ errorsNew.gender_id }}
                             </small>
+                            <BackendErrors :name="errorResponseAPI?.errors?.gender_id"/> 
                         </div>
                     </div>
                     <div class="flex-auto">
@@ -903,6 +913,7 @@ const remove = (aver) => {
                             <small id="username-help" :class="{ 'p-invalid text-red-700': errorsNew['first_name'] }">
                                 {{ errorsNew.first_name }}
                             </small>
+                            <BackendErrors :name="errorResponseAPI?.errors?.first_name"/> 
                         </div>
                     </div>
                 </div>
@@ -915,6 +926,7 @@ const remove = (aver) => {
                             <small id="username-help" :class="{ 'p-invalid text-red-700': errorsNew['last_name'] }">
                                 {{ errorsNew.last_name }}
                             </small>
+                            <BackendErrors :name="errorResponseAPI?.errors?.last_name"/> 
                         </div>
                     </div>
                     <div class="flex-auto">
@@ -936,6 +948,7 @@ const remove = (aver) => {
                             <small id="username-help" :class="{ 'p-invalid text-red-700': errorsNew['document_type'] }">
                                 {{ errorsNew.document_type }}
                             </small>
+                            <BackendErrors :name="errorResponseAPI?.errors?.document_type"/> 
                         </div>
                     </div>
                     <div class="flex-auto">
@@ -945,6 +958,7 @@ const remove = (aver) => {
                             <small id="username-help" :class="{ 'p-invalid text-red-700 ': errorsNew['documento'] }">
                                 {{ errorsNew.documento }}
                             </small>
+                            <BackendErrors :name="errorResponseAPI?.errors?.document"/> 
                         </div>
                     </div>
                 </div>
@@ -977,6 +991,7 @@ const remove = (aver) => {
                             <small id="username-help" :class="{ 'p-invalid text-red-700': errorsNew['payment_type_uuid'] }">
                                 {{ errorsNew.payment_type_uuid }}
                             </small>
+                            <BackendErrors :name="errorResponseAPI?.errors?.payment_type_uuid"/> 
                         </div>
                     </div>
                     <div class="flex-auto">
@@ -986,6 +1001,7 @@ const remove = (aver) => {
                             <small id="username-help" :class="{ 'p-invalid text-red-700': errorsNew['work_center_uuid'] }">
                                 {{ errorsNew.work_center_uuid }}
                             </small>
+                            <BackendErrors :name="errorResponseAPI?.errors?.work_center_uuid"/> 
                         </div>
                     </div>
                 </div>
@@ -1006,6 +1022,7 @@ const remove = (aver) => {
                             <small id="username-help" :class="{ 'p-invalid text-red-700': errorsNew['farm'] }">
                                 {{ errorsNew.farm }}
                             </small>
+                            <BackendErrors :name="errorResponseAPI?.errors?.farm_uuid"/> 
                         </div>
                     </div>
                 </div>
@@ -1047,6 +1064,7 @@ const remove = (aver) => {
                             <small id="username-help" :class="{ 'p-invalid text-red-700': errorsNew['gender_id'] }">
                                 {{ errorsNew.gender_id }}
                             </small>
+                            <BackendErrors :name="errorResponseAPI?.errors?.gender_id"/> 
                         </div>
                     </div>
                     <div class="flex-auto">
@@ -1056,6 +1074,7 @@ const remove = (aver) => {
                             <small id="username-help" :class="{ 'p-invalid text-red-700': errorsNew['first_name'] }">
                                 {{ errorsNew.first_name }}
                             </small>
+                            <BackendErrors :name="errorResponseAPI?.errors?.first_name"/> 
                         </div>
                     </div>
                 </div>
@@ -1068,6 +1087,7 @@ const remove = (aver) => {
                             <small id="username-help" :class="{ 'p-invalid text-red-700': errorsNew['last_name'] }">
                                 {{ errorsNew.last_name }}
                             </small>
+                            <BackendErrors :name="errorResponseAPI?.errors?.last_name"/> 
                         </div>
                     </div>
                     <div class="flex-auto">
@@ -1089,6 +1109,7 @@ const remove = (aver) => {
                             <small id="username-help" :class="{ 'p-invalid text-red-700': errorsNew['document_type'] }">
                                 {{ errorsNew.document_type }}
                             </small>
+                            <BackendErrors :name="errorResponseAPI?.errors?.document_type"/> 
                         </div>
                     </div>
                     <div class="flex-auto">
@@ -1098,6 +1119,7 @@ const remove = (aver) => {
                             <small id="username-help" :class="{ 'p-invalid text-red-700 ': errorsNew['documento'] }">
                                 {{ errorsNew.documento }}
                             </small>
+                            <BackendErrors :name="errorResponseAPI?.errors?.document"/> 
                         </div>
                     </div>
                 </div>
@@ -1130,6 +1152,7 @@ const remove = (aver) => {
                             <small id="username-help" :class="{ 'p-invalid text-red-700': errorsNew['payment_type_uuid'] }">
                                 {{ errorsNew.payment_type_uuid }}
                             </small>
+                            <BackendErrors :name="errorResponseAPI?.errors?.document_type"/> 
                         </div>
                     </div>
                     <div class="flex-auto">
@@ -1139,6 +1162,7 @@ const remove = (aver) => {
                             <small id="username-help" :class="{ 'p-invalid text-red-700': errorsNew['work_center_uuid'] }">
                                 {{ errorsNew.work_center_uuid }}
                             </small>
+                            <BackendErrors :name="errorResponseAPI?.errors?.work_center_uuid"/> 
                         </div>
                     </div>
                 </div>
@@ -1159,6 +1183,7 @@ const remove = (aver) => {
                             <small id="username-help" :class="{ 'p-invalid text-red-700': errorsNew['farm'] }">
                                 {{ errorsNew.farm }}
                             </small>
+                            <BackendErrors :name="errorResponseAPI?.errors?.farm_uuid"/> 
                         </div>
                     </div>
                 </div>
