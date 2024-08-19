@@ -41,48 +41,16 @@
                                     
 
                                      <Divider v-if="ability.can('planeacion_diaria_editar')" layout="vertical" />
-<Button 
-    v-if="ability.can('planeacion_diaria_eliminar')" 
-    :disabled="!listRowSelect.length > 0" 
-    label="Liquidar" 
-    icon="pi pi-check" 
-    class="mb-2 mt-2" 
-    @click="openDelete" 
-    size="large" 
-    :style="{ backgroundColor: '#A93226', borderColor: '#A93226', color: '#ffffff' }"
-/>
 
-
-<Divider v-if="ability.can('planeacion_diaria_editar')" layout="vertical" />
-<Button 
-    v-if="ability.can('planeacion_diaria_eliminar')" 
-    :disabled="!listRowSelect.length > 0" 
-    label="Cerrar" 
-    icon="pi pi-check" 
-    class="mb-2 mt-2" 
-    @click="openClose" 
-    size="large" 
-    :style="{ backgroundColor: '#F39C12', borderColor: '#F39C12', color: '#ffffff' }"
-/>
-
-
-<Divider v-if="ability.can('planeacion_diaria_editar')" layout="vertical" />
-<Button 
-    v-if="ability.can('planeacion_diaria_eliminar')" 
-    :disabled="!listRowSelect.length > 0" 
-    label="Validar" 
-    icon="pi pi-check" 
-    class="mb-2 mt-2" 
-    @click="openDelete" 
-    size="large" 
-    :style="{ backgroundColor: '#D7DBDD', borderColor: '#D7DBDD', color: '#000000' }"
-/>
 
                             </template>
                         </Toolbar>
                     </div>
                 </div>
             </div>
+
+
+            
             
             <!-- <pre>{{crop_lots_codeV}}</pre>
         <pre>{{ otherTestValue }}</pre>
@@ -129,8 +97,77 @@
                 <template #header>
                     <!--Uncomment when filters are done-->
 
+                    <div class="grid">
+                <div class="col-xs-12 col-sm-6 col-md-4 mb-2 text-center mx-auto">
+            <div class="col-xs-12 col-sm-6 col-md-4 mb-2 text-center mx-auto">
+                        <Toolbar style="margin-bottom: 1rem">
+                            <template #center>
+  
+
+                                <Button 
+    v-if="ability.can('planeacion_diaria_eliminar')" 
+    :disabled="!listRowSelect.length > 0" 
+    label="En progreso" 
+    icon="pi pi-check" 
+    class="mb-2 mt-2" 
+    @click="openDelete" 
+    size="large" 
+    :style="{ backgroundColor: '#FFC300', borderColor: '#A93226', color: '#ffffff' }"
+/>
+
+<Divider v-if="ability.can('planeacion_diaria_editar')" layout="vertical" />
+ 
+<Button 
+    v-if="ability.can('planeacion_diaria_eliminar')" 
+    :disabled="!listRowSelect.length > 0" 
+    label="Liquidar" 
+    icon="pi pi-check" 
+    class="mb-2 mt-2" 
+    @click="openDelete" 
+    size="large" 
+    :style="{ backgroundColor: '#A93226', borderColor: '#A93226', color: '#ffffff' }"
+/>
+
+<Divider v-if="ability.can('planeacion_diaria_editar')" layout="vertical" />
+<Button 
+    v-if="ability.can('planeacion_diaria_eliminar')" 
+    :disabled="!listRowSelect.length > 0" 
+    label="Cerrar" 
+    icon="pi pi-check" 
+    class="mb-2 mt-2" 
+    @click="openClose" 
+    size="large" 
+    :style="{ backgroundColor: '#F39C12', borderColor: '#F39C12', color: '#ffffff' }"
+/>
+
+
+
+
+
+
+
+<Divider v-if="ability.can('planeacion_diaria_editar')" layout="vertical" />
+<Button 
+    v-if="ability.can('planeacion_diaria_eliminar')" 
+    :disabled="!listRowSelect.length > 0" 
+    label="Validar" 
+    icon="pi pi-check" 
+    class="mb-2 mt-2" 
+    @click="openDelete" 
+    size="large" 
+    :style="{ backgroundColor: '#D7DBDD', borderColor: '#D7DBDD', color: '#000000' }"
+/>
+
+                            </template>
+                        </Toolbar>
+                    </div>
+
+                </div>
+            </div>
+
                     <Toolbar class="mb-2">
                         <template v-slot:start>
+                            
                             <Button type="button" icon="pi pi-filter-slash" label="Limpiar" class="p-button-outlined" @click="clearFilter()" />
                         </template>
                         <template v-slot:end>
