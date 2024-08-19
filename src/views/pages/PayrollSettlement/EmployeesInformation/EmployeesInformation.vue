@@ -806,6 +806,7 @@ totalJournalTotal.value = computed(() => {
     for (let item of summary.value) {
         total += parseFloat(item.total_journal) || 0;
     }
+    console.log(total);
     return total;
 });
 
