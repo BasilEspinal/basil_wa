@@ -146,11 +146,43 @@ export default function useData() {
         return responseData;
     }
 
+    async function patchRequest(endPoint, data, id) {
+        let responseData = { data: [], error: '', ok: false };
+        let baseUrl = `${base}${api}${endPoint}/${id}`;
+        const requestOptions = {
+            method: 'PATCH',
+            headers: APISettings.headers,
+            body: JSON.stringify(data)
+        };
+        try {
+            const response = await fetch(baseUrl, requestOptions);
+            responseData.ok = response.ok;
+            if (!response.ok) {
+                const errorBody = await response.text();
+                const errorBodyObject = JSON.parse(errorBody);
+
+                console.error(`Error ${response.status}: ${errorBody}`);
+                console.log('response', typeof errorBodyObject, errorBodyObject);
+                responseData.error += ` ${errorBody}`;
+                errorResponseAPI.value = errorBodyObject;
+
+                throw new Error(`Error ${response.status} al enviar datos.`);
+            }
+            responseData.data = await response.json();
+        } catch (e) {
+            console.error('Error en la solicitud PATCH:', e.message);
+            responseData.error += ' ' + e.message;
+            console.log(e);
+        }
+        return responseData;
+    }
+
     return {
         getRequest,
         postRequest,
         putRequest,
         deleteRequest,
+        patchRequest,
         errorResponseAPI
     };
 }

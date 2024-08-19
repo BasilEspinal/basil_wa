@@ -40,16 +40,44 @@
                                 <Button v-if="ability.can('planeacion_diaria_eliminar')" :disabled="!listRowSelect.length > 0" label="Delete" icon="pi pi-trash" class="p-button-danger mb-2 mt-2" @click="openDelete" size="large" />
                                      -->
 
-                                    <Divider v-if="ability.can('planeacion_diaria_editar')" layout="vertical" />
-                                    <Button v-if="ability.can('planeacion_diaria_eliminar')" :disabled="!listRowSelect.length > 0" label="Liquidar" icon="pi pi-check" class="p-button-success mb-2 mt-2" @click="openDelete" size="large" />   
+                                     <Divider v-if="ability.can('planeacion_diaria_editar')" layout="vertical" />
+<Button 
+    v-if="ability.can('planeacion_diaria_eliminar')" 
+    :disabled="!listRowSelect.length > 0" 
+    label="Liquidar" 
+    icon="pi pi-check" 
+    class="mb-2 mt-2" 
+    @click="openDelete" 
+    size="large" 
+    :style="{ backgroundColor: '#A93226', borderColor: '#A93226', color: '#ffffff' }"
+/>
 
 
-                                    <Divider v-if="ability.can('planeacion_diaria_editar')" layout="vertical" />
-                                    <Button v-if="ability.can('planeacion_diaria_eliminar')" :disabled="!listRowSelect.length > 0" label="Cerrar" icon="pi pi-check" class="p-button-warning mb-2 mt-2" @click="openDelete" size="large" />   
+<Divider v-if="ability.can('planeacion_diaria_editar')" layout="vertical" />
+<Button 
+    v-if="ability.can('planeacion_diaria_eliminar')" 
+    :disabled="!listRowSelect.length > 0" 
+    label="Cerrar" 
+    icon="pi pi-check" 
+    class="mb-2 mt-2" 
+    @click="openClose" 
+    size="large" 
+    :style="{ backgroundColor: '#F39C12', borderColor: '#F39C12', color: '#ffffff' }"
+/>
 
 
-                                        <Divider v-if="ability.can('planeacion_diaria_editar')" layout="vertical" />
-                                        <Button v-if="ability.can('planeacion_diaria_eliminar')" :disabled="!listRowSelect.length > 0" label="Contabilizar" icon="pi pi-check" class="p-button-sucess mb-2 mt-2" @click="openDelete" size="large" />       
+<Divider v-if="ability.can('planeacion_diaria_editar')" layout="vertical" />
+<Button 
+    v-if="ability.can('planeacion_diaria_eliminar')" 
+    :disabled="!listRowSelect.length > 0" 
+    label="Validar" 
+    icon="pi pi-check" 
+    class="mb-2 mt-2" 
+    @click="openDelete" 
+    size="large" 
+    :style="{ backgroundColor: '#D7DBDD', borderColor: '#D7DBDD', color: '#000000' }"
+/>
+
                             </template>
                         </Toolbar>
                     </div>
@@ -264,7 +292,9 @@
 
                 <Column field="status" filterField="status.name" header="Status" sortable>
                     <template #body="{ data }">
-                        <Tag :value="data.status.name" :severity="'EFC88B'" />
+                        <Tag :value="data.status.name" :style="{ backgroundColor: data.status.color, color:'#FFFFFF'  }" />
+
+
                     </template>
                     <template #filter="{ filterModel }">
                         <InputText v-model="filterModel.value" type="text" class="p-column-filter" placeholder="Search by status" />
@@ -435,7 +465,7 @@
 
                 <div class="flex justify-content-end gap-2">
                     <Button type="button" label="Cancel" severity="secondary" @click="formDialogNew = false" />
-                    <Button type="button" label="Save" @click="createRecord()" />
+                    <Button type="button" label="Save" @click="NewRecord()" />
                 </div>
             </Dialog>
 
@@ -809,6 +839,15 @@
                     <Button type="button" label="Delete" @click="DeleteRecord" />
                 </div>
             </Dialog>
+            <Dialog v-model:visible="formDialogClose" :style="{ width: '450px' }" :header="formDialogCloseTitle" :modal="true">
+                <label for="username" class="text-2xl font-medium w-6rem"> Are you sure you want to close the following? </label>
+                <Summary :listRowSelect="listRowSelect" />
+                <div class="flex justify-content-end gap-2">
+                    
+                    <Button type="button" label="Cancel" severity="secondary" @click="formDialogClose = false" />
+                    <Button type="button" label="Save" @click="patchRecord" />
+                </div>
+            </Dialog>
 
             <Toast />
         </div>
@@ -830,7 +869,7 @@ import useDataAPI from '@/composables/DataAPI/FetchDataAPI.js';
 import { useToast } from 'primevue/usetoast';
 import { FilterMatchMode, FilterOperator } from 'primevue/api';
 import useData from '@/composables/DataAPI/FetchDataAPICopy.js';
-const { getRequest, postRequest, putRequest, deleteRequest, errorResponseAPI } = useData();
+const { getRequest, postRequest, putRequest, deleteRequest,patchRequest, errorResponseAPI } = useData();
 import { useRouter } from 'vue-router';
 import { useForm } from 'vee-validate';
 import { toTypedSchema } from '@vee-validate/zod';
@@ -840,6 +879,7 @@ import { z } from 'zod';
 import ability from '@/service/ability.js';
 import { AbilityBuilder } from '@casl/ability';
 import BackendErrors from '@/views/Errors/BackendErrors.vue';
+import Summary from './Summary.vue';
 
 const prueba = ref({ revisar: 'revisar GET-POST-PUT-DELETE' });
 const backendValidation = ref();
@@ -877,11 +917,14 @@ const formDialogEditTitle = 'Edit ' + namePage;
 const formDialogCloneTitle = 'Clone ' + namePage;
 const formDialogExportTitle = 'Export ' + namePage;
 const formDialogDeleteTitle = 'Delete ' + namePage;
+const formDialogCloseTitle = 'Close ' + namePage;
 const formDialogNew = ref(false);
 const formDialogEdit = ref(false);
 const formDialogClone = ref(false);
 const formDialogExport = ref(false);
 const formDialogDelete = ref(false);
+const formDialogClose = ref(false);
+
 const toast = useToast();
 const filename = ref('table');
 const isChanging = ref(false);
@@ -1222,6 +1265,10 @@ const openExport = () => {
     formDialogExport.value = true;
 };
 
+const openClose = () => {
+  
+    formDialogClose.value = true;
+};
 const openDelete = () => {
     formDialogDelete.value = true;
 };
@@ -1315,6 +1362,27 @@ const EditRecord = handleSubmitNew(async (values) => {
         console.log(errorResponseAPI);
     }
 });
+
+const patchRecord = async (values) => {
+    const { uuid } = listRowSelect.value[0];
+    const data = {
+        status_id: 10
+    };
+    const restp = await patchRequest(endpoint.value, data, uuid);
+    toast.add({ severity: restp.ok ? 'success' : 'error', summary: 'Close', detail: restp.ok ? 'Closed' : restp.error, life: 3000 });
+    loadingData();
+    if (restp.ok) {
+        
+        formDialogClose.value = false;
+        listRowSelect.value = [];
+        selectedRegisters.value = [];
+        errorResponseAPI.value = '';
+    } else {
+        backendValidationFlag.value = true;
+        backendValidation.value = restp;
+        formDialogEdit.value = true;
+    }
+};
 
 const CloneRecord = handleSubmitNew(async (values) => {
     const yyyy = values.transaction_dateV.getFullYear();

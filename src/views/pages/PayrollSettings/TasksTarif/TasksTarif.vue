@@ -216,23 +216,21 @@ const openEdit = () => {
     const { work_type_day, type_price: typePrice, price_tarif: priceTarif, taskType, packing_type, farm: Farm } = listRowSelect.value[0];
 
     type_date.value = { id: work_type_day, name: work_type_day };
-    task_type_tarifV.value = { id: typePrice.code, name: typePrice.label };
+    task_type_tarifV.value = { id: typePrice, name: typePrice };
     price_tarif.value = Number(priceTarif);
     taskTypeV.value = { id: taskType.uuid, name: taskType.name };
     packingType.value = { id: packing_type.uuid, name: packing_type.name };
     farm.value = { id: Farm.uuid, name: Farm.name };
     company.value = { id: Farm.uuid, name: Farm.name };
-
     formDialogEdit.value = true;
-    console.log(type_date.value, ',', type_price.value, ',', price_tarif.value, ',', taskType.value, ',', packingType.value);
+    // console.log(type_date.value, ',', type_price.value, ',', price_tarif.value, ',', taskType.value, ',', packingType.value);
 };
 
 const openClone = () => {
     resetForm();
     const { work_type_day, type_price: typePrice, price_tarif: priceTarif, taskType, packing_type, farm: Farm } = listRowSelect.value[0];
-
     type_date.value = { id: work_type_day, name: work_type_day };
-    task_type_tarifV.value = { id: typePrice.code, name: typePrice.label };
+    task_type_tarifV.value = { id: typePrice, name: typePrice };
     price_tarif.value = Number(priceTarif);
     taskTypeV.value = { id: taskType.uuid, name: taskType.name };
     packingType.value = { id: packing_type.uuid, name: packing_type.name };
@@ -262,7 +260,7 @@ const createRecord = handleSubmitNew(async (values) => {
         farm_uuid: values.farm ? values.farm.id : farmDefault,
         company_uuid: values.company ? values.company.id : companyDefault
     };
-    prueba.value = data;
+    
     const restp = await postRequest(endpoint.value, data);
     console.log('DATA: ', data);
     toast.add({ severity: restp.ok ? 'success' : 'error', summary: 'Create', detail: restp.ok ? 'Creado' : restp.error, life: 3000 });
@@ -606,7 +604,7 @@ const remove = (aver) => {
 
                     <div class="mb-3">
                         <div class="flex align-items-center">
-                            <label for="username" class="font-semibold w-6rem">Task type tarif: </label>
+                            <label for="username" class="font-semibold w-3">Task type tarif: </label>
                             <AutoComplete v-model="task_type_tarifV" dropdown inputId="task_type_tarifV" :suggestions="task_type_tarifObject" field="name" @complete="searchTypeOfTaskTarif" placeholder="Busca o selecciona " />
                         </div>
                         <small id="username-help" :class="{ 'p-invalid text-red-700': errorsNew['task_type_tarifV'] }">
@@ -675,6 +673,7 @@ const remove = (aver) => {
             </Dialog>
 
             <Dialog v-model:visible="formDialogEdit" modal :header="formDialogEditTitle" class="p-fluid text-center w-3 mx-auto">
+                <pre>{{prueba}}</pre>
                 <div class="grid">
                     <div class="mb-3 col-12 md:col-12 lg:col-12">
                         <div class="flex align-items-center gap-3 mb-1">
@@ -697,6 +696,7 @@ const remove = (aver) => {
                                 <small id="username-help" :class="{ 'p-invalid text-red-700 ': errorsNew['type_date'] }">
                                     {{ errorsNew.type_date }}
                                 </small>
+                                <BackendErrors :name="errorResponseAPI?.errors?.work_type_day" />
                             </div>
                         </div>
                     </div>
@@ -720,6 +720,7 @@ const remove = (aver) => {
                                 <small id="username-help" :class="{ 'p-invalid text-red-700': errorsNew['price_tarif'] }">
                                     {{ errorsNew.price_tarif }}
                                 </small>
+                                <BackendErrors :name="errorResponseAPI?.errors?.price_tarif" />
                             </div>
                         </div>
                     </div>
@@ -732,6 +733,7 @@ const remove = (aver) => {
                                 <small id="username-help" :class="{ 'p-invalid text-red-700': errorsNew['packingType'] }">
                                     {{ errorsNew.packingType }}
                                 </small>
+                                <BackendErrors :name="errorResponseAPI?.errors?.packing_type" />
                             </div>
                         </div>
                     </div>
@@ -744,6 +746,7 @@ const remove = (aver) => {
                                 <small id="username-help" :class="{ 'p-invalid text-red-700': errorsNew['farm'] }">
                                     {{ errorsNew.farm }}
                                 </small>
+                                <BackendErrors :name="errorResponseAPI?.errors?.farm" />
                             </div>
                         </div>
                     </div>
@@ -768,64 +771,94 @@ const remove = (aver) => {
                 </div>
             </Dialog>
 
-            <Dialog v-model:visible="formDialogClone" modal :header="formDialogCloneTitle" class="p-fluid text-center mx-auto">
-                <div class="flex flex-wrap gap-3 mb-3 p-fluid">
-                    <div class="flex-auto">
-                        <label for="type_date" class="font-bold block mb-2"> Type Date </label>
-                        <Dropdown v-model="type_date" :options="typeDateList" optionLabel="name" class="w-full md:w-15rem" inputId="type_date" v-bind="type_dateProps" />
-                        <div class="flex-auto">
-                            <small id="username-help" :class="{ 'p-invalid text-red-700 ': errorsNew['type_date'] }">
-                                {{ errorsNew.type_date }}
-                            </small>
+            <Dialog v-model:visible="formDialogClone" modal :header="formDialogCloneTitle" class="p-fluid text-center w-3 mx-auto">
+                <div class="grid">
+                    <div class="mb-3 col-12 md:col-12 lg:col-12">
+                        <div class="flex align-items-center gap-3 mb-1">
+                            <label for="taskType" class="font-semibold w-3"> Tasks Type </label>
+                            <AutoComplete v-model="taskTypeV" class="w-full" inputId="taskTypeV" :suggestions="taskOfType" @complete="searchTaskOfType" field="name" dropdown />
+                            <div class="flex-auto">
+                                <small id="username-help" :class="{ 'p-invalid text-red-700': errorsNew['taskType'] }">
+                                    {{ errorsNew.taskType }}
+                                </small>
+                                <BackendErrors :name="errorResponseAPI?.errors?.taskType" />
+                            </div>
                         </div>
                     </div>
-                    <div class="flex-auto">
-                        <label for="type_price" class="font-bold block mb-2"> Type Price </label>
-                        <InputText id="username" v-model="type_price" class="flex-auto md:w-15rem" autocomplete="off" v-bind="type_priceProps" inputId="type_price" :useGrouping="false" />
-                        <div class="flex-auto">
-                            <small id="username-help" :class="{ 'p-invalid text-red-700': errorsNew['type_price'] }">
-                                {{ errorsNew.type_price }}
-                            </small>
+
+                    <div class="mb-3 col-12 md:col-12 lg:col-12">
+                        <div class="flex align-items-center gap-3 mb-1">
+                            <label for="type_date" class="font-semibold w-3"> Type Date </label>
+                            <Dropdown v-model="type_date" :options="typeDateList" optionLabel="name" class="w-full" inputId="type_date" v-bind="type_dateProps" />
+                            <div class="flex-auto">
+                                <small id="username-help" :class="{ 'p-invalid text-red-700 ': errorsNew['type_date'] }">
+                                    {{ errorsNew.type_date }}
+                                </small>
+                                <BackendErrors :name="errorResponseAPI?.errors?.work_type_day" />
+                            </div>
                         </div>
                     </div>
-                </div>
-                <div class="flex flex-wrap gap-3 mb-3 p-fluid">
-                    <div class="flex-auto">
-                        <label for="price_tarif" class="font-bold block mb-2"> Price Tarif </label>
-                        <InputNumber v-model="price_tarif" class="w-full md:w-15rem" inputId="price_tarif" mode="currency" currency="USD" locale="en-US" v-bind="price_tarifProps" />
-                        <div class="flex-auto">
-                            <small id="username-help" :class="{ 'p-invalid text-red-700': errorsNew['price_tarif'] }">
-                                {{ errorsNew.price_tarif }}
-                            </small>
+
+                    <div class="mb-3">
+                        <div class="flex align-items-center">
+                            <label for="username" class="font-semibold w-6rem">Task type tarif: </label>
+                            <AutoComplete v-model="task_type_tarifV" dropdown inputId="task_type_tarifV" :suggestions="task_type_tarifObject" field="name" @complete="searchTypeOfTaskTarif" placeholder="Busca o selecciona " />
+                        </div>
+                        <small id="username-help" :class="{ 'p-invalid text-red-700': errorsNew['task_type_tarifV'] }">
+                            {{ errorsNew.task_type_tarifV }}
+                        </small>
+                        <BackendErrors :name="errorResponseAPI?.errors?.type_price" />
+                    </div>
+
+                    <div class="mb-3 col-12 md:col-12 lg:col-12">
+                        <div class="flex align-items-center gap-3 mb-1">
+                            <label for="price_tarif" class="font-semibold w-3"> Price Tarif </label>
+                            <InputNumber v-model="price_tarif" class="w-full" inputId="price_tarif" mode="currency" currency="USD" locale="en-US" v-bind="price_tarifProps" />
+                            <div class="flex-auto">
+                                <small id="username-help" :class="{ 'p-invalid text-red-700': errorsNew['price_tarif'] }">
+                                    {{ errorsNew.price_tarif }}
+                                </small>
+                                <BackendErrors :name="errorResponseAPI?.errors?.price_tarif" />
+                            </div>
                         </div>
                     </div>
-                    <div class="flex-auto">
-                        <label for="farm" class="font-bold block mb-2"> Farm </label>
-                        <AutoComplete v-model="farm" class="w-full md:w-15rem" inputId="farm" :suggestions="farms" @complete="searchFarms" field="name" dropdown />
-                        <div class="flex-auto">
-                            <small id="username-help" :class="{ 'p-invalid text-red-700': errorsNew['farm'] }">
-                                {{ errorsNew.farm }}
-                            </small>
+
+                    <div class="mb-3 col-12 md:col-12 lg:col-12">
+                        <div class="flex align-items-center gap-3 mb-1">
+                            <label for="packingType" class="font-semibold w-3"> Packing Types </label>
+                            <AutoComplete v-model="packingType" class="w-full" inputId="packingType" :suggestions="packingTipesL" @complete="searchPackingType" field="name" dropdown />
+                            <div class="flex-auto">
+                                <small id="username-help" :class="{ 'p-invalid text-red-700': errorsNew['packingType'] }">
+                                    {{ errorsNew.packingType }}
+                                </small>
+                                <BackendErrors :name="errorResponseAPI?.errors?.packing_type" />
+                            </div>
                         </div>
                     </div>
-                </div>
-                <div class="flex flex-wrap gap-3 mb-5 p-fluid">
-                    <div class="flex-auto">
-                        <label for="packingType" class="font-bold block mb-2"> Packing Types </label>
-                        <AutoComplete v-model="packingType" class="w-full md:w-15rem" inputId="packingType" :suggestions="packingTipesL" @complete="searchPackingType" field="name" dropdown />
-                        <div class="flex-auto">
-                            <small id="username-help" :class="{ 'p-invalid text-red-700': errorsNew['packingType'] }">
-                                {{ errorsNew.packingType }}
-                            </small>
+
+                    <div class="mb-3 col-12 md:col-12 lg:col-12">
+                        <div class="flex align-items-center gap-3 mb-1">
+                            <label for="farm" class="font-semibold w-3"> Farm </label>
+                            <AutoComplete v-model="farm" class="w-full" inputId="farm" :suggestions="farms" @complete="searchFarms" field="name" dropdown />
+                            <div class="flex-auto">
+                                <small id="username-help" :class="{ 'p-invalid text-red-700': errorsNew['farm'] }">
+                                    {{ errorsNew.farm }}
+                                </small>
+                                <BackendErrors :name="errorResponseAPI?.errors?.farm" />
+                            </div>
                         </div>
                     </div>
-                    <div class="flex-auto">
-                        <label for="taskType" class="font-bold block mb-2"> Tacks Type </label>
-                        <AutoComplete v-model="taskType" class="w-full md:w-15rem" inputId="taskType" :suggestions="taskTipesL" @complete="searchTaskType" field="name" dropdown />
+
+                    <div class="mb-3 col-12 md:col-12 lg:col-12">
+                        <div class="flex align-items-center gap-3 mb-1">
+                            <label for="username" class="font-semibold w-3">Company:</label>
+                            <AutoComplete v-model="company" class="w-full" inputId="ac" :suggestions="compa" @complete="searchCompannies" field="name" dropdown />
+                        </div>
                         <div class="flex-auto">
-                            <small id="username-help" :class="{ 'p-invalid text-red-700': errorsNew['taskType'] }">
-                                {{ errorsNew.taskType }}
+                            <small id="username-help" :class="{ 'p-invalid text-red-700': errorsNew['company'] }">
+                                {{ errorsNew.company }}
                             </small>
+                            <BackendErrors :name="errorResponseAPI?.errors?.company" />
                         </div>
                     </div>
                 </div>

@@ -669,7 +669,7 @@ const readAll = async () => {
     if (!respDoneType.ok) toast.add({ severity: 'error', detail: 'Error' + respDoneType.error, life: 3000 });
     doneTypes.value = respDoneType.data.data.map((doneType) => ({ id: doneType.uuid, name: doneType.name }));
 
-    const respWorkTypeDay = await getRequest('/lists/workTypesDay');
+    const respWorkTypeDay = await getRequest('/lists/workTypeDay');
     if (!respWorkTypeDay.ok) toast.add({ severity: 'error', detail: 'Error' + respWorkTypeDay.error, life: 3000 });
     work_type_day.value = respWorkTypeDay.data.data.map((workTypeDay) => ({ id: workTypeDay.id, name: workTypeDay.label }));
 
