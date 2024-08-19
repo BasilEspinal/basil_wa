@@ -302,25 +302,25 @@
 
         <Column field="task_qty_labor">
             <template #body="slotProps">
-                {{slotProps.data.task_qty_hora_extra}}
+                {{slotProps.data.task_qty_labor}}
             </template>
         </Column>
 
         <Column field="total_labor">
             <template #body="slotProps">
-                {{formatCurrency(slotProps.data.total_hora_extra)}}
+                {{formatCurrency(slotProps.data.total_labor)}}
             </template>
         </Column>
 
         <Column field="task_qty_journal">
             <template #body="slotProps">
-                {{slotProps.data.task_qty_hora_extra}}
+                {{slotProps.data.task_qty_journal}}
             </template>
         </Column>
 
         <Column field="total_journal">
             <template #body="slotProps">
-                {{formatCurrency(slotProps.data.total_hora_extra)}}
+                {{formatCurrency(slotProps.data.total_journal)}}
             </template>
         </Column>
 
