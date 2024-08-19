@@ -13,7 +13,7 @@
                     <div class="col-xs-12 col-sm-6 col-md-4 mb-2 text-center mx-auto">
                         <Toolbar style="margin-bottom: 1rem">
                             <template #center>
-                                <!-- <Button v-if="ability.can('planeacion_diaria_crear')" :disabled="headerNames.length > 0" label="New" icon="pi pi-plus" class="p-button-success mb-2 mt-2" @click="openNew" size="large" />
+                                 <Button v-if="ability.can('planeacion_diaria_crear')" :disabled="headerNames.length > 0" label="New" icon="pi pi-plus" class="p-button-success mb-2 mt-2" @click="openNew" size="large" />
                                 <Divider v-if="ability.can('planeacion_diaria_crear')" layout="vertical" />
                                 <Button
                                     v-if="ability.can('planeacion_diaria_editar')"
@@ -33,12 +33,12 @@
                                     class="p-button-secondary mb-2 mt-2"
                                     @click="openClone"
                                     size="large"
-                                /> -->
-                                <!-- <Divider v-if="ability.can('planeacion_diaria_crear')" layout="vertical" />
+                                /> 
+                                <Divider v-if="ability.can('planeacion_diaria_crear')" layout="vertical" />
                                 <Button v-if="ability.can('planeacion_diaria_editar')" :disabled="headerNames.length > 0" label="Export" icon="pi pi-file-import" class="p-button-warning mb-2 mt-2" @click="openExport" size="large" />
                                 <Divider v-if="ability.can('planeacion_diaria_editar')" layout="vertical" />
                                 <Button v-if="ability.can('planeacion_diaria_eliminar')" :disabled="!listRowSelect.length > 0" label="Delete" icon="pi pi-trash" class="p-button-danger mb-2 mt-2" @click="openDelete" size="large" />
-                                     -->
+                                    
 
                                      <Divider v-if="ability.can('planeacion_diaria_editar')" layout="vertical" />
 <Button 
@@ -465,7 +465,7 @@
 
                 <div class="flex justify-content-end gap-2">
                     <Button type="button" label="Cancel" severity="secondary" @click="formDialogNew = false" />
-                    <Button type="button" label="Save" @click="NewRecord()" />
+                    <Button type="button" label="Save" @click="createRecord()" />
                 </div>
             </Dialog>
 
