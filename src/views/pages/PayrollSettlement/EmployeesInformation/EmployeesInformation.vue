@@ -368,14 +368,21 @@
         <ColumnGroup type="footer">
             <Row>
                 <Column footer="Totals:" :colspan="3" footerStyle="text-align:right"/>
-                <Column :footer="lastYearTotal" />
-                <Column :footer="lastYearTotal" />
+                <Column :footer="totalTaskQtyTask" />
+                <Column :footer="totalTaskTotal" />
+                <Column :footer="totalTaskQtyLabor" />
+                <Column :footer="totalLaborTotal" />
+                <Column :footer="totalTaskQtyJournal" />
+                <Column :footer="totalJournalTotal" />
+                <Column :footer="totalTaskQtyHoraExtra" />
+                <Column :footer="totalHoraExtraTotal" />
+
+                <!-- <Column :footer="totalJournalTotal" /> -->
+                <!-- <Column :footer="thisYearTotal" />
                 <Column :footer="lastYearTotal" />
                 <Column :footer="thisYearTotal" />
-                <Column :footer="lastYearTotal" />
                 <Column :footer="thisYearTotal" />
-                <Column :footer="thisYearTotal" />
-                <Column :footer="thisYearTotal" />
+                <Column :footer="thisYearTotal" /> -->
             </Row>
         </ColumnGroup>
     </DataTable>
@@ -603,77 +610,16 @@ const sales = ref([
 const formatCurrency = (value) => {
     return value.toLocaleString('en-US', {style: 'currency', currency: 'USD'});
 };
+const totalTaskQtyTask = ref(0);
+const totalTaskTotal = ref(0);
+const totalTaskQtyHoraExtra = ref(0);
+const totalHoraExtraTotal = ref(0);
+const totalTaskQtyLabor = ref(0);
+const totalLaborTotal = ref(0);
+const totalTaskQtyJournal = ref(0);
+const totalJournalTotal = ref(0);
 
-const totalTaskQtyTask = computed((summary) => {
-    let total = 0;
-    for(let item of summary.value) {
-        total += item.task_qty_task;
-    }
-    return total;
-});
 
-// Computed function for total_task
-const totalTaskTotal = computed((summary) => {
-    let total = 0;
-    for(let item of summary.value) {
-        total += item.total_task;
-    }
-    return total;
-});
-
-// Computed function for task_qty_hora_extra
-const totalTaskQtyHoraExtra = computed((data) => {
-    let total = 0;
-    for(let item of data.value) {
-        total += item.task_qty_hora_extra;
-    }
-    return total;
-});
-
-// Computed function for total_hora_extra
-const totalHoraExtraTotal = computed((summary) => {
-    let total = 0;
-    for(let item of summary.value) {
-        total += item.total_hora_extra;
-    }
-    return total;
-});
-
-// Computed function for task_qty_labor
-const totalTaskQtyLabor = computed((summary) => {
-    let total = 0;
-    for(let item of summary.value) {
-        total += item.task_qty_labor;
-    }
-    return total;
-});
-
-// Computed function for total_labor
-const totalLaborTotal = computed((summary) => {
-    let total = 0;
-    for(let item of summary.value) {
-        total += item.total_labor;
-    }
-    return total;
-});
-
-// Computed function for task_qty_journal
-const totalTaskQtyJournal = computed((summary) => {
-    let total = 0;
-    for(let item of summary.value) {
-        total += item.task_qty_journal;
-    }
-    return total;
-});
-
-// Computed function for total_journal
-const totalJournalTotal = computed((summary) => {
-    let total = 0;
-    for(let item of summary.value) {
-        total += item.total_journal;
-    }
-    return total;
-});
 
 const lastYearTotal = computed(() => {
     let total = 0;
@@ -798,17 +744,71 @@ const loadingData = async () => {
     const response2 = await getRequest('/transactions/transemployeegroupperiod');
     if (!response2.ok) toast.add({ severity: 'error', detail: 'Error' + response2.error, life: 3000 });
     summary.value = response2.data.data;
+// Ahora, asigna las funciones computadas a cada ref, convirtiendo strings a números
+totalTaskQtyTask.value = computed(() => {
+    let total = 0;
+    for (let item of summary.value) {
+        total += parseFloat(item.task_qty_task) || 0;
+    }
+    return total;
+});
 
-    console.log( typeof totalHoraExtraTotal.value);
-    console.log(totalLaborTotal.value);
-    console.log(totalJournalTotal.value);
-    console.log(totalTaskQtyJournal.value);
-    console.log(totalTaskQtyLabor.value);
-    console.log(totalTaskQtyHoraExtra.value);
-    console.log(totalTaskQtyTask.value);
-    console.log(totalTaskTotal.value);
-    console.log(lastYearTotal.value);
-    console.log(thisYearTotal.value);
+totalTaskTotal.value = computed(() => {
+    let total = 0;
+    for (let item of summary.value) {
+        total += parseFloat(item.total_task) || 0;
+    }
+    return total;
+});
+
+totalTaskQtyHoraExtra.value = computed(() => {
+    let total = 0;
+    for (let item of summary.value) {
+        total += parseFloat(item.task_qty_hora_extra) || 0;
+    }
+    return total;
+});
+
+totalHoraExtraTotal.value = computed(() => {
+    let total = 0;
+    for (let item of summary.value) {
+        total += parseFloat(item.total_hora_extra) || 0;
+    }
+    return total;
+});
+
+totalTaskQtyLabor.value = computed(() => {
+    let total = 0;
+    for (let item of summary.value) {
+        total += parseFloat(item.task_qty_labor) || 0;
+    }
+    return total;
+});
+
+totalLaborTotal.value = computed(() => {
+    let total = 0;
+    for (let item of summary.value) {
+        total += parseFloat(item.total_labor) || 0;
+    }
+    return total;
+});
+
+totalTaskQtyJournal.value = computed(() => {
+    let total = 0;
+    for (let item of summary.value) {
+        total += parseFloat(item.task_qty_journal) || 0;
+    }
+    return total;
+});
+
+totalJournalTotal.value = computed(() => {
+    let total = 0;
+    for (let item of summary.value) {
+        total += parseFloat(item.total_journal) || 0;
+    }
+    return total;
+});
+
 
 
 };
