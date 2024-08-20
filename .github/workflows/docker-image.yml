@@ -34,3 +34,26 @@ jobs:
           push: true
           tags: ${{ steps.meta.outputs.tags }}
           labels: ${{ steps.meta.outputs.labels }}
+
+
+deploy:
+  needs: push_to_registry
+  runs-on: ubuntu-latest
+
+  steps:
+    - name: Install doctl
+      uses: digitalocean/action-doctl@v2
+      with:
+        token: ${{ secrets.DIGITALOCEAN_ACCESS_TOKEN }}
+
+    - name: SSH into Droplet and Deploy
+      run: |
+        # Assumes your droplet's IP address is stored in a secret
+        ssh -o StrictHostKeyChecking=no root@${{ secrets.DROPLET_IP }} << 'EOF'
+          docker pull byepesg/agro_online:main
+          docker stop your_container_name || true
+          docker rm your_container_name || true
+          docker run -d --name your_container_name -p 9001:8080 byepesg/agro_online:main
+        EOF
+
+
