@@ -103,10 +103,9 @@ const checkActiveRoute = (item) => {
         <Transition v-if="item.items && item.visible !== false" name="layout-submenu">
             
             <ul v-show="root ? true : isActiveMenu" class="layout-submenu" v-if=" (ability.can(item.items[0].gate))">
-                <!-- <pre>{{item }}</pre>   -->
-                <!-- <pre>{{(ability.can(item.gate))}}</pre> -->
-                <app-menu-item v-for="(child, i) in item.items" :key="child" :index="i" :item="child" :parentItemKey="itemKey" :root="false" >
-                    <p>{{child}}</p>
+                <!-- <pre>{{ item.items[0].items.gate }}</pre> -->
+                <app-menu-item v-for="(child, i) in item.items" :key="child" :index="i" :item="child"
+                    :parentItemKey="itemKey" :root="false" >
                 </app-menu-item>
                 
                 
