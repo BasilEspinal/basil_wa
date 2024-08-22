@@ -30,7 +30,7 @@
 
             </div>
         </div>
-        <!-- <pre>{{ dataResponseAPI }}</pre> -->
+        <pre>{{ event }}</pre>
         <DataTable
         :value="dataFromComponent"
         dataKey="uuid"
@@ -43,7 +43,7 @@
         columnResizeMode="expand"
         sortMode="multiple"
         :paginator="true"
-        :rows="50"
+        :rows="1"
         :rowsPerPageOptions="[5, 10, 20, 50]"
         :class="`p-datatable-${size.class}`"
         @row-select="onRowSelect(selectedRegisters)"
@@ -53,6 +53,7 @@
         filterDisplay="menu"
         v-model:filters="filters"
         :globalFilterFields="['name', 'company.name', 'farm.name', 'status.name', 'created_at', 'updated_at', 'codeV', 'planner_tasks.transaction_date', 'transaction_date', 'day_week_num', 'tasks_of_type.name', 'packing_type_name', 'product_name', 'vehicle', 'supervisory_employee.document', 'supervisory_employee.first_name', 'supervisory_employee.last_name', 'supervisory_jobtype.name', 'worker_employee.document', 'worker_employee.first_name', 'worker_employee.last_name', 'worker_jobtype.name', 'customer_request_id.dispatch_number_lot']" 
+        
         >
         <template #header>
             <!--Uncomment when filters are done-->
