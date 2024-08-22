@@ -629,6 +629,8 @@ const onRowSelect = (data) => {
     
 };
 
+
+
 watch(listRowSelect, onRowSelect);
 
 const onSelectAllChange = () => {
