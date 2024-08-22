@@ -96,7 +96,6 @@ const checkActiveRoute = (item) => {
                 <!-- <pre>{{ item.items[0].items.gate }}</pre> -->
                 <app-menu-item v-for="(child, i) in item.items" :key="child" :index="i" :item="child"
                     :parentItemKey="itemKey" :root="false" >
-                    
                 </app-menu-item>
                 
                 
