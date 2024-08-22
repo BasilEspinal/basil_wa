@@ -673,7 +673,7 @@ const readAll = async () => {
     if (!respWorkTypeDay.ok) toast.add({ severity: 'error', detail: 'Error' + respWorkTypeDay.error, life: 3000 });
     work_type_day.value = respWorkTypeDay.data.data.map((workTypeDay) => ({ id: workTypeDay.id, name: workTypeDay.label }));
 
-    const respWorkTypeTarif = await getRequest('/lists/workTypeRate');
+    const respWorkTypeTarif = await getRequest('/lists/workTypeTarif');
     if (!respWorkTypeTarif.ok) toast.add({ severity: 'error', detail: 'Error' + respWorkTypeTarif.error, life: 3000 });
     work_type_tarif.value = respWorkTypeTarif.data.data.map((workTypeTarif) => ({ id: workTypeTarif.id, name: workTypeTarif.label }));
 

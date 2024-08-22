@@ -512,6 +512,20 @@ const remove = (aver) => {
                     </template>
                 </Column>
 
+
+                <Column field="packing_type.name" filterField="packing_type.name" header="Packing Type Name" sortable>
+                    <template #header>
+                        <ToggleButton v-model="documentFrozen" onIcon="pi pi-lock" offIcon="pi pi-lock-open" onLabel="" offLabel="" />
+                        <div>&nbsp;</div>
+                    </template>
+                    <template #body="{ data }">
+                        {{ data.packing_type.name }}
+                    </template>
+                    <template #filter="{ filterModel }">
+                        <InputText v-model="filterModel.value" type="text" class="p-column-filter" placeholder="Search by " />
+                    </template>
+                </Column>
+
                 <Column field="type_price" filterField="type_price" header="Type Price" sortable>
                     <template #body="{ data }">
                         {{ data.type_price }}
