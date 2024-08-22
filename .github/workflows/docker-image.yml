@@ -36,24 +36,37 @@ jobs:
           labels: ${{ steps.meta.outputs.labels }}
 
 
-deploy:
-  needs: push_to_registry
-  runs-on: ubuntu-latest
+# Commenting out the entire deploy job
 
-  steps:
-    - name: Install doctl
-      uses: digitalocean/action-doctl@v2
-      with:
-        token: ${{ secrets.DIGITALOCEAN_ACCESS_TOKEN }}
+# deploy:
+#   # Define the deploy job that depends on the successful completion of the push_to_registry job
+#   needs: push_to_registry
+#   runs-on: ubuntu-latest
 
-    - name: SSH into Droplet and Deploy
-      run: |
-        # Assumes your droplet's IP address is stored in a secret
-        ssh -o StrictHostKeyChecking=no root@${{ secrets.DROPLET_IP }} << 'EOF'
-          docker pull byepesg/agro_online:main
-          docker stop your_container_name || true
-          docker rm your_container_name || true
-          docker run -d --name your_container_name -p 9001:8080 byepesg/agro_online:main
-        EOF
+#   steps:
+#     - name: Install doctl
+#       # Use the doctl action to install DigitalOcean's command line interface
+#       uses: digitalocean/action-doctl@v2
+#       with:
+#         # Authenticate doctl using the DigitalOcean access token stored in secrets
+#         token: ${{ secrets.DIGITALOCEAN_ACCESS_TOKEN }}
+
+#     - name: SSH into Droplet and Deploy
+#       # SSH into the Droplet and execute the deployment commands
+#       run: |
+#         # Connect to the Droplet using SSH; disable strict host key checking for automation
+#         ssh -o StrictHostKeyChecking=no root@${{ secrets.DROPLET_IP }} << 'EOF'
+#           # Pull the latest Docker image from Docker Hub
+#           docker pull byepesg/agro_online:main
+          
+#           # Stop the running container if it exists
+#           docker stop your_container_name || true
+          
+#           # Remove the existing container to avoid conflicts
+#           docker rm your_container_name || true
+          
+#           # Run the new container with the pulled image on the specified ports
+#           docker run -d --name your_container_name -p 9001:8080 byepesg/agro_online:main
+#         EOF
 
 
