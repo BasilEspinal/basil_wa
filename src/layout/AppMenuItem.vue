@@ -90,8 +90,9 @@ const checkActiveRoute = (item) => {
             
             
         </a>
+
         
-        <router-link v-if="item.to && !item.items && item.visible !== false && (ability.can(item.gate))" @click="itemClick($event, item, index)"
+        <router-link v-if="item.to && !item.items && item.visible !== false" @click="itemClick($event, item, index)"
             :class="[item.class, { 'active-route': checkActiveRoute(item) }]" tabindex="0" :to="item.to">
             <i   :class="item.icon" class="layout-menuitem-icon"></i>
             <span  class="layout-menuitem-text">{{ item.label }}</span>
