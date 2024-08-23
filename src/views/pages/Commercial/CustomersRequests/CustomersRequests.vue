@@ -529,31 +529,7 @@
                                     </div>
                                 </div>
 
-                                <div class="grid">
-                                    <div class="mb-3 col-12 md:col-6 lg:col-6">
-                                        <div class="flex align-items-center">
-                                            <label for="farm" class="font-semibold w-6rem">Farm :</label>
-                                            <AutoComplete v-model="farm" class="flex-auto" inputId="ac" :suggestions="farms" @complete="searchFarms" field="name" dropdown />
-                                        </div>
-                                        <!-- <pre>{{farm}}</pre> -->
-                                        <small id="username-help" :class="{ 'p-invalid text-red-700': errorsNew['farm'] }">
-                                            {{ errorsNew.farm }}
-                                        </small>
-                                        <BackendErrors :name="errorResponseAPI?.errors?.farm_uuid" />
-                                    </div>
 
-                                    <div class="mb-3 col-12 md:col-6 lg:col-6">
-                                        <div class="flex align-items-center">
-                                            <label for="company" class="font-semibold w-6rem">Company:</label>
-                                            <AutoComplete v-model="company" class="flex-auto" inputId="ac" :suggestions="compa" @complete="searchCompannies" field="name" dropdown />
-                                        </div>
-                                        <!-- <pre>{{company}}</pre> -->
-                                        <small id="username-help" :class="{ 'p-invalid text-red-700': errorsNew['company'] }">
-                                            {{ errorsNew.company }}
-                                        </small>
-                                        <BackendErrors :name="errorResponseAPI?.errors?.company_uuid" />
-                                    </div>
-                                </div>
 
                                 <div class="grid">
                                     <div class="mb-3 col-12 md:col-6 lg:col-3">
@@ -613,8 +589,35 @@
                                 </Card>
                             </template>
                         </Card>
+                        
 
                         <Divider />
+
+                        <div class="grid">
+                                    <div class="mb-3 col-12 md:col-6 lg:col-6">
+                                        <div class="flex align-items-center">
+                                            <label for="farm" class="font-semibold w-6rem">Farm :</label>
+                                            <AutoComplete v-model="farm" class="flex-auto" inputId="ac" :suggestions="farms" @complete="searchFarms" field="name" dropdown />
+                                        </div>
+                                        <!-- <pre>{{farm}}</pre> -->
+                                        <small id="username-help" :class="{ 'p-invalid text-red-700': errorsNew['farm'] }">
+                                            {{ errorsNew.farm }}
+                                        </small>
+                                        <BackendErrors :name="errorResponseAPI?.errors?.farm_uuid" />
+                                    </div>
+
+                                    <div class="mb-3 col-12 md:col-6 lg:col-6">
+                                        <div class="flex align-items-center">
+                                            <label for="company" class="font-semibold w-6rem">Company:</label>
+                                            <AutoComplete v-model="company" class="flex-auto" inputId="ac" :suggestions="compa" @complete="searchCompannies" field="name" dropdown />
+                                        </div>
+                                        <!-- <pre>{{company}}</pre> -->
+                                        <small id="username-help" :class="{ 'p-invalid text-red-700': errorsNew['company'] }">
+                                            {{ errorsNew.company }}
+                                        </small>
+                                        <BackendErrors :name="errorResponseAPI?.errors?.company_uuid" />
+                                    </div>
+                                </div>
                     </TabPanel>
                     <TabPanel header="Summarize">
                         <Timeline :value="events" class="mb-3 col-12 md:col-12 lg:col-12">
@@ -638,8 +641,7 @@
 
             <Dialog v-model:visible="formDialogEdit" modal :header="formDialogEditTitle" class="p-fluid text-center mx-auto">
                 <!-- <pre>{{ prueba }}</pre> -->
-                <pre>{{ prueba }}</pre>
-                <pre>{{ errorsNew }}</pre>
+
                 <Avatar icon="pi pi-user" class="mr-3" size="xlarge" shape="circle" />
                 <span> Employee: {{ employeeNameDefault }} </span>
 
@@ -790,69 +792,7 @@
                                 <BackendErrors :name="errorResponseAPI?.errors?.outlet_temperature" />
                             </div>
 
-                            <!-- <div class="mb-3 col-12 md:col-6 lg:col-3">
-                                <div class="flex align-items-center">
-                                    <label for="productV" class="font-semibold w-6rem">Product:</label>
-                                    <AutoComplete v-model="productV" class="flex-auto" inputId="ac"
-                                        :suggestions="products" @complete="searchProduct" field="name" dropdown />
-                                </div>
-                                
-                                <small id="username-help" :class="{ 'p-invalid text-red-700': errorsNew['productV'] }">
-                                    {{ errorsNew.productV }}
-                                </small>
-                            </div>
 
-                            <div class="mb-3 col-12 md:col-6 lg:col-3">
-                                <div class="flex align-items-center">
-                                    <label for="product_typeV" class="font-semibold w-6rem">Product Type:</label>
-                                    <AutoComplete v-model="product_typeV" class="flex-auto" inputId="ac"
-                                        :suggestions="productsType" @complete="searchProductType" field="name"
-                                        dropdown />
-                                </div>
-                                
-                                <small id="username-help"
-                                    :class="{ 'p-invalid text-red-700': errorsNew['product_typeV'] }">
-                                    {{ errorsNew.product_typeV }}
-                                </small>
-                            </div> -->
-
-                            <!-- <div class="mb-3 col-12 md:col-6 lg:col-3">
-                                <div class="flex align-items-center">
-                                    <label for="packing_typeV" class="font-semibold w-6rem">Packing type:</label>
-                                    <AutoComplete v-model="packing_typeV" class="flex-auto" inputId="ac"
-                                        :suggestions="packingTypes" @complete="searchPackingType" field="name"
-                                        dropdown />
-                                </div>
-                                
-                                <small id="username-help"
-                                    :class="{ 'p-invalid text-red-700': errorsNew['packing_typeV'] }">
-                                    {{ errorsNew.packing_typeV }}
-                                </small>
-                            </div>
-
-                            <div class="mb-3 col-12 md:col-6 lg:col-3">
-                                <div class="flex align-items-center">
-                                    <label for="farm" class="font-semibold w-6rem">Farm :</label>
-                                    <AutoComplete v-model="farm" class="flex-auto" inputId="ac" :suggestions="farms"
-                                        @complete="searchFarms" field="name" dropdown />
-                                </div>
-                                
-                                <small id="username-help" :class="{ 'p-invalid text-red-700': errorsNew['farm'] }">
-                                    {{ errorsNew.farm }}
-                                </small>
-                            </div>
-
-                            <div class="mb-3 col-12 md:col-6 lg:col-3">
-                                <div class="flex align-items-center">
-                                    <label for="company" class="font-semibold w-6rem">Company:</label>
-                                    <AutoComplete v-model="company" class="flex-auto" inputId="ac" :suggestions="compa"
-                                        @complete="searchCompannies" field="name" dropdown />
-                                </div>
-                                
-                                <small id="username-help" :class="{ 'p-invalid text-red-700': errorsNew['company'] }">
-                                    {{ errorsNew.company }}
-                                </small>
-                            </div> -->
                         </div>
                     </TabPanel>
                     <TabPanel header="Presentation">
@@ -915,31 +855,7 @@
                                     </div>
                                 </div>
 
-                                <div class="grid">
-                                    <div class="mb-3 col-12 md:col-6 lg:col-6">
-                                        <div class="flex align-items-center">
-                                            <label for="farm" class="font-semibold w-6rem">Farm :</label>
-                                            <AutoComplete v-model="farm" class="flex-auto" inputId="ac" :suggestions="farms" @complete="searchFarms" field="name" dropdown />
-                                        </div>
-                                        <!-- <pre>{{farm}}</pre> -->
-                                        <small id="username-help" :class="{ 'p-invalid text-red-700': errorsNew['farm'] }">
-                                            {{ errorsNew.farm }}
-                                        </small>
-                                        <BackendErrors :name="errorResponseAPI?.errors?.farm_uuid" />
-                                    </div>
 
-                                    <div class="mb-3 col-12 md:col-6 lg:col-6">
-                                        <div class="flex align-items-center">
-                                            <label for="company" class="font-semibold w-6rem">Company:</label>
-                                            <AutoComplete v-model="company" class="flex-auto" inputId="ac" :suggestions="compa" @complete="searchCompannies" field="name" dropdown />
-                                        </div>
-                                        <!-- <pre>{{company}}</pre> -->
-                                        <small id="username-help" :class="{ 'p-invalid text-red-700': errorsNew['company'] }">
-                                            {{ errorsNew.company }}
-                                        </small>
-                                        <BackendErrors :name="errorResponseAPI?.errors?.company_uuid" />
-                                    </div>
-                                </div>
 
                                 <div class="grid">
                                     <div class="mb-3 col-12 md:col-6 lg:col-3">
@@ -1001,6 +917,32 @@
                         </Card>
 
                         <Divider />
+
+                        <div class="grid">
+                                    <div class="mb-3 col-12 md:col-6 lg:col-6">
+                                        <div class="flex align-items-center">
+                                            <label for="farm" class="font-semibold w-6rem">Farm :</label>
+                                            <AutoComplete v-model="farm" class="flex-auto" inputId="ac" :suggestions="farms" @complete="searchFarms" field="name" dropdown />
+                                        </div>
+                                        <!-- <pre>{{farm}}</pre> -->
+                                        <small id="username-help" :class="{ 'p-invalid text-red-700': errorsNew['farm'] }">
+                                            {{ errorsNew.farm }}
+                                        </small>
+                                        <BackendErrors :name="errorResponseAPI?.errors?.farm_uuid" />
+                                    </div>
+
+                                    <div class="mb-3 col-12 md:col-6 lg:col-6">
+                                        <div class="flex align-items-center">
+                                            <label for="company" class="font-semibold w-6rem">Company:</label>
+                                            <AutoComplete v-model="company" class="flex-auto" inputId="ac" :suggestions="compa" @complete="searchCompannies" field="name" dropdown />
+                                        </div>
+                                        <!-- <pre>{{company}}</pre> -->
+                                        <small id="username-help" :class="{ 'p-invalid text-red-700': errorsNew['company'] }">
+                                            {{ errorsNew.company }}
+                                        </small>
+                                        <BackendErrors :name="errorResponseAPI?.errors?.company_uuid" />
+                                    </div>
+                                </div>
                     </TabPanel>
                     <TabPanel header="Summarize">
                         <Timeline :value="events" class="mb-3 col-12 md:col-12 lg:col-12">
@@ -1021,9 +963,7 @@
             </Dialog>
 
             <Dialog v-model:visible="formDialogClone" modal :header="formDialogCloneTitle" class="p-fluid text-center mx-auto">
-                <!-- <pre>{{ prueba }}</pre> -->
-                <pre>{{ prueba }}</pre>
-                <pre>{{ errorsNew }}</pre>
+
                 <Avatar icon="pi pi-user" class="mr-3" size="xlarge" shape="circle" />
                 <span> Employee: {{ employeeNameDefault }} </span>
 
@@ -1311,31 +1251,7 @@
                                     </div>
                                 </div>
 
-                                <div class="grid">
-                                    <div class="mb-3 col-12 md:col-6 lg:col-6">
-                                        <div class="flex align-items-center">
-                                            <label for="farm" class="font-semibold w-6rem">Farm :</label>
-                                            <AutoComplete v-model="farm" class="flex-auto" inputId="ac" :suggestions="farms" @complete="searchFarms" field="name" dropdown />
-                                        </div>
-                                        <!-- <pre>{{farm}}</pre> -->
-                                        <small id="username-help" :class="{ 'p-invalid text-red-700': errorsNew['farm'] }">
-                                            {{ errorsNew.farm }}
-                                        </small>
-                                        <BackendErrors :name="errorResponseAPI?.errors?.farm_uuid" />
-                                    </div>
 
-                                    <div class="mb-3 col-12 md:col-6 lg:col-6">
-                                        <div class="flex align-items-center">
-                                            <label for="company" class="font-semibold w-6rem">Company:</label>
-                                            <AutoComplete v-model="company" class="flex-auto" inputId="ac" :suggestions="compa" @complete="searchCompannies" field="name" dropdown />
-                                        </div>
-                                        <!-- <pre>{{company}}</pre> -->
-                                        <small id="username-help" :class="{ 'p-invalid text-red-700': errorsNew['company'] }">
-                                            {{ errorsNew.company }}
-                                        </small>
-                                        <BackendErrors :name="errorResponseAPI?.errors?.company_uuid" />
-                                    </div>
-                                </div>
 
                                 <div class="grid">
                                     <div class="mb-3 col-12 md:col-6 lg:col-3">
@@ -1397,6 +1313,32 @@
                         </Card>
 
                         <Divider />
+
+                        <div class="grid">
+                                    <div class="mb-3 col-12 md:col-6 lg:col-6">
+                                        <div class="flex align-items-center">
+                                            <label for="farm" class="font-semibold w-6rem">Farm :</label>
+                                            <AutoComplete v-model="farm" class="flex-auto" inputId="ac" :suggestions="farms" @complete="searchFarms" field="name" dropdown />
+                                        </div>
+                                        <!-- <pre>{{farm}}</pre> -->
+                                        <small id="username-help" :class="{ 'p-invalid text-red-700': errorsNew['farm'] }">
+                                            {{ errorsNew.farm }}
+                                        </small>
+                                        <BackendErrors :name="errorResponseAPI?.errors?.farm_uuid" />
+                                    </div>
+
+                                    <div class="mb-3 col-12 md:col-6 lg:col-6">
+                                        <div class="flex align-items-center">
+                                            <label for="company" class="font-semibold w-6rem">Company:</label>
+                                            <AutoComplete v-model="company" class="flex-auto" inputId="ac" :suggestions="compa" @complete="searchCompannies" field="name" dropdown />
+                                        </div>
+                                        <!-- <pre>{{company}}</pre> -->
+                                        <small id="username-help" :class="{ 'p-invalid text-red-700': errorsNew['company'] }">
+                                            {{ errorsNew.company }}
+                                        </small>
+                                        <BackendErrors :name="errorResponseAPI?.errors?.company_uuid" />
+                                    </div>
+                                </div>
                     </TabPanel>
                     <TabPanel header="Summarize">
                         <Timeline :value="events" class="mb-3 col-12 md:col-12 lg:col-12">
@@ -1682,6 +1624,7 @@ const {
         packing_type_dispatchV: { name: '', id: '' },
         packing_dispatch_weightV: { name: '', id: '' },
         unit_type_dispatch_V: { name: '', id: '' },
+        packing_name_customerV: 'CAJAS',
         outlet_temperatureV: 0
     },
     validationSchema: toTypedSchema(

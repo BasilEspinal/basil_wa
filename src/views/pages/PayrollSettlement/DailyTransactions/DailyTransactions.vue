@@ -30,7 +30,7 @@
 
             </div>
         </div>
-        <!-- <pre>{{ dataResponseAPI }}</pre> -->
+        <pre>{{ event }}</pre>
         <DataTable
         :value="dataFromComponent"
         dataKey="uuid"
@@ -42,9 +42,11 @@
         resizableColumns
         columnResizeMode="expand"
         sortMode="multiple"
+
         :paginator="true"
-        :rows="50"
+        :rows="3"
         :rowsPerPageOptions="[5, 10, 20, 50]"
+
         :class="`p-datatable-${size.class}`"
         @row-select="onRowSelect(selectedRegisters)"
         @row-unselect="onRowSelect(selectedRegisters)"
@@ -53,6 +55,7 @@
         filterDisplay="menu"
         v-model:filters="filters"
         :globalFilterFields="['name', 'company.name', 'farm.name', 'status.name', 'created_at', 'updated_at', 'codeV', 'planner_tasks.transaction_date', 'transaction_date', 'day_week_num', 'tasks_of_type.name', 'packing_type_name', 'product_name', 'vehicle', 'supervisory_employee.document', 'supervisory_employee.first_name', 'supervisory_employee.last_name', 'supervisory_jobtype.name', 'worker_employee.document', 'worker_employee.first_name', 'worker_employee.last_name', 'worker_jobtype.name', 'customer_request_id.dispatch_number_lot']" 
+        
         >
         <template #header>
             <!--Uncomment when filters are done-->
@@ -487,7 +490,7 @@ import ability from '@/service/ability.js';
 import { AbilityBuilder} from '@casl/ability';
 
 const prueba = ref({revisar: 'revisar GET-POST-PUT-DELETE'});
-const namePage = ' Daily Transactions  ';
+const namePage = ' Proofff Transactions  ';
 const titlePage = ' '+namePage+' information';
 const dataFromComponent = ref();
 const Farms = ref([]);
@@ -496,6 +499,33 @@ const Compan = ref([]);
 const compa = ref([]);
 const farmDefault = sessionStorage.getItem('accessSessionFarm');
 const companyDefault = sessionStorage.getItem('accessSessionCompany');
+
+
+const lazyLoading = ref(false);
+
+const loadCarsLazy = (event) => {
+    !lazyLoading.value && (lazyLoading.value = true);
+
+    if (loadLazyTimeout.value) {
+        clearTimeout(loadLazyTimeout.value);
+    }
+
+    //simulate remote connection with a timeout
+    loadLazyTimeout.value = setTimeout(() => {
+        let _virtualCars = [...virtualCars.value];
+        let { first, last } = event;
+
+        //load data of required page
+        const loadedCars = cars.value.slice(first, last);
+
+        //populate page of virtual cars
+        Array.prototype.splice.apply(_virtualCars, [...[first, last - first], ...loadedCars]);
+
+        virtualCars.value = _virtualCars;
+        lazyLoading.value = false;
+    }, Math.random() * 1000 + 250);
+};
+
 
 const formDialogNew = ref(false);
 const formDialogNewTitle = 'Create new xxxxxxxxxx';
