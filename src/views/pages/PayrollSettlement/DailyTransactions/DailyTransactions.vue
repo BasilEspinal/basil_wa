@@ -42,9 +42,11 @@
         resizableColumns
         columnResizeMode="expand"
         sortMode="multiple"
+
         :paginator="true"
-        :rows="1"
+        :rows="3"
         :rowsPerPageOptions="[5, 10, 20, 50]"
+
         :class="`p-datatable-${size.class}`"
         @row-select="onRowSelect(selectedRegisters)"
         @row-unselect="onRowSelect(selectedRegisters)"
@@ -488,7 +490,7 @@ import ability from '@/service/ability.js';
 import { AbilityBuilder} from '@casl/ability';
 
 const prueba = ref({revisar: 'revisar GET-POST-PUT-DELETE'});
-const namePage = ' Daily Transactions  ';
+const namePage = ' Proofff Transactions  ';
 const titlePage = ' '+namePage+' information';
 const dataFromComponent = ref();
 const Farms = ref([]);
@@ -497,6 +499,33 @@ const Compan = ref([]);
 const compa = ref([]);
 const farmDefault = sessionStorage.getItem('accessSessionFarm');
 const companyDefault = sessionStorage.getItem('accessSessionCompany');
+
+
+const lazyLoading = ref(false);
+
+const loadCarsLazy = (event) => {
+    !lazyLoading.value && (lazyLoading.value = true);
+
+    if (loadLazyTimeout.value) {
+        clearTimeout(loadLazyTimeout.value);
+    }
+
+    //simulate remote connection with a timeout
+    loadLazyTimeout.value = setTimeout(() => {
+        let _virtualCars = [...virtualCars.value];
+        let { first, last } = event;
+
+        //load data of required page
+        const loadedCars = cars.value.slice(first, last);
+
+        //populate page of virtual cars
+        Array.prototype.splice.apply(_virtualCars, [...[first, last - first], ...loadedCars]);
+
+        virtualCars.value = _virtualCars;
+        lazyLoading.value = false;
+    }, Math.random() * 1000 + 250);
+};
+
 
 const formDialogNew = ref(false);
 const formDialogNewTitle = 'Create new xxxxxxxxxx';
