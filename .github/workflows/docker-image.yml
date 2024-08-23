@@ -55,7 +55,7 @@ jobs:
   
       - name: SSH into Droplet and Deploy
         run: |
-          ssh -i ~/.ssh/ayepes2003_rsa -o StrictHostKeyChecking=no root@${{ secrets.DROPLET_IP }} << 'EOF'
+          ssh -i root@${{ secrets.DROPLET_IP }} << 'EOF'
             docker pull byepesg/agro_online:main
             docker stop your_container_name || true
             docker rm your_container_name || true
