@@ -497,7 +497,7 @@ import ability from '@/service/ability.js';
 import { AbilityBuilder} from '@casl/ability';
 
 const prueba = ref({revisar: 'revisar GET-POST-PUT-DELETE'});
-const namePage = ' 5 Another Proofff Transactions  ';
+const namePage = ' Daily Transactions by Planner';  ';
 const titlePage = ' '+namePage+' information';
 const dataFromComponent = ref();
 const Farms = ref([]);
@@ -630,6 +630,8 @@ const initFilters = () => {
         updated_at: { operator: FilterOperator.AND, constraints: [{ value: null, matchMode: FilterMatchMode.STARTS_WITH }] },
     };
 };
+
+
 
 const documentFrozen = ref(false);
 const readAll = async () => {
