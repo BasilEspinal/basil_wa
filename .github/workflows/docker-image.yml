@@ -1,4 +1,4 @@
-name: Docker Image CI
+name: Docker Image CI/CD
 
 on:
   push:
@@ -8,7 +8,7 @@ on:
 
 jobs:
   push_to_registry:
-    name: Push Docker image to Docker Hub 
+    name: Build and Push Docker image to Docker Hub 
     runs-on: ubuntu-latest
 
     steps:
@@ -39,26 +39,18 @@ jobs:
     name: Deploy to DigitalOcean Droplet
     needs: push_to_registry
     runs-on: ubuntu-latest
-  
+
     steps:
-      - name: Install doctl
-        uses: digitalocean/action-doctl@v2
-        with:
-          token: ${{ secrets.DIGITALOCEAN_ACCESS_TOKEN }}
-  
-      - name: Set up SSH
+      - name: Install SSH Client
+        run: sudo apt-get update && sudo apt-get install -y sshpass
+
+      - name: Deploy and Run Docker Container on Droplet
+        env:
+          DROPLET_IP: ${{ secrets.DROPLET_IP }}
+          DROPLET_PASSWORD: ${{ secrets.DROPLET_PASSWORD }}
         run: |
-          mkdir -p ~/.ssh
-          echo "${{ secrets.SSH_PRIVATE_KEY }}" > ~/.ssh/deployment_basil
-          chmod 600 ~/.ssh/deployment_basil
-          echo "${{ secrets.KNOWN_HOSTS }}" >> ~/.ssh/known_hosts
-  
-      - name: SSH into Droplet and Deploy
-        run: |
-          ssh -i ~/.ssh/deployment_basil root@${{ secrets.DROPLET_IP }} << 'EOF'
-            docker pull byepesg/agro_online:main
-            docker stop your_container_name || true
-            docker rm your_container_name || true
-            docker run -d --name your_container_name -p 9001:8080 byepesg/agro_online:main
-          EOF
-  
+          sshpass -p "${{ secrets.DROPLET_PASSWORD }}" ssh -o StrictHostKeyChecking=no root@${DROPLET_IP} "
+          docker pull byepesg/agro_online:latest &&
+          docker stop jbpm-server-full || true &&
+          docker rm jbpm-server-full || true &&
+          docker run -p 9020:8080 -p 8001:8001 -d --name jbpm-server-full byepesg/agro_online:latest"
