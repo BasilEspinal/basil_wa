@@ -30,23 +30,29 @@
 
             </div>
         </div>
-        <pre>{{ event }}</pre>
+        
         <DataTable
         :value="dataFromComponent"
         dataKey="uuid"
         tableStyle="min-width: 75rem"
         showGridlines
-        :loading="loading"
+        
         scrollable
         scrollHeight="600px"
         resizableColumns
         columnResizeMode="expand"
         sortMode="multiple"
 
-        :paginator="true"
-        :rows="3"
-        :rowsPerPageOptions="[5, 10, 20, 50]"
-
+        :rows="20"
+        :totalRecords="120"
+        @page="onPage($event)"
+        @sort="onSort($event)"
+        ref="dt" 
+        lazy 
+        :first="first" 
+        paginator 
+        :loading="loading"
+        
         :class="`p-datatable-${size.class}`"
         @row-select="onRowSelect(selectedRegisters)"
         @row-unselect="onRowSelect(selectedRegisters)"
@@ -54,9 +60,10 @@
         v-model:selection="selectedRegisters"
         filterDisplay="menu"
         v-model:filters="filters"
-        :globalFilterFields="['name', 'company.name', 'farm.name', 'status.name', 'created_at', 'updated_at', 'codeV', 'planner_tasks.transaction_date', 'transaction_date', 'day_week_num', 'tasks_of_type.name', 'packing_type_name', 'product_name', 'vehicle', 'supervisory_employee.document', 'supervisory_employee.first_name', 'supervisory_employee.last_name', 'supervisory_jobtype.name', 'worker_employee.document', 'worker_employee.first_name', 'worker_employee.last_name', 'worker_jobtype.name', 'customer_request_id.dispatch_number_lot']" 
+        :globalFilterFields="['name', 'company.name', 'farm.name', 'status.name', 'created_at', 'updated_at', 'planner_tasks.transaction_date', 'transaction_date', 'day_week_num', 'tasks_of_type.name', 'packing_type.name', 'product.name', 'vehicle.name', 'supervisory_employee.document', 'supervisory_employee.first_name', 'supervisory_employee.last_name', 'supervisory_jobtype.name', 'worker_employee.document', 'worker_employee.first_name', 'worker_employee.last_name', 'worker_jobtype.name', 'customer_request_id.dispatch_number_lot']" 
         
         >
+        
         <template #header>
             <!--Uncomment when filters are done-->
 
@@ -501,30 +508,11 @@ const farmDefault = sessionStorage.getItem('accessSessionFarm');
 const companyDefault = sessionStorage.getItem('accessSessionCompany');
 
 
-const lazyLoading = ref(false);
+const dt = ref();
+const loading = ref(false);
+const lazyParams = ref({});
+const first = ref(0);
 
-const loadCarsLazy = (event) => {
-    !lazyLoading.value && (lazyLoading.value = true);
-
-    if (loadLazyTimeout.value) {
-        clearTimeout(loadLazyTimeout.value);
-    }
-
-    //simulate remote connection with a timeout
-    loadLazyTimeout.value = setTimeout(() => {
-        let _virtualCars = [...virtualCars.value];
-        let { first, last } = event;
-
-        //load data of required page
-        const loadedCars = cars.value.slice(first, last);
-
-        //populate page of virtual cars
-        Array.prototype.splice.apply(_virtualCars, [...[first, last - first], ...loadedCars]);
-
-        virtualCars.value = _virtualCars;
-        lazyLoading.value = false;
-    }, Math.random() * 1000 + 250);
-};
 
 
 const formDialogNew = ref(false);
@@ -540,7 +528,8 @@ const formDialogDelete = ref(false);
 const toast = useToast();
 const filename = ref('table');
 const isChanging = ref(false);
-let endpoint = ref('/transactions/tasks');  //replace endpoint with your endpoint
+let endpoint = ref("/transactions/tasks?page=" + "1")
+  //replace endpoint with your endpoint
 
 
 ////////////
@@ -553,14 +542,50 @@ const sizeOptions = ref([
     { label: 'Large', value: 'large', class: 'lg' }
 ]);
 
+onMounted(async() => {
+    loading.value = true;
+    lazyParams.value = {
+        first: dt.value.first,
+        rows: dt.value.rows,
+        sortField: null,
+        sortOrder: null,
+        filters: filters.value
+    };
 
+    await loadLazyData();
+});
 
 onBeforeMount(() => {
     readAll();
     initFilters();
 });
+
+const loadLazyData = async (event) => {
+
+lazyParams.value = { ...lazyParams.value, first: event?.first || first.value };
+endpoint.value = "/transactions/tasks?page=" + (lazyParams.value.page + 1);
+const response = await getRequest(endpoint.value);
+if (!response.ok) toast.add({ severity: 'error', detail: 'Error' + response.error, life: 3000 });
+dataFromComponent.value = response.data.data;
+
+loading.value = false;
+
+
+};
+const onPage = async (event) => {
+loading.value = true;
+lazyParams.value = event;
+loadLazyData(event);
+
+
+};
+const onSort = (event) => {
+lazyParams.value = event;
+loadLazyData(event);
+
+};
 const listRowSelect = ref([]);
-const loading = ref(false);
+
 const onRowSelect = (data) => {
     
     listRowSelect.value = data;
@@ -619,9 +644,10 @@ const readAll = async () => {
     Compan.value = respCompan.data.data.map((comp) => ({ id: comp.uuid, name: comp.name }));
 };
 const loadingData = async () => {
-    const response = await getRequest(endpoint.value);
-    if (!response.ok) toast.add({ severity: 'error', detail: 'Error' + response.error, life: 3000 });
-    dataFromComponent.value = response.data.data;
+    // const response = await getRequest(endpoint.value);
+    // if (!response.ok) toast.add({ severity: 'error', detail: 'Error' + response.error, life: 3000 });
+    // dataFromComponent.value = response.data.data;
+    
 };
 watch(
     () => dataFromComponent.value,
