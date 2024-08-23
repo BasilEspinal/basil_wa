@@ -50,7 +50,7 @@ jobs:
           DROPLET_PASSWORD: ${{ secrets.DROPLET_PASSWORD }}
         run: |
           sshpass -p "${{ secrets.DROPLET_PASSWORD }}" ssh -o StrictHostKeyChecking=no root@${DROPLET_IP} "
-          docker pull byepesg/agro_online:latest &&
-          docker stop jbpm-server-full || true &&
-          docker rm jbpm-server-full || true &&
-          docker run -p 9020:8080 -p 8001:8001 -d --name jbpm-server-full byepesg/agro_online:latest"
+          docker pull byepesg/agro_online:main &&
+          docker stop agro_online_container || true &&
+          docker rm agro_online_container || true &&
+          docker run -d -p 9001:8080 --name agro_online_container byepesg/agro_online:main"
