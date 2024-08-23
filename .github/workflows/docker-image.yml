@@ -45,7 +45,14 @@ jobs:
         uses: digitalocean/action-doctl@v2
         with:
           token: ${{ secrets.DIGITALOCEAN_ACCESS_TOKEN }}
-
+  
+      - name: Set up SSH
+        run: |
+          mkdir -p ~/.ssh
+          echo "${{ secrets.SSH_PRIVATE_KEY }}" > ~/.ssh/deployment_basil
+          chmod 600 ~/.ssh/deployment_basil
+          echo "${{ secrets.KNOWN_HOSTS }}" >> ~/.ssh/known_hosts
+  
       - name: SSH into Droplet and Deploy
         run: |
           ssh -i ~/.ssh/deployment_basil root@${{ secrets.DROPLET_IP }} << 'EOF'
@@ -54,4 +61,4 @@ jobs:
             docker rm your_container_name || true
             docker run -d --name your_container_name -p 9001:8080 byepesg/agro_online:main
           EOF
-
+  
