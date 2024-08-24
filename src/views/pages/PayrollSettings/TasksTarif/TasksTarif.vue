@@ -4,7 +4,7 @@ import useDataAPI from '@/composables/DataAPI/FetchDataAPI.js';
 import { useToast } from 'primevue/usetoast';
 import { FilterMatchMode, FilterOperator } from 'primevue/api';
 import useData from '@/composables/DataAPI/FetchDataAPICopy.js';
-const { getRequest, postRequest, putRequest, deleteRequest, errorResponseAPI } = useData();
+const { getRequest, postRequest, putRequest, deleteRequest } = useData();
 import { useRouter } from 'vue-router';
 import { useForm } from 'vee-validate';
 import { toTypedSchema } from '@vee-validate/zod';
@@ -13,8 +13,11 @@ import { saveAs } from 'file-saver';
 import { z } from 'zod';
 import ability from '@/service/ability.js';
 import { AbilityBuilder } from '@casl/ability';
+
+const { getRequest, postRequest, putRequest, deleteRequest, errorResponseAPI } = useData();
 import BackendErrors from '@/views/Errors/BackendErrors.vue';
-const prueba = ref({ revisar: 'revisar GET-POST-PUT-DELETE' });
+
+const prueba = ref({revisar: 'revisar GET-POST-PUT-DELETE'});
 const namePage = 'Tarif of task';
 const titlePage = ' ' + namePage + ' information';
 const dataFromComponent = ref();

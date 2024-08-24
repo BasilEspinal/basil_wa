@@ -1,180 +1,169 @@
-
 <template>
     <div>
-    <div class="card">
-        <div>
-            <h1>{{ titlePage }}</h1> 
-            
+        <div class="card">
+            <div>
+                <h1>{{ titlePage }}</h1>
+            </div>
         </div>
-
-
-    </div>
-    <div class="card">
-        <div class="grid">
-            <div class="col-xs-12 col-sm-6 col-md-4 mb-2 text-center mx-auto">
-                <!--Uncomment when table is done-->
-                
+        <div class="card">
+            <div class="grid">
                 <div class="col-xs-12 col-sm-6 col-md-4 mb-2 text-center mx-auto">
-            <Toolbar style="margin-bottom: 1rem">
-                <template #center>
-                    <Button v-if = "ability.can('vehiculo_crear')" :disabled="headerNames.length > 0" :label="$t('toolbarCrud.titleCreate')" icon="pi pi-plus" class="p-button-success mb-2 mt-2" @click="openNew" size="large" />
-                    <Divider v-if = "ability.can('vehiculo_crear')" layout="vertical" />
-                    <Button v-if = "ability.can('vehiculo_editar')" :disabled="!(listRowSelect.length > 0 && listRowSelect.length < 2)" label="Edit" icon="pi pi-file-edit" class="p-button-help mb-2 mt-2" @click="openEdit" size="large" />
-                    <Divider v-if = "ability.can('vehiculo_editar')" layout="vertical" />
-                    <Button v-if = "ability.can('vehiculo_crear')" :disabled="!(listRowSelect.length > 0 && listRowSelect.length < 2)" label="Clone" icon="pi pi-copy" class="p-button-secondary mb-2 mt-2" @click="openClone" size="large" />
-                    <Divider v-if = "ability.can('vehiculo_crear')" layout="vertical" />
-                    <Button v-if = "ability.can('vehiculo_crear')" :disabled="headerNames.length > 0" label="Export" icon="pi pi-file-import" class="p-button-warning mb-2 mt-2" @click="openExport" size="large" />
-                    <Divider v-if = "ability.can('vehiculo_crear')" layout="vertical" />
-                    <Button v-if = "ability.can('vehiculo_eliminar')" :disabled="!listRowSelect.length > 0" label="Delete" icon="pi pi-trash" class="p-button-danger mb-2 mt-2" @click="openDelete" size="large" />
-                </template>
-            </Toolbar>
+                    <!--Uncomment when table is done-->
+
+                    <div class="col-xs-12 col-sm-6 col-md-4 mb-2 text-center mx-auto">
+                        <Toolbar style="margin-bottom: 1rem">
+                            <template #center>
+                                <Button v-if="ability.can('vehiculo_crear')" :disabled="headerNames.length > 0" :label="$t('toolbarCrud.titleCreate')" icon="pi pi-plus" class="p-button-success mb-2 mt-2" @click="openNew" size="large" />
+                                <Divider v-if="ability.can('vehiculo_crear')" layout="vertical" />
+                                <Button v-if="ability.can('vehiculo_editar')" :disabled="!(listRowSelect.length > 0 && listRowSelect.length < 2)" label="Edit" icon="pi pi-file-edit" class="p-button-help mb-2 mt-2" @click="openEdit" size="large" />
+                                <Divider v-if="ability.can('vehiculo_editar')" layout="vertical" />
+                                <Button v-if="ability.can('vehiculo_crear')" :disabled="!(listRowSelect.length > 0 && listRowSelect.length < 2)" label="Clone" icon="pi pi-copy" class="p-button-secondary mb-2 mt-2" @click="openClone" size="large" />
+                                <Divider v-if="ability.can('vehiculo_crear')" layout="vertical" />
+                                <Button v-if="ability.can('vehiculo_crear')" :disabled="headerNames.length > 0" label="Export" icon="pi pi-file-import" class="p-button-warning mb-2 mt-2" @click="openExport" size="large" />
+                                <Divider v-if="ability.can('vehiculo_crear')" layout="vertical" />
+                                <Button v-if="ability.can('vehiculo_eliminar')" :disabled="!listRowSelect.length > 0" label="Delete" icon="pi pi-trash" class="p-button-danger mb-2 mt-2" @click="openDelete" size="large" />
+                            </template>
+                        </Toolbar>
+                    </div>
+                </div>
             </div>
+            <!-- <pre>{{ dataResponseAPI }}</pre> -->
+            <DataTable
+                :value="dataFromComponent"
+                dataKey="uuid"
+                tableStyle="min-width: 75rem"
+                showGridlines
+                :loading="loading"
+                scrollable
+                scrollHeight="600px"
+                resizableColumns
+                columnResizeMode="expand"
+                sortMode="multiple"
+                :paginator="true"
+                :rows="50"
+                :rowsPerPageOptions="[5, 10, 20, 50]"
+                :class="`p-datatable-${size.class}`"
+                @row-select="onRowSelect(selectedRegisters)"
+                @row-unselect="onRowSelect(selectedRegisters)"
+                @select-all-change="onSelectAllChange"
+                v-model:selection="selectedRegisters"
+                filterDisplay="menu"
+                v-model:filters="filters"
+                :globalFilterFields="['company.name', 'farm.name', 'status.name', 'created_at', 'updated_at', 'code', 'vehicle_type', 'quantity_available', 'weight_packing_type']"
+                v-if="ability.can('vehiculo_listado')"
+            >
+                <template #header>
+                    <!--Uncomment when filters are done-->
 
-            </div>
-        </div>
-        <!-- <pre>{{ dataResponseAPI }}</pre> -->
-        <DataTable
-        :value="dataFromComponent"
-        dataKey="uuid"
-        tableStyle="min-width: 75rem"
-        showGridlines
-        :loading="loading"
-        scrollable
-        scrollHeight="600px"
-        resizableColumns
-        columnResizeMode="expand"
-        sortMode="multiple"
-        :paginator="true"
-        :rows="50"
-        :rowsPerPageOptions="[5, 10, 20, 50]"
-        :class="`p-datatable-${size.class}`"
-        @row-select="onRowSelect(selectedRegisters)"
-        @row-unselect="onRowSelect(selectedRegisters)"
-        @select-all-change="onSelectAllChange"
-        v-model:selection="selectedRegisters"
-        filterDisplay="menu"
-        v-model:filters="filters"
-        :globalFilterFields="[ 'company.name', 'farm.name', 'status.name', 'created_at', 'updated_at', 'code', 'vehicle_type', 'quantity_available', 'weight_packing_type']" 
-        v-if = "ability.can('vehiculo_listado')"
-        >
-        <template #header>
-            <!--Uncomment when filters are done-->
+                    <Toolbar class="mb-2">
+                        <template v-slot:start>
+                            <Button type="button" icon="pi pi-filter-slash" label="Limpiar" class="p-button-outlined mb-2" @click="clearFilter()" />
+                        </template>
+                        <template v-slot:end>
+                            <span class="p-input-icon-left mb-2">
+                                <i class="pi pi-search" />
+                                <InputText v-model="filters['global'].value" placeholder="Buscar" style="width: 100%" />
+                            </span>
+                        </template>
+                        <template v-slot:center>
+                            <SelectButton v-model="size" :options="sizeOptions" optionLabel="label" dataKey="label"> </SelectButton>
+                        </template>
+                    </Toolbar>
+                </template>
 
-            <Toolbar class = "mb-2">
-                    <template v-slot:start>
-                        <Button type="button" icon="pi pi-filter-slash" label="Limpiar" class="p-button-outlined mb-2" @click="clearFilter()" />
+                <template #empty> No customers found. </template>
+                <template #loading> Loading customers data. Please wait. </template>
+                <Column selectionMode="multiple" headerStyle="width: 3rem"></Column>
+                <Column field="code" filterField="code" header="Code" sortable :frozen="documentFrozen">
+                    <!--Replace :frozen with the model-->
+                    <template #header>
+                        <ToggleButton v-model="documentFrozen" onIcon="pi pi-lock" offIcon="pi pi-lock-open" onLabel="" offLabel="" />
+                        <div>&nbsp;</div>
                     </template>
-                    <template v-slot:end>
-                        <span class="p-input-icon-left mb-2">
-                        <i class="pi pi-search" />
-                        <InputText v-model="filters['global'].value" placeholder="Buscar" style="width: 100%" />
-                    </span>
+
+                    <template #body="{ data }">
+                        {{ data.code }}
                     </template>
-                    <template v-slot:center>
-                        
-                        <SelectButton v-model="size" :options="sizeOptions" optionLabel="label" dataKey="label"> </SelectButton>
-                        
-                    </template>       
-                </Toolbar>
-        </template>
+                    <template #filter="{ filterModel }">
+                        <InputText v-model="filterModel.value" type="text" class="p-column-filter" placeholder="Search by column " />
+                    </template>
+                </Column>
 
-        <template #empty> No customers found. </template>
-        <template #loading> Loading customers data. Please wait. </template>
-        <Column selectionMode="multiple" headerStyle="width: 3rem"></Column>
-        <Column field="code" filterField="code" header="Code" sortable :frozen="documentFrozen"> <!--Replace :frozen with the model-->
-            <template #header>
-                    <ToggleButton v-model="documentFrozen" onIcon="pi pi-lock" offIcon="pi pi-lock-open" onLabel="" offLabel="" />
-                    <div>&nbsp;</div>
-                </template>
+                <Column field="vehicle_type" filterField="vehicle_type" header="Vehicle Type" sortable>
+                    <template #body="{ data }">
+                        {{ data.vehicle_type }}
+                    </template>
+                    <template #filter="{ filterModel }">
+                        <InputText v-model="filterModel.value" type="text" class="p-column-filter" placeholder="Search by column" />
+                    </template>
+                </Column>
 
-                <template #body="{ data }">
-                    {{ data.code }} 
-                </template>
-                <template #filter="{ filterModel }">
-                    <InputText v-model="filterModel.value" type="text" class="p-column-filter" placeholder="Search by column " />
-                </template>
-        </Column>
+                <Column field="quantity_available" filterField="quantity_available" header="Quantity Available" sortable>
+                    <template #body="{ data }">
+                        {{ data.quantity_available }}
+                    </template>
+                    <template #filter="{ filterModel }">
+                        <InputText v-model="filterModel.value" type="text" class="p-column-filter" placeholder="Search by column" />
+                    </template>
+                </Column>
 
-        <Column field="vehicle_type" filterField="vehicle_type" header="Vehicle Type" sortable> 
-            
-                <template #body="{ data }">
-                    {{ data.vehicle_type }} 
-                </template>
-                <template #filter="{ filterModel }">
-                    <InputText v-model="filterModel.value" type="text" class="p-column-filter" placeholder="Search by column" />
-                </template>
-        </Column>
+                <Column field="weight_packing_type" filterField="weight_packing_type" header="Weight Packing Type" sortable>
+                    <template #body="{ data }">
+                        {{ data.weight_packing_type }}
+                    </template>
+                    <template #filter="{ filterModel }">
+                        <InputText v-model="filterModel.value" type="text" class="p-column-filter" placeholder="Search by column" />
+                    </template>
+                </Column>
 
-        <Column field="quantity_available" filterField="quantity_available" header="Quantity Available" sortable> 
-            
-            <template #body="{ data }">
-                {{ data.quantity_available }} 
-            </template>
-            <template #filter="{ filterModel }">
-                <InputText v-model="filterModel.value" type="text" class="p-column-filter" placeholder="Search by column" />
-            </template>
-        </Column>
+                <!--Here add other columns-->
 
-        <Column field="weight_packing_type" filterField="weight_packing_type" header="Weight Packing Type" sortable> 
-            
-            <template #body="{ data }">
-                {{ data.weight_packing_type }} 
-            </template>
-            <template #filter="{ filterModel }">
-                <InputText v-model="filterModel.value" type="text" class="p-column-filter" placeholder="Search by column" />
-            </template>
-        </Column>
+                <Column field="farmName" filterField="farm.name" header="Farm Name" sortable>
+                    <template #body="{ data }">
+                        {{ data.farm.name }}
+                    </template>
+                    <template #filter="{ filterModel }">
+                        <InputText v-model="filterModel.value" type="text" class="p-column-filter" placeholder="Search by column" />
+                    </template>
+                </Column>
 
-        <!--Here add other columns-->
+                <Column field="companyName" filterField="company.name" header="Company Name" sortable>
+                    <template #body="{ data }">
+                        {{ data.company.name }}
+                    </template>
+                    <template #filter="{ filterModel }">
+                        <InputText v-model="filterModel.value" type="text" class="p-column-filter" placeholder="Search by column" />
+                    </template>
+                </Column>
 
-        <Column field="farmName" filterField="farm.name" header="Farm Name" sortable>
-                <template #body="{ data }">
-                    {{ data.farm.name }}
-                </template>
-                <template #filter="{ filterModel }">
-                    <InputText v-model="filterModel.value" type="text" class="p-column-filter" placeholder="Search by column" />
-                </template>
-            </Column>
+                <Column field="createdAt" filterField="created_at" header="Creation date" sortable>
+                    <template #body="{ data }">
+                        {{ data.created_at }}
+                    </template>
+                    <template #filter="{ filterModel }">
+                        <InputText v-model="filterModel.value" type="text" class="p-column-filter" placeholder="Search by creation date" />
+                    </template>
+                </Column>
 
-            <Column field="companyName" filterField="company.name" header="Company Name" sortable>
-                <template #body="{ data }">
-                    {{ data.company.name }}
-                </template>
-                <template #filter="{ filterModel }">
-                    <InputText v-model="filterModel.value" type="text" class="p-column-filter" placeholder="Search by column" />
-                </template>
-            </Column>
+                <Column field="updatedAt" filterField="updated_at" header="Modification date" sortable>
+                    <template #body="{ data }">
+                        {{ data.updated_at }}
+                    </template>
+                    <template #filter="{ filterModel }">
+                        <InputText v-model="filterModel.value" type="text" class="p-column-filter" placeholder="Search by modification date" />
+                    </template>
+                </Column>
 
-            <Column field="createdAt" filterField="created_at" header="Creation date" sortable>
-                <template #body="{ data }">
-                    {{ data.created_at }}
-                </template>
-                <template #filter="{ filterModel }">
-                    <InputText v-model="filterModel.value" type="text" class="p-column-filter" placeholder="Search by creation date" />
-                </template>
-            </Column>
-
-            <Column field="updatedAt" filterField="updated_at" header="Modification date" sortable>
-                <template #body="{ data }">
-                    {{ data.updated_at }}
-                </template>
-                <template #filter="{ filterModel }">
-                    <InputText v-model="filterModel.value" type="text" class="p-column-filter" placeholder="Search by modification date" />
-                </template>
-            </Column>
-
-            <Column field="status" filterField="status.name" header="Status" sortable>
-                <template #body="{ data }">
-                    <Tag :value="data.status.name" :severity="'EFC88B'" />
-                </template>
-                <template #filter="{ filterModel }">
-                    <InputText v-model="filterModel.value" type="text" class="p-column-filter" placeholder="Search by status" />
-                </template>
-            </Column>
-
-        </DataTable>
-        <Dialog v-model:visible="formDialogNew" modal :header="formDialogNewTitle" class="p-fluid text-center mx-auto">
-
+                <Column field="status" filterField="status.name" header="Status" sortable>
+                    <template #body="{ data }">
+                        <Tag :value="data.status.name" :severity="'EFC88B'" />
+                    </template>
+                    <template #filter="{ filterModel }">
+                        <InputText v-model="filterModel.value" type="text" class="p-column-filter" placeholder="Search by status" />
+                    </template>
+                </Column>
+            </DataTable>
+            <Dialog v-model:visible="formDialogNew" modal :header="formDialogNewTitle" class="p-fluid text-center mx-auto">
                 <div class="mb-3">
                     <div class="flex align-items-center gap-3 mb-1">
                         <label for="username" class="font-semibold w-6rem">Code :</label>
@@ -183,6 +172,7 @@
                     <small id="username-help" :class="{ 'p-invalid text-red-700': errorsNew['codeV'] }">
                         {{ errorsNew.codeV }}
                     </small>
+                    <BackendErrors :name="errorResponseAPI?.errors?.code"/>
                 </div>
 
                 <div class="mb-3">
@@ -198,12 +188,12 @@
                 <div class="mb-3">
                     <div class="flex align-items-center gap-3 mb-1">
                         <label for="quantity_available" class="font-semibold w-6rem">Quantity Available</label>
-                        <InputNumber id="quantity_available" v-model="quantity_availableV" class="flex-auto"  placeholder="Introduce the value" inputId="minmax" :min="0" :max="1000" v-bind="quantity_availablePropsV" />
-                        
+                        <InputNumber id="quantity_available" v-model="quantity_availableV" class="flex-auto" placeholder="Introduce the value" inputId="minmax" :min="0" :max="1000" v-bind="quantity_availablePropsV" />
                     </div>
                     <small id="username-help" :class="{ 'p-invalid text-red-700': errorsNew['quantity_availableV'] }">
                         {{ errorsNew.quantity_availableV }}
                     </small>
+                    <BackendErrors :name="errorResponseAPI?.errors?.quantity_available"/>
                 </div>
 
                 <div class="mb-3">
@@ -224,6 +214,7 @@
                     <small id="username-help" :class="{ 'p-invalid text-red-700': errorsNew['farm'] }">
                         {{ errorsNew.farm }}
                     </small>
+                    <BackendErrors :name="errorResponseAPI?.errors?.farm_uuid"/>
                 </div>
                 <div class="mb-3">
                     <div class="flex align-items-center">
@@ -250,6 +241,7 @@
                     <small id="username-help" :class="{ 'p-invalid text-red-700': errorsNew['codeV'] }">
                         {{ errorsNew.codeV }}
                     </small>
+                    <BackendErrors :name="errorResponseAPI?.errors?.code"/>
                 </div>
 
                 <div class="mb-3">
@@ -265,12 +257,12 @@
                 <div class="mb-3">
                     <div class="flex align-items-center gap-3 mb-1">
                         <label for="quantity_available" class="font-semibold w-6rem">Quantity Available</label>
-                        <InputNumber id="quantity_available" v-model="quantity_availableV" class="flex-auto"  placeholder="Introduce the value" inputId="minmax" :min="0" :max="1000" v-bind="quantity_availablePropsV" />
-                        
+                        <InputNumber id="quantity_available" v-model="quantity_availableV" class="flex-auto" placeholder="Introduce the value" inputId="minmax" :min="0" :max="1000" v-bind="quantity_availablePropsV" />
                     </div>
                     <small id="username-help" :class="{ 'p-invalid text-red-700': errorsNew['quantity_availableV'] }">
                         {{ errorsNew.quantity_availableV }}
                     </small>
+                    <BackendErrors :name="errorResponseAPI?.errors?.quantity_available"/>
                 </div>
 
                 <div class="mb-3">
@@ -291,6 +283,7 @@
                     <small id="username-help" :class="{ 'p-invalid text-red-700': errorsNew['farm'] }">
                         {{ errorsNew.farm }}
                     </small>
+                    <BackendErrors :name="errorResponseAPI?.errors?.farm_uuid"/>
                 </div>
                 <div class="mb-3">
                     <div class="flex align-items-center">
@@ -317,6 +310,7 @@
                     <small id="username-help" :class="{ 'p-invalid text-red-700': errorsNew['codeV'] }">
                         {{ errorsNew.codeV }}
                     </small>
+                    <BackendErrors :name="errorResponseAPI?.errors?.code"/>
                 </div>
 
                 <div class="mb-3">
@@ -332,12 +326,12 @@
                 <div class="mb-3">
                     <div class="flex align-items-center gap-3 mb-1">
                         <label for="quantity_available" class="font-semibold w-6rem">Quantity Available</label>
-                        <InputNumber id="quantity_available" v-model="quantity_availableV" class="flex-auto"  placeholder="Introduce the value" inputId="minmax" :min="0" :max="1000" v-bind="quantity_availablePropsV" />
-                        
+                        <InputNumber id="quantity_available" v-model="quantity_availableV" class="flex-auto" placeholder="Introduce the value" inputId="minmax" :min="0" :max="1000" v-bind="quantity_availablePropsV" />
                     </div>
                     <small id="username-help" :class="{ 'p-invalid text-red-700': errorsNew['quantity_availableV'] }">
                         {{ errorsNew.quantity_availableV }}
                     </small>
+                    <BackendErrors :name="errorResponseAPI?.errors?.quantity_available"/>
                 </div>
 
                 <div class="mb-3">
@@ -358,6 +352,7 @@
                     <small id="username-help" :class="{ 'p-invalid text-red-700': errorsNew['farm'] }">
                         {{ errorsNew.farm }}
                     </small>
+                    <BackendErrors :name="errorResponseAPI?.errors?.farm_uuid"/>
                 </div>
                 <div class="mb-3">
                     <div class="flex align-items-center">
@@ -413,9 +408,8 @@
             </Dialog>
 
             <Toast />
+        </div>
     </div>
-</div>
-    
 </template>
 
 <!-- 
@@ -433,7 +427,8 @@ import useDataAPI from '@/composables/DataAPI/FetchDataAPI.js';
 import { useToast } from 'primevue/usetoast';
 import { FilterMatchMode, FilterOperator } from 'primevue/api';
 import useData from '@/composables/DataAPI/FetchDataAPICopy.js';
-const { getRequest, postRequest, putRequest, deleteRequest } = useData();
+const { getRequest, postRequest, putRequest, deleteRequest, errorResponseAPI } = useData();
+import BackendErrors from '@/views/Errors/BackendErrors.vue';
 import { useRouter } from 'vue-router';
 import { useForm } from 'vee-validate';
 import { toTypedSchema } from '@vee-validate/zod';
@@ -441,9 +436,9 @@ import * as XLSX from 'xlsx';
 import { saveAs } from 'file-saver';
 import { z } from 'zod';
 import ability from '@/service/ability.js';
-import { AbilityBuilder} from '@casl/ability';
+import { AbilityBuilder } from '@casl/ability';
 import { useI18n } from 'vue-i18n';
-const prueba = ref({revisar: 'revisar GET-POST-PUT-DELETE'});
+const prueba = ref({ revisar: 'revisar GET-POST-PUT-DELETE' });
 const namePage = ' Vehicles ';
 // const titlePage = ' '+namePage+' Information';
 const { t } = useI18n();
@@ -456,11 +451,11 @@ const compa = ref([]);
 const farmDefault = sessionStorage.getItem('accessSessionFarm');
 const companyDefault = sessionStorage.getItem('accessSessionCompany');
 
-const formDialogNewTitle = 'Create new '+namePage;
-const formDialogEditTitle = 'Edit '+namePage;
+const formDialogNewTitle = 'Create new ' + namePage;
+const formDialogEditTitle = 'Edit ' + namePage;
 const formDialogCloneTitle = 'Clone ' + namePage;
 const formDialogExportTitle = 'Export ' + namePage;
-const formDialogDeleteTitle = 'Delete '+namePage;
+const formDialogDeleteTitle = 'Delete ' + namePage;
 const formDialogNew = ref(false);
 const formDialogEdit = ref(false);
 const formDialogClone = ref(false);
@@ -469,20 +464,17 @@ const formDialogDelete = ref(false);
 const toast = useToast();
 const filename = ref('table');
 const isChanging = ref(false);
-let endpoint = ref('/vehicles');  //replace endpoint with your endpoint
-
+let endpoint = ref('/vehicles'); //replace endpoint with your endpoint
 
 ////////////
- //Form here
- ////////////   
+//Form here
+////////////
 const size = ref({ label: 'Normal', value: 'normal' });
 const sizeOptions = ref([
     { label: 'Small', value: 'small', class: 'sm' },
     { label: 'Normal', value: 'normal' },
     { label: 'Large', value: 'large', class: 'lg' }
 ]);
-
-
 
 onBeforeMount(() => {
     readAll();
@@ -491,10 +483,8 @@ onBeforeMount(() => {
 const listRowSelect = ref([]);
 const loading = ref(false);
 const onRowSelect = (data) => {
-    
     listRowSelect.value = data;
     //assignValues(mode.value)
-    
 };
 
 watch(listRowSelect, onRowSelect);
@@ -511,9 +501,9 @@ const initFilters = () => {
     filters.value = {
         global: { value: null, matchMode: FilterMatchMode.CONTAINS },
         code: { operator: FilterOperator.AND, constraints: [{ value: null, matchMode: FilterMatchMode.STARTS_WITH }] },
-        'vehicle_type': { operator: FilterOperator.AND, constraints: [{ value: null, matchMode: FilterMatchMode.STARTS_WITH }] },
-        'quantity_available': { operator: FilterOperator.AND, constraints: [{ value: null, matchMode: FilterMatchMode.STARTS_WITH }] },
-        'weight_packing_type': { operator: FilterOperator.AND, constraints: [{ value: null, matchMode: FilterMatchMode.STARTS_WITH }] },
+        vehicle_type: { operator: FilterOperator.AND, constraints: [{ value: null, matchMode: FilterMatchMode.STARTS_WITH }] },
+        quantity_available: { operator: FilterOperator.AND, constraints: [{ value: null, matchMode: FilterMatchMode.STARTS_WITH }] },
+        weight_packing_type: { operator: FilterOperator.AND, constraints: [{ value: null, matchMode: FilterMatchMode.STARTS_WITH }] },
         'status.name': { operator: FilterOperator.AND, constraints: [{ value: null, matchMode: FilterMatchMode.STARTS_WITH }] },
         'farm.name': { operator: FilterOperator.AND, constraints: [{ value: null, matchMode: FilterMatchMode.STARTS_WITH }] },
         'company.name': { operator: FilterOperator.AND, constraints: [{ value: null, matchMode: FilterMatchMode.STARTS_WITH }] },
@@ -558,7 +548,6 @@ const {
 } = useForm({
     validationSchema: toTypedSchema(
         z.object({
-
             codeV: z.string().min(4),
             vehicle_typeV: z.string().min(2),
             quantity_availableV: z.number().min(1),
@@ -598,20 +587,15 @@ let headerNames = ref([]);
 provide('isChanging', isChanging);
 watch(listRowSelect, RowSelect);
 
-
-
-
 const openNew = () => {
     resetForm();
     formDialogNew.value = true;
-
 };
 
 const openEdit = () => {
     resetForm();
-    const { code, company: empresa, farm: farmParameter,vehicle_type:vehicle_type,quantity_available:quantity_available,weight_packing_type:weight_packing_type } = listRowSelect.value[0];
+    const { code, company: empresa, farm: farmParameter, vehicle_type: vehicle_type, quantity_available: quantity_available, weight_packing_type: weight_packing_type } = listRowSelect.value[0];
 
-    
     codeV.value = code;
     vehicle_typeV.value = vehicle_type;
     quantity_availableV.value = quantity_available;
@@ -624,9 +608,8 @@ const openEdit = () => {
 
 const openClone = () => {
     resetForm();
-    const { code, company: empresa, farm: farmParameter,vehicle_type:vehicle_type,quantity_available:quantity_available,weight_packing_type:weight_packing_type } = listRowSelect.value[0];
+    const { code, company: empresa, farm: farmParameter, vehicle_type: vehicle_type, quantity_available: quantity_available, weight_packing_type: weight_packing_type } = listRowSelect.value[0];
 
-    
     codeV.value = code;
     vehicle_typeV.value = vehicle_type;
     quantity_availableV.value = quantity_available;
@@ -659,8 +642,7 @@ const createRecord = handleSubmitNew(async (values) => {
     toast.add({ severity: restp.ok ? 'success' : 'error', summary: 'Create', detail: restp.ok ? 'Creado' : restp.error, life: 3000 });
     loadingData();
     formDialogNew.value = false;
-    prueba.value= data;
-    
+    prueba.value = data;
 });
 
 const EditRecord = handleSubmitNew(async (values) => {
@@ -673,14 +655,16 @@ const EditRecord = handleSubmitNew(async (values) => {
         company_uuid: values.company ? values.company.id : companyDefault,
         farm_uuid: values.farm ? values.farm.id : farmDefault
     };
-    
+
     const restp = await putRequest(endpoint.value, data, uuid);
     toast.add({ severity: restp.ok ? 'success' : 'error', summary: 'Edit', detail: restp.ok ? 'Editado' : restp.error, life: 3000 });
     loadingData();
     formDialogEdit.value = false;
-    prueba.value= data;
-    if(restp.ok) {listRowSelect.value = []
-    selectedRegisters.value = []}
+    prueba.value = data;
+    if (restp.ok) {
+        listRowSelect.value = [];
+        selectedRegisters.value = [];
+    }
 });
 
 const CloneRecord = handleSubmitNew(async (values) => {
@@ -696,9 +680,11 @@ const CloneRecord = handleSubmitNew(async (values) => {
     toast.add({ severity: restp.ok ? 'success' : 'error', summary: 'Clone', detail: restp.ok ? 'Clonado' : restp.error, life: 3000 });
     loadingData();
     formDialogClone.value = false;
-    prueba.value= data;
-    if(restp.ok) {listRowSelect.value = []
-    selectedRegisters.value = []}
+    prueba.value = data;
+    if (restp.ok) {
+        listRowSelect.value = [];
+        selectedRegisters.value = [];
+    }
 });
 
 const searchCompannies = (event) => {
@@ -786,5 +772,4 @@ const remove = (aver) => {
 };
 </script>
 
-<style lang="scss" scoped>
-</style>
+<style lang="scss" scoped></style>

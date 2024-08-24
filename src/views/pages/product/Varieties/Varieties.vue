@@ -3,7 +3,7 @@ import { ref, watch, provide, onBeforeMount } from 'vue';
 import { useToast } from 'primevue/usetoast';
 import useRestrictionVarieties from '@/composables/Product/Varieties/restrictionsVarieties.js';
 import useData from '@/composables/DataAPI/FetchDataAPICopy.js';
-const { getRequest, postRequest, putRequest, deleteRequest } = useData();
+const { getRequest, postRequest, putRequest, deleteRequest, errorResponseAPI } = useData();
 import { toTypedSchema } from '@vee-validate/zod';
 import { useForm } from 'vee-validate';
 import * as XLSX from 'xlsx';
@@ -11,6 +11,7 @@ import ability from '@/service/ability.js';
 import { z } from 'zod';
 import { saveAs } from 'file-saver';
 import { FilterMatchMode, FilterOperator } from 'primevue/api';
+import BackendErrors from '@/views/Errors/BackendErrors.vue';
 
 //
 const prueba = ref({});
@@ -208,8 +209,9 @@ const createVarieties = handleSubmitNew(async (values) => {
 
     toast.add({ severity: restp.ok ? 'success' : 'error', summary: 'Create', detail: restp.ok ? 'Creado' : restp.error, life: 3000 });
     loadingData();
-    formDialogNew.value = false;
+    //formDialogNew.value = false;
 });
+
 const EditVarieties = handleSubmitNew(async (values) => {
     const { uuid } = listRowSelect.value[0];
     const data = {
@@ -480,6 +482,7 @@ const remove = (aver) => {
                     <small id="username-help" :class="{ 'p-invalid text-red-700': errorsNew['name'] }">
                         {{ errorsNew.name }}
                     </small>
+                    <BackendErrors :name="errorResponseAPI?.errors?.code"/>
                 </div>
                 <div class="mb-3">
                     <div class="flex align-items-center gap-3 mb-1">
@@ -489,6 +492,7 @@ const remove = (aver) => {
                     <small id="username-help" :class="{ 'p-invalid text-red-700': errorsNew['codigo'] }">
                         {{ errorsNew.codigo }}
                     </small>
+                    <BackendErrors :name="errorResponseAPI?.errors?.name"/>
                 </div>
                 <div class="mb-3">
                     <div class="flex align-items-center">
@@ -498,6 +502,7 @@ const remove = (aver) => {
                     <small id="username-help" :class="{ 'p-invalid text-red-700': errorsNew['farm'] }">
                         {{ errorsNew.farm }}
                     </small>
+                    <BackendErrors :name="errorResponseAPI?.errors?.farm_uuid"/>
                 </div>
                 <div class="mb-3">
                     <div class="flex align-items-center">
@@ -524,6 +529,7 @@ const remove = (aver) => {
                     <small id="username-help" :class="{ 'p-invalid text-red-700': errorsNew['name'] }">
                         {{ errorsNew.name }}
                     </small>
+                    <BackendErrors :name="errorResponseAPI?.errors?.name"/>
                 </div>
                 <div class="mb-3">
                     <div class="flex align-items-center gap-3 mb-1">
@@ -533,6 +539,7 @@ const remove = (aver) => {
                     <small id="username-help" :class="{ 'p-invalid text-red-700': errorsNew['codigo'] }">
                         {{ errorsNew.codigo }}
                     </small>
+                    <BackendErrors :name="errorResponseAPI?.errors?.code"/>
                 </div>
                 <!-- <div class="mb-3">
                 <div class="flex align-items-center">
@@ -570,6 +577,7 @@ const remove = (aver) => {
                     <small id="username-help" :class="{ 'p-invalid text-red-700': errorsNew['name'] }">
                         {{ errorsNew.name }}
                     </small>
+                    <BackendErrors :name="errorResponseAPI?.errors?.name"/>
                 </div>
                 <div class="mb-3">
                     <div class="flex align-items-center gap-3 mb-1">
@@ -579,6 +587,7 @@ const remove = (aver) => {
                     <small id="username-help" :class="{ 'p-invalid text-red-700': errorsNew['codigo'] }">
                         {{ errorsNew.codigo }}
                     </small>
+                    <BackendErrors :name="errorResponseAPI?.errors?.code"/>
                 </div>
                 <div class="mb-3">
                     <div class="flex align-items-center">
@@ -588,6 +597,7 @@ const remove = (aver) => {
                     <small id="username-help" :class="{ 'p-invalid text-red-700': errorsNew['farm'] }">
                         {{ errorsNew.farm }}
                     </small>
+                    <BackendErrors :name="errorResponseAPI?.errors?.farm_uuid"/>
                 </div>
                 <div class="mb-3">
                     <div class="flex align-items-center">

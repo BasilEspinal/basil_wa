@@ -1,199 +1,187 @@
 <template>
     <div>
-    <div class="card">
-        <div>
-            <h1>{{ titlePage }}</h1> 
+        <div class="card">
+            <div>
+                <h1>{{ titlePage }}</h1>
+            </div>
         </div>
-
-
-    </div>
-    <div class="card">
-        <div class="grid">
-            <div class="col-xs-12 col-sm-6 col-md-4 mb-2 text-center mx-auto">
-                <!--Uncomment when table is done-->
-                
+        <div class="card">
+            <div class="grid">
                 <div class="col-xs-12 col-sm-6 col-md-4 mb-2 text-center mx-auto">
-            <Toolbar style="margin-bottom: 1rem">
-                <template #center>
-                    <Button v-if = "ability.can('lote_crear')" :disabled="headerNames.length > 0" label="New" icon="pi pi-plus" class="p-button-success mb-2 mt-2" @click="openNew" size="large" />
-                    <Divider v-if = "ability.can('lote_crear')" layout="vertical" />
-                    <Button v-if = "ability.can('lote_editar')" :disabled="!(listRowSelect.length > 0 && listRowSelect.length < 2)" label="Edit" icon="pi pi-file-edit" class="p-button-help mb-2 mt-2" @click="openEdit" size="large" />
-                    <Divider v-if = "ability.can('lote_editar')" layout="vertical" />
-                    <Button v-if = "ability.can('lote_crear')" :disabled="!(listRowSelect.length > 0 && listRowSelect.length < 2)" label="Clone" icon="pi pi-copy" class="p-button-secondary mb-2 mt-2" @click="openClone" size="large" />
-                    <Divider v-if = "ability.can('lote_crear')" layout="vertical" />
-                    <Button v-if = "ability.can('lote_crear')" :disabled="headerNames.length > 0" label="Export" icon="pi pi-file-import" class="p-button-warning mb-2 mt-2" @click="openExport" size="large" />
-                    <Divider v-if = "ability.can('lote_crear')" layout="vertical" />
-                    <Button v-if = "ability.can('lote_eliminar')" :disabled="!listRowSelect.length > 0" label="Delete" icon="pi pi-trash" class="p-button-danger mb-2 mt-2" @click="openDelete" size="large" />
-                </template>
-            </Toolbar>
+                    <!--Uncomment when table is done-->
+
+                    <div class="col-xs-12 col-sm-6 col-md-4 mb-2 text-center mx-auto">
+                        <Toolbar style="margin-bottom: 1rem">
+                            <template #center>
+                                <Button v-if="ability.can('lote_crear')" :disabled="headerNames.length > 0" label="New" icon="pi pi-plus" class="p-button-success mb-2 mt-2" @click="openNew" size="large" />
+                                <Divider v-if="ability.can('lote_crear')" layout="vertical" />
+                                <Button v-if="ability.can('lote_editar')" :disabled="!(listRowSelect.length > 0 && listRowSelect.length < 2)" label="Edit" icon="pi pi-file-edit" class="p-button-help mb-2 mt-2" @click="openEdit" size="large" />
+                                <Divider v-if="ability.can('lote_editar')" layout="vertical" />
+                                <Button v-if="ability.can('lote_crear')" :disabled="!(listRowSelect.length > 0 && listRowSelect.length < 2)" label="Clone" icon="pi pi-copy" class="p-button-secondary mb-2 mt-2" @click="openClone" size="large" />
+                                <Divider v-if="ability.can('lote_crear')" layout="vertical" />
+                                <Button v-if="ability.can('lote_crear')" :disabled="headerNames.length > 0" label="Export" icon="pi pi-file-import" class="p-button-warning mb-2 mt-2" @click="openExport" size="large" />
+                                <Divider v-if="ability.can('lote_crear')" layout="vertical" />
+                                <Button v-if="ability.can('lote_eliminar')" :disabled="!listRowSelect.length > 0" label="Delete" icon="pi pi-trash" class="p-button-danger mb-2 mt-2" @click="openDelete" size="large" />
+                            </template>
+                        </Toolbar>
+                    </div>
+                </div>
             </div>
+            <!-- <pre>{{ dataResponseAPI }}</pre> -->
+            <DataTable
+                :value="dataFromComponent"
+                dataKey="uuid"
+                tableStyle="min-width: 75rem"
+                showGridlines
+                :loading="loading"
+                scrollable
+                scrollHeight="600px"
+                resizableColumns
+                columnResizeMode="expand"
+                sortMode="multiple"
+                :paginator="true"
+                :rows="50"
+                :rowsPerPageOptions="[5, 10, 20, 50]"
+                :class="`p-datatable-${size.class}`"
+                @row-select="onRowSelect(selectedRegisters)"
+                @row-unselect="onRowSelect(selectedRegisters)"
+                @select-all-change="onSelectAllChange"
+                v-model:selection="selectedRegisters"
+                filterDisplay="menu"
+                v-model:filters="filters"
+                :globalFilterFields="['company.name', 'farm.name', 'status.name', 'created_at', 'updated_at', 'code', 'area_m2', 'channel_average', 'zone', 'latitude', 'longitude']"
+                v-if="ability.can('lote_listado')"
+            >
+                <template #header>
+                    <!--Uncomment when filters are done-->
 
-            </div>
-        </div>
-        <!-- <pre>{{ dataResponseAPI }}</pre> -->
-        <DataTable
-        :value="dataFromComponent"
-        dataKey="uuid"
-        tableStyle="min-width: 75rem"
-        showGridlines
-        :loading="loading"
-        scrollable
-        scrollHeight="600px"
-        resizableColumns
-        columnResizeMode="expand"
-        sortMode="multiple"
-        :paginator="true"
-        :rows="50"
-        :rowsPerPageOptions="[5, 10, 20, 50]"
-        :class="`p-datatable-${size.class}`"
-        @row-select="onRowSelect(selectedRegisters)"
-        @row-unselect="onRowSelect(selectedRegisters)"
-        @select-all-change="onSelectAllChange"
-        v-model:selection="selectedRegisters"
-        filterDisplay="menu"
-        v-model:filters="filters"
-        :globalFilterFields="['company.name', 'farm.name', 'status.name', 'created_at', 'updated_at', 'code', 'area_m2', 'channel_average', 'zone', 'latitude', 'longitude']" 
-        v-if = "ability.can('lote_listado')"
-        >
-        <template #header>
-            <!--Uncomment when filters are done-->
+                    <Toolbar class="mb-2">
+                        <template v-slot:start>
+                            <Button type="button" icon="pi pi-filter-slash" label="Limpiar" class="p-button-outlined mb-2" @click="clearFilter()" />
+                        </template>
+                        <template v-slot:end>
+                            <span class="p-input-icon-left mb-2">
+                                <i class="pi pi-search" />
+                                <InputText v-model="filters['global'].value" placeholder="Buscar" style="width: 100%" />
+                            </span>
+                        </template>
+                        <template v-slot:center>
+                            <SelectButton v-model="size" :options="sizeOptions" optionLabel="label" dataKey="label"> </SelectButton>
+                        </template>
+                    </Toolbar>
+                </template>
 
-            <Toolbar class = "mb-2">
-                    <template v-slot:start>
-                        <Button type="button" icon="pi pi-filter-slash" label="Limpiar" class="p-button-outlined mb-2" @click="clearFilter()" />
+                <template #empty> No customers found. </template>
+                <template #loading> Loading customers data. Please wait. </template>
+                <Column selectionMode="multiple" headerStyle="width: 3rem"></Column>
+                <Column field="code" filterField="code" header="Code" sortable :frozen="documentFrozen">
+                    <!--Replace :frozen with the model-->
+                    <template #header>
+                        <ToggleButton v-model="documentFrozen" onIcon="pi pi-lock" offIcon="pi pi-lock-open" onLabel="" offLabel="" />
+                        <div>&nbsp;</div>
                     </template>
-                    <template v-slot:end>
-                        <span class="p-input-icon-left mb-2">
-                        <i class="pi pi-search" />
-                        <InputText v-model="filters['global'].value" placeholder="Buscar" style="width: 100%" />
-                    </span>
+
+                    <template #body="{ data }">
+                        {{ data.code }}
                     </template>
-                    <template v-slot:center>
-                        
-                        <SelectButton v-model="size" :options="sizeOptions" optionLabel="label" dataKey="label"> </SelectButton>
-                        
-                    </template>       
-                </Toolbar>
-        </template>
+                    <template #filter="{ filterModel }">
+                        <InputText v-model="filterModel.value" type="text" class="p-column-filter" placeholder="Search by " />
+                    </template>
+                </Column>
 
-        <template #empty> No customers found. </template>
-        <template #loading> Loading customers data. Please wait. </template>
-        <Column selectionMode="multiple" headerStyle="width: 3rem"></Column>
-        <Column field="code" filterField="code" header="Code" sortable :frozen="documentFrozen"> <!--Replace :frozen with the model-->
-            <template #header>
-                    <ToggleButton v-model="documentFrozen" onIcon="pi pi-lock" offIcon="pi pi-lock-open" onLabel="" offLabel="" />
-                    <div>&nbsp;</div>
-                </template>
+                <Column field="area_m2" filterField="area_m2" header="Area (m2)" sortable>
+                    <template #body="{ data }">
+                        {{ data.area_m2 }}
+                    </template>
+                    <template #filter="{ filterModel }">
+                        <InputText v-model="filterModel.value" type="text" class="p-column-filter" placeholder="Search by " />
+                    </template>
+                </Column>
 
-                <template #body="{ data }">
-                    {{ data.code }} 
-                </template>
-                <template #filter="{ filterModel }">
-                    <InputText v-model="filterModel.value" type="text" class="p-column-filter" placeholder="Search by " />
-                </template>
-        </Column>
+                <Column field="channel_average" filterField="channel_average" header="Channel Average" sortable>
+                    <template #body="{ data }">
+                        {{ data.channel_average }}
+                    </template>
+                    <template #filter="{ filterModel }">
+                        <InputText v-model="filterModel.value" type="text" class="p-column-filter" placeholder="Search by " />
+                    </template>
+                </Column>
 
-        <Column field="area_m2" filterField="area_m2" header="Area (m2)" sortable> 
-            
-                <template #body="{ data }">
-                    {{ data.area_m2 }} 
-                </template>
-                <template #filter="{ filterModel }">
-                    <InputText v-model="filterModel.value" type="text" class="p-column-filter" placeholder="Search by " />
-                </template>
-        </Column>
+                <Column field="zone" filterField="zone" header="Zone" sortable>
+                    <template #body="{ data }">
+                        {{ data.zone }}
+                    </template>
+                    <template #filter="{ filterModel }">
+                        <InputText v-model="filterModel.value" type="text" class="p-column-filter" placeholder="Search by " />
+                    </template>
+                </Column>
 
-        <Column field="channel_average" filterField="channel_average" header="Channel Average" sortable> 
-            
-            <template #body="{ data }">
-                {{ data.channel_average }} 
-            </template>
-            <template #filter="{ filterModel }">
-                <InputText v-model="filterModel.value" type="text" class="p-column-filter" placeholder="Search by " />
-            </template>
-    </Column>
+                <Column field="latitude" filterField="latitude" header="Latitude" sortable>
+                    <template #body="{ data }">
+                        {{ data.latitude }}
+                    </template>
+                    <template #filter="{ filterModel }">
+                        <InputText v-model="filterModel.value" type="text" class="p-column-filter" placeholder="Search by " />
+                    </template>
+                </Column>
 
-    <Column field="zone" filterField="zone" header="Zone" sortable> 
-            
-            <template #body="{ data }">
-                {{ data.zone }} 
-            </template>
-            <template #filter="{ filterModel }">
-                <InputText v-model="filterModel.value" type="text" class="p-column-filter" placeholder="Search by " />
-            </template>
-    </Column>
+                <Column field="longitude" filterField="longitude" header="Longitude" sortable>
+                    <template #body="{ data }">
+                        {{ data.longitude }}
+                    </template>
+                    <template #filter="{ filterModel }">
+                        <InputText v-model="filterModel.value" type="text" class="p-column-filter" placeholder="Search by " />
+                    </template>
+                </Column>
 
-    <Column field="latitude" filterField="latitude" header="Latitude" sortable> 
-            
-            <template #body="{ data }">
-                {{ data.latitude }} 
-            </template>
-            <template #filter="{ filterModel }">
-                <InputText v-model="filterModel.value" type="text" class="p-column-filter" placeholder="Search by " />
-            </template>
-    </Column>
+                <!--Here add other columns-->
 
-    <Column field="longitude" filterField="longitude" header="Longitude" sortable> 
-            
-            <template #body="{ data }">
-                {{ data.longitude }} 
-            </template>
-            <template #filter="{ filterModel }">
-                <InputText v-model="filterModel.value" type="text" class="p-column-filter" placeholder="Search by " />
-            </template>
-    </Column>
+                <Column field="farmName" filterField="farm.name" header="Farm Name" sortable>
+                    <template #body="{ data }">
+                        {{ data.farm.name }}
+                    </template>
+                    <template #filter="{ filterModel }">
+                        <InputText v-model="filterModel.value" type="text" class="p-column-filter" placeholder="Search by farm" />
+                    </template>
+                </Column>
 
-        <!--Here add other columns-->
+                <Column field="companyName" filterField="company.name" header="Company Name" sortable>
+                    <template #body="{ data }">
+                        {{ data.company.name }}
+                    </template>
+                    <template #filter="{ filterModel }">
+                        <InputText v-model="filterModel.value" type="text" class="p-column-filter" placeholder="Search by farm" />
+                    </template>
+                </Column>
 
-        <Column field="farmName" filterField="farm.name" header="Farm Name" sortable>
-                <template #body="{ data }">
-                    {{ data.farm.name }}
-                </template>
-                <template #filter="{ filterModel }">
-                    <InputText v-model="filterModel.value" type="text" class="p-column-filter" placeholder="Search by farm" />
-                </template>
-            </Column>
+                <Column field="createdAt" filterField="created_at" header="Creation date" sortable>
+                    <template #body="{ data }">
+                        {{ data.created_at }}
+                    </template>
+                    <template #filter="{ filterModel }">
+                        <InputText v-model="filterModel.value" type="text" class="p-column-filter" placeholder="Search by creation date" />
+                    </template>
+                </Column>
 
-            <Column field="companyName" filterField="company.name" header="Company Name" sortable>
-                <template #body="{ data }">
-                    {{ data.company.name }}
-                </template>
-                <template #filter="{ filterModel }">
-                    <InputText v-model="filterModel.value" type="text" class="p-column-filter" placeholder="Search by farm" />
-                </template>
-            </Column>
+                <Column field="updatedAt" filterField="updated_at" header="Modification date" sortable>
+                    <template #body="{ data }">
+                        {{ data.updated_at }}
+                    </template>
+                    <template #filter="{ filterModel }">
+                        <InputText v-model="filterModel.value" type="text" class="p-column-filter" placeholder="Search by modification date" />
+                    </template>
+                </Column>
 
-            <Column field="createdAt" filterField="created_at" header="Creation date" sortable>
-                <template #body="{ data }">
-                    {{ data.created_at }}
-                </template>
-                <template #filter="{ filterModel }">
-                    <InputText v-model="filterModel.value" type="text" class="p-column-filter" placeholder="Search by creation date" />
-                </template>
-            </Column>
-
-            <Column field="updatedAt" filterField="updated_at" header="Modification date" sortable>
-                <template #body="{ data }">
-                    {{ data.updated_at }}
-                </template>
-                <template #filter="{ filterModel }">
-                    <InputText v-model="filterModel.value" type="text" class="p-column-filter" placeholder="Search by modification date" />
-                </template>
-            </Column>
-
-            <Column field="status" filterField="status.name" header="Status" sortable>
-                <template #body="{ data }">
-                    <Tag :value="data.status.name" :severity="'EFC88B'" />
-                </template>
-                <template #filter="{ filterModel }">
-                    <InputText v-model="filterModel.value" type="text" class="p-column-filter" placeholder="Search by status" />
-                </template>
-            </Column>
-
-        </DataTable>
-        <Dialog v-model:visible="formDialogNew" modal :header="formDialogNewTitle" class="p-fluid text-center mx-auto">
-            
-            
+                <Column field="status" filterField="status.name" header="Status" sortable>
+                    <template #body="{ data }">
+                        <Tag :value="data.status.name" :severity="'EFC88B'" />
+                    </template>
+                    <template #filter="{ filterModel }">
+                        <InputText v-model="filterModel.value" type="text" class="p-column-filter" placeholder="Search by status" />
+                    </template>
+                </Column>
+            </DataTable>
+            <Dialog v-model:visible="formDialogNew" modal :header="formDialogNewTitle" class="p-fluid text-center mx-auto">
                 <div class="mb-3">
                     <div class="flex align-items-center gap-3 mb-1">
                         <label for="username" class="font-semibold w-6rem">Code :</label>
@@ -202,6 +190,7 @@
                     <small id="username-help" :class="{ 'p-invalid text-red-700': errorsNew['codeV'] }">
                         {{ errorsNew.codeV }}
                     </small>
+                    <BackendErrors :name="errorResponseAPI?.errors?.code"/>
                 </div>
 
                 <div class="mb-3">
@@ -212,17 +201,18 @@
                     <small id="area_m2V-help" :class="{ 'p-invalid text-red-700': errorsNew['area_m2V'] }">
                         {{ errorsNew.area_m2V }}
                     </small>
+                    <BackendErrors :name="errorResponseAPI?.errors?.area_m2"/>
                 </div>
 
                 <div class="mb-3">
                     <div class="flex align-items-center gap-3 mb-1">
                         <label for="channel_averageV" class="font-semibold">Channel avg:</label>
-                        <InputNumber id="channel_averageV" v-model="channel_averageV" class="flex-auto"  inputId="minmax" :min="0" :max="1000" />
-                        
+                        <InputNumber id="channel_averageV" v-model="channel_averageV" class="flex-auto" inputId="minmax" :min="0" :max="1000" />
                     </div>
                     <small id="username-help" :class="{ 'p-invalid text-red-700': errorsNew['channel_averageV'] }">
                         {{ errorsNew.channel_averageV }}
                     </small>
+                    <BackendErrors :name="errorResponseAPI?.errors?.channel_average"/>
                 </div>
 
                 <div class="mb-3">
@@ -233,13 +223,13 @@
                     <small id="username-help" :class="{ 'p-invalid text-red-700': errorsNew['zoneV'] }">
                         {{ errorsNew.zoneV }}
                     </small>
+                    <BackendErrors :name="errorResponseAPI?.errors?.zone"/>
                 </div>
 
                 <div class="mb-3">
                     <div class="flex align-items-center gap-3 mb-1">
                         <label for="latitudeV" class="font-semibold">Latitude:</label>
                         <InputText id="latitudeV" v-model="latitudeV" class="flex-auto" autocomplete="off" v-bind="latitudeVProps" />
-                        
                     </div>
                     <small id="username-help" :class="{ 'p-invalid text-red-700': errorsNew['latitudeV'] }">
                         {{ errorsNew.latitudeV }}
@@ -250,27 +240,26 @@
                     <div class="flex align-items-center gap-3 mb-1">
                         <label for="longitudeV" class="font-semibold">Longitude:</label>
                         <InputText id="longitudeV" v-model="longitudeV" class="flex-auto" autocomplete="off" v-bind="longitudeVProps" />
-                        
                     </div>
                     <small id="username-help" :class="{ 'p-invalid text-red-700': errorsNew['longitudeV'] }">
                         {{ errorsNew.longitudeV }}
                     </small>
                 </div>
 
-
                 <div class="mb-3">
                     <div class="flex align-items-center gap-3 mb-1">
                         <label for="username" class="font-semibold w-3">Farm :</label>
-                        <AutoComplete v-model="farm" inputId="ac"  class="flex-auto" :suggestions="farms" @complete="searchFarms" field="name" dropdown />
+                        <AutoComplete v-model="farm" inputId="ac" class="flex-auto" :suggestions="farms" @complete="searchFarms" field="name" dropdown />
                     </div>
                     <small id="username-help" :class="{ 'p-invalid text-red-700': errorsNew['farm'] }">
                         {{ errorsNew.farm }}
                     </small>
+                    <BackendErrors :name="errorResponseAPI?.errors?.farm_uuid"/>
                 </div>
                 <div class="mb-3">
                     <div class="flex align-items-center gap-3 mb-1">
                         <label for="username" class="font-semibold w-3">Company:</label>
-                        <AutoComplete v-model="company" inputId="ac"  class="flex-auto" :suggestions="compa" @complete="searchCompannies" field="name" dropdown />
+                        <AutoComplete v-model="company" inputId="ac" class="flex-auto" :suggestions="compa" @complete="searchCompannies" field="name" dropdown />
                     </div>
                     <small id="username-help" :class="{ 'p-invalid text-red-700': errorsNew['company'] }">
                         {{ errorsNew.company }}
@@ -284,7 +273,6 @@
             </Dialog>
 
             <Dialog v-model:visible="formDialogEdit" modal :header="formDialogEditTitle" class="p-fluid text-center mx-auto">
-             
                 <div class="mb-3">
                     <div class="flex align-items-center gap-3 mb-1">
                         <label for="username" class="font-semibold w-6rem">Code :</label>
@@ -293,6 +281,7 @@
                     <small id="username-help" :class="{ 'p-invalid text-red-700': errorsNew['codeV'] }">
                         {{ errorsNew.codeV }}
                     </small>
+                    <BackendErrors :name="errorResponseAPI?.errors?.code"/>
                 </div>
 
                 <div class="mb-3">
@@ -303,13 +292,13 @@
                     <small id="area_m2V-help" :class="{ 'p-invalid text-red-700': errorsNew['area_m2V'] }">
                         {{ errorsNew.area_m2V }}
                     </small>
+                    <BackendErrors :name="errorResponseAPI?.errors?.area_m2"/>
                 </div>
 
                 <div class="mb-3">
                     <div class="flex align-items-center gap-3 mb-1">
                         <label for="channel_averageV" class="font-semibold">Channel avg:</label>
-                        <InputNumber id="channel_averageV" v-model="channel_averageV" class="flex-auto"  inputId="minmax" :min="0" :max="1000" />
-                        
+                        <InputNumber id="channel_averageV" v-model="channel_averageV" class="flex-auto" inputId="minmax" :min="0" :max="1000" />
                     </div>
                     <small id="username-help" :class="{ 'p-invalid text-red-700': errorsNew['channel_averageV'] }">
                         {{ errorsNew.channel_averageV }}
@@ -324,13 +313,13 @@
                     <small id="username-help" :class="{ 'p-invalid text-red-700': errorsNew['zoneV'] }">
                         {{ errorsNew.zoneV }}
                     </small>
+                    <BackendErrors :name="errorResponseAPI?.errors?.zone"/>
                 </div>
 
                 <div class="mb-3">
                     <div class="flex align-items-center gap-3 mb-1">
                         <label for="latitudeV" class="font-semibold">Latitude:</label>
                         <InputText id="latitudeV" v-model="latitudeV" class="flex-auto" autocomplete="off" v-bind="latitudeVProps" />
-                        
                     </div>
                     <small id="username-help" :class="{ 'p-invalid text-red-700': errorsNew['latitudeV'] }">
                         {{ errorsNew.latitudeV }}
@@ -341,27 +330,26 @@
                     <div class="flex align-items-center gap-3 mb-1">
                         <label for="longitudeV" class="font-semibold">Longitude:</label>
                         <InputText id="longitudeV" v-model="longitudeV" class="flex-auto" autocomplete="off" v-bind="longitudeVProps" />
-                        
                     </div>
                     <small id="username-help" :class="{ 'p-invalid text-red-700': errorsNew['longitudeV'] }">
                         {{ errorsNew.longitudeV }}
                     </small>
                 </div>
 
-
                 <div class="mb-3">
                     <div class="flex align-items-center gap-3 mb-1">
                         <label for="username" class="font-semibold w-3">Farm :</label>
-                        <AutoComplete v-model="farm" inputId="ac"  class="flex-auto" :suggestions="farms" @complete="searchFarms" field="name" dropdown />
+                        <AutoComplete v-model="farm" inputId="ac" class="flex-auto" :suggestions="farms" @complete="searchFarms" field="name" dropdown />
                     </div>
                     <small id="username-help" :class="{ 'p-invalid text-red-700': errorsNew['farm'] }">
                         {{ errorsNew.farm }}
                     </small>
+                    <BackendErrors :name="errorResponseAPI?.errors?.farm_uuid"/>
                 </div>
                 <div class="mb-3">
                     <div class="flex align-items-center gap-3 mb-1">
                         <label for="username" class="font-semibold w-3">Company:</label>
-                        <AutoComplete v-model="company" inputId="ac"  class="flex-auto" :suggestions="compa" @complete="searchCompannies" field="name" dropdown />
+                        <AutoComplete v-model="company" inputId="ac" class="flex-auto" :suggestions="compa" @complete="searchCompannies" field="name" dropdown />
                     </div>
                     <small id="username-help" :class="{ 'p-invalid text-red-700': errorsNew['company'] }">
                         {{ errorsNew.company }}
@@ -375,7 +363,6 @@
             </Dialog>
 
             <Dialog v-model:visible="formDialogClone" modal :header="formDialogCloneTitle" class="p-fluid text-center mx-auto">
-           
                 <div class="mb-3">
                     <div class="flex align-items-center gap-3 mb-1">
                         <label for="username" class="font-semibold w-6rem">Code :</label>
@@ -384,6 +371,7 @@
                     <small id="username-help" :class="{ 'p-invalid text-red-700': errorsNew['codeV'] }">
                         {{ errorsNew.codeV }}
                     </small>
+                    <BackendErrors :name="errorResponseAPI?.errors?.code"/>
                 </div>
 
                 <div class="mb-3">
@@ -394,17 +382,18 @@
                     <small id="area_m2V-help" :class="{ 'p-invalid text-red-700': errorsNew['area_m2V'] }">
                         {{ errorsNew.area_m2V }}
                     </small>
+                    <BackendErrors :name="errorResponseAPI?.errors?.area_m2"/>
                 </div>
 
                 <div class="mb-3">
                     <div class="flex align-items-center gap-3 mb-1">
                         <label for="channel_averageV" class="font-semibold">Channel avg:</label>
-                        <InputNumber id="channel_averageV" v-model="channel_averageV" class="flex-auto"  inputId="minmax" :min="0" :max="1000" />
-                        
+                        <InputNumber id="channel_averageV" v-model="channel_averageV" class="flex-auto" inputId="minmax" :min="0" :max="1000" />
                     </div>
                     <small id="username-help" :class="{ 'p-invalid text-red-700': errorsNew['channel_averageV'] }">
                         {{ errorsNew.channel_averageV }}
                     </small>
+                    <BackendErrors :name="errorResponseAPI?.errors?.channel_average"/>
                 </div>
 
                 <div class="mb-3">
@@ -415,13 +404,13 @@
                     <small id="username-help" :class="{ 'p-invalid text-red-700': errorsNew['zoneV'] }">
                         {{ errorsNew.zoneV }}
                     </small>
+                    <BackendErrors :name="errorResponseAPI?.errors?.zone"/>
                 </div>
 
                 <div class="mb-3">
                     <div class="flex align-items-center gap-3 mb-1">
                         <label for="latitudeV" class="font-semibold">Latitude:</label>
                         <InputText id="latitudeV" v-model="latitudeV" class="flex-auto" autocomplete="off" v-bind="latitudeVProps" />
-                        
                     </div>
                     <small id="username-help" :class="{ 'p-invalid text-red-700': errorsNew['latitudeV'] }">
                         {{ errorsNew.latitudeV }}
@@ -432,32 +421,31 @@
                     <div class="flex align-items-center gap-3 mb-1">
                         <label for="longitudeV" class="font-semibold">Longitude:</label>
                         <InputText id="longitudeV" v-model="longitudeV" class="flex-auto" autocomplete="off" v-bind="longitudeVProps" />
-                        
                     </div>
                     <small id="username-help" :class="{ 'p-invalid text-red-700': errorsNew['longitudeV'] }">
                         {{ errorsNew.longitudeV }}
                     </small>
                 </div>
 
-
                 <div class="mb-3">
                     <div class="flex align-items-center gap-3 mb-1">
                         <label for="username" class="font-semibold w-3">Farm :</label>
-                        <AutoComplete v-model="farm" inputId="ac"  class="flex-auto" :suggestions="farms" @complete="searchFarms" field="name" dropdown />
+                        <AutoComplete v-model="farm" inputId="ac" class="flex-auto" :suggestions="farms" @complete="searchFarms" field="name" dropdown />
                     </div>
                     <small id="username-help" :class="{ 'p-invalid text-red-700': errorsNew['farm'] }">
                         {{ errorsNew.farm }}
                     </small>
+                    <BackendErrors :name="errorResponseAPI?.errors?.farm_uuid"/>
                 </div>
                 <div class="mb-3">
                     <div class="flex align-items-center gap-3 mb-1">
                         <label for="username" class="font-semibold w-3">Company:</label>
-                        <AutoComplete v-model="company" inputId="ac"  class="flex-auto" :suggestions="compa" @complete="searchCompannies" field="name" dropdown />
+                        <AutoComplete v-model="company" inputId="ac" class="flex-auto" :suggestions="compa" @complete="searchCompannies" field="name" dropdown />
                     </div>
                     <small id="username-help" :class="{ 'p-invalid text-red-700': errorsNew['company'] }">
                         {{ errorsNew.company }}
                     </small>
-                </div>      
+                </div>
 
                 <div class="flex justify-content-end gap-2">
                     <Button type="button" label="Cancel" severity="secondary" @click="formDialogClone = false" />
@@ -503,9 +491,8 @@
             </Dialog>
 
             <Toast />
+        </div>
     </div>
-</div>
-    
 </template>
 
 <!-- 
@@ -523,7 +510,8 @@ import useDataAPI from '@/composables/DataAPI/FetchDataAPI.js';
 import { useToast } from 'primevue/usetoast';
 import { FilterMatchMode, FilterOperator } from 'primevue/api';
 import useData from '@/composables/DataAPI/FetchDataAPICopy.js';
-const { getRequest, postRequest, putRequest, deleteRequest } = useData();
+const { getRequest, postRequest, putRequest, deleteRequest, errorResponseAPI } = useData();
+import BackendErrors from '@/views/Errors/BackendErrors.vue';
 import { useRouter } from 'vue-router';
 import { useForm } from 'vee-validate';
 import { toTypedSchema } from '@vee-validate/zod';
@@ -531,10 +519,10 @@ import * as XLSX from 'xlsx';
 import { saveAs } from 'file-saver';
 import { z } from 'zod';
 import ability from '@/service/ability.js';
-import { AbilityBuilder} from '@casl/ability';
-const prueba = ref({revisar: 'revisar GET-POST-PUT-DELETE'});
+import { AbilityBuilder } from '@casl/ability';
+const prueba = ref({ revisar: 'revisar GET-POST-PUT-DELETE' });
 const namePage = 'Lotes para Cultivo ';
-const titlePage = ' '+namePage+' Information';
+const titlePage = ' ' + namePage + ' Information';
 const dataFromComponent = ref();
 const Farms = ref([]);
 const farms = ref([]);
@@ -543,11 +531,11 @@ const compa = ref([]);
 const farmDefault = sessionStorage.getItem('accessSessionFarm');
 const companyDefault = sessionStorage.getItem('accessSessionCompany');
 
-const formDialogNewTitle = 'Create new '+namePage;
-const formDialogEditTitle = 'Edit '+namePage;
+const formDialogNewTitle = 'Create new ' + namePage;
+const formDialogEditTitle = 'Edit ' + namePage;
 const formDialogCloneTitle = 'Clone ' + namePage;
 const formDialogExportTitle = 'Export ' + namePage;
-const formDialogDeleteTitle = 'Delete '+namePage;
+const formDialogDeleteTitle = 'Delete ' + namePage;
 const formDialogNew = ref(false);
 const formDialogEdit = ref(false);
 const formDialogClone = ref(false);
@@ -556,20 +544,17 @@ const formDialogDelete = ref(false);
 const toast = useToast();
 const filename = ref('table');
 const isChanging = ref(false);
-let endpoint = ref('/crop_lots');  //replace endpoint with your endpoint
-
+let endpoint = ref('/crop_lots'); //replace endpoint with your endpoint
 
 ////////////
- //Form here
- ////////////   
+//Form here
+////////////
 const size = ref({ label: 'Normal', value: 'normal' });
 const sizeOptions = ref([
     { label: 'Small', value: 'small', class: 'sm' },
     { label: 'Normal', value: 'normal' },
     { label: 'Large', value: 'large', class: 'lg' }
 ]);
-
-
 
 onBeforeMount(() => {
     readAll();
@@ -578,10 +563,8 @@ onBeforeMount(() => {
 const listRowSelect = ref([]);
 const loading = ref(false);
 const onRowSelect = (data) => {
-    
     listRowSelect.value = data;
     //assignValues(mode.value)
-    
 };
 
 watch(listRowSelect, onRowSelect);
@@ -647,7 +630,6 @@ const {
 } = useForm({
     validationSchema: toTypedSchema(
         z.object({
-            
             codeV: z.string().min(2),
             area_m2V: z.string().min(1),
             channel_averageV: z.number().min(1).max(100),
@@ -691,31 +673,15 @@ let headerNames = ref([]);
 provide('isChanging', isChanging);
 watch(listRowSelect, RowSelect);
 
-
-
-
 const openNew = () => {
     resetForm();
     formDialogNew.value = true;
-
 };
 
 const openEdit = () => {
     resetForm();
-    const { 
-        code, 
-        area_m2: area_m2,
-        channel_average: channel_average,
-        zone: zone,
-        latitude: latitude,
-        longitude: longitude,
-        company: empresa, 
-        farm: farmParameter, 
-        
-    
-    } = listRowSelect.value[0];
+    const { code, area_m2: area_m2, channel_average: channel_average, zone: zone, latitude: latitude, longitude: longitude, company: empresa, farm: farmParameter } = listRowSelect.value[0];
 
-    
     codeV.value = code;
     area_m2V.value = area_m2;
     channel_averageV.value = channel_average;
@@ -729,20 +695,8 @@ const openEdit = () => {
 
 const openClone = () => {
     resetForm();
-    const { 
-        code, 
-        area_m2: area_m2,
-        channel_average: channel_average,
-        zone: zone,
-        latitude: latitude,
-        longitude: longitude,
-        company: empresa, 
-        farm: farmParameter, 
-        
-    
-    } = listRowSelect.value[0];
+    const { code, area_m2: area_m2, channel_average: channel_average, zone: zone, latitude: latitude, longitude: longitude, company: empresa, farm: farmParameter } = listRowSelect.value[0];
 
-    
     codeV.value = code;
     area_m2V.value = area_m2;
     channel_averageV.value = channel_average;
@@ -771,14 +725,14 @@ const createRecord = handleSubmitNew(async (values) => {
         latitude: values.latitudeV,
         longitude: values.longitudeV,
         company_uuid: values.company ? values.company.id : companyDefault,
-        farm_uuid: values.farm ? values.farm.id : farmDefault,
+        farm_uuid: values.farm ? values.farm.id : farmDefault
     };
     const restp = await postRequest(endpoint.value, data);
 
     toast.add({ severity: restp.ok ? 'success' : 'error', summary: 'Create', detail: restp.ok ? 'Creado' : restp.error, life: 3000 });
     loadingData();
     formDialogNew.value = false;
-    prueba.value= data;
+    prueba.value = data;
 });
 
 const EditRecord = handleSubmitNew(async (values) => {
@@ -791,16 +745,18 @@ const EditRecord = handleSubmitNew(async (values) => {
         latitude: values.latitudeV,
         longitude: values.longitudeV,
         company_uuid: values.company ? values.company.id : companyDefault,
-        farm_uuid: values.farm ? values.farm.id : farmDefault,
+        farm_uuid: values.farm ? values.farm.id : farmDefault
     };
-    
+
     const restp = await putRequest(endpoint.value, data, uuid);
     toast.add({ severity: restp.ok ? 'success' : 'error', summary: 'Edit', detail: restp.ok ? 'Editado' : restp.error, life: 3000 });
     loadingData();
     formDialogEdit.value = false;
-    prueba.value= data;
-    if(restp.ok) {listRowSelect.value = []
-    selectedRegisters.value = []}
+    prueba.value = data;
+    if (restp.ok) {
+        listRowSelect.value = [];
+        selectedRegisters.value = [];
+    }
 });
 
 const CloneRecord = handleSubmitNew(async (values) => {
@@ -812,15 +768,17 @@ const CloneRecord = handleSubmitNew(async (values) => {
         latitude: values.latitudeV,
         longitude: values.longitudeV,
         company_uuid: values.company ? values.company.id : companyDefault,
-        farm_uuid: values.farm ? values.farm.id : farmDefault,
+        farm_uuid: values.farm ? values.farm.id : farmDefault
     };
     const restp = await postRequest(endpoint.value, data);
     toast.add({ severity: restp.ok ? 'success' : 'error', summary: 'Clone', detail: restp.ok ? 'Clonado' : restp.error, life: 3000 });
     loadingData();
     formDialogClone.value = false;
-    prueba.value= data;
-    if(restp.ok) {listRowSelect.value = []
-    selectedRegisters.value = []}
+    prueba.value = data;
+    if (restp.ok) {
+        listRowSelect.value = [];
+        selectedRegisters.value = [];
+    }
 });
 
 const ExportRecord = () => {
@@ -854,8 +812,6 @@ const searchFarms = (event) => {
         }
     }, 200);
 };
-
-
 
 function formatCSV(eventos) {
     const dataExport = [];
@@ -910,5 +866,4 @@ const remove = (aver) => {
 };
 </script>
 
-<style lang="scss" scoped>
-</style>
+<style lang="scss" scoped></style>

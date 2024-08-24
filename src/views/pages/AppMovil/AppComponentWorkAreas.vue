@@ -47,7 +47,6 @@ const getUsers = async () => {
 };
 
 const getData = async () => {
-    console.log(workCenterData.value.taskoftype_id.id);
     const response = await getRequest(`/appmovil/tasksplanner?filter[tasks_of_type_id]=${workCenterData.value.taskoftype_id.id}&filter[company_id]=${CopanyId.value}&filter[farm_id]=${FarmId.value}`);
     if (!response.ok) toast.add({ severity: 'error', detail: 'Error' + response.error, life: 3000 });
     data.value = response.data.data[0];
@@ -71,10 +70,7 @@ watch(data, () => {
     titulo.value = workCenterData.value.taskoftype_id.name;
     if (data.value) {
         getTarifa();
-
         lotes.value = data.value.crop_lots;
-        console.log(data);
-        console.log(lotes.value);
     }
 });
 
@@ -129,7 +125,7 @@ function searchUsers() {
                 </template>
                 <ScrollPanel class="maxHeightC">
                     <div v-if="filterUsers">
-                        <UserAppMovil :dataUsers="filterUsers" :Lote="lotes" :Taridf="Tarif" :diaFestivo="holiday" />
+                        <UserAppMovil :dataUsers="filterUsers" :Lote="lotes" :Taridf="Tarif" :diaFestivo="holiday" :data="data" />
                     </div>
                     <div v-else>
                         <div class="flex flex-column align-items-center justify-content-center m-4">
