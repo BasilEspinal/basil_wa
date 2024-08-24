@@ -14,7 +14,7 @@ import { z } from 'zod';
 import ability from '@/service/ability.js';
 import { AbilityBuilder } from '@casl/ability';
 
-const { getRequest, postRequest, putRequest, deleteRequest, errorResponseAPI } = useData();
+
 import BackendErrors from '@/views/Errors/BackendErrors.vue';
 
 const prueba = ref({revisar: 'revisar GET-POST-PUT-DELETE'});

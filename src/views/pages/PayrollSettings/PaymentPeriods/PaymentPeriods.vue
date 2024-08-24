@@ -482,8 +482,6 @@ const companyDefault = sessionStorage.getItem('accessSessionCompany');
 const PeriodNumber = ref([]);
 const periodNumber = ref(periodNumberValues);
 
-const PeriodNumber = ref([]);
-const periodNumber = ref(periodNumberValues);
 
 const formDialogNewTitle = 'Create new ' + namePage;
 const formDialogEditTitle = 'Edit ' + namePage;
