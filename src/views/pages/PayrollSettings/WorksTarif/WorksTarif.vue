@@ -70,104 +70,88 @@
                     </Toolbar>
                 </template>
 
-                <template #empty> No customers found. </template>
-                <template #loading> Loading customers data. Please wait. </template>
-                <Column selectionMode="multiple" headerStyle="width: 3rem"></Column>
-                <!-- <Column field="code" filterField="code" header="Code" sortable :frozen="documentFrozen"> 
+        <template #empty> No customers found. </template>
+        <template #loading> Loading customers data. Please wait. </template>
+        <Column selectionMode="multiple" headerStyle="width: 3rem"></Column>
+
+        <Column field="tasks_of_type_name" filterField="tasks_of_type_name" header="Name Task Type" sortable :frozen="documentFrozen"> 
             <template #header>
                     <ToggleButton v-model="documentFrozen" onIcon="pi pi-lock" offIcon="pi pi-lock-open" onLabel="" offLabel="" />
                     <div>&nbsp;</div>
                 </template>
-
-                <template #body="{ data }">
-                    {{ data.code }} 
-                </template>
-                <template #filter="{ filterModel }">
-                    <InputText v-model="filterModel.value" type="text" class="p-column-filter" placeholder="Search by " />
-                </template>
-        </Column> -->
-
-                <!-- <Column field="name" filterField="name" header="Name" sortable> 
             
-                <template #body="{ data }">
-                    {{ data.name }} 
+            <template #body="{ data }">
+                {{ data.tasks_of_type.name }} 
+            </template>
+            <template #filter="{ filterModel }">
+                <InputText v-model="filterModel.value" type="text" class="p-column-filter" placeholder="Search by " />
+            </template>
+        </Column>
+
+        <Column field="done_type_name" filterField="done_type_name" header="Subactivity name" sortable :frozen="documentFrozen"> 
+            <template #header>
+                    <ToggleButton v-model="documentFrozen" onIcon="pi pi-lock" offIcon="pi pi-lock-open" onLabel="" offLabel="" />
+                    <div>&nbsp;</div>
                 </template>
-                <template #filter="{ filterModel }">
-                    <InputText v-model="filterModel.value" type="text" class="p-column-filter" placeholder="Search by " />
+            <template #body="{ data }">
+                {{ data.done_type.name }} 
+            </template>
+            <template #filter="{ filterModel }">
+                <InputText v-model="filterModel.value" type="text" class="p-column-filter" placeholder="Search by " />
+            </template>
+        </Column>
+
+        <Column field="price_tarif" filterField="price_tarif" header="Price tarif" sortable :frozen="documentFrozen">  
+            <template #header>
+                    <ToggleButton v-model="documentFrozen" onIcon="pi pi-lock" offIcon="pi pi-lock-open" onLabel="" offLabel="" />
+                    <div>&nbsp;</div>
                 </template>
-        </Column> -->
-                <Column field="tasks_of_type_code" filterField="tasks_of_type_code" header="Code Task Type" sortable :frozen="documentFrozen">
-                    <template #header>
-                        <ToggleButton v-model="documentFrozen" onIcon="pi pi-lock" offIcon="pi pi-lock-open" onLabel="" offLabel="" />
-                        <div>&nbsp;</div>
-                    </template>
-                    <template #body="{ data }">
-                        {{ data.tasks_of_type.code }}
-                    </template>
-                    <template #filter="{ filterModel }">
-                        <InputText v-model="filterModel.value" type="text" class="p-column-filter" placeholder="Search by " />
-                    </template>
-                </Column>
+            <template #body="{ data }">
+                {{ data.price_tarif }} 
+            </template>
+            <template #filter="{ filterModel }">
+                <InputText v-model="filterModel.value" type="text" class="p-column-filter" placeholder="Search by " />
+            </template>
+    </Column>
 
-                <Column field="tasks_of_type_name" filterField="tasks_of_type_name" header="Name Task Type" sortable>
-                    <template #body="{ data }">
-                        {{ data.tasks_of_type.name }}
-                    </template>
-                    <template #filter="{ filterModel }">
-                        <InputText v-model="filterModel.value" type="text" class="p-column-filter" placeholder="Search by " />
-                    </template>
-                </Column>
 
-                <Column field="done_type_code" filterField="done_type_code" header="Code Done Type" sortable>
-                    <template #body="{ data }">
-                        {{ data.done_type.code }}
-                    </template>
-                    <template #filter="{ filterModel }">
-                        <InputText v-model="filterModel.value" type="text" class="p-column-filter" placeholder="Search by " />
-                    </template>
-                </Column>
+        <Column field="work_type_day" filterField="work_type_day" header="Work Type day" sortable> 
+            
+            <template #body="{ data }">
+                {{ data.work_type_day }} 
+            </template>
+            <template #filter="{ filterModel }">
+                <InputText v-model="filterModel.value" type="text" class="p-column-filter" placeholder="Search by Work Price Type " />
+            </template>
+    </Column>
 
-                <Column field="done_type_name" filterField="done_type_name" header="Name Done Type" sortable>
-                    <template #body="{ data }">
-                        {{ data.done_type.name }}
-                    </template>
-                    <template #filter="{ filterModel }">
-                        <InputText v-model="filterModel.value" type="text" class="p-column-filter" placeholder="Search by " />
-                    </template>
-                </Column>
-                <Column field="work_type_day" filterField="work_type_day" header="Work Type day" sortable>
-                    <template #body="{ data }">
-                        {{ data.work_type_day }}
-                    </template>
-                    <template #filter="{ filterModel }">
-                        <InputText v-model="filterModel.value" type="text" class="p-column-filter" placeholder="Search by Work Price Type " />
-                    </template>
-                </Column>
+    <Column field="work_type_tarif" filterField="work_type_tarif" header="Activity name" sortable> 
+            
+            <template #body="{ data }">
+                {{ data.work_type_tarif }} 
+            </template>
+            <template #filter="{ filterModel }">
+                <InputText v-model="filterModel.value" type="text" class="p-column-filter" placeholder="Search by Work Price Type " />
+            </template>
+    </Column>
 
-                <Column field="work_type_tarif" filterField="work_type_tarif" header="Work Type tarif" sortable>
-                    <template #body="{ data }">
-                        {{ data.work_type_tarif }}
-                    </template>
-                    <template #filter="{ filterModel }">
-                        <InputText v-model="filterModel.value" type="text" class="p-column-filter" placeholder="Search by Work Price Type " />
-                    </template>
-                </Column>
+    <Column field="price_tarif" filterField="price_tarif" header="Price tarif" sortable> 
+            
+            <template #body="{ data }">
+                {{ data.price_tarif }} 
+            </template>
+            <template #filter="{ filterModel }">
+                <InputText v-model="filterModel.value" type="text" class="p-column-filter" placeholder="Search by " />
+            </template>
+    </Column>
+        <!-- tasks_of_type.code -->
+        <!-- tasks_of_type.name -->
+        <!-- done_type.code -->
+        <!-- done_type.name -->
+        <!-- "work_type_day" -->
+        <!-- "price_tarif" -->
+        <!--Here add other columns-->
 
-                <Column field="price_tarif" filterField="price_tarif" header="Price tarif" sortable>
-                    <template #body="{ data }">
-                        {{ data.price_tarif }}
-                    </template>
-                    <template #filter="{ filterModel }">
-                        <InputText v-model="filterModel.value" type="text" class="p-column-filter" placeholder="Search by " />
-                    </template>
-                </Column>
-                <!-- tasks_of_type.code -->
-                <!-- tasks_of_type.name -->
-                <!-- done_type.code -->
-                <!-- done_type.name -->
-                <!-- "work_type_day" -->
-                <!-- "price_tarif" -->
-                <!--Here add other columns-->
 
                 <Column field="farmName" filterField="farm.name" header="Farm Name" sortable>
                     <template #body="{ data }">
@@ -582,9 +566,6 @@ const clearFilter = () => {
 const initFilters = () => {
     filters.value = {
         global: { value: null, matchMode: FilterMatchMode.CONTAINS },
-        // code: { operator: FilterOperator.AND, constraints: [{ value: null, matchMode: FilterMatchMode.STARTS_WITH }] },
-        // name: { operator: FilterOperator.AND, constraints: [{ value: null, matchMode: FilterMatchMode.STARTS_WITH }] },
-        'tasks_of_type.code': { operator: FilterOperator.AND, constraints: [{ value: null, matchMode: FilterMatchMode.STARTS_WITH }] },
         'tasks_of_type.name': { operator: FilterOperator.AND, constraints: [{ value: null, matchMode: FilterMatchMode.STARTS_WITH }] },
         'done_type.code': { operator: FilterOperator.AND, constraints: [{ value: null, matchMode: FilterMatchMode.STARTS_WITH }] },
         'done_type.name': { operator: FilterOperator.AND, constraints: [{ value: null, matchMode: FilterMatchMode.STARTS_WITH }] },
@@ -642,49 +623,7 @@ watch(
         console.log(oldValue);
     }
 );
-// const {
-//     handleSubmit: handleSubmitNew,
-//     errors: errorsNew,
-//     defineField,
-//     resetForm
-// } = useForm(
-//     {
-//     validationSchema: toTypedSchema(
-//         z.object({
 
-//             tasks_of_typeV: z.object({
-//                 name: z.string().min(4),
-//                 id: z.string().min(2)
-//             }),
-//             done_typeV: z.object({
-//                 name: z.string().min(4),
-//                 id: z.string().min(2)
-//             }),
-//             work_type_dayV: z.object({
-//                 name: z.string().min(4),
-//                 id: z.string().min(2)
-//             }),
-//             work_type_tarifV: z
-//             .object({
-//                 name: z.string().min(4),
-//                 id: z.string().min(4)
-//             }),
-//             price_tarifV: z.number().min(2),
-//             farm: z
-//                 .object({
-//                     name: z.string().min(4),
-//                     id: z.string().min(4)
-//                 })
-//                 .optional(),
-//             company: z
-//                 .object({
-//                     name: z.string().min(4),
-//                     id: z.string().min(4)
-//                 })
-//                 .optional()
-//         })
-//     )
-// });
 const {
     handleSubmit: handleSubmitNew,
     errors: errorsNew,
@@ -693,7 +632,7 @@ const {
     setValues
 } = useForm({
     initialValues: {
-        tasks_of_typeV: { name: '', id: '' }, // Valores por defecto
+        tasks_of_typeV: { name: '', id: '' },
         done_typeV: { name: '', id: '' },
         work_type_dayV: { name: '', id: '' },
         work_type_tarifV: { name: '', id: '' },

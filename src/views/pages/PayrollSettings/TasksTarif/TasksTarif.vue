@@ -84,6 +84,7 @@ const initFilters = () => {
         work_type_day: { operator: FilterOperator.AND, constraints: [{ value: null, matchMode: FilterMatchMode.STARTS_WITH }] },
         type_price: { operator: FilterOperator.AND, constraints: [{ value: null, matchMode: FilterMatchMode.STARTS_WITH }] },
         price_tarif: { operator: FilterOperator.AND, constraints: [{ value: null, matchMode: FilterMatchMode.STARTS_WITH }] },
+        'taskType.name': { operator: FilterOperator.AND, constraints: [{ value: null, matchMode: FilterMatchMode.STARTS_WITH }] },
         'packing_type.name': { operator: FilterOperator.AND, constraints: [{ value: null, matchMode: FilterMatchMode.STARTS_WITH }] },
         'status.name': { operator: FilterOperator.AND, constraints: [{ value: null, matchMode: FilterMatchMode.STARTS_WITH }] },
         'farm.name': { operator: FilterOperator.AND, constraints: [{ value: null, matchMode: FilterMatchMode.STARTS_WITH }] },
@@ -476,7 +477,7 @@ const remove = (aver) => {
                 v-model:selection="selectedRegisters"
                 filterDisplay="menu"
                 v-model:filters="filters"
-                :globalFilterFields="['work_type_day', 'type_price', 'price_tarif', 'company.name', 'farm.name', 'status.name', 'created_at', 'updated_at']"
+                :globalFilterFields="['work_type_day', 'type_price', 'price_tarif', 'company.name', 'farm.name', 'status.name', 'created_at', 'updated_at', 'taskType.name', 'packing_type.name']"
                 v-if="ability.can('tarifa_tarea_listado')"
             >
                 <template #header>
@@ -502,11 +503,46 @@ const remove = (aver) => {
                 <template #loading> Loading customers data. Please wait. </template>
                 <Column selectionMode="multiple" headerStyle="width: 3rem"></Column>
 
-                <Column field="work_type_day" filterField="work_type_day" header="Work Type Day" sortable>
+                <Column field="taskType.name" filterField="taskType.name" header="Task Type Name" sortable :frozen="documentFrozen">
                     <template #header>
                         <ToggleButton v-model="documentFrozen" onIcon="pi pi-lock" offIcon="pi pi-lock-open" onLabel="" offLabel="" />
                         <div>&nbsp;</div>
                     </template>
+                    <template #body="{ data }"> {{ data.taskType.name }} </template>
+                    <template #filter="{ filterModel }">
+                        <InputText v-model="filterModel.value" type="text" class="p-column-filter" placeholder="Search by Task Type Name" />
+                    </template>
+                </Column>
+
+
+
+                <Column field="type_price" filterField="type_price" header="Activity" sortable :frozen="documentFrozen">
+                    <template #header>
+                        <ToggleButton v-model="documentFrozen" onIcon="pi pi-lock" offIcon="pi pi-lock-open" onLabel="" offLabel="" />
+                        <div>&nbsp;</div>
+                    </template>
+                    <template #body="{ data }">
+                        {{ data.type_price }}
+                    </template>
+                    <template #filter="{ filterModel }">
+                        <InputText v-model="filterModel.value" type="text" class="p-column-filter" placeholder="Search by " />
+                    </template>
+                </Column>
+
+                <Column field="price_tarif" filterField="price_tarif" header="Task Type Price Tarif" sortable :frozen="documentFrozen">
+                    <template #header>
+                        <ToggleButton v-model="documentFrozen" onIcon="pi pi-lock" offIcon="pi pi-lock-open" onLabel="" offLabel="" />
+                        <div>&nbsp;</div>
+                    </template>
+                    <template #body="{ data }"> $ {{ data.price_tarif }} </template>
+                    <template #filter="{ filterModel }">
+                        <InputText v-model="filterModel.value" type="text" class="p-column-filter" placeholder="Search by " />
+                    </template>
+                </Column>
+
+
+                <Column field="work_type_day" filterField="work_type_day" header="Work Type Day" sortable>
+
                     <template #body="{ data }">
                         {{ data.work_type_day }}
                     </template>
@@ -517,10 +553,7 @@ const remove = (aver) => {
 
 
                 <Column field="packing_type.name" filterField="packing_type.name" header="Packing Type Name" sortable>
-                    <template #header>
-                        <ToggleButton v-model="documentFrozen" onIcon="pi pi-lock" offIcon="pi pi-lock-open" onLabel="" offLabel="" />
-                        <div>&nbsp;</div>
-                    </template>
+
                     <template #body="{ data }">
                         {{ data.packing_type.name }}
                     </template>
@@ -529,21 +562,10 @@ const remove = (aver) => {
                     </template>
                 </Column>
 
-                <Column field="type_price" filterField="type_price" header="Type Price" sortable>
-                    <template #body="{ data }">
-                        {{ data.type_price }}
-                    </template>
-                    <template #filter="{ filterModel }">
-                        <InputText v-model="filterModel.value" type="text" class="p-column-filter" placeholder="Search by " />
-                    </template>
-                </Column>
 
-                <Column field="price_tarif" filterField="price_tarif" header="Task Type Tarif" sortable>
-                    <template #body="{ data }"> $ {{ data.price_tarif }} </template>
-                    <template #filter="{ filterModel }">
-                        <InputText v-model="filterModel.value" type="text" class="p-column-filter" placeholder="Search by " />
-                    </template>
-                </Column>
+
+
+
 
                 <Column field="farmName" filterField="farm.name" header="Farm Name" sortable>
                     <template #body="{ data }">
