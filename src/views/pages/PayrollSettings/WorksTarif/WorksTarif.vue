@@ -93,7 +93,7 @@
             </template>
         </Column>
 
-        <Column field="done_type_name" filterField="done_type_name" header="Name Done Type" sortable :frozen="documentFrozen"> 
+        <Column field="done_type_name" filterField="done_type_name" header="Subactivity name" sortable :frozen="documentFrozen"> 
             <template #header>
                     <ToggleButton v-model="documentFrozen" onIcon="pi pi-lock" offIcon="pi pi-lock-open" onLabel="" offLabel="" />
                     <div>&nbsp;</div>
@@ -130,7 +130,7 @@
             </template>
     </Column>
 
-    <Column field="work_type_tarif" filterField="work_type_tarif" header="Work Type tarif" sortable> 
+    <Column field="work_type_tarif" filterField="work_type_tarif" header="Activity name" sortable> 
             
             <template #body="{ data }">
                 {{ data.work_type_tarif }} 

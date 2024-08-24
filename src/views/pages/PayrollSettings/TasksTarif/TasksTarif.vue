@@ -513,7 +513,7 @@ const remove = (aver) => {
 
 
 
-                <Column field="type_price" filterField="type_price" header="Type Price" sortable :frozen="documentFrozen">
+                <Column field="type_price" filterField="type_price" header="Activity" sortable :frozen="documentFrozen">
                     <template #header>
                         <ToggleButton v-model="documentFrozen" onIcon="pi pi-lock" offIcon="pi pi-lock-open" onLabel="" offLabel="" />
                         <div>&nbsp;</div>
