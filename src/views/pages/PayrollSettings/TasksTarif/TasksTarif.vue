@@ -4,7 +4,6 @@ import useDataAPI from '@/composables/DataAPI/FetchDataAPI.js';
 import { useToast } from 'primevue/usetoast';
 import { FilterMatchMode, FilterOperator } from 'primevue/api';
 import useData from '@/composables/DataAPI/FetchDataAPICopy.js';
-const { getRequest, postRequest, putRequest, deleteRequest } = useData();
 import { useRouter } from 'vue-router';
 import { useForm } from 'vee-validate';
 import { toTypedSchema } from '@vee-validate/zod';
@@ -13,6 +12,10 @@ import { saveAs } from 'file-saver';
 import { z } from 'zod';
 import ability from '@/service/ability.js';
 import { AbilityBuilder } from '@casl/ability';
+
+const { getRequest, postRequest, putRequest, deleteRequest, errorResponseAPI } = useData();
+import BackendErrors from '@/views/Errors/BackendErrors.vue';
+
 const prueba = ref({revisar: 'revisar GET-POST-PUT-DELETE'});
 const namePage = 'Tarif of task';
 const titlePage = ' '+namePage+' information';
@@ -523,6 +526,7 @@ const remove = (aver) => {
                             <small id="username-help" :class="{ 'p-invalid text-red-700 ': errorsNew['type_date'] }">
                                 {{ errorsNew.type_date }}
                             </small>
+                            <BackendErrors :name="errorResponseAPI?.errors?.work_type_day"/>
                         </div>
                     </div>
                     <div class="flex-auto">
@@ -532,6 +536,7 @@ const remove = (aver) => {
                             <small id="username-help" :class="{ 'p-invalid text-red-700': errorsNew['type_price'] }">
                                 {{ errorsNew.type_price }}
                             </small>
+                            <BackendErrors :name="errorResponseAPI?.errors?.type_price"/>
                         </div>
                     </div>
                 </div>
@@ -543,6 +548,7 @@ const remove = (aver) => {
                             <small id="username-help" :class="{ 'p-invalid text-red-700': errorsNew['price_tarif'] }">
                                 {{ errorsNew.price_tarif }}
                             </small>
+                            <BackendErrors :name="errorResponseAPI?.errors?.price_tarif"/>
                         </div>
                     </div>
                     <div class="flex-auto">
@@ -552,6 +558,7 @@ const remove = (aver) => {
                             <small id="username-help" :class="{ 'p-invalid text-red-700': errorsNew['farm'] }">
                                 {{ errorsNew.farm }}
                             </small>
+                            <BackendErrors :name="errorResponseAPI?.errors?.farm_uuid"/>
                         </div>
                     </div>
                 </div>
@@ -563,6 +570,7 @@ const remove = (aver) => {
                             <small id="username-help" :class="{ 'p-invalid text-red-700': errorsNew['packingType'] }">
                                 {{ errorsNew.packingType }}
                             </small>
+                            <BackendErrors :name="errorResponseAPI?.errors?.packing_type_uuid"/>
                         </div>
                     </div>
                     <div class="flex-auto">
@@ -572,6 +580,7 @@ const remove = (aver) => {
                             <small id="username-help" :class="{ 'p-invalid text-red-700': errorsNew['tacksType'] }">
                                 {{ errorsNew.tacksType }}
                             </small>
+                            <BackendErrors :name="errorResponseAPI?.errors?.tasks_of_type_uuid"/>
                         </div>
                     </div>
                 </div>
@@ -591,6 +600,7 @@ const remove = (aver) => {
                             <small id="username-help" :class="{ 'p-invalid text-red-700 ': errorsNew['type_date'] }">
                                 {{ errorsNew.type_date }}
                             </small>
+                            <BackendErrors :name="errorResponseAPI?.errors?.work_type_day"/>
                         </div>
                     </div>
                     <div class="flex-auto">
@@ -600,6 +610,7 @@ const remove = (aver) => {
                             <small id="username-help" :class="{ 'p-invalid text-red-700': errorsNew['type_price'] }">
                                 {{ errorsNew.type_price }}
                             </small>
+                            <BackendErrors :name="errorResponseAPI?.errors?.type_price"/>
                         </div>
                     </div>
                 </div>
@@ -611,6 +622,7 @@ const remove = (aver) => {
                             <small id="username-help" :class="{ 'p-invalid text-red-700': errorsNew['price_tarif'] }">
                                 {{ errorsNew.price_tarif }}
                             </small>
+                            <BackendErrors :name="errorResponseAPI?.errors?.price_tarif"/>
                         </div>
                     </div>
                     <div class="flex-auto">
@@ -620,6 +632,7 @@ const remove = (aver) => {
                             <small id="username-help" :class="{ 'p-invalid text-red-700': errorsNew['farm'] }">
                                 {{ errorsNew.farm }}
                             </small>
+                            <BackendErrors :name="errorResponseAPI?.errors?.farm_uuid"/>
                         </div>
                     </div>
                 </div>
@@ -631,6 +644,7 @@ const remove = (aver) => {
                             <small id="username-help" :class="{ 'p-invalid text-red-700': errorsNew['packingType'] }">
                                 {{ errorsNew.packingType }}
                             </small>
+                            <BackendErrors :name="errorResponseAPI?.errors?.packing_type_uuid"/>
                         </div>
                     </div>
                     <div class="flex-auto">
@@ -640,6 +654,7 @@ const remove = (aver) => {
                             <small id="username-help" :class="{ 'p-invalid text-red-700': errorsNew['tacksType'] }">
                                 {{ errorsNew.tacksType }}
                             </small>
+                            <BackendErrors :name="errorResponseAPI?.errors?.tasks_of_type_uuid"/>
                         </div>
                     </div>
                 </div>
@@ -659,6 +674,7 @@ const remove = (aver) => {
                             <small id="username-help" :class="{ 'p-invalid text-red-700 ': errorsNew['type_date'] }">
                                 {{ errorsNew.type_date }}
                             </small>
+                            <BackendErrors :name="errorResponseAPI?.errors?.work_type_day"/>
                         </div>
                     </div>
                     <div class="flex-auto">
@@ -668,6 +684,7 @@ const remove = (aver) => {
                             <small id="username-help" :class="{ 'p-invalid text-red-700': errorsNew['type_price'] }">
                                 {{ errorsNew.type_price }}
                             </small>
+                            <BackendErrors :name="errorResponseAPI?.errors?.type_price"/>
                         </div>
                     </div>
                 </div>
@@ -679,6 +696,7 @@ const remove = (aver) => {
                             <small id="username-help" :class="{ 'p-invalid text-red-700': errorsNew['price_tarif'] }">
                                 {{ errorsNew.price_tarif }}
                             </small>
+                            <BackendErrors :name="errorResponseAPI?.errors?.price_tarif"/>
                         </div>
                     </div>
                     <div class="flex-auto">
@@ -688,6 +706,7 @@ const remove = (aver) => {
                             <small id="username-help" :class="{ 'p-invalid text-red-700': errorsNew['farm'] }">
                                 {{ errorsNew.farm }}
                             </small>
+                            <BackendErrors :name="errorResponseAPI?.errors?.farm_uuid"/>
                         </div>
                     </div>
                 </div>
@@ -699,6 +718,7 @@ const remove = (aver) => {
                             <small id="username-help" :class="{ 'p-invalid text-red-700': errorsNew['packingType'] }">
                                 {{ errorsNew.packingType }}
                             </small>
+                            <BackendErrors :name="errorResponseAPI?.errors?.packing_type_uuid"/>
                         </div>
                     </div>
                     <div class="flex-auto">
@@ -708,6 +728,7 @@ const remove = (aver) => {
                             <small id="username-help" :class="{ 'p-invalid text-red-700': errorsNew['tacksType'] }">
                                 {{ errorsNew.tacksType }}
                             </small>
+                            <BackendErrors :name="errorResponseAPI?.errors?.tasks_of_type_uuid"/>
                         </div>
                     </div>
                 </div>

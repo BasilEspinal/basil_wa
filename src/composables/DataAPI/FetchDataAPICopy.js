@@ -75,7 +75,7 @@ export default function useData() {
         } catch (e) {
             console.error('Error en la solicitud POST:', e.message);
             responseData.error += ' ' + e.message;
-            errorResponseAPI.value = response;
+            //errorResponseAPI.value = response;
         }
         return responseData;
     }

@@ -3,27 +3,21 @@ import { ref, onMounted, watch } from 'vue';
 import InputNumber from 'primevue/inputnumber';
 import { useI18n } from 'vue-i18n';
 import UseAppMovil from '@/composables/AppMovil/UseAppMovil.js';
-const { worksDay, task_type, dones_work, data_planner, priceunit } = UseAppMovil();
-
+import ItemUserAppMovil from './ItemUserAppMovil.vue';
+const { worksDay, data_planner } = UseAppMovil();
 const props = defineProps({
     dataUsers: { type: Array },
     Taridf: { type: Object },
     Lote: { type: Array },
-    diaFestivo: { type: Boolean }
+    diaFestivo: { type: Boolean },
+    data: { type: Object }
 });
-
 const { t } = useI18n();
 
-const select_tasks_type = ref(null);
-const selected_crops_lots = ref(null);
-const selected_dones_work = ref(null);
-const selected_quanty = ref(null);
-const PesoAprox = ref('4');
-const Total = ref(null);
-const Notas = ref(null);
 const workView = ref(true);
 const tarifa = ref(0);
 const supervisoName = ref('');
+const supervisoId = ref('');
 const editingRows = ref([]);
 const editable = ref(true);
 const estilo = ref({
@@ -33,12 +27,8 @@ const estilo = ref({
 
 onMounted(async () => {
     supervisoName.value = await sessionStorage.getItem('accessSessionEmployeeName');
-    console.log('name ', sessionStorage.getItem('accessSessionEmployeeName'));
+    supervisoId.value = await sessionStorage.getItem('accesSessionEmployeeUuid');
 });
-
-const UpdateTotal = () => {
-    Total.value = selected_quanty.value * priceunit.value;
-};
 
 const changeWorkView = (event) => {
     workView.value = !workView.value;
@@ -56,10 +46,12 @@ const onRowEditSave = (event) => {
     let { newData, index } = event;
     worksDay.value[index] = newData;
 };
+
 </script>
 
 <template>
     <div>
+        <Toast />
         <Accordion>
             <AccordionTab v-for="slotProps in dataUsers" :key="slotProps.id" selectOnFocus>
                 <template #header>
@@ -71,69 +63,7 @@ const onRowEditSave = (event) => {
                     </span>
                 </template>
                 <div v-if="workView">
-                    <div class="grid p-fluid mt-3">
-                        <div class="field col-12 md:col-4">
-                            <span class="p-float-label">
-                                <Dropdown v-model="select_tasks_type" :options="task_type" filter optionLabel="name" />
-                                <label class="font-bold" for="task_type">{{ t('appmovil.tipoActividad') }}</label>
-                            </span>
-                        </div>
-                        <div class="field col-12 md:col-4">
-                            <span class="p-float-label">
-                                <Dropdown v-model="selected_crops_lots" :options="Lote" filter optionLabel="code" />
-                                <label class="font-bold" for="crops_lots">{{ t('appmovil.lote') }}</label>
-                            </span>
-                        </div>
-                        <div class="field col-12 md:col-4" v-if="select_tasks_type?.name !== 'Task'">
-                            <span class="p-float-label">
-                                <Dropdown v-model="selected_dones_work" :options="dones_work" filter optionLabel="name" />
-                                <label class="font-bold" for="dones_work">{{ t('appmovil.labor') }}</label>
-                            </span>
-                        </div>
-                        <div class="field col-12 md:col-4">
-                            <span class="p-float-label">
-                                <InputNumber v-model="selected_quanty" :update:modelValue="UpdateTotal" inputId="minmax" :min="1" :max="5" />
-                                <label class="font-bold" for="quanty">{{ t('appmovil.cantidad') }}</label>
-                            </span>
-                        </div>
-                        <div class="field col-12 md:col-4">
-                            <div class="p-inputgroup">
-                                <span class="p-float-label border-round border-1">
-                                    <span class="p-inputgroup font-bold ml-1">{{ t('appmovil.pesoAproximado') }}:</span>
-                                    <span class="p-float-label">
-                                        <label class="font-bold" inputId="locale-us" locale="en-US" for="weightunit">{{ PesoAprox }}</label>
-                                    </span>
-                                    <span class="p-inputgroup-addon">Kg</span>
-                                </span>
-                            </div>
-                        </div>
-                        <div class="field col-12 md:col-4">
-                            <div class="p-inputgroup">
-                                <span class="p-float-label border-round border-1">
-                                    <span class="p-inputgroup font-bold ml-1">{{ t('appmovil.precioUnitario') }}:</span>
-                                    <span class="p-float-label">
-                                        <label class="font-bold" inputId="locale-us" locale="en-US" for="weightunit">{{ tarifa }}</label>
-                                    </span>
-                                    <span class="p-inputgroup-addon">$</span>
-                                </span>
-                            </div>
-                        </div>
-                        <div class="field col-12 md:col-8">
-                            <span class="p-float-label">
-                                <Textarea inputId="textarea" rows="4" cols="40" v-model="Notas" />
-                                <label for="textarea">{{ t('appmovil.notas') }}</label>
-                            </span>
-                        </div>
-                        <div class="field col-12 md:col-4">
-                            <div class="p-inputgroup border-round border-1">
-                                <span class="p-float-label">
-                                    <label class="font-bold" for="weightunit">{{ t('appmovil.total') }}: {{ selected_quanty * tarifa }}</label>
-                                </span>
-                                <span class="p-inputgroup-addon">$</span>
-                            </div>
-                            <Button class="mt-3" :label="t('appmovil.save')" icon="pi pi-check"></Button>
-                        </div>
-                    </div>
+                    <ItemUserAppMovil :slotProps="slotProps" :tarifa="tarifa" :Lote="Lote" :data="data"/>
                 </div>
                 <div v-else class="p-fluid">
                     <div class="datalles-bacg p-fluid formgrid grid mb-3">

@@ -1,84 +1,79 @@
 <template>
     <div>
-    <div class="card">
-        <div>
-            <h1>{{ titlePage }}</h1> 
+        <div class="card">
+            <div>
+                <h1>{{ titlePage }}</h1>
+            </div>
         </div>
-
-
-    </div>
-    <div class="card">
-        <div class="grid">
-            <div class="col-xs-12 col-sm-6 col-md-4 mb-2 text-center mx-auto">
-                <!--Uncomment when table is done-->
-                
+        <div class="card">
+            <div class="grid">
                 <div class="col-xs-12 col-sm-6 col-md-4 mb-2 text-center mx-auto">
-            <Toolbar style="margin-bottom: 1rem">
-                <template #center>
-                    <Button v-if="ability.can('tipo_pago_crear')" :disabled="headerNames.length > 0" label="New" icon="pi pi-plus" class="p-button-success mb-2 mt-2" @click="openNew" size="large" />
-                    <Divider layout="vertical" />
-                    <Button :disabled="!(listRowSelect.length > 0 && listRowSelect.length < 2)" label="Edit" icon="pi pi-file-edit" class="p-button-help mb-2 mt-2" @click="openEdit" size="large" />
-                    <Divider layout="vertical" />
-                    <Button :disabled="!(listRowSelect.length > 0 && listRowSelect.length < 2)" label="Clone" icon="pi pi-copy" class="p-button-secondary mb-2 mt-2" @click="openClone" size="large" />
-                    <Divider layout="vertical" />
-                    <Button :disabled="headerNames.length > 0" label="Export" icon="pi pi-file-import" class="p-button-warning mb-2 mt-2" @click="openExport" size="large" />
-                    <Divider layout="vertical" />
-                    <Button :disabled="!listRowSelect.length > 0" label="Delete" icon="pi pi-trash" class="p-button-danger mb-2 mt-2" @click="openDelete" size="large" />
+                    <!--Uncomment when table is done-->
+
+                    <div class="col-xs-12 col-sm-6 col-md-4 mb-2 text-center mx-auto">
+                        <Toolbar style="margin-bottom: 1rem">
+                            <template #center>
+                                <Button v-if="ability.can('tipo_pago_crear')" :disabled="headerNames.length > 0" label="New" icon="pi pi-plus" class="p-button-success mb-2 mt-2" @click="openNew" size="large" />
+                                <Divider layout="vertical" />
+                                <Button :disabled="!(listRowSelect.length > 0 && listRowSelect.length < 2)" label="Edit" icon="pi pi-file-edit" class="p-button-help mb-2 mt-2" @click="openEdit" size="large" />
+                                <Divider layout="vertical" />
+                                <Button :disabled="!(listRowSelect.length > 0 && listRowSelect.length < 2)" label="Clone" icon="pi pi-copy" class="p-button-secondary mb-2 mt-2" @click="openClone" size="large" />
+                                <Divider layout="vertical" />
+                                <Button :disabled="headerNames.length > 0" label="Export" icon="pi pi-file-import" class="p-button-warning mb-2 mt-2" @click="openExport" size="large" />
+                                <Divider layout="vertical" />
+                                <Button :disabled="!listRowSelect.length > 0" label="Delete" icon="pi pi-trash" class="p-button-danger mb-2 mt-2" @click="openDelete" size="large" />
+                            </template>
+                        </Toolbar>
+                    </div>
+                </div>
+            </div>
+            <!-- <pre>{{ dataResponseAPI }}</pre> -->
+            <DataTable
+                :value="dataFromComponent"
+                dataKey="uuid"
+                tableStyle="min-width: 75rem"
+                showGridlines
+                :loading="loading"
+                scrollable
+                scrollHeight="600px"
+                resizableColumns
+                columnResizeMode="expand"
+                sortMode="multiple"
+                :paginator="true"
+                :rows="50"
+                :rowsPerPageOptions="[5, 10, 20, 50]"
+                :class="`p-datatable-${size.class}`"
+                @row-select="onRowSelect(selectedRegisters)"
+                @row-unselect="onRowSelect(selectedRegisters)"
+                @select-all-change="onSelectAllChange"
+                v-model:selection="selectedRegisters"
+                filterDisplay="menu"
+                v-model:filters="filters"
+                :globalFilterFields="['name', 'company.name', 'farm.name', 'status.name', 'created_at', 'updated_at']"
+            >
+                <template #header>
+                    <!--Uncomment when filters are done-->
+
+                    <Toolbar class="mb-2">
+                        <template v-slot:start>
+                            <Button type="button" icon="pi pi-filter-slash" label="Limpiar" class="p-button-outlined mb-2" @click="clearFilter()" />
+                        </template>
+                        <template v-slot:end>
+                            <span class="p-input-icon-left mb-2">
+                                <i class="pi pi-search" />
+                                <InputText v-model="filters['global'].value" placeholder="Buscar" style="width: 100%" />
+                            </span>
+                        </template>
+                        <template v-slot:center>
+                            <SelectButton v-model="size" :options="sizeOptions" optionLabel="label" dataKey="label"> </SelectButton>
+                        </template>
+                    </Toolbar>
                 </template>
-            </Toolbar>
-            </div>
 
-            </div>
-        </div>
-        <!-- <pre>{{ dataResponseAPI }}</pre> -->
-        <DataTable
-        :value="dataFromComponent"
-        dataKey="uuid"
-        tableStyle="min-width: 75rem"
-        showGridlines
-        :loading="loading"
-        scrollable
-        scrollHeight="600px"
-        resizableColumns
-        columnResizeMode="expand"
-        sortMode="multiple"
-        :paginator="true"
-        :rows="50"
-        :rowsPerPageOptions="[5, 10, 20, 50]"
-        :class="`p-datatable-${size.class}`"
-        @row-select="onRowSelect(selectedRegisters)"
-        @row-unselect="onRowSelect(selectedRegisters)"
-        @select-all-change="onSelectAllChange"
-        v-model:selection="selectedRegisters"
-        filterDisplay="menu"
-        v-model:filters="filters"
-        :globalFilterFields="['name', 'company.name', 'farm.name', 'status.name', 'created_at', 'updated_at']" 
-        >
-        <template #header>
-            <!--Uncomment when filters are done-->
-
-            <Toolbar class = "mb-2">
-                    <template v-slot:start>
-                        <Button type="button" icon="pi pi-filter-slash" label="Limpiar" class="p-button-outlined mb-2" @click="clearFilter()" />
-                    </template>
-                    <template v-slot:end>
-                        <span class="p-input-icon-left mb-2">
-                        <i class="pi pi-search" />
-                        <InputText v-model="filters['global'].value" placeholder="Buscar" style="width: 100%" />
-                    </span>
-                    </template>
-                    <template v-slot:center>
-                        
-                        <SelectButton v-model="size" :options="sizeOptions" optionLabel="label" dataKey="label"> </SelectButton>
-                        
-                    </template>       
-                </Toolbar>
-        </template>
-
-        <template #empty> No customers found. </template>
-        <template #loading> Loading customers data. Please wait. </template>
-        <Column selectionMode="multiple" headerStyle="width: 3rem"></Column>
-        <!-- <Column field="code" filterField="code" header="Code" sortable :frozen="documentFrozen"> 
+                <template #empty> No customers found. </template>
+                <template #loading> Loading customers data. Please wait. </template>
+                <Column selectionMode="multiple" headerStyle="width: 3rem"></Column>
+                <!-- <Column field="code" filterField="code" header="Code" sortable :frozen="documentFrozen"> 
             <template #header>
                     <ToggleButton v-model="documentFrozen" onIcon="pi pi-lock" offIcon="pi pi-lock-open" onLabel="" offLabel="" />
                     <div>&nbsp;</div>
@@ -92,7 +87,7 @@
                 </template>
         </Column> -->
 
-        <!-- <Column field="name" filterField="name" header="Name" sortable> 
+                <!-- <Column field="name" filterField="name" header="Name" sortable> 
             
                 <template #body="{ data }">
                     {{ data.name }} 
@@ -101,123 +96,116 @@
                     <InputText v-model="filterModel.value" type="text" class="p-column-filter" placeholder="Search by " />
                 </template>
         </Column> -->
-        <Column field="tasks_of_type_code" filterField="tasks_of_type_code" header="Code Task Type" sortable :frozen="documentFrozen"> 
-            <template #header>
-                    <ToggleButton v-model="documentFrozen" onIcon="pi pi-lock" offIcon="pi pi-lock-open" onLabel="" offLabel="" />
-                    <div>&nbsp;</div>
-                </template>
-            <template #body="{ data }">
-                {{ data.tasks_of_type.code }} 
-            </template>
-            <template #filter="{ filterModel }">
-                <InputText v-model="filterModel.value" type="text" class="p-column-filter" placeholder="Search by " />
-            </template>
-        </Column>
+                <Column field="tasks_of_type_code" filterField="tasks_of_type_code" header="Code Task Type" sortable :frozen="documentFrozen">
+                    <template #header>
+                        <ToggleButton v-model="documentFrozen" onIcon="pi pi-lock" offIcon="pi pi-lock-open" onLabel="" offLabel="" />
+                        <div>&nbsp;</div>
+                    </template>
+                    <template #body="{ data }">
+                        {{ data.tasks_of_type.code }}
+                    </template>
+                    <template #filter="{ filterModel }">
+                        <InputText v-model="filterModel.value" type="text" class="p-column-filter" placeholder="Search by " />
+                    </template>
+                </Column>
 
-        <Column field="tasks_of_type_name" filterField="tasks_of_type_name" header="Name Task Type" sortable> 
-            
-            <template #body="{ data }">
-                {{ data.tasks_of_type.name }} 
-            </template>
-            <template #filter="{ filterModel }">
-                <InputText v-model="filterModel.value" type="text" class="p-column-filter" placeholder="Search by " />
-            </template>
-        </Column>
+                <Column field="tasks_of_type_name" filterField="tasks_of_type_name" header="Name Task Type" sortable>
+                    <template #body="{ data }">
+                        {{ data.tasks_of_type.name }}
+                    </template>
+                    <template #filter="{ filterModel }">
+                        <InputText v-model="filterModel.value" type="text" class="p-column-filter" placeholder="Search by " />
+                    </template>
+                </Column>
 
-        <Column field="done_type_code" filterField="done_type_code" header="Code Done Type" sortable> 
-            
-            <template #body="{ data }">
-                {{ data.done_type.code }} 
-            </template>
-            <template #filter="{ filterModel }">
-                <InputText v-model="filterModel.value" type="text" class="p-column-filter" placeholder="Search by " />
-            </template>
-        </Column>
+                <Column field="done_type_code" filterField="done_type_code" header="Code Done Type" sortable>
+                    <template #body="{ data }">
+                        {{ data.done_type.code }}
+                    </template>
+                    <template #filter="{ filterModel }">
+                        <InputText v-model="filterModel.value" type="text" class="p-column-filter" placeholder="Search by " />
+                    </template>
+                </Column>
 
-        <Column field="done_type_name" filterField="done_type_name" header="Name Done Type" sortable> 
-            
-            <template #body="{ data }">
-                {{ data.done_type.name }} 
-            </template>
-            <template #filter="{ filterModel }">
-                <InputText v-model="filterModel.value" type="text" class="p-column-filter" placeholder="Search by " />
-            </template>
-        </Column>
-        <Column field="work_type_day" filterField="work_type_day" header="Work Type day" sortable> 
-            
-            <template #body="{ data }">
-                {{ data.work_type_day }} 
-            </template>
-            <template #filter="{ filterModel }">
-                <InputText v-model="filterModel.value" type="text" class="p-column-filter" placeholder="Search by Work Price Type " />
-            </template>
-    </Column>
+                <Column field="done_type_name" filterField="done_type_name" header="Name Done Type" sortable>
+                    <template #body="{ data }">
+                        {{ data.done_type.name }}
+                    </template>
+                    <template #filter="{ filterModel }">
+                        <InputText v-model="filterModel.value" type="text" class="p-column-filter" placeholder="Search by " />
+                    </template>
+                </Column>
+                <Column field="work_type_day" filterField="work_type_day" header="Work Type day" sortable>
+                    <template #body="{ data }">
+                        {{ data.work_type_day }}
+                    </template>
+                    <template #filter="{ filterModel }">
+                        <InputText v-model="filterModel.value" type="text" class="p-column-filter" placeholder="Search by Work Price Type " />
+                    </template>
+                </Column>
 
-    <Column field="work_type_tarif" filterField="work_type_tarif" header="Work Type tarif" sortable> 
-            
-            <template #body="{ data }">
-                {{ data.work_type_tarif }} 
-            </template>
-            <template #filter="{ filterModel }">
-                <InputText v-model="filterModel.value" type="text" class="p-column-filter" placeholder="Search by Work Price Type " />
-            </template>
-    </Column>
+                <Column field="work_type_tarif" filterField="work_type_tarif" header="Work Type tarif" sortable>
+                    <template #body="{ data }">
+                        {{ data.work_type_tarif }}
+                    </template>
+                    <template #filter="{ filterModel }">
+                        <InputText v-model="filterModel.value" type="text" class="p-column-filter" placeholder="Search by Work Price Type " />
+                    </template>
+                </Column>
 
-    <Column field="price_tarif" filterField="price_tarif" header="Price tarif" sortable> 
-            
-            <template #body="{ data }">
-                {{ data.price_tarif }} 
-            </template>
-            <template #filter="{ filterModel }">
-                <InputText v-model="filterModel.value" type="text" class="p-column-filter" placeholder="Search by " />
-            </template>
-    </Column>
-        <!-- tasks_of_type.code -->
-        <!-- tasks_of_type.name -->
-        <!-- done_type.code -->
-        <!-- done_type.name -->
-        <!-- "work_type_day" -->
-        <!-- "price_tarif" -->
-        <!--Here add other columns-->
+                <Column field="price_tarif" filterField="price_tarif" header="Price tarif" sortable>
+                    <template #body="{ data }">
+                        {{ data.price_tarif }}
+                    </template>
+                    <template #filter="{ filterModel }">
+                        <InputText v-model="filterModel.value" type="text" class="p-column-filter" placeholder="Search by " />
+                    </template>
+                </Column>
+                <!-- tasks_of_type.code -->
+                <!-- tasks_of_type.name -->
+                <!-- done_type.code -->
+                <!-- done_type.name -->
+                <!-- "work_type_day" -->
+                <!-- "price_tarif" -->
+                <!--Here add other columns-->
 
+                <Column field="farmName" filterField="farm.name" header="Farm Name" sortable>
+                    <template #body="{ data }">
+                        {{ data.farm.name }}
+                    </template>
+                    <template #filter="{ filterModel }">
+                        <InputText v-model="filterModel.value" type="text" class="p-column-filter" placeholder="Search by farm" />
+                    </template>
+                </Column>
 
-        <Column field="farmName" filterField="farm.name" header="Farm Name" sortable>
-                <template #body="{ data }">
-                    {{ data.farm.name }}
-                </template>
-                <template #filter="{ filterModel }">
-                    <InputText v-model="filterModel.value" type="text" class="p-column-filter" placeholder="Search by farm" />
-                </template>
-            </Column>
+                <Column field="companyName" filterField="company.name" header="Company Name" sortable>
+                    <template #body="{ data }">
+                        {{ data.company.name }}
+                    </template>
+                    <template #filter="{ filterModel }">
+                        <InputText v-model="filterModel.value" type="text" class="p-column-filter" placeholder="Search by farm" />
+                    </template>
+                </Column>
 
-            <Column field="companyName" filterField="company.name" header="Company Name" sortable>
-                <template #body="{ data }">
-                    {{ data.company.name }}
-                </template>
-                <template #filter="{ filterModel }">
-                    <InputText v-model="filterModel.value" type="text" class="p-column-filter" placeholder="Search by farm" />
-                </template>
-            </Column>
+                <Column field="createdAt" filterField="created_at" header="Creation date" sortable>
+                    <template #body="{ data }">
+                        {{ data.created_at }}
+                    </template>
+                    <template #filter="{ filterModel }">
+                        <InputText v-model="filterModel.value" type="text" class="p-column-filter" placeholder="Search by creation date" />
+                    </template>
+                </Column>
 
-            <Column field="createdAt" filterField="created_at" header="Creation date" sortable>
-                <template #body="{ data }">
-                    {{ data.created_at }}
-                </template>
-                <template #filter="{ filterModel }">
-                    <InputText v-model="filterModel.value" type="text" class="p-column-filter" placeholder="Search by creation date" />
-                </template>
-            </Column>
+                <Column field="updatedAt" filterField="updated_at" header="Modification date" sortable>
+                    <template #body="{ data }">
+                        {{ data.updated_at }}
+                    </template>
+                    <template #filter="{ filterModel }">
+                        <InputText v-model="filterModel.value" type="text" class="p-column-filter" placeholder="Search by modification date" />
+                    </template>
+                </Column>
 
-            <Column field="updatedAt" filterField="updated_at" header="Modification date" sortable>
-                <template #body="{ data }">
-                    {{ data.updated_at }}
-                </template>
-                <template #filter="{ filterModel }">
-                    <InputText v-model="filterModel.value" type="text" class="p-column-filter" placeholder="Search by modification date" />
-                </template>
-            </Column>
-
-            <!-- <Column field="status" filterField="status.name" header="Status" sortable>
+                <!-- <Column field="status" filterField="status.name" header="Status" sortable>
                 <template #body="{ data }">
                     <Tag :value="data.status.name" :severity="'EFC88B'" />
                 </template>
@@ -225,74 +213,59 @@
                     <InputText v-model="filterModel.value" type="text" class="p-column-filter" placeholder="Search by status" />
                 </template>
             </Column> -->
-
-        </DataTable>
-        <Dialog v-model:visible="formDialogNew" modal :header="formDialogNewTitle" class="p-fluid text-center mx-auto">
-
-                
+            </DataTable>
+            <Dialog v-model:visible="formDialogNew" modal :header="formDialogNewTitle" class="p-fluid text-center mx-auto">
                 <div class="mb-3">
-                    
-                    <div class=" flex align-items-center">
+                    <div class="flex align-items-center">
                         <label for="username" class="font-semibold w-6rem">Type of task: </label>
-                    <AutoComplete v-model="tasks_of_typeV" dropdown :suggestions="taskOfTypesObject" field="name"  @complete="searchTaskOfTypes" placeholder=""/>
+                        <AutoComplete v-model="tasks_of_typeV" dropdown :suggestions="taskOfTypesObject" field="name" @complete="searchTaskOfTypes" placeholder="" />
                     </div>
                     <small id="username-help" :class="{ 'p-invalid text-red-700': errorsNew['tasks_of_typeV'] }">
                         {{ errorsNew.tasks_of_typeV }}
                     </small>
-                    
                 </div>
 
-
-
-
                 <div class="mb-3">
-                    <div class=" flex align-items-center">
+                    <div class="flex align-items-center">
                         <label for="username" class="font-semibold w-6rem">Done Types: </label>
-                    <AutoComplete v-model="done_typeV" dropdown :suggestions="doneTypesObject" field="name"  @complete="searchDoneTypes" placeholder="" />
+                        <AutoComplete v-model="done_typeV" dropdown :suggestions="doneTypesObject" field="name" @complete="searchDoneTypes" placeholder="" />
                     </div>
                     <small id="username-help" :class="{ 'p-invalid text-red-700': errorsNew['done_typeV'] }">
                         {{ errorsNew.done_typeV }}
                     </small>
-                    
                 </div>
 
                 <div class="mb-3">
-                    <div class=" flex align-items-center">
+                    <div class="flex align-items-center">
                         <label for="username" class="font-semibold w-6rem">Work type day: </label>
-                    <AutoComplete v-model="work_type_dayV" dropdown :suggestions="work_type_dayObject" field="name"  @complete="searchTypeOfWorkTypeDay" placeholder="" />
+                        <AutoComplete v-model="work_type_dayV" dropdown :suggestions="work_type_dayObject" field="name" @complete="searchTypeOfWorkTypeDay" placeholder="" />
                     </div>
                     <small id="username-help" :class="{ 'p-invalid text-red-700': errorsNew['work_type_dayV'] }">
                         {{ errorsNew.work_type_dayV }}
                     </small>
-                    
                 </div>
 
-
                 <div class="mb-3">
-                    <div class=" flex align-items-center">
+                    <div class="flex align-items-center">
                         <label for="username" class="font-semibold w-6rem">Work type tarif: </label>
-                    <AutoComplete v-model="work_type_tarifV" dropdown inputId="ac" :suggestions="work_type_tarifObject"  field="name" @complete="searchTypeOfWorkTarif" placeholder="Busca o selecciona " />
+                        <AutoComplete v-model="work_type_tarifV" dropdown inputId="ac" :suggestions="work_type_tarifObject" field="name" @complete="searchTypeOfWorkTarif" placeholder="Busca o selecciona " />
                     </div>
                     <small id="username-help" :class="{ 'p-invalid text-red-700': errorsNew['work_type_tarifV'] }">
-                        {{ errorsNew.work_type_tarifV}}
+                        {{ errorsNew.work_type_tarifV }}
                     </small>
-                    
                 </div>
 
                 <div class="mb-3">
-                    <div class=" flex align-items-center">
+                    <div class="flex align-items-center">
                         <!-- <label for="minmax-buttons" class="font-bold block mb-2"> Price Tarif </label> -->
-                        <label for="username" class="font-semibold w-6rem">Price Tarif:   </label>
+                        <label for="username" class="font-semibold w-6rem">Price Tarif: </label>
                         <InputNumber v-model="price_tarifV" inputId="minmax-buttons" mode="decimal" showButtons :min="0" :max="100" />
                     </div>
                     <small id="username-help" :class="{ 'p-invalid text-red-700': errorsNew['price_TarifV'] }">
                         {{ errorsNew.price_tarifV }}
                     </small>
-                    
                 </div>
 
-                
-                
                 <div class="mb-3">
                     <div class="flex align-items-center">
                         <label for="username" class="font-semibold w-6rem">Farm: </label>
@@ -319,57 +292,48 @@
             </Dialog>
 
             <Dialog v-model:visible="formDialogEdit" modal :header="formDialogEditTitle" class="p-fluid text-center mx-auto">
-
                 <div class="mb-3">
-                    <div class=" flex align-items-center">
+                    <div class="flex align-items-center">
                         <label for="username" class="font-semibold w-6rem">Type of task: </label>
-                    <AutoComplete v-model="tasks_of_typeV" dropdown :suggestions="taskOfTypesObject" field="name"  @complete="searchTaskOfTypes" />
+                        <AutoComplete v-model="tasks_of_typeV" dropdown :suggestions="taskOfTypesObject" field="name" @complete="searchTaskOfTypes" />
                     </div>
                     <small id="username-help" :class="{ 'p-invalid text-red-700': errorsNew['tasks_of_typeV'] }">
                         {{ errorsNew.tasks_of_typeV }}
                     </small>
-                    
                 </div>
 
-
-
-
                 <div class="mb-3">
-                    <div class=" flex align-items-center">
+                    <div class="flex align-items-center">
                         <label for="username" class="font-semibold w-6rem">Done Types: </label>
-                    <AutoComplete v-model="done_typeV" dropdown :suggestions="doneTypesObject" field="name"  @complete="searchDoneTypes" />
+                        <AutoComplete v-model="done_typeV" dropdown :suggestions="doneTypesObject" field="name" @complete="searchDoneTypes" />
                     </div>
                     <small id="username-help" :class="{ 'p-invalid text-red-700': errorsNew['done_typeV'] }">
                         {{ errorsNew.done_typeV }}
                     </small>
-                    
                 </div>
 
                 <div class="mb-3">
-                    <div class=" flex align-items-center">
+                    <div class="flex align-items-center">
                         <label for="username" class="font-semibold w-6rem">Work type day: </label>
-                    <AutoComplete v-model="work_type_dayV" dropdown :suggestions="work_type_dayObject" field="name"  @complete="searchTypeOfWorkTypeDay" />
+                        <AutoComplete v-model="work_type_dayV" dropdown :suggestions="work_type_dayObject" field="name" @complete="searchTypeOfWorkTypeDay" />
                     </div>
                     <small id="username-help" :class="{ 'p-invalid text-red-700': errorsNew['work_type_dayV'] }">
                         {{ errorsNew.work_type_dayV }}
                     </small>
-                    
                 </div>
 
-
                 <div class="mb-3">
-                    <div class=" flex align-items-center">
+                    <div class="flex align-items-center">
                         <label for="username" class="font-semibold w-6rem">Work type tarif: </label>
-                    <AutoComplete v-model="work_type_tarifV" dropdown :suggestions="work_type_tarifObject"  field="name" @complete="searchTypeOfWorkTarif" />
+                        <AutoComplete v-model="work_type_tarifV" dropdown :suggestions="work_type_tarifObject" field="name" @complete="searchTypeOfWorkTarif" />
                     </div>
                     <small id="username-help" :class="{ 'p-invalid text-red-700': errorsNew['work_type_tarifV'] }">
-                        {{ errorsNew.work_type_tarifV}}
+                        {{ errorsNew.work_type_tarifV }}
                     </small>
-                    
                 </div>
 
                 <div class="mb-3">
-                    <div class=" flex align-items-center">
+                    <div class="flex align-items-center">
                         <!-- <label for="minmax-buttons" class="font-bold block mb-2"> Price Tarif </label> -->
                         <label for="username" class="font-semibold w-6rem">Price Tarif: </label>
                         <InputNumber v-model="price_tarifV" inputId="minmax-buttons" mode="decimal" showButtons :min="0" :max="100" />
@@ -377,11 +341,8 @@
                     <small id="username-help" :class="{ 'p-invalid text-red-700': errorsNew['price_TarifV'] }">
                         {{ errorsNew.price_tarifV }}
                     </small>
-                    
                 </div>
 
-                
-                
                 <div class="mb-3">
                     <div class="flex align-items-center">
                         <label for="username" class="font-semibold w-6rem">Farm: </label>
@@ -408,57 +369,48 @@
             </Dialog>
 
             <Dialog v-model:visible="formDialogClone" modal :header="formDialogCloneTitle" class="p-fluid text-center mx-auto">
-
                 <div class="mb-3">
-                    <div class=" flex align-items-center">
+                    <div class="flex align-items-center">
                         <label for="username" class="font-semibold w-6rem">Type of task: </label>
-                    <AutoComplete v-model="tasks_of_typeV" dropdown :suggestions="taskOfTypesObject" field="name"  @complete="searchTaskOfTypes" />
+                        <AutoComplete v-model="tasks_of_typeV" dropdown :suggestions="taskOfTypesObject" field="name" @complete="searchTaskOfTypes" />
                     </div>
                     <small id="username-help" :class="{ 'p-invalid text-red-700': errorsNew['tasks_of_typeV'] }">
                         {{ errorsNew.tasks_of_typeV }}
                     </small>
-                    
                 </div>
 
-
-
-
                 <div class="mb-3">
-                    <div class=" flex align-items-center">
+                    <div class="flex align-items-center">
                         <label for="username" class="font-semibold w-6rem">Done Types: </label>
-                    <AutoComplete v-model="done_typeV" dropdown :suggestions="doneTypesObject" field="name"  @complete="searchDoneTypes" />
+                        <AutoComplete v-model="done_typeV" dropdown :suggestions="doneTypesObject" field="name" @complete="searchDoneTypes" />
                     </div>
                     <small id="username-help" :class="{ 'p-invalid text-red-700': errorsNew['done_typeV'] }">
                         {{ errorsNew.done_typeV }}
                     </small>
-                    
                 </div>
 
                 <div class="mb-3">
-                    <div class=" flex align-items-center">
+                    <div class="flex align-items-center">
                         <label for="username" class="font-semibold w-6rem">Work type day: </label>
-                    <AutoComplete v-model="work_type_dayV" dropdown :suggestions="work_type_dayObject" field="name"  @complete="searchTypeOfWorkTypeDay" />
+                        <AutoComplete v-model="work_type_dayV" dropdown :suggestions="work_type_dayObject" field="name" @complete="searchTypeOfWorkTypeDay" />
                     </div>
                     <small id="username-help" :class="{ 'p-invalid text-red-700': errorsNew['work_type_dayV'] }">
                         {{ errorsNew.work_type_dayV }}
                     </small>
-                    
                 </div>
 
-
                 <div class="mb-3">
-                    <div class=" flex align-items-center">
+                    <div class="flex align-items-center">
                         <label for="username" class="font-semibold w-6rem">Work type tarif: </label>
-                    <AutoComplete v-model="work_type_tarifV" dropdown :suggestions="work_type_tarifObject"  field="name" @complete="searchTypeOfWorkTarif" />
+                        <AutoComplete v-model="work_type_tarifV" dropdown :suggestions="work_type_tarifObject" field="name" @complete="searchTypeOfWorkTarif" />
                     </div>
                     <small id="username-help" :class="{ 'p-invalid text-red-700': errorsNew['work_type_tarifV'] }">
-                        {{ errorsNew.work_type_tarifV}}
+                        {{ errorsNew.work_type_tarifV }}
                     </small>
-                    
                 </div>
 
                 <div class="mb-3">
-                    <div class=" flex align-items-center">
+                    <div class="flex align-items-center">
                         <!-- <label for="minmax-buttons" class="font-bold block mb-2"> Price Tarif </label> -->
                         <label for="username" class="font-semibold w-6rem">Price Tarif: </label>
                         <InputNumber v-model="price_tarifV" inputId="minmax-buttons" mode="decimal" showButtons :min="0" :max="100" />
@@ -466,11 +418,8 @@
                     <small id="username-help" :class="{ 'p-invalid text-red-700': errorsNew['price_TarifV'] }">
                         {{ errorsNew.price_tarifV }}
                     </small>
-                    
                 </div>
 
-                
-                
                 <div class="mb-3">
                     <div class="flex align-items-center">
                         <label for="username" class="font-semibold w-6rem">Farm: </label>
@@ -534,9 +483,8 @@
             </Dialog>
 
             <Toast />
+        </div>
     </div>
-</div>
-    
 </template>
 
 <!-- 
@@ -562,10 +510,10 @@ import * as XLSX from 'xlsx';
 import { saveAs } from 'file-saver';
 import { z } from 'zod';
 import ability from '@/service/ability.js';
-import { AbilityBuilder} from '@casl/ability';
-const prueba = ref({revisar: 'revisar GET-POST-PUT-DELETE'});
+import { AbilityBuilder } from '@casl/ability';
+const prueba = ref({ revisar: 'revisar GET-POST-PUT-DELETE' });
 const namePage = ' Works Tarif ';
-const titlePage = ' '+namePage+' information';
+const titlePage = ' ' + namePage + ' information';
 const dataFromComponent = ref();
 const Farms = ref([]);
 const farms = ref([]);
@@ -583,16 +531,11 @@ const work_type_dayObject = ref([]);
 const work_type_tarif = ref([]);
 const work_type_tarifObject = ref([]);
 
-
-
-
-
-
-const formDialogNewTitle = 'Create new '+namePage;
-const formDialogEditTitle = 'Edit '+namePage;
+const formDialogNewTitle = 'Create new ' + namePage;
+const formDialogEditTitle = 'Edit ' + namePage;
 const formDialogCloneTitle = 'Clone ' + namePage;
 const formDialogExportTitle = 'Export ' + namePage;
-const formDialogDeleteTitle = 'Delete '+namePage;
+const formDialogDeleteTitle = 'Delete ' + namePage;
 const formDialogNew = ref(false);
 const formDialogEdit = ref(false);
 const formDialogClone = ref(false);
@@ -601,20 +544,17 @@ const formDialogDelete = ref(false);
 const toast = useToast();
 const filename = ref('table');
 const isChanging = ref(false);
-let endpoint = ref('/tarif_of_works');  //replace endpoint with your endpoint
-
+let endpoint = ref('/tarif_of_works'); //replace endpoint with your endpoint
 
 ////////////
- //Form here
- ////////////   
+//Form here
+////////////
 const size = ref({ label: 'Normal', value: 'normal' });
 const sizeOptions = ref([
     { label: 'Small', value: 'small', class: 'sm' },
     { label: 'Normal', value: 'normal' },
     { label: 'Large', value: 'large', class: 'lg' }
 ]);
-
-
 
 onBeforeMount(() => {
     readAll();
@@ -623,10 +563,8 @@ onBeforeMount(() => {
 const listRowSelect = ref([]);
 const loading = ref(false);
 const onRowSelect = (data) => {
-    
     listRowSelect.value = data;
     //assignValues(mode.value)
-    
 };
 
 watch(listRowSelect, onRowSelect);
@@ -670,12 +608,13 @@ const readAll = async () => {
     doneTypes.value = respDoneType.data.data.map((doneType) => ({ id: doneType.uuid, name: doneType.name }));
 
     const respWorkTypeDay = await getRequest('/lists/workTypesDay');
-    if (!respWorkTypeDay.ok) toast.add({ severity: 'error', detail: 'Error' + respWorkTypeDay.error, life: 3000 });
+    console.log('respWorkTypeDay : ', respWorkTypeDay);
+    if (respWorkTypeDay.ok) toast.add({ severity: 'error', detail: 'Error' + respWorkTypeDay.error, life: 3000 });
     work_type_day.value = respWorkTypeDay.data.map((workTypeDay) => ({ id: workTypeDay.id, name: workTypeDay.label }));
 
     const respWorkTypeTarif = await getRequest('/lists/workTypeRate');
-    if (!respWorkTypeTarif.ok) toast.add({ severity: 'error', detail: 'Error' + respWorkTypeTarif.error, life: 3000 });
-    work_type_tarif.value = respWorkTypeTarif.data.map((workTypeTarif) => ({ id: workTypeTarif.id, name: workTypeTarif.label }));
+    if (!respWorkTypeTarif.ok) work_type_tarif.value = respWorkTypeTarif.data.map((workTypeTarif) => ({ id: workTypeTarif.id, name: workTypeTarif.label }));
+    toast.add({ severity: 'error', detail: 'Error' + respWorkTypeTarif.error, life: 3000 });
 
     const respFarms = await getRequest('/farms');
     if (!respFarms.ok) toast.add({ severity: 'error', detail: 'Error' + respFarms.error, life: 3000 });
@@ -711,7 +650,7 @@ watch(
 //     {
 //     validationSchema: toTypedSchema(
 //         z.object({
-            
+
 //             tasks_of_typeV: z.object({
 //                 name: z.string().min(4),
 //                 id: z.string().min(2)
@@ -780,26 +719,29 @@ const {
                 id: z.string().min(4)
             }),
             price_tarifV: z.number().min(2),
-            farm: z.object({
-                name: z.string().min(4),
-                id: z.string().min(4)
-            }).optional(),
-            company: z.object({
-                name: z.string().min(4),
-                id: z.string().min(4)
-            }).optional()
+            farm: z
+                .object({
+                    name: z.string().min(4),
+                    id: z.string().min(4)
+                })
+                .optional(),
+            company: z
+                .object({
+                    name: z.string().min(4),
+                    id: z.string().min(4)
+                })
+                .optional()
         })
     )
 });
 
 const [farm] = defineField('farm');
 const [company] = defineField('company');
-const[tasks_of_typeV] = defineField('tasks_of_typeV');
-const [done_typeV,done_typeVProps] = defineField('done_typeV');
-const [work_type_dayV,work_type_dayVProps] = defineField('work_type_dayV');
-const [price_tarifV,price_tarifVProps] = defineField('price_tarifV');
-const [work_type_tarifV,work_type_tarifVProps] = defineField('work_type_tarifV');
-
+const [tasks_of_typeV] = defineField('tasks_of_typeV');
+const [done_typeV, done_typeVProps] = defineField('done_typeV');
+const [work_type_dayV, work_type_dayVProps] = defineField('work_type_dayV');
+const [price_tarifV, price_tarifVProps] = defineField('price_tarifV');
+const [work_type_tarifV, work_type_tarifVProps] = defineField('work_type_tarifV');
 
 const extenciones = ref([{ name: 'CSV' }, { name: 'XLS' }]);
 const optionsEsport = ref([{ name: 'ALL' }, { name: 'SELECTED' }]);
@@ -813,26 +755,22 @@ let headerNames = ref([]);
 provide('isChanging', isChanging);
 watch(listRowSelect, RowSelect);
 
-
-
 const openNew = () => {
     resetForm();
     formDialogNew.value = true;
-    
-
 };
 
 const openEdit = () => {
     resetForm();
-    const { code, company: empresa, farm: farmParameter, name: nombre, tasks_of_type:task, done_type:done,work_type_day:work,work_type_tarif:tarif,price_tarif:price } = listRowSelect.value[0];
+    const { code, company: empresa, farm: farmParameter, name: nombre, tasks_of_type: task, done_type: done, work_type_day: work, work_type_tarif: tarif, price_tarif: price } = listRowSelect.value[0];
 
     // name.value = nombre;
     // codeV.value = code;
-    tasks_of_typeV.value={id:task.uuid, name:task.name}
-    done_typeV.value={id:done.uuid,name:done.name}
-    work_type_dayV.value={id:work,name:work}
-    work_type_tarifV.value = {id:tarif,name:tarif}
-    price_tarifV.value=Number(price)
+    tasks_of_typeV.value = { id: task.uuid, name: task.name };
+    done_typeV.value = { id: done.uuid, name: done.name };
+    work_type_dayV.value = { id: work, name: work };
+    work_type_tarifV.value = { id: tarif, name: tarif };
+    price_tarifV.value = Number(price);
     company.value = { id: empresa.uuid, name: empresa.name };
     farm.value = { id: farmParameter.uuid, name: farmParameter.name };
 
@@ -843,15 +781,15 @@ const openClone = () => {
     resetForm();
     // const { company: empresa, farm: farmParameter, name: nombre } = listRowSelect.value[0];
     // name.value = nombre;
-    const { code, company: empresa, farm: farmParameter, name: nombre, tasks_of_type:task, done_type:done,work_type_day:work,work_type_tarif:tarif,price_tarif:price } = listRowSelect.value[0];
+    const { code, company: empresa, farm: farmParameter, name: nombre, tasks_of_type: task, done_type: done, work_type_day: work, work_type_tarif: tarif, price_tarif: price } = listRowSelect.value[0];
 
     // name.value = nombre;
     // codeV.value = code;
-    tasks_of_typeV.value={id:task.uuid, name:task.name}
-    done_typeV.value={id:done.uuid,name:done.name}
-    work_type_dayV.value={id:work,name:work}
-    work_type_tarifV.value = {id:tarif,name:tarif}
-    price_tarifV.value=Number(price)
+    tasks_of_typeV.value = { id: task.uuid, name: task.name };
+    done_typeV.value = { id: done.uuid, name: done.name };
+    work_type_dayV.value = { id: work, name: work };
+    work_type_tarifV.value = { id: tarif, name: tarif };
+    price_tarifV.value = Number(price);
     company.value = { id: empresa.uuid, name: empresa.name };
     farm.value = { id: farmParameter.uuid, name: farmParameter.name };
     formDialogClone.value = true;
@@ -878,19 +816,18 @@ const createRecord = handleSubmitNew(async (values) => {
         //company_uuid: values.company ? values.company.id : companyDefault,
         farm_uuid: values.farm ? values.farm.id : farmDefault
     };
-        // Agrega company_uuid solo si company está presente
-        if (values.company) {
+    // Agrega company_uuid solo si company está presente
+    if (values.company) {
         data.company_uuid = values.company.id;
     }
 
-    console.log(data)
+    console.log(data);
     const restp = await postRequest(endpoint.value, data);
 
     toast.add({ severity: restp.ok ? 'success' : 'error', summary: 'Create', detail: restp.ok ? 'Creado' : restp.error, life: 3000 });
     loadingData();
     formDialogNew.value = false;
-    prueba.value= data;
-
+    prueba.value = data;
 });
 
 const EditRecord = handleSubmitNew(async (values) => {
@@ -901,7 +838,6 @@ const EditRecord = handleSubmitNew(async (values) => {
     //     company_uuid: values.company ? values.company.id : '25b4319c-e93f-4411-936c-118060f5e7c9',
     //     farm_uuid: values.farm ? values.farm.id : values.farm
     // };
-    
 
     const data = {
         // code: values.codeV,
@@ -914,8 +850,8 @@ const EditRecord = handleSubmitNew(async (values) => {
         //company_uuid: values.company ? values.company.id : companyDefault,
         farm_uuid: values.farm ? values.farm.id : farmDefault
     };
-        // Agrega company_uuid solo si company está presente
-        if (values.company) {
+    // Agrega company_uuid solo si company está presente
+    if (values.company) {
         data.company_uuid = values.company.id;
     }
 
@@ -923,9 +859,11 @@ const EditRecord = handleSubmitNew(async (values) => {
     toast.add({ severity: restp.ok ? 'success' : 'error', summary: 'Edit', detail: restp.ok ? 'Editado' : restp.error, life: 3000 });
     loadingData();
     formDialogEdit.value = false;
-    prueba.value= data;
-    if(restp.ok) {listRowSelect.value = []
-    selectedRegisters.value = []}
+    prueba.value = data;
+    if (restp.ok) {
+        listRowSelect.value = [];
+        selectedRegisters.value = [];
+    }
 });
 
 const CloneRecord = handleSubmitNew(async (values) => {
@@ -946,20 +884,20 @@ const CloneRecord = handleSubmitNew(async (values) => {
         //company_uuid: values.company ? values.company.id : companyDefault,
         farm_uuid: values.farm ? values.farm.id : farmDefault
     };
-        // Agrega company_uuid solo si company está presente
-        if (values.company) {
+    // Agrega company_uuid solo si company está presente
+    if (values.company) {
         data.company_uuid = values.company.id;
     }
     const restp = await postRequest(endpoint.value, data);
     toast.add({ severity: restp.ok ? 'success' : 'error', summary: 'Clone', detail: restp.ok ? 'Clonado' : restp.error, life: 3000 });
     loadingData();
     formDialogClone.value = false;
-    prueba.value= data;
-    if(restp.ok) {listRowSelect.value = []
-    selectedRegisters.value = []}
+    prueba.value = data;
+    if (restp.ok) {
+        listRowSelect.value = [];
+        selectedRegisters.value = [];
+    }
 });
-
-
 
 const ExportRecord = () => {
     const eventos = exportAll.value.name == 'ALL' ? dataFromComponent.value.map((data) => data) : listRowSelect.value.map((data) => data);
@@ -1091,5 +1029,4 @@ const remove = (aver) => {
 };
 </script>
 
-<style lang="scss" scoped>
-</style>
+<style lang="scss" scoped></style>
