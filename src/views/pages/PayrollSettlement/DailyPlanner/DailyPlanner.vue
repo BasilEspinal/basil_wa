@@ -42,6 +42,28 @@
 
                                      <Divider v-if="ability.can('planeacion_diaria_editar')" layout="vertical" />
 
+                                     <div class="flex justify-center">
+                                        <Toast />
+                                        <SplitButton
+                                        :disabled="!(listRowSelect.length > 0 && listRowSelect.length < 2)" 
+                                        label="Action" 
+                                        icon="pi pi-check" 
+                                        dropdownIcon="pi pi-cog" 
+                                        
+                                        :model="items" />
+                                    </div>
+
+                                    <Dialog v-model:visible="formDialogSettlement" :style="{ width: '450px' }" :header="titleDialog" :modal="true">
+                                        <label for="username" class="text-2xl font-medium w-6rem"> {{ messageDialog }} </label>
+                                        <Summary :listRowSelect="listRowSelect" />
+                                        <div class="flex justify-content-end gap-2">
+                                            
+                                            <Button type="button" label="Cancel" severity="secondary" @click="formDialogClose = false" />
+                                            <Button type="button" label="Save" @click="patchRecord" />
+                                        </div>
+                                    </Dialog>
+
+
 
                             </template>
                         </Toolbar>
@@ -97,73 +119,7 @@
                 <template #header>
                     <!--Uncomment when filters are done-->
 
-                    <div class="grid">
-                <div class="col-xs-12 col-sm-6 col-md-4 mb-2 text-center mx-auto">
-            <div class="col-xs-12 col-sm-6 col-md-4 mb-2 text-center mx-auto">
-                        <Toolbar style="margin-bottom: 1rem">
-                            <template #center>
-  
 
-                                <Button 
-    v-if="ability.can('planeacion_diaria_eliminar')" 
-    :disabled="!listRowSelect.length > 0" 
-    label="En progreso" 
-    icon="pi pi-check" 
-    class="mb-2 mt-2" 
-    @click="openDelete" 
-    size="large" 
-    :style="{ backgroundColor: '#FFC300', borderColor: '#A93226', color: '#ffffff' }"
-/>
-
-<Divider v-if="ability.can('planeacion_diaria_editar')" layout="vertical" />
- 
-<Button 
-    v-if="ability.can('planeacion_diaria_eliminar')" 
-    :disabled="!listRowSelect.length > 0" 
-    label="Liquidar" 
-    icon="pi pi-check" 
-    class="mb-2 mt-2" 
-    @click="openDelete" 
-    size="large" 
-    :style="{ backgroundColor: '#A93226', borderColor: '#A93226', color: '#ffffff' }"
-/>
-
-<Divider v-if="ability.can('planeacion_diaria_editar')" layout="vertical" />
-<Button 
-    v-if="ability.can('planeacion_diaria_eliminar')" 
-    :disabled="!listRowSelect.length > 0" 
-    label="Cerrar" 
-    icon="pi pi-check" 
-    class="mb-2 mt-2" 
-    @click="openClose" 
-    size="large" 
-    :style="{ backgroundColor: '#F39C12', borderColor: '#F39C12', color: '#ffffff' }"
-/>
-
-
-
-
-
-
-
-<Divider v-if="ability.can('planeacion_diaria_editar')" layout="vertical" />
-<Button 
-    v-if="ability.can('planeacion_diaria_eliminar')" 
-    :disabled="!listRowSelect.length > 0" 
-    label="Validar" 
-    icon="pi pi-check" 
-    class="mb-2 mt-2" 
-    @click="openDelete" 
-    size="large" 
-    :style="{ backgroundColor: '#D7DBDD', borderColor: '#D7DBDD', color: '#000000' }"
-/>
-
-                            </template>
-                        </Toolbar>
-                    </div>
-
-                </div>
-            </div>
 
                     <Toolbar class="mb-2">
                         <template v-slot:start>
@@ -876,15 +832,7 @@
                     <Button type="button" label="Delete" @click="DeleteRecord" />
                 </div>
             </Dialog>
-            <Dialog v-model:visible="formDialogClose" :style="{ width: '450px' }" :header="formDialogCloseTitle" :modal="true">
-                <label for="username" class="text-2xl font-medium w-6rem"> Are you sure you want to close the following? </label>
-                <Summary :listRowSelect="listRowSelect" />
-                <div class="flex justify-content-end gap-2">
-                    
-                    <Button type="button" label="Cancel" severity="secondary" @click="formDialogClose = false" />
-                    <Button type="button" label="Save" @click="patchRecord" />
-                </div>
-            </Dialog>
+
 
             <Toast />
         </div>
@@ -917,6 +865,10 @@ import ability from '@/service/ability.js';
 import { AbilityBuilder } from '@casl/ability';
 import BackendErrors from '@/views/Errors/BackendErrors.vue';
 import Summary from './Summary.vue';
+import {useMenuItems} from '@/composables/PayrollSettlement/DailyPlanner.js';
+
+
+
 
 const prueba = ref({ revisar: 'revisar GET-POST-PUT-DELETE' });
 const backendValidation = ref();
@@ -965,6 +917,7 @@ const formDialogClose = ref(false);
 const toast = useToast();
 const filename = ref('table');
 const isChanging = ref(false);
+const { items, save,flagProgress,flagClose,flagValidate,flagLiquidate,titleDialog,messageDialog,status_idSettlement } = useMenuItems();
 let endpoint = ref('/planner_tasks'); //replace endpoint with your endpoint
 
 ////////////
@@ -1228,8 +1181,6 @@ watch(
     }
 );
 
-const varto = ref();
-
 const openEdit = () => {
     resetForm();
 
@@ -1302,10 +1253,21 @@ const openExport = () => {
     formDialogExport.value = true;
 };
 
-const openClose = () => {
-  
-    formDialogClose.value = true;
+const formDialogSettlement = ref(false);
+const openDialogSettlement = () => {
+
+    formDialogSettlement.value = true;
 };
+watch(
+    [flagClose, flagProgress, flagValidate, flagLiquidate],
+    ([newClose, newProgress, newValidate, newLiquidate], [oldClose, oldProgress, oldValidate, oldLiquidate]) => {
+        if (newClose !== oldClose || newProgress !== oldProgress || newValidate !== oldValidate || newLiquidate !== oldLiquidate) {
+            openDialogSettlement();
+        }
+    }
+);
+
+    
 const openDelete = () => {
     formDialogDelete.value = true;
 };
@@ -1403,14 +1365,13 @@ const EditRecord = handleSubmitNew(async (values) => {
 const patchRecord = async (values) => {
     const { uuid } = listRowSelect.value[0];
     const data = {
-        status_id: 10
+        status_id: status_idSettlement.value
     };
     const restp = await patchRequest(endpoint.value, data, uuid);
     toast.add({ severity: restp.ok ? 'success' : 'error', summary: 'Close', detail: restp.ok ? 'Closed' : restp.error, life: 3000 });
     loadingData();
     if (restp.ok) {
-        
-        formDialogClose.value = false;
+        formDialogSettlement.value = false;
         listRowSelect.value = [];
         selectedRegisters.value = [];
         errorResponseAPI.value = '';
