@@ -917,7 +917,7 @@ const formDialogClose = ref(false);
 const toast = useToast();
 const filename = ref('table');
 const isChanging = ref(false);
-const { items, save,flagProgress,flagClose,flagValidate,flagLiquidate,titleDialog,messageDialog,status_idSettlement } = useMenuItems();
+const { items, save,flagProgress,flagClose,flagValidate,flagLiquidate,titleDialog,messageDialog,status_idSettlement,currentState } = useMenuItems();
 let endpoint = ref('/planner_tasks'); //replace endpoint with your endpoint
 
 ////////////
@@ -1255,7 +1255,8 @@ const openExport = () => {
 
 const formDialogSettlement = ref(false);
 const openDialogSettlement = () => {
-
+    console.log(listRowSelect.value[0].status.name);
+    currentState.value = listRowSelect.value[0].status.name;
     formDialogSettlement.value = true;
 };
 watch(
@@ -1270,6 +1271,7 @@ watch(
     
 const openDelete = () => {
     formDialogDelete.value = true;
+
 };
 
 const createRecord = handleSubmitNew(async (values) => {
@@ -1364,6 +1366,7 @@ const EditRecord = handleSubmitNew(async (values) => {
 
 const patchRecord = async (values) => {
     const { uuid } = listRowSelect.value[0];
+    
     const data = {
         status_id: status_idSettlement.value
     };

@@ -14,9 +14,9 @@ export function useMenuItems() {
 
     // Computed properties to determine if buttons should be enabled
     const canProgress = computed(() => currentState.value === '');
-    const canClose = computed(() => currentState.value === 'inProgress');
-    const canValidate = computed(() => currentState.value === 'closed');
-    const canLiquidate = computed(() => currentState.value === 'validated');
+    const canClose = computed(() => currentState.value === 'IN_PROGRESS');
+    const canValidate = computed(() => currentState.value === 'CLOSED');
+    const canLiquidate = computed(() => currentState.value === 'VALIDATED');
 
     const items = ref([
         {
@@ -26,7 +26,7 @@ export function useMenuItems() {
                 if (!canProgress.value) return;
                 titleDialog.value = 'In Progress Settlement';
                 messageDialog.value = 'Are you sure you want to mark this settlement as In Progress?';
-                currentState.value = 'inProgress';  // Update the current state
+                currentState.value = 'IN_PROGRESS';  // Update the current state
                 flagClose.value = false;
                 flagLiquidate.value = false;
                 flagValidate.value = false;
@@ -43,13 +43,13 @@ export function useMenuItems() {
                 if (!canClose.value) return;
                 titleDialog.value = 'Close Settlement';
                 messageDialog.value = 'Are you sure you want to close this settlement?';
-                currentState.value = 'closed';  // Update the current state
+                currentState.value = 'CLOSED';  // Update the current state
                 flagLiquidate.value = false;
                 flagValidate.value = false;
                 flagProgress.value = false;
                 flagClose.value = true;
                 status_idSettlement.value = 10;
-                toast.add({ severity: 'warn', summary: 'Closed', detail: 'Settlement Closed', life: 3000 });
+                toast.add({ severity: 'warn', summary: 'Closed', detail: 'Settlement CLOSED', life: 3000 });
             },
             disabled: computed(() => !canClose.value)  // Disable if not allowed
         },
@@ -60,13 +60,13 @@ export function useMenuItems() {
                 if (!canValidate.value) return;
                 titleDialog.value = 'Validate Settlement';
                 messageDialog.value = 'Are you sure you want to validate this settlement?';
-                currentState.value = 'validated';  // Update the current state
+                currentState.value = 'VALIDATED';  // Update the current state
                 flagLiquidate.value = false;
                 flagProgress.value = false;
                 flagClose.value = false;
                 flagValidate.value = true;
                 status_idSettlement.value = 11;
-                toast.add({ severity: 'success', summary: 'Validated', detail: 'Settlement Validated', life: 3000 });
+                toast.add({ severity: 'success', summary: 'VALIDATED', detail: 'Settlement VALIDATED', life: 3000 });
             },
             disabled: computed(() => !canValidate.value)  // Disable if not allowed
         },
@@ -77,13 +77,13 @@ export function useMenuItems() {
                 if (!canLiquidate.value) return;
                 titleDialog.value = 'Liquidate Settlement';
                 messageDialog.value = 'Are you sure you want to liquidate this settlement?';
-                currentState.value = 'liquidated';  // Update the current state
+                currentState.value = 'LIQUIDATED';  // Update the current state
                 flagProgress.value = false;
                 flagClose.value = false;
                 flagValidate.value = false;
                 flagLiquidate.value = true;
                 status_idSettlement.value = 12;
-                toast.add({ severity: 'success', summary: 'Liquidated', detail: 'Settlement Liquidated', life: 3000 });
+                toast.add({ severity: 'success', summary: 'LIQUIDATED', detail: 'Settlement LIQUIDATED', life: 3000 });
             },
             disabled: computed(() => !canLiquidate.value)  // Disable if not allowed
         }
