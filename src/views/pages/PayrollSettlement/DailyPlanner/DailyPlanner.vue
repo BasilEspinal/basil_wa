@@ -1200,7 +1200,10 @@ const openEdit = () => {
         vehicle: vehicle
     } = listRowSelect.value[0];
     console.log(listRowSelect.value[0]);
+    console.log(date)
+    console.log(new Date(date));    
     transaction_dateV.value = new Date(date);
+
     task_of_typeV.value = { id: task.uuid, name: task.name };
     crop_lots_codeV.value = crop_lots;
     productV.value = { id: productX.uuid, name: productX.name };

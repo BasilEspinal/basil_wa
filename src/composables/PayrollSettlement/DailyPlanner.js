@@ -31,7 +31,7 @@ export function useMenuItems() {
                 flagLiquidate.value = false;
                 flagValidate.value = false;
                 flagProgress.value = true;
-                status_idSettlement.value = 9;
+                status_idSettlement.value = 19;
                 toast.add({ severity: 'success', summary: 'Updated', detail: 'Settlement marked as In Progress', life: 3000 });
             },
             disabled: computed(() => !canProgress.value)  // Disable if not allowed
@@ -48,7 +48,7 @@ export function useMenuItems() {
                 flagValidate.value = false;
                 flagProgress.value = false;
                 flagClose.value = true;
-                status_idSettlement.value = 10;
+                status_idSettlement.value = 20;
                 toast.add({ severity: 'warn', summary: 'Closed', detail: 'Settlement CLOSED', life: 3000 });
             },
             disabled: computed(() => !canClose.value)  // Disable if not allowed
@@ -65,7 +65,7 @@ export function useMenuItems() {
                 flagProgress.value = false;
                 flagClose.value = false;
                 flagValidate.value = true;
-                status_idSettlement.value = 11;
+                status_idSettlement.value = 21;
                 toast.add({ severity: 'success', summary: 'VALIDATED', detail: 'Settlement VALIDATED', life: 3000 });
             },
             disabled: computed(() => !canValidate.value)  // Disable if not allowed
@@ -82,7 +82,7 @@ export function useMenuItems() {
                 flagClose.value = false;
                 flagValidate.value = false;
                 flagLiquidate.value = true;
-                status_idSettlement.value = 12;
+                status_idSettlement.value = 22;
                 toast.add({ severity: 'success', summary: 'LIQUIDATED', detail: 'Settlement LIQUIDATED', life: 3000 });
             },
             disabled: computed(() => !canLiquidate.value)  // Disable if not allowed
