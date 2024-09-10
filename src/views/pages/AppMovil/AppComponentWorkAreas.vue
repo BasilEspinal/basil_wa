@@ -21,7 +21,7 @@ const FarmId = ref(null);
 const users = ref(null);
 const filterUsers = ref(null);
 const data = ref(null);
-const holiday = ref(false);
+const holiday = ref('Normal');
 const Tarif = ref(null);
 const lotes = ref(null);
 const search = ref(null);
@@ -33,7 +33,12 @@ onMounted(async () => {
     getData();
     getUsers();
     getHoliday();
+
+
+    
 });
+
+
 
 const logoUrl = computed(() => {
     return `layout/images/${layoutConfig.darkTheme.value ? 'logo-white' : 'logo-dark'}.png`;
@@ -56,7 +61,9 @@ const getHoliday = async () => {
     // const response = await getRequest(`/appmovil/calendars?filter[company_id]=${CopanyId.value}&filter[farm_id]=${FarmId.value}`);
     const response = await getRequest(`/appmovil/calendars?filter[company_id]=${CopanyId.value}`);
     if (!response.ok) toast.add({ severity: 'error', detail: 'Error' + response.error, life: 3000 });
-    holiday.value = response.data.data != [];
+    console.log(response.data.data);
+    holiday.value = response.data.data.length === 0 ? 'Normal' : 'Festivo';
+    console.log(holiday.value);
 };
 
 const getTarifa = async () => {
@@ -184,6 +191,19 @@ function searchUsers() {
                         </ColumnGroup>
                     </DataTable>
                 </ScrollPanel>
+            </TabPanel>
+            <TabPanel>
+                <template #header>
+                    <div class="flex align-items-center gap-2">
+                        <i class="pi pi-cart-plus" style="font-size: 1rem" shape="circle" />
+                        <span class="font-bold white-space-nowrap">{{ t('appmovil.envios') }}</span>
+                    </div>
+                </template>
+                
+                    <pre>Hola</pre>
+                    
+                    
+                
             </TabPanel>
         </TabView>
         <Toast />

@@ -2,14 +2,12 @@
 import { ref, onMounted } from 'vue';
 import { useToast } from 'primevue/usetoast';
 import useData from '@/composables/DataAPI/FetchDataAPICopy.js';
-const { postRequest, errorResponseAPI } = useData();
+const { postRequest, getRequest, errorResponseAPI } = useData();
 import BackendErrors from '@/views/Errors/BackendErrors.vue';
-import UseAppMovil from '@/composables/AppMovil/UseAppMovil.js';
 import { useI18n } from 'vue-i18n';
-const { task_type, dones_work } = UseAppMovil();
 const endpoint = '/transactions/tasks';
 const toast = useToast();
-
+const farmDefault = sessionStorage.getItem('accessSessionFarm');
 const selected_quanty = ref(null);
 const Total = ref(null);
 const select_tasks_type = ref(null);
@@ -19,30 +17,43 @@ const supervisoId = ref('');
 const workCenter = ref({});
 const PesoAprox = ref('4');
 const Notas = ref(null);
+const dones_work = ref(null);
+const tarifa = ref(null);
+
 
 const { t } = useI18n();
 onMounted(async () => {
     workCenter.value = JSON.parse(sessionStorage.getItem('accessSessionWorkCenter'));
     supervisoId.value = await sessionStorage.getItem('accesSessionEmployeeUuid');
+    getLabor();
 });
 
 function clearFiels() {
     selected_quanty.value = null;
     Total.value = null;
     select_tasks_type.value = null;
-    supervisoId.value = null;
+    //supervisoId.value = null;
     Notas.value = null;
 }
 
 const props = defineProps({
     slotProps: { type: Object },
-    tarifa: { type: Number },
+    diaFestivo: { type: String, defaultValue: 'Normal' },
     Lote: { type: Array },
-    data: { type: Object }
+    data: { type: Object },
+    tipoActividad: { type: Array }
 });
 
+const getLabor = async () => {
+    const { taskoftype_id } = workCenter.value;
+    if (!taskoftype_id) return;
+    const response = await getRequest(`/lists/getDoneTypeTasksType?filter[tasks_of_type_id]=${taskoftype_id?.id}`);
+    if (!response.ok) toast.add({ severity: 'error', detail: 'Error' + response.error, life: 3000 });
+    dones_work.value = response.data?.data ?? [];
+};
+
 async function sendDailyReport(dataUser) {
-    const { data, tarifa } = props;
+    const { data } = props;
     const { taskoftype_id } = workCenter.value;
     const customerRequest = data?.customer_request != '' ? data.customer_request : '2c1392a8-2f4c-4d24-9dd4-ef865b0ff456';
     const dataPost = {
@@ -56,23 +67,41 @@ async function sendDailyReport(dataUser) {
         supervisory_employee_uuid: supervisoId.value,
         worker_employee_uuid: dataUser.uuid,
         planner_task_uuid: data?.uuid ?? '',
-        customer_request_uuid: customerRequest,
+        customer_request_uuid: customerRequest?.uuid,
         product_uuid: data?.product.uuid ?? '',
         product_type_uuid: data?.product_type.uuid ?? '',
         variant_uuid: data?.varieties.uuid ?? '',
         packing_type_uuid: data?.packing_type.uuid ?? '',
         device_name: 'Web',
         transdate_sync: null,
-        calendar_uuid: null
+        calendar_uuid: null,
+        done_of_type_uuid: select_tasks_type.value?.code != 'Task' ? selected_dones_work.value?.uuid : "",
+        farm_uuid: farmDefault,
+        
     };
+    console.log(dataPost);
     const restp = await postRequest(endpoint, dataPost);
     toast.add({ severity: restp.ok ? 'success' : 'error', summary: 'Create', detail: restp.ok ? 'Creado' : restp.error, life: 3000 });
     if (restp.ok) clearFiels();
 }
 
 const UpdateTotal = () => {
-    const { tarifa } = props;
     Total.value = selected_quanty.value * tarifa.value;
+};
+
+const getTarifa = async () => {
+    if (!select_tasks_type.value) return;
+    const { data } = props;
+    const listFilterType = ['Task', 'HoraExtra'];
+    let Endpoint = '';
+    console.log(props.diaFestivo)
+    if (select_tasks_type.value && listFilterType.includes(select_tasks_type.value.code)) {
+        Endpoint = `/appmovil/taskstarif?filter[tasks_of_type_id]=${data.tasks_of_type?.id}&filter[work_type_day]=${props.diaFestivo}&filter[farm_id]=${data.farm?.id}&filter[company_id]=${data.company?.id}&filter[packing_type_id]=${data.packing_type?.id}&filter[type_price]=${select_tasks_type.value.code}`;
+    }
+    // /appmovil/donetarif  ?filter[tasks_of_type_id]=4 & filter[work_type_day]=Normal & filter[farm_id]=1 & filter[company_id]=1 & filter[work_type_tarif]=Individual & filter[done_of_type_id]=1
+    const response = await getRequest(Endpoint);
+    if (!response.ok) toast.add({ severity: 'error', detail: 'Error' + response.error, life: 3000 });
+    tarifa.value = response.data?.data[0]?.price_tarif;
 };
 </script>
 
@@ -80,7 +109,7 @@ const UpdateTotal = () => {
     <div class="grid p-fluid mt-3">
         <div class="field col-12 md:col-4">
             <span class="p-float-label">
-                <Dropdown v-model="select_tasks_type" :options="task_type" filter optionLabel="name" />
+                <Dropdown v-model="select_tasks_type" :options="tipoActividad" filter optionLabel="label" :update:modelValue="getTarifa()" />
                 <label class="font-bold" for="task_type">{{ t('appmovil.tipoActividad') }}</label>
             </span>
             <BackendErrors :name="errorResponseAPI?.errors?.planner_task_uuid" />
@@ -92,7 +121,8 @@ const UpdateTotal = () => {
             </span>
             <BackendErrors :name="errorResponseAPI?.errors?.crop_lot_code" />
         </div>
-        <div class="field col-12 md:col-4" v-if="select_tasks_type?.name !== 'Task'">
+        
+        <div class="field col-12 md:col-4" v-if="select_tasks_type?.label !== 'Task' && select_tasks_type?.name !== '' &&select_tasks_type!==null">
             <span class="p-float-label">
                 <Dropdown v-model="selected_dones_work" :options="dones_work" filter optionLabel="name" />
                 <label class="font-bold" for="dones_work">{{ t('appmovil.labor') }}</label>
