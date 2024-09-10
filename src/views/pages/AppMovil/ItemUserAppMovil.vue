@@ -7,7 +7,7 @@ import BackendErrors from '@/views/Errors/BackendErrors.vue';
 import { useI18n } from 'vue-i18n';
 const endpoint = '/transactions/tasks';
 const toast = useToast();
-
+const farmDefault = sessionStorage.getItem('accessSessionFarm');
 const selected_quanty = ref(null);
 const Total = ref(null);
 const select_tasks_type = ref(null);
@@ -20,6 +20,7 @@ const Notas = ref(null);
 const dones_work = ref(null);
 const tarifa = ref(null);
 
+
 const { t } = useI18n();
 onMounted(async () => {
     workCenter.value = JSON.parse(sessionStorage.getItem('accessSessionWorkCenter'));
@@ -31,7 +32,7 @@ function clearFiels() {
     selected_quanty.value = null;
     Total.value = null;
     select_tasks_type.value = null;
-    supervisoId.value = null;
+    //supervisoId.value = null;
     Notas.value = null;
 }
 
@@ -74,8 +75,11 @@ async function sendDailyReport(dataUser) {
         device_name: 'Web',
         transdate_sync: null,
         calendar_uuid: null,
-        done_of_type_id: select_tasks_type.value?.code != 'Task' ? selected_dones_work.value?.uuid : null
+        done_of_type_uuid: select_tasks_type.value?.code != 'Task' ? selected_dones_work.value?.uuid : "",
+        farm_uuid: farmDefault,
+        
     };
+    console.log(dataPost);
     const restp = await postRequest(endpoint, dataPost);
     toast.add({ severity: restp.ok ? 'success' : 'error', summary: 'Create', detail: restp.ok ? 'Creado' : restp.error, life: 3000 });
     if (restp.ok) clearFiels();
@@ -90,6 +94,7 @@ const getTarifa = async () => {
     const { data } = props;
     const listFilterType = ['Task', 'HoraExtra'];
     let Endpoint = '';
+    console.log(props.diaFestivo)
     if (select_tasks_type.value && listFilterType.includes(select_tasks_type.value.code)) {
         Endpoint = `/appmovil/taskstarif?filter[tasks_of_type_id]=${data.tasks_of_type?.id}&filter[work_type_day]=${props.diaFestivo}&filter[farm_id]=${data.farm?.id}&filter[company_id]=${data.company?.id}&filter[packing_type_id]=${data.packing_type?.id}&filter[type_price]=${select_tasks_type.value.code}`;
     }
@@ -116,7 +121,8 @@ const getTarifa = async () => {
             </span>
             <BackendErrors :name="errorResponseAPI?.errors?.crop_lot_code" />
         </div>
-        <div class="field col-12 md:col-4" v-if="select_tasks_type?.label !== 'Task' && select_tasks_type?.name !== ''">
+        
+        <div class="field col-12 md:col-4" v-if="select_tasks_type?.label !== 'Task' && select_tasks_type?.name !== '' &&select_tasks_type!==null">
             <span class="p-float-label">
                 <Dropdown v-model="selected_dones_work" :options="dones_work" filter optionLabel="name" />
                 <label class="font-bold" for="dones_work">{{ t('appmovil.labor') }}</label>
