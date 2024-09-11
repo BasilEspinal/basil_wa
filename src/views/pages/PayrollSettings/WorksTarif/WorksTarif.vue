@@ -243,7 +243,7 @@
                     <div class="flex align-items-center">
                         <!-- <label for="minmax-buttons" class="font-bold block mb-2"> Price Tarif </label> -->
                         <label for="username" class="font-semibold w-6rem">Price Tarif: </label>
-                        <InputNumber v-model="price_tarifV" inputId="minmax-buttons" mode="decimal" showButtons :min="0" :max="100" />
+                        <InputNumber v-model="price_tarifV" inputId="minmax-buttons" mode="decimal" showButtons :min="0" />
                     </div>
                     <small id="username-help" :class="{ 'p-invalid text-red-700': errorsNew['price_TarifV'] }">
                         {{ errorsNew.price_tarifV }}
@@ -320,7 +320,7 @@
                     <div class="flex align-items-center">
                         <!-- <label for="minmax-buttons" class="font-bold block mb-2"> Price Tarif </label> -->
                         <label for="username" class="font-semibold w-6rem">Price Tarif: </label>
-                        <InputNumber v-model="price_tarifV" inputId="minmax-buttons" mode="decimal" showButtons :min="0" :max="100" />
+                        <InputNumber v-model="price_tarifV" inputId="minmax-buttons" mode="decimal" showButtons :min="0" />
                     </div>
                     <small id="username-help" :class="{ 'p-invalid text-red-700': errorsNew['price_TarifV'] }">
                         {{ errorsNew.price_tarifV }}
@@ -397,7 +397,7 @@
                     <div class="flex align-items-center">
                         <!-- <label for="minmax-buttons" class="font-bold block mb-2"> Price Tarif </label> -->
                         <label for="username" class="font-semibold w-6rem">Price Tarif: </label>
-                        <InputNumber v-model="price_tarifV" inputId="minmax-buttons" mode="decimal" showButtons :min="0" :max="100" />
+                        <InputNumber v-model="price_tarifV" inputId="minmax-buttons" mode="decimal" showButtons :min="0" />
                     </div>
                     <small id="username-help" :class="{ 'p-invalid text-red-700': errorsNew['price_TarifV'] }">
                         {{ errorsNew.price_tarifV }}
