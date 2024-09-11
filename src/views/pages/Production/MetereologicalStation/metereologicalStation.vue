@@ -1,84 +1,99 @@
 <template>
     <div>
-    <div class="card">
-        <div>
-            <h1>{{ titlePage }}</h1> 
+        <div class="card">
+            <div>
+                <h1>{{ titlePage }}</h1>
+            </div>
+            <!-- <UnderConstruction /> -->
         </div>
-<!-- <UnderConstruction /> -->
-
-    </div>
-    <div class="card">
-        <div class="grid">
-            <div class="col-xs-12 col-sm-6 col-md-4 mb-2 text-center mx-auto">
-                <!--Uncomment when table is done-->
-                
+        <div class="card">
+            <div class="grid">
                 <div class="col-xs-12 col-sm-6 col-md-4 mb-2 text-center mx-auto">
-            <Toolbar style="margin-bottom: 1rem">
-                <template #center>
-                    <Button :disabled="headerNames.length > 0" label="New" icon="pi pi-plus" class="p-button-success mb-2 mt-2" @click="openNew" size="large" />
-                    <Divider layout="vertical" />
-                    <Button :disabled="!(listRowSelect.length > 0 && listRowSelect.length < 2)" label="Edit" icon="pi pi-file-edit" class="p-button-help mb-2 mt-2" @click="openEdit" size="large" />
-                    <Divider layout="vertical" />
-                    <Button :disabled="!(listRowSelect.length > 0 && listRowSelect.length < 2)" label="Clone" icon="pi pi-copy" class="p-button-secondary mb-2 mt-2" @click="openClone" size="large" />
-                    <Divider layout="vertical" />
-                    <Button :disabled="headerNames.length > 0" label="Export" icon="pi pi-file-import" class="p-button-warning mb-2 mt-2" @click="openExport" size="large" />
-                    <Divider layout="vertical" />
-                    <Button :disabled="!listRowSelect.length > 0" label="Delete" icon="pi pi-trash" class="p-button-danger mb-2 mt-2" @click="openDelete" size="large" />
+                    <!--Uncomment when table is done-->
+
+                    <div class="col-xs-12 col-sm-6 col-md-4 mb-2 text-center mx-auto">
+                        <Toolbar style="margin-bottom: 1rem">
+                            <template #center>
+                                <Button :disabled="headerNames.length > 0" label="New" icon="pi pi-plus" class="p-button-success mb-2 mt-2" @click="openNew" size="large" />
+                                <Divider layout="vertical" />
+                                <Button :disabled="!(listRowSelect.length > 0 && listRowSelect.length < 2)" label="Edit" icon="pi pi-file-edit" class="p-button-help mb-2 mt-2" @click="openEdit" size="large" />
+                                <Divider layout="vertical" />
+                                <Button :disabled="!(listRowSelect.length > 0 && listRowSelect.length < 2)" label="Clone" icon="pi pi-copy" class="p-button-secondary mb-2 mt-2" @click="openClone" size="large" />
+                                <Divider layout="vertical" />
+                                <Button :disabled="headerNames.length > 0" label="Export" icon="pi pi-file-import" class="p-button-warning mb-2 mt-2" @click="openExport" size="large" />
+                                <Divider layout="vertical" />
+                                <Button :disabled="!listRowSelect.length > 0" label="Delete" icon="pi pi-trash" class="p-button-danger mb-2 mt-2" @click="openDelete" size="large" />
+                            </template>
+                        </Toolbar>
+                    </div>
+                </div>
+            </div>
+            <!-- <pre>{{ dataResponseAPI }}</pre> -->
+            <DataTable
+                :value="dataFromComponent"
+                dataKey="uuid"
+                tableStyle="min-width: 75rem"
+                showGridlines
+                :loading="loading"
+                scrollable
+                scrollHeight="600px"
+                resizableColumns
+                columnResizeMode="expand"
+                sortMode="multiple"
+                :paginator="true"
+                :rows="50"
+                :rowsPerPageOptions="[5, 10, 20, 50]"
+                :class="`p-datatable-${size.class}`"
+                @row-select="onRowSelect(selectedRegisters)"
+                @row-unselect="onRowSelect(selectedRegisters)"
+                @select-all-change="onSelectAllChange"
+                v-model:selection="selectedRegisters"
+                filterDisplay="menu"
+                v-model:filters="filters"
+                :globalFilterFields="[
+                    'records:_479_z6-20297_timestamp',
+                    'atmos_14_port_1__c_air_temperature',
+                    'atmos_14_port_1.1__rh_relative_humidity',
+                    'atmos_14_port_1.2__kpa_atmospheric_pressure',
+                    'ecrn-100_port_2__mm_precipitation',
+                    'ecrn-100_port_2.1__mm/h_max_precip_rate',
+                    'davis_cup_port_3__wind_direction',
+                    'davis_cup_port_3.1__m/s_wind_speed',
+                    'davis_cup_port_3.2__m/s_gust_speed',
+                    'pyr_port_4__w/m2_solar_radiation',
+                    'qso-s_port_5__umolm-2s-1_ppfd',
+                    'teros_12_port_6__m3/m3_water_content',
+                    'teros_12_port_6.1__c_soil_temperature',
+                    'teros_12_port_6.2__ms/cm_bulk_ec',
+                    'battery_port_7_%_battery_percent',
+                    'battery_port_7.1__mv_battery_voltage',
+                    'barometer_port_8__kpa_reference_pressure',
+                    'barometer_port_8.1__c_logger_temperature'
+                ]"
+            >
+                <template #header>
+                    <!--Uncomment when filters are done-->
+
+                    <Toolbar class="mb-2">
+                        <template v-slot:start>
+                            <Button type="button" icon="pi pi-filter-slash" label="Limpiar" class="p-button-outlined mb-2" @click="clearFilter()" />
+                        </template>
+                        <template v-slot:end>
+                            <span class="p-input-icon-left mb-2">
+                                <i class="pi pi-search" />
+                                <InputText v-model="filters['global'].value" placeholder="Buscar" style="width: 100%" />
+                            </span>
+                        </template>
+                        <template v-slot:center>
+                            <SelectButton v-model="size" :options="sizeOptions" optionLabel="label" dataKey="label"> </SelectButton>
+                        </template>
+                    </Toolbar>
                 </template>
-            </Toolbar>
-            </div>
 
-            </div>
-        </div>
-        <!-- <pre>{{ dataResponseAPI }}</pre> -->
-        <DataTable
-        :value="dataFromComponent"
-        dataKey="uuid"
-        tableStyle="min-width: 75rem"
-        showGridlines
-        :loading="loading"
-        scrollable
-        scrollHeight="600px"
-        resizableColumns
-        columnResizeMode="expand"
-        sortMode="multiple"
-        :paginator="true"
-        :rows="50"
-        :rowsPerPageOptions="[5, 10, 20, 50]"
-        :class="`p-datatable-${size.class}`"
-        @row-select="onRowSelect(selectedRegisters)"
-        @row-unselect="onRowSelect(selectedRegisters)"
-        @select-all-change="onSelectAllChange"
-        v-model:selection="selectedRegisters"
-        filterDisplay="menu"
-        v-model:filters="filters"
-        :globalFilterFields="[ 'records:_479_z6-20297_timestamp', 'atmos_14_port_1__c_air_temperature', 'atmos_14_port_1.1__rh_relative_humidity', 'atmos_14_port_1.2__kpa_atmospheric_pressure', 'ecrn-100_port_2__mm_precipitation', 'ecrn-100_port_2.1__mm/h_max_precip_rate', 'davis_cup_port_3__wind_direction', 'davis_cup_port_3.1__m/s_wind_speed', 'davis_cup_port_3.2__m/s_gust_speed', 'pyr_port_4__w/m2_solar_radiation', 'qso-s_port_5__umolm-2s-1_ppfd', 'teros_12_port_6__m3/m3_water_content', 'teros_12_port_6.1__c_soil_temperature', 'teros_12_port_6.2__ms/cm_bulk_ec', 'battery_port_7_%_battery_percent', 'battery_port_7.1__mv_battery_voltage', 'barometer_port_8__kpa_reference_pressure', 'barometer_port_8.1__c_logger_temperature' ]" 
-        >
-        <template #header>
-            <!--Uncomment when filters are done-->
-
-            <Toolbar class = "mb-2">
-                    <template v-slot:start>
-                        <Button type="button" icon="pi pi-filter-slash" label="Limpiar" class="p-button-outlined mb-2" @click="clearFilter()" />
-                    </template>
-                    <template v-slot:end>
-                        <span class="p-input-icon-left mb-2">
-                        <i class="pi pi-search" />
-                        <InputText v-model="filters['global'].value" placeholder="Buscar" style="width: 100%" />
-                    </span>
-                    </template>
-                    <template v-slot:center>
-                        
-                        <SelectButton v-model="size" :options="sizeOptions" optionLabel="label" dataKey="label"> </SelectButton>
-                        
-                    </template>       
-                </Toolbar>
-        </template>
-
-        <template #empty> No customers found. </template>
-        <template #loading> Loading customers data. Please wait. </template>
-        <Column selectionMode="multiple" headerStyle="width: 3rem"></Column>
-        <!-- <Column field="code" filterField="code" header="Code" sortable :frozen="documentFrozen"> 
+                <template #empty> No customers found. </template>
+                <template #loading> Loading customers data. Please wait. </template>
+                <Column selectionMode="multiple" headerStyle="width: 3rem"></Column>
+                <!-- <Column field="code" filterField="code" header="Code" sortable :frozen="documentFrozen"> 
             <template #header>
                     <ToggleButton v-model="documentFrozen" onIcon="pi pi-lock" offIcon="pi pi-lock-open" onLabel="" offLabel="" />
                     <div>&nbsp;</div>
@@ -92,171 +107,169 @@
                     <InputText v-model="filterModel.value" type="text" class="p-column-filter" placeholder="Search by " />
                 </template>
         </Column> -->
-        <Column field="records:_479_z6-20297_timestamp" filterField="records__479_z6_20297_timestamp" header="Timestamp" sortable> 
-    <template #body="{ data }">
-        {{ data["records:_479_z6-20297_timestamp"] }} 
-    </template>
-    <template #filter="{ filterModel }">
-        <InputText v-model="filterModel.value" type="text" class="p-column-filter" placeholder="Search by Timestamp" />
-    </template>
-</Column>
+                <Column field="records:_479_z6-20297_timestamp" filterField="records__479_z6_20297_timestamp" header="Timestamp" sortable>
+                    <template #body="{ data }">
+                        {{ data['records:_479_z6-20297_timestamp'] }}
+                    </template>
+                    <template #filter="{ filterModel }">
+                        <InputText v-model="filterModel.value" type="text" class="p-column-filter" placeholder="Search by Timestamp" />
+                    </template>
+                </Column>
 
-<Column field="atmos_14_port_1__c_air_temperature" filterField="atmos_14_port_1__c_air_temperature" header="Port1-Atmos14-°C Air Temperature" sortable> 
-    <template #body="{ data }">
-        {{ data.atmos_14_port_1__c_air_temperature }} 
-    </template>
-    <template #filter="{ filterModel }">
-        <InputText v-model="filterModel.value" type="text" class="p-column-filter" placeholder="Search by Air Temperature" />
-    </template>
-</Column>
+                <Column field="atmos_14_port_1__c_air_temperature" filterField="atmos_14_port_1__c_air_temperature" header="Port1-Atmos14-°C Air Temperature" sortable>
+                    <template #body="{ data }">
+                        {{ data.atmos_14_port_1__c_air_temperature }}
+                    </template>
+                    <template #filter="{ filterModel }">
+                        <InputText v-model="filterModel.value" type="text" class="p-column-filter" placeholder="Search by Air Temperature" />
+                    </template>
+                </Column>
 
-<Column field="atmos_14_port_1.1__rh_relative_humidity" filterField="atmos_14_port_1.1__rh_relative_humidity" header="Port1-Atmos14-% RH Relative Humidity" sortable> 
-    <template #body="{ data }">
-        {{ data["atmos_14_port_1.1__rh_relative_humidity"] }} 
-    </template>
-    <template #filter="{ filterModel }">
-        <InputText v-model="filterModel.value" type="text" class="p-column-filter" placeholder="Search by RH Relative Humidity" />
-    </template>
-</Column>
+                <Column field="atmos_14_port_1.1__rh_relative_humidity" filterField="atmos_14_port_1.1__rh_relative_humidity" header="Port1-Atmos14-% RH Relative Humidity" sortable>
+                    <template #body="{ data }">
+                        {{ data['atmos_14_port_1.1__rh_relative_humidity'] }}
+                    </template>
+                    <template #filter="{ filterModel }">
+                        <InputText v-model="filterModel.value" type="text" class="p-column-filter" placeholder="Search by RH Relative Humidity" />
+                    </template>
+                </Column>
 
-<Column field="atmos_14_port_1.2__kpa_atmospheric_pressure" filterField="atmos_14_port_1.2__kpa_atmospheric_pressure" header="Port1-Atmos14-kPa Atmospheric Pressure" sortable> 
-    <template #body="{ data }">
-        {{ data["atmos_14_port_1.2__kpa_atmospheric_pressure"] }} 
-    </template>
-    <template #filter="{ filterModel }">
-        <InputText v-model="filterModel.value" type="text" class="p-column-filter" placeholder="Search by Atmospheric Pressure" />
-    </template>
-</Column>
+                <Column field="atmos_14_port_1.2__kpa_atmospheric_pressure" filterField="atmos_14_port_1.2__kpa_atmospheric_pressure" header="Port1-Atmos14-kPa Atmospheric Pressure" sortable>
+                    <template #body="{ data }">
+                        {{ data['atmos_14_port_1.2__kpa_atmospheric_pressure'] }}
+                    </template>
+                    <template #filter="{ filterModel }">
+                        <InputText v-model="filterModel.value" type="text" class="p-column-filter" placeholder="Search by Atmospheric Pressure" />
+                    </template>
+                </Column>
 
-<Column field="ecrn-100_port_2__mm_precipitation" filterField="ecrn-100_port_2__mm_precipitation" header="Port2-ECRN-100-mm Precipitation" sortable> 
-    <template #body="{ data }">
-        {{ data["ecrn-100_port_2__mm_precipitation"] }} 
-    </template>
-    <template #filter="{ filterModel }">
-        <InputText v-model="filterModel.value" type="text" class="p-column-filter" placeholder="Search by Precipitation" />
-    </template>
-</Column>
+                <Column field="ecrn-100_port_2__mm_precipitation" filterField="ecrn-100_port_2__mm_precipitation" header="Port2-ECRN-100-mm Precipitation" sortable>
+                    <template #body="{ data }">
+                        {{ data['ecrn-100_port_2__mm_precipitation'] }}
+                    </template>
+                    <template #filter="{ filterModel }">
+                        <InputText v-model="filterModel.value" type="text" class="p-column-filter" placeholder="Search by Precipitation" />
+                    </template>
+                </Column>
 
-<Column field="ecrn-100_port_2.1__mm/h_max_precip_rate" filterField="ecrn-100_port_2.1__mm/h_max_precip_rate" header="Port2-ECRN-100-mm/h Max Precip Rate" sortable> 
-    <template #body="{ data }">
-        {{ data["ecrn-100_port_2.1__mm/h_max_precip_rate"] }} 
-    </template>
-    <template #filter="{ filterModel }">
-        <InputText v-model="filterModel.value" type="text" class="p-column-filter" placeholder="Search by Max Precip Rate" />
-    </template>
-</Column>
+                <Column field="ecrn-100_port_2.1__mm/h_max_precip_rate" filterField="ecrn-100_port_2.1__mm/h_max_precip_rate" header="Port2-ECRN-100-mm/h Max Precip Rate" sortable>
+                    <template #body="{ data }">
+                        {{ data['ecrn-100_port_2.1__mm/h_max_precip_rate'] }}
+                    </template>
+                    <template #filter="{ filterModel }">
+                        <InputText v-model="filterModel.value" type="text" class="p-column-filter" placeholder="Search by Max Precip Rate" />
+                    </template>
+                </Column>
 
-<Column field="davis_cup_port_3__wind_direction" filterField="davis_cup_port_3__wind_direction" header="Port3-Davis Cup-Wind Direction" sortable> 
-    <template #body="{ data }">
-        {{ data["davis_cup_port_3__wind_direction"] }} 
-    </template>
-    <template #filter="{ filterModel }">
-        <InputText v-model="filterModel.value" type="text" class="p-column-filter" placeholder="Search by Wind Direction" />
-    </template>
-</Column>
+                <Column field="davis_cup_port_3__wind_direction" filterField="davis_cup_port_3__wind_direction" header="Port3-Davis Cup-Wind Direction" sortable>
+                    <template #body="{ data }">
+                        {{ data['davis_cup_port_3__wind_direction'] }}
+                    </template>
+                    <template #filter="{ filterModel }">
+                        <InputText v-model="filterModel.value" type="text" class="p-column-filter" placeholder="Search by Wind Direction" />
+                    </template>
+                </Column>
 
-<Column field="davis_cup_port_3.1__m/s_wind_speed" filterField="davis_cup_port_3.1__m/s_wind_speed" header="Port3-Davis Cup-m/s Wind Speed" sortable> 
-    <template #body="{ data }">
-        {{ data["davis_cup_port_3.1__m/s_wind_speed"] }} 
-    </template>
-    <template #filter="{ filterModel }">
-        <InputText v-model="filterModel.value" type="text" class="p-column-filter" placeholder="Search by Wind Speed" />
-    </template>
-</Column>
+                <Column field="davis_cup_port_3.1__m/s_wind_speed" filterField="davis_cup_port_3.1__m/s_wind_speed" header="Port3-Davis Cup-m/s Wind Speed" sortable>
+                    <template #body="{ data }">
+                        {{ data['davis_cup_port_3.1__m/s_wind_speed'] }}
+                    </template>
+                    <template #filter="{ filterModel }">
+                        <InputText v-model="filterModel.value" type="text" class="p-column-filter" placeholder="Search by Wind Speed" />
+                    </template>
+                </Column>
 
-<Column field="davis_cup_port_3.2__m/s_gust_speed" filterField="davis_cup_port_3.2__m/s_gust_speed" header="Port3-Davis Cup-m/s Gust Speed" sortable> 
-    <template #body="{ data }">
-        {{ data["davis_cup_port_3.2__m/s_gust_speed"] }} 
-    </template>
-    <template #filter="{ filterModel }">
-        <InputText v-model="filterModel.value" type="text" class="p-column-filter" placeholder="Search by Gust Speed" />
-    </template>
-</Column>
+                <Column field="davis_cup_port_3.2__m/s_gust_speed" filterField="davis_cup_port_3.2__m/s_gust_speed" header="Port3-Davis Cup-m/s Gust Speed" sortable>
+                    <template #body="{ data }">
+                        {{ data['davis_cup_port_3.2__m/s_gust_speed'] }}
+                    </template>
+                    <template #filter="{ filterModel }">
+                        <InputText v-model="filterModel.value" type="text" class="p-column-filter" placeholder="Search by Gust Speed" />
+                    </template>
+                </Column>
 
-<Column field="pyr_port_4__w/m2_solar_radiation" filterField="pyr_port_4__w/m2_solar_radiation" header="Port4-Pyr-W/m2 Solar Radiation" sortable> 
-    <template #body="{ data }">
-        {{ data["pyr_port_4__w/m2_solar_radiation"] }} 
-    </template>
-    <template #filter="{ filterModel }">
-        <InputText v-model="filterModel.value" type="text" class="p-column-filter" placeholder="Search by Solar Radiation" />
-    </template>
-</Column>
+                <Column field="pyr_port_4__w/m2_solar_radiation" filterField="pyr_port_4__w/m2_solar_radiation" header="Port4-Pyr-W/m2 Solar Radiation" sortable>
+                    <template #body="{ data }">
+                        {{ data['pyr_port_4__w/m2_solar_radiation'] }}
+                    </template>
+                    <template #filter="{ filterModel }">
+                        <InputText v-model="filterModel.value" type="text" class="p-column-filter" placeholder="Search by Solar Radiation" />
+                    </template>
+                </Column>
 
-<Column field="qso-s_port_5__umolm-2s-1_ppfd" filterField="qso-s_port_5__umolm-2s-1_ppfd" header="Port5-QSO-S-μmol·m-2·s-1 PPFD" sortable> 
-    <template #body="{ data }">
-        {{ data["qso-s_port_5__umolm-2s-1_ppfd"] }} 
-    </template>
-    <template #filter="{ filterModel }">
-        <InputText v-model="filterModel.value" type="text" class="p-column-filter" placeholder="Search by PPFD" />
-    </template>
-</Column>
+                <Column field="qso-s_port_5__umolm-2s-1_ppfd" filterField="qso-s_port_5__umolm-2s-1_ppfd" header="Port5-QSO-S-μmol·m-2·s-1 PPFD" sortable>
+                    <template #body="{ data }">
+                        {{ data['qso-s_port_5__umolm-2s-1_ppfd'] }}
+                    </template>
+                    <template #filter="{ filterModel }">
+                        <InputText v-model="filterModel.value" type="text" class="p-column-filter" placeholder="Search by PPFD" />
+                    </template>
+                </Column>
 
-<Column field="teros_12_port_6__m3/m3_water_content" filterField="teros_12_port_6__m3/m3_water_content" header="Port6-Teros12-m3/m3 Water Content" sortable> 
-    <template #body="{ data }">
-        {{ data["teros_12_port_6__m3/m3_water_content"] }} 
-    </template>
-    <template #filter="{ filterModel }">
-        <InputText v-model="filterModel.value" type="text" class="p-column-filter" placeholder="Search by Water Content" />
-    </template>
-</Column>
+                <Column field="teros_12_port_6__m3/m3_water_content" filterField="teros_12_port_6__m3/m3_water_content" header="Port6-Teros12-m3/m3 Water Content" sortable>
+                    <template #body="{ data }">
+                        {{ data['teros_12_port_6__m3/m3_water_content'] }}
+                    </template>
+                    <template #filter="{ filterModel }">
+                        <InputText v-model="filterModel.value" type="text" class="p-column-filter" placeholder="Search by Water Content" />
+                    </template>
+                </Column>
 
-<Column field="teros_12_port_6.1__c_soil_temperature" filterField="teros_12_port_6.1__c_soil_temperature" header="Port6-Teros12-°C Soil Temperature" sortable> 
-    <template #body="{ data }">
-        {{ data["teros_12_port_6.1__c_soil_temperature"] }} 
-    </template>
-    <template #filter="{ filterModel }">
-        <InputText v-model="filterModel.value" type="text" class="p-column-filter" placeholder="Search by Soil Temperature" />
-    </template>
-</Column>
+                <Column field="teros_12_port_6.1__c_soil_temperature" filterField="teros_12_port_6.1__c_soil_temperature" header="Port6-Teros12-°C Soil Temperature" sortable>
+                    <template #body="{ data }">
+                        {{ data['teros_12_port_6.1__c_soil_temperature'] }}
+                    </template>
+                    <template #filter="{ filterModel }">
+                        <InputText v-model="filterModel.value" type="text" class="p-column-filter" placeholder="Search by Soil Temperature" />
+                    </template>
+                </Column>
 
-<Column field="teros_12_port_6.2__ms/cm_bulk_ec" filterField="teros_12_port_6.2__ms/cm_bulk_ec" header="Port6-Teros12-mS/cm Bulk EC" sortable> 
-    <template #body="{ data }">
-        {{ data["teros_12_port_6.2__ms/cm_bulk_ec"] }} 
-    </template>
-    <template #filter="{ filterModel }">
-        <InputText v-model="filterModel.value" type="text" class="p-column-filter" placeholder="Search by Bulk EC" />
-    </template>
-</Column>
+                <Column field="teros_12_port_6.2__ms/cm_bulk_ec" filterField="teros_12_port_6.2__ms/cm_bulk_ec" header="Port6-Teros12-mS/cm Bulk EC" sortable>
+                    <template #body="{ data }">
+                        {{ data['teros_12_port_6.2__ms/cm_bulk_ec'] }}
+                    </template>
+                    <template #filter="{ filterModel }">
+                        <InputText v-model="filterModel.value" type="text" class="p-column-filter" placeholder="Search by Bulk EC" />
+                    </template>
+                </Column>
 
-<Column field="battery_port_7_%_battery_percent" filterField="battery_port_7_%_battery_percent" header="Port7-Battery-% Battery Percent" sortable> 
-    <template #body="{ data }">
-        {{ data["battery_port_7_%_battery_percent"] }} 
-    </template>
-    <template #filter="{ filterModel }">
-        <InputText v-model="filterModel.value" type="text" class="p-column-filter" placeholder="Search by Battery Percent" />
-    </template>
-</Column>
+                <Column field="battery_port_7_%_battery_percent" filterField="battery_port_7_%_battery_percent" header="Port7-Battery-% Battery Percent" sortable>
+                    <template #body="{ data }">
+                        {{ data['battery_port_7_%_battery_percent'] }}
+                    </template>
+                    <template #filter="{ filterModel }">
+                        <InputText v-model="filterModel.value" type="text" class="p-column-filter" placeholder="Search by Battery Percent" />
+                    </template>
+                </Column>
 
-<Column field="battery_port_7.1__mv_battery_voltage" filterField="battery_port_7.1__mv_battery_voltage" header="Port7-Battery-mV Battery Voltage" sortable> 
-    <template #body="{ data }">
-        {{ data["battery_port_7.1__mv_battery_voltage"] }} 
-    </template>
-    <template #filter="{ filterModel }">
-        <InputText v-model="filterModel.value" type="text" class="p-column-filter" placeholder="Search by Battery Voltage" />
-    </template>
-</Column>
+                <Column field="battery_port_7.1__mv_battery_voltage" filterField="battery_port_7.1__mv_battery_voltage" header="Port7-Battery-mV Battery Voltage" sortable>
+                    <template #body="{ data }">
+                        {{ data['battery_port_7.1__mv_battery_voltage'] }}
+                    </template>
+                    <template #filter="{ filterModel }">
+                        <InputText v-model="filterModel.value" type="text" class="p-column-filter" placeholder="Search by Battery Voltage" />
+                    </template>
+                </Column>
 
-<Column field="barometer_port_8__kpa_reference_pressure" filterField="barometer_port_8__kpa_reference_pressure" header="Port8-Barometer-kPa Reference Pressure" sortable> 
-    <template #body="{ data }">
-        {{ data["barometer_port_8__kpa_reference_pressure"] }} 
-    </template>
-    <template #filter="{ filterModel }">
-        <InputText v-model="filterModel.value" type="text" class="p-column-filter" placeholder="Search by Reference Pressure" />
-    </template>
-</Column>
+                <Column field="barometer_port_8__kpa_reference_pressure" filterField="barometer_port_8__kpa_reference_pressure" header="Port8-Barometer-kPa Reference Pressure" sortable>
+                    <template #body="{ data }">
+                        {{ data['barometer_port_8__kpa_reference_pressure'] }}
+                    </template>
+                    <template #filter="{ filterModel }">
+                        <InputText v-model="filterModel.value" type="text" class="p-column-filter" placeholder="Search by Reference Pressure" />
+                    </template>
+                </Column>
 
-<Column field="barometer_port_8.1__c_logger_temperature" filterField="barometer_port_8.1__c_logger_temperature" header="Port8-Barometer-°C Logger Temperature" sortable> 
-    <template #body="{ data }">
-        {{ data["barometer_port_8.1__c_logger_temperature"] }} 
-    </template>
-    <template #filter="{ filterModel }">
-        <InputText v-model="filterModel.value" type="text" class="p-column-filter" placeholder="Search by Logger Temperature" />
-    </template>
-</Column>
+                <Column field="barometer_port_8.1__c_logger_temperature" filterField="barometer_port_8.1__c_logger_temperature" header="Port8-Barometer-°C Logger Temperature" sortable>
+                    <template #body="{ data }">
+                        {{ data['barometer_port_8.1__c_logger_temperature'] }}
+                    </template>
+                    <template #filter="{ filterModel }">
+                        <InputText v-model="filterModel.value" type="text" class="p-column-filter" placeholder="Search by Logger Temperature" />
+                    </template>
+                </Column>
 
-
-
-        <!-- 
+                <!-- 
         <Column field="name" filterField="name" header="Name" sortable> 
             
             <template #body="{ data }">
@@ -266,10 +279,10 @@
                 <InputText v-model="filterModel.value" type="text" class="p-column-filter" placeholder="Search by " />
             </template>
     </Column> -->
-        
-        <!--Here add other columns-->
 
-        <!-- <Column field="farmName" filterField="farm.name" header="Farm Name" sortable>
+                <!--Here add other columns-->
+
+                <!-- <Column field="farmName" filterField="farm.name" header="Farm Name" sortable>
                 <template #body="{ data }">
                     {{ data.farm.name }}
                 </template>
@@ -313,9 +326,8 @@
                     <InputText v-model="filterModel.value" type="text" class="p-column-filter" placeholder="Search by status" />
                 </template>
             </Column> -->
-
-        </DataTable>
-        <Dialog v-model:visible="formDialogNew" modal :header="formDialogNewTitle" class="p-fluid text-center mx-auto">
+            </DataTable>
+            <Dialog v-model:visible="formDialogNew" modal :header="formDialogNewTitle" class="p-fluid text-center mx-auto">
                 <div class="mb-3">
                     <div class="flex align-items-center gap-3 mb-1">
                         <label for="username" class="font-semibold w-6rem">Name :</label>
@@ -379,25 +391,23 @@
                     </small>
                 </div>
                 <div class="mb-3">
-                <div class="flex align-items-center">
-                    <label for="username" class="font-semibold w-3">Farm :</label>
-                    <AutoComplete v-model="farm" inputId="ac" :suggestions="farms" @complete="searchFarms" field="name"
-                        dropdown />
+                    <div class="flex align-items-center">
+                        <label for="username" class="font-semibold w-3">Farm :</label>
+                        <AutoComplete v-model="farm" inputId="ac" :suggestions="farms" @complete="searchFarms" field="name" dropdown />
+                    </div>
+                    <small id="username-help" :class="{ 'p-invalid text-red-700': errorsNew['farm'] }">
+                        {{ errorsNew.farm }}
+                    </small>
                 </div>
-                <small id="username-help" :class="{ 'p-invalid text-red-700': errorsNew['farm'] }">
-                    {{ errorsNew.farm }}
-                </small>
-            </div>
-            <div class="mb-3">
-                <div class="flex align-items-center">
-                    <label for="username" class="font-semibold w-3">Companny:</label>
-                    <AutoComplete v-model="company" inputId="ac" :suggestions="compa" @complete="EditRecord"
-                        field="name" dropdown />
+                <div class="mb-3">
+                    <div class="flex align-items-center">
+                        <label for="username" class="font-semibold w-3">Companny:</label>
+                        <AutoComplete v-model="company" inputId="ac" :suggestions="compa" @complete="EditRecord" field="name" dropdown />
+                    </div>
+                    <small id="username-help" :class="{ 'p-invalid text-red-700': errorsNew['company'] }">
+                        {{ errorsNew.company }}
+                    </small>
                 </div>
-                <small id="username-help" :class="{ 'p-invalid text-red-700': errorsNew['company'] }">
-                    {{ errorsNew.company }}
-                </small>
-            </div>
 
                 <div class="flex justify-content-end gap-2">
                     <Button type="button" label="Cancel" severity="secondary" @click="formDialogEdit = false" />
@@ -487,9 +497,8 @@
             </Dialog>
 
             <Toast />
+        </div>
     </div>
-</div>
-    
 </template>
 
 <!-- 
@@ -507,7 +516,8 @@ import useDataAPI from '@/composables/DataAPI/FetchDataAPI.js';
 import { useToast } from 'primevue/usetoast';
 import { FilterMatchMode, FilterOperator } from 'primevue/api';
 import useData from '@/composables/DataAPI/FetchDataAPICopy.js';
-const { getRequest, postRequest, putRequest, deleteRequest } = useData();
+const { getRequest, postRequest, putRequest, deleteRequest, errorResponseAPI } = useData();
+import BackendErrors from '@/views/Errors/BackendErrors.vue';
 import { useRouter } from 'vue-router';
 import { useForm } from 'vee-validate';
 import { toTypedSchema } from '@vee-validate/zod';
@@ -515,14 +525,12 @@ import * as XLSX from 'xlsx';
 import { saveAs } from 'file-saver';
 import { z } from 'zod';
 import ability from '@/service/ability.js';
-import { AbilityBuilder} from '@casl/ability';
-
+import { AbilityBuilder } from '@casl/ability';
 
 import UnderConstruction from '../../../../components/UnderConstruction.vue';
 
-
 const namePage = ' Metereological Station ';
-const titlePage = namePage+'information';
+const titlePage = namePage + 'information';
 const dataFromComponent = ref();
 const Farms = ref([]);
 const farms = ref([]);
@@ -530,11 +538,11 @@ const Compan = ref([]);
 const compa = ref([]);
 
 const formDialogNew = ref(false);
-const formDialogNewTitle = 'Create new'+namePage;
-const formDialogEditTitle = 'Edit'+namePage;
+const formDialogNewTitle = 'Create new' + namePage;
+const formDialogEditTitle = 'Edit' + namePage;
 const formDialogCloneTitle = 'Clone' + namePage;
 const formDialogExportTitle = 'Export' + namePage;
-const formDialogDeleteTitle = 'Delete'+namePage;
+const formDialogDeleteTitle = 'Delete' + namePage;
 const formDialogEdit = ref(false);
 const formDialogClone = ref(false);
 const formDialogExport = ref(false);
@@ -544,10 +552,9 @@ const filename = ref('table');
 const isChanging = ref(false);
 let endpoint = ref('/demo/data/metereologicalStation.json');
 
-
 ////////////
- //Form here
- ////////////   
+//Form here
+////////////
 const size = ref({ label: 'Normal', value: 'normal' });
 const sizeOptions = ref([
     { label: 'Small', value: 'small', class: 'sm' },
@@ -555,21 +562,15 @@ const sizeOptions = ref([
     { label: 'Large', value: 'large', class: 'lg' }
 ]);
 
-
-
 onBeforeMount(async () => {
     readAll();
     initFilters();
-
-
 });
 const listRowSelect = ref([]);
 const loading = ref(false);
 const onRowSelect = (data) => {
-    
     listRowSelect.value = data;
     //assignValues(mode.value)
-    
 };
 
 watch(listRowSelect, onRowSelect);
@@ -602,9 +603,7 @@ const initFilters = () => {
         battery_port_7__battery_percent: { operator: FilterOperator.AND, constraints: [{ value: null, matchMode: FilterMatchMode.STARTS_WITH }] },
         battery_port_7_1__mv_battery_voltage: { operator: FilterOperator.AND, constraints: [{ value: null, matchMode: FilterMatchMode.STARTS_WITH }] },
         barometer_port_8__kpa_reference_pressure: { operator: FilterOperator.AND, constraints: [{ value: null, matchMode: FilterMatchMode.STARTS_WITH }] },
-        barometer_port_8_1__c_logger_temperature: { operator: FilterOperator.AND, constraints: [{ value: null, matchMode: FilterMatchMode.STARTS_WITH }] },
-
-        
+        barometer_port_8_1__c_logger_temperature: { operator: FilterOperator.AND, constraints: [{ value: null, matchMode: FilterMatchMode.STARTS_WITH }] }
     };
 };
 
@@ -621,17 +620,16 @@ const readAll = async () => {
 };
 const loadingData = async () => {
     //const response = await getRequest(endpoint.value);
-    const response = await fetch('demo/data/metereologicalStation.json').then((res) => res.json())
+    const response = await fetch('demo/data/metereologicalStation.json').then((res) => res.json());
     if (!response.ok) toast.add({ severity: 'error', detail: 'Error' + response.error, life: 3000 });
     // dataFromComponent.value = response.data.data;
     dataFromComponent.value = response.data;
-    console.log(dataFromComponent.value[0].atmos_14_port_1__c_air_temperature)
+    console.log(dataFromComponent.value[0].atmos_14_port_1__c_air_temperature);
     // atmos_14_port_1__c_air_temperature
 
     // const dataTest = await fetch('demo/data/metereologicalStation.json').then((res) => res.json())
 
-
-// console.log(dataTest.data[0].atmos_14.port_1)
+    // console.log(dataTest.data[0].atmos_14.port_1)
 };
 watch(
     () => dataFromComponent.value,
@@ -715,7 +713,6 @@ const searchCompannies = (event) => {
 const openNew = () => {
     resetForm();
     formDialogNew.value = true;
-
 };
 
 const openEdit = () => {
@@ -757,7 +754,7 @@ const EditRecord = handleSubmitNew(async (values) => {
         company_uuid: values.company ? values.company.id : '25b4319c-e93f-4411-936c-118060f5e7c9',
         farm_uuid: values.farm ? values.farm.id : values.farm
     };
-    
+
     const restp = await putRequest(endpoint.value, data, uuid);
     toast.add({ severity: restp.ok ? 'success' : 'error', summary: 'Edit', detail: restp.ok ? 'Editado' : restp.error, life: 3000 });
     loadingData();
@@ -850,5 +847,4 @@ const remove = (aver) => {
 };
 </script>
 
-<style lang="scss" scoped>
-</style>
+<style lang="scss" scoped></style>

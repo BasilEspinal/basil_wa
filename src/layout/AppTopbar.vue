@@ -120,10 +120,6 @@ const initializeValues = async () => {
 
     // If you need to log the values only after they are set
     await new Promise((resolve) => setTimeout(resolve, 5000)); // Adjust the timeout as needed
-
-    console.log(dataUser.value);
-    console.log(nameEdit.value);
-    console.log(emailEdit.value);
 };
 
 

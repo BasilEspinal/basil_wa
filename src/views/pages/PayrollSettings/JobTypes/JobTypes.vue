@@ -159,6 +159,7 @@
                     <small id="username-help" :class="{ 'p-invalid text-red-700': errorsNew['name'] }">
                         {{ errorsNew.name }}
                     </small>
+                    <BackendErrors :name="errorResponseAPI?.errors?.name"/>
                 </div>
                 <div class="mb-3">
                     <div class="flex align-items-center gap-3 mb-1">
@@ -168,6 +169,7 @@
                     <small id="username-help" :class="{ 'p-invalid text-red-700': errorsNew['codeV'] }">
                         {{ errorsNew.codeV }}
                     </small>
+                    <BackendErrors :name="errorResponseAPI?.errors?.code"/>
                 </div>
                 <div class="mb-3">
                     <div class="flex align-items-center">
@@ -177,6 +179,7 @@
                     <small id="username-help" :class="{ 'p-invalid text-red-700': errorsNew['farm'] }">
                         {{ errorsNew.farm }}
                     </small>
+                    <BackendErrors :name="errorResponseAPI?.errors?.farm_uuid"/>
                 </div>
                 <div class="mb-3">
                     <div class="flex align-items-center">
@@ -203,6 +206,7 @@
                     <small id="username-help" :class="{ 'p-invalid text-red-700': errorsNew['name'] }">
                         {{ errorsNew.name }}
                     </small>
+                    <BackendErrors :name="errorResponseAPI?.errors?.name"/>
                 </div>
                 <div class="mb-3">
                     <div class="flex align-items-center gap-3 mb-1">
@@ -212,6 +216,7 @@
                     <small id="username-help" :class="{ 'p-invalid text-red-700': errorsNew['codeV'] }">
                         {{ errorsNew.codeV }}
                     </small>
+                    <BackendErrors :name="errorResponseAPI?.errors?.code"/>
                 </div>
                 <div class="mb-3">
                 <div class="flex align-items-center">
@@ -222,6 +227,7 @@
                 <small id="username-help" :class="{ 'p-invalid text-red-700': errorsNew['farm'] }">
                     {{ errorsNew.farm }}
                 </small>
+                <BackendErrors :name="errorResponseAPI?.errors?.farm_uuid"/>
             </div>
             <div class="mb-3">
                 <div class="flex align-items-center">
@@ -249,6 +255,7 @@
                     <small id="username-help" :class="{ 'p-invalid text-red-700': errorsNew['name'] }">
                         {{ errorsNew.name }}
                     </small>
+                    <BackendErrors :name="errorResponseAPI?.errors?.name"/>
                 </div>
                 <div class="mb-3">
                     <div class="flex align-items-center gap-3 mb-1">
@@ -258,6 +265,7 @@
                     <small id="username-help" :class="{ 'p-invalid text-red-700': errorsNew['codeV'] }">
                         {{ errorsNew.codeV }}
                     </small>
+                    <BackendErrors :name="errorResponseAPI?.errors?.code"/>
                 </div>
                 <div class="mb-3">
                     <div class="flex align-items-center">
@@ -267,6 +275,7 @@
                     <small id="username-help" :class="{ 'p-invalid text-red-700': errorsNew['farm'] }">
                         {{ errorsNew.farm }}
                     </small>
+                    <BackendErrors :name="errorResponseAPI?.errors?.farm_uuid"/>
                 </div>
                 <div class="mb-3">
                     <div class="flex align-items-center">
@@ -342,7 +351,8 @@ import useDataAPI from '@/composables/DataAPI/FetchDataAPI.js';
 import { useToast } from 'primevue/usetoast';
 import { FilterMatchMode, FilterOperator } from 'primevue/api';
 import useData from '@/composables/DataAPI/FetchDataAPICopy.js';
-const { getRequest, postRequest, putRequest, deleteRequest } = useData();
+const { getRequest, postRequest, putRequest, deleteRequest, errorResponseAPI } = useData();
+import BackendErrors from '@/views/Errors/BackendErrors.vue';
 import { useRouter } from 'vue-router';
 import { useForm } from 'vee-validate';
 import { toTypedSchema } from '@vee-validate/zod';

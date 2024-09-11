@@ -4,7 +4,8 @@ import useDataAPI from '@/composables/DataAPI/FetchDataAPI.js';
 import { useToast } from 'primevue/usetoast';
 import { FilterMatchMode, FilterOperator } from 'primevue/api';
 import useData from '@/composables/DataAPI/FetchDataAPICopy.js';
-const { getRequest, postRequest, putRequest, deleteRequest } = useData();
+const { getRequest, postRequest, putRequest, deleteRequest, errorResponseAPI } = useData();
+import BackendErrors from '@/views/Errors/BackendErrors.vue';
 import { useRouter } from 'vue-router';
 import { useForm } from 'vee-validate';
 import { toTypedSchema } from '@vee-validate/zod';
@@ -29,7 +30,8 @@ const GenderList = ref([]);
 const DocumentTypeList = ref([]);
 const WorkCenterList = ref([]);
 const PaymentTypeList = ref([]);
-const taskTipesL = ref([]);
+const jobTypeList = ref([]);
+const JobTypeList = ref([]);
 
 const formDialogNewTitle = 'Create new '+namePage;
 const formDialogEditTitle = 'Edit '+namePage;
@@ -81,6 +83,7 @@ const initFilters = () => {
         global: { value: null, matchMode: FilterMatchMode.CONTAINS },
         document_type: { operator: FilterOperator.AND, constraints: [{ value: null, matchMode: FilterMatchMode.STARTS_WITH }] },
         'workCenter.name': { operator: FilterOperator.AND, constraints: [{ value: null, matchMode: FilterMatchMode.STARTS_WITH }] },
+        'jobType.name': { operator: FilterOperator.AND, constraints: [{ value: null, matchMode: FilterMatchMode.STARTS_WITH }] },
         document: { operator: FilterOperator.AND, constraints: [{ value: null, matchMode: FilterMatchMode.STARTS_WITH }] },
         first_name: { operator: FilterOperator.AND, constraints: [{ value: null, matchMode: FilterMatchMode.STARTS_WITH }] },
         last_name: { operator: FilterOperator.AND, constraints: [{ value: null, matchMode: FilterMatchMode.STARTS_WITH }] },
@@ -88,6 +91,7 @@ const initFilters = () => {
         email: { operator: FilterOperator.AND, constraints: [{ value: null, matchMode: FilterMatchMode.STARTS_WITH }] },
         bank_account_number: { operator: FilterOperator.AND, constraints: [{ value: null, matchMode: FilterMatchMode.STARTS_WITH }] },
         bank_account_doc: { operator: FilterOperator.AND, constraints: [{ value: null, matchMode: FilterMatchMode.STARTS_WITH }] },
+        'jobType.name': { operator: FilterOperator.AND, constraints: [{ value: null, matchMode: FilterMatchMode.STARTS_WITH }] },
         'payment_type.name': { operator: FilterOperator.AND, constraints: [{ value: null, matchMode: FilterMatchMode.STARTS_WITH }] },
         'farm.name': { operator: FilterOperator.AND, constraints: [{ value: null, matchMode: FilterMatchMode.STARTS_WITH }] },
         'company.name': { operator: FilterOperator.AND, constraints: [{ value: null, matchMode: FilterMatchMode.STARTS_WITH }] },
@@ -122,6 +126,11 @@ const readAll = async () => {
     if (!respGenderList.ok) toast.add({ severity: 'error', detail: 'Error' + respGenderList.error, life: 3000 });
     GenderList.value = respGenderList.data.data.map((comp) => ({ id: comp.id, name: comp.label }));
 
+    const respJobType = await getRequest('/job_types');
+    if (!respJobType.ok) toast.add({ severity: 'error', detail: 'Error' + respJobType.error, life: 3000 });
+    JobTypeList.value = respJobType.data.data.map((comp) => ({ id: comp.uuid, name: comp.name }));
+
+    console.log('JobTypeList', JobTypeList.value);
     const respPaymentType = await getRequest('/payment_types');
     if (!respPaymentType.ok) toast.add({ severity: 'error', detail: 'Error' + respPaymentType.error, life: 3000 });
     PaymentTypeList.value = respPaymentType.data.data.map((comp) => ({ id: comp.uuid, name: comp.name }));
@@ -149,6 +158,9 @@ const {
     defineField,
     resetForm
 } = useForm({
+    initialValues:{
+        job_typeV: {id: '', name: ''}
+    },  
     validationSchema: toTypedSchema(
         z.object({
             documento: z.number().min(10000000, 'min length 8').max(999999999999, 'max length 12'),
@@ -166,6 +178,10 @@ const {
             }),
             bank_account_number: z.number().min(10000000, 'min length 8'),
             bank_account_doc: z.string().min(3),
+            job_typeV: z.object({
+                id: z.string().min(3),
+                name: z.string().min(3)
+            }),
             payment_type_uuid: z.object({
                 id: z.string().min(3),
                 name: z.string().min(3)
@@ -200,6 +216,7 @@ const [bank_account_number, bank_account_numberProps] = defineField('bank_accoun
 const [bank_account_doc, bank_account_docProps] = defineField('bank_account_doc');
 const [gender_id] = defineField('gender_id');
 const [document_type] = defineField('document_type');
+const [job_typeV] = defineField('job_typeV');
 const [payment_type_uuid] = defineField('payment_type_uuid');
 const [work_center_uuid] = defineField('work_center_uuid');
 const [farm_uuid] = defineField('farm_uuid');
@@ -235,6 +252,7 @@ const openEdit = () => {
         bank_account_number: BankAccountNumber,
         bank_account_doc: BankAccountDoc,
         payment_type: PaymentType,
+        jobType: JobType,
         workCenter: WorkC,
         farm: Farm,
         company: empresa
@@ -245,6 +263,7 @@ const openEdit = () => {
     last_name.value = lastName;
     last_name_b.value = lastNameB;
     gender_id.value = { id: Gender.id, name: Gender.name };
+    job_typeV.value = { id: JobType.uuid, name: JobType.name };
     email.value = Email;
     document_type.value = DocumentTypeList.value.filter((a) => a.id == DocumentType.id)[0];
     bank_account_number.value = Number(BankAccountNumber);
@@ -270,6 +289,7 @@ const openClone = () => {
         bank_account_number: BankAccountNumber,
         bank_account_doc: BankAccountDoc,
         payment_type: PaymentType,
+        jobType: JobType,
         workCenter: WorkC,
         farm: Farm,
         company: empresa
@@ -284,6 +304,7 @@ const openClone = () => {
     document_type.value = DocumentTypeList.value.filter((a) => a.id == DocumentType.id)[0];
     bank_account_number.value = Number(BankAccountNumber);
     bank_account_doc.value = BankAccountDoc;
+    job_typeV.value = { id: JobType.uuid, name: JobType.name };
     payment_type_uuid.value = { id: PaymentType.uuid, name: PaymentType.name };
     work_center_uuid.value = { id: WorkC.uuid, name: WorkC.name };
     farm_uuid.value = { id: Farm.uuid, name: Farm.name };
@@ -313,13 +334,14 @@ const createRecord = handleSubmitNew(async (values) => {
         bank_account_number: values.bank_account_number + '',
         bank_account_doc: values.bank_account_doc,
         payment_type_uuid: values.payment_type_uuid.id,
+        job_typeV: values.job_typeV.id,
         work_center_uuid: values.work_center_uuid.id,
         company_uuid: values.company ? values.company.id : companyDefault,
         farm_uuid: values.farm ? values.farm.id : farmDefault,
     };
     
     const restp = await postRequest(endpoint.value, data);
-
+    console.log(restp)
     toast.add({ severity: restp.ok ? 'success' : 'error', summary: 'Create', detail: restp.ok ? 'Creado' : restp.error, life: 3000 });
     loadingData();
     prueba.value= data;
@@ -347,6 +369,7 @@ const EditRecord = handleSubmitNew(async (values) => {
         document_type: values.document_type.id,
         bank_account_number: values.bank_account_number + '',
         bank_account_doc: values.bank_account_doc,
+        job_typeV: values.job_typeV.id,
         payment_type_uuid: values.payment_type_uuid.id,
         work_center_uuid: values.work_center_uuid.id,
         company_uuid: values.company ? values.company.id : companyDefault,
@@ -381,12 +404,13 @@ const cloneRecord = handleSubmitNew(async (values) => {
         document_type: values.document_type.id,
         bank_account_number: values.bank_account_number + '',
         bank_account_doc: values.bank_account_doc,
+        job_typeV: values.job_typeV.id,
         payment_type_uuid: values.payment_type_uuid.id,
         work_center_uuid: values.work_center_uuid.id,
         company_uuid: values.company ? values.company.id : companyDefault,
         farm_uuid: values.farm ? values.farm.id : farmDefault,
     };
-    console.log('data: ', data);
+    
     const restp = await postRequest(endpoint.value, data);
 
     toast.add({ severity: restp.ok ? 'success' : 'error', summary: 'Create', detail: restp.ok ? 'Creado' : restp.error, life: 3000 });
@@ -413,6 +437,17 @@ const ExportRecord = () => {
     else formatXLS(eventos);
 };
 
+const searchJobTypes = (event) => {
+    setTimeout(() => {
+        if (!event.query.trim().length) {
+            jobTypeList.value = [...JobTypeList.value];
+        } else {
+            jobTypeList.value = JobTypeList.value.filter((fram) => {
+                return fram.name.toLowerCase().startsWith(event.query.toLowerCase());
+            });
+        }
+    }, 200);
+};
 const searchCompannies = (event) => {
     setTimeout(() => {
         if (!event.query.trim().length) {
@@ -493,6 +528,7 @@ const remove = (aver) => {
         <div class="card">
             <h1>{{ titlePage }}</h1>
         </div>
+        
         <div class="card">
             <Toolbar>
                 <template #center>
@@ -639,6 +675,15 @@ const remove = (aver) => {
                     </template>
                 </Column>
 
+                <Column field="jobType" filterField="jobType.name" header="Job Type" sortable>
+                    <template #body="{ data }">
+                        {{ data.jobType.name }}
+                    </template>
+                    <template #filter="{ filterModel }">
+                        <InputText v-model="filterModel.value" type="text" class="p-column-filter" placeholder="Search by Job Type" />
+                    </template>
+                </Column>
+
                 <Column field="bankAccountNumber" filterField="bank_account_number" header="Bank Account Number" sortable>
                     <template #body="{ data }">
                         {{ data.bank_account_number }}
@@ -656,6 +701,16 @@ const remove = (aver) => {
                         <InputText v-model="filterModel.value" type="text" class="p-column-filter" placeholder="Search by Bank Account Document" />
                     </template>
                 </Column>
+
+                <Column field="jobType" filterField="jobType.name" header="Job Type" sortable>
+                    <template #body="{ data }">
+                        {{ data.jobType?.name || 'N/A' }}
+                    </template>
+                    <template #filter="{ filterModel }">
+                        <InputText v-model="filterModel.value" type="text" class="p-column-filter" placeholder="Search by Job Type" />
+                    </template>
+                </Column>
+
 
                 <Column field="paymentType" filterField="payment_type.name" header="Payment Type" sortable>
                     <template #body="{ data }">
@@ -737,11 +792,12 @@ const remove = (aver) => {
                 <div class="flex flex-wrap gap-3 mb-3 p-fluid">
                     <div class="flex-auto">
                         <label for="gender_id" class="font-bold block mb-2"> Gender </label>
-                        <Dropdown v-model="gender_id" :options="GenderList" optionLabel="name" class="w-full md:w-15rem" inputId="gender_id" v-bind="gender_idProps" />
+                        <Dropdown v-model="gender_id" :options="GenderList" optionLabel="name" class="w-full md:w-15rem" inputId="gender_id"  />
                         <div class="flex-auto">
                             <small id="username-help" :class="{ 'p-invalid text-red-700': errorsNew['gender_id'] }">
                                 {{ errorsNew.gender_id }}
                             </small>
+                            <BackendErrors :name="errorResponseAPI?.errors?.gender_id"/>
                         </div>
                     </div>
                     <div class="flex-auto">
@@ -751,6 +807,7 @@ const remove = (aver) => {
                             <small id="username-help" :class="{ 'p-invalid text-red-700': errorsNew['first_name'] }">
                                 {{ errorsNew.first_name }}
                             </small>
+                            <BackendErrors :name="errorResponseAPI?.errors?.first_name"/>
                         </div>
                     </div>
                 </div>
@@ -763,6 +820,7 @@ const remove = (aver) => {
                             <small id="username-help" :class="{ 'p-invalid text-red-700': errorsNew['last_name'] }">
                                 {{ errorsNew.last_name }}
                             </small>
+                            <BackendErrors :name="errorResponseAPI?.errors?.last_name"/>
                         </div>
                     </div>
                     <div class="flex-auto">
@@ -779,11 +837,12 @@ const remove = (aver) => {
                 <div class="flex flex-wrap gap-3 mb-3 p-fluid">
                     <div class="flex-auto">
                         <label for="document_type" class="font-bold block mb-2"> Document Type </label>
-                        <Dropdown v-model="document_type" :options="DocumentTypeList" optionLabel="name" class="w-full md:w-15rem" inputId="document_type" v-bind="gender_idProps" />
+                        <Dropdown v-model="document_type" :options="DocumentTypeList" optionLabel="name" class="w-full md:w-15rem" inputId="document_type"  />
                         <div class="flex-auto">
                             <small id="username-help" :class="{ 'p-invalid text-red-700': errorsNew['document_type'] }">
                                 {{ errorsNew.document_type }}
                             </small>
+                            <BackendErrors :name="errorResponseAPI?.errors?.document_type"/>  
                         </div>
                     </div>
                     <div class="flex-auto">
@@ -793,6 +852,7 @@ const remove = (aver) => {
                             <small id="username-help" :class="{ 'p-invalid text-red-700 ': errorsNew['documento'] }">
                                 {{ errorsNew.documento }}
                             </small>
+                            <BackendErrors :name="errorResponseAPI?.errors?.document"/>  
                         </div>
                     </div>
                 </div>
@@ -804,7 +864,7 @@ const remove = (aver) => {
                         <div class="flex-auto">
                             <small id="username-help" :class="{ 'p-invalid text-red-700': errorsNew['bank_account_number'] }">
                                 {{ errorsNew.bank_account_number }}
-                            </small>
+                            </small> 
                         </div>
                     </div>
                     <div class="flex-auto">
@@ -820,11 +880,12 @@ const remove = (aver) => {
                 <div class="flex flex-wrap gap-3 mb-3 p-fluid">
                     <div class="flex-auto">
                         <label for="payment_type_uuid" class="font-bold block mb-2"> Payment Type </label>
-                        <Dropdown v-model="payment_type_uuid" :options="PaymentTypeList" optionLabel="name" class="w-full md:w-15rem" inputId="payment_type_uuid" v-bind="payment_typeProps" />
+                        <Dropdown v-model="payment_type_uuid" :options="PaymentTypeList" optionLabel="name" class="w-full md:w-15rem" inputId="payment_type_uuid"  />
                         <div class="flex-auto">
                             <small id="username-help" :class="{ 'p-invalid text-red-700': errorsNew['payment_type_uuid'] }">
                                 {{ errorsNew.payment_type_uuid }}
                             </small>
+                            <BackendErrors :name="errorResponseAPI?.errors?.payment_type_uuid"/> 
                         </div>
                     </div>
                     <div class="flex-auto">
@@ -834,9 +895,12 @@ const remove = (aver) => {
                             <small id="username-help" :class="{ 'p-invalid text-red-700': errorsNew['work_center_uuid'] }">
                                 {{ errorsNew.work_center_uuid }}
                             </small>
+                            <BackendErrors :name="errorResponseAPI?.errors?.work_center_uuid"/> 
                         </div>
                     </div>
+
                 </div>
+
                 <div class="flex flex-wrap gap-3 mb-5 p-fluid">
                     <div class="flex-auto">
                         <label for="email" class="font-bold block mb-2"> Email </label>
@@ -848,26 +912,42 @@ const remove = (aver) => {
                         </div>
                     </div>
                     <div class="flex-auto">
+
+                        <label for="JobType" class="font-bold block mb-2"> Job Type </label>
+                        <AutoComplete v-model="job_typeV" inputId="ac" class="flex-auto" :suggestions="jobTypeList" @complete="searchJobTypes" field="name" dropdown />
+                        
+                        <div class="flex-auto">
+                            <small id="username-help" :class="{ 'p-invalid text-red-700': errorsNew['errorsNew.jobType_name'] }">
+                                {{ errorsNew.jobType_name }}
+                            </small>
+                            <BackendErrors :name="errorResponseAPI?.errors?.errorsNew.jobTyp_uuid"/> 
+                        </div>
+                    </div>
+                </div>
+                <div class="flex flex-wrap gap-3 mb-5 p-fluid">
+
+                    <div class="flex-auto">
+                        <label for="username" class="font-bold block mb-2">Company:</label>
+                        <AutoComplete v-model="company" inputId="ac" class="flex-auto" :suggestions="compa" @complete="searchCompannies" field="name" dropdown />
+                        <div class="flex-auto">
+                            <small id="username-help" :class="{ 'p-invalid text-red-700': errorsNew['company'] }">
+                        {{ errorsNew.company }}
+                            </small>
+                        </div>
+                    </div>
+
+
+                    <div class="flex-auto">
                         <label for="farm" class="font-bold block mb-2"> Farm </label>
                         <AutoComplete v-model="farm_uuid" class="w-full md:w-15rem" inputId="farm" :suggestions="farms" @complete="searchFarms" field="name" dropdown />
                         <div class="flex-auto">
                             <small id="username-help" :class="{ 'p-invalid text-red-700': errorsNew['farm'] }">
                                 {{ errorsNew.farm }}
                             </small>
+                            <BackendErrors :name="errorResponseAPI?.errors?.farm_uuid"/> 
                         </div>
                     </div>
                 </div>
-
-                <div class="mb-3">
-                    <div class="flex align-items-center">
-                        <label for="username" class="font-semibold w-6rem">Company:</label>
-                        <AutoComplete v-model="company" inputId="ac" class="flex-auto" :suggestions="compa" @complete="searchCompannies" field="name" dropdown />
-                    </div>
-                    <small id="username-help" :class="{ 'p-invalid text-red-700': errorsNew['company'] }">
-                        {{ errorsNew.company }}
-                    </small>
-                </div>
-
 
                 <div class="flex justify-content-end gap-2">
                     <Button type="button" label="Cancel" severity="secondary" @click="formDialogNew = false" />
@@ -889,11 +969,12 @@ const remove = (aver) => {
                 <div class="flex flex-wrap gap-3 mb-3 p-fluid">
                     <div class="flex-auto">
                         <label for="gender_id" class="font-bold block mb-2"> Gender </label>
-                        <Dropdown v-model="gender_id" :options="GenderList" optionLabel="name" class="w-full md:w-15rem" inputId="gender_id" v-bind="gender_idProps" />
+                        <Dropdown v-model="gender_id" :options="GenderList" optionLabel="name" class="w-full md:w-15rem" inputId="gender_id"  />
                         <div class="flex-auto">
                             <small id="username-help" :class="{ 'p-invalid text-red-700': errorsNew['gender_id'] }">
                                 {{ errorsNew.gender_id }}
                             </small>
+                            <BackendErrors :name="errorResponseAPI?.errors?.gender_id"/>
                         </div>
                     </div>
                     <div class="flex-auto">
@@ -903,6 +984,7 @@ const remove = (aver) => {
                             <small id="username-help" :class="{ 'p-invalid text-red-700': errorsNew['first_name'] }">
                                 {{ errorsNew.first_name }}
                             </small>
+                            <BackendErrors :name="errorResponseAPI?.errors?.first_name"/>
                         </div>
                     </div>
                 </div>
@@ -915,6 +997,7 @@ const remove = (aver) => {
                             <small id="username-help" :class="{ 'p-invalid text-red-700': errorsNew['last_name'] }">
                                 {{ errorsNew.last_name }}
                             </small>
+                            <BackendErrors :name="errorResponseAPI?.errors?.last_name"/>
                         </div>
                     </div>
                     <div class="flex-auto">
@@ -931,11 +1014,12 @@ const remove = (aver) => {
                 <div class="flex flex-wrap gap-3 mb-3 p-fluid">
                     <div class="flex-auto">
                         <label for="document_type" class="font-bold block mb-2"> Document Type </label>
-                        <Dropdown v-model="document_type" :options="DocumentTypeList" optionLabel="name" class="w-full md:w-15rem" inputId="document_type" v-bind="gender_idProps" />
+                        <Dropdown v-model="document_type" :options="DocumentTypeList" optionLabel="name" class="w-full md:w-15rem" inputId="document_type"  />
                         <div class="flex-auto">
                             <small id="username-help" :class="{ 'p-invalid text-red-700': errorsNew['document_type'] }">
                                 {{ errorsNew.document_type }}
                             </small>
+                            <BackendErrors :name="errorResponseAPI?.errors?.document_type"/>  
                         </div>
                     </div>
                     <div class="flex-auto">
@@ -945,6 +1029,7 @@ const remove = (aver) => {
                             <small id="username-help" :class="{ 'p-invalid text-red-700 ': errorsNew['documento'] }">
                                 {{ errorsNew.documento }}
                             </small>
+                            <BackendErrors :name="errorResponseAPI?.errors?.document"/>  
                         </div>
                     </div>
                 </div>
@@ -956,7 +1041,7 @@ const remove = (aver) => {
                         <div class="flex-auto">
                             <small id="username-help" :class="{ 'p-invalid text-red-700': errorsNew['bank_account_number'] }">
                                 {{ errorsNew.bank_account_number }}
-                            </small>
+                            </small> 
                         </div>
                     </div>
                     <div class="flex-auto">
@@ -972,11 +1057,12 @@ const remove = (aver) => {
                 <div class="flex flex-wrap gap-3 mb-3 p-fluid">
                     <div class="flex-auto">
                         <label for="payment_type_uuid" class="font-bold block mb-2"> Payment Type </label>
-                        <Dropdown v-model="payment_type_uuid" :options="PaymentTypeList" optionLabel="name" class="w-full md:w-15rem" inputId="payment_type_uuid" v-bind="payment_typeProps" />
+                        <Dropdown v-model="payment_type_uuid" :options="PaymentTypeList" optionLabel="name" class="w-full md:w-15rem" inputId="payment_type_uuid"  />
                         <div class="flex-auto">
                             <small id="username-help" :class="{ 'p-invalid text-red-700': errorsNew['payment_type_uuid'] }">
                                 {{ errorsNew.payment_type_uuid }}
                             </small>
+                            <BackendErrors :name="errorResponseAPI?.errors?.payment_type_uuid"/> 
                         </div>
                     </div>
                     <div class="flex-auto">
@@ -986,9 +1072,12 @@ const remove = (aver) => {
                             <small id="username-help" :class="{ 'p-invalid text-red-700': errorsNew['work_center_uuid'] }">
                                 {{ errorsNew.work_center_uuid }}
                             </small>
+                            <BackendErrors :name="errorResponseAPI?.errors?.work_center_uuid"/> 
                         </div>
                     </div>
+
                 </div>
+
                 <div class="flex flex-wrap gap-3 mb-5 p-fluid">
                     <div class="flex-auto">
                         <label for="email" class="font-bold block mb-2"> Email </label>
@@ -1000,24 +1089,41 @@ const remove = (aver) => {
                         </div>
                     </div>
                     <div class="flex-auto">
+
+                        <label for="JobType" class="font-bold block mb-2"> Job Type </label>
+                        <AutoComplete v-model="job_typeV" inputId="ac" class="flex-auto" :suggestions="jobTypeList" @complete="searchJobTypes" field="name" dropdown />
+                        
+                        <div class="flex-auto">
+                            <small id="username-help" :class="{ 'p-invalid text-red-700': errorsNew['errorsNew.jobType_name'] }">
+                                {{ errorsNew.jobType_name }}
+                            </small>
+                            <BackendErrors :name="errorResponseAPI?.errors?.errorsNew.jobTyp_uuid"/> 
+                        </div>
+                    </div>
+                </div>
+                <div class="flex flex-wrap gap-3 mb-5 p-fluid">
+
+                    <div class="flex-auto">
+                        <label for="username" class="font-bold block mb-2">Company:</label>
+                        <AutoComplete v-model="company" inputId="ac" class="flex-auto" :suggestions="compa" @complete="searchCompannies" field="name" dropdown />
+                        <div class="flex-auto">
+                            <small id="username-help" :class="{ 'p-invalid text-red-700': errorsNew['company'] }">
+                        {{ errorsNew.company }}
+                            </small>
+                        </div>
+                    </div>
+
+
+                    <div class="flex-auto">
                         <label for="farm" class="font-bold block mb-2"> Farm </label>
                         <AutoComplete v-model="farm_uuid" class="w-full md:w-15rem" inputId="farm" :suggestions="farms" @complete="searchFarms" field="name" dropdown />
                         <div class="flex-auto">
                             <small id="username-help" :class="{ 'p-invalid text-red-700': errorsNew['farm'] }">
                                 {{ errorsNew.farm }}
                             </small>
+                            <BackendErrors :name="errorResponseAPI?.errors?.farm_uuid"/> 
                         </div>
                     </div>
-                </div>
-
-                <div class="mb-3">
-                    <div class="flex align-items-center">
-                        <label for="username" class="font-semibold w-6rem">Company:</label>
-                        <AutoComplete v-model="company" inputId="ac" class="flex-auto" :suggestions="compa" @complete="searchCompannies" field="name" dropdown />
-                    </div>
-                    <small id="username-help" :class="{ 'p-invalid text-red-700': errorsNew['company'] }">
-                        {{ errorsNew.company }}
-                    </small>
                 </div>
 
 
@@ -1033,20 +1139,20 @@ const remove = (aver) => {
                         <template #content>
                             <div class="flex-auto">
                                 <small id="username-help" :class="{ 'p-invalid text-red-700': errorsNew['backendValidation'] }">
-                                {{ backendValidation }}
+                                {{ backendValidation.error }}
                                 </small>
-                                <pre>{{prueba}}</pre>
                             </div>
                         </template>
                 </Card>
                 <div class="flex flex-wrap gap-3 mb-3 p-fluid">
                     <div class="flex-auto">
                         <label for="gender_id" class="font-bold block mb-2"> Gender </label>
-                        <Dropdown v-model="gender_id" :options="GenderList" optionLabel="name" class="w-full md:w-15rem" inputId="gender_id" v-bind="gender_idProps" />
+                        <Dropdown v-model="gender_id" :options="GenderList" optionLabel="name" class="w-full md:w-15rem" inputId="gender_id"  />
                         <div class="flex-auto">
                             <small id="username-help" :class="{ 'p-invalid text-red-700': errorsNew['gender_id'] }">
                                 {{ errorsNew.gender_id }}
                             </small>
+                            <BackendErrors :name="errorResponseAPI?.errors?.gender_id"/>
                         </div>
                     </div>
                     <div class="flex-auto">
@@ -1056,6 +1162,7 @@ const remove = (aver) => {
                             <small id="username-help" :class="{ 'p-invalid text-red-700': errorsNew['first_name'] }">
                                 {{ errorsNew.first_name }}
                             </small>
+                            <BackendErrors :name="errorResponseAPI?.errors?.first_name"/>
                         </div>
                     </div>
                 </div>
@@ -1068,6 +1175,7 @@ const remove = (aver) => {
                             <small id="username-help" :class="{ 'p-invalid text-red-700': errorsNew['last_name'] }">
                                 {{ errorsNew.last_name }}
                             </small>
+                            <BackendErrors :name="errorResponseAPI?.errors?.last_name"/>
                         </div>
                     </div>
                     <div class="flex-auto">
@@ -1084,11 +1192,12 @@ const remove = (aver) => {
                 <div class="flex flex-wrap gap-3 mb-3 p-fluid">
                     <div class="flex-auto">
                         <label for="document_type" class="font-bold block mb-2"> Document Type </label>
-                        <Dropdown v-model="document_type" :options="DocumentTypeList" optionLabel="name" class="w-full md:w-15rem" inputId="document_type" v-bind="gender_idProps" />
+                        <Dropdown v-model="document_type" :options="DocumentTypeList" optionLabel="name" class="w-full md:w-15rem" inputId="document_type"  />
                         <div class="flex-auto">
                             <small id="username-help" :class="{ 'p-invalid text-red-700': errorsNew['document_type'] }">
                                 {{ errorsNew.document_type }}
                             </small>
+                            <BackendErrors :name="errorResponseAPI?.errors?.document_type"/>  
                         </div>
                     </div>
                     <div class="flex-auto">
@@ -1098,6 +1207,7 @@ const remove = (aver) => {
                             <small id="username-help" :class="{ 'p-invalid text-red-700 ': errorsNew['documento'] }">
                                 {{ errorsNew.documento }}
                             </small>
+                            <BackendErrors :name="errorResponseAPI?.errors?.document"/>  
                         </div>
                     </div>
                 </div>
@@ -1109,7 +1219,7 @@ const remove = (aver) => {
                         <div class="flex-auto">
                             <small id="username-help" :class="{ 'p-invalid text-red-700': errorsNew['bank_account_number'] }">
                                 {{ errorsNew.bank_account_number }}
-                            </small>
+                            </small> 
                         </div>
                     </div>
                     <div class="flex-auto">
@@ -1125,11 +1235,12 @@ const remove = (aver) => {
                 <div class="flex flex-wrap gap-3 mb-3 p-fluid">
                     <div class="flex-auto">
                         <label for="payment_type_uuid" class="font-bold block mb-2"> Payment Type </label>
-                        <Dropdown v-model="payment_type_uuid" :options="PaymentTypeList" optionLabel="name" class="w-full md:w-15rem" inputId="payment_type_uuid" v-bind="payment_typeProps" />
+                        <Dropdown v-model="payment_type_uuid" :options="PaymentTypeList" optionLabel="name" class="w-full md:w-15rem" inputId="payment_type_uuid"  />
                         <div class="flex-auto">
                             <small id="username-help" :class="{ 'p-invalid text-red-700': errorsNew['payment_type_uuid'] }">
                                 {{ errorsNew.payment_type_uuid }}
                             </small>
+                            <BackendErrors :name="errorResponseAPI?.errors?.payment_type_uuid"/> 
                         </div>
                     </div>
                     <div class="flex-auto">
@@ -1139,9 +1250,12 @@ const remove = (aver) => {
                             <small id="username-help" :class="{ 'p-invalid text-red-700': errorsNew['work_center_uuid'] }">
                                 {{ errorsNew.work_center_uuid }}
                             </small>
+                            <BackendErrors :name="errorResponseAPI?.errors?.work_center_uuid"/> 
                         </div>
                     </div>
+
                 </div>
+
                 <div class="flex flex-wrap gap-3 mb-5 p-fluid">
                     <div class="flex-auto">
                         <label for="email" class="font-bold block mb-2"> Email </label>
@@ -1153,24 +1267,41 @@ const remove = (aver) => {
                         </div>
                     </div>
                     <div class="flex-auto">
+
+                        <label for="JobType" class="font-bold block mb-2"> Job Type </label>
+                        <AutoComplete v-model="job_typeV" inputId="ac" class="flex-auto" :suggestions="jobTypeList" @complete="searchJobTypes" field="name" dropdown />
+                        
+                        <div class="flex-auto">
+                            <small id="username-help" :class="{ 'p-invalid text-red-700': errorsNew['errorsNew.jobType_name'] }">
+                                {{ errorsNew.jobType_name }}
+                            </small>
+                            <BackendErrors :name="errorResponseAPI?.errors?.errorsNew.jobTyp_uuid"/> 
+                        </div>
+                    </div>
+                </div>
+                <div class="flex flex-wrap gap-3 mb-5 p-fluid">
+
+                    <div class="flex-auto">
+                        <label for="username" class="font-bold block mb-2">Company:</label>
+                        <AutoComplete v-model="company" inputId="ac" class="flex-auto" :suggestions="compa" @complete="searchCompannies" field="name" dropdown />
+                        <div class="flex-auto">
+                            <small id="username-help" :class="{ 'p-invalid text-red-700': errorsNew['company'] }">
+                        {{ errorsNew.company }}
+                            </small>
+                        </div>
+                    </div>
+
+
+                    <div class="flex-auto">
                         <label for="farm" class="font-bold block mb-2"> Farm </label>
                         <AutoComplete v-model="farm_uuid" class="w-full md:w-15rem" inputId="farm" :suggestions="farms" @complete="searchFarms" field="name" dropdown />
                         <div class="flex-auto">
                             <small id="username-help" :class="{ 'p-invalid text-red-700': errorsNew['farm'] }">
                                 {{ errorsNew.farm }}
                             </small>
+                            <BackendErrors :name="errorResponseAPI?.errors?.farm_uuid"/> 
                         </div>
                     </div>
-                </div>
-
-                <div class="mb-3">
-                    <div class="flex align-items-center">
-                        <label for="username" class="font-semibold w-6rem">Company:</label>
-                        <AutoComplete v-model="company" inputId="ac" class="flex-auto" :suggestions="compa" @complete="searchCompannies" field="name" dropdown />
-                    </div>
-                    <small id="username-help" :class="{ 'p-invalid text-red-700': errorsNew['company'] }">
-                        {{ errorsNew.company }}
-                    </small>
                 </div>
 
 

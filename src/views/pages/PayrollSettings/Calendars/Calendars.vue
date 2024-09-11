@@ -1,255 +1,210 @@
 <template>
     <div>
-    <div class="card">
-        <div>
-            <h1>{{ titlePage }}</h1> 
+        <div class="card">
+            <div>
+                <h1>{{ titlePage }}</h1>
+            </div>
         </div>
-
-
-    </div>
-    <div class="card">
-        <div class="grid">
-            <div class="col-xs-12 col-sm-6 col-md-4 mb-2 text-center mx-auto">
-                <!--Uncomment when table is done-->
-                
+        <div class="card">
+            <div class="grid">
                 <div class="col-xs-12 col-sm-6 col-md-4 mb-2 text-center mx-auto">
-            <Toolbar style="margin-bottom: 1rem">
-                <template #center>
-                    <Button  v-if="ability.can('calendario_crear')" :disabled="headerNames.length > 0" label="New" icon="pi pi-plus" class="p-button-success mb-2 mt-2" @click="openNew" size="large" />
-                    <Divider v-if="ability.can('calendario_crear')" layout="vertical" />
-                    <Button v-if="ability.can('calendario_editar')" :disabled="!(listRowSelect.length > 0 && listRowSelect.length < 2)" label="Edit" icon="pi pi-file-edit" class="p-button-help mb-2 mt-2" @click="openEdit" size="large" />
-                    <Divider v-if="ability.can('calendario_editar')" layout="vertical" />
-                    <Button v-if="ability.can('calendario_crear')" :disabled="!(listRowSelect.length > 0 && listRowSelect.length < 2)" label="Clone" icon="pi pi-copy" class="p-button-secondary mb-2 mt-2" @click="openClone" size="large" />
-                    <Divider v-if="ability.can('calendario_crear')" layout="vertical" />
-                    <Button v-if="ability.can('calendario_editar')" :disabled="headerNames.length > 0" label="Export" icon="pi pi-file-import" class="p-button-warning mb-2 mt-2" @click="openExport" size="large" />
-                    <Divider v-if="ability.can('calendario_editar')" layout="vertical" />
-                    <Button v-if="ability.can('calendario_eliminar')" :disabled="!listRowSelect.length > 0" label="Delete" icon="pi pi-trash" class="p-button-danger mb-2 mt-2" @click="openDelete" size="large" />
-                </template>
-            </Toolbar>
+                    <!--Uncomment when table is done-->
+
+                    <div class="col-xs-12 col-sm-6 col-md-4 mb-2 text-center mx-auto">
+                        <Toolbar style="margin-bottom: 1rem">
+                            <template #center>
+                                <Button v-if="ability.can('calendario_crear')" :disabled="headerNames.length > 0" label="New" icon="pi pi-plus" class="p-button-success mb-2 mt-2" @click="openNew" size="large" />
+                                <Divider v-if="ability.can('calendario_crear')" layout="vertical" />
+                                <Button v-if="ability.can('calendario_editar')" :disabled="!(listRowSelect.length > 0 && listRowSelect.length < 2)" label="Edit" icon="pi pi-file-edit" class="p-button-help mb-2 mt-2" @click="openEdit" size="large" />
+                                <Divider v-if="ability.can('calendario_editar')" layout="vertical" />
+                                <Button v-if="ability.can('calendario_crear')" :disabled="!(listRowSelect.length > 0 && listRowSelect.length < 2)" label="Clone" icon="pi pi-copy" class="p-button-secondary mb-2 mt-2" @click="openClone" size="large" />
+                                <Divider v-if="ability.can('calendario_crear')" layout="vertical" />
+                                <Button v-if="ability.can('calendario_editar')" :disabled="headerNames.length > 0" label="Export" icon="pi pi-file-import" class="p-button-warning mb-2 mt-2" @click="openExport" size="large" />
+                                <Divider v-if="ability.can('calendario_editar')" layout="vertical" />
+                                <Button v-if="ability.can('calendario_eliminar')" :disabled="!listRowSelect.length > 0" label="Delete" icon="pi pi-trash" class="p-button-danger mb-2 mt-2" @click="openDelete" size="large" />
+                            </template>
+                        </Toolbar>
+                    </div>
+                </div>
             </div>
+            <!-- <pre>{{ dataResponseAPI }}</pre> -->
+            <DataTable
+                v-if="ability.can('calendario_listado')"
+                :value="dataFromComponent"
+                dataKey="uuid"
+                tableStyle="min-width: 75rem"
+                showGridlines
+                :loading="loading"
+                scrollable
+                scrollHeight="600px"
+                resizableColumns
+                columnResizeMode="expand"
+                sortMode="multiple"
+                :paginator="true"
+                :rows="50"
+                :rowsPerPageOptions="[5, 10, 20, 50]"
+                :class="`p-datatable-${size.class}`"
+                @row-select="onRowSelect(selectedRegisters)"
+                @row-unselect="onRowSelect(selectedRegisters)"
+                @select-all-change="onSelectAllChange"
+                v-model:selection="selectedRegisters"
+                filterDisplay="menu"
+                v-model:filters="filters"
+                :globalFilterFields="['name', 'company.name', 'farm.name', 'status.name', 'created_at', 'updated_at', 'code', 'transaction_date', 'day_week_name', 'day_week_num', 'type_date']"
+            >
+                <template #header>
+                    <!--Uncomment when filters are done-->
 
-            </div>
-        </div>
-        <!-- <pre>{{ dataResponseAPI }}</pre> -->
-        <DataTable
-        v-if="ability.can('calendario_listado')"
-        :value="dataFromComponent"
-        dataKey="uuid"
-        tableStyle="min-width: 75rem"
-        showGridlines
-        :loading="loading"
-        scrollable
-        scrollHeight="600px"
-        resizableColumns
-        columnResizeMode="expand"
-        sortMode="multiple"
-        :paginator="true"
-        :rows="50"
-        :rowsPerPageOptions="[5, 10, 20, 50]"
-        :class="`p-datatable-${size.class}`"
-        @row-select="onRowSelect(selectedRegisters)"
-        @row-unselect="onRowSelect(selectedRegisters)"
-        @select-all-change="onSelectAllChange"
-        v-model:selection="selectedRegisters"
-        filterDisplay="menu"
-        v-model:filters="filters"
-        :globalFilterFields="['name', 'company.name', 'farm.name', 'status.name', 'created_at', 'updated_at', 'code', 'transaction_date', 'day_week_name', 'day_week_num', 'type_date']" 
-        >
-        <template #header>
-            <!--Uncomment when filters are done-->
+                    <Toolbar class="mb-2">
+                        <template v-slot:start>
+                            <Button type="button" icon="pi pi-filter-slash" label="Limpiar" class="p-button-outlined mb-2" @click="clearFilter()" />
+                        </template>
+                        <template v-slot:end>
+                            <span class="p-input-icon-left mb-2">
+                                <i class="pi pi-search" />
+                                <InputText v-model="filters['global'].value" placeholder="Buscar" style="width: 100%" />
+                            </span>
+                        </template>
+                        <template v-slot:center>
+                            <SelectButton v-model="size" :options="sizeOptions" optionLabel="label" dataKey="label"> </SelectButton>
+                        </template>
+                    </Toolbar>
+                </template>
 
-            <Toolbar class = "mb-2">
-                    <template v-slot:start>
-                        <Button type="button" icon="pi pi-filter-slash" label="Limpiar" class="p-button-outlined mb-2" @click="clearFilter()" />
+                <template #empty> No customers found. </template>
+                <template #loading> Loading customers data. Please wait. </template>
+                <Column selectionMode="multiple" headerStyle="width: 3rem"></Column>
+                <Column field="day_week_num" filterField="day_week_num" header="Day Week num" sortable :frozen="documentFrozen">
+                    <!--Replace :frozen with the model-->
+                    <template #header>
+                        <ToggleButton v-model="documentFrozen" onIcon="pi pi-lock" offIcon="pi pi-lock-open" onLabel="" offLabel="" />
+                        <div>&nbsp;</div>
                     </template>
-                    <template v-slot:end>
-                        <span class="p-input-icon-left mb-2">
-                        <i class="pi pi-search" />
-                        <InputText v-model="filters['global'].value" placeholder="Buscar" style="width: 100%" />
-                    </span>
+
+                    <template #body="{ data }">
+                        {{ data.day_week_num }}
                     </template>
-                    <template v-slot:center>
-                        
-                        <SelectButton v-model="size" :options="sizeOptions" optionLabel="label" dataKey="label"> </SelectButton>
-                        
-                    </template>       
-                </Toolbar>
-        </template>
+                    <template #filter="{ filterModel }">
+                        <InputText v-model="filterModel.value" type="text" class="p-column-filter" placeholder="Search by " />
+                    </template>
+                </Column>
 
-        <template #empty> No customers found. </template>
-        <template #loading> Loading customers data. Please wait. </template>
-        <Column selectionMode="multiple" headerStyle="width: 3rem"></Column>
-        <Column field="day_week_num" filterField="day_week_num" header="Day Week num" sortable :frozen="documentFrozen"> <!--Replace :frozen with the model-->
-            <template #header>
-                    <ToggleButton v-model="documentFrozen" onIcon="pi pi-lock" offIcon="pi pi-lock-open" onLabel="" offLabel="" />
-                    <div>&nbsp;</div>
-                </template>
+                <Column field="day_week_name" filterField="day_week_name" header="Day Week Name" sortable>
+                    <template #body="{ data }">
+                        {{ data.day_week_name }}
+                    </template>
+                    <template #filter="{ filterModel }">
+                        <InputText v-model="filterModel.value" type="text" class="p-column-filter" placeholder="Search by " />
+                    </template>
+                </Column>
+                <Column field="transaction_date" filterField="transaction_date" header="Transaction date" sortable>
+                    <template #body="{ data }">
+                        {{ data.transaction_date }}
+                    </template>
+                    <template #filter="{ filterModel }">
+                        <InputText v-model="filterModel.value" type="text" class="p-column-filter" placeholder="Search by " />
+                    </template>
+                </Column>
 
-                <template #body="{ data }">
-                    {{ data.day_week_num }} 
-                </template>
-                <template #filter="{ filterModel }">
-                    <InputText v-model="filterModel.value" type="text" class="p-column-filter" placeholder="Search by " />
-                </template>
-        </Column>
+                <Column field="type_date" filterField="type_date" header="Type date" sortable>
+                    <template #body="{ data }">
+                        {{ data.type_date }}
+                    </template>
+                    <template #filter="{ filterModel }">
+                        <InputText v-model="filterModel.value" type="text" class="p-column-filter" placeholder="Search by " />
+                    </template>
+                </Column>
 
-        <Column field="day_week_name" filterField="day_week_name" header="Day Week Name" sortable> 
-            
-                <template #body="{ data }">
-                    {{ data.day_week_name }} 
-                </template>
-                <template #filter="{ filterModel }">
-                    <InputText v-model="filterModel.value" type="text" class="p-column-filter" placeholder="Search by " />
-                </template>
-        </Column>
-        <Column field="transaction_date" filterField="transaction_date" header="Transaction date" sortable> 
-            
-            <template #body="{ data }">
-                {{ data.transaction_date }} 
-            </template>
-            <template #filter="{ filterModel }">
-                <InputText v-model="filterModel.value" type="text" class="p-column-filter" placeholder="Search by " />
-            </template>
-        </Column>
+                <!--Here add other columns-->
 
-    <Column field="type_date" filterField="type_date" header="Type date" sortable> 
-            
-            <template #body="{ data }">
-                {{ data.type_date }} 
-            </template>
-            <template #filter="{ filterModel }">
-                <InputText v-model="filterModel.value" type="text" class="p-column-filter" placeholder="Search by " />
-            </template>
-    </Column>
+                <Column field="farmName" filterField="farm.name" header="Farm Name" sortable>
+                    <template #body="{ data }">
+                        {{ data.farm.name }}
+                    </template>
+                    <template #filter="{ filterModel }">
+                        <InputText v-model="filterModel.value" type="text" class="p-column-filter" placeholder="Search by farm" />
+                    </template>
+                </Column>
 
+                <Column field="companyName" filterField="company.name" header="Company Name" sortable>
+                    <template #body="{ data }">
+                        {{ data.company.name }}
+                    </template>
+                    <template #filter="{ filterModel }">
+                        <InputText v-model="filterModel.value" type="text" class="p-column-filter" placeholder="Search by farm" />
+                    </template>
+                </Column>
 
-        <!--Here add other columns-->
+                <Column field="createdAt" filterField="created_at" header="Creation date" sortable>
+                    <template #body="{ data }">
+                        {{ data.created_at }}
+                    </template>
+                    <template #filter="{ filterModel }">
+                        <InputText v-model="filterModel.value" type="text" class="p-column-filter" placeholder="Search by creation date" />
+                    </template>
+                </Column>
 
-        <Column field="farmName" filterField="farm.name" header="Farm Name" sortable>
-                <template #body="{ data }">
-                    {{ data.farm.name }}
-                </template>
-                <template #filter="{ filterModel }">
-                    <InputText v-model="filterModel.value" type="text" class="p-column-filter" placeholder="Search by farm" />
-                </template>
-            </Column>
+                <Column field="updatedAt" filterField="updated_at" header="Modification date" sortable>
+                    <template #body="{ data }">
+                        {{ data.updated_at }}
+                    </template>
+                    <template #filter="{ filterModel }">
+                        <InputText v-model="filterModel.value" type="text" class="p-column-filter" placeholder="Search by modification date" />
+                    </template>
+                </Column>
 
-            <Column field="companyName" filterField="company.name" header="Company Name" sortable>
-                <template #body="{ data }">
-                    {{ data.company.name }}
-                </template>
-                <template #filter="{ filterModel }">
-                    <InputText v-model="filterModel.value" type="text" class="p-column-filter" placeholder="Search by farm" />
-                </template>
-            </Column>
-
-            <Column field="createdAt" filterField="created_at" header="Creation date" sortable>
-                <template #body="{ data }">
-                    {{ data.created_at }}
-                </template>
-                <template #filter="{ filterModel }">
-                    <InputText v-model="filterModel.value" type="text" class="p-column-filter" placeholder="Search by creation date" />
-                </template>
-            </Column>
-
-            <Column field="updatedAt" filterField="updated_at" header="Modification date" sortable>
-                <template #body="{ data }">
-                    {{ data.updated_at }}
-                </template>
-                <template #filter="{ filterModel }">
-                    <InputText v-model="filterModel.value" type="text" class="p-column-filter" placeholder="Search by modification date" />
-                </template>
-            </Column>
-
-            <Column field="status" filterField="status.name" header="Status" sortable>
-                <template #body="{ data }">
-                    <Tag :value="data.status.name" :severity="'EFC88B'" />
-                </template>
-                <template #filter="{ filterModel }">
-                    <InputText v-model="filterModel.value" type="text" class="p-column-filter" placeholder="Search by status" />
-                </template>
-            </Column>
-
-        </DataTable>
-        <Dialog v-model:visible="formDialogNew" modal :header="formDialogNewTitle" class="p-fluid text-center mx-auto">
-
-
-
-
+                <Column field="status" filterField="status.name" header="Status" sortable>
+                    <template #body="{ data }">
+                        <Tag :value="data.status.name" :severity="'EFC88B'" />
+                    </template>
+                    <template #filter="{ filterModel }">
+                        <InputText v-model="filterModel.value" type="text" class="p-column-filter" placeholder="Search by status" />
+                    </template>
+                </Column>
+            </DataTable>
+            <Dialog v-model:visible="formDialogNew" modal :header="formDialogNewTitle" class="p-fluid text-center mx-auto">
                 <div class="mb-3">
-                    <div class=" flex align-items-center">
+                    <div class="flex align-items-center">
                         <label for="username" class="font-semibold w-3">Transaction Date :</label>
                         <!-- <Calendar v-model="transaction_dateV" class="flex-auto" v-bind="transaction_dateVProps"/> -->
-                        <Calendar v-model="transaction_dateV" class="flex-auto"  showIcon :showOnFocus="false" inputId="buttondisplay" />
+                        <Calendar v-model="transaction_dateV" class="flex-auto" showIcon :showOnFocus="false" inputId="buttondisplay" />
                     </div>
                     <small id="username-help" :class="{ 'p-invalid text-red-500': errorsNew['type_dateV'] }">
                         {{ errorsNew.type_dateV }}
                     </small>
-
-                    <small id="username-help" :class="{ 'p-invalid text-red-500': errorResponseAPI?.errors?.transaction_date }">
-                    <div v-if="errorResponseAPI?.errors?.transaction_date">
-                        <div v-for="(error, index) in errorResponseAPI.errors.transaction_date" :key="index">
-                            {{ error }}
-                        </div>
-                    </div>
-                </small>
+                    <BackendErrors :name="errorResponseAPI?.errors?.transaction_date"/>
 
                 </div>
 
                 <div class="mb-3">
-                    <div class=" flex align-items-center">
+                    <div class="flex align-items-center">
                         <label for="username" class="font-semibold w-3">Type of Date :</label>
-                        <Dropdown  v-model="type_dateV" :options="typeOfDates" optionLabel="name" placeholder="Select a type of date" class="flex-auto" v-bin="type_dateVProps"/>
+                        <Dropdown v-model="type_dateV" :options="typeOfDates" optionLabel="name" placeholder="Select a type of date" class="flex-auto" v-bin="type_dateVProps" />
                     </div>
-                    <small id="username-help" :class="{ 'p-invalid text-red-500': errorsNew['type_dateV']||errorResponseAPI?.errors?.type_date }">
-                        {{ errorsNew.type_dateV||errorResponseAPI?.errors?.type_date }}
+                    <small id="username-help" :class="{ 'p-invalid text-red-500': errorsNew['type_dateV'] || errorResponseAPI?.errors?.type_date }">
+                        {{ errorsNew.type_dateV || errorResponseAPI?.errors?.type_date }}
                     </small>
-
-                    <small id="username-help" :class="{ 'p-invalid text-red-500': errorResponseAPI?.errors?.type_date }">
-                    <div v-if="errorResponseAPI?.errors?.type_date">
-                        <div v-for="(error, index) in errorResponseAPI?.errors?.type_date" :key="index">
-                            {{ error }}
-                        </div>
-                    </div>
-                </small>
-                    
+                    <BackendErrors :name="errorResponseAPI?.errors?.type_date"/>
                 </div>
                 <div class="mb-3">
-                <div class="flex align-items-center">
-                    <label for="username" class="font-semibold w-3">Farm :</label>
-                    <AutoComplete v-model="farm" inputId="ac" class="flex-auto" :suggestions="farms" @complete="searchFarms" field="name"
-                        dropdown />
-                </div>
-                <small id="username-help" :class="{ 'p-invalid text-red-500': errorsNew['farm']|| errorResponseAPI?.errors?.farm }">
-                    {{ errorsNew.farm || errorResponseAPI?.errors?.farm}}
-                </small>
-
-                <small id="username-help" :class="{ 'p-invalid text-red-500': errorResponseAPI?.errors?.farm }">
-                    <div v-if="errorResponseAPI?.errors?.farm">
-                        <div v-for="(error, index) in errorResponseAPI?.errors?.farm" :key="index">
-                            {{ error }}
-                        </div>
+                    <div class="flex align-items-center">
+                        <label for="username" class="font-semibold w-3">Farm :</label>
+                        <AutoComplete v-model="farm" inputId="ac" class="flex-auto" :suggestions="farms" @complete="searchFarms" field="name" dropdown />
                     </div>
-                </small>
-
-            </div>
-            <div class="mb-3">
-                <div class="flex align-items-center">
-                    <label for="username" class="font-semibold w-3">Company:</label>
-                    <AutoComplete v-model="company" inputId="ac" class="flex-auto" :suggestions="compa" @complete="EditRecord"
-                        field="name" dropdown />
+                    <small id="username-help" :class="{ 'p-invalid text-red-500': errorsNew['farm'] || errorResponseAPI?.errors?.farm }">
+                        {{ errorsNew.farm || errorResponseAPI?.errors?.farm }}
+                    </small>
+                    <BackendErrors :name="errorResponseAPI?.errors?.farm_uuid"/>
                 </div>
-                <small id="username-help" :class="{ 'p-invalid text-red-500': errorsNew['company']||errorResponseAPI?.errors?.company }">
-                    {{ errorsNew.company||errorResponseAPI?.errors?.company }}
-                </small>
-                <small id="username-help" :class="{ 'p-invalid text-red-500': errorResponseAPI?.errors?.company }">
-                    <div v-if="errorResponseAPI?.errors?.company">
-                        <div v-for="(error, index) in errorResponseAPI?.errors?.company" :key="index">
-                            {{ error }}
-                        </div>
+                <div class="mb-3">
+                    <div class="flex align-items-center">
+                        <label for="username" class="font-semibold w-3">Company:</label>
+                        <AutoComplete v-model="company" inputId="ac" class="flex-auto" :suggestions="compa" @complete="EditRecord" field="name" dropdown />
                     </div>
-                </small>
-            </div>
+                    <small id="username-help" :class="{ 'p-invalid text-red-500': errorsNew['company'] || errorResponseAPI?.errors?.company }">
+                        {{ errorsNew.company || errorResponseAPI?.errors?.company }}
+                    </small>
+                </div>
 
                 <div class="flex justify-content-end gap-2">
                     <Button type="button" label="Cancel" severity="secondary" @click="formDialogNew = false" />
@@ -258,81 +213,47 @@
             </Dialog>
 
             <Dialog v-model:visible="formDialogEdit" modal :header="formDialogEditTitle" class="p-fluid text-center mx-auto">
-                
                 <div class="mb-3">
-                    <div class=" flex align-items-center">
+                    <div class="flex align-items-center">
                         <label for="username" class="font-semibold w-3">Transaction Date :</label>
                         <!-- <Calendar v-model="transaction_dateV" class="flex-auto" v-bind="transaction_dateVProps"/> -->
-                        <Calendar v-model="transaction_dateV" class="flex-auto"  showIcon :showOnFocus="false" inputId="buttondisplay" />
+                        <Calendar v-model="transaction_dateV" class="flex-auto" showIcon :showOnFocus="false" inputId="buttondisplay" />
                     </div>
                     <small id="username-help" :class="{ 'p-invalid text-red-500': errorsNew['type_dateV'] }">
                         {{ errorsNew.type_dateV }}
                     </small>
-
-                    <small id="username-help" :class="{ 'p-invalid text-red-500': errorResponseAPI?.errors?.transaction_date }">
-                    <div v-if="errorResponseAPI?.errors?.transaction_date">
-                        <div v-for="(error, index) in errorResponseAPI.errors.transaction_date" :key="index">
-                            {{ error }}
-                        </div>
-                    </div>
-                </small>
-
+                    <BackendErrors :name="errorResponseAPI?.errors?.transaction_date"/>
                 </div>
 
                 <div class="mb-3">
-                    <div class=" flex align-items-center">
+                    <div class="flex align-items-center">
                         <label for="username" class="font-semibold w-3">Type of Date :</label>
-                        <Dropdown  v-model="type_dateV" :options="typeOfDates" optionLabel="name" placeholder="Select a type of date" class="flex-auto" v-bin="type_dateVProps"/>
+                        <Dropdown v-model="type_dateV" :options="typeOfDates" optionLabel="name" placeholder="Select a type of date" class="flex-auto" v-bin="type_dateVProps" />
                     </div>
-                    <small id="username-help" :class="{ 'p-invalid text-red-500': errorsNew['type_dateV']||errorResponseAPI?.errors?.type_date }">
-                        {{ errorsNew.type_dateV||errorResponseAPI?.errors?.type_date }}
+                    <small id="username-help" :class="{ 'p-invalid text-red-500': errorsNew['type_dateV'] || errorResponseAPI?.errors?.type_date }">
+                        {{ errorsNew.type_dateV || errorResponseAPI?.errors?.type_date }}
                     </small>
-
-                    <small id="username-help" :class="{ 'p-invalid text-red-500': errorResponseAPI?.errors?.type_date }">
-                    <div v-if="errorResponseAPI?.errors?.type_date">
-                        <div v-for="(error, index) in errorResponseAPI?.errors?.type_date" :key="index">
-                            {{ error }}
-                        </div>
-                    </div>
-                </small>
-                    
+                    <BackendErrors :name="errorResponseAPI?.errors?.type_date"/>
                 </div>
                 <div class="mb-3">
-                <div class="flex align-items-center">
-                    <label for="username" class="font-semibold w-3">Farm :</label>
-                    <AutoComplete v-model="farm" inputId="ac" class="flex-auto" :suggestions="farms" @complete="searchFarms" field="name"
-                        dropdown />
-                </div>
-                <small id="username-help" :class="{ 'p-invalid text-red-500': errorsNew['farm']|| errorResponseAPI?.errors?.farm }">
-                    {{ errorsNew.farm || errorResponseAPI?.errors?.farm}}
-                </small>
-
-                <small id="username-help" :class="{ 'p-invalid text-red-500': errorResponseAPI?.errors?.farm }">
-                    <div v-if="errorResponseAPI?.errors?.farm">
-                        <div v-for="(error, index) in errorResponseAPI?.errors?.farm" :key="index">
-                            {{ error }}
-                        </div>
+                    <div class="flex align-items-center">
+                        <label for="username" class="font-semibold w-3">Farm :</label>
+                        <AutoComplete v-model="farm" inputId="ac" class="flex-auto" :suggestions="farms" @complete="searchFarms" field="name" dropdown />
                     </div>
-                </small>
-
-            </div>
-            <div class="mb-3">
-                <div class="flex align-items-center">
-                    <label for="username" class="font-semibold w-3">Company:</label>
-                    <AutoComplete v-model="company" inputId="ac" class="flex-auto" :suggestions="compa" @complete="EditRecord"
-                        field="name" dropdown />
+                    <small id="username-help" :class="{ 'p-invalid text-red-500': errorsNew['farm'] || errorResponseAPI?.errors?.farm }">
+                        {{ errorsNew.farm || errorResponseAPI?.errors?.farm }}
+                    </small>
+                    <BackendErrors :name="errorResponseAPI?.errors?.farm_uuid"/>
                 </div>
-                <small id="username-help" :class="{ 'p-invalid text-red-500': errorsNew['company']||errorResponseAPI?.errors?.company }">
-                    {{ errorsNew.company||errorResponseAPI?.errors?.company }}
-                </small>
-                <small id="username-help" :class="{ 'p-invalid text-red-500': errorResponseAPI?.errors?.company }">
-                    <div v-if="errorResponseAPI?.errors?.company">
-                        <div v-for="(error, index) in errorResponseAPI?.errors?.company" :key="index">
-                            {{ error }}
-                        </div>
+                <div class="mb-3">
+                    <div class="flex align-items-center">
+                        <label for="username" class="font-semibold w-3">Company:</label>
+                        <AutoComplete v-model="company" inputId="ac" class="flex-auto" :suggestions="compa" @complete="EditRecord" field="name" dropdown />
                     </div>
-                </small>
-            </div>
+                    <small id="username-help" :class="{ 'p-invalid text-red-500': errorsNew['company'] || errorResponseAPI?.errors?.company }">
+                        {{ errorsNew.company || errorResponseAPI?.errors?.company }}
+                    </small>
+                </div>
 
                 <div class="flex justify-content-end gap-2">
                     <Button type="button" label="Cancel" severity="secondary" @click="formDialogEdit = false" />
@@ -342,79 +263,53 @@
 
             <Dialog v-model:visible="formDialogClone" modal :header="formDialogCloneTitle" class="p-fluid text-center mx-auto">
                 <div class="mb-3">
-                    <div class=" flex align-items-center">
+                    <div class="flex align-items-center">
                         <label for="username" class="font-semibold w-3">Transaction Date :</label>
                         <!-- <Calendar v-model="transaction_dateV" class="flex-auto" v-bind="transaction_dateVProps"/> -->
-                        <Calendar v-model="transaction_dateV" class="flex-auto"  showIcon :showOnFocus="false" inputId="buttondisplay" />
+                        <Calendar v-model="transaction_dateV" class="flex-auto" showIcon :showOnFocus="false" inputId="buttondisplay" />
                     </div>
                     <small id="username-help" :class="{ 'p-invalid text-red-500': errorsNew['type_dateV'] }">
                         {{ errorsNew.type_dateV }}
                     </small>
-
-                    <small id="username-help" :class="{ 'p-invalid text-red-500': errorResponseAPI?.errors?.transaction_date }">
-                    <div v-if="errorResponseAPI?.errors?.transaction_date">
-                        <div v-for="(error, index) in errorResponseAPI.errors.transaction_date" :key="index">
-                            {{ error }}
-                        </div>
-                    </div>
-                </small>
-
+                    <BackendErrors :name="errorResponseAPI?.errors?.transaction_date"/>
                 </div>
 
                 <div class="mb-3">
-                    <div class=" flex align-items-center">
+                    <div class="flex align-items-center">
                         <label for="username" class="font-semibold w-3">Type of Date :</label>
-                        <Dropdown  v-model="type_dateV" :options="typeOfDates" optionLabel="name" placeholder="Select a type of date" class="flex-auto" v-bin="type_dateVProps"/>
+                        <Dropdown v-model="type_dateV" :options="typeOfDates" optionLabel="name" placeholder="Select a type of date" class="flex-auto" v-bin="type_dateVProps" />
                     </div>
-                    <small id="username-help" :class="{ 'p-invalid text-red-500': errorsNew['type_dateV']||errorResponseAPI?.errors?.type_date }">
-                        {{ errorsNew.type_dateV||errorResponseAPI?.errors?.type_date }}
+                    <small id="username-help" :class="{ 'p-invalid text-red-500': errorsNew['type_dateV'] || errorResponseAPI?.errors?.type_date }">
+                        {{ errorsNew.type_dateV || errorResponseAPI?.errors?.type_date }}
                     </small>
-
-                    <small id="username-help" :class="{ 'p-invalid text-red-500': errorResponseAPI?.errors?.type_date }">
-                    <div v-if="errorResponseAPI?.errors?.type_date">
-                        <div v-for="(error, index) in errorResponseAPI?.errors?.type_date" :key="index">
-                            {{ error }}
-                        </div>
-                    </div>
-                </small>
-                    
+                    <BackendErrors :name="errorResponseAPI?.errors?.type_date"/>
                 </div>
                 <div class="mb-3">
-                <div class="flex align-items-center">
-                    <label for="username" class="font-semibold w-3">Farm :</label>
-                    <AutoComplete v-model="farm" inputId="ac" class="flex-auto" :suggestions="farms" @complete="searchFarms" field="name"
-                        dropdown />
-                </div>
-                <small id="username-help" :class="{ 'p-invalid text-red-500': errorsNew['farm']|| errorResponseAPI?.errors?.farm }">
-                    {{ errorsNew.farm || errorResponseAPI?.errors?.farm}}
-                </small>
-
-                <small id="username-help" :class="{ 'p-invalid text-red-500': errorResponseAPI?.errors?.farm }">
-                    <div v-if="errorResponseAPI?.errors?.farm">
-                        <div v-for="(error, index) in errorResponseAPI?.errors?.farm" :key="index">
-                            {{ error }}
-                        </div>
+                    <div class="flex align-items-center">
+                        <label for="username" class="font-semibold w-3">Farm :</label>
+                        <AutoComplete v-model="farm" inputId="ac" class="flex-auto" :suggestions="farms" @complete="searchFarms" field="name" dropdown />
                     </div>
-                </small>
-
-            </div>
-            <div class="mb-3">
-                <div class="flex align-items-center">
-                    <label for="username" class="font-semibold w-3">Company:</label>
-                    <AutoComplete v-model="company" inputId="ac" class="flex-auto" :suggestions="compa" @complete="EditRecord"
-                        field="name" dropdown />
+                    <small id="username-help" :class="{ 'p-invalid text-red-500': errorsNew['farm'] || errorResponseAPI?.errors?.farm }">
+                        {{ errorsNew.farm || errorResponseAPI?.errors?.farm }}
+                    </small>
+                    <BackendErrors :name="errorResponseAPI?.errors?.farm_uuid"/>
                 </div>
-                <small id="username-help" :class="{ 'p-invalid text-red-500': errorsNew['company']||errorResponseAPI?.errors?.company }">
-                    {{ errorsNew.company||errorResponseAPI?.errors?.company }}
-                </small>
-                <small id="username-help" :class="{ 'p-invalid text-red-500': errorResponseAPI?.errors?.company }">
-                    <div v-if="errorResponseAPI?.errors?.company">
-                        <div v-for="(error, index) in errorResponseAPI?.errors?.company" :key="index">
-                            {{ error }}
-                        </div>
+                <div class="mb-3">
+                    <div class="flex align-items-center">
+                        <label for="username" class="font-semibold w-3">Company:</label>
+                        <AutoComplete v-model="company" inputId="ac" class="flex-auto" :suggestions="compa" @complete="EditRecord" field="name" dropdown />
                     </div>
-                </small>
-            </div>
+                    <small id="username-help" :class="{ 'p-invalid text-red-500': errorsNew['company'] || errorResponseAPI?.errors?.company }">
+                        {{ errorsNew.company || errorResponseAPI?.errors?.company }}
+                    </small>
+                    <small id="username-help" :class="{ 'p-invalid text-red-500': errorResponseAPI?.errors?.company }">
+                        <div v-if="errorResponseAPI?.errors?.company">
+                            <div v-for="(error, index) in errorResponseAPI?.errors?.company" :key="index">
+                                {{ error }}
+                            </div>
+                        </div>
+                    </small>
+                </div>
 
                 <div class="flex justify-content-end gap-2">
                     <Button type="button" label="Cancel" severity="secondary" @click="formDialogClone = false" />
@@ -460,9 +355,8 @@
             </Dialog>
 
             <Toast />
+        </div>
     </div>
-</div>
-    
 </template>
 
 <!-- 
@@ -480,7 +374,8 @@ import useDataAPI from '@/composables/DataAPI/FetchDataAPI.js';
 import { useToast } from 'primevue/usetoast';
 import { FilterMatchMode, FilterOperator } from 'primevue/api';
 import useData from '@/composables/DataAPI/FetchDataAPICopy.js';
-const { getRequest, postRequest, putRequest, deleteRequest,errorResponseAPI } = useData();
+const { getRequest, postRequest, putRequest, deleteRequest, errorResponseAPI } = useData();
+import BackendErrors from '@/views/Errors/BackendErrors.vue';
 import { useRouter } from 'vue-router';
 import { useForm } from 'vee-validate';
 import { toTypedSchema } from '@vee-validate/zod';
@@ -488,10 +383,10 @@ import * as XLSX from 'xlsx';
 import { saveAs } from 'file-saver';
 import { z } from 'zod';
 import ability from '@/service/ability.js';
-import { AbilityBuilder} from '@casl/ability';
-const prueba = ref({revisar: 'revisar GET-POST-PUT-DELETE'});
+import { AbilityBuilder } from '@casl/ability';
+const prueba = ref({ revisar: 'revisar GET-POST-PUT-DELETE' });
 const namePage = ' Calendars ';
-const titlePage = ' '+namePage+' information';
+const titlePage = ' ' + namePage + ' information';
 const dataFromComponent = ref();
 
 const Farms = ref([]);
@@ -502,15 +397,13 @@ const farmDefault = sessionStorage.getItem('accessSessionFarm');
 const companyDefault = sessionStorage.getItem('accessSessionCompany');
 
 const selectedTypeOfDate = ref();
-const typeOfDates = ref([
-    { name: 'Festivo', code: 'Festivo' },
-]);
+const typeOfDates = ref([{ name: 'Festivo', code: 'Festivo' }]);
 
-const formDialogNewTitle = 'Create new '+namePage;
-const formDialogEditTitle = 'Edit '+namePage;
+const formDialogNewTitle = 'Create new ' + namePage;
+const formDialogEditTitle = 'Edit ' + namePage;
 const formDialogCloneTitle = 'Clone ' + namePage;
 const formDialogExportTitle = 'Export ' + namePage;
-const formDialogDeleteTitle = 'Delete '+namePage;
+const formDialogDeleteTitle = 'Delete ' + namePage;
 const formDialogNew = ref(false);
 const formDialogEdit = ref(false);
 const formDialogClone = ref(false);
@@ -520,22 +413,17 @@ const toast = useToast();
 const filename = ref('table');
 const isChanging = ref(false);
 const date = ref();
-let endpoint = ref('/calendars');  //replace endpoint with your endpoint
-
-
-
+let endpoint = ref('/calendars'); //replace endpoint with your endpoint
 
 ////////////
- //Form here
- ////////////   
+//Form here
+////////////
 const size = ref({ label: 'Normal', value: 'normal' });
 const sizeOptions = ref([
     { label: 'Small', value: 'small', class: 'sm' },
     { label: 'Normal', value: 'normal' },
     { label: 'Large', value: 'large', class: 'lg' }
 ]);
-
-
 
 onBeforeMount(() => {
     readAll();
@@ -544,10 +432,8 @@ onBeforeMount(() => {
 const listRowSelect = ref([]);
 const loading = ref(false);
 const onRowSelect = (data) => {
-    
     listRowSelect.value = data;
     //assignValues(mode.value)
-    
 };
 
 watch(listRowSelect, onRowSelect);
@@ -578,8 +464,6 @@ const initFilters = () => {
 };
 
 const documentFrozen = ref(false);
-
-
 
 const readAll = async () => {
     loadingData();
@@ -616,7 +500,6 @@ const {
 } = useForm({
     validationSchema: toTypedSchema(
         z.object({
-
             transaction_dateV: z.date(),
             type_dateV: z.object({
                 name: z.string().min(4),
@@ -640,8 +523,8 @@ const {
 
 const [farm] = defineField('farm');
 const [company] = defineField('company');
-const [transaction_dateV,transaction_dateVProps] = defineField('transaction_dateV');
-const [type_dateV,type_dateVProps] = defineField('type_dateV');
+const [transaction_dateV, transaction_dateVProps] = defineField('transaction_dateV');
+const [type_dateV, type_dateVProps] = defineField('type_dateV');
 
 const extenciones = ref([{ name: 'CSV' }, { name: 'XLS' }]);
 const optionsEsport = ref([{ name: 'ALL' }, { name: 'SELECTED' }]);
@@ -655,18 +538,14 @@ let headerNames = ref([]);
 provide('isChanging', isChanging);
 watch(listRowSelect, RowSelect);
 
-
-
-
 const openNew = () => {
     resetForm();
     formDialogNew.value = true;
-
 };
 
 const openEdit = () => {
     resetForm();
-    const {  code, company: empresa, farm: farmParameter, name: nombre,type_date:type,transaction_date:date } = listRowSelect.value[0];
+    const { code, company: empresa, farm: farmParameter, name: nombre, type_date: type, transaction_date: date } = listRowSelect.value[0];
     transaction_dateV.value = new Date(date);
     type_dateV.value = { name: type, code: type };
     company.value = { id: empresa.uuid, name: empresa.name };
@@ -679,7 +558,7 @@ const openClone = () => {
     resetForm();
     // const { company: empresa, farm: farmParameter, name: nombre } = listRowSelect.value[0];
 
-    const {  code, company: empresa, farm: farmParameter, name: nombre,type_date:type,transaction_date:date } = listRowSelect.value[0];
+    const { code, company: empresa, farm: farmParameter, name: nombre, type_date: type, transaction_date: date } = listRowSelect.value[0];
     transaction_dateV.value = new Date(date);
     type_dateV.value = { name: type, code: type };
     company.value = { id: empresa.uuid, name: empresa.name };
@@ -696,35 +575,29 @@ const openDelete = () => {
     formDialogDelete.value = true;
 };
 
-
 const createRecord = handleSubmitNew(async (values) => {
-    
     const yyyy = values.transaction_dateV.getFullYear();
     const mm = String(values.transaction_dateV.getMonth() + 1).padStart(2, '0'); // Los meses en JavaScript son 0-indexados
     const dd = String(values.transaction_dateV.getDate()).padStart(2, '0');
     const formattedDate = `${yyyy}-${mm}-${dd}`;
 
     const data = {
-
-        transaction_date:formattedDate,
+        transaction_date: formattedDate,
         type_date: values.type_dateV.code,
         company_uuid: values.company ? values.company.id : companyDefault,
-        farm_uuid: values.farm ? values.farm.id : farmDefault,
+        farm_uuid: values.farm ? values.farm.id : farmDefault
     };
     const restp = await postRequest(endpoint.value, data);
-    console.log(data)
-    
+    console.log(data);
+
     toast.add({ severity: restp.ok ? 'success' : 'error', summary: 'Create', detail: restp.ok ? 'Creado' : restp.error, life: 3000 });
     loadingData();
-    
-    prueba.value= data;
-    if(restp.ok) {
+
+    prueba.value = data;
+    if (restp.ok) {
         formDialogNew.value = false;
     }
-
-    
 });
-
 
 const EditRecord = handleSubmitNew(async (values) => {
     const { uuid } = listRowSelect.value[0];
@@ -734,49 +607,46 @@ const EditRecord = handleSubmitNew(async (values) => {
     const formattedDate = `${yyyy}-${mm}-${dd}`;
 
     const data = {
-        
         transaction_date: formattedDate,
         type_date: values.type_dateV.code,
         company_uuid: values.company ? values.company.id : companyDefault,
-        farm_uuid: values.farm ? values.farm.id : farmDefault,
+        farm_uuid: values.farm ? values.farm.id : farmDefault
     };
-    
+
     const restp = await putRequest(endpoint.value, data, uuid);
     toast.add({ severity: restp.ok ? 'success' : 'error', summary: 'Edit', detail: restp.ok ? 'Editado' : restp.error, life: 3000 });
     loadingData();
-    
-    prueba.value= data;
-    if(restp.ok) {listRowSelect.value = []
-    selectedRegisters.value = []
-    formDialogEdit.value = false;
-}
+
+    prueba.value = data;
+    if (restp.ok) {
+        listRowSelect.value = [];
+        selectedRegisters.value = [];
+        formDialogEdit.value = false;
+    }
 });
 
 const CloneRecord = handleSubmitNew(async (values) => {
-
-    
     const yyyy = values.transaction_dateV.getFullYear();
     const mm = String(values.transaction_dateV.getMonth() + 1).padStart(2, '0'); // Los meses en JavaScript son 0-indexados
     const dd = String(values.transaction_dateV.getDate()).padStart(2, '0');
     const formattedDate = `${yyyy}-${mm}-${dd}`;
 
     const data = {
-
-        transaction_date:formattedDate,
+        transaction_date: formattedDate,
         type_date: values.type_dateV.code,
         company_uuid: values.company ? values.company.id : companyDefault,
-        farm_uuid: values.farm ? values.farm.id : farmDefault,
+        farm_uuid: values.farm ? values.farm.id : farmDefault
     };
     const restp = await postRequest(endpoint.value, data);
     toast.add({ severity: restp.ok ? 'success' : 'error', summary: 'Clone', detail: restp.ok ? 'Clonado' : restp.error, life: 3000 });
     loadingData();
-    
 
-    prueba.value= data;
-    if(restp.ok) {listRowSelect.value = []
-    selectedRegisters.value = []
-    formDialogClone.value = false;
-}
+    prueba.value = data;
+    if (restp.ok) {
+        listRowSelect.value = [];
+        selectedRegisters.value = [];
+        formDialogClone.value = false;
+    }
 });
 
 const ExportRecord = () => {
@@ -809,7 +679,6 @@ const searchFarms = (event) => {
         }
     }, 200);
 };
-
 
 function formatCSV(eventos) {
     const dataExport = [];
@@ -864,5 +733,4 @@ const remove = (aver) => {
 };
 </script>
 
-<style lang="scss" scoped>
-</style>
+<style lang="scss" scoped></style>

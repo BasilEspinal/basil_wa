@@ -76,7 +76,6 @@ export default function useDataAPI(datos) {
                 const { can, rules } = new AbilityBuilder();
 
                 can(permissions);
-                console.log(permissions.length);
                 dataResponsePermissionsAPI.value = permissions;
                 ability.update(rules);
                 
