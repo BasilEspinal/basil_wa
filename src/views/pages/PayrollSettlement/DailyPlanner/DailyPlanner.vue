@@ -13,69 +13,79 @@
                     <div class="col-xs-12 col-sm-6 col-md-4 mb-2 text-center mx-auto">
                         <Toolbar style="margin-bottom: 1rem">
                             <template #center>
-                                 <Button v-if="ability.can('planeacion_diaria_crear')" :disabled="headerNames.length > 0" label="New" icon="pi pi-plus" class="p-button-success mb-2 mt-2" @click="openNew" size="large" />
-                                <Divider v-if="ability.can('planeacion_diaria_crear')" layout="vertical" />
-                                <Button
-                                    v-if="ability.can('planeacion_diaria_editar')"
-                                    :disabled="!(listRowSelect.length > 0 && listRowSelect.length < 2)"
-                                    label="Edit"
-                                    icon="pi pi-file-edit"
-                                    class="p-button-help mb-2 mt-2"
-                                    @click="openEdit"
-                                    size="large"
-                                />
-                                <Divider v-if="ability.can('planeacion_diaria_editar')" layout="vertical" />
-                                <Button
-                                    v-if="ability.can('planeacion_diaria_crear')"
-                                    :disabled="!(listRowSelect.length > 0 && listRowSelect.length < 2)"
-                                    label="Clone"
-                                    icon="pi pi-copy"
-                                    class="p-button-secondary mb-2 mt-2"
-                                    @click="openClone"
-                                    size="large"
-                                /> 
-                                <Divider v-if="ability.can('planeacion_diaria_crear')" layout="vertical" />
-                                <Button v-if="ability.can('planeacion_diaria_editar')" :disabled="headerNames.length > 0" label="Export" icon="pi pi-file-import" class="p-button-warning mb-2 mt-2" @click="openExport" size="large" />
-                                <Divider v-if="ability.can('planeacion_diaria_editar')" layout="vertical" />
-                                <Button v-if="ability.can('planeacion_diaria_eliminar')" :disabled="!listRowSelect.length > 0" label="Delete" icon="pi pi-trash" class="p-button-danger mb-2 mt-2" @click="openDelete" size="large" />
-                                    
+          <div class="flex flex-wrap justify-content-center gap-3"> <!-- Added flex-wrap and gap for responsive buttons -->
+            <Button
+              v-if="ability.can('planeacion_diaria_crear')"
+              :disabled="headerNames.length > 0"
+              label="New"
+              icon="pi pi-plus"
+              class="p-button-success mb-2 mt-2"
+              @click="openNew"
+              size="large"
+            />
+            <Divider v-if="ability.can('planeacion_diaria_crear')" layout="vertical" />
 
-                                     <Divider v-if="ability.can('planeacion_diaria_editar')" layout="vertical" />
+            <Button
+              v-if="ability.can('planeacion_diaria_editar')"
+              :disabled="!(listRowSelect.length > 0 && listRowSelect.length < 2)"
+              label="Edit"
+              icon="pi pi-file-edit"
+              class="p-button-help mb-2 mt-2"
+              @click="openEdit"
+              size="large"
+            />
+            <Divider v-if="ability.can('planeacion_diaria_editar')" layout="vertical" />
 
-                                     <div class="flex justify-center">
-                                        <Toast />
-                                        <SplitButton
-                                        :disabled="!(listRowSelect.length > 0 && listRowSelect.length < 2)" 
-                                        label="Action" 
-                                        icon="pi pi-check" 
-                                        dropdownIcon="pi pi-cog" 
-                                        :model="items" />
-                                    </div>
+            <Button
+              v-if="ability.can('planeacion_diaria_crear')"
+              :disabled="!(listRowSelect.length > 0 && listRowSelect.length < 2)"
+              label="Clone"
+              icon="pi pi-copy"
+              class="p-button-secondary mb-2 mt-2"
+              @click="openClone"
+              size="large"
+            />
+            <Divider v-if="ability.can('planeacion_diaria_crear')" layout="vertical" />
 
-                                    <Dialog v-model:visible="formDialogSettlement" :style="{ width: '450px' }" :header="titleDialog" :modal="true">
-                                        <label for="username" class="text-2xl font-medium w-6rem"> {{ messageDialog }} </label>
-                                        <Summary :listRowSelect="listRowSelect" />
-                                        <div class="flex justify-content-end gap-2">
-                                            
-                                            <Button type="button" label="Cancel" severity="secondary" @click="formDialogClose = false" />
-                                            <Button type="button" label="Save" @click="patchRecord" />
-                                        </div>
-                                    </Dialog>
+            <Button
+              v-if="ability.can('planeacion_diaria_editar')"
+              :disabled="headerNames.length > 0"
+              label="Export"
+              icon="pi pi-file-import"
+              class="p-button-warning mb-2 mt-2"
+              @click="openExport"
+              size="large"
+            />
+            <Divider v-if="ability.can('planeacion_diaria_editar')" layout="vertical" />
 
+            <Button
+              v-if="ability.can('planeacion_diaria_eliminar')"
+              :disabled="!listRowSelect.length > 0"
+              label="Delete"
+              icon="pi pi-trash"
+              class="p-button-danger mb-2 mt-2"
+              @click="openDelete"
+              size="large"
+            />
+            <Divider v-if="ability.can('planeacion_diaria_editar')" layout="vertical" />
 
+            <!-- ActionButton Component -->
+            <ActionButton :items="items" :listRowSelect="listRowSelect" />
+          </div>
 
-                            </template>
+          <Dialog v-model:visible="flagDialog" :style="{ width: '450px' }" :header="titleDialog" :modal="true">
+            <label for="username" class="text-2xl font-medium w-6rem"> {{ messageDialog }} </label>
+            <Summary :listRowSelect="listRowSelect" />
+            <div class="flex justify-content-end gap-2">
+              <Button type="button" label="Cancel" severity="secondary" @click="formDialogClose = false" />
+              <Button type="button" label="Save" @click="patchRecord" />
+            </div>
+          </Dialog>
+        </template>
                         </Toolbar>
                     </div>
                 </div>
             </div>
-
-
-            
-            
-            <!-- <pre>{{crop_lots_codeV}}</pre>
-        <pre>{{ otherTestValue }}</pre>
-             -->
 
             <DataTable
                 :value="dataFromComponent"
@@ -865,9 +875,7 @@ import { AbilityBuilder } from '@casl/ability';
 import BackendErrors from '@/views/Errors/BackendErrors.vue';
 import Summary from './Summary.vue';
 import {useMenuItems} from '@/composables/PayrollSettlement/DailyPlanner.js';
-
-
-
+import ActionButton from '@/views/pages/PayrollSettlement/DailyPlanner/ActionButton.vue'; // Ajusta el path si es necesario
 
 const prueba = ref({ revisar: 'revisar GET-POST-PUT-DELETE' });
 const backendValidation = ref();
@@ -916,7 +924,7 @@ const formDialogClose = ref(false);
 const toast = useToast();
 const filename = ref('table');
 const isChanging = ref(false);
-const { getItems,items, save,flagProgress,flagClose,flagValidate,flagLiquidate,titleDialog,messageDialog,status_idSettlement,currentState } = useMenuItems();
+const { getItems,items, messageDialog,titleDialog,status_idSettlement,flagDialog } = useMenuItems();
 let endpoint = ref('/planner_tasks'); //replace endpoint with your endpoint
 
 ////////////
@@ -935,34 +943,47 @@ onBeforeMount(() => {
 });
 const listRowSelect = ref([]);
 const loading = ref(false);
-const onRowSelect = async (data) => {
-    listRowSelect.value = data;
-    const test =await getItems(listRowSelect.value[0].status.id);
-    
-    
-    
-};
-
-watch(listRowSelect, onRowSelect);
-
 const onSelectAllChange = () => {
     onRowSelect();
 };
 
-const formDialogSettlement = ref(false);
-const openDialogSettlement = () => {
-    console.log(listRowSelect.value[0].status.name);
-    currentState.value = listRowSelect.value[0].status.name;
-    formDialogSettlement.value = true;
+const onRowSelect = async (data) => {
+    listRowSelect.value = data;
+    openDialogSettlement();    
 };
-watch(
-    [flagClose, flagProgress, flagValidate, flagLiquidate],
-    ([newClose, newProgress, newValidate, newLiquidate], [oldClose, oldProgress, oldValidate, oldLiquidate]) => {
-        if (newClose !== oldClose || newProgress !== oldProgress || newValidate !== oldValidate || newLiquidate !== oldLiquidate) {
-            openDialogSettlement();
-        }
+
+watch(listRowSelect, onRowSelect);
+
+const openDialogSettlement = async () => {
+    
+    if(listRowSelect.value.length != 0){
+        await getItems(listRowSelect.value[0].status.id);
     }
-);
+};
+
+
+
+const patchRecord = async (values) => {
+    const { uuid } = listRowSelect.value[0];
+    
+    const data = {
+        status_id: status_idSettlement.value
+    };
+    const restp = await patchRequest(endpoint.value, data, uuid);
+    toast.add({ severity: restp.ok ? 'success' : 'error', summary: 'Done', detail: restp.ok ? 'Status has changed to'+titleDialog.value : restp.error, life: 3000 });
+    loadingData();
+    if (restp.ok) {
+        
+        listRowSelect.value = [];
+        selectedRegisters.value = [];
+        errorResponseAPI.value = '';
+        flagDialog.value = false;
+    } else {
+        backendValidationFlag.value = true;
+        backendValidation.value = restp;
+        
+    }
+};
 
 const filters = ref();
 
@@ -1003,7 +1024,7 @@ const readAll = async () => {
     const respProducts = await getRequest('/products');
     if (!respProducts.ok) toast.add({ severity: 'error', detail: 'Error' + respProducts.error, life: 3000 });
     Products.value = respProducts.data.data.map((product) => ({ id: product.uuid, name: product.name }));
-    console.log(products);
+    
 
     const respProductsType = await getRequest('/product_types');
     if (!respProductsType.ok) toast.add({ severity: 'error', detail: 'Error' + respProductsType.error, life: 3000 });
@@ -1047,7 +1068,7 @@ const readAll = async () => {
     const respCustomerRequest = await getRequest('/customer_requests');
     if (!respCustomerRequest.ok) toast.add({ severity: 'error', detail: 'Error' + respCustomerRequest.error, life: 3000 });
     Customer_request.value = respCustomerRequest.data.data.map((customer) => ({ id: customer.uuid, name: customer.dispatch_number_lot }));
-    console.log(Customer_request);
+    
 };
 
 const filtroCropLots = ref('');
@@ -1066,8 +1087,8 @@ watch(
     () => isChanging.value,
     (newValue, oldValue) => {
         readAll(endpoint.value);
-        console.log(newValue);
-        console.log(oldValue);
+        // console.log(newValue);
+        // console.log(oldValue);
     }
 );
 const {
@@ -1195,7 +1216,7 @@ watch(
 watch(
     () => CropLots.value,
     (newValue, oldValue) => {
-        console.log(newValue);
+        // console.log(newValue);
     }
 );
 
@@ -1371,26 +1392,7 @@ const EditRecord = handleSubmitNew(async (values) => {
     }
 });
 
-const patchRecord = async (values) => {
-    const { uuid } = listRowSelect.value[0];
-    
-    const data = {
-        status_id: status_idSettlement.value
-    };
-    const restp = await patchRequest(endpoint.value, data, uuid);
-    toast.add({ severity: restp.ok ? 'success' : 'error', summary: 'Close', detail: restp.ok ? 'Closed' : restp.error, life: 3000 });
-    loadingData();
-    if (restp.ok) {
-        formDialogSettlement.value = false;
-        listRowSelect.value = [];
-        selectedRegisters.value = [];
-        errorResponseAPI.value = '';
-    } else {
-        backendValidationFlag.value = true;
-        backendValidation.value = restp;
-        formDialogEdit.value = true;
-    }
-};
+
 
 const CloneRecord = handleSubmitNew(async (values) => {
     const yyyy = values.transaction_dateV.getFullYear();
