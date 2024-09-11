@@ -49,7 +49,6 @@
                                         label="Action" 
                                         icon="pi pi-check" 
                                         dropdownIcon="pi pi-cog" 
-                                        
                                         :model="items" />
                                     </div>
 
@@ -917,7 +916,7 @@ const formDialogClose = ref(false);
 const toast = useToast();
 const filename = ref('table');
 const isChanging = ref(false);
-const { items, save,flagProgress,flagClose,flagValidate,flagLiquidate,titleDialog,messageDialog,status_idSettlement,currentState } = useMenuItems();
+const { getItems,items, save,flagProgress,flagClose,flagValidate,flagLiquidate,titleDialog,messageDialog,status_idSettlement,currentState } = useMenuItems();
 let endpoint = ref('/planner_tasks'); //replace endpoint with your endpoint
 
 ////////////
@@ -936,9 +935,12 @@ onBeforeMount(() => {
 });
 const listRowSelect = ref([]);
 const loading = ref(false);
-const onRowSelect = (data) => {
+const onRowSelect = async (data) => {
     listRowSelect.value = data;
-    //assignValues(mode.value)
+    const test =await getItems(listRowSelect.value[0].status.id);
+    
+    
+    
 };
 
 watch(listRowSelect, onRowSelect);
@@ -946,6 +948,22 @@ watch(listRowSelect, onRowSelect);
 const onSelectAllChange = () => {
     onRowSelect();
 };
+
+const formDialogSettlement = ref(false);
+const openDialogSettlement = () => {
+    console.log(listRowSelect.value[0].status.name);
+    currentState.value = listRowSelect.value[0].status.name;
+    formDialogSettlement.value = true;
+};
+watch(
+    [flagClose, flagProgress, flagValidate, flagLiquidate],
+    ([newClose, newProgress, newValidate, newLiquidate], [oldClose, oldProgress, oldValidate, oldLiquidate]) => {
+        if (newClose !== oldClose || newProgress !== oldProgress || newValidate !== oldValidate || newLiquidate !== oldLiquidate) {
+            openDialogSettlement();
+        }
+    }
+);
+
 const filters = ref();
 
 const clearFilter = () => {
@@ -1256,20 +1274,6 @@ const openExport = () => {
     formDialogExport.value = true;
 };
 
-const formDialogSettlement = ref(false);
-const openDialogSettlement = () => {
-    console.log(listRowSelect.value[0].status.name);
-    currentState.value = listRowSelect.value[0].status.name;
-    formDialogSettlement.value = true;
-};
-watch(
-    [flagClose, flagProgress, flagValidate, flagLiquidate],
-    ([newClose, newProgress, newValidate, newLiquidate], [oldClose, oldProgress, oldValidate, oldLiquidate]) => {
-        if (newClose !== oldClose || newProgress !== oldProgress || newValidate !== oldValidate || newLiquidate !== oldLiquidate) {
-            openDialogSettlement();
-        }
-    }
-);
 
     
 const openDelete = () => {
@@ -1472,17 +1476,7 @@ const searchTaskOfType = (event) => {
         }
     }, 200);
 };
-// const searchCropLots = (event) => {
-//     setTimeout(() => {
-//         if (!event.query.trim().length) {
-//             crop_lots.value = [...CropLots.value];
-//         } else {
-//             crop_lots.value = CropLots.value.filter((fram) => {
-//                 return fram.code.toLowerCase().startsWith(event.query.toLowerCase());
-//             });
-//         }
-//     }, 200);
-// };
+
 const searchProduct = (event) => {
     setTimeout(() => {
         if (!event.query.trim().length) {
