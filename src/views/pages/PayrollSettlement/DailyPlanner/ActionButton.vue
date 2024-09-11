@@ -3,11 +3,16 @@
       <Toast />
       <SplitButton
         :disabled="!(listRowSelect.length > 0 && listRowSelect.length < 2)" 
-        class="p-button-success mb-2 mt-2"
+        class="mb-2 mt-2"
         label="Action" 
         icon="pi pi-check" 
         dropdownIcon="pi pi-cog" 
-        :model="items" />
+        :model="items"
+        size="large"
+        severity="contrast"
+        
+         />
+        
     </div>
   </template>
   

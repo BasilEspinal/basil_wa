@@ -12,9 +12,9 @@ export function useMenuItems() {
     const items = ref([]);
     const getItems = async (id) => {
         try {
-            items.value = [];
+            
             const response = await getRequest(`/processflow/PlannerTask/${id}`);
-    
+            items.value = [];
             // Check if response data is valid and contains the expected data structure
             if (response && response.data && Array.isArray(response.data.data) && response.data.data.length > 0) {
                 response.data.data.forEach(element => {
@@ -32,6 +32,7 @@ export function useMenuItems() {
                             }
                         });
                     }
+                    console.log('Entro');
                 });
             } else {
                 
