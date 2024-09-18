@@ -50,6 +50,8 @@ export const messages = {
             name: 'Farm Name'
         },
         appmovil: {
+            vehicle: 'Vehicle',
+            quantityRequested: 'Quantity Requested',
             centroTrabajo: 'Work Centers',
             titulo: 'Daily work of ',
             users: 'Users',
@@ -138,6 +140,8 @@ export const messages = {
             name: 'Finca'
         },
         appmovil: {
+            vehicle: 'Vehículo',
+            quantityRequested: 'Cantidad Solicitada',
             centroTrabajo: 'Centro de Trabajo',
             titulo: 'Trabajo diario de ',
             users: 'Usuarios',

@@ -421,6 +421,8 @@ watch(
                 <span class="text-500">Pendientes</span>
             </div>
         </div>
+
+        
         <div class="col-12 xl:col-6">
             <div class="card">
                 <h5>Icopores por semana</h5>

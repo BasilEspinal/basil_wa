@@ -249,7 +249,7 @@
                 <Column field="crop_lots_code" filterField="filtroCropLots" header="Crop Lots Code" sortable>
                     <template #body="{ data }">
                         <!-- {{ cropLotsToString(data.crop_lots) }} -->
-                         {{ data.crop_lots ? data.crop_lots : 'N/A' }}
+                         {{ data.crop_lots ? cropLotsToString(data.crop_lots) : 'N/A' }}
                     </template>
                     <template #filter="{ filterModel }">
                         <InputText v-model="filterModel.value" type="text" class="p-column-filter" placeholder="Search by " />

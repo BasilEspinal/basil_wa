@@ -6,7 +6,7 @@ import UserAppMovil from './UserAppMovil.vue';
 import { useI18n } from 'vue-i18n';
 import useData from '@/composables/DataAPI/FetchDataAPICopy.js';
 import { useLayout } from '@/layout/composables/layout';
-
+import Shipping from './Shipping.vue';
 const { t } = useI18n();
 const toast = useToast();
 const { getRequest, postRequest, putRequest, deleteRequest } = useData();
@@ -197,11 +197,16 @@ function searchUsers() {
                     <div class="flex align-items-center gap-2">
                         <i class="pi pi-cart-plus" style="font-size: 1rem" shape="circle" />
                         <span class="font-bold white-space-nowrap">{{ t('appmovil.envios') }}</span>
+
                     </div>
-                </template>
-                
-                    <pre>Hola</pre>
                     
+                </template>
+                <ScrollPanel class="maxHeightC">
+                    <Shipping :data="{name:'Sebastian', batchs:lotes}" />
+                </ScrollPanel>
+                
+                
+
                     
                 
             </TabPanel>
