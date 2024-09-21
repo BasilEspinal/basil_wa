@@ -1,7 +1,7 @@
 <template>
     
         <div class="grid">
-            <pre>{{lots}}</pre>
+            
 
                     <div class="mb-3 col-12 md:col-6 lg:col-12">
                         <div class="mb-3">
@@ -239,8 +239,8 @@ const createRecord = handleSubmitNew(async (values) => {
     vehicle_id: values.vehiclesV? values.vehiclesV.id : dataPlanner.value.data.data[0].vehicle.id, // ID del vehículo
     planner_task_id: dataPlanner.value.data.data[0].id,
     farm_id: values.farm ? 1 : farmDefault,
-    // supervisory_employee_id: 2, // ID del empleado supervisor
-    supervisory_employee_id: values.emplooyesV.id ?values.emplooyesV.id:dataStart.value.data.data.employee.id, // ID del empleado supervisor
+    supervisory_employee_id: 2, // ID del empleado supervisor
+    // supervisory_employee_id: values.emplooyesV.id ?values.emplooyesV.id:dataStart.value.data.data.employee.id, // ID del empleado supervisor
     employee_transport_id: 13, // ID del empleado encargado del transporte
     notes_small: notes.value, // Nota adicional
 };

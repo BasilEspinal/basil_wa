@@ -153,6 +153,11 @@ const router = createRouter({
                     component: () => import('@/views/pages/PayrollSettlement/DailyPlanner/DailyPlanner.vue')
                 },
                 {
+                    path: '/PayrollSettlement/Shipping/Dispatching',
+                    name: 'shippingDispatching',
+                    component: () => import('@/views/pages/PayrollSettlement/Shipping/Shipping.vue')
+                },
+                {
                     path: '/PayrollSettlement/DailyTransactions',
                     name: 'dailytransactions',
                     component: () => import('@/views/pages/PayrollSettlement/DailyTransactions/DailyTransactions.vue')

@@ -1,36 +1,462 @@
 <script setup>
 import { ref, onBeforeMount } from 'vue';
-
+import { computed } from 'vue';
 import AppMenuItem from './AppMenuItem.vue';
 import ability from '@/service/ability.js';
 import useDataAPI from '@/composables/DataAPI/FetchDataAPI.js';
+import { useI18n } from 'vue-i18n';
 
+const { t } = useI18n();
 const {
     getAllResponseAPI,
     getAllResponsePermissionsAPI,
-    getAllResponseListAPI,
-    totalRecordsResponseAPI,
-    currentPageResponseAPI,
-    linksResponseAPI,
-    postResponseAPI,
-    putResponseAPI,
-    deleteResponseAPI,
-    errorResponseAPI,
-    dataResponseAPI,
-    dataResponseListAPI,
-    statusCode
+    
 } = useDataAPI();
 
 //This is the model that will be used to create the menu
-const model2 = ref([
+// const model2 = ref([
+//     {
+//         items: [
+//             {
+//                 label: 'Dashboards',
+//                 gate: 'monitor_menu',
+//                 items: [
+//                     {
+//                         label: 'Centro de control',
+//                         icon: 'pi pi-fw pi-home',
+//                         to: '/applayout',
+//                         gate: 'monitor_menu'
+//                     }
+//                 ]
+//             }
+//         ]
+//     },
+//     {
+//         items: [
+//             {
+//                 rol: 'admin',
+//                 icon: 'pi pi-desktop',
+//                 label: 'Monitor Online',
+//                 gate: 'monitor_corta_menu',
+//                 items: [
+//                     {
+//                         label: '10 de Mejor Rendimiento',
+//                         icon: 'pi pi-fw pi-table',
+//                         to: '/monitorCorta',
+//                         gate: 'monitor_corta_menu'
+//                     }
+//                 ]
+//             }
+//         ]
+//     },
+//     {
+//         items: [
+//             {
+//                 rol: 'admin',
+//                 icon: 'pi pi-bars',
+//                 label: 'Producto',
+//                 gate: 'producto_menu',
+//                 items: [
+//                     {
+//                         label: 'Variedades',
+//                         to: '/product/varieties',
+//                         icon: 'pi pi-th-large',
+//                         gate: 'producto_variedades_menu'
+//                     },
+//                     {
+//                         icon: 'pi pi-bars',
+//                         label: 'Productos',
+//                         to: '/product/products',
+//                         gate: 'producto_productos_menu'
+//                     },
+//                     // {
+//                     //     label: 'No-En-Uso-Variedades de producto',
+//                     //     to: '/product/productvarieties',
+//                     //     icon: 'pi pi-list',
+//                     //     gate: 'producto_variedadesdeproducto_menu',
+//                     // },
+//                     {
+//                         label: 'Tipos de productos',
+//                         icon: 'pi pi-bookmark',
+//                         to: '/product/productTypes',
+//                         gate: 'producto_tiposdeproducto_menu'
+//                     },
+//                     {
+//                         label: 'Tipos de Unidades',
+//                         to: '/product/unit_types',
+//                         icon: 'pi pi-bookmark',
+//                         gate: 'producto_tiposdeunidades_menu'
+//                     },
+//                     {
+//                         label: 'Tipos de Empaque',
+//                         to: '/product/packing_types',
+//                         icon: 'pi pi-bookmark',
+//                         gate: 'producto_tiposdeempaque_menu'
+//                     }
+//                 ]
+//             }
+//         ]
+//     },
+//     {
+//         items: [
+//             {
+//                 label: 'Comercial',
+//                 rol: 'admin',
+//                 icon: 'pi pi-sitemap',
+//                 gate: 'comercial_menu',
+//                 items: [
+//                     {
+//                         label: 'Ofertas de producto',
+//                         to: '/Commercial/ProductAvailability/ProductAvailability',
+//                         icon: 'pi pi-folder',
+//                         gate: 'comercial_ofertasdeproducto_menu'
+//                     },
+//                     {
+//                         label: 'Solicitudes de Clientes',
+//                         to: '/Commercial/CustomersRequests/CustomersRequests',
+//                         icon: 'pi pi-bookmark',
+//                         gate: 'comercial_solicitudesdeclientes_menu,'
+//                     },
+//                     {
+//                         label: 'Clientes',
+//                         to: '/Commercial/Customers/Customers',
+//                         icon: 'pi pi-bookmark',
+//                         gate: 'comercial_clientes_menu,'
+//                     },
+//                     {
+//                         label: 'Despachos',
+//                         to: '/Commercial/Delivery/Delivery',
+//                         icon: 'pi pi-bolt',
+//                         gate: 'comercial_despachos_menu,'
+//                     }
+//                 ]
+//             }
+//         ]
+//     },
+//     {
+//         items: [
+//             {
+//                 label: 'Producción',
+//                 rol: 'admin',
+//                 icon: 'pi pi-shopping-cart',
+//                 gate: 'produccion_menu',
+//                 items: [
+//                     {
+//                         label: 'Lotes para Cultivo ',
+//                         to: '/production/croplots',
+//                         icon: 'pi pi-bars',
+//                         gate: 'produccion_lotesparacultivo_menu'
+//                     },
+//                     {
+//                         label: 'Vehículos',
+//                         to: '/production/vehicles',
+//                         icon: 'pi pi-car',
+//                         gate: 'produccion_vehiculos_menu,'
+//                     },
+//                     {
+//                         label: 'Programación de Lotes',
+//                         to: '/production/LotsSchedule',
+//                         icon: 'pi pi-calendar-minus',
+//                         gate: 'produccion_programaciondelotes_menu'
+//                     },
+//                     {
+//                         label: 'Control de temperatura',
+//                         to: '/production/TemperatureControl',
+//                         icon: 'pi pi-calendar-minus',
+//                         gate: ''
+//                     },
+//                     {
+//                         label: 'Estación metereológica',
+//                         to: '/production/MetereologicalStation',
+//                         icon: 'pi pi-calendar-minus',
+//                         gate: ''
+//                     }
+//                 ]
+//             }
+//         ]
+//     },
+//     {
+//         items: [
+//             {
+//                 label: 'Configuración de Pagos',
+//                 rol: 'admin',
+//                 icon: 'pi pi-dollar',
+//                 gate: 'configuraciondepagos_menu',
+//                 items: [
+//                     {
+//                         label: 'Tipos de Pago',
+//                         to: '/payrollsettings/PaymentTypes',
+//                         icon: 'pi pi-tablet',
+//                         gate: 'configuraciondepagos_tiposdepago_menu'
+//                     },
+//                     {
+//                         label: 'Tipos de Tareas',
+//                         to: '/payrollsettings/taskstypes',
+//                         icon: 'pi pi-list',
+//                         gate: 'configuraciondetiposdetareas_menu'
+//                     },
+//                     {
+//                         label: 'Tarifas por Tareas',
+//                         to: '/payrollsettings/taskstarif',
+//                         icon: 'pi pi-bookmark',
+//                         gate: 'configuraciondepagos_tarifasportarea_menu,'
+//                     },
+//                     {
+//                         label: 'Tipos de Labores',
+//                         to: '/payrollsettings/donetypes',
+//                         icon: 'pi pi-list',
+//                         gate: 'configuraciondetiposdetareas_menu'
+//                     },
+//                     // {
+//                     //     label: 'Tipos de trabajo',
+//                     //     to: '/payrollsettings/jobtypes/',
+//                     //     icon: 'pi pi-list',
+//                     //     gate: 'configuraciondetiposdetareas_menu',
+//                     // },
+//                     {
+//                         label: 'Tarifas por Labores',
+//                         to: '/payrollsettings/workstarif',
+//                         icon: 'pi pi-briefcase',
+//                         gate: 'configuraciondepagos_tarifasporlabores_menu'
+//                     },
+//                     {
+//                         label: 'Periodos de Pago',
+//                         to: '/payrollsettings/payperiods',
+//                         icon: 'pi pi-calendar-plus',
+//                         gate: 'configuraciondepagos_periodosdepago_menu,'
+//                     },
+//                     {
+//                         label: 'Calendarios',
+//                         to: '/payrollsettings/calendars',
+//                         icon: 'pi pi-calendar-times',
+//                         gate: 'configuraciondepagos_calendarios_menu'
+//                     },
+
+//                     {
+//                         label: 'Centros de Trabajo',
+//                         to: '/payrollsettings/Workcenters',
+//                         icon: 'pi pi-bookmark',
+//                         gate: 'configuraciondepagos_centrosdetrabajo_menu'
+//                     },
+//                     {
+//                         label: 'Cargos',
+//                         to: '/payrollsettings/Jobtypes',
+//                         icon: 'pi pi-bolt',
+//                         gate: 'configuraciondepagos_cargos_menu'
+//                     },
+//                     {
+//                         label: 'Empleados',
+//                         to: '/payrollsettings/Employees',
+//                         icon: 'pi pi-users',
+//                         gate: 'configuraciondepagos_empleados_menu,'
+//                     }
+//                 ]
+//             }
+//         ]
+//     },
+//     {
+//         items: [
+//             {
+//                 label: 'Liquidacion de nómina',
+//                 rol: 'admin',
+//                 icon: 'pi pi-money-bill',
+//                 gate: 'liquidacion_nomina_menu',
+//                 items: [
+//                     {
+//                         label: 'Planeación Diaria',
+//                         to: '/PayrollSettlement/DailyPlanner',
+//                         icon: 'pi pi-tablet',
+//                         gate: 'liquidaciondenomina_planeaciondiaria_menu'
+//                     },
+//                     {
+//                         label: 'Transacciones del dia',
+//                         to: '/PayrollSettlement/DailyTransactions',
+//                         icon: 'pi pi-bookmark',
+//                         gate: 'liquidaciondenomina_transacciones_diarias_menu'
+//                     },
+//                     {
+//                         label: 'Shipping',
+//                         to: '/PayrollSettlement/Shipping/Dispatching',
+//                         icon: 'pi pi-bookmark',
+//                         gate: 'liquidaciondenomina_transacciones_diarias_menu'
+//                     },
+
+//                     // {
+//                     //     label: 'Trabajos de Corta',
+//                     //     to: '/PayrollSettlement/WorkRegisterCorta',
+//                     //     icon: 'pi pi-percentage',
+//                     //     gate: 'liquidaciondenomina_trabajosdecorta_menu'
+//                     // },
+//                     {
+//                         label: 'Traslado a Prefrio',
+//                         to: '/PayrollSettlement/TransferTasks',
+//                         icon: 'pi pi-bookmark',
+//                         gate: 'liquidaciondenomina_trasladoaprefrio_menu'
+//                     },
+
+//                     {
+//                         label: 'Liquidación Diaria',
+//                         to: '/PayrollSettlement/DailySettlement',
+//                         icon: 'pi pi-bookmark',
+//                         gate: 'liquidaciondenomina_liquidacion_diaria_menu'
+//                     },
+
+
+//                     {
+//                         label: 'Resumen de empleados',
+//                         to: '/PayrollSettlement/EmployeesInformation',
+//                         icon: 'pi pi-bookmark',
+//                         gate: 'liquidaciondenomina_employees_information_menu'
+//                     },
+
+//                     {
+//                         label: 'Resumen de periodo',
+//                         to: '/PayrollSettlement/PaymentPeriodsInformation',
+//                         icon: 'pi pi-bookmark',
+//                         gate: 'liquidaciondenomina_payment_periods_information_menu'
+//                     },
+//                     // {
+//                     //     label: 'Trabajos de Selección',
+//                     //     to: '/PayrollSettlement/WorkRegisterSelection',
+//                     //     icon: 'pi pi-tablet',
+//                     //     gate: 'liquidaciondenomina_trabajosdeseleccion_menu'
+//                     // },
+//                     // {
+//                     //     label: 'Trabajos de Contratistas',
+//                     //     to: '/PayrollSettlement/WorkRegisterDaily',
+//                     //     icon: 'pi pi-share-alt',
+//                     //     gate: 'liquidaciondenomina_laboresdecontratista_menu'
+//                     // },
+
+//                     {
+//                         label: 'Descuentos de Nómina',
+//                         to: '/PayrollSettlement/DiscountRegistering',
+//                         icon: 'pi pi-ticket',
+//                         gate: 'liquidaciondenomina_descuentosdenomina_menu'
+//                     }
+//                 ]
+//             }
+//         ]
+//     },
+//     {
+//         items: [
+//             {
+//                 label: 'Administración',
+//                 rol: 'admin',
+//                 icon: 'pi pi-prime',
+//                 gate: 'administracion_menu',
+//                 items: [
+//                     {
+//                         label: 'Empresa',
+//                         to: '/admon/companies',
+//                         icon: 'pi pi-folder',
+//                         gate: 'administracion_empresa_menu'
+//                     },
+//                     {
+//                         label: 'Fincas',
+//                         to: '/admon/farms',
+//                         icon: 'pi pi-bookmark',
+//                         gate: 'administracion_fincas_menu'
+//                     }
+//                 ]
+//             }
+//         ]
+//     },
+//     {
+//         items: [
+//             {
+//                 label: 'Sistema',
+//                 rol: 'admin',
+//                 icon: 'pi pi-desktop',
+//                 gate: 'sistema_menu',
+//                 items: [
+//                     {
+//                         label: 'Usuarios',
+//                         to: '/system/Users',
+//                         icon: 'pi pi-id-card',
+//                         gate: 'sistema_usuarios_menu'
+//                     },
+//                     {
+//                         label: 'Roles',
+//                         to: '/system/roles',
+//                         icon: 'pi pi-user-plus',
+//                         gate: 'sistema_roles_menu'
+//                     },
+//                     {
+//                         label: 'Permisos',
+//                         to: '/system/permissions',
+//                         icon: 'pi pi-eye-slash',
+//                         gate: 'sistema_permisos_menu'
+//                     },
+//                     {
+//                         label: 'Estado de Registros',
+//                         to: '/system/statuses',
+//                         icon: 'pi pi-bell',
+//                         gate: 'sistema_estadoderegistros_menu'
+//                     }
+//                 ]
+//             }
+//         ]
+//     },
+//     {
+//         items: [
+//             {
+//                 label: 'App Movil',
+//                 rol: 'admin',
+//                 icon: 'pi pi-box',
+//                 gate: 'appmovil_menu',
+//                 items: [
+//                     {
+//                         label: 'Captura de datos',
+//                         to: '/AppMovil/General',
+//                         icon: 'pi pi-mobile',
+//                         gate: 'appmovil_data_capture'
+//                     },
+//                     {
+//                         label: 'Captura de corta',
+//                         to: '/AppMovil/Corta',
+//                         icon: 'pi pi-mobile',
+//                         gate: 'appmovil_corta_menu'
+//                     },
+//                     {
+//                         label: 'Captura de Prefio',
+//                         to: '/AppMovil/PreFrio',
+//                         icon: 'pi pi-mobile',
+//                         gate: 'appmovil_prefrio_menu'
+//                     },
+//                     {
+//                         label: 'Captura de Seleccion',
+//                         to: '/AppMovil/Seleccion',
+//                         icon: 'pi pi-mobile',
+//                         gate: 'appmovil_prefrio_menu'
+//                     },
+//                     {
+//                         label: 'Captura de Contratista',
+//                         to: '/AppMovil/Contractor',
+//                         icon: 'pi pi-mobile',
+//                         gate: 'appmovil_contratista_menu'
+//                     },
+//                     {
+//                         label: 'Captura de Agronomìa',
+//                         to: '/AppMovil/Agronomo',
+//                         icon: 'pi pi-mobile',
+//                         gate: 'appmovil_agronomia_menu'
+//                     }
+//                 ]
+//             }
+//         ]
+//     }
+// ]);
+
+const model2 = computed(() => ([
     {
         items: [
             {
-                label: 'Dashboards',
+                label: t('menu.dashboards'),
                 gate: 'monitor_menu',
                 items: [
                     {
-                        label: 'Centro de control',
+                        label: t('menu.controlCenter'),
                         icon: 'pi pi-fw pi-home',
                         to: '/applayout',
                         gate: 'monitor_menu'
@@ -44,11 +470,11 @@ const model2 = ref([
             {
                 rol: 'admin',
                 icon: 'pi pi-desktop',
-                label: 'Monitor Online',
+                label: t('menu.monitorOnline'),
                 gate: 'monitor_corta_menu',
                 items: [
                     {
-                        label: '10 de Mejor Rendimiento',
+                        label: t('menu.top10Performance'),
                         icon: 'pi pi-fw pi-table',
                         to: '/monitorCorta',
                         gate: 'monitor_corta_menu'
@@ -62,41 +488,35 @@ const model2 = ref([
             {
                 rol: 'admin',
                 icon: 'pi pi-bars',
-                label: 'Producto',
+                label: t('menu.product'),
                 gate: 'producto_menu',
                 items: [
                     {
-                        label: 'Variedades',
+                        label: t('menu.varieties'),
                         to: '/product/varieties',
                         icon: 'pi pi-th-large',
                         gate: 'producto_variedades_menu'
                     },
                     {
                         icon: 'pi pi-bars',
-                        label: 'Productos',
+                        label: t('menu.products'),
                         to: '/product/products',
                         gate: 'producto_productos_menu'
                     },
-                    // {
-                    //     label: 'No-En-Uso-Variedades de producto',
-                    //     to: '/product/productvarieties',
-                    //     icon: 'pi pi-list',
-                    //     gate: 'producto_variedadesdeproducto_menu',
-                    // },
                     {
-                        label: 'Tipos de productos',
+                        label: t('menu.productTypes'),
                         icon: 'pi pi-bookmark',
                         to: '/product/productTypes',
                         gate: 'producto_tiposdeproducto_menu'
                     },
                     {
-                        label: 'Tipos de Unidades',
+                        label: t('menu.unitTypes'),
                         to: '/product/unit_types',
                         icon: 'pi pi-bookmark',
                         gate: 'producto_tiposdeunidades_menu'
                     },
                     {
-                        label: 'Tipos de Empaque',
+                        label: t('menu.packingTypes'),
                         to: '/product/packing_types',
                         icon: 'pi pi-bookmark',
                         gate: 'producto_tiposdeempaque_menu'
@@ -108,34 +528,34 @@ const model2 = ref([
     {
         items: [
             {
-                label: 'Comercial',
+                label: t('menu.commercial'),
                 rol: 'admin',
                 icon: 'pi pi-sitemap',
                 gate: 'comercial_menu',
                 items: [
                     {
-                        label: 'Ofertas de producto',
+                        label: t('menu.productOffers'),
                         to: '/Commercial/ProductAvailability/ProductAvailability',
                         icon: 'pi pi-folder',
                         gate: 'comercial_ofertasdeproducto_menu'
                     },
                     {
-                        label: 'Solicitudes de Clientes',
+                        label: t('menu.clientRequests'),
                         to: '/Commercial/CustomersRequests/CustomersRequests',
                         icon: 'pi pi-bookmark',
-                        gate: 'comercial_solicitudesdeclientes_menu,'
+                        gate: 'comercial_solicitudesdeclientes_menu'
                     },
                     {
-                        label: 'Clientes',
+                        label: t('menu.clients'),
                         to: '/Commercial/Customers/Customers',
                         icon: 'pi pi-bookmark',
-                        gate: 'comercial_clientes_menu,'
+                        gate: 'comercial_clientes_menu'
                     },
                     {
-                        label: 'Despachos',
+                        label: t('menu.deliveries'),
                         to: '/Commercial/Delivery/Delivery',
                         icon: 'pi pi-bolt',
-                        gate: 'comercial_despachos_menu,'
+                        gate: 'comercial_despachos_menu'
                     }
                 ]
             }
@@ -144,37 +564,37 @@ const model2 = ref([
     {
         items: [
             {
-                label: 'Producción',
+                label: t('menu.production'),
                 rol: 'admin',
                 icon: 'pi pi-shopping-cart',
                 gate: 'produccion_menu',
                 items: [
                     {
-                        label: 'Lotes para Cultivo ',
+                        label: t('menu.cultivationLots'),
                         to: '/production/croplots',
                         icon: 'pi pi-bars',
                         gate: 'produccion_lotesparacultivo_menu'
                     },
                     {
-                        label: 'Vehículos',
+                        label: t('menu.vehicles'),
                         to: '/production/vehicles',
                         icon: 'pi pi-car',
-                        gate: 'produccion_vehiculos_menu,'
+                        gate: 'produccion_vehiculos_menu'
                     },
                     {
-                        label: 'Programación de Lotes',
+                        label: t('menu.lotScheduling'),
                         to: '/production/LotsSchedule',
                         icon: 'pi pi-calendar-minus',
                         gate: 'produccion_programaciondelotes_menu'
                     },
                     {
-                        label: 'Control de temperatura',
+                        label: t('menu.temperatureControl'),
                         to: '/production/TemperatureControl',
                         icon: 'pi pi-calendar-minus',
                         gate: ''
                     },
                     {
-                        label: 'Estación metereológica',
+                        label: t('menu.meteoStation'),
                         to: '/production/MetereologicalStation',
                         icon: 'pi pi-calendar-minus',
                         gate: ''
@@ -186,77 +606,70 @@ const model2 = ref([
     {
         items: [
             {
-                label: 'Configuración de Pagos',
+                label: t('menu.paymentSettings'),
                 rol: 'admin',
                 icon: 'pi pi-dollar',
                 gate: 'configuraciondepagos_menu',
                 items: [
                     {
-                        label: 'Tipos de Pago',
+                        label: t('menu.paymentTypes'),
                         to: '/payrollsettings/PaymentTypes',
                         icon: 'pi pi-tablet',
                         gate: 'configuraciondepagos_tiposdepago_menu'
                     },
                     {
-                        label: 'Tipos de Tareas',
+                        label: t('menu.taskTypes'),
                         to: '/payrollsettings/taskstypes',
                         icon: 'pi pi-list',
                         gate: 'configuraciondetiposdetareas_menu'
                     },
                     {
-                        label: 'Tarifas por Tareas',
+                        label: t('menu.taskRates'),
                         to: '/payrollsettings/taskstarif',
                         icon: 'pi pi-bookmark',
-                        gate: 'configuraciondepagos_tarifasportarea_menu,'
+                        gate: 'configuraciondepagos_tarifasportarea_menu'
                     },
                     {
-                        label: 'Tipos de Labores',
+                        label: t('menu.workTypes'),
                         to: '/payrollsettings/donetypes',
                         icon: 'pi pi-list',
                         gate: 'configuraciondetiposdetareas_menu'
                     },
-                    // {
-                    //     label: 'Tipos de trabajo',
-                    //     to: '/payrollsettings/jobtypes/',
-                    //     icon: 'pi pi-list',
-                    //     gate: 'configuraciondetiposdetareas_menu',
-                    // },
                     {
-                        label: 'Tarifas por Labores',
+                        label: t('menu.laborRates'),
                         to: '/payrollsettings/workstarif',
                         icon: 'pi pi-briefcase',
                         gate: 'configuraciondepagos_tarifasporlabores_menu'
                     },
                     {
-                        label: 'Periodos de Pago',
+                        label: t('menu.payPeriods'),
                         to: '/payrollsettings/payperiods',
                         icon: 'pi pi-calendar-plus',
-                        gate: 'configuraciondepagos_periodosdepago_menu,'
+                        gate: 'configuraciondepagos_periodosdepago_menu'
                     },
                     {
-                        label: 'Calendarios',
+                        label: t('menu.calendars'),
                         to: '/payrollsettings/calendars',
                         icon: 'pi pi-calendar-times',
                         gate: 'configuraciondepagos_calendarios_menu'
                     },
-
                     {
-                        label: 'Centros de Trabajo',
+                        label: t('menu.workCenters'),
                         to: '/payrollsettings/Workcenters',
                         icon: 'pi pi-bookmark',
                         gate: 'configuraciondepagos_centrosdetrabajo_menu'
                     },
                     {
-                        label: 'Cargos',
+                        label: t('menu.jobTypes'),
                         to: '/payrollsettings/Jobtypes',
                         icon: 'pi pi-bolt',
                         gate: 'configuraciondepagos_cargos_menu'
                     },
                     {
-                        label: 'Empleados',
+                        label: t('menu.employees'),
                         to: '/payrollsettings/Employees',
                         icon: 'pi pi-users',
-                        gate: 'configuraciondepagos_empleados_menu,'
+                        gate: 'configuraciondepagos_empleados_menu'
                     }
                 ]
             }
@@ -265,73 +678,55 @@ const model2 = ref([
     {
         items: [
             {
-                label: 'Liquidacion de nómina',
+                label: t('menu.payrollSettlement'),
                 rol: 'admin',
                 icon: 'pi pi-money-bill',
                 gate: 'liquidacion_nomina_menu',
                 items: [
                     {
-                        label: 'Planeación Diaria',
+                        label: t('menu.dailyPlanning'),
                         to: '/PayrollSettlement/DailyPlanner',
                         icon: 'pi pi-tablet',
                         gate: 'liquidaciondenomina_planeaciondiaria_menu'
                     },
                     {
-                        label: 'Transacciones del dia',
+                        label: t('menu.dailyTransactions'),
                         to: '/PayrollSettlement/DailyTransactions',
                         icon: 'pi pi-bookmark',
                         gate: 'liquidaciondenomina_transacciones_diarias_menu'
                     },
-
-                    // {
-                    //     label: 'Trabajos de Corta',
-                    //     to: '/PayrollSettlement/WorkRegisterCorta',
-                    //     icon: 'pi pi-percentage',
-                    //     gate: 'liquidaciondenomina_trabajosdecorta_menu'
-                    // },
                     {
-                        label: 'Traslado a Prefrio',
+                        label: t('menu.shipping'),
+                        to: '/PayrollSettlement/Shipping/Dispatching',
+                        icon: 'pi pi-bookmark',
+                        gate: 'liquidaciondenomina_transacciones_diarias_menu'
+                    },
+                    {
+                        label: t('menu.transferToPrefrio'),
                         to: '/PayrollSettlement/TransferTasks',
                         icon: 'pi pi-bookmark',
                         gate: 'liquidaciondenomina_trasladoaprefrio_menu'
                     },
-
                     {
-                        label: 'Liquidación Diaria',
+                        label: t('menu.dailySettlement'),
                         to: '/PayrollSettlement/DailySettlement',
                         icon: 'pi pi-bookmark',
                         gate: 'liquidaciondenomina_liquidacion_diaria_menu'
                     },
-
-
                     {
-                        label: 'Resumen de empleados',
+                        label: t('menu.employeeSummary'),
                         to: '/PayrollSettlement/EmployeesInformation',
                         icon: 'pi pi-bookmark',
                         gate: 'liquidaciondenomina_employees_information_menu'
                     },
-
                     {
-                        label: 'Resumen de periodo',
+                        label: t('menu.periodSummary'),
                         to: '/PayrollSettlement/PaymentPeriodsInformation',
                         icon: 'pi pi-bookmark',
                         gate: 'liquidaciondenomina_payment_periods_information_menu'
                     },
-                    // {
-                    //     label: 'Trabajos de Selección',
-                    //     to: '/PayrollSettlement/WorkRegisterSelection',
-                    //     icon: 'pi pi-tablet',
-                    //     gate: 'liquidaciondenomina_trabajosdeseleccion_menu'
-                    // },
-                    // {
-                    //     label: 'Trabajos de Contratistas',
-                    //     to: '/PayrollSettlement/WorkRegisterDaily',
-                    //     icon: 'pi pi-share-alt',
-                    //     gate: 'liquidaciondenomina_laboresdecontratista_menu'
-                    // },
-
                     {
-                        label: 'Descuentos de Nómina',
+                        label: t('menu.payrollDiscounts'),
                         to: '/PayrollSettlement/DiscountRegistering',
                         icon: 'pi pi-ticket',
                         gate: 'liquidaciondenomina_descuentosdenomina_menu'
@@ -343,19 +738,19 @@ const model2 = ref([
     {
         items: [
             {
-                label: 'Administración',
+                label: t('menu.admin'),
                 rol: 'admin',
                 icon: 'pi pi-prime',
                 gate: 'administracion_menu',
                 items: [
                     {
-                        label: 'Empresa',
+                        label: t('menu.company'),
                         to: '/admon/companies',
                         icon: 'pi pi-folder',
                         gate: 'administracion_empresa_menu'
                     },
                     {
-                        label: 'Fincas',
+                        label: t('menu.farms'),
                         to: '/admon/farms',
                         icon: 'pi pi-bookmark',
                         gate: 'administracion_fincas_menu'
@@ -367,31 +762,31 @@ const model2 = ref([
     {
         items: [
             {
-                label: 'Sistema',
+                label: t('menu.system'),
                 rol: 'admin',
                 icon: 'pi pi-desktop',
                 gate: 'sistema_menu',
                 items: [
                     {
-                        label: 'Usuarios',
+                        label: t('menu.users'),
                         to: '/system/Users',
                         icon: 'pi pi-id-card',
                         gate: 'sistema_usuarios_menu'
                     },
                     {
-                        label: 'Roles',
+                        label: t('menu.roles'),
                         to: '/system/roles',
                         icon: 'pi pi-user-plus',
                         gate: 'sistema_roles_menu'
                     },
                     {
-                        label: 'Permisos',
+                        label: t('menu.permissions'),
                         to: '/system/permissions',
                         icon: 'pi pi-eye-slash',
                         gate: 'sistema_permisos_menu'
                     },
                     {
-                        label: 'Estado de Registros',
+                        label: t('menu.recordStatus'),
                         to: '/system/statuses',
                         icon: 'pi pi-bell',
                         gate: 'sistema_estadoderegistros_menu'
@@ -403,43 +798,43 @@ const model2 = ref([
     {
         items: [
             {
-                label: 'App Movil',
+                label: t('menu.mobileApp'),
                 rol: 'admin',
                 icon: 'pi pi-box',
                 gate: 'appmovil_menu',
                 items: [
                     {
-                        label: 'Captura de datos',
+                        label: t('menu.dataCapture'),
                         to: '/AppMovil/General',
                         icon: 'pi pi-mobile',
                         gate: 'appmovil_data_capture'
                     },
                     {
-                        label: 'Captura de corta',
+                        label: t('menu.cortaCapture'),
                         to: '/AppMovil/Corta',
                         icon: 'pi pi-mobile',
                         gate: 'appmovil_corta_menu'
                     },
                     {
-                        label: 'Captura de Prefio',
+                        label: t('menu.preFrioCapture'),
                         to: '/AppMovil/PreFrio',
                         icon: 'pi pi-mobile',
                         gate: 'appmovil_prefrio_menu'
                     },
                     {
-                        label: 'Captura de Seleccion',
+                        label: t('menu.selectionCapture'),
                         to: '/AppMovil/Seleccion',
                         icon: 'pi pi-mobile',
-                        gate: 'appmovil_prefrio_menu'
+                        gate: 'appmovil_seleccion_menu'
                     },
                     {
-                        label: 'Captura de Contratista',
+                        label: t('menu.contractorCapture'),
                         to: '/AppMovil/Contractor',
                         icon: 'pi pi-mobile',
                         gate: 'appmovil_contratista_menu'
                     },
                     {
-                        label: 'Captura de Agronomìa',
+                        label: t('menu.agronomyCapture'),
                         to: '/AppMovil/Agronomo',
                         icon: 'pi pi-mobile',
                         gate: 'appmovil_agronomia_menu'
@@ -448,7 +843,7 @@ const model2 = ref([
             }
         ]
     }
-]);
+]));
 
 onBeforeMount(() => {
     fetchInfoAndUpdateValue();
