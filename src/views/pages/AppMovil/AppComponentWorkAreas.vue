@@ -5,14 +5,14 @@ import { useToast } from 'primevue/usetoast';
 import UserAppMovil from './UserAppMovil.vue';
 import { useI18n } from 'vue-i18n';
 import { useLayout } from '@/layout/composables/layout';
-import appMovilService from '../../../service/appMovil/appMovilService';
+import { useAppMovilService } from '../../../service/appMovil/appMovilService';
 
 const { t } = useI18n();
 const toast = useToast();
 const { worksDay } = UseAppMovil();
 const { layoutConfig } = useLayout();
 
-const appServ = appMovilService;
+const { HOLIDAY, initData, TASK_OF_TYPE, getUsers, getDataTasksplanner } = useAppMovilService();
 
 const titulo = ref('');
 const totalPrices = ref(null);
@@ -24,28 +24,28 @@ const lotes = ref(null);
 const search = ref(null);
 
 onMounted(async () => {
-    await appServ.initData();
-    getUsers();
+    await initData();
+    getUser();
     getData();
-    holiday.value = appServ.HOLIDAY;
-    titulo.value = t('appmovil.titulo') + ' ' + appServ.TASK_OF_TYPE.name;
+    holiday.value = HOLIDAY;
+    titulo.value = t('appmovil.titulo') + ' ' + TASK_OF_TYPE.name;
 });
 
 const logoUrl = computed(() => {
     return `layout/images/${layoutConfig.darkTheme.value ? 'logo-white' : 'logo-dark'}.png`;
 });
 
-const getUsers = async () => {
-    const response = await appServ.getUsers();
+const getUser = async () => {
+    const response = await getUsers();
     if (!response.ok) toast.add({ severity: 'error', detail: 'Error' + response.error, life: 3000 });
     users.value = response.data.ok ?? response.data.data;
     filterUsers.value = response.data.ok ?? response.data.data;
 };
 
 const getData = async () => {
-    const response = await appServ.getDataTasksplanner();
+    const response = await getDataTasksplanner();
     if (!response.ok) toast.add({ severity: 'error', detail: 'Error' + response.error, life: 3000 });
-    data.value = response.data.data[0];
+    data.value = response.data;
 };
 
 watch(data, () => {

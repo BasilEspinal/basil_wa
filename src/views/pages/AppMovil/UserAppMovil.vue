@@ -2,7 +2,7 @@
 import { ref, onMounted } from 'vue';
 import InputNumber from 'primevue/inputnumber';
 import { useI18n } from 'vue-i18n';
-import appMovilService from '../../../service/appMovil/appMovilService';
+import { useAppMovilService } from '../../../service/appMovil/appMovilService';
 import { useToast } from 'primevue/usetoast';
 import UseAppMovil from '@/composables/AppMovil/UseAppMovil.js';
 import ItemUserAppMovil from './ItemUserAppMovil.vue';
@@ -16,7 +16,7 @@ const props = defineProps({
 
 const toast = useToast();
 const { t } = useI18n();
-const appService = appMovilService;
+const { SUPERVISO_NAME, getTipoActividad, HOLIDAY } = useAppMovilService();
 const workView = ref(true);
 const supervisoName = ref('');
 const editingRows = ref([]);
@@ -28,14 +28,14 @@ const estilo = ref({
 });
 
 onMounted(async () => {
-    supervisoName.value = appService.SUPERVISO_NAME;
-    getTipoActiuvidad();
+    supervisoName.value = SUPERVISO_NAME;
+    TipoActividad();
 });
 
-const getTipoActiuvidad = async () => {
-    const response = await appService.getTipoActividad();
+const TipoActividad = async () => {
+    const response = await getTipoActividad();
     if (!response.ok) toast.add({ severity: 'error', detail: 'Error' + response.error, life: 3000 });
-    tipoActividad.value = response?.data ?? [];
+    tipoActividad.value = response?.data;
 };
 
 const changeWorkView = (event) => {
@@ -63,7 +63,7 @@ const onRowEditSave = (event) => {
                     </span>
                 </template>
                 <div v-if="workView" :key="slotProps.id">
-                    <ItemUserAppMovil :slotProps="slotProps" :idUs="slotProps.id" :tipoActividad="tipoActividad?.data" :Lote="Lote" :data="data" />
+                    <ItemUserAppMovil :slotProps="slotProps" :idUs="slotProps.id" :tipoActividad="tipoActividad" :Lote="Lote" :data="data" />
                 </div>
                 <div v-else class="p-fluid">
                     <div class="datalles-bacg p-fluid formgrid grid mb-3">
@@ -85,7 +85,7 @@ const onRowEditSave = (event) => {
                             <Divider class="m-0" />
                             <pre class="m-1"><b>{{ t('appmovil.fechaPlaneada') }}:</b> {{ data_planner.planner_date }}</pre>
                             <Divider class="m-0" />
-                            <pre class="m-1"><b>{{ t('appmovil.dialaboral') }}:</b> {{ appService.HOLIDAY === 'Festivo'? t('appmovil.diaFestivo') : t('appmovil.diaNormal')}}</pre>
+                            <pre class="m-1"><b>{{ t('appmovil.dialaboral') }}:</b> {{ HOLIDAY === 'Festivo'? t('appmovil.diaFestivo') : t('appmovil.diaNormal')}}</pre>
                         </div>
                     </div>
                     <DataTable v-model:editingRows="editingRows" size="small" :value="worksDay" editMode="row" dataKey="id" @row-edit-save="onRowEditSave" :pt="estilo">

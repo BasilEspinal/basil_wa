@@ -1,14 +1,14 @@
 <script setup>
 import { ref, onMounted, watch } from 'vue';
 import { useToast } from 'primevue/usetoast';
-import appMovilService from '../../../service/appMovil/appMovilService';
+import { useAppMovilService } from '../../../service/appMovil/appMovilService';
 import useData from '@/composables/DataAPI/FetchDataAPICopy.js';
 const { errorResponseAPI } = useData();
 import BackendErrors from '@/views/Errors/BackendErrors.vue';
 import { useI18n } from 'vue-i18n';
 
 const toast = useToast();
-const appServ = appMovilService;
+const { getTarif, getDonesWork, postDailyReport, WORK_CENTER, SUPERVISO_ID, LOTES, prueba } = useAppMovilService();
 const selected_quanty = ref(null);
 const Total = ref(null);
 const select_tasks_type = ref(null);
@@ -25,9 +25,9 @@ const lotes = ref({});
 
 const { t } = useI18n();
 onMounted(async () => {
-    workCenter.value = appMovilService.WORK_CENTER;
-    supervisoId.value = appMovilService.SUPERVISO_ID;
-    lotes.value = appMovilService.LOTES;
+    workCenter.value = WORK_CENTER;
+    supervisoId.value = SUPERVISO_ID;
+    lotes.value = LOTES;
 });
 
 function clearFiels() {
@@ -46,13 +46,14 @@ const props = defineProps({
 });
 
 const getLabor = async () => {
-    const response = await appMovilService.getDonesWork();
+    const response = await getDonesWork();
     if (!response.ok) toast.add({ severity: 'error', detail: 'Error' + response.error, life: 3000 });
     dones_work.value = response.data?.data ?? [];
 };
 
 async function sendDailyReport() {
-    const restp = await appMovilService.postDailyReport({
+    prueba();
+    const restp = await postDailyReport({
         loteCode: selected_crops_lots.value?.code,
         tasksTypeCode: select_tasks_type.value?.code,
         quantity: selected_quanty.value,
@@ -70,7 +71,10 @@ const UpdateTotal = () => {
 };
 
 const updateTaskTarif = async () => {
-    tarifa.value = await appServ.getTarif(select_tasks_type.value.code);
+    console.log('averrr.  me llaman');
+    tarifa.value = await getTarif(select_tasks_type.value.code);
+    console.log('averrr.  me llaman', tarifa.value);
+    tarifa.value === 0 ? toast.add({ severity: 'error', summary: 'Tarifa', detail: 'NO existe tarifa definida', life: 3000 }): '';
     laborActive.value = select_tasks_type.value?.label !== 'Task' && select_tasks_type.value?.name !== '' && select_tasks_type.value !== null;
     if (laborActive.value) getLabor();
 };
@@ -81,7 +85,6 @@ watch(select_tasks_type, () => {
 </script>
 
 <template>
-    {{ select_tasks_type }}
     <div class="grid p-fluid mt-3">
         <div class="field col-12 md:col-4">
             <span class="p-float-label">
