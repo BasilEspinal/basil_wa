@@ -697,7 +697,7 @@ const model2 = computed(() => ([
                     },
                     {
                         label: t('menu.shipping'),
-                        to: '/PayrollSettlement/Shipping/Dispatching',
+                        to: '/PayrollSettlement/ShippingProcess/ShippingProcess',
                         icon: 'pi pi-bookmark',
                         gate: 'liquidaciondenomina_transacciones_diarias_menu'
                     },

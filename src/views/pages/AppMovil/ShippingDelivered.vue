@@ -224,7 +224,7 @@ const readAll = async () => {
     const respVehicles = await getRequest('/vehicles');
     if (!respVehicles.ok) toast.add({ severity: 'error', detail: 'Error' + respVehicles.error, life: 3000 });
     Vehicles.value = respVehicles.data.data.map((vehicle) => ({ id: vehicle.uuid, name: vehicle.vehicle_type }));
-
+    console.log(Vehicles.value);
 
 };
 
@@ -245,6 +245,7 @@ const createRecord = handleSubmitNew(async (values) => {
     notes_small: notes.value, // Nota adicional
 };
 
+console.log('data', data);
     
     const restp = await postRequest(endpoint.value, data);
 console.log('data', data);

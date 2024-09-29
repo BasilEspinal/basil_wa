@@ -153,9 +153,9 @@ const router = createRouter({
                     component: () => import('@/views/pages/PayrollSettlement/DailyPlanner/DailyPlanner.vue')
                 },
                 {
-                    path: '/PayrollSettlement/Shipping/Dispatching',
-                    name: 'shippingDispatching',
-                    component: () => import('@/views/pages/PayrollSettlement/Shipping/Shipping.vue')
+                    path: '/PayrollSettlement/ShippingProcess/ShippingProcess',
+                    name: 'shippingProcess',
+                    component: () => import('@/views/pages/PayrollSettlement/ShippingProcess/ShippingProcess.vue')
                 },
                 {
                     path: '/PayrollSettlement/DailyTransactions',
