@@ -696,7 +696,7 @@ const model2 = computed(() => ([
                         gate: 'liquidaciondenomina_transacciones_diarias_menu'
                     },
                     {
-                        label: t('menu.shipping'),
+                        label: t('menu.shipping.shippingProcess'),
                         to: '/PayrollSettlement/ShippingProcess/ShippingProcess',
                         icon: 'pi pi-bookmark',
                         gate: 'liquidaciondenomina_transacciones_diarias_menu'
