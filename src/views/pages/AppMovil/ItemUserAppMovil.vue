@@ -8,7 +8,7 @@ import BackendErrors from '@/views/Errors/BackendErrors.vue';
 import { useI18n } from 'vue-i18n';
 
 const toast = useToast();
-const { getTarif, getDonesWork, postDailyReport, WORK_CENTER, SUPERVISO_ID, LOTES, prueba } = useAppMovilService();
+const { getTarif, getDonesWork, postDailyReport, WORK_CENTER, SUPERVISO_ID, LOTES } = useAppMovilService();
 const selected_quanty = ref(null);
 const Total = ref(null);
 const select_tasks_type = ref(null);
@@ -52,7 +52,6 @@ const getLabor = async () => {
 };
 
 async function sendDailyReport() {
-    prueba();
     const restp = await postDailyReport({
         loteCode: selected_crops_lots.value?.code,
         tasksTypeCode: select_tasks_type.value?.code,
@@ -71,10 +70,8 @@ const UpdateTotal = () => {
 };
 
 const updateTaskTarif = async () => {
-    console.log('averrr.  me llaman');
     tarifa.value = await getTarif(select_tasks_type.value.code);
-    console.log('averrr.  me llaman', tarifa.value);
-    tarifa.value === 0 ? toast.add({ severity: 'error', summary: 'Tarifa', detail: 'NO existe tarifa definida', life: 3000 }): '';
+    tarifa.value === 0 ? toast.add({ severity: 'error', summary: 'Tarifa', detail: 'NO existe tarifa definida', life: 3000 }) : '';
     laborActive.value = select_tasks_type.value?.label !== 'Task' && select_tasks_type.value?.name !== '' && select_tasks_type.value !== null;
     if (laborActive.value) getLabor();
 };
