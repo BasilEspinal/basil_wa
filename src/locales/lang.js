@@ -85,7 +85,13 @@ export const messages = {
             payrollSettlement: 'Payroll Settlement',
             dailyPlanning: 'Daily Planning',
             dailyTransactions: 'Daily Transactions',
-            shipping: 'Shipping Process',
+            shipping: {
+                shippingProcess: 'Shipping Process',
+                tabs:{
+                    shipping: 'Shipping',
+                    received: 'Received',
+                    differences: 'Differences',
+                }},
             transferToPrefrio: 'Transfer to Prefrio',
             dailySettlement: 'Daily Settlement',
             employeeSummary: 'Employee Summary',
@@ -237,7 +243,14 @@ export const messages = {
             payrollSettlement: 'Liquidación de Nómina',
             dailyPlanning: 'Planeación Diaria',
             dailyTransactions: 'Transacciones del Día',
-            shipping: 'Proceso de Envío',
+            shipping: {
+                shippingProcess: 'Proceso de Envío',
+                tabs:{
+                    shipping: 'Envío',
+                    received: 'Recibidos',
+                    differences: 'Diferencias',
+                }
+            },
             transferToPrefrio: 'Traslado a Prefrio',
             dailySettlement: 'Liquidación Diaria',
             employeeSummary: 'Resumen de Empleados',

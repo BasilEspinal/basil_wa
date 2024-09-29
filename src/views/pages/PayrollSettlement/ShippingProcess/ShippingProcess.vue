@@ -2,7 +2,7 @@
     <div>
     <div class="card">
         <div>
-            <h1 v-if="!ability.can('menux','comercialx')">{{ $t('menux') }}</h1>
+            <h1 v-if="!ability.can('menux','comercialx')">{{ $t('menu.shipping.shippingProcess') }}</h1>
         </div>
     </div>
 
@@ -10,15 +10,15 @@
     
         <div class="card">
         <TabView>
-            <TabPanel header="Shippings">
+            <TabPanel :header="$t('menu.shipping.tabs.shipping')">
                 <Shipping />
             </TabPanel>
-            <TabPanel header="Receivings">
+            <TabPanel :header="$t('menu.shipping.tabs.received')">
                 <Recevings />
             </TabPanel>
 
-            <TabPanel header="Differences">
-                <p>Differences</p>
+            <TabPanel :header="$t('menu.shipping.tabs.differences')">
+                <Differences />
             </TabPanel>
 
         </TabView>
@@ -45,6 +45,7 @@ import { ref} from 'vue';
 import { useI18n } from 'vue-i18n';
 import Recevings from './Recevings.vue';
 import Shipping from './Shipping.vue';
+import Differences from './Differences.vue';
 const tabs = ref([
     { title: 'Shippings', content: 'Shippings Content', value: '0' },
     { title: 'Receivings 2', content: 'Recevings Content', value: '1' },

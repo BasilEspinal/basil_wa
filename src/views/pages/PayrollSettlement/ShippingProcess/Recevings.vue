@@ -10,7 +10,10 @@
                 <div class="col-xs-12 col-sm-6 col-md-4 mb-2 text-center mx-auto">
             <Toolbar style="margin-bottom: 1rem">
                 <template #center>
-                    <Button :disabled="listRowSelect.length > 0" label="New" icon="pi pi-plus" class="p-button-success mb-2 mt-2" @click="openDialog('new')" size="large" />
+                    <Divider layout="vertical" />
+                    <Button :disabled="!(listRowSelect.length > 0 && listRowSelect.length < 2)" label="Detalles" icon="pi pi-bars" class="p-button-success mb-2 mt-2" @click="openForm('detalles')" size="large" />
+                        <Divider layout="vertical" />
+                    <!-- <Button :disabled="listRowSelect.length > 0" label="New" icon="pi pi-plus" class="p-button-success mb-2 mt-2" @click="openDialog('new')" size="large" />
                     <Divider layout="vertical" />
                     <Button :disabled="!(listRowSelect.length > 0 && listRowSelect.length < 2)" label="Edit" icon="pi pi-file-edit" class="p-button-help mb-2 mt-2" @click="openDialog('edit')" size="large" />
                     <Divider layout="vertical" />
@@ -18,7 +21,7 @@
                     <Divider layout="vertical" />
                     <Button :disabled="listRowSelect.length > 0" label="Export" icon="pi pi-file-import" class="p-button-warning mb-2 mt-2" @click="openExport" size="large" />
                     <Divider layout="vertical" />
-                    <Button :disabled="!listRowSelect.length > 0" label="Delete" icon="pi pi-trash" class="p-button-danger mb-2 mt-2" @click="openDelete" size="large" />
+                    <Button :disabled="!listRowSelect.length > 0" label="Delete" icon="pi pi-trash" class="p-button-danger mb-2 mt-2" @click="openDelete" size="large" /> -->
                 </template>
             </Toolbar>
             </div>
@@ -47,7 +50,7 @@
         v-model:selection="listRowSelect"
         filterDisplay="menu"
         v-model:filters="filters"
-        :globalFilterFields="['name', 'company.name', 'farm.name', 'status.name', 'created_at', 'updated_at']" 
+        :globalFilterFields="globalFilter" 
         >
         <template #header>
             <!--Uncomment when filters are done-->
@@ -73,76 +76,28 @@
         <template #empty> No customers found. </template>
         <template #loading> Loading customers data. Please wait. </template>
         <Column selectionMode="multiple" headerStyle="width: 3rem"></Column>
-        <Column field="code" filterField="code" header="Code" sortable :frozen="documentFrozen"> <!--Replace :frozen with the model-->
-            <template #header>
+        <Column v-for="(col) in dynamicColumns" :key="col.field" :field="col.field" :header="col.header" :frozen="col.frozen || false" sortable>
+    <template v-if="col.frozen" #header>
                     <ToggleButton v-model="documentFrozen" onIcon="pi pi-lock" offIcon="pi pi-lock-open" onLabel="" offLabel="" />
+                    <div>&nbsp;</div>
                 </template>
-                <template #body="{ data }">
-                    {{ data.code }} 
-                </template>
-                <template #filter="{ filterModel }">
-                    <InputText v-model="filterModel.value" type="text" class="p-column-filter" :placeholder="$t('general.search')"  />
-                </template>
-        </Column>
-
-        <Column field="name" filterField="name" header="Name" sortable> 
-            
-                <template #body="{ data }">
-                    {{ data.name }} 
-                </template>
-                <template #filter="{ filterModel }">
-                    <InputText v-model="filterModel.value" type="text" class="p-column-filter" :placeholder="$t('general.search')" />
-                </template>
-        </Column>
-
-        <!--Here add other columns-->
-
-        <Column field="farmName" filterField="farm.name" header="Farm Name" sortable>
-                <template #body="{ data }">
-                    {{ data.farm.name }}
-                </template>
-                <template #filter="{ filterModel }">
-                    <InputText v-model="filterModel.value" type="text" class="p-column-filter" :placeholder="$t('general.search')" />
-                </template>
-            </Column>
-
-            <Column field="companyName" filterField="company.name" header="Company Name" sortable>
-                <template #body="{ data }">
-                    {{ data.company.name }}
-                </template>
-                <template #filter="{ filterModel }">
-                    <InputText v-model="filterModel.value" type="text" class="p-column-filter" :placeholder="$t('general.search')" />
-                </template>
-            </Column>
-
-            <Column field="createdAt" filterField="created_at" header="Creation date" sortable>
-                <template #body="{ data }">
-                    {{ data.created_at }}
-                </template>
-                <template #filter="{ filterModel }">
-                    <InputText v-model="filterModel.value" type="text" class="p-column-filter" :placeholder="$t('general.search')" />
-                </template>
-            </Column>
-
-            <Column field="updatedAt" filterField="updated_at" header="Modification date" sortable>
-                <template #body="{ data }">
-                    {{ data.updated_at }}
-                </template>
-                <template #filter="{ filterModel }">
-                    <InputText v-model="filterModel.value" type="text" class="p-column-filter" :placeholder="$t('general.search')" />
-                </template>
-            </Column>
-
-            <Column field="status" filterField="status.name" header="Status" sortable>
-                <template #body="{ data }">
-                    <Tag :value="data.status.name" :severity="'EFC88B'" />
-                </template>
-                <template #filter="{ filterModel }">
-                    <InputText v-model="filterModel.value" type="text" class="p-column-filter" :placeholder="$t('general.search')" />
-                </template>
-            </Column>
+    <template #body="{ data }">
+      {{ getNestedValue(data, col.field) }}
+    </template>
+    <template #filter="{ filterModel }">
+      <InputText v-model="filterModel.value" type="text" class="p-column-filter" :placeholder="'Search by ' + col.header" />
+    </template>
+  </Column>
 
         </DataTable>
+        <Dialog v-model:visible="formProperties.open" modal :header="formProperties.title" class="p-fluid text-center mx-auto">
+            
+            <ReceivingsSummary :listRowSelect="listRowSelect" />
+            <div class="flex justify-content-end gap-2">
+              <Button type="button" label="Cancel" severity="secondary" @click="formProperties.open = false" />
+              
+            </div>
+        </Dialog>
         <Dialog v-model:visible="formDialog" modal :header="formDialogTitle" class="p-fluid text-center mx-auto">
 
                                     <div class="grid">
@@ -259,18 +214,59 @@ import { CrudService } from '@/service/CRUD/CrudService';
 import { InitialDataService } from '@/service/initialData';
 import { FilterMatchMode, FilterOperator } from 'primevue/api';
 import { toTypedSchema } from '@vee-validate/zod';
+import {computed} from 'vue';
 // import { saveAs } from 'file-saver/dist/FileSaver';
 import { useToast } from 'primevue/usetoast';
 import { useForm } from 'vee-validate';
 import { onBeforeMount, onMounted, ref, watch } from 'vue';
 import { useI18n } from 'vue-i18n';
 import * as XLSX from 'xlsx';
+import ReceivingsSummary from './ReceivingsSummary.vue';
 import { z } from 'zod';
+import ReceivingsSummaryVue from './ReceivingsSummary.vue';
 const { t } = useI18n();
 
+const dynamicColumns = [
+  {field:'transaction_date', header: 'Transaction Date', frozen: true},  
+  {field:'voyage_num', header: 'Voyage Num', frozen: false},
+  {field:'vehicle.code', header: 'Vehicle Name', frozen: false},  
+{field:'vehicle_qty_max',header: 'Vehicle Max qty', frozen: false},
+  {field:'sent_qty',header: 'Send Qty', frozen: false},
+{field:'received_qty',header: 'Received Qty', frozen: false},
+{field:'difference_qty',header: 'Difference Qty', frozen: false},
+{field:'alarm_delivery',header: 'alarm_delivery', frozen: false},
+  {field:'dispatch_number_lot',header: 'Dispatch Number', frozen: false},
+  {field:'tasks_of_type.name',header: 'Task Of Type', frozen: false},
+  { field: 'product.name', header: 'Product Name', frozen: false },
+  { field: 'varieties.name', header: 'Variety Name', frozen: false },
+  { field: 'product_type.name', header: 'Product Type Name', frozen: false },
+  { field: 'packing_type.name', header: 'Packing Type Name', frozen: false },
+  { field: 'supervisory.first_name', header: 'Supervisor First Name', frozen: false },
+  { field: 'supervisory.lasts_names', header: 'Supervisor Last Name', frozen: false },
+  { field: 'employee.first_name', header: 'Employee First Name', frozen: false },
+  { field: 'employee.lasts_names', header: 'Employee Last Name', frozen: false },
+  { field: 'shipping_statuses.name', header: 'Shipping Status', frozen: false },
+  { field: 'farm.name', header: 'Farm Name', frozen: false },
+  { field: 'company.name', header: 'Company Name', frozen: false },
+  { field: 'status.name', header: 'Status Name', frozen: false },
+];
+const getNestedValue = (obj, path) => {
+  return path.split('.').reduce((value, key) => value && value[key], obj);
+};
+const formProperties = ref({open: false, title: '', mode: '', data: null});
+const openForm = (mode) => {
+    console.log(mode);
+    
+    formProperties.value = {
+        open: true,
+        title: mode === 'Ver Detalles',
+        mode: mode,
+        data: mode === 'detalles' ? null : listRowSelect.value[0]
+    };
 
+}
 const prueba = ref({revisar: 'revisar GET-POST-PUT-DELETE'});
-let endpoint = ref('/variants');  //replace endpoint with your endpoint
+let endpoint = ref('/receiving/receivings');  //replace endpoint with your endpoint
 const crudService = CrudService(endpoint.value);
 const errorResponseAPI = crudService.getErrorResponse();
 const dataFromComponent = ref();
@@ -324,16 +320,20 @@ const clearFilter = () => {
 const initFilters = () => {
     filters.value = {
         global: { value: null, matchMode: FilterMatchMode.CONTAINS },
-        code: { operator: FilterOperator.AND, constraints: [{ value: null, matchMode: FilterMatchMode.STARTS_WITH }] },
-        name: { operator: FilterOperator.AND, constraints: [{ value: null, matchMode: FilterMatchMode.STARTS_WITH }] },
-        'status.name': { operator: FilterOperator.AND, constraints: [{ value: null, matchMode: FilterMatchMode.STARTS_WITH }] },
-        'farm.name': { operator: FilterOperator.AND, constraints: [{ value: null, matchMode: FilterMatchMode.STARTS_WITH }] },
-        'company.name': { operator: FilterOperator.AND, constraints: [{ value: null, matchMode: FilterMatchMode.STARTS_WITH }] },
         created_at: { operator: FilterOperator.AND, constraints: [{ value: null, matchMode: FilterMatchMode.STARTS_WITH }] },
         updated_at: { operator: FilterOperator.AND, constraints: [{ value: null, matchMode: FilterMatchMode.STARTS_WITH }] }
     };
+    dynamicColumns.forEach((col) => {
+    filters.value[col.field] = {
+      operator: FilterOperator.AND,
+      constraints: [{ value: null, matchMode: FilterMatchMode.STARTS_WITH }]
+    };
+    });   
 };
-
+// Dynamically create globalFilterFields based on dynamicColumns
+const globalFilter = computed(() => {
+  return dynamicColumns.map(col => col.field);
+});
 const documentFrozen = ref(false);
 const readAll = async () => {
     loadingData();
