@@ -113,7 +113,7 @@ const dataPrueba = ref();
 const lots = ref([]);
 const Lots = ref([]);
 
-const endpoint = ref('/shipping/send_qty');
+const endpoint = ref('/appmovil/shippings/send_qty');
 const farmDefault = sessionStorage.getItem('accessSessionFarm');
 
 const props = defineProps({

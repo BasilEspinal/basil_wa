@@ -235,10 +235,12 @@ const dynamicColumns = [
   { field: 'varieties.name', header: 'Variety Name', frozen: false },
   { field: 'product_type.name', header: 'Product Type Name', frozen: false },
   { field: 'packing_type.name', header: 'Packing Type Name', frozen: false },
-  { field: 'supervisory.first_name', header: 'Supervisor First Name', frozen: false },
-  { field: 'supervisory.lasts_names', header: 'Supervisor Last Name', frozen: false },
-  { field: 'employee.first_name', header: 'Employee First Name', frozen: false },
-  { field: 'employee.lasts_names', header: 'Employee Last Name', frozen: false },
+  { field: 'supervisory.full_name', header: 'Supervisor First Name', frozen: false },
+//   { field: 'supervisory.first_name', header: 'Supervisor First Name', frozen: false },
+//   { field: 'supervisory.lasts_names', header: 'Supervisor Last Name', frozen: false },
+  { field: 'employee.full_name', header: 'Employee First Name', frozen: false },
+//   { field: 'employee.first_name', header: 'Employee First Name', frozen: false },
+//   { field: 'employee.lasts_names', header: 'Employee Last Name', frozen: false },
   { field: 'shipping_statuses.name', header: 'Shipping Status', frozen: false },
   { field: 'farm.name', header: 'Farm Name', frozen: false },
   { field: 'company.name', header: 'Company Name', frozen: false },
@@ -262,7 +264,7 @@ const openForm = (mode) => {
 
 
 const prueba = ref({revisar: 'revisar GET-POST-PUT-DELETE'});
-let endpoint = ref('/shipping/shippings');  //replace endpoint with your endpoint
+let endpoint = ref('/transactions/shipping/shippings');  //replace endpoint with your endpoint
 const crudService = CrudService(endpoint.value);
 const errorResponseAPI = crudService.getErrorResponse();
 const dataFromComponent = ref();
@@ -338,6 +340,7 @@ const readAll = async () => {
     InitialDataService.getSizeOptions().then((data) => {sizeOptions.value = data; });
 
     const respFarms = await InitialDataService.getBranches();
+
     if (!respFarms.ok) toast.add({ severity: 'error', detail: 'Error' + respFarms.error, life: 3000 });
     Farms.value = respFarms.data.data.map((farm) => ({ id: farm.uuid, name: farm.name }));
     

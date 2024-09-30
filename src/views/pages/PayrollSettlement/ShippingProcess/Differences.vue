@@ -262,7 +262,7 @@ const openForm = (mode) => {
 
 
 const prueba = ref({revisar: 'revisar GET-POST-PUT-DELETE'});
-let endpoint = ref('/shipping/shippings');  //replace endpoint with your endpoint
+let endpoint = ref('/transactions/shipping/shippings');  //replace endpoint with your endpoint
 const crudService = CrudService(endpoint.value);
 const errorResponseAPI = crudService.getErrorResponse();
 const dataFromComponent = ref();

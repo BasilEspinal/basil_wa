@@ -230,8 +230,8 @@ const dynamicColumns = [
   {field:'transaction_date', header: 'Transaction Date', frozen: true},  
   {field:'voyage_num', header: 'Voyage Num', frozen: false},
   {field:'vehicle.code', header: 'Vehicle Name', frozen: false},  
-{field:'vehicle_qty_max',header: 'Vehicle Max qty', frozen: false},
-  {field:'sent_qty',header: 'Send Qty', frozen: false},
+// {field:'vehicle_qty_max',header: 'Vehicle Max qty', frozen: false},
+//   {field:'sent_qty',header: 'Send Qty', frozen: false},
 {field:'received_qty',header: 'Received Qty', frozen: false},
 {field:'difference_qty',header: 'Difference Qty', frozen: false},
 {field:'alarm_delivery',header: 'alarm_delivery', frozen: false},
@@ -241,11 +241,13 @@ const dynamicColumns = [
   { field: 'varieties.name', header: 'Variety Name', frozen: false },
   { field: 'product_type.name', header: 'Product Type Name', frozen: false },
   { field: 'packing_type.name', header: 'Packing Type Name', frozen: false },
-  { field: 'supervisory.first_name', header: 'Supervisor First Name', frozen: false },
-  { field: 'supervisory.lasts_names', header: 'Supervisor Last Name', frozen: false },
-  { field: 'employee.first_name', header: 'Employee First Name', frozen: false },
-  { field: 'employee.lasts_names', header: 'Employee Last Name', frozen: false },
-  { field: 'shipping_statuses.name', header: 'Shipping Status', frozen: false },
+  { field: 'supervisory.full_name', header: 'Supervisor First Name', frozen: false },
+//   { field: 'supervisory.first_name', header: 'Supervisor First Name', frozen: false },
+//   { field: 'supervisory.lasts_names', header: 'Supervisor Last Name', frozen: false },
+  { field: 'employee.full_name', header: 'Employee First Name', frozen: false },
+//   { field: 'employee.first_name', header: 'Employee First Name', frozen: false },
+//   { field: 'employee.lasts_names', header: 'Employee Last Name', frozen: false },
+  { field: 'receivingStatuses.name', header: 'Receiving Status', frozen: false },
   { field: 'farm.name', header: 'Farm Name', frozen: false },
   { field: 'company.name', header: 'Company Name', frozen: false },
   { field: 'status.name', header: 'Status Name', frozen: false },
@@ -266,7 +268,7 @@ const openForm = (mode) => {
 
 }
 const prueba = ref({revisar: 'revisar GET-POST-PUT-DELETE'});
-let endpoint = ref('/receiving/receivings');  //replace endpoint with your endpoint
+let endpoint = ref('/transactions/receiving/receivings');  //replace endpoint with your endpoint
 const crudService = CrudService(endpoint.value);
 const errorResponseAPI = crudService.getErrorResponse();
 const dataFromComponent = ref();

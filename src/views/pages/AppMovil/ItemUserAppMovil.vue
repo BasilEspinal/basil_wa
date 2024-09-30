@@ -25,7 +25,7 @@ const { t } = useI18n();
 onMounted(async () => {
     workCenter.value = JSON.parse(sessionStorage.getItem('accessSessionWorkCenter'));
     supervisoId.value = await sessionStorage.getItem('accesSessionEmployeeUuid');
-    getLabor();
+    // getLabor(); temporal Jaym
 });
 
 function clearFiels() {
