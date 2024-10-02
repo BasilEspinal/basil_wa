@@ -184,7 +184,7 @@ import { useI18n } from 'vue-i18n';
 import * as XLSX from 'xlsx';
 import ReceivingsSummary from './ReceivingsSummary.vue';
 import { z } from 'zod';
-import ReceivingsSummaryVue from './ReceivingsSummary.vue';
+
 const { t } = useI18n();
 
 const dynamicColumns = [

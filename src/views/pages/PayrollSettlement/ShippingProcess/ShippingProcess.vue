@@ -17,8 +17,8 @@
                 <Recevings />
             </TabPanel>
 
-            <TabPanel :header="$t('menu.shipping.tabs.differences')">
-                <Differences />
+            <TabPanel :header="$t('menu.shipping.tabs.discrepancies')">
+                <Discrepancies />
             </TabPanel>
 
         </TabView>
@@ -45,7 +45,7 @@ import { ref} from 'vue';
 import { useI18n } from 'vue-i18n';
 import Recevings from './Recevings.vue';
 import Shipping from './Shipping.vue';
-import Differences from './Differences.vue';
+import Discrepancies from './Discrepancies.vue';
 const tabs = ref([
     { title: 'Shippings', content: 'Shippings Content', value: '0' },
     { title: 'Receivings 2', content: 'Recevings Content', value: '1' },

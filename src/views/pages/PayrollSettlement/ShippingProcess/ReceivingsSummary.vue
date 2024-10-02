@@ -5,12 +5,16 @@
         <div class="card mb-0">
           <div class="flex justify-content-between mb-3">
             <div>
-              <span class="block text-500 font-medium mb-3">General Information</span>
+              <Panel header="General Information">
+
+                
               <div class="text-900 font-medium text-xl">Transaction Date: {{ listRowSelect[0].transaction_date }}</div>
               <div class="text-900 font-medium text-xl">Voyage Number: {{ listRowSelect[0].voyage_num }}</div>
               <div class="text-900 font-medium text-xl">Sent Quantity: {{ listRowSelect[0].sent_qty }}</div>
               <div class="text-900 font-medium text-xl">Received Quantity: {{ listRowSelect[0].received_qty }}</div>
               <div class="text-900 font-medium text-xl">Dispatch Number Lot: {{ listRowSelect[0].dispatch_number_lot }}</div>
+              </Panel>
+              
             </div>
             <div class="flex align-items-center justify-content-center bg-green-100 border-round" style="width: 2.5rem; height: 2.5rem">
               <i class="pi pi-calendar text-green-500 text-xl"></i>

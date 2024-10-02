@@ -90,7 +90,7 @@ export const messages = {
                 tabs:{
                     shipping: 'Shipping',
                     received: 'Received',
-                    differences: 'Differences',
+                    discrepancies: 'Discrepancies',
                 }},
             transferToPrefrio: 'Transfer to Prefrio',
             dailySettlement: 'Daily Settlement',
@@ -248,7 +248,7 @@ export const messages = {
                 tabs:{
                     shipping: 'Envío',
                     received: 'Recibidos',
-                    differences: 'Diferencias',
+                    discrepancies: 'Discrepancias',
                 }
             },
             transferToPrefrio: 'Traslado a Prefrio',

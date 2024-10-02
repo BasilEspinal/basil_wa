@@ -32,6 +32,7 @@ export const CrudService = (baseEndpoint) => ({
         return await postRequest(baseEndpoint, data);
     },
 
+    
     /**
      * Update an existing record by UUID
      * @param {String} uuid - The UUID of the record to update.

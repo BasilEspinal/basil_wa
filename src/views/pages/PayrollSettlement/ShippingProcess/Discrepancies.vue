@@ -13,9 +13,11 @@
                     <Divider layout="vertical" />
                     <Button :disabled="!(listRowSelect.length > 0 && listRowSelect.length < 2)" label="Detalles" icon="pi pi-bars" class="p-button-success mb-2 mt-2" @click="openForm('detalles')" size="large" />
                         <Divider layout="vertical" />
-                    <!-- <Button :disabled="listRowSelect.length > 0" label="New" icon="pi pi-plus" class="p-button-success mb-2 mt-2" @click="openDialog('new')" size="large" />
-                    <Divider layout="vertical" />
-                    <Button :disabled="!(listRowSelect.length > 0 && listRowSelect.length < 2)" label="Edit" icon="pi pi-file-edit" class="p-button-help mb-2 mt-2" @click="openDialog('edit')" size="large" />
+                        
+                        <Button :disabled="!(listRowSelect.length > 0 && listRowSelect.length < 2)" label="Edit" icon="pi pi-file-edit" class="p-button-help mb-2 mt-2" @click="openDialog('edit')" size="large" />    
+                            <Divider layout="vertical" />
+                    <!-- 
+                    <Button :disabled="listRowSelect.length > 0" label="New" icon="pi pi-plus" class="p-button-success mb-2 mt-2" @click="openDialog('new')" size="large" />
                     <Divider layout="vertical" />
                     <Button :disabled="!(listRowSelect.length > 0 && listRowSelect.length < 2)" label="Clone" icon="pi pi-copy" class="p-button-secondary mb-2 mt-2" @click="openDialog('clone')" size="large" />
                     <Divider layout="vertical" />
@@ -106,7 +108,7 @@
         </DataTable>
         <Dialog v-model:visible="formProperties.open" modal :header="formProperties.title" class="p-fluid text-center mx-auto">
             
-            <ShippingSummary :listRowSelect="listRowSelect" />
+            <DiscrepanciesSummary :listRowSelect="listRowSelect" />
             <div class="flex justify-content-end gap-2">
               <Button type="button" label="Cancel" severity="secondary" @click="formProperties.open = false" />
             </div>
@@ -235,27 +237,31 @@ import { onBeforeMount, onMounted, ref, watch } from 'vue';
 import { useI18n } from 'vue-i18n';
 import * as XLSX from 'xlsx';
 import { z } from 'zod';
-import ShippingSummary from './ShippingSummary.vue';
+import DiscrepanciesSummary from './DiscrepanciesSummary.vue';
+
 const { t } = useI18n();
 
 const dynamicColumns = [
-  {field: 'transaction_date', header: 'Transaction Date', frozen: true, color: false},  
-  {field: 'shipping_statuses.name', header: 'Shipping Status', frozen: false, color: false},
-  {field: 'voyage_num', header: 'Voyage Num', frozen: false, color: false},
-  {field: 'vehicle.code', header: 'Vehicle Name', frozen: false, color: false},  
-  {field: 'sent_qty', header: 'Send Qty', frozen: false, color: false},
-  {field: 'tasks_of_type.name', header: 'Task Of Type', frozen: false, color: false},
-  {field: 'dispatch_number_lot', header: 'Dispatch Number', frozen: false, color: false},
-  {field: 'product.name', header: 'Product Name', frozen: false, color: false},
-  {field: 'varieties.name', header: 'Variety Name', frozen: false, color: false},
-  {field: 'product_type.name', header: 'Product Type Name', frozen: false, color: false},
-  {field: 'packing_type.name', header: 'Packing Type Name', frozen: false, color: false},
-  {field: 'supervisory.full_name', header: 'Supervisor First Name', frozen: false, color: false},
-  {field: 'employee.full_name', header: 'Employee First Name', frozen: false, color: false},  
-  {field: 'farm.name', header: 'Farm Name', frozen: false, color: false},
-  {field: 'company.name', header: 'Company Name', frozen: false, color: false},
-  {field: 'status.name', header: 'Status Name', frozen: false, color: true},
+  { field: 'validated_date', header: 'Validated Date', frozen: true, color: false },  
+  { field: 'voyage_num', header: 'Voyage Num', frozen: false, color: false },
+  { field: 'sent_qty', header: 'Sent Qty', frozen: false, color: false },
+  { field: 'received_qty', header: 'Received Qty', frozen: false, color: false },
+  { field: 'confirmed_qty', header: 'Confirmed Qty', frozen: false, color: false },
+  { field: 'notes_small', header: 'Notes Small', frozen: false, color: false },
+  { field: 'shipping_task.transaction_date', header: 'Shipping Task Date', frozen: false, color: false },
+  { field: 'shipping_task.vehicle_qty_max', header: 'Shipping Vehicle Max Qty', frozen: false, color: false },
+  { field: 'shipping_task.sent_qty', header: 'Shipping Sent Qty', frozen: false, color: false },
+  { field: 'shipping_task.dispatch_number_lot', header: 'Dispatch Number Lot', frozen: false, color: false },
+  { field: 'receiving_task.transaction_date', header: 'Receiving Task Date', frozen: false, color: false },
+  { field: 'receiving_task.vehicle_qty_max', header: 'Receiving Vehicle Max Qty', frozen: false, color: false },
+  { field: 'receiving_task.sent_qty', header: 'Receiving Sent Qty', frozen: false, color: false },
+  { field: 'validation_statuses.name', header: 'Validation Status', frozen: false, color: true },
+  { field: 'farm.name', header: 'Farm Name', frozen: false, color: false },
+  { field: 'company.name', header: 'Company Name', frozen: false, color: false },
+  { field: 'status.name', header: 'Status Name', frozen: false, color: true }, // This has color, so color: true
+  
 ];
+
 
 const getNestedValue = (obj, path) => {
   return path.split('.').reduce((value, key) => value && value[key], obj);

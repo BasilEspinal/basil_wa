@@ -98,7 +98,7 @@ export const InitialDataService = {
     async getEmployeesWorkCenter(value) {
 
         try {
-            const response =  await getRequest(`/appmovil/employees?filter[work_center_id]=2'`);
+            const response =  await getRequest(`/appmovil/employees?filter[work_center_id]=${value}`);
             return response;
         } catch (error) {
             console.error('Error fetching vehicles:', error);
