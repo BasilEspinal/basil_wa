@@ -1,5 +1,5 @@
 import useData from '@/service/FetchData/FetchDataAPI.js';
-const { getRequest, postRequest, putRequest, deleteRequest,errorResponseAPI } = useData();
+const { getRequest, postRequest, putRequest, deleteRequest,patchRequest,errorResponseAPI } = useData();
 
 export const CrudService = (baseEndpoint) => ({
     /**
@@ -52,6 +52,10 @@ export const CrudService = (baseEndpoint) => ({
         
 
         return await deleteRequest(baseEndpoint, uuid);
+    },
+    async patch(uuid, data) {
+        return await patchRequest(baseEndpoint, data,uuid);
+        
     },
     getErrorResponse() {
         return errorResponseAPI;

@@ -77,17 +77,28 @@
         <template #loading> Loading customers data. Please wait. </template>
         <Column selectionMode="multiple" headerStyle="width: 3rem"></Column>
         <Column v-for="(col) in dynamicColumns" :key="col.field" :field="col.field" :header="col.header" :frozen="col.frozen || false" sortable>
-    <template v-if="col.frozen" #header>
-                    <ToggleButton v-model="documentFrozen" onIcon="pi pi-lock" offIcon="pi pi-lock-open" onLabel="" offLabel="" />
-                    <div>&nbsp;</div>
-                </template>
-    <template #body="{ data }">
+  <!-- Header Template -->
+  <template v-if="col.frozen" #header>
+    <ToggleButton v-model="documentFrozen" onIcon="pi pi-lock" offIcon="pi pi-lock-open" onLabel="" offLabel="" />
+    <div>&nbsp;</div>
+  </template>
+  
+  <!-- Body Template -->
+  <template #body="{ data }">
+    <!-- Conditionally render the Tag component if col.color is true -->
+    <Tag v-if="col.color" :value="getNestedValue(data, col.field)" :style="{ backgroundColor: data.status.color, color:'#FFFFFF'  }" />
+    
+    <!-- Render the text only if Tag is not rendered -->
+    <span v-else>
       {{ getNestedValue(data, col.field) }}
-    </template>
-    <template #filter="{ filterModel }">
-      <InputText v-model="filterModel.value" type="text" class="p-column-filter" :placeholder="'Search by ' + col.header" />
-    </template>
-  </Column>
+    </span>
+  </template>
+
+  <!-- Filter Template -->
+  <template #filter="{ filterModel }">
+    <InputText v-model="filterModel.value" type="text" class="p-column-filter" :placeholder="'Search by ' + col.header" />
+  </template>
+</Column>
 
         </DataTable>
         <Dialog v-model:visible="formProperties.open" modal :header="formProperties.title" class="p-fluid text-center mx-auto">
@@ -225,27 +236,24 @@ import ShippingSummary from './ShippingSummary.vue';
 const { t } = useI18n();
 
 const dynamicColumns = [
-  {field:'transaction_date', header: 'Transaction Date', frozen: true},  
-  {field:'voyage_num', header: 'Voyage Num', frozen: false},
-  {field:'vehicle.code', header: 'Vehicle Name', frozen: false},  
-  {field:'sent_qty',header: 'Send Qty', frozen: false},
-  {field:'tasks_of_type.name',header: 'Task Of Type', frozen: false},
-  {field:'dispatch_number_lot',header: 'Dispatch Number', frozen: false},
-  { field: 'product.name', header: 'Product Name', frozen: false },
-  { field: 'varieties.name', header: 'Variety Name', frozen: false },
-  { field: 'product_type.name', header: 'Product Type Name', frozen: false },
-  { field: 'packing_type.name', header: 'Packing Type Name', frozen: false },
-  { field: 'supervisory.full_name', header: 'Supervisor First Name', frozen: false },
-//   { field: 'supervisory.first_name', header: 'Supervisor First Name', frozen: false },
-//   { field: 'supervisory.lasts_names', header: 'Supervisor Last Name', frozen: false },
-  { field: 'employee.full_name', header: 'Employee First Name', frozen: false },
-//   { field: 'employee.first_name', header: 'Employee First Name', frozen: false },
-//   { field: 'employee.lasts_names', header: 'Employee Last Name', frozen: false },
-  { field: 'shipping_statuses.name', header: 'Shipping Status', frozen: false },
-  { field: 'farm.name', header: 'Farm Name', frozen: false },
-  { field: 'company.name', header: 'Company Name', frozen: false },
-  { field: 'status.name', header: 'Status Name', frozen: false },
+  {field: 'transaction_date', header: 'Transaction Date', frozen: true, color: false},  
+  {field: 'shipping_statuses.name', header: 'Shipping Status', frozen: false, color: false},
+  {field: 'voyage_num', header: 'Voyage Num', frozen: false, color: false},
+  {field: 'vehicle.code', header: 'Vehicle Name', frozen: false, color: false},  
+  {field: 'sent_qty', header: 'Send Qty', frozen: false, color: false},
+  {field: 'tasks_of_type.name', header: 'Task Of Type', frozen: false, color: false},
+  {field: 'dispatch_number_lot', header: 'Dispatch Number', frozen: false, color: false},
+  {field: 'product.name', header: 'Product Name', frozen: false, color: false},
+  {field: 'varieties.name', header: 'Variety Name', frozen: false, color: false},
+  {field: 'product_type.name', header: 'Product Type Name', frozen: false, color: false},
+  {field: 'packing_type.name', header: 'Packing Type Name', frozen: false, color: false},
+  {field: 'supervisory.full_name', header: 'Supervisor First Name', frozen: false, color: false},
+  {field: 'employee.full_name', header: 'Employee First Name', frozen: false, color: false},  
+  {field: 'farm.name', header: 'Farm Name', frozen: false, color: false},
+  {field: 'company.name', header: 'Company Name', frozen: false, color: false},
+  {field: 'status.name', header: 'Status Name', frozen: false, color: true},
 ];
+
 
 const getNestedValue = (obj, path) => {
   return path.split('.').reduce((value, key) => value && value[key], obj);

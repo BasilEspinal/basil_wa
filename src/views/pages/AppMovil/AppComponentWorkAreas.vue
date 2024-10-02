@@ -7,6 +7,7 @@ import { useI18n } from 'vue-i18n';
 import useData from '@/composables/DataAPI/FetchDataAPICopy.js';
 import { useLayout } from '@/layout/composables/layout';
 import ShippingDelivered from './ShippingDelivered.vue';
+import DeliveringDelivered from './DeliveringDelivered.vue';
 const { t } = useI18n();
 const toast = useToast();
 const { getRequest, postRequest, putRequest, deleteRequest } = useData();
@@ -215,7 +216,7 @@ function searchUsers() {
                 </template>
                 <ScrollPanel class="maxHeightC">
 
-                    
+                    <DeliveringDelivered :data="{name:'Sebastian' }" :batchs="lotes" />
                 </ScrollPanel>
             </TabPanel>
         </TabView>

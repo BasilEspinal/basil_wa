@@ -13,10 +13,13 @@
                     <Divider layout="vertical" />
                     <Button :disabled="!(listRowSelect.length > 0 && listRowSelect.length < 2)" label="Detalles" icon="pi pi-bars" class="p-button-success mb-2 mt-2" @click="openForm('detalles')" size="large" />
                         <Divider layout="vertical" />
+                        
                     <!-- <Button :disabled="listRowSelect.length > 0" label="New" icon="pi pi-plus" class="p-button-success mb-2 mt-2" @click="openDialog('new')" size="large" />
                     <Divider layout="vertical" />
                     <Button :disabled="!(listRowSelect.length > 0 && listRowSelect.length < 2)" label="Edit" icon="pi pi-file-edit" class="p-button-help mb-2 mt-2" @click="openDialog('edit')" size="large" />
                     <Divider layout="vertical" />
+                    <Button :disabled="!(listRowSelect.length > 0 && listRowSelect.length < 2)" label="Edit" icon="pi pi-file-edit" class="p-button-help mb-2 mt-2" @click="openDialog('patch')" size="large" />
+                            <Divider layout="vertical" />
                     <Button :disabled="!(listRowSelect.length > 0 && listRowSelect.length < 2)" label="Clone" icon="pi pi-copy" class="p-button-secondary mb-2 mt-2" @click="openDialog('clone')" size="large" />
                     <Divider layout="vertical" />
                     <Button :disabled="listRowSelect.length > 0" label="Export" icon="pi pi-file-import" class="p-button-warning mb-2 mt-2" @click="openExport" size="large" />
@@ -77,17 +80,28 @@
         <template #loading> Loading customers data. Please wait. </template>
         <Column selectionMode="multiple" headerStyle="width: 3rem"></Column>
         <Column v-for="(col) in dynamicColumns" :key="col.field" :field="col.field" :header="col.header" :frozen="col.frozen || false" sortable>
-    <template v-if="col.frozen" #header>
-                    <ToggleButton v-model="documentFrozen" onIcon="pi pi-lock" offIcon="pi pi-lock-open" onLabel="" offLabel="" />
-                    <div>&nbsp;</div>
-                </template>
-    <template #body="{ data }">
+  <!-- Header Template -->
+  <template v-if="col.frozen" #header>
+    <ToggleButton v-model="documentFrozen" onIcon="pi pi-lock" offIcon="pi pi-lock-open" onLabel="" offLabel="" />
+    <div>&nbsp;</div>
+  </template>
+  
+  <!-- Body Template -->
+  <template #body="{ data }">
+    <!-- Conditionally render the Tag component if col.color is true -->
+    <Tag v-if="col.color" :value="getNestedValue(data, col.field)" :style="{ backgroundColor: data.status.color, color:'#FFFFFF'  }" />
+    
+    <!-- Render the text only if Tag is not rendered -->
+    <span v-else>
       {{ getNestedValue(data, col.field) }}
-    </template>
-    <template #filter="{ filterModel }">
-      <InputText v-model="filterModel.value" type="text" class="p-column-filter" :placeholder="'Search by ' + col.header" />
-    </template>
-  </Column>
+    </span>
+  </template>
+
+  <!-- Filter Template -->
+  <template #filter="{ filterModel }">
+    <InputText v-model="filterModel.value" type="text" class="p-column-filter" :placeholder="'Search by ' + col.header" />
+  </template>
+</Column>
 
         </DataTable>
         <Dialog v-model:visible="formProperties.open" modal :header="formProperties.title" class="p-fluid text-center mx-auto">
@@ -98,62 +112,9 @@
               
             </div>
         </Dialog>
-        <Dialog v-model:visible="formDialog" modal :header="formDialogTitle" class="p-fluid text-center mx-auto">
+      
 
-                                    <div class="grid">
-                                        <div class="mb-3 col-12 md:col-6 lg:col-6">
-                                            <div class="flex align-items-center">
-                                            <label for="username" class="font-semibold w-6rem">Name :</label>
-                                            <InputText id="username" v-model="name" class="flex-auto" autocomplete="off" v-bind="nameProps" />
-                                        </div>
-                                        <FrontEndErrors :errorsNew="errorsNew" name="name" />
-                                        <BackendErrors :name="errorResponseAPI?.errors?.code" />
-                                    </div>
-
-                                    <div class="mb-3 col-12 md:col-6 lg:col-6">
-                                        <div class="flex align-items-center">
-                                            <label for="username" class="font-semibold w-6rem">Code :</label>
-                                            <InputText id="username" v-model="codeV" class="flex-auto" autocomplete="off" v-bind="codeVProps" />
-                                        </div>
-                                        <FrontEndErrors :errorsNew="errorsNew" name="codeV" />
-                                        <BackendErrors :name="errorResponseAPI?.errors?.code" />
-                                    </div>
-
-                                    <div class="mb-3 col-12 md:col-6 lg:col-6">
-                                        <div class="flex align-items-center">
-                                            <label for="farm" class="font-semibold w-6rem">Farm :</label>
-                                            
-                                            <AutoComplete 
-                                            v-model="farm"  
-                                            class="flex-auto"
-                                            :suggestions="farms" 
-                                            @complete="searchBranches" 
-                                            optionLabel="name"
-                                            placeholder="Introduce the value" 
-                                            dropdown 
-                                            />
-
-                                        </div>
-                                        <FrontEndErrors :errorsNew="errorsNew" name="farm" />
-                                        <BackendErrors :name="errorResponseAPI?.errors?.farm_uuid" />
-                                    </div>
-
-                                    <div class="mb-3 col-12 md:col-6 lg:col-6">
-                                        <div class="flex align-items-center">
-                                            <label for="company" class="font-semibold w-6rem">Company:</label>
-                                            <AutoComplete v-model="company" class="flex-auto" inputId="ac" :suggestions="compa" @complete="searchCompanies" optionLabel="name" dropdown />
-                                        </div>
-                                        <FrontEndErrors :errorsNew="errorsNew" name="company" />
-                                        <BackendErrors :name="errorResponseAPI?.errors?.company_uuid" />
-                                    </div>
-                                </div>
-
-                <div class="flex justify-content-end gap-2 flex-auto">
-                    <Button class="flex-auto" type="button" label="Cancel" severity="secondary" @click="formDialog = false" />
-                    <Button class="flex-auto" type="button" label="Save" @click="actionRecordManager(state)" />
-                </div>
-            </Dialog>
-
+                 
             <Dialog v-model:visible="formDialogExport" :style="{ width: '290px' }" :header="formDialogExportTitle" :modal="true" class="p-fluid">
                 <div class="mb-3">
                     <div class="flex align-items-center gap-3 mb-1">
@@ -227,31 +188,26 @@ import ReceivingsSummaryVue from './ReceivingsSummary.vue';
 const { t } = useI18n();
 
 const dynamicColumns = [
-  {field:'transaction_date', header: 'Transaction Date', frozen: true},  
-  {field:'voyage_num', header: 'Voyage Num', frozen: false},
-  {field:'vehicle.code', header: 'Vehicle Name', frozen: false},  
-// {field:'vehicle_qty_max',header: 'Vehicle Max qty', frozen: false},
-//   {field:'sent_qty',header: 'Send Qty', frozen: false},
-{field:'received_qty',header: 'Received Qty', frozen: false},
-{field:'difference_qty',header: 'Difference Qty', frozen: false},
-{field:'alarm_delivery',header: 'alarm_delivery', frozen: false},
-  {field:'dispatch_number_lot',header: 'Dispatch Number', frozen: false},
-  {field:'tasks_of_type.name',header: 'Task Of Type', frozen: false},
-  { field: 'product.name', header: 'Product Name', frozen: false },
-  { field: 'varieties.name', header: 'Variety Name', frozen: false },
-  { field: 'product_type.name', header: 'Product Type Name', frozen: false },
-  { field: 'packing_type.name', header: 'Packing Type Name', frozen: false },
-  { field: 'supervisory.full_name', header: 'Supervisor First Name', frozen: false },
-//   { field: 'supervisory.first_name', header: 'Supervisor First Name', frozen: false },
-//   { field: 'supervisory.lasts_names', header: 'Supervisor Last Name', frozen: false },
-  { field: 'employee.full_name', header: 'Employee First Name', frozen: false },
-//   { field: 'employee.first_name', header: 'Employee First Name', frozen: false },
-//   { field: 'employee.lasts_names', header: 'Employee Last Name', frozen: false },
-  { field: 'receivingStatuses.name', header: 'Receiving Status', frozen: false },
-  { field: 'farm.name', header: 'Farm Name', frozen: false },
-  { field: 'company.name', header: 'Company Name', frozen: false },
-  { field: 'status.name', header: 'Status Name', frozen: false },
+  {field: 'transaction_date', header: 'Transaction Date', frozen: true, color: false},  
+  {field: 'voyage_num', header: 'Voyage Num', frozen: false, color: false},
+  {field: 'vehicle.code', header: 'Vehicle Name', frozen: false, color: false},  
+  {field: 'received_qty', header: 'Received Qty', frozen: false, color: false},
+  {field: 'difference_qty', header: 'Difference Qty', frozen: false, color: false},
+  {field: 'alarm_delivery', header: 'alarm_delivery', frozen: false, color: false},
+  {field: 'dispatch_number_lot', header: 'Dispatch Number', frozen: false, color: false},
+  {field: 'tasks_of_type.name', header: 'Task Of Type', frozen: false, color: false},
+  {field: 'product.name', header: 'Product Name', frozen: false, color: false},
+  {field: 'varieties.name', header: 'Variety Name', frozen: false, color: false},
+  {field: 'product_type.name', header: 'Product Type Name', frozen: false, color: false},
+  {field: 'packing_type.name', header: 'Packing Type Name', frozen: false, color: false},
+  {field: 'supervisory.full_name', header: 'Supervisor First Name', frozen: false, color: false},
+  {field: 'employee.full_name', header: 'Employee First Name', frozen: false, color: false},
+  {field: 'receivingStatuses.name', header: 'Receiving Status', frozen: false, color: true},
+  {field: 'farm.name', header: 'Farm Name', frozen: false, color: false},
+  {field: 'company.name', header: 'Company Name', frozen: false, color: false},
+  {field: 'status.name', header: 'Status Name', frozen: false, color: true},
 ];
+
 const getNestedValue = (obj, path) => {
   return path.split('.').reduce((value, key) => value && value[key], obj);
 };
@@ -276,6 +232,11 @@ const Farms = ref([]);
 const farms = ref([]);
 const Compan = ref([]);
 const compa = ref([]);
+const employees = ref([]);
+const Employees = ref([]);
+const vehicles = ref([]);
+const Vehicles = ref([]);
+
 const farmDefault = sessionStorage.getItem('accessSessionFarm');
 const companyDefault = sessionStorage.getItem('accessSessionCompany');
 const formDialogExportTitle = 'Export xxxxxxxxxx';
@@ -353,6 +314,16 @@ const readAll = async () => {
     if (!respCompan.ok) toast.add({ severity: 'error', detail: 'Error' + respCompan.error, life: 3000 });
     Compan.value = respCompan.data.data.map((comp) => ({ id: comp.uuid, name: comp.name }));
 
+    const respEmployees = await getRequest('/appmovil/employees?filter[work_center_id]=2');
+    if (!respEmployees.ok) toast.add({ severity: 'error', detail: 'Error' + respEmployees.error, life: 3000 });
+    Employees.value = respEmployees.data.data.map((employee) => ({ id: employee.uuid, name: employee.first_name }));
+    employees.value = respEmployees.data.data.map((employee) => employee.name);
+
+    const respVehicles = await getRequest('/vehicles');
+    if (!respVehicles.ok) toast.add({ severity: 'error', detail: 'Error' + respVehicles.error, life: 3000 });
+    Vehicles.value = respVehicles.data.data.map((vehicle) => ({ id: vehicle.uuid, name: vehicle.vehicle_type }));
+    console.log(Vehicles.value);
+
 };
 const loadingData = async () => {
     //const response = await getRequest(endpoint.value);
@@ -373,29 +344,50 @@ const {
 } = useForm({
     validationSchema: toTypedSchema(
         z.object({
-            name: z.string().min(4),
-            codeV: z.string().min(4),
-            farm: z
+            // name: z.string().min(4),
+            // codeV: z.string().min(4),
+            received_qtyV: z.number().min(1),
+            notesV: z.string().min(4),
+            employeesV: z
                 .object({
-                    id: z.string().min(4),
-                    name: z.string().min(4)
-                    
+                    name: z.string().optional(),
+                    id: z.string().optional()
                 })
                 .optional(),
-            company: z
+                request_qty_V: z.number().min(1).max(1000),
+            vehiclesV: z
                 .object({
-                    id: z.string().min(4),
-                    name: z.string().min(4)
-                    
+                    name: z.string().optional(),
+                    id: z.string().optional()
                 })
-                .optional()
+                .optional(),
+            selected_crops_lots: z.object({
+                code: z.string().min(4),
+                id: z.string().min(4)   
+            }),
+            // farm: z
+            //     .object({
+            //         id: z.string().min(4),
+            //         name: z.string().min(4)
+                    
+            //     })
+            //     .optional(),
+            // company: z
+            //     .object({
+            //         id: z.string().min(4),
+            //         name: z.string().min(4)
+                    
+            //     })
+            //     .optional()
         })
     )
 });
-const [name, nameProps] = defineField('name');
-const [codeV, codeVProps] = defineField('codeV');
-const [farm] = defineField('farm');
-const [company] = defineField('company');
+// const [name, nameProps] = defineField('name');
+// const [codeV, codeVProps] = defineField('codeV');
+const [received_qtyV, received_qtyVProps] = defineField('received_qtyV');
+const [notesV, notesVProps] = defineField('notesV');
+// const [farm] = defineField('farm');
+// const [company] = defineField('company');
 
 const extenciones = ref([{ name: 'CSV' }, { name: 'XLS' }]);
 const optionsEsport = ref([{ name: 'ALL' }, { name: 'SELECTED' }]);
@@ -413,7 +405,9 @@ const state = ref('');
 const openDialog = (mode) => {
     formDialogTitle.value = 
         mode === 'new' ? 'Create new register' :
-        mode === 'edit' ? 'Edit new register' : 'Clone new register';
+        mode === 'edit' ? 'Edit new register' : 
+        mode === 'clone' ? 'Clone new register' :
+        mode === 'patch' ? 'Patch new register' : 'View new register';
 
     if (mode === 'new') {
         resetForm();
@@ -421,11 +415,14 @@ const openDialog = (mode) => {
         toast.add({ severity: 'error', summary: 'Error', detail: 'Select a record', life: 3000 });
         return;
     } else {
-        const { code, company: empresa, farm: farmParameter, name: nombre } = listRowSelect.value[0];
-        name.value = nombre;
-        codeV.value = code;
-        company.value = { id: empresa.uuid, name: empresa.name };
-        farm.value = { id: farmParameter.uuid, name: farmParameter.name };
+        const {received_qty:received_qty, notes_small:notes_small} = listRowSelect.value[0];
+        received_qtyV.value = received_qty;
+        notesV.value = notes_small;
+        // const { code, company: empresa, farm: farmParameter, name: nombre } = listRowSelect.value[0];
+        // name.value = nombre;
+        // codeV.value = code;
+        // company.value = { id: empresa.uuid, name: empresa.name };
+        // farm.value = { id: farmParameter.uuid, name: farmParameter.name };
         
     }
 
@@ -447,21 +444,27 @@ const openDelete = () => {
 const actionRecordManager = handleSubmitNew(async (values) => {
     const responseCRUD = ref();
     const data = {
-        code: values.codeV,
-        name: values.name,
-        company_uuid: values.company ? values.company.id : companyDefault,
-        farm_uuid: values.farm ? values.farm.id : farmDefault
+        received_qty: values.received_qtyV,
+        notes_small: values.notesV,
+        // code: values.codeV,
+        // name: values.name,
+        // company_uuid: values.company ? values.company.id : companyDefault,
+        // farm_uuid: values.farm ? values.farm.id : farmDefault
     };
 
     // Verifica si es un nuevo registro o si es edición/duplicado
     if (state.value === 'new') {
-        responseCRUD.value = await crudService.create(data);
-    } else {
-        const { uuid } = listRowSelect.value[0];
-        responseCRUD.value = state.value === 'edit' 
-            ? await crudService.update(uuid, data) 
-            : await crudService.create(data);
-    }
+    responseCRUD.value = await crudService.create(data);
+} else if (state.value === 'edit') {
+    const { uuid } = listRowSelect.value[0];
+    responseCRUD.value = await crudService.update(uuid, data);
+} else if (state.value === 'patch') {
+    const { uuid } = listRowSelect.value[0];
+    responseCRUD.value = await crudService.patch("/transactions/shipment/discrepancies",uuid, data); // Assuming you have a patch method in crudService
+} else {
+    const { uuid } = listRowSelect.value[0];
+    responseCRUD.value = await crudService.create(data);
+}
 
     // Mostrar notificación y cerrar el diálogo si la operación fue exitosa
     toast.add({ 
@@ -545,6 +548,28 @@ const remove = (aver) => {
     }
 };
 
+const searchEmployees = (event) => {
+    setTimeout(() => {
+        if (!event.query.trim().length) {
+            employees.value = [...Employees.value];
+        } else {
+            employees.value = Employees.value.filter((fram) => {
+                return fram.name.toLowerCase().startsWith(event.query.toLowerCase());
+            });
+        }
+    }, 200);
+};
+const searchVehicles = (event) => {
+    setTimeout(() => {
+        if (!event.query.trim().length) {
+            vehicles.value = [...Vehicles.value];
+        } else {
+            vehicles.value = Vehicles.value.filter((fram) => {
+                return fram.name.toLowerCase().startsWith(event.query.toLowerCase());
+            });
+        }
+    }, 200);
+};
 const searchCompanies = (event) => {
     setTimeout(() => {
         if (!event.query.trim().length) {
