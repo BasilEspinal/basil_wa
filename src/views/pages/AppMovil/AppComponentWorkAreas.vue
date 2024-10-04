@@ -1,5 +1,5 @@
 <script setup>
-import { ref, computed, onMounted, watch } from 'vue';
+import { ref, computed, onMounted, watch, onBeforeMount } from 'vue';
 import UseAppMovil from '@/composables/AppMovil/UseAppMovil.js';
 import { useToast } from 'primevue/usetoast';
 import UserAppMovil from './UserAppMovil.vue';
@@ -24,7 +24,7 @@ const holiday = ref('Normal');
 const lotes = ref(null);
 const search = ref(null);
 
-onMounted(async () => {
+onBeforeMount(async () => {
     await initData();
     getUser();
     getData();
@@ -50,8 +50,10 @@ const getData = async () => {
 };
 
 watch(data, () => {
+    
     lotes.value = data.value?.crop_lots;
 });
+
 
 watch(search, () => {
     searchUsers();
@@ -177,7 +179,7 @@ function searchUsers() {
                     
                 </template>
                 <ScrollPanel class="maxHeightC">
-                    <ShippingDelivered :data="{name:'Sebastian' }" :batchs="lotes" />
+                    <ShippingDelivered :data="data" :batchs="lotes" />
                 </ScrollPanel>                    
             </TabPanel>
 
@@ -190,7 +192,7 @@ function searchUsers() {
                 </template>
                 <ScrollPanel class="maxHeightC">
 
-                    <DeliveringDelivered :data="{name:'Sebastian' }" :batchs="lotes" />
+                    <DeliveringDelivered :data="data" :batchs="lotes" />
                 </ScrollPanel>
             </TabPanel>
         </TabView>

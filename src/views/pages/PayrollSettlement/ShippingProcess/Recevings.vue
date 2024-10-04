@@ -190,7 +190,7 @@ const { t } = useI18n();
 const dynamicColumns = [
   {field: 'transaction_date', header: 'Transaction Date', frozen: true, color: false},  
   {field: 'voyage_num', header: 'Voyage Num', frozen: false, color: false},
-  {field: 'vehicle.code', header: 'Vehicle Name', frozen: false, color: false},  
+  {field: 'vehicle.vehicle_type', header: 'Vehicle Name', frozen: false, color: false},  
   {field: 'received_qty', header: 'Received Qty', frozen: false, color: false},
   {field: 'difference_qty', header: 'Difference Qty', frozen: false, color: false},
   {field: 'alarm_delivery', header: 'alarm_delivery', frozen: false, color: false},

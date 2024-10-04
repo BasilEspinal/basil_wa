@@ -239,7 +239,7 @@ const dynamicColumns = [
   {field: 'transaction_date', header: 'Transaction Date', frozen: true, color: false},  
   {field: 'shipping_statuses.name', header: 'Shipping Status', frozen: false, color: true},
   {field: 'voyage_num', header: 'Voyage Num', frozen: false, color: false},
-  {field: 'vehicle.code', header: 'Vehicle Name', frozen: false, color: false},  
+  {field: 'vehicle.vehicle_type', header: 'Vehicle Name', frozen: false, color: false},  
   {field: 'sent_qty', header: 'Send Qty', frozen: false, color: false},
   {field: 'tasks_of_type.name', header: 'Task Of Type', frozen: false, color: false},
   {field: 'dispatch_number_lot', header: 'Dispatch Number', frozen: false, color: false},

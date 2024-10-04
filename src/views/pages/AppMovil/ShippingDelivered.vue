@@ -27,12 +27,8 @@
             <div class="mb-3 col-12 md:col-6 lg:col-6">
                 <div class="flex align-items-center">
                             
-                                <label for="username" class="font-semibold w-3">{{t('appmovil.empleado')}}</label>
+                                <label for="username" class="font-semibold w-3">{{t('appmovil.vehicle_employee')}}</label>
                                 <AutoComplete v-model="emplooyesV" inputId="ac" class="flex-auto" :suggestions="employees" @complete="searchEmployees" field="name" dropdown placeholder="Select Employees" />
-                            
-                            <small id="username-help" :class="{ 'p-invalid text-red-700': errorsNew['emplooyesV'] }">
-                                {{ errorsNew.emplooyesV }}
-                            </small>
 
                             <!--Pendiente-->
                             <FrontEndErrors :errorsNew="errorsNew" name="emplooyesV" />
@@ -44,18 +40,13 @@
 
 
 
-
+                    
                             <div class="mb-3 col-12 md:col-6 lg:col-6">
                         <div class="flex align-items-center">
                                 
                                     <label for="username" class="font-semibold w-6rem">{{ t('appmovil.vehicle') }}</label>
                                     <AutoComplete v-model="vehiclesV" inputId="ac" class="flex-auto" :suggestions="vehicles" @complete="searchVehicles" field="name" dropdown placeholder="Select Vehicles" />
                                 
-
-                                <small id="username-help" :class="{ 'p-invalid text-red-700': errorsNew['vehiclesV'] }">
-                                    {{ errorsNew['vehiclesV'] }}
-                                </small>
-
                                 <FrontEndErrors :errorsNew="errorsNew" name="vehiclesV" />
                                 <BackendErrors :name="errorResponseAPI?.errors?.vehicle_id" />
                             </div>
@@ -157,7 +148,7 @@ const {
         transaction_dateV: '',
         product_typeV: { name: '', id: '' },
         emplooyesV: { name: '', id: '' },
-        vehiclesV: { name: '', id: '' },
+        vehiclesV: { name: '', id: null},
         request_qty_V: 0,
         farm: { name: '', id: '' },
         company: { name: '', id: '' }
@@ -182,7 +173,7 @@ const {
             vehiclesV: z
                 .object({
                     name: z.string().optional(),
-                    id: z.string().optional()
+                    id: z.number().optional()
                 })
                 .optional(),
             selected_crops_lots: z.object({
@@ -217,18 +208,19 @@ const [notes] = defineField('notes');
 
 onBeforeMount(async () => {
     readAll();
-    console.log('data', props.data);
-    // dataStart.value = await getRequest(`/appmovil/datastart`);
+    
     dataStart.value= await InitialDataService.getDatastart();
-    console.log('dataStart', dataStart.value);
-    // dataPlanner.value = await getRequest(`/appmovil/tasksplanner?filter[tasks_of_type_id]=${dataStart.value.data.data.employee.workCenter.taskoftype_id.id}&filter[company_id]=${dataStart.value.data.data.company.id}&filter[farm_id]=${dataStart.value.data.data.farm.id}`);
-    dataPlanner.value = await InitialDataService.getTasksPlanner(dataStart.value);
-    console.log('dataPlanner', dataPlanner.value);
+    dataPlanner.value = await InitialDataService.getTasksPlanner(dataStart.value);    
+    vehiclesV.value = {
+    name: dataPlanner.value.data.data[0].vehicle.vehicle_type,  
+    id: dataPlanner.value.data.data[0].vehicle.id       
+};
     lots.value.push(props.batchs)
 
     
 
 });
+
 
 const readAll = async () => {
     // const respTasksOfType = await getRequest('/task_of_types');
@@ -246,8 +238,8 @@ const readAll = async () => {
     // const respVehicles = await getRequest('/vehicles');
     const respVehicles = await InitialDataService.getVehicles();
     if (!respVehicles.ok) toast.add({ severity: 'error', detail: 'Error' + respVehicles.error, life: 3000 });
-    Vehicles.value = respVehicles.data.data.map((vehicle) => ({ id: vehicle.uuid, name: vehicle.vehicle_type }));
-    console.log(Vehicles.value);
+    Vehicles.value = respVehicles.data.data.map((vehicle) => ({ id: vehicle.id, name: vehicle.vehicle_type }));
+    //console.log(Vehicles.value);
 
 };
 
