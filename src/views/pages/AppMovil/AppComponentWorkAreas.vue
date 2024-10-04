@@ -4,82 +4,53 @@ import UseAppMovil from '@/composables/AppMovil/UseAppMovil.js';
 import { useToast } from 'primevue/usetoast';
 import UserAppMovil from './UserAppMovil.vue';
 import { useI18n } from 'vue-i18n';
-import useData from '@/composables/DataAPI/FetchDataAPICopy.js';
 import { useLayout } from '@/layout/composables/layout';
+import { useAppMovilService } from '../../../service/appMovil/appMovilService';
 import ShippingDelivered from './ShippingDelivered.vue';
 import DeliveringDelivered from './DeliveringDelivered.vue';
 const { t } = useI18n();
 const toast = useToast();
-const { getRequest, postRequest, putRequest, deleteRequest } = useData();
 const { worksDay } = UseAppMovil();
 const { layoutConfig } = useLayout();
 
-const workCenterData = ref(null);
+const { HOLIDAY, initData, TASK_OF_TYPE, getUsers, getDataTasksplanner } = useAppMovilService();
+
 const titulo = ref('');
 const totalPrices = ref(null);
-const CopanyId = ref(null);
-const FarmId = ref(null);
 const users = ref(null);
 const filterUsers = ref(null);
 const data = ref(null);
 const holiday = ref('Normal');
-const Tarif = ref(null);
 const lotes = ref(null);
 const search = ref(null);
 
 onMounted(async () => {
-    workCenterData.value = JSON.parse(sessionStorage.getItem('accessSessionWorkCenter'));
-    CopanyId.value = sessionStorage.getItem('accessSessionCompanyId');
-    FarmId.value = sessionStorage.getItem('accessSessionFarmId');
+    await initData();
+    getUser();
     getData();
-    getUsers();
-    getHoliday();
-
-
-    
+    holiday.value = HOLIDAY;
+    titulo.value = t('appmovil.titulo') + ' ' + TASK_OF_TYPE.name;
 });
-
-
 
 const logoUrl = computed(() => {
     return `layout/images/${layoutConfig.darkTheme.value ? 'logo-white' : 'logo-dark'}.png`;
 });
 
-const getUsers = async () => {
-    const response = await getRequest(`/appmovil/employees?filter[work_center_id]=${workCenterData.value.id}`);
+const getUser = async () => {
+    const response = await getUsers();
     if (!response.ok) toast.add({ severity: 'error', detail: 'Error' + response.error, life: 3000 });
-    users.value = response.data.data ?? null;
-    filterUsers.value = response.data.data ?? [];
+    users.value = response.data.ok ?? response.data.data;
+    filterUsers.value = response.data.ok ?? response.data.data;
 };
 
 const getData = async () => {
-    const response = await getRequest(`/appmovil/tasksplanner?filter[tasks_of_type_id]=${workCenterData.value.taskoftype_id.id}&filter[company_id]=${CopanyId.value}&filter[farm_id]=${FarmId.value}`);
+    const response = await getDataTasksplanner();
     if (!response.ok) toast.add({ severity: 'error', detail: 'Error' + response.error, life: 3000 });
-    data.value = response.data.data[0];
-};
-
-const getHoliday = async () => {
-    // const response = await getRequest(`/appmovil/calendars?filter[company_id]=${CopanyId.value}&filter[farm_id]=${FarmId.value}`);
-    const response = await getRequest(`/appmovil/calendars?filter[company_id]=${CopanyId.value}`);
-    if (!response.ok) toast.add({ severity: 'error', detail: 'Error' + response.error, life: 3000 });
-    console.log(response.data.data);
-    holiday.value = response.data.data.length === 0 ? 'Normal' : 'Festivo';
-    console.log(holiday.value);
-};
-
-const getTarifa = async () => {
-    const { packing_type } = data.value;
-    const response = await getRequest(`/appmovil/taskstarif?filter[tasks_of_type_id]=${workCenterData.value.taskoftype_id.id}&filter[packing_type_id]=${packing_type.id}`);
-    if (!response.ok) toast.add({ severity: 'error', detail: 'Error' + response.error, life: 3000 });
-    Tarif.value = response.data;
+    data.value = response.data;
 };
 
 watch(data, () => {
-    titulo.value = workCenterData.value.taskoftype_id.name;
-    if (data.value) {
-        getTarifa();
-        lotes.value = data.value.crop_lots;
-    }
+    lotes.value = data.value?.crop_lots;
 });
 
 watch(search, () => {
@@ -111,7 +82,7 @@ function searchUsers() {
     <div class="card maxHeightY">
         <div class="flex">
             <div class="w-full">
-                <h2>{{ t('appmovil.titulo') }} {{ titulo }}</h2>
+                <h2>{{ titulo }}</h2>
             </div>
             <div>
                 <div class="p-inputgroup">
@@ -133,7 +104,7 @@ function searchUsers() {
                 </template>
                 <ScrollPanel class="maxHeightC">
                     <div v-if="filterUsers">
-                        <UserAppMovil :dataUsers="filterUsers" :Lote="lotes" :Taridf="Tarif" :diaFestivo="holiday" :data="data" />
+                        <UserAppMovil :dataUsers="filterUsers" :Lote="lotes" :data="data" />
                     </div>
                     <div v-else>
                         <div class="flex flex-column align-items-center justify-content-center m-4">
