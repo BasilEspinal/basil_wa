@@ -311,7 +311,7 @@ export const messages = {
             diaFestivo: 'Festivo',
             usersAvailable: 'Usuarios no disponibles',
             nodataplanner: 'No hay datos para el planeador' ,
-            infonodataplanner: 'No hay datos planeados, por favor verifique la configuración del centro de trabajo, la compañía y la finca'
+            infonodataplanner: 'No hay datos planeados, por favor verifique la configuración del centro de trabajo, la compañía y la finca.'
         }
     }
 };
