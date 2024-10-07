@@ -172,7 +172,7 @@ import BackendErrors from '@/layout/composables/Errors/BackendErrors.vue';
 import FrontEndErrors from '@/layout/composables/Errors/FrontendErrors.vue';
 import ability from '@/service/ability.js';
 import { CrudService } from '@/service/CRUD/CrudService';
-import { InitialDataService } from '@/service/initialData';
+import { InitialDataService } from '@/service/InitialData';
 import { FilterMatchMode, FilterOperator } from 'primevue/api';
 import { toTypedSchema } from '@vee-validate/zod';
 import {computed} from 'vue';
