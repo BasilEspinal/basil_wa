@@ -148,7 +148,9 @@ export const messages = {
             precio: 'Price',
             diaNormal: 'Normal day',
             diaFestivo: 'Holiday',
-            usersAvailable: 'Users not available'
+            usersAvailable: 'Users not available',
+            nodataplanner: 'No data for the planner',
+            infonodataplanner: 'There is no data for the planner, please check the configuration of the work center, the company and the farm'
         }
     },
     es: {
@@ -307,7 +309,9 @@ export const messages = {
             precio: 'Precio',
             diaNormal: 'Normal',
             diaFestivo: 'Festivo',
-            usersAvailable: 'Usuarios no disponibles'
+            usersAvailable: 'Usuarios no disponibles',
+            nodataplanner: 'No hay datos para el planeador' ,
+            infonodataplanner: 'No hay datos para el planeador, por favor verifique la configuración del centro de trabajo, la compañía y la finca'
         }
     }
 };

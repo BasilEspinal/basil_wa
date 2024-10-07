@@ -314,15 +314,7 @@ const readAll = async () => {
     if (!respCompan.ok) toast.add({ severity: 'error', detail: 'Error' + respCompan.error, life: 3000 });
     Compan.value = respCompan.data.data.map((comp) => ({ id: comp.uuid, name: comp.name }));
 
-    const respEmployees = await getRequest('/appmovil/employees?filter[work_center_id]=2');
-    if (!respEmployees.ok) toast.add({ severity: 'error', detail: 'Error' + respEmployees.error, life: 3000 });
-    Employees.value = respEmployees.data.data.map((employee) => ({ id: employee.uuid, name: employee.first_name }));
-    employees.value = respEmployees.data.data.map((employee) => employee.name);
 
-    const respVehicles = await getRequest('/vehicles');
-    if (!respVehicles.ok) toast.add({ severity: 'error', detail: 'Error' + respVehicles.error, life: 3000 });
-    Vehicles.value = respVehicles.data.data.map((vehicle) => ({ id: vehicle.uuid, name: vehicle.vehicle_type }));
-    console.log(Vehicles.value);
 
 };
 const loadingData = async () => {

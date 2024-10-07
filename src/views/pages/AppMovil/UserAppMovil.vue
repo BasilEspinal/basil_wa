@@ -8,6 +8,8 @@ import UseAppMovil from '@/composables/AppMovil/UseAppMovil.js';
 import ItemUserAppMovil from './ItemUserAppMovil.vue';
 
 const { worksDay, data_planner } = UseAppMovil();
+
+console.log('data_planner', data_planner);
 const props = defineProps({
     dataUsers: { type: Array },
     Lote: { type: Array },

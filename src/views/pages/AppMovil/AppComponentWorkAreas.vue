@@ -81,7 +81,7 @@ function searchUsers() {
 </script>
 
 <template>
-    <div class="card maxHeightY">
+    <div v-if="true" class="card maxHeightY">
         <div class="flex">
             <div class="w-full">
                 <h2>{{ titulo }}</h2>
@@ -198,6 +198,20 @@ function searchUsers() {
         </TabView>
         <Toast />
     </div>
+<div v-else>
+    <div class="flex flex-column align-items-center justify-content-center m-4">
+                            <div style="border-radius: 56px; padding: 0.3rem; background: linear-gradient(180deg, rgba(255, 30, 60, 0.4) 10%, rgba(33, 150, 243, 0) 40%, rgba(255, 30, 60, 0.4) 80%)">
+                                <div class="w-full surface-card py-5 px-5 sm:px-8 flex flex-column align-items-center" style="border-radius: 53px">
+                                    <div class="grid flex flex-column align-items-center">
+                                        <img :src="logoUrl" alt="logo" class="mb-2 w-4rem flex-shrink-0" />
+                                        <h1 class="text-900 font-bold text-3xl mb-1">{{t('appmovil.nodataplanner')}}</h1>
+                                        <img src="/demo/images/error/asset-error.svg" alt="Error" class="mb-4" width="50%" />
+                                        <span class="text-700 mb-4">{{t('appmovil.infonodataplanner')}}</span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+</div>
 </template>
 
 <style lang="scss" scoped>

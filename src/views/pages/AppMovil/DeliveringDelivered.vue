@@ -27,18 +27,18 @@
         <div class="mb-3 col-12 md:col-6 lg:col-4">
             <div class="flex align-items-center">
                         
-                            <label for="username" class="font-semibold w-3">{{t('appmovil.vehicle_employee')}}</label>
+                            <label for="username" class="font-semibold w-6rem">{{t('appmovil.vehicle_employee')}}</label>
                             <AutoComplete v-model="emplooyesV" inputId="ac" class="flex-auto" :suggestions="employees" @complete="searchEmployees" field="name" dropdown placeholder="Select Employees" />
                         <!--Pendiente-->
                         <FrontEndErrors :errorsNew="errorsNew" name="emplooyesV" />
                         <BackendErrors :name="errorResponseAPI?.errors?.employee_transport_id" />
                     </div>
                 </div>
-        <pre>{{ voyage_num_V }}</pre>
+        
                 <div class="mb-3 col-12 md:col-4 lg:col-4">
             <div class="flex align-items-center">
                         
-                            <label for="username" class="font-semibold w-3">{{t('appmovil.voyage_number')}}</label>
+                            <label for="username" class="font-semibold w-6rem">{{t('appmovil.voyage_number')}}</label>
                             <AutoComplete v-model="voyage_num_V" inputId="ac" class="flex-auto" :suggestions="shippingsDelivered" @complete="searchShippingsDelivered" field="name" dropdown placeholder='Select one' />
                         <!--Pendiente-->
                         <FrontEndErrors :errorsNew="errorsNew" name="voyage_num_V" />
@@ -68,7 +68,7 @@
                     <div class="mb-3 col-12 md:col-4 lg:col-4">
                         <div class="flex align-items-center">
                                 
-                                <label class="font-semibold w-3" for="crops_lots">{{ t('appmovil.lote') }}</label>
+                                <label class="font-semibold w-6rem" for="crops_lots">{{ t('appmovil.lote') }}</label>
                                 <!-- <AutoComplete v-model="selected_crops_lots" inputId="ac" class="flex-auto" :suggestions="lots" @complete="searchLots" field="code" dropdown placeholder="Select lots" /> -->
                                 <Dropdown v-model="selected_crops_lots" :options="batchs" filter optionLabel="code" class="flex-auto" />
 
@@ -248,7 +248,6 @@ const readAll = async () => {
 
 // const respEmployees = await getRequest('/appmovil/employees?filter[work_center_id]=2');
 const respEmployees = await InitialDataService.getEmployeesWorkCenter(2);
-console.log('respEmployees', respEmployees);
 if (!respEmployees.ok) toast.add({ severity: 'error', detail: 'Error' + respEmployees.error, life: 3000 });
 Employees.value = respEmployees.data.data.map((employee) => ({ id: employee.id, name: employee.first_name }));
 employees.value = respEmployees.data.data.map((employee) => employee.name);

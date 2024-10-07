@@ -27,7 +27,7 @@
             <div class="mb-3 col-12 md:col-6 lg:col-6">
                 <div class="flex align-items-center">
                             
-                                <label for="username" class="font-semibold w-3">{{t('appmovil.vehicle_employee')}}</label>
+                                <label for="username" class="font-semibold w-6rem">{{t('appmovil.vehicle_employee')}}</label>
                                 <AutoComplete v-model="emplooyesV" inputId="ac" class="flex-auto" :suggestions="employees" @complete="searchEmployees" field="name" dropdown placeholder="Select Employees" />
 
                             <!--Pendiente-->
@@ -57,7 +57,7 @@
                         <div class="mb-3 col-12 md:col-6 lg:col-6">
                             <div class="flex align-items-center">
                                     
-                                    <label class="font-semibold w-3" for="crops_lots">{{ t('appmovil.lote') }}</label>
+                                    <label class="font-semibold w-6rem" for="crops_lots">{{ t('appmovil.lote') }}</label>
                                     <!-- <AutoComplete v-model="selected_crops_lots" inputId="ac" class="flex-auto" :suggestions="lots" @complete="searchLots" field="code" dropdown placeholder="Select lots" /> -->
                                     <Dropdown v-model="selected_crops_lots" :options="batchs" filter optionLabel="code" class="flex-auto" />
 
