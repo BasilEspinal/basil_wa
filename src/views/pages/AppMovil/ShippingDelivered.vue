@@ -104,7 +104,7 @@ import BackendErrors from '@/views/Errors/BackendErrors.vue';
 import FrontEndErrors from '@/layout/composables/Errors/FrontendErrors.vue';
 import ability from '@/service/ability.js';
 import { CrudService } from '@/service/CRUD/CrudService';
-import { InitialDataService } from '@/service/initialData';
+import { InitialDataService } from '@/service/InitialData';
 import {computed} from 'vue';
 const { t } = useI18n();
 const toast = useToast();
