@@ -14,7 +14,7 @@
                     <Button :disabled="!(listRowSelect.length > 0 && listRowSelect.length < 2)" label="Detalles" icon="pi pi-bars" class="p-button-success mb-2 mt-2" @click="openForm('detalles')" size="large" />
                         <Divider layout="vertical" />
                         
-                        <Button :disabled="!(listRowSelect.length > 0 && listRowSelect.length < 2)" label="Edit" icon="pi pi-file-edit" class="p-button-help mb-2 mt-2" @click="openDialog('edit')" size="large" />    
+                        <Button :disabled="!(listRowSelect.length > 0 && listRowSelect.length < 2)" label="Edit" icon="pi pi-file-edit" class="p-button-help mb-2 mt-2" @click="openDialog('patch')" size="large" />    
                             <Divider layout="vertical" />
                     <!-- 
                     <Button :disabled="listRowSelect.length > 0" label="New" icon="pi pi-plus" class="p-button-success mb-2 mt-2" @click="openDialog('new')" size="large" />
@@ -115,52 +115,45 @@
         </Dialog>
         <Dialog v-model:visible="formDialog" modal :header="formDialogTitle" class="p-fluid text-center mx-auto">
 
+
+
+
                                     <div class="grid">
-                                        <div class="mb-3 col-12 md:col-6 lg:col-6">
-                                            <div class="flex align-items-center">
-                                            <label for="username" class="font-semibold w-6rem">Name :</label>
-                                            <InputText id="username" v-model="name" class="flex-auto" autocomplete="off" v-bind="nameProps" />
-                                        </div>
-                                        <FrontEndErrors :errorsNew="errorsNew" name="name" />
-                                        <BackendErrors :name="errorResponseAPI?.errors?.code" />
-                                    </div>
 
-                                    <div class="mb-3 col-12 md:col-6 lg:col-6">
-                                        <div class="flex align-items-center">
-                                            <label for="username" class="font-semibold w-6rem">Code :</label>
-                                            <InputText id="username" v-model="codeV" class="flex-auto" autocomplete="off" v-bind="codeVProps" />
-                                        </div>
-                                        <FrontEndErrors :errorsNew="errorsNew" name="codeV" />
-                                        <BackendErrors :name="errorResponseAPI?.errors?.code" />
-                                    </div>
 
-                                    <div class="mb-3 col-12 md:col-6 lg:col-6">
-                                        <div class="flex align-items-center">
-                                            <label for="farm" class="font-semibold w-6rem">Farm :</label>
-                                            
-                                            <AutoComplete 
-                                            v-model="farm"  
-                                            class="flex-auto"
-                                            :suggestions="farms" 
-                                            @complete="searchBranches" 
-                                            optionLabel="name"
-                                            placeholder="Introduce the value" 
-                                            dropdown 
-                                            />
+                                        <div class="mb-3 col-12 md:col-12 lg:col-12">
+                        <div class="flex align-items-center">
+                            
+                                <label for="confirmed_qty_V" class="font-semibold w-6rem"> {{ t('appmovil.quantityRequested') }}</label>
+                                <!-- <InputNumber id="confirmed_qty_V" v-model="confirmed_qty_V" class="flex-auto" inputId="minmax" :min="0" :max="1000" /> -->
+                                <InputNumber v-model="confirmed_qty_V" class="flex-auto" showButtons buttonLayout="horiontal" :min="0">
+                                            <template #incrementbuttonicon>
+                                                <span class="pi pi-plus" />
+                                            </template>
+                                            <template #decrementbuttonicon>
+                                                <span class="pi pi-minus" />
+                                            </template>
+                                        </InputNumber>
+                            </div>
+                            <!-- <pre>{{confirmed_qty_V}}</pre> -->
+                            <FrontEndErrors :errorsNew="errorsNew" name="confirmed_qty_V" />
+                            <BackendErrors :name="errorResponseAPI?.errors?.request_qty" />
+                            
+                        </div>
 
-                                        </div>
-                                        <FrontEndErrors :errorsNew="errorsNew" name="farm" />
-                                        <BackendErrors :name="errorResponseAPI?.errors?.farm_uuid" />
-                                    </div>
+                        <div class="mb-3 col-12 md:col-12 lg:col-12">
+                        <div class="flex align-items-center">
+                                
+                                <label class="font-semibold w-6rem" for="textarea">{{ t('appmovil.notas') }}</label>
+                                <Textarea v-model="notes" class="flex-auto" inputId="textarea" rows="5" cols="30"  variant="filled"  />
+                            <FrontEndErrors :errorsNew="errorsNew" name="notes" />
+                            <BackendErrors :name="errorResponseAPI?.errors?.notes_small" />
+                                
+                            </div>
+                        </div>
+                        
 
-                                    <div class="mb-3 col-12 md:col-6 lg:col-6">
-                                        <div class="flex align-items-center">
-                                            <label for="company" class="font-semibold w-6rem">Company:</label>
-                                            <AutoComplete v-model="company" class="flex-auto" inputId="ac" :suggestions="compa" @complete="searchCompanies" optionLabel="name" dropdown />
-                                        </div>
-                                        <FrontEndErrors :errorsNew="errorsNew" name="company" />
-                                        <BackendErrors :name="errorResponseAPI?.errors?.company_uuid" />
-                                    </div>
+
                                 </div>
 
                 <div class="flex justify-content-end gap-2 flex-auto">
@@ -280,7 +273,8 @@ const openForm = (mode) => {
 
 
 const prueba = ref({revisar: 'revisar GET-POST-PUT-DELETE'});
-let endpoint = ref('/transactions/shipment/discrepancies');  //replace endpoint with your endpoint
+const uuidDiscrepancy = ref('');
+let endpoint = ref(`/transactions/shipment/discrepancies`);  //replace endpoint with your endpoint
 const crudService = CrudService(endpoint.value);
 const errorResponseAPI = crudService.getErrorResponse();
 const dataFromComponent = ref();
@@ -386,29 +380,13 @@ const {
 } = useForm({
     validationSchema: toTypedSchema(
         z.object({
-            name: z.string().min(4),
-            codeV: z.string().min(4),
-            farm: z
-                .object({
-                    id: z.string().min(4),
-                    name: z.string().min(4)
-                    
-                })
-                .optional(),
-            company: z
-                .object({
-                    id: z.string().min(4),
-                    name: z.string().min(4)
-                    
-                })
-                .optional()
+            confirmed_qty_V:z.number().min(1),
+            notes: z.string().optional(),
         })
     )
 });
-const [name, nameProps] = defineField('name');
-const [codeV, codeVProps] = defineField('codeV');
-const [farm] = defineField('farm');
-const [company] = defineField('company');
+const [confirmed_qty_V, confirmed_qty_VProps] = defineField('confirmed_qty_V');
+const [notes] = defineField('notes');
 
 const extenciones = ref([{ name: 'CSV' }, { name: 'XLS' }]);
 const optionsEsport = ref([{ name: 'ALL' }, { name: 'SELECTED' }]);
@@ -424,6 +402,7 @@ const state = ref('');
 
 
 const openDialog = (mode) => {
+    
     formDialogTitle.value = 
         mode === 'new' ? 'Create new register' :
         mode === 'edit' ? 'Edit new register' : 'Clone new register';
@@ -434,12 +413,10 @@ const openDialog = (mode) => {
         toast.add({ severity: 'error', summary: 'Error', detail: 'Select a record', life: 3000 });
         return;
     } else {
-        const { code, company: empresa, farm: farmParameter, name: nombre } = listRowSelect.value[0];
-        name.value = nombre;
-        codeV.value = code;
-        company.value = { id: empresa.uuid, name: empresa.name };
-        farm.value = { id: farmParameter.uuid, name: farmParameter.name };
         
+        
+        
+
     }
 
     formDialog.value = true;
@@ -459,22 +436,27 @@ const openDelete = () => {
 
 const actionRecordManager = handleSubmitNew(async (values) => {
     const responseCRUD = ref();
+    const { uuid } = listRowSelect.value[0];
     const data = {
-        code: values.codeV,
-        name: values.name,
-        company_uuid: values.company ? values.company.id : companyDefault,
-        farm_uuid: values.farm ? values.farm.id : farmDefault
-    };
+        confirmed_qty: values.confirmed_qty_V,
+        notes_small: values.notes,
 
-    // Verifica si es un nuevo registro o si es edición/duplicado
+        
+
+    };
+console.log('data:', data);
     if (state.value === 'new') {
-        responseCRUD.value = await crudService.create(data);
-    } else {
-        const { uuid } = listRowSelect.value[0];
-        responseCRUD.value = state.value === 'edit' 
-            ? await crudService.update(uuid, data) 
-            : await crudService.create(data);
-    }
+
+} else if (state.value === 'edit') {
+
+
+} else if (state.value === 'patch') {
+responseCRUD.value = await crudService.patch(uuid,data);
+} 
+else if (state.value === 'delete') {
+} else {
+
+}    
 
     // Mostrar notificación y cerrar el diálogo si la operación fue exitosa
     toast.add({ 
@@ -488,6 +470,9 @@ const actionRecordManager = handleSubmitNew(async (values) => {
         formDialog.value = false;
         listRowSelect.value = [];
         selectedRegisters.value = [];
+    }
+    else{
+        console.log('Error:', responseCRUD.value.error);
     }
 
     // Recargar datos

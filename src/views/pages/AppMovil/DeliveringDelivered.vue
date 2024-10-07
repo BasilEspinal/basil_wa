@@ -5,9 +5,9 @@
         <div class="mb-3 col-12 md:col-6 lg:col-6">
                         <div class="flex align-items-center">
                             
-                                <label for="request_qty_V" class="font-semibold w-6rem"> {{ t('appmovil.quantityRequested') }}</label>
-                                <!-- <InputNumber id="request_qty_V" v-model="request_qty_V" class="flex-auto" inputId="minmax" :min="0" :max="1000" /> -->
-                                <InputNumber v-model="request_qty_V" class="flex-auto" showButtons buttonLayout="horiontal" :min="0">
+                                <label for="received_qty_V" class="font-semibold w-6rem"> {{ t('appmovil.quantityRequested') }}</label>
+                                <!-- <InputNumber id="received_qty_V" v-model="received_qty_V" class="flex-auto" inputId="minmax" :min="0" :max="1000" /> -->
+                                <InputNumber v-model="received_qty_V" class="flex-auto" showButtons buttonLayout="horiontal" :min="0">
                                             <template #incrementbuttonicon>
                                                 <span class="pi pi-plus" />
                                             </template>
@@ -16,15 +16,15 @@
                                             </template>
                                         </InputNumber>
                             </div>
-                            <!-- <pre>{{request_qty_V}}</pre> -->
-                            <FrontEndErrors :errorsNew="errorsNew" name="request_qty_V" />
+                            <!-- <pre>{{received_qty_V}}</pre> -->
+                            <FrontEndErrors :errorsNew="errorsNew" name="received_qty_V" />
                             <BackendErrors :name="errorResponseAPI?.errors?.request_qty" />
                             
                         </div>
                         
         
 
-        <div class="mb-3 col-12 md:col-6 lg:col-6">
+        <div class="mb-3 col-12 md:col-6 lg:col-4">
             <div class="flex align-items-center">
                         
                             <label for="username" class="font-semibold w-3">{{t('appmovil.vehicle_employee')}}</label>
@@ -34,13 +34,25 @@
                         <BackendErrors :name="errorResponseAPI?.errors?.employee_transport_id" />
                     </div>
                 </div>
+        <pre>{{ voyage_num_V }}</pre>
+                <div class="mb-3 col-12 md:col-4 lg:col-4">
+            <div class="flex align-items-center">
+                        
+                            <label for="username" class="font-semibold w-3">{{t('appmovil.voyage_number')}}</label>
+                            <AutoComplete v-model="voyage_num_V" inputId="ac" class="flex-auto" :suggestions="shippingsDelivered" @complete="searchShippingsDelivered" field="name" dropdown placeholder='Select one' />
+                        <!--Pendiente-->
+                        <FrontEndErrors :errorsNew="errorsNew" name="voyage_num_V" />
+                        <BackendErrors :name="errorResponseAPI?.errors?.voyage_num" />
+                    </div>
+                </div>
+                
                 
 
 
 
 
 
-                        <div class="mb-3 col-12 md:col-6 lg:col-6">
+                        <div class="mb-3 col-12 md:col-4 lg:col-4">
                     <div class="flex align-items-center">
                             
                                 <label for="username" class="font-semibold w-6rem">{{ t('appmovil.vehicle') }}</label>
@@ -53,7 +65,7 @@
                     
 
 
-                    <div class="mb-3 col-12 md:col-6 lg:col-6">
+                    <div class="mb-3 col-12 md:col-4 lg:col-4">
                         <div class="flex align-items-center">
                                 
                                 <label class="font-semibold w-3" for="crops_lots">{{ t('appmovil.lote') }}</label>
@@ -105,9 +117,12 @@ import ability from '@/service/ability.js';
 import { CrudService } from '@/service/CRUD/CrudService';
 import { InitialDataService } from '@/service/initialData';
 import {computed} from 'vue';
+import {useAppMovilService} from '@/service/appMovil/appMovilService.js';
+
 const { t } = useI18n();
 const toast = useToast();
 const { getRequest, postRequest, putRequest, deleteRequest, patchRequest, errorResponseAPI } = useData();
+const { getShippingsDelivered } = useAppMovilService();
 const tasks_of_type = ref([]);
 const Tasks_of_type = ref([]);
 const Tasks_of_type_filter = ref([]);
@@ -116,13 +131,15 @@ const Employees = ref([]);
 const vehicles = ref([]);
 const Vehicles = ref([]);
 const dataStart = ref([]);
-const crudService = CrudService('/appmovil/shippings/send_qty');
+const crudService = CrudService('/appmovil/receivings/send_qty');
 const dataPlanner = ref([]);
 const lots = ref([]);
 const Lots = ref([]);
-const state = ref('new');
+const state = ref('patch');
+const shippingsDelivered = ref([]);
+const ShippingsDelivered = ref([]);
 
-const endpoint = ref('/appmovil/shippings/send_qty');
+//const endpoint = ref('/appmovil/shippings/send_qty');
 const farmDefault = sessionStorage.getItem('accessSessionFarm');
 
 const props = defineProps({
@@ -143,27 +160,32 @@ initialValues: {
     product_typeV: { name: '', id: '' },
     emplooyesV: { name: '', id: '' },
     vehiclesV: { name: '', id: '' },
-    request_qty_V: 0,
-    farm: { name: '', id: '' },
-    company: { name: '', id: '' }
+    received_qty_V: 0,
+    selected_crops_lots: { code: '' },
+    notes: '',
+    voyage_num_V: { name: '', id: '' }
+    
+    // farm: { name: '', id: '' },
+    // company: { name: '', id: '' }
 },
 validationSchema: toTypedSchema(
     z.object({
         // transaction_dateV: z.date(),
-        request_qty_V:z.number().min(1),
-        task_of_typeV: z
-            .object({
-                name: z.string().min(4),
-                id: z.string().min(4)
-            })
-            .optional(),
+        received_qty_V:z.number().min(1),
+        // task_of_typeV: z
+        //     .object({
+        //         name: z.string().min(4),
+        //         id: z.string().min(4)
+        //     })
+        //     .optional(),
         emplooyesV: z
             .object({
                 name: z.string().optional(),
-                id: z.string().optional()
+                //id: z.string().optional()
+                id: z.number().optional()
             })
             .optional(),
-            request_qty_V: z.number().min(1).max(1000),
+            
         vehiclesV: z
             .object({
                 name: z.string().optional(),
@@ -175,29 +197,34 @@ validationSchema: toTypedSchema(
             
         }),
         notes: z.string().optional(),
-
-
-        farm: z
-            .object({
-                name: z.string().optional(),
-                id: z.string().optional()
+        voyage_num_V: z.object({
+                name: z.number().optional(),
+                id: z.number().optional()
             })
-            .optional(),
-        company: z
-            .object({
-                name: z.string().optional(),
-                id: z.string().optional()
-            })
-            .optional()
+
+        //farm: z
+        //     .object({
+        //         name: z.string().optional(),
+        //         id: z.string().optional()
+        //     })
+        //     .optional(),
+        // company: z
+        //     .object({
+        //         name: z.string().optional(),
+        //         id: z.string().optional()
+        //     })
+        //     .optional()
     })
 )
 });
 
 const [emplooyesV] = defineField('emplooyesV');
 const [vehiclesV] = defineField('vehiclesV');
-const [request_qty_V, request_qty_VProps] = defineField('request_qty_V');
+const [received_qty_V, received_qty_VProps] = defineField('received_qty_V');
 const [selected_crops_lots] = defineField('selected_crops_lots');
 const [notes] = defineField('notes');
+const [voyage_num_V] = defineField('voyage_num_V');
+
 
 onBeforeMount(async () => {
 readAll();
@@ -218,15 +245,12 @@ lots.value.push(props.batchs)
 
 const readAll = async () => {
 // const respTasksOfType = await getRequest('/task_of_types');
-const respTasksOfType = await InitialDataService.getTaskOfType();
-if (!respTasksOfType.ok) toast.add({ severity: 'error', detail: 'Error' + respTasksOfType.error, life: 3000 });
-Tasks_of_type.value = respTasksOfType.data.data.map((task) => ({ id: task.uuid, name: task.name }));
-Tasks_of_type_filter.value = respTasksOfType.data.data.map((task) => task.name);
 
 // const respEmployees = await getRequest('/appmovil/employees?filter[work_center_id]=2');
 const respEmployees = await InitialDataService.getEmployeesWorkCenter(2);
+console.log('respEmployees', respEmployees);
 if (!respEmployees.ok) toast.add({ severity: 'error', detail: 'Error' + respEmployees.error, life: 3000 });
-Employees.value = respEmployees.data.data.map((employee) => ({ id: employee.uuid, name: employee.first_name }));
+Employees.value = respEmployees.data.data.map((employee) => ({ id: employee.id, name: employee.first_name }));
 employees.value = respEmployees.data.data.map((employee) => employee.name);
 
 // const respVehicles = await getRequest('/vehicles');
@@ -234,40 +258,49 @@ const respVehicles = await InitialDataService.getVehicles();
 if (!respVehicles.ok) toast.add({ severity: 'error', detail: 'Error' + respVehicles.error, life: 3000 });
 Vehicles.value = respVehicles.data.data.map((vehicle) => ({ id: vehicle.id, name: vehicle.vehicle_type }));
 
+const respShippingsDelivered = await getShippingsDelivered();
+if (!respShippingsDelivered.ok) toast.add({ severity: 'error', detail: 'Error' + respShippingsDelivered.error, life: 3000 });
+ShippingsDelivered.value = respShippingsDelivered.data.data.map((shipping) => ({ id: shipping.id, name: shipping.id }));
+
 
 };
+
 
 const actionRecordManager = handleSubmitNew(async (values) => {
 const responseCRUD = ref();
 const data = {
 trans_dev: false, // Valor booleano directamente asignado
-tasks_of_type_id: dataPlanner.value.data.data[0].tasks_of_type.id, // ID del tipo de tarea
-dispatch_number_lot: dataPlanner.value.data.data[0].customer_request.dispatch_number_lot, // Número de lote de despacho
-transaction_date: getCurrentFormattedDate(), // Fecha y hora de transacción
-sent_qty: values.request_qty_V? values.request_qty_V : '', // Cantidad enviada
+received_qty: values.received_qty_V,
+employee_transport_id: values.emplooyesV.id ,
 crop_lot_code: values.selected_crops_lots.code, // Código del lote de cultivo
 vehicle_id: values.vehiclesV? values.vehiclesV.id : dataPlanner.value.data.data[0].vehicle.id, // ID del vehículo
-planner_task_id: dataPlanner.value.data.data[0].id,
-farm_id: values.farm ? 1 : farmDefault,
-supervisory_employee_id: 2, // ID del empleado supervisor
-// supervisory_employee_id: values.emplooyesV.id ?values.emplooyesV.id:dataStart.value.data.data.employee.id, // ID del empleado supervisor
-employee_transport_id: 13, // ID del empleado encargado del transporte
 notes_small: notes.value, // Nota adicional
+voyage_num: values.voyage_num_V.id, // Número de viaje
+
+
+// planner_task_id: dataPlanner.value.data.data[0].id,
+// farm_id: values.farm ? 1 : farmDefault,
+// supervisory_employee_id: 2, // ID del empleado supervisor
+//tasks_of_type_id: dataPlanner.value.data.data[0].tasks_of_type.id, // ID del tipo de tarea
+// supervisory_employee_id: values.emplooyesV.id ?values.emplooyesV.id:dataStart.value.data.data.employee.id, // ID del empleado supervisor
+//dispatch_number_lot: dataPlanner.value.data.data[0].customer_request.dispatch_number_lot, // Número de lote de despacho
 };
 
 console.log('data', data);
 
 if (state.value === 'new') {
-responseCRUD.value = await crudService.create(data);
+
 } else if (state.value === 'edit') {
 
 
 } else if (state.value === 'patch') {
-
+responseCRUD.value = await crudService.patch('',data);
+} 
+else if (state.value === 'delete') {
 } else {
 
 }    
-toast.add({ severity: responseCRUD.value.ok ? 'success' : 'error', summary: 'Create', detail: responseCRUD.value.ok ? 'Creado' : restp.error, life: 3000 });
+toast.add({ severity: responseCRUD.value.ok ? 'success' : 'error', summary: 'Create', detail: responseCRUD.value.ok ? 'Creado' : responseCRUD.error, life: 3000 });
 
 if (responseCRUD.value.ok) {    
     console.log('data', data);
@@ -295,6 +328,17 @@ setTimeout(() => {
     } else {
         lots.value = Lots.value.filter((fram) => {
             return fram.code.toLowerCase().startsWith(event.query.toLowerCase());
+        });
+    }
+}, 200);
+};
+const searchShippingsDelivered = (event) => {
+setTimeout(() => {
+    if (!event.query.trim().length) {
+        shippingsDelivered.value = [...ShippingsDelivered.value];
+    } else {
+        shippingsDelivered.value = ShippingsDelivered.value.filter((fram) => {
+            return fram.name.toLowerCase().startsWith(event.query.toLowerCase());
         });
     }
 }, 200);

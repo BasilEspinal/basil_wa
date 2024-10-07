@@ -106,6 +106,15 @@ export function useAppMovilService() {
         }
     };
 
+    const getShippingsDelivered = async () => {
+        try {
+            const response = await getRequest(`/transactions/shipping/shippings`);
+            return response;
+        } catch (e) {
+            return error(e);
+        }
+    };
+
     // Exposing the reactive state and methods
     return {
         WORK_CENTER: fetchWorkCenter,
@@ -125,6 +134,7 @@ export function useAppMovilService() {
         getUsers,
         postDailyReport,
         getTipoActividad,
-        getHoliDay
+        getHoliDay,
+        getShippingsDelivered
     };
 }
