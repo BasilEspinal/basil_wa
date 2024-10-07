@@ -15,6 +15,8 @@
                 <div class="col-xs-12 col-sm-6 col-md-4 mb-2 text-center mx-auto">
             <Toolbar style="margin-bottom: 1rem">
                 <template #center>
+                    <Button :disabled="!(listRowSelect.length > 0 && listRowSelect.length < 2)" label="Detalles" icon="pi pi-bars" class="p-button-success mb-2 mt-2" @click="openForm('detalles')" size="large" />
+                        <Divider layout="vertical" />
                     <Button :disabled="headerNames.length > 0" label="New" icon="pi pi-plus" class="p-button-success mb-2 mt-2" @click="openNew" size="large" />
                     <Divider layout="vertical" />
                     <Button :disabled="!(listRowSelect.length > 0 && listRowSelect.length < 2)" label="Edit" icon="pi pi-file-edit" class="p-button-help mb-2 mt-2" @click="openEdit" size="large" />
@@ -116,6 +118,70 @@
                     <InputText v-model="filterModel.value" type="text" class="p-column-filter" placeholder="Search by " />
                 </template>
         </Column>
+
+        <Column field="type_day_tarif" filterField="type_day_tarif" header="Type Day Tarif" sortable>
+    <template #body="{ data }">
+        {{ data.type_day_tarif }}
+    </template>
+    <template #filter="{ filterModel }">
+        <InputText v-model="filterModel.value" type="text" class="p-column-filter" placeholder="Search by Type Day Tarif" />
+    </template>
+</Column>
+
+<Column field="type_price_task" filterField="type_price_task" header="Type Price Task" sortable>
+    <template #body="{ data }">
+        {{ data.type_price_task }}
+    </template>
+    <template #filter="{ filterModel }">
+        <InputText v-model="filterModel.value" type="text" class="p-column-filter" placeholder="Search by Type Price Task" />
+    </template>
+</Column>
+
+<Column field="task_qty" filterField="task_qty" header="Task Quantity" sortable>
+    <template #body="{ data }">
+        {{ data.task_qty }}
+    </template>
+    <template #filter="{ filterModel }">
+        <InputText v-model="filterModel.value" type="text" class="p-column-filter" placeholder="Search by Task Quantity" />
+    </template>
+</Column>
+
+<Column field="corrected_task_qty" filterField="corrected_task_qty" header="Corrected Task Quantity" sortable>
+    <template #body="{ data }">
+        {{ data.corrected_task_qty }}
+    </template>
+    <template #filter="{ filterModel }">
+        <InputText v-model="filterModel.value" type="text" class="p-column-filter" placeholder="Search by Corrected Task Quantity" />
+    </template>
+</Column>
+
+<Column field="price_tarif_task" filterField="price_tarif_task" header="Price Tarif Task" sortable>
+    <template #body="{ data }">
+        {{ data.price_tarif_task }}
+    </template>
+    <template #filter="{ filterModel }">
+        <InputText v-model="filterModel.value" type="text" class="p-column-filter" placeholder="Search by Price Tarif Task" />
+    </template>
+</Column>
+
+<Column field="task_total_pays" filterField="task_total_pays" header="Task Total Pays" sortable>
+    <template #body="{ data }">
+        {{ data.task_total_pays }}
+    </template>
+    <template #filter="{ filterModel }">
+        <InputText v-model="filterModel.value" type="text" class="p-column-filter" placeholder="Search by Task Total Pays" />
+    </template>
+</Column>
+
+<Column field="notes_small" filterField="notes_small" header="Notes" sortable>
+    <template #body="{ data }">
+        {{ data.notes_small ? data.notes_small : 'N/A' }}
+    </template>
+    <template #filter="{ filterModel }">
+        <InputText v-model="filterModel.value" type="text" class="p-column-filter" placeholder="Search by Notes" />
+    </template>
+</Column>
+
 
         <Column field="day_week_num" filterField="day_week_num" header="Day Week Number" sortable> 
             
@@ -294,6 +360,15 @@
             </Column>
 
         </DataTable>
+        <Dialog v-model:visible="formProperties.open" modal :header="formProperties.title" class="p-fluid text-center mx-auto">
+            
+            <Summary :listRowSelect="listRowSelect" />
+            <div class="flex justify-content-end gap-2">
+              <Button type="button" label="Cancel" severity="secondary" @click="formProperties.open = false" />
+              
+            </div>
+        </Dialog>
+
         <Dialog v-model:visible="formDialogNew" modal :header="formDialogNewTitle" class="p-fluid text-center mx-auto">
                 <div class="mb-3">
                     <div class="flex align-items-center gap-3 mb-1">
@@ -492,9 +567,10 @@ import { useForm } from 'vee-validate';
 import { toTypedSchema } from '@vee-validate/zod';
 import * as XLSX from 'xlsx';
 import { saveAs } from 'file-saver';
-import { z } from 'zod';
+import { boolean, z } from 'zod';
 import ability from '@/service/ability.js';
 import { AbilityBuilder} from '@casl/ability';
+import Summary from './Summary.vue';
 
 const prueba = ref({revisar: 'revisar GET-POST-PUT-DELETE'});
 const namePage = ' Daily Transactions by Planner';
@@ -514,6 +590,24 @@ const lazyParams = ref({});
 const first = ref(0);
 
 
+const formProperties = ref({open: false, title: '', mode: '', data: null});
+const openForm = (mode) => {
+    console.log(mode);
+    
+    formProperties.value = {
+        open: true,
+        title: mode === 'Ver Detalles',
+        mode: mode,
+        data: mode === 'detalles' ? null : listRowSelect.value[0]
+    };
+console.log(formProperties.value);
+};
+
+watch(formProperties, (value) => {
+    if (!value.open) {
+        
+    }
+});
 
 const formDialogNew = ref(false);
 const formDialogNewTitle = 'Create new xxxxxxxxxx';
@@ -703,6 +797,7 @@ const RowSelect = (data) => {
 let headerNames = ref([]);
 provide('isChanging', isChanging);
 watch(listRowSelect, RowSelect);
+
 
 
 

@@ -1,27 +1,24 @@
 <script setup>
-import { ref, onMounted, watch } from 'vue';
+import { ref, onMounted } from 'vue';
 import InputNumber from 'primevue/inputnumber';
 import { useI18n } from 'vue-i18n';
+import { useAppMovilService } from '../../../service/appMovil/appMovilService';
 import { useToast } from 'primevue/usetoast';
 import UseAppMovil from '@/composables/AppMovil/UseAppMovil.js';
 import ItemUserAppMovil from './ItemUserAppMovil.vue';
-import useData from '@/composables/DataAPI/FetchDataAPICopy.js';
-const { getRequest } = useData();
+
 const { worksDay, data_planner } = UseAppMovil();
 const props = defineProps({
     dataUsers: { type: Array },
-    Taridf: { type: Object },
     Lote: { type: Array },
-    diaFestivo: { type: String },
     data: { type: Object }
 });
+
 const toast = useToast();
 const { t } = useI18n();
-
+const { SUPERVISO_NAME, getTipoActividad, HOLIDAY } = useAppMovilService();
 const workView = ref(true);
-const tarifa = ref(0);
 const supervisoName = ref('');
-const supervisoId = ref('');
 const editingRows = ref([]);
 const editable = ref(true);
 const tipoActividad = ref(null);
@@ -31,28 +28,20 @@ const estilo = ref({
 });
 
 onMounted(async () => {
-    supervisoName.value = await sessionStorage.getItem('accessSessionEmployeeName');
-    supervisoId.value = await sessionStorage.getItem('accesSessionEmployeeUuid');
-    getTipoActiuvidad();
+    supervisoName.value = SUPERVISO_NAME;
+    TipoActividad();
 });
 
-const getTipoActiuvidad = async () => {
-    const response = await getRequest('/lists/activityTaskType');
+const TipoActividad = async () => {
+    const response = await getTipoActividad();
     if (!response.ok) toast.add({ severity: 'error', detail: 'Error' + response.error, life: 3000 });
-    tipoActividad.value = response?.data ?? [];
+    tipoActividad.value = response?.data;
 };
 
 const changeWorkView = (event) => {
     workView.value = !workView.value;
     event.stopPropagation();
 };
-
-watch(props, () => {
-    if (props.Taridf?.data?.length) {
-        const { price_tarif } = props.Taridf.data[0];
-        tarifa.value = parseInt(price_tarif) ?? 0;
-    }
-});
 
 const onRowEditSave = (event) => {
     let { newData, index } = event;
@@ -73,8 +62,8 @@ const onRowEditSave = (event) => {
                         <Button class="w-8rem" :label="t('appmovil.detalles')" :disabled="!workView" @click="changeWorkView" size="small" severity="secondary" outlined />
                     </span>
                 </template>
-                <div v-if="workView">
-                    <ItemUserAppMovil :slotProps="slotProps" :diaFestivo="diaFestivo" :tipoActividad="tipoActividad?.data" :Lote="Lote" :data="data" />
+                <div v-if="workView" :key="slotProps.id">
+                    <ItemUserAppMovil :slotProps="slotProps" :idUs="slotProps.id" :tipoActividad="tipoActividad" :Lote="Lote" :data="data" />
                 </div>
                 <div v-else class="p-fluid">
                     <div class="datalles-bacg p-fluid formgrid grid mb-3">
@@ -96,7 +85,7 @@ const onRowEditSave = (event) => {
                             <Divider class="m-0" />
                             <pre class="m-1"><b>{{ t('appmovil.fechaPlaneada') }}:</b> {{ data_planner.planner_date }}</pre>
                             <Divider class="m-0" />
-                            <pre class="m-1"><b>{{ t('appmovil.dialaboral') }}:</b> {{ diaFestivo === 'Festivo'? t('appmovil.diaFestivo') : t('appmovil.diaNormal')}}</pre>
+                            <pre class="m-1"><b>{{ t('appmovil.dialaboral') }}:</b> {{ HOLIDAY === 'Festivo'? t('appmovil.diaFestivo') : t('appmovil.diaNormal')}}</pre>
                         </div>
                     </div>
                     <DataTable v-model:editingRows="editingRows" size="small" :value="worksDay" editMode="row" dataKey="id" @row-edit-save="onRowEditSave" :pt="estilo">
