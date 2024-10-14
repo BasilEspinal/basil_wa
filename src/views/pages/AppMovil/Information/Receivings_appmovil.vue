@@ -180,23 +180,24 @@ const { t } = useI18n();
 
 const dynamicColumns = [
   {field: 'transaction_date', header: 'Transaction Date', frozen: true, color: false},  
+  {field: 'receivingStatuses.name', header: 'Receiving Status', frozen: false, color: true},
   {field: 'voyage_num', header: 'Voyage Num', frozen: false, color: false},
-  {field: 'vehicle.vehicle_type', header: 'Vehicle Name', frozen: false, color: false},  
+//   {field: 'vehicle.vehicle_type', header: 'Vehicle Name', frozen: false, color: false},  
   {field: 'received_qty', header: 'Received Qty', frozen: false, color: false},
-  {field: 'difference_qty', header: 'Difference Qty', frozen: false, color: false},
+//   {field: 'difference_qty', header: 'Difference Qty', frozen: false, color: false},
   {field: 'alarm_delivery', header: 'alarm_delivery', frozen: false, color: false},
   {field: 'dispatch_number_lot', header: 'Dispatch Number', frozen: false, color: false},
-  {field: 'tasks_of_type.name', header: 'Task Of Type', frozen: false, color: false},
-  {field: 'product.name', header: 'Product Name', frozen: false, color: false},
-  {field: 'varieties.name', header: 'Variety Name', frozen: false, color: false},
-  {field: 'product_type.name', header: 'Product Type Name', frozen: false, color: false},
-  {field: 'packing_type.name', header: 'Packing Type Name', frozen: false, color: false},
-  {field: 'supervisory.full_name', header: 'Supervisor First Name', frozen: false, color: false},
+//   {field: 'tasks_of_type.name', header: 'Task Of Type', frozen: false, color: false},
+//   {field: 'product.name', header: 'Product Name', frozen: false, color: false},
+//   {field: 'varieties.name', header: 'Variety Name', frozen: false, color: false},
+//   {field: 'product_type.name', header: 'Product Type Name', frozen: false, color: false},
+//   {field: 'packing_type.name', header: 'Packing Type Name', frozen: false, color: false},
+//   {field: 'supervisory.full_name', header: 'Supervisor First Name', frozen: false, color: false},
   {field: 'employee.full_name', header: 'Employee First Name', frozen: false, color: false},
-  {field: 'receivingStatuses.name', header: 'Receiving Status', frozen: false, color: true},
-  {field: 'farm.name', header: 'Farm Name', frozen: false, color: false},
-  {field: 'company.name', header: 'Company Name', frozen: false, color: false},
-  {field: 'status.name', header: 'Status Name', frozen: false, color: true},
+  
+//   {field: 'farm.name', header: 'Farm Name', frozen: false, color: false},
+//   {field: 'company.name', header: 'Company Name', frozen: false, color: false},
+//   {field: 'status.name', header: 'Status Name', frozen: false, color: true},
 ];
 
 const getNestedValue = (obj, path) => {
