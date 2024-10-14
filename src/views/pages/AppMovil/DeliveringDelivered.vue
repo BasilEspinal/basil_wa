@@ -270,6 +270,7 @@ const responseCRUD = ref();
 const data = {
 trans_dev: false, // Valor booleano directamente asignado
 received_qty: values.received_qty_V,
+tasks_of_type_id: dataPlanner.value.data.data[0].tasks_of_type.id, // ID del tipo de tarea
 employee_transport_id: values.emplooyesV.id ,
 crop_lot_code: values.selected_crops_lots.code, // Código del lote de cultivo
 vehicle_id: values.vehiclesV? values.vehiclesV.id : dataPlanner.value.data.data[0].vehicle.id, // ID del vehículo
