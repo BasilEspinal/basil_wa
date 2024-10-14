@@ -81,6 +81,12 @@ const setChart = () => {
                 backgroundColor: documentStyle.getPropertyValue('--primary-200'),
                 borderColor: documentStyle.getPropertyValue('--primary-200'),
                 data: [28, 48, 40, 19, 86, 27, 90]
+            },
+            {
+                label: 'Tabacos nuevos',
+                backgroundColor: documentStyle.getPropertyValue('--primary-400'),
+                borderColor: documentStyle.getPropertyValue('--primary-200'),
+                data: [28, 48, 40, 19, 86, 27, 90]
             }
         ]
     };
@@ -362,17 +368,70 @@ watch(
         <div class="col-12 lg:col-6 xl:col-3" >
             
             <div class="card mb-0">
+                
                 <div class="flex justify-content-between mb-3">
                     <div>
-                        <span class="block text-500 font-medium mb-3">Icopores Recogidos</span>
-                        <div class="text-900 font-medium text-xl">152</div>
+                        
+                        <span class="block text-500 font-medium mb-3">Icopores (Corta)</span>
+                        <div class="text-900 font-medium text-xl">152 Recogidos</div>
                     </div>
                     <div class="flex align-items-center justify-content-center bg-green-100 border-round" style="width: 2.5rem; height: 2.5rem">
                         <i class="pi pi-shopping-cart text-green-500 text-xl"></i>
                     </div>
                 </div>
-                <span class="text-green-500 font-medium">50 </span>
-                <span class="text-500">En Traslado</span>
+                <div>
+                <span class="text-green-500 font-medium">102 </span>
+                <span class="text-500">Enviados</span>
+            </div>
+            <div>
+                <span class="text-red-500 font-medium">50 </span>
+                <span class="text-500">Por enviar</span>
+            </div>
+            </div>
+        </div>
+
+        <div class="col-12 lg:col-6 xl:col-3">
+            <div class="card mb-0">
+                <div class="flex justify-content-between mb-3">
+                    <div>
+                        <span class="block text-500 font-medium mb-3">Icopores (prefrio)</span>
+                        <div class="text-900 font-medium text-xl">102 recibidos</div>
+                    </div>
+                    <div class="flex align-items-center justify-content-center bg-green-100 border-round" style="width: 2.5rem; height: 2.5rem">
+                        <i class="pi pi-shopping-cart text-green-500 text-xl"></i>
+                    </div>
+                </div>
+                <div>
+                <span class="text-green-500 font-medium">71 </span>
+                <span class="text-500">Enviados</span>
+            </div>
+            <div>
+                <span class="text-red-500 font-medium">31 </span>
+                <span class="text-500">Por enviar</span>
+            </div>
+            </div>
+        </div>
+
+        <div class="col-12 lg:col-6 xl:col-3" >
+            <div class="card mb-0">
+                <div class="flex justify-content-between mb-3">
+                    <div>
+                        <span class="block text-500 font-medium mb-3">Tabacos Clasificados</span>
+                        <div class="text-900 font-medium text-xl">71</div>
+                    </div>
+                    <div class="flex align-items-center justify-content-center bg-green-100 border-round" style="width: 2.5rem; height: 2.5rem">
+                        <i class="pi pi-shopping-cart text-green-500 text-xl"></i>
+                    </div>
+                </div>
+                <div>
+                <span class="text-green-500 font-medium">41 </span>
+                <span class="text-500">Enviados</span>
+            </div>
+            <div>
+                <span class="text-red-500 font-medium">30 </span>
+                <span class="text-500">Por enviar</span>
+            </div>
+                
             </div>
         </div>
         
@@ -381,7 +440,7 @@ watch(
                 <div class="flex justify-content-between mb-3">
                     <div>
                         <span class="block text-500 font-medium mb-3">Tabacos Empacados</span>
-                        <div class="text-900 font-medium text-xl">2.100</div>
+                        <div class="text-900 font-medium text-xl">41</div>
                     </div>
                     <div class="flex align-items-center justify-content-center bg-green-100 border-round" style="width: 2.5rem; height: 2.5rem">
                         <i class="pi pi-shopping-cart text-green-500 text-xl"></i>
@@ -391,7 +450,7 @@ watch(
                 <span class="text-500">Meta del dia</span>
             </div>
         </div>
-        <div class="col-12 lg:col-6 xl:col-3">
+        <div class="col-12 lg:col-6 xl:col-12">
             <div class="card mb-0">
                 <div class="flex justify-content-between mb-3">
                     <div>
@@ -406,30 +465,16 @@ watch(
                 <span class="text-500">Pendientes</span>
             </div>
         </div>
-        <div class="col-12 lg:col-6 xl:col-3">
-            <div class="card mb-0">
-                <div class="flex justify-content-between mb-3">
-                    <div>
-                        <span class="block text-500 font-medium mb-3">Traslados</span>
-                        <div class="text-900 font-medium text-xl">152 Confirmados</div>
-                    </div>
-                    <div class="flex align-items-center justify-content-center bg-green-100 border-round" style="width: 2.5rem; height: 2.5rem">
-                        <i class="pi pi-shopping-cart text-green-500 text-xl"></i>
-                    </div>
-                </div>
-                <span class="text-green-500 font-medium">85 </span>
-                <span class="text-500">Pendientes</span>
-            </div>
-        </div>
+
 
         
-        <div class="col-12 xl:col-6">
+        <div class="col-12 xl:col-12">
             <div class="card">
                 <h5>Icopores por semana</h5>
                 <Chart type="bar" :data="barData" :options="barOptions"></Chart>
             </div>
         </div>
-        <div class="col-12 xl:col-6">
+        <div class="col-12 xl:col-12">
             <div class="card flex flex-column align-items-center">
                 <h5 class="text-left w-full">Productos Mensual</h5>
                 <Chart type="pie" :data="pieData" :options="pieOptions"></Chart>

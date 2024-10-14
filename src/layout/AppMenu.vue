@@ -719,7 +719,8 @@ const model2 = computed(() => ([
                         label: t('menu.employeeSummary'),
                         to: '/PayrollSettlement/EmployeesInformation',
                         icon: 'pi pi-bookmark',
-                        gate: 'liquidaciondenomina_employees_information_menu'
+                        gate: 'liquidaciondenomina_planeaciondiaria_menu'
+                        // gate: 'liquidaciondenomina_employees_information_menu'
                     },
                     {
                         label: t('menu.periodSummary'),
