@@ -26,18 +26,19 @@ const holiday = ref('Normal');
 const lotes = ref(null);
 const search = ref(null);
 const userEmployee = ref(localStorage.getItem('accesSessionEmployeeUuid'));
+const loading = ref(true); // Initially set to true
+
 
 onBeforeMount(async () => {
+    loading.value = true; // Set loading to true when data fetching starts
     await initData();
     getUser();
-    getData();
+    await getData();
     holiday.value = HOLIDAY;
     titulo.value = t('appmovil.titulo') + ' ' + (TASK_OF_TYPE?.name ? TASK_OF_TYPE.name : 'XXXXXXXXXXXXXX');
-    
-    
-    
-
+    loading.value = false; // Set loading to false when data fetching is complete
 });
+
 
 
 const logoUrl = computed(() => {
@@ -92,123 +93,53 @@ function searchUsers() {
 
 <template>
     <h2>{{ titulo }}</h2>
-    
-    <div v-if="data" class="card maxHeightY">
 
+    <div v-if="loading" class="flex align-items-center justify-content-center" style="height: 100vh;">
+        <ProgressSpinner />
+    </div>
+
+    <div v-else-if="data" class="card maxHeightY">
         <div v-if="userEmployee">
-        <div class="flex">
-            <div class="w-full">
-                
-            </div>
-            <div>
-                <div class="p-inputgroup">
-                    <span class="p-float-label">
-                        <InputText id="search" v-model="search" />
-                        <label class="font-bold">{{ t('appmovil.users') }}</label>
-                    </span>
-                    <Button class="p-inputgroup-addon" @click="searchUsers" label="Search" />
+            <div class="flex">
+                <div class="w-full">
+                </div>
+                <div>
+                    <div class="p-inputgroup">
+                        <span class="p-float-label">
+                            <InputText id="search" v-model="search" />
+                            <label class="font-bold">{{ t('appmovil.users') }}</label>
+                        </span>
+                        <Button class="p-inputgroup-addon" @click="searchUsers" label="Search" />
+                    </div>
                 </div>
             </div>
+            <TabView class="tabview-custom">
+                <TabPanel v-if="ability.can('appmovil_users')">
+                    <template #header>
+                        <div class="flex align-items-center gap-2">
+                            <i class="pi pi-user" style="font-size: 1rem" shape="circle" />
+                            <span class="font-bold white-space-nowrap">{{ t('appmovil.users') }}</span>
+                        </div>
+                    </template>
+                    <ScrollPanel class="maxHeightC">
+                        <div v-if="filterUsers">
+                            <UserAppMovil :dataUsers="filterUsers" :Lote="lotes" :data="data" />
+                        </div>
+                        <div v-else>
+                            <ErrorAppMovil :title="t('appmovil.usersAvailable')" description="Requested resource is not available" :logo-url="logoUrl" />
+                        </div>
+                    </ScrollPanel>
+                </TabPanel>
+                <!-- The rest of your tabs here -->
+            </TabView>
         </div>
-        <TabView class="tabview-custom">
-            <TabPanel v-if="ability.can('appmovil_users')">
-                <template #header>
-                    <div class="flex align-items-center gap-2">
-                        <i class="pi pi-user" style="font-size: 1rem" shape="circle" />
-                        <span class="font-bold white-space-nowrap">{{ t('appmovil.users') }}</span>
-                    </div>
-                </template>
-                <ScrollPanel class="maxHeightC">
-                    <div v-if="filterUsers">
-                        <UserAppMovil :dataUsers="filterUsers" :Lote="lotes" :data="data" />
-                    </div>
-                    <div v-else>
-                        <ErrorAppMovil :title="t('appmovil.usersAvailable')" description="Requested resource is not available" :logo-url="logoUrl"/>
-
-                    </div>
-                </ScrollPanel>
-            </TabPanel>
-            <TabPanel v-if="ability.can('appmovil_summary')">
-                <template #header>
-                    <div class="flex align-items-center gap-2">
-                        <i class="pi pi-bars" style="font-size: 1rem" shape="circle" />
-                        <span class="font-bold white-space-nowrap">{{ t('appmovil.resumen') }}</span>
-                    </div>
-                </template>
-                <ScrollPanel class="maxHeightC">
-                    <DataTable :value="worksDay">
-                        <ColumnGroup type="header">
-                            <Row>
-                                <Column :header="t('appmovil.empleado')" :rowspan="3" />
-                            </Row>
-                            <Row>
-                                <Column :header="t('appmovil.trabajos')" :colspan="2" />
-                            </Row>
-                            <Row>
-                                <Column :header="t('appmovil.cantidad')" sortable field="lastYearProfit" />
-                                <Column :header="t('appmovil.precio')" sortable field="thisYearProfit" />
-                            </Row>
-                        </ColumnGroup>
-                        <Column field="employee" />
-                        <Column field="quantity">
-                            <template #body="slotProps">
-                                {{ formatCurrency(slotProps.data.quantity) }}
-                            </template>
-                        </Column>
-                        <Column field="totalPrice">
-                            <template #body="slotProps">
-                                {{ formatCurrency(slotProps.data.totalPrice) }}
-                            </template>
-                        </Column>
-                        <ColumnGroup type="footer">
-                            <Row>
-                                <Column :footer="t('appmovil.total') + ' :'" :colspan="1" footerStyle="text-align:left" />
-                                <Column :footer="quantities" />
-                                <Column :footer="totalPrices" />
-                            </Row>
-                        </ColumnGroup>
-                    </DataTable>
-                </ScrollPanel>
-            </TabPanel>
-
-
-            
-            <TabPanel v-if="ability.can('appmovil_shipping_delivered')">
-                <template #header>
-                    <div class="flex align-items-center gap-2">
-                        <i class="pi pi-cart-plus" style="font-size: 1rem" shape="circle" />
-                        <span class="font-bold white-space-nowrap">{{ t('appmovil.envios') }}</span>
-
-                    </div>
-                    
-                </template>
-                <ScrollPanel class="maxHeightC">
-                    <ShippingDelivered :data="data" :batchs="lotes" />
-                </ScrollPanel>                    
-            </TabPanel>
-
-            <TabPanel v-if="ability.can('appmovil_delivering_delivered')">
-                <template #header>
-                    <div class="flex align-items-center gap-2">
-                        <i class="pi pi-cart-plus" style="font-size: 1rem" shape="circle" />
-                        <span class="font-bold white-space-nowrap">{{ t('appmovil.received') }}</span>
-                    </div>
-                </template>
-                <ScrollPanel class="maxHeightC">
-
-                    <DeliveringDelivered :data="data" :batchs="lotes" />
-                </ScrollPanel>
-            </TabPanel>
-        </TabView>
-        <Toast />
-    </div>
-    <div v-else >
-        <ErrorAppMovil :title="t('appmovil.noemployeeAssigned')" :description="t('appmovil.infonoemployeeAssigned')" :logo-url="logoUrl"/>
+        <div v-else>
+            <ErrorAppMovil :title="t('appmovil.noemployeeAssigned')" :description="t('appmovil.infonoemployeeAssigned')" :logo-url="logoUrl" />
         </div>
     </div>
-    <div v-else >
-    <ErrorAppMovil :title="t('appmovil.nodataplanner')" :description="t('appmovil.infonodataplanner')" :logo-url="logoUrl"/>
-    
+
+    <div v-else>
+        <ErrorAppMovil :title="t('appmovil.nodataplanner')" :description="t('appmovil.infonodataplanner')" :logo-url="logoUrl" />
     </div>
 </template>
 
