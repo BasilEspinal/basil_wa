@@ -280,6 +280,16 @@ const router = createRouter({
                     component: () => import('@/views/pages/AppMovil/AppMovilCorta.vue')
                 },
                 {
+                    path: '/AppMovil/Corta/Envios',
+                    name: 'appmovil_corta_envios',
+                    component: () => import('@/views/pages/AppMovil/Information/Shippings_appmovil.vue')
+                },
+                {
+                    path: '/AppMovil/Corta/Recibidos',
+                    name: 'appmovil_corta_recibidos',
+                    component: () => import('@/views/pages/AppMovil/Information/Receivings_appmovil.vue')
+                },
+                {
                     path: '/AppMovil/PreFrio',
                     name: 'appmovil_prefio',
                     component: () => import('@/views/pages/AppMovil/AppMovilPreFrio.vue')

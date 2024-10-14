@@ -62,7 +62,7 @@ export function useAppMovilService() {
     };
 
     const getDataTasksplanner = async () => {
-        console.log(fetchWorkCenter.value.taskoftype)
+        
         const response = await getRequest(`/appmovil/tasksplanner?filter[tasks_of_type_id]=${fetchWorkCenter.value?.taskoftype.id}&filter[company_id]=${fetchCompannyId.value}&filter[farm_id]=${fetchFarmId.value}`);
         tasksPlaner.value = response.data.data[0];
         return { ...response, data: response.data.data[0] };

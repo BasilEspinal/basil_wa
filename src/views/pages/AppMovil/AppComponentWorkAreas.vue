@@ -93,13 +93,21 @@ function searchUsers() {
 
 <template>
     <h2>{{ titulo }}</h2>
-
+    
     <div v-if="loading" class="flex align-items-center justify-content-center" style="height: 100vh;">
         <ProgressSpinner />
     </div>
+    
 
     <div v-else-if="data" class="card maxHeightY">
-        <div v-if="userEmployee">
+        
+        
+        
+        <div v-if="!data.crop_lots">
+            <ErrorAppMovil :title="t('appmovil.nolotes')" :description="t('appmovil.infonolotes')" :logo-url="logoUrl" />
+        </div>
+
+        <div v-else-if="userEmployee">
             <div class="flex">
                 <div class="w-full">
                 </div>

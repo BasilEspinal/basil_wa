@@ -114,6 +114,14 @@
                     </template>
                 </Column>
 
+                <Column field="taskoftype" filterField="taskoftype" header="Task Of type" sortable>
+                    <template #body="{ data }">
+                        {{ data.taskoftype? data.taskoftype.name : '' }}
+                    </template>
+                    <template #filter="{ filterModel }">
+                        <InputText v-model="filterModel.value" type="text" class="p-column-filter" placeholder="Search by " />
+                    </template>
+                </Column>
                 <!--Here add other columns-->
 
                 <Column field="farmName" filterField="farm.name" header="Farm Name" sortable>
@@ -125,6 +133,7 @@
                     </template>
                 </Column>
 
+                
                 <Column field="companyName" filterField="company.name" header="Company Name" sortable>
                     <template #body="{ data }">
                         {{ data.company.name }}

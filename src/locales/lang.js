@@ -153,7 +153,13 @@ export const messages = {
             noemployeeAssigned: 'No employee assigned',
             infonoemployeeAssigned: 'There is no employee assigned to the user',
             nodataplanner: 'No data in daily planner',
-            infonodataplanner: 'There is no data for the planner, please check the configuration of the work center, the company and the farm'
+            infonodataplanner: 'There is no data for the planner, please check the configuration of the work center, the company and the farm',
+            nolotes: 'No batches',
+            infonolotes: 'There are no batches scheduled for today despite the data planned',
+            shipping: {
+                shippingProcess: 'Shipping Process',
+                deliveryProcess: 'Delivery Process',
+            }
         }
     },
     es: {
@@ -316,7 +322,13 @@ export const messages = {
             noemployeeAssigned: 'No hay empleado asignado',
             infonoemployeeAssigned: 'No hay empleado asignado al usuario',
             nodataplanner: 'No hay planeación diaria' ,
-            infonodataplanner: 'No hay datos planeados, por favor verifique la configuración del centro de trabajo, la compañía y la finca.'
+            infonodataplanner: 'No hay datos planeados, por favor verifique la configuración del centro de trabajo, la compañía y la finca.',
+            nolotes: 'No hay lotes',
+            infonolotes: 'No hay lotes programados para hoy a pesar de los datos planeados',
+            shipping: {
+                shippingProcess: 'Proceso de Envío',
+                deliveryProcess: 'Proceso de Entrega',
+            }
         }
     }
 };
