@@ -56,7 +56,7 @@ const getData = async () => {
     const response = await getDataTasksplanner();
     if (!response.ok) toast.add({ severity: 'error', detail: 'Error' + response.error, life: 3000 });
     data.value = response.data;
-    console.log(data.value?data.value:'Anything')
+    
     
 };
 

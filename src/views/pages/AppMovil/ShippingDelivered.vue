@@ -110,8 +110,8 @@ const { t } = useI18n();
 const toast = useToast();
 const { getRequest, postRequest, putRequest, deleteRequest, patchRequest, errorResponseAPI } = useData();
 const tasks_of_type = ref([]);
-// const Tasks_of_type = ref([]);
-// const Tasks_of_type_filter = ref([]);
+const Tasks_of_type = ref([]);
+const Tasks_of_type_filter = ref([]);
 const employees = ref([]);
 const Employees = ref([]);
 const vehicles = ref([]);
@@ -212,6 +212,7 @@ onBeforeMount(async () => {
     dataStart.value= await InitialDataService.getDatastart();
     dataPlanner.value = await InitialDataService.getTasksPlanner(dataStart.value);    
     console.log(dataPlanner.value)
+    console.log(dataPlanner.value.data.data[0].vehicle.vehicle_type)
     vehiclesV.value = {
     name: dataPlanner.value.data.data[0].vehicle.vehicle_type,  
     id: dataPlanner.value.data.data[0].vehicle.id       
@@ -226,10 +227,10 @@ console.log(dataPlanner.value)
 
 const readAll = async () => {
     // const respTasksOfType = await getRequest('/task_of_types');
-    // const respTasksOfType = await InitialDataService.getTaskOfType();
-    // if (!respTasksOfType.ok) toast.add({ severity: 'error', detail: 'Error' + respTasksOfType.error, life: 3000 });
-    // Tasks_of_type.value = respTasksOfType.data.data.map((task) => ({ id: task.uuid, name: task.name }));
-    // Tasks_of_type_filter.value = respTasksOfType.data.data.map((task) => task.name);
+    const respTasksOfType = await InitialDataService.getTaskOfType();
+    if (!respTasksOfType.ok) toast.add({ severity: 'error', detail: 'Error' + respTasksOfType.error, life: 3000 });
+    Tasks_of_type.value = respTasksOfType.data.data.map((task) => ({ id: task.uuid, name: task.name }));
+    Tasks_of_type_filter.value = respTasksOfType.data.data.map((task) => task.name);
 
     // const respEmployees = await getRequest('/appmovil/employees?filter[work_center_id]=2');
     const respEmployees = await InitialDataService.getEmployeesWorkCenter(2);
@@ -246,6 +247,7 @@ const readAll = async () => {
 };
 
 const actionRecordManager = handleSubmitNew(async (values) => {
+    
     const responseCRUD = ref();
     const data = {
     trans_dev: false, // Valor booleano directamente asignado

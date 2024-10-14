@@ -9,7 +9,7 @@ import ItemUserAppMovil from './ItemUserAppMovil.vue';
 
 const { worksDay, data_planner } = UseAppMovil();
 
-console.log('data_planner', 'Esta data planner esta seteada debemos cambiarla porque es una para unos datos specíficos');
+
 const props = defineProps({
     dataUsers: { type: Array },
     Lote: { type: Array },
@@ -33,9 +33,7 @@ onMounted(async () => {
     supervisoName.value = SUPERVISO_NAME;
     TipoActividad();
 });
-onBeforeMount(async () => {
-    console.log(dataInfoUser())
-});
+
 const TipoActividad = async () => {
     const response = await getTipoActividad();
     if (!response.ok) toast.add({ severity: 'error', detail: 'Error' + response.error, life: 3000 });

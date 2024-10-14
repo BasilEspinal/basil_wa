@@ -26,7 +26,7 @@ export function useAppMovilService() {
         try {
             const response = await getRequest(`/appmovil/datastart`);
             return response;
-            console.log('Datos iniciales', response);
+            
         }
         catch (e) {
             return error(e);
@@ -49,9 +49,11 @@ export function useAppMovilService() {
         try {
             let Endpoint = '';
             if (tasksType && listFilterType.includes(tasksType)) {
-                Endpoint = `/appmovil/taskstarif?filter[tasks_of_type_id]=${fetchWorkCenter.value?.taskoftype_id?.id}&filter[work_type_day]=${holiday.value}&filter[farm_id]=${fetchFarmId.value}&filter[company_id]=${fetchCompannyId.value}&filter[packing_type_id]=${tasksPlaner.value?.packing_type.id}&filter[type_price]=${tasksType}`;
+                Endpoint = `/appmovil/taskstarif?filter[tasks_of_type_id]=${fetchWorkCenter.value?.taskoftype?.id}&filter[work_type_day]=${holiday.value}&filter[farm_id]=${fetchFarmId.value}&filter[company_id]=${fetchCompannyId.value}&filter[packing_type_id]=${tasksPlaner.value?.packing_type.id}&filter[type_price]=${tasksType}`;
             }
             const response = await getRequest(Endpoint);
+
+
             return response.data?.data[0]?.price_tarif ?? 0;
         } catch (e) {
             console.error('Error:', e);
