@@ -211,13 +211,11 @@ onBeforeMount(async () => {
     
     dataStart.value= await InitialDataService.getDatastart();
     dataPlanner.value = await InitialDataService.getTasksPlanner(dataStart.value);    
-    console.log(dataPlanner.value)
-    console.log(dataPlanner.value.data.data[0].vehicle.vehicle_type)
     vehiclesV.value = {
     name: dataPlanner.value.data.data[0].vehicle.vehicle_type,  
     id: dataPlanner.value.data.data[0].vehicle.id       
 };
-console.log(dataPlanner.value)
+
     lots.value.push(props.batchs)
 
     
