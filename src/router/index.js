@@ -16,6 +16,11 @@ const router = createRouter({
             component: AppLayout,
             children: [
                 {
+                    path: '/pages/template',
+                    name: 'template',
+                    component: () => import('@/views/pages/template/V3/Agroonline_v3.vue')
+                },
+                {
                     path: '/applayout',
                     name: 'dashboard',
                     component: () => import('@/views/Dashboard/Dashboard.vue')
@@ -297,6 +302,7 @@ const router = createRouter({
                 
             ]
         },
+        
         {
             path: '/pages/crud',
             name: 'crud',

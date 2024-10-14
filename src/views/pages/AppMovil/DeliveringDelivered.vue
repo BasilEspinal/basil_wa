@@ -123,9 +123,9 @@ const { t } = useI18n();
 const toast = useToast();
 const { getRequest, postRequest, putRequest, deleteRequest, patchRequest, errorResponseAPI } = useData();
 const { getShippingsDelivered } = useAppMovilService();
-const tasks_of_type = ref([]);
-const Tasks_of_type = ref([]);
-const Tasks_of_type_filter = ref([]);
+// const tasks_of_type = ref([]);
+// const Tasks_of_type = ref([]);
+// const Tasks_of_type_filter = ref([]);
 const employees = ref([]);
 const Employees = ref([]);
 const vehicles = ref([]);
@@ -365,17 +365,17 @@ setTimeout(() => {
 }, 200);
 };
 
-const searchTaskOfType = (event) => {
-setTimeout(() => {
-    if (!event.query.trim().length) {
-        tasks_of_type.value = [...Tasks_of_type.value];
-    } else {
-        tasks_of_type.value = Tasks_of_type.value.filter((fram) => {
-            return fram.name.toLowerCase().startsWith(event.query.toLowerCase());
-        });
-    }
-}, 200);
-};
+// const searchTaskOfType = (event) => {
+// setTimeout(() => {
+//     if (!event.query.trim().length) {
+//         tasks_of_type.value = [...Tasks_of_type.value];
+//     } else {
+//         tasks_of_type.value = Tasks_of_type.value.filter((fram) => {
+//             return fram.name.toLowerCase().startsWith(event.query.toLowerCase());
+//         });
+//     }
+// }, 200);
+// };
 </script>
 
 <style scoped>

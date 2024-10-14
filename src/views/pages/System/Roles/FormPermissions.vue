@@ -12,13 +12,14 @@ const emit = defineEmits([]);
 const { putResponseAPI } = useDataAPI();
 const search = ref(null);
 const filterPermiss = ref(null);
-
+const isLoaded = ref(false);
 const props = defineProps({
     data: { type: Object }
 });
 
 onMounted(async () => {
     searchPermisRol();
+    
 });
 
 watch(search, () => {
@@ -27,7 +28,7 @@ watch(search, () => {
 
 async function searchPermisRol() {
     const restp = await getRequest(`/permissions/without-roles/${props.data.id}`);
-    toast.add({ severity: restp.ok ? 'success' : 'error', summary: 'Permiss', detail: restp.ok ? 'Permiss' : restp.error, life: 3000 });
+    toast.add({ severity: restp.ok ? 'success' : 'error', summary: 'Permissions were load', detail: restp.ok ? 'Permissions were load' : restp.error, life: 3000 });
     const listaDeObjetos = [];
     if (restp.ok) {
         for (const clave in restp.data) {
@@ -46,12 +47,22 @@ function searchPermis() {
     }
 }
 
+watch(filterPermiss, () => {
+
+        savePermiss();
+
+
+});
 const savePermiss = async () => {
     const dataJson = {
         name: props.data.name,
-        permissions: picklistValue.value[1].map((item) => ({ id: item.id }))
+        // aqui habia picklistValue.value[1] pero no se que es
+        permissions: filterPermiss.value[1].map((item) => ({ id: item.id }))
     };
     const restp = await putResponseAPI(dataJson, endpoint.value, props.data.id);
+    console.log('picklistValue', picklistValue.value[1]);
+    console.log('dataJson', dataJson);
+    console.log('restp', restp);
     toast.add({ severity: restp.ok ? 'success' : 'error', summary: 'Update User ' + props.data.name, detail: restp.ok ? 'Acualizado' : 'Error: ', life: 3000 });
     emit('update', { update: true });
 };

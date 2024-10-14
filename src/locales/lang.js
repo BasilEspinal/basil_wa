@@ -120,6 +120,7 @@ export const messages = {
             quantityRequested: 'Quantity Requested',
             centroTrabajo: 'Work Centers',
             titulo: 'Daily work of ',
+            
             users: 'Users',
             detalles: ' Details',
             resumen: 'Summary',
@@ -149,7 +150,9 @@ export const messages = {
             diaNormal: 'Normal day',
             diaFestivo: 'Holiday',
             usersAvailable: 'Users not available',
-            nodataplanner: 'No data for the planner',
+            noemployeeAssigned: 'No employee assigned',
+            infonoemployeeAssigned: 'There is no employee assigned to the user',
+            nodataplanner: 'No data in daily planner',
             infonodataplanner: 'There is no data for the planner, please check the configuration of the work center, the company and the farm'
         }
     },
@@ -310,7 +313,9 @@ export const messages = {
             diaNormal: 'Normal',
             diaFestivo: 'Festivo',
             usersAvailable: 'Usuarios no disponibles',
-            nodataplanner: 'No hay datos para el planeador' ,
+            noemployeeAssigned: 'No hay empleado asignado',
+            infonoemployeeAssigned: 'No hay empleado asignado al usuario',
+            nodataplanner: 'No hay planeación diaria' ,
             infonodataplanner: 'No hay datos planeados, por favor verifique la configuración del centro de trabajo, la compañía y la finca.'
         }
     }

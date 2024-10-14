@@ -1,5 +1,5 @@
 <script setup>
-import { ref, onMounted } from 'vue';
+import { ref, onMounted,onBeforeMount } from 'vue';
 import InputNumber from 'primevue/inputnumber';
 import { useI18n } from 'vue-i18n';
 import { useAppMovilService } from '../../../service/appMovil/appMovilService';
@@ -9,7 +9,7 @@ import ItemUserAppMovil from './ItemUserAppMovil.vue';
 
 const { worksDay, data_planner } = UseAppMovil();
 
-console.log('data_planner', data_planner);
+console.log('data_planner', 'Esta data planner esta seteada debemos cambiarla porque es una para unos datos specíficos');
 const props = defineProps({
     dataUsers: { type: Array },
     Lote: { type: Array },
@@ -18,7 +18,7 @@ const props = defineProps({
 
 const toast = useToast();
 const { t } = useI18n();
-const { SUPERVISO_NAME, getTipoActividad, HOLIDAY } = useAppMovilService();
+const { SUPERVISO_NAME, getTipoActividad, HOLIDAY,dataInfoUser } = useAppMovilService();
 const workView = ref(true);
 const supervisoName = ref('');
 const editingRows = ref([]);
@@ -33,7 +33,9 @@ onMounted(async () => {
     supervisoName.value = SUPERVISO_NAME;
     TipoActividad();
 });
-
+onBeforeMount(async () => {
+    console.log(dataInfoUser())
+});
 const TipoActividad = async () => {
     const response = await getTipoActividad();
     if (!response.ok) toast.add({ severity: 'error', detail: 'Error' + response.error, life: 3000 });

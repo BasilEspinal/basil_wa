@@ -22,6 +22,16 @@ export function useAppMovilService() {
         await getHoliDay();
         await getTipoActividad();
     };
+    const dataInfoUser = async (uuid) => {
+        try {
+            const response = await getRequest(`/appmovil/datastart`);
+            return response;
+            console.log('Datos iniciales', response);
+        }
+        catch (e) {
+            return error(e);
+        }
+    }
 
     const getDonesWork = async () => {
         try {
@@ -50,7 +60,8 @@ export function useAppMovilService() {
     };
 
     const getDataTasksplanner = async () => {
-        const response = await getRequest(`/appmovil/tasksplanner?filter[tasks_of_type_id]=${fetchWorkCenter.value?.taskoftype_id.id}&filter[company_id]=${fetchCompannyId.value}&filter[farm_id]=${fetchFarmId.value}`);
+        console.log(fetchWorkCenter.value.taskoftype)
+        const response = await getRequest(`/appmovil/tasksplanner?filter[tasks_of_type_id]=${fetchWorkCenter.value?.taskoftype.id}&filter[company_id]=${fetchCompannyId.value}&filter[farm_id]=${fetchFarmId.value}`);
         tasksPlaner.value = response.data.data[0];
         return { ...response, data: response.data.data[0] };
     };
@@ -121,7 +132,7 @@ export function useAppMovilService() {
         SUPERVISO_ID: fetchSupervisorId,
         FARM_ID: fetchFarmId,
         COMPANY_ID: fetchCompannyId,
-        TASK_OF_TYPE: fetchWorkCenter.value?.taskoftype_id,
+        TASK_OF_TYPE: fetchWorkCenter.value?.taskoftype,
         SUPERVISO_NAME: fetchSupervisorName,
         EMPLOYEE_ID: fetchEmployeeId,
         HOLIDAY: holiday,
@@ -135,6 +146,7 @@ export function useAppMovilService() {
         postDailyReport,
         getTipoActividad,
         getHoliDay,
-        getShippingsDelivered
+        getShippingsDelivered,
+        dataInfoUser
     };
 }

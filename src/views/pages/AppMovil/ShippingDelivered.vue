@@ -110,8 +110,8 @@ const { t } = useI18n();
 const toast = useToast();
 const { getRequest, postRequest, putRequest, deleteRequest, patchRequest, errorResponseAPI } = useData();
 const tasks_of_type = ref([]);
-const Tasks_of_type = ref([]);
-const Tasks_of_type_filter = ref([]);
+// const Tasks_of_type = ref([]);
+// const Tasks_of_type_filter = ref([]);
 const employees = ref([]);
 const Employees = ref([]);
 const vehicles = ref([]);
@@ -211,10 +211,12 @@ onBeforeMount(async () => {
     
     dataStart.value= await InitialDataService.getDatastart();
     dataPlanner.value = await InitialDataService.getTasksPlanner(dataStart.value);    
+    console.log(dataPlanner.value)
     vehiclesV.value = {
     name: dataPlanner.value.data.data[0].vehicle.vehicle_type,  
     id: dataPlanner.value.data.data[0].vehicle.id       
 };
+console.log(dataPlanner.value)
     lots.value.push(props.batchs)
 
     
@@ -224,10 +226,10 @@ onBeforeMount(async () => {
 
 const readAll = async () => {
     // const respTasksOfType = await getRequest('/task_of_types');
-    const respTasksOfType = await InitialDataService.getTaskOfType();
-    if (!respTasksOfType.ok) toast.add({ severity: 'error', detail: 'Error' + respTasksOfType.error, life: 3000 });
-    Tasks_of_type.value = respTasksOfType.data.data.map((task) => ({ id: task.uuid, name: task.name }));
-    Tasks_of_type_filter.value = respTasksOfType.data.data.map((task) => task.name);
+    // const respTasksOfType = await InitialDataService.getTaskOfType();
+    // if (!respTasksOfType.ok) toast.add({ severity: 'error', detail: 'Error' + respTasksOfType.error, life: 3000 });
+    // Tasks_of_type.value = respTasksOfType.data.data.map((task) => ({ id: task.uuid, name: task.name }));
+    // Tasks_of_type_filter.value = respTasksOfType.data.data.map((task) => task.name);
 
     // const respEmployees = await getRequest('/appmovil/employees?filter[work_center_id]=2');
     const respEmployees = await InitialDataService.getEmployeesWorkCenter(2);
@@ -328,17 +330,17 @@ const searchVehicles = (event) => {
     }, 200);
 };
 
-const searchTaskOfType = (event) => {
-    setTimeout(() => {
-        if (!event.query.trim().length) {
-            tasks_of_type.value = [...Tasks_of_type.value];
-        } else {
-            tasks_of_type.value = Tasks_of_type.value.filter((fram) => {
-                return fram.name.toLowerCase().startsWith(event.query.toLowerCase());
-            });
-        }
-    }, 200);
-};
+// const searchTaskOfType = (event) => {
+//     setTimeout(() => {
+//         if (!event.query.trim().length) {
+//             tasks_of_type.value = [...Tasks_of_type.value];
+//         } else {
+//             tasks_of_type.value = Tasks_of_type.value.filter((fram) => {
+//                 return fram.name.toLowerCase().startsWith(event.query.toLowerCase());
+//             });
+//         }
+//     }, 200);
+// };
 </script>
   
   <style scoped>

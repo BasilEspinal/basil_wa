@@ -35,6 +35,7 @@ const { layoutConfig } = useLayout();
 const toast = useToast();
 const count = ref(0);
 const token = ref('')
+
 const dataFromComponent = ref();
 let endpoint = ref('/appmovil/datastart');
 

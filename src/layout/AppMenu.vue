@@ -819,7 +819,7 @@ const model2 = computed(() => ([
                         label: t('menu.preFrioCapture'),
                         to: '/AppMovil/PreFrio',
                         icon: 'pi pi-mobile',
-                        gate: 'appmovil_prefrio_menu'
+                        gate: 'appmovil_prefrio_menu_tmp'
                     },
                     {
                         label: t('menu.selectionCapture'),
@@ -840,6 +840,25 @@ const model2 = computed(() => ([
                         gate: 'appmovil_agronomia_menu'
                     }
                 ]
+            }
+        ]
+    },
+    {
+        items:[
+            {
+                label: t('menu.template'),
+                rol: 'admin',
+                icon: 'pi pi-desktop',
+                gate: 'appmovil_agronomia_menu',
+                items: [
+                    {
+                        label: t('menu.template'),
+                        to: '/pages/template',
+                        icon: 'pi pi-fw pi-home',
+                        gate: 'appmovil_agronomia_menu'
+                    }
+                ]
+
             }
         ]
     }
