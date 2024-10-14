@@ -130,7 +130,77 @@ function searchUsers() {
                         </div>
                     </ScrollPanel>
                 </TabPanel>
-                <!-- The rest of your tabs here -->
+                <TabPanel v-if="ability.can('appmovil_summary')">
+                <template #header>
+                    <div class="flex align-items-center gap-2">
+                        <i class="pi pi-bars" style="font-size: 1rem" shape="circle" />
+                        <span class="font-bold white-space-nowrap">{{ t('appmovil.resumen') }}</span>
+                    </div>
+                </template>
+                <ScrollPanel class="maxHeightC">
+                    <DataTable :value="worksDay">
+                        <ColumnGroup type="header">
+                            <Row>
+                                <Column :header="t('appmovil.empleado')" :rowspan="3" />
+                            </Row>
+                            <Row>
+                                <Column :header="t('appmovil.trabajos')" :colspan="2" />
+                            </Row>
+                            <Row>
+                                <Column :header="t('appmovil.cantidad')" sortable field="lastYearProfit" />
+                                <Column :header="t('appmovil.precio')" sortable field="thisYearProfit" />
+                            </Row>
+                        </ColumnGroup>
+                        <Column field="employee" />
+                        <Column field="quantity">
+                            <template #body="slotProps">
+                                {{ formatCurrency(slotProps.data.quantity) }}
+                            </template>
+                        </Column>
+                        <Column field="totalPrice">
+                            <template #body="slotProps">
+                                {{ formatCurrency(slotProps.data.totalPrice) }}
+                            </template>
+                        </Column>
+                        <ColumnGroup type="footer">
+                            <Row>
+                                <Column :footer="t('appmovil.total') + ' :'" :colspan="1" footerStyle="text-align:left" />
+                                <Column :footer="quantities" />
+                                <Column :footer="totalPrices" />
+                            </Row>
+                        </ColumnGroup>
+                    </DataTable>
+                </ScrollPanel>
+            </TabPanel>
+
+
+            
+            <TabPanel v-if="ability.can('appmovil_shipping_delivered')">
+                <template #header>
+                    <div class="flex align-items-center gap-2">
+                        <i class="pi pi-cart-plus" style="font-size: 1rem" shape="circle" />
+                        <span class="font-bold white-space-nowrap">{{ t('appmovil.envios') }}</span>
+
+                    </div>
+                    
+                </template>
+                <ScrollPanel class="maxHeightC">
+                    <ShippingDelivered :data="data" :batchs="lotes" />
+                </ScrollPanel>                    
+            </TabPanel>
+
+            <TabPanel v-if="ability.can('appmovil_delivering_delivered')">
+                <template #header>
+                    <div class="flex align-items-center gap-2">
+                        <i class="pi pi-cart-plus" style="font-size: 1rem" shape="circle" />
+                        <span class="font-bold white-space-nowrap">{{ t('appmovil.received') }}</span>
+                    </div>
+                </template>
+                <ScrollPanel class="maxHeightC">
+
+                    <DeliveringDelivered :data="data" :batchs="lotes" />
+                </ScrollPanel>
+            </TabPanel>
             </TabView>
         </div>
         <div v-else>
