@@ -61,8 +61,11 @@ async function sendDailyReport() {
         userId: props.slotProps.uuid,
         labor: selected_dones_work.value?.uuid
     });
+    
+    
     toast.add({ severity: restp.ok ? 'success' : 'error', summary: 'Create', detail: restp.ok ? 'Creado' : restp.error, life: 3000 });
-    if (restp.ok) clearFiels();
+    //if (restp.ok) 
+    //clearFiels();
 }
 
 const UpdateTotal = () => {
@@ -70,7 +73,9 @@ const UpdateTotal = () => {
 };
 
 const updateTaskTarif = async () => {
+    console.log('select_tasks_type', select_tasks_type.value);
     tarifa.value = await getTarif(select_tasks_type.value.code);
+    console.log(tarifa.value);
     tarifa.value === 0 ? toast.add({ severity: 'error', summary: 'Tarifa', detail: 'NO existe tarifa definida', life: 3000 }) : '';
     laborActive.value = select_tasks_type.value?.label !== 'Task' && select_tasks_type.value?.name !== '' && select_tasks_type.value !== null;
     if (laborActive.value) getLabor();

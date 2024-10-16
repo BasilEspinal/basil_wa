@@ -1,5 +1,5 @@
 <script setup>
-import { ref, onMounted } from 'vue';
+import { ref, onMounted,onBeforeMount } from 'vue';
 import InputNumber from 'primevue/inputnumber';
 import { useI18n } from 'vue-i18n';
 import { useAppMovilService } from '../../../service/appMovil/appMovilService';
@@ -9,7 +9,7 @@ import ItemUserAppMovil from './ItemUserAppMovil.vue';
 
 const { worksDay, data_planner } = UseAppMovil();
 
-console.log('data_planner', data_planner);
+
 const props = defineProps({
     dataUsers: { type: Array },
     Lote: { type: Array },
@@ -18,7 +18,7 @@ const props = defineProps({
 
 const toast = useToast();
 const { t } = useI18n();
-const { SUPERVISO_NAME, getTipoActividad, HOLIDAY } = useAppMovilService();
+const { SUPERVISO_NAME, getTipoActividad, HOLIDAY,dataInfoUser } = useAppMovilService();
 const workView = ref(true);
 const supervisoName = ref('');
 const editingRows = ref([]);

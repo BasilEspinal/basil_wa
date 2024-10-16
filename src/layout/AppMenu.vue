@@ -693,13 +693,15 @@ const model2 = computed(() => ([
                         label: t('menu.dailyTransactions'),
                         to: '/PayrollSettlement/DailyTransactions',
                         icon: 'pi pi-bookmark',
-                        gate: 'liquidaciondenomina_transacciones_diarias_menu'
+                        // gate: 'liquidaciondenomina_transacciones_diarias_menu'
+                        gate: 'liquidaciondenomina_planeaciondiaria_menu'
                     },
                     {
                         label: t('menu.shipping.shippingProcess'),
                         to: '/PayrollSettlement/ShippingProcess/ShippingProcess',
                         icon: 'pi pi-bookmark',
-                        gate: 'liquidaciondenomina_transacciones_diarias_menu'
+                        //gate: 'liquidaciondenomina_shipping_process_menu'
+                        gate: 'liquidaciondenomina_planeaciondiaria_menu'
                     },
                     {
                         label: t('menu.transferToPrefrio'),
@@ -717,7 +719,8 @@ const model2 = computed(() => ([
                         label: t('menu.employeeSummary'),
                         to: '/PayrollSettlement/EmployeesInformation',
                         icon: 'pi pi-bookmark',
-                        gate: 'liquidaciondenomina_employees_information_menu'
+                        gate: 'liquidaciondenomina_planeaciondiaria_menu'
+                        // gate: 'liquidaciondenomina_employees_information_menu'
                     },
                     {
                         label: t('menu.periodSummary'),
@@ -819,7 +822,7 @@ const model2 = computed(() => ([
                         label: t('menu.preFrioCapture'),
                         to: '/AppMovil/PreFrio',
                         icon: 'pi pi-mobile',
-                        gate: 'appmovil_prefrio_menu'
+                        gate: 'appmovil_prefrio_menu_tmp'
                     },
                     {
                         label: t('menu.selectionCapture'),
@@ -838,8 +841,39 @@ const model2 = computed(() => ([
                         to: '/AppMovil/Agronomo',
                         icon: 'pi pi-mobile',
                         gate: 'appmovil_agronomia_menu'
+                    },
+                    {
+                        label: t('appmovil.shipping.shippingProcess'),
+                        to: '/AppMovil/Corta/Envios',
+                        icon: 'pi pi-mobile',
+                        gate: 'appmovil_shipping_process_envio'
+                    },
+                    {
+                        label: t('appmovil.shipping.deliveryProcess'),
+                        to: '/AppMovil/Corta/Recibidos',
+                        icon: 'pi pi-mobile',
+                        gate: 'appmovil_shipping_process_recibido'
                     }
                 ]
+            }
+        ]
+    },
+    {
+        items:[
+            {
+                label: t('menu.template'),
+                rol: 'admin',
+                icon: 'pi pi-desktop',
+                gate: 'appmovil_agronomia_menu',
+                items: [
+                    {
+                        label: t('menu.template'),
+                        to: '/pages/template',
+                        icon: 'pi pi-fw pi-home',
+                        gate: 'appmovil_agronomia_menu'
+                    }
+                ]
+
             }
         ]
     }

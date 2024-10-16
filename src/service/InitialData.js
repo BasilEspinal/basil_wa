@@ -63,7 +63,8 @@ export const InitialDataService = {
 
     async getTasksPlanner(value) {
         try {
-            const employeeId = value?.data?.data?.employee?.workCenter?.taskoftype_id?.id;
+            
+            const employeeId = value?.data?.data?.employee?.workCenter?.taskoftype?.id;
             const companyId = value?.data?.data?.company?.id;
             const farmId = value?.data?.data?.farm?.id;
 

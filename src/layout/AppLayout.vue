@@ -29,7 +29,7 @@ watch(isSidebarActive, (newVal) => {
         bindOutsideClickListener();
     } else {
         unbindOutsideClickListener();
-    }D
+    }
 });
 
 onBeforeMount(() => {

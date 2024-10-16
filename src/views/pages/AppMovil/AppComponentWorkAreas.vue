@@ -8,6 +8,8 @@ import { useLayout } from '@/layout/composables/layout';
 import { useAppMovilService } from '../../../service/appMovil/appMovilService';
 import ShippingDelivered from './ShippingDelivered.vue';
 import DeliveringDelivered from './DeliveringDelivered.vue';
+import ErrorAppMovil from './ErrorAppMovil.vue';
+import ability from '@/service/ability.js';
 const { t } = useI18n();
 const toast = useToast();
 const { worksDay } = UseAppMovil();
@@ -23,14 +25,21 @@ const data = ref(null);
 const holiday = ref('Normal');
 const lotes = ref(null);
 const search = ref(null);
+const userEmployee = ref(localStorage.getItem('accesSessionEmployeeUuid'));
+const loading = ref(true); // Initially set to true
+
 
 onBeforeMount(async () => {
+    loading.value = true; // Set loading to true when data fetching starts
     await initData();
     getUser();
-    getData();
+    await getData();
     holiday.value = HOLIDAY;
-    titulo.value = t('appmovil.titulo') + ' ' + TASK_OF_TYPE.name;
+    titulo.value = t('appmovil.titulo') + ' ' + (TASK_OF_TYPE?.name ? TASK_OF_TYPE.name : 'XXXXXXXXXXXXXX');
+    loading.value = false; // Set loading to false when data fetching is complete
 });
+
+
 
 const logoUrl = computed(() => {
     return `layout/images/${layoutConfig.darkTheme.value ? 'logo-white' : 'logo-dark'}.png`;
@@ -47,6 +56,8 @@ const getData = async () => {
     const response = await getDataTasksplanner();
     if (!response.ok) toast.add({ severity: 'error', detail: 'Error' + response.error, life: 3000 });
     data.value = response.data;
+    
+    
 };
 
 watch(data, () => {
@@ -81,50 +92,53 @@ function searchUsers() {
 </script>
 
 <template>
-    <div v-if="true" class="card maxHeightY">
-        <div class="flex">
-            <div class="w-full">
-                <h2>{{ titulo }}</h2>
-            </div>
-            <div>
-                <div class="p-inputgroup">
-                    <span class="p-float-label">
-                        <InputText id="search" v-model="search" />
-                        <label class="font-bold">{{ t('appmovil.users') }}</label>
-                    </span>
-                    <Button class="p-inputgroup-addon" @click="searchUsers" label="Search" />
+    <h2>{{ titulo }}</h2>
+    
+    <div v-if="loading" class="flex align-items-center justify-content-center" style="height: 100vh;">
+        <ProgressSpinner />
+    </div>
+    
+
+    <div v-else-if="data" class="card maxHeightY">
+        
+        
+        
+        <div v-if="!data.crop_lots">
+            <ErrorAppMovil :title="t('appmovil.nolotes')" :description="t('appmovil.infonolotes')" :logo-url="logoUrl" />
+        </div>
+
+        <div v-else-if="userEmployee">
+            <div class="flex">
+                <div class="w-full">
+                </div>
+                <div>
+                    <div class="p-inputgroup">
+                        <span class="p-float-label">
+                            <InputText id="search" v-model="search" />
+                            <label class="font-bold">{{ t('appmovil.users') }}</label>
+                        </span>
+                        <Button class="p-inputgroup-addon" @click="searchUsers" label="Search" />
+                    </div>
                 </div>
             </div>
-        </div>
-        <TabView class="tabview-custom">
-            <TabPanel>
-                <template #header>
-                    <div class="flex align-items-center gap-2">
-                        <i class="pi pi-user" style="font-size: 1rem" shape="circle" />
-                        <span class="font-bold white-space-nowrap">{{ t('appmovil.users') }}</span>
-                    </div>
-                </template>
-                <ScrollPanel class="maxHeightC">
-                    <div v-if="filterUsers">
-                        <UserAppMovil :dataUsers="filterUsers" :Lote="lotes" :data="data" />
-                    </div>
-                    <div v-else>
-                        <div class="flex flex-column align-items-center justify-content-center m-4">
-                            <div style="border-radius: 56px; padding: 0.3rem; background: linear-gradient(180deg, rgba(255, 30, 60, 0.4) 10%, rgba(33, 150, 243, 0) 40%, rgba(255, 30, 60, 0.4) 80%)">
-                                <div class="w-full surface-card py-5 px-5 sm:px-8 flex flex-column align-items-center" style="border-radius: 53px">
-                                    <div class="grid flex flex-column align-items-center">
-                                        <img :src="logoUrl" alt="logo" class="mb-2 w-4rem flex-shrink-0" />
-                                        <h1 class="text-900 font-bold text-3xl mb-1">{{ t('appmovil.usersAvailable') }}</h1>
-                                        <img src="/demo/images/error/asset-error.svg" alt="Error" class="mb-4" width="50%" />
-                                        <span class="text-700 mb-4">Requested resource is not available.</span>
-                                    </div>
-                                </div>
-                            </div>
+            <TabView class="tabview-custom">
+                <TabPanel v-if="ability.can('appmovil_users')">
+                    <template #header>
+                        <div class="flex align-items-center gap-2">
+                            <i class="pi pi-user" style="font-size: 1rem" shape="circle" />
+                            <span class="font-bold white-space-nowrap">{{ t('appmovil.users') }}</span>
                         </div>
-                    </div>
-                </ScrollPanel>
-            </TabPanel>
-            <TabPanel>
+                    </template>
+                    <ScrollPanel class="maxHeightC">
+                        <div v-if="filterUsers">
+                            <UserAppMovil :dataUsers="filterUsers" :Lote="lotes" :data="data" />
+                        </div>
+                        <div v-else>
+                            <ErrorAppMovil :title="t('appmovil.usersAvailable')" description="Requested resource is not available" :logo-url="logoUrl" />
+                        </div>
+                    </ScrollPanel>
+                </TabPanel>
+                <TabPanel v-if="ability.can('appmovil_summary')">
                 <template #header>
                     <div class="flex align-items-center gap-2">
                         <i class="pi pi-bars" style="font-size: 1rem" shape="circle" />
@@ -169,7 +183,7 @@ function searchUsers() {
 
 
             
-            <TabPanel>
+            <TabPanel v-if="ability.can('appmovil_shipping_delivered')">
                 <template #header>
                     <div class="flex align-items-center gap-2">
                         <i class="pi pi-cart-plus" style="font-size: 1rem" shape="circle" />
@@ -183,7 +197,7 @@ function searchUsers() {
                 </ScrollPanel>                    
             </TabPanel>
 
-            <TabPanel>
+            <TabPanel v-if="ability.can('appmovil_delivering_delivered')">
                 <template #header>
                     <div class="flex align-items-center gap-2">
                         <i class="pi pi-cart-plus" style="font-size: 1rem" shape="circle" />
@@ -195,23 +209,16 @@ function searchUsers() {
                     <DeliveringDelivered :data="data" :batchs="lotes" />
                 </ScrollPanel>
             </TabPanel>
-        </TabView>
-        <Toast />
+            </TabView>
+        </div>
+        <div v-else>
+            <ErrorAppMovil :title="t('appmovil.noemployeeAssigned')" :description="t('appmovil.infonoemployeeAssigned')" :logo-url="logoUrl" />
+        </div>
     </div>
-<div v-else>
-    <div class="flex flex-column align-items-center justify-content-center m-4">
-                            <div style="border-radius: 56px; padding: 0.3rem; background: linear-gradient(180deg, rgba(255, 30, 60, 0.4) 10%, rgba(33, 150, 243, 0) 40%, rgba(255, 30, 60, 0.4) 80%)">
-                                <div class="w-full surface-card py-5 px-5 sm:px-8 flex flex-column align-items-center" style="border-radius: 53px">
-                                    <div class="grid flex flex-column align-items-center">
-                                        <img :src="logoUrl" alt="logo" class="mb-2 w-4rem flex-shrink-0" />
-                                        <h1 class="text-900 font-bold text-3xl mb-1">{{t('appmovil.nodataplanner')}}</h1>
-                                        <img src="/demo/images/error/asset-error.svg" alt="Error" class="mb-4" width="50%" />
-                                        <span class="text-700 mb-4">{{t('appmovil.infonodataplanner')}}</span>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-</div>
+
+    <div v-else>
+        <ErrorAppMovil :title="t('appmovil.nodataplanner')" :description="t('appmovil.infonodataplanner')" :logo-url="logoUrl" />
+    </div>
 </template>
 
 <style lang="scss" scoped>

@@ -35,6 +35,7 @@ const { layoutConfig } = useLayout();
 const toast = useToast();
 const count = ref(0);
 const token = ref('')
+
 const dataFromComponent = ref();
 let endpoint = ref('/appmovil/datastart');
 
@@ -154,6 +155,9 @@ const fetchInfoPostLogin = async (data) => {
     
     sessionStorage.setItem('accessSessionToken', token.value);
     sessionStorage.setItem('accessSessionUser', user);
+    sessionStorage.setItem('accessSessionFarm', farm);  
+    sessionStorage.setItem('accessSessionCompany', company);
+    localStorage.setItem('accesSessionToken', token.value);
     localStorage.setItem('accesSessionUsers', user);
     localStorage.setItem('accesSessionFarms', farm);
     localStorage.setItem('accesSessionCompanys', company);

@@ -24,6 +24,7 @@ const newDataRols = () =>{
 
 </script>
 <template>
+    
         <PickList v-model="picklistValue" listStyle="height:250px" dataKey="code" @selection-change="newDataRols">
             <template #sourceheader> From </template>
             <template #targetheader> To </template>
@@ -31,4 +32,5 @@ const newDataRols = () =>{
                 <div>{{ slotProps.item.name }}</div>
             </template>
         </PickList>
+    
 </template>

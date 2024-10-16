@@ -9,15 +9,8 @@ export const fetchInfoDataLogged = async () => {
         const response = await getRequest('/appmovil/datastart');
         console.log('response :', response);
         const { farm, company, employee, user_email } = response.data.data;
-        const employeeName = employee.first_name + ' ' + employee.lasts_names;
-        //const farm = response.data.data.farm.uuid;
-        //const farmId = response.data.data.farm.id;
-        //const company = response.data.data.company.uuid;
-        //const companyID = response.data.data.company.id;
-        //const employeeUuid = response.data.data.employee.uuid;
-        //const emailUser = response.data.data.user_email;
-        //const workCenter = response.data.data.employee.workCenter;
-        console.log('employeeName', employeeName);
+        const employeeName = employee.full_name; 
+        sessionStorage.setItem('accessSessionEmail', user_email);
         sessionStorage.setItem('accessSessionEmail', user_email);
         localStorage.setItem('accesSessionEmail', user_email);
         localStorage.setItem('accesSessionFarms', farm.uuid);

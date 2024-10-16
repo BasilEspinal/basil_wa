@@ -215,6 +215,7 @@ onBeforeMount(async () => {
     name: dataPlanner.value.data.data[0].vehicle.vehicle_type,  
     id: dataPlanner.value.data.data[0].vehicle.id       
 };
+
     lots.value.push(props.batchs)
 
     
@@ -244,6 +245,7 @@ const readAll = async () => {
 };
 
 const actionRecordManager = handleSubmitNew(async (values) => {
+    
     const responseCRUD = ref();
     const data = {
     trans_dev: false, // Valor booleano directamente asignado
@@ -328,17 +330,17 @@ const searchVehicles = (event) => {
     }, 200);
 };
 
-const searchTaskOfType = (event) => {
-    setTimeout(() => {
-        if (!event.query.trim().length) {
-            tasks_of_type.value = [...Tasks_of_type.value];
-        } else {
-            tasks_of_type.value = Tasks_of_type.value.filter((fram) => {
-                return fram.name.toLowerCase().startsWith(event.query.toLowerCase());
-            });
-        }
-    }, 200);
-};
+// const searchTaskOfType = (event) => {
+//     setTimeout(() => {
+//         if (!event.query.trim().length) {
+//             tasks_of_type.value = [...Tasks_of_type.value];
+//         } else {
+//             tasks_of_type.value = Tasks_of_type.value.filter((fram) => {
+//                 return fram.name.toLowerCase().startsWith(event.query.toLowerCase());
+//             });
+//         }
+//     }, 200);
+// };
 </script>
   
   <style scoped>

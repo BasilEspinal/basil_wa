@@ -48,6 +48,7 @@ export default function useData() {
     }
 
     async function postRequest(endPoint, data) {
+        initializeToken();
         let responseData = { data: [], error: '', ok: false };
         let baseUrl = `${base}${api}${endPoint}`;
         const requestOptions = {
@@ -56,6 +57,7 @@ export default function useData() {
             body: JSON.stringify(data)
         };
         try {
+            console.log('requestOptions:', requestOptions.headers);
             const response = await fetch(baseUrl, requestOptions);
             responseData.ok = response.ok;
             if (!response.ok) {
@@ -80,6 +82,7 @@ export default function useData() {
     }
 
     async function putRequest(endPoint, data, id) {
+        initializeToken();
         let responseData = { data: [], error: '', ok: false };
         let baseUrl = `${base}${api}${endPoint}/${id}`;
         const requestOptions = {
@@ -110,6 +113,7 @@ export default function useData() {
     }
 
     async function deleteRequest(endPoint, id) {
+        initializeToken();
         let responseData = { data: [], error: '', ok: false };
         let baseUrl = `${base}${api}${endPoint}/${id}`;
         const requestOptions = {
@@ -133,6 +137,7 @@ export default function useData() {
     }
 
     async function patchRequest(endPoint, data, id) {
+        initializeToken();
         let responseData = { data: [], error: '', ok: false };
         let baseUrl = `${base}${api}${endPoint}/${id}`;
         const requestOptions = {
