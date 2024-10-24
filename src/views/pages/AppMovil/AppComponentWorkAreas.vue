@@ -10,6 +10,138 @@ import ShippingDelivered from './ShippingDelivered.vue';
 import DeliveringDelivered from './DeliveringDelivered.vue';
 import ErrorAppMovil from './ErrorAppMovil.vue';
 import ability from '@/service/ability.js';
+//
+// Estoy utilizando otro servicio para el CRUD
+
+//Sebastian
+import { CrudService } from '@/service/CRUD/CrudService';
+import {AppMovilDataService_V2} from '@/service/appMovil/appMovilService_V2';
+const errorSummary = ref(false);
+const summary = ref()
+const sales = ref([
+    {product: 'Bamboo Watch', lastYearSale: 51, thisYearSale: 40, lastYearProfit: 54406, thisYearProfit: 43342},
+    {product: 'Black Watch', lastYearSale: 83, thisYearSale: 9, lastYearProfit: 423132, thisYearProfit: 312122},
+    {product: 'Blue Band', lastYearSale: 38, thisYearSale: 5, lastYearProfit: 12321, thisYearProfit: 8500},
+    {product: 'Blue T-Shirt', lastYearSale: 49, thisYearSale: 22, lastYearProfit: 745232, thisYearProfit: 65323},
+    {product: 'Brown Purse', lastYearSale: 17, thisYearSale: 79, lastYearProfit: 643242, thisYearProfit: 500332},
+    {product: 'Chakra Bracelet', lastYearSale: 52, thisYearSale:  65, lastYearProfit: 421132, thisYearProfit: 150005},
+    {product: 'Galaxy Earrings', lastYearSale: 82, thisYearSale: 12, lastYearProfit: 131211, thisYearProfit: 100214},
+    {product: 'Game Controller', lastYearSale: 44, thisYearSale: 45, lastYearProfit: 66442, thisYearProfit: 53322},
+    {product: 'Gaming Set', lastYearSale: 90, thisYearSale: 56, lastYearProfit: 765442, thisYearProfit: 296232},
+    {product: 'Gold Phone Case', lastYearSale: 75, thisYearSale: 54, lastYearProfit: 21212, thisYearProfit: 12533}
+]);
+const formatCurrency = (value) => {
+    return value.toLocaleString('en-US', {style: 'currency', currency: 'USD'});
+};
+const totalTaskQtyTask = ref(0);
+const totalTaskTotal = ref(0);
+const totalTaskQtyHoraExtra = ref(0);
+const totalHoraExtraTotal = ref(0);
+const totalTaskQtyLabor = ref(0);
+const totalLaborTotal = ref(0);
+const totalTaskQtyJournal = ref(0);
+const totalJournalTotal = ref(0);
+const idPlannerTask = ref(0);
+
+const getDataEmployeesInfo = async () => {
+    const response = await AppMovilDataService_V2.getInfoEmployees(idPlannerTask.value);
+    if (!response.ok) {
+        toast.add({ severity: 'error', detail: 'Error' + response.error, life: 3000 });
+    
+        errorSummary.value = true;
+
+        
+    }
+    summary.value = response.data.data;
+    
+
+const lastYearTotal = computed(() => {
+    let total = 0;
+    for(let sale of sales.value) {
+        total += sale.lastYearProfit;
+    }
+
+    return formatCurrency(total);
+});
+
+const thisYearTotal = computed(() => {
+    let total = 0;
+    for(let sale of sales.value) {
+        total += sale.thisYearProfit;
+    }
+
+    return formatCurrency(total);
+});
+
+totalTaskQtyTask.value = computed(() => {
+    let total = 0;
+    for (let item of summary.value) {
+        total += parseFloat(item.task_qty_task) || 0;
+    }
+    return total;
+});
+
+totalTaskTotal.value = computed(() => {
+    let total = 0;
+    for (let item of summary.value) {
+        total += parseFloat(item.total_task) || 0;
+    }
+    return total;
+});
+
+totalTaskQtyHoraExtra.value = computed(() => {
+    let total = 0;
+    for (let item of summary.value) {
+        total += parseFloat(item.task_qty_hora_extra) || 0;
+    }
+    return total;
+});
+
+totalHoraExtraTotal.value = computed(() => {
+    let total = 0;
+    for (let item of summary.value) {
+        total += parseFloat(item.total_hora_extra) || 0;
+    }
+    return total;
+});
+
+totalTaskQtyLabor.value = computed(() => {
+    let total = 0;
+    for (let item of summary.value) {
+        total += parseFloat(item.task_qty_labor) || 0;
+    }
+    return total;
+});
+
+totalLaborTotal.value = computed(() => {
+    let total = 0;
+    for (let item of summary.value) {
+        total += parseFloat(item.total_labor) || 0;
+    }
+    return total;
+});
+
+totalTaskQtyJournal.value = computed(() => {
+    let total = 0;
+    for (let item of summary.value) {
+        total += parseFloat(item.task_qty_journal) || 0;
+    }
+    return total;
+});
+
+totalJournalTotal.value = computed(() => {
+    let total = 0;
+    for (let item of summary.value) {
+        total += parseFloat(item.total_journal) || 0;
+    }
+    console.log(total);
+    return total;
+});
+
+
+};
+
+////////////////////////////////////////////////////////////
 const { t } = useI18n();
 const toast = useToast();
 const { worksDay } = UseAppMovil();
@@ -37,6 +169,10 @@ onBeforeMount(async () => {
     holiday.value = HOLIDAY;
     titulo.value = t('appmovil.titulo') + ' ' + (TASK_OF_TYPE?.name ? TASK_OF_TYPE.name : 'XXXXXXXXXXXXXX');
     loading.value = false; // Set loading to false when data fetching is complete
+    //////////////////////////
+    //Sebastian
+    getDataEmployeesInfo();
+    ////////////////////////
 });
 
 
@@ -56,9 +192,9 @@ const getData = async () => {
     const response = await getDataTasksplanner();
     if (!response.ok) toast.add({ severity: 'error', detail: 'Error' + response.error, life: 3000 });
     data.value = response.data;
-    
-    
+    idPlannerTask.value =data.value.id   
 };
+
 
 watch(data, () => {
     
@@ -70,9 +206,6 @@ watch(search, () => {
     searchUsers();
 });
 
-const formatCurrency = (value) => {
-    return value.toLocaleString('en-US', { style: 'currency', currency: 'USD' });
-};
 
 const quantities = computed(() => {
     let total = 0;
@@ -99,10 +232,7 @@ function searchUsers() {
     </div>
     
 
-    <div v-else-if="data" class="card maxHeightY">
-        
-        
-        
+    <div v-else-if="data" class="card maxHeightY">       
         <div v-if="!data.crop_lots">
             <ErrorAppMovil :title="t('appmovil.nolotes')" :description="t('appmovil.infonolotes')" :logo-url="logoUrl" />
         </div>
@@ -146,7 +276,9 @@ function searchUsers() {
                     </div>
                 </template>
                 <ScrollPanel class="maxHeightC">
-                    <DataTable :value="worksDay">
+                    <!-- <DataTable :value="worksDay">
+
+
                         <ColumnGroup type="header">
                             <Row>
                                 <Column :header="t('appmovil.empleado')" :rowspan="3" />
@@ -177,8 +309,126 @@ function searchUsers() {
                                 <Column :footer="totalPrices" />
                             </Row>
                         </ColumnGroup>
-                    </DataTable>
+                    </DataTable> -->
+                    <div v-if="!errorSummary">
+
+                    <DataTable :value="summary" tableStyle="min-width: 50rem">
+        <ColumnGroup type="header">
+            <Row>
+                <Column header="Employees" :rowspan="3" />
+                <Column header="Type price task" :rowspan="3" />
+                <Column header="Type Day Tarif" :rowspan="3" />
+                
+                <Column header="Cortar" :colspan="4" />
+            </Row>
+            <Row>
+                <Column header="Task" :colspan="2" />
+                <!-- <Column header="Labor" :colspan="2" />
+                <Column header="Journal" :colspan="2" /> -->
+                <Column header="Hora Extra" :colspan="2" />
+            </Row>
+            <Row>
+                <Column header="Quantity" sortable field="task_qty_task"/>
+                <Column header="Total" sortable field="total_task"/>
+
+                 <!-- <Column header="Quantity" sortable field="task_qty_labor"/>
+                <Column header="Total" sortable field="total_labor"/>
+
+                <Column header="Quantity" sortable field="task_qty_journal"/>
+                <Column header="Total" sortable field="total_journal"/> -->
+
+                <Column header="Type price task" :rowspan="3" />
+                <Column header="Type Day Tarif" :rowspan="3" />
+
+                <Column header="Quantity" sortable field="task_qty_hora_extra"/>
+                <Column header="Total" sortable field="total_hora_extra"/> 
+            </Row>
+        </ColumnGroup>
+        <Column field="employee.full_name" />
+        <Column field="type_price_task" />
+        <Column field="type_day_tarif" />
+        
+
+
+        <Column field="task_qty_task">
+            <template #body="slotProps">
+                {{slotProps.data.task_qty_task}}
+            </template>
+        </Column>        
+
+
+
+
+        <Column field="total_task">
+            <template #body="slotProps">
+                {{formatCurrency(slotProps.data.total_task)}}
+            </template>
+        </Column>
+        <!-- 
+        <Column field="task_qty_labor">
+            <template #body="slotProps">
+                {{slotProps.data.task_qty_labor}}
+            </template>
+        </Column>
+
+        <Column field="total_labor">
+            <template #body="slotProps">
+                {{formatCurrency(slotProps.data.total_labor)}}
+            </template>
+        </Column>
+
+        <Column field="task_qty_journal">
+            <template #body="slotProps">
+                {{slotProps.data.task_qty_journal}}
+            </template>
+        </Column>
+
+        <Column field="total_journal">
+            <template #body="slotProps">
+                {{formatCurrency(slotProps.data.total_journal)}}
+            </template>
+        </Column>
+
+         
+-->
+<Column field="price_task" />
+<Column field="price_hora_extra" />
+<Column field="task_qty_hora_extra">
+            <template #body="slotProps">
+                {{slotProps.data.task_qty_hora_extra?slotProps.data.task_qty_hora_extra:'Null'}}
+            </template>
+        </Column>
+        
+        <Column field="total_hora_extra">
+            <template #body="slotProps">
+                {{slotProps.data.total_hora_extra?formatCurrency(slotProps.data.total_hora_extra):'Null'}}
+            </template>
+        </Column> 
+     
+        <ColumnGroup type="footer">
+            <Row>
+                <Column footer="Totals:" :colspan="3" footerStyle="text-align:right"/>
+                <Column :footer="totalTaskQtyTask" />
+                <Column :footer="totalTaskTotal" />
+                <!-- <Column :footer="totalTaskQtyLabor" />
+                <Column :footer="totalLaborTotal" />
+                <Column :footer="totalTaskQtyJournal" />
+                <Column :footer="totalJournalTotal" /> -->
+                <Column footerStyle="text-align:right"/>
+                <Column footerStyle="text-align:right"/>
+                <Column :footer="totalTaskQtyHoraExtra" />
+                
+                <Column :footer="totalHoraExtraTotal" />
+
+            </Row>
+        </ColumnGroup>
+        </DataTable>
+                    </div>
+                    <div v-else>
+                        <ErrorAppMovil :title="t('appmovil.nodataplanner')" :description="t('appmovil.infonodataplanner')" :logo-url="logoUrl" />
+                        </div>
                 </ScrollPanel>
+                
             </TabPanel>
 
 

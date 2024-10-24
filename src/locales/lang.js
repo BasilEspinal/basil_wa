@@ -328,7 +328,9 @@ export const messages = {
             shipping: {
                 shippingProcess: 'Proceso de Envío',
                 deliveryProcess: 'Proceso de Entrega',
-            }
+            },
+            
+            
         }
     }
 };

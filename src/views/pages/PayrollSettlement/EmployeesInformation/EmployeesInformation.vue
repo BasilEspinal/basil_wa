@@ -385,7 +385,7 @@
                 <Column :footer="thisYearTotal" /> -->
             </Row>
         </ColumnGroup>
-    </DataTable>
+        </DataTable>
 
 
 

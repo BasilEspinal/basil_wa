@@ -16,7 +16,7 @@ const tipoActividad = ref([]);
 export function useAppMovilService() {
 
     const error = (e) => ({ data: [], error: e, ok: false });
-
+    
     const initData = async () => {
         await getDataTasksplanner();
         await getHoliDay();
