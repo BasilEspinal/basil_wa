@@ -34,10 +34,11 @@ const totalTaskQtyLabor = ref(0);
 const totalLaborTotal = ref(0);
 const totalTaskQtyJournal = ref(0);
 const totalJournalTotal = ref(0);
-const idPlannerTask = ref(0);
+
+
 
 const getDataEmployeesInfo = async (employee_id) => {
-    console.log("hola")
+    
     const response = await AppMovilDataService_V2.getInfoEmployeesById(props.data.id,employee_id);
     if (!response.ok) {
         toast.add({ severity: 'error', detail: 'Error' + response.error, life: 3000 });
@@ -46,29 +47,29 @@ const getDataEmployeesInfo = async (employee_id) => {
 
         
     }
-    console.log(data_planner.id)
     summary.value = response.data.data;
-    console.log(summary.value)
+    console.log('pruea')
 
-const lastYearTotal = computed(() => {
-    let total = 0;
-    for(let sale of sales.value) {
-        total += sale.lastYearProfit;
-    }
+// const lastYearTotal = computed(() => {
+//     let total = 0;
+//     for(let sale of sales.value) {
+//         total += sale.lastYearProfit;
+//     }
 
-    return formatCurrency(total);
-});
+//     return formatCurrency(total);
+// });
 
-const thisYearTotal = computed(() => {
-    let total = 0;
-    for(let sale of sales.value) {
-        total += sale.thisYearProfit;
-    }
+// const thisYearTotal = computed(() => {
+//     let total = 0;
+//     for(let sale of sales.value) {
+//         total += sale.thisYearProfit;
+//     }
 
-    return formatCurrency(total);
-});
-
+//     return formatCurrency(total);
+// });
+console.log('uuuu')
 totalTaskQtyTask.value = computed(() => {
+    console.log('aaaa')
     let total = 0;
     for (let item of summary.value) {
         total += parseFloat(item.task_qty_task) || 0;
@@ -176,13 +177,16 @@ const TipoActividad = async () => {
     tipoActividad.value = response?.data;
 };
 
-const changeWorkView = async (event) => {
+
+
+const changeWorkView = async (id) => {
     
 
     workView.value = !workView.value;
     
-    event.stopPropagation();
-    await getDataEmployeesInfo(127)
+    // event.stopPropagation();
+    console.log(id)
+    await getDataEmployeesInfo(id)
     
     // if(!workView){
     //     console.log("work")
@@ -212,8 +216,8 @@ const onRowEditSave = (event) => {
                     <span class="flex align-items-center gap-2 w-full">
                         <Avatar style="min-width: 2rem" image="https://primefaces.org/cdn/primevue/images/avatar/amyelsner.png" shape="circle" />
                         <span class="responsive-text font-bold white-space-nowrap overflow-hidden w-full">{{ slotProps.first_name }}</span>
-                        <Button class="w-8rem" :label="t('appmovil.trabajos')" :disabled="workView" @click="changeWorkView" size="small" outlined />
-                        <Button class="w-8rem" :label="t('appmovil.detalles')" :disabled="!workView" @click="changeWorkView" size="small" severity="secondary" outlined />
+                        <Button class="w-8rem" :label="t('appmovil.trabajos')" :disabled="workView" @click="changeWorkView(slotProps.id)" size="small" outlined />
+                        <Button class="w-8rem" :label="t('appmovil.detalles')" :disabled="!workView" @click="changeWorkView(slotProps.id)" size="small" severity="secondary" outlined />
                     </span>
                 </template>
                 <pre>{{ slotProps.id }}</pre>
