@@ -83,7 +83,7 @@ const initFilters = () => {
         global: { value: null, matchMode: FilterMatchMode.CONTAINS },
         document_type: { operator: FilterOperator.AND, constraints: [{ value: null, matchMode: FilterMatchMode.STARTS_WITH }] },
         'workCenter.name': { operator: FilterOperator.AND, constraints: [{ value: null, matchMode: FilterMatchMode.STARTS_WITH }] },
-        'jobType.name': { operator: FilterOperator.AND, constraints: [{ value: null, matchMode: FilterMatchMode.STARTS_WITH }] },
+        'job_type.name': { operator: FilterOperator.AND, constraints: [{ value: null, matchMode: FilterMatchMode.STARTS_WITH }] },
         document: { operator: FilterOperator.AND, constraints: [{ value: null, matchMode: FilterMatchMode.STARTS_WITH }] },
         first_name: { operator: FilterOperator.AND, constraints: [{ value: null, matchMode: FilterMatchMode.STARTS_WITH }] },
         last_name: { operator: FilterOperator.AND, constraints: [{ value: null, matchMode: FilterMatchMode.STARTS_WITH }] },
@@ -252,7 +252,7 @@ const openEdit = () => {
         bank_account_number: BankAccountNumber,
         bank_account_doc: BankAccountDoc,
         payment_type: PaymentType,
-        jobType: JobType,
+        job_type: JobType,
         workCenter: WorkC,
         farm: Farm,
         company: empresa
@@ -289,7 +289,7 @@ const openClone = () => {
         bank_account_number: BankAccountNumber,
         bank_account_doc: BankAccountDoc,
         payment_type: PaymentType,
-        jobType: JobType,
+        job_type: JobType,
         workCenter: WorkC,
         farm: Farm,
         company: empresa
@@ -309,7 +309,6 @@ const openClone = () => {
     work_center_uuid.value = { id: WorkC.uuid, name: WorkC.name };
     farm_uuid.value = { id: Farm.uuid, name: Farm.name };
     company.value = { id: empresa.uuid, name: empresa.name };
-
     formDialogClone.value = true;
 };
 
@@ -334,7 +333,7 @@ const createRecord = handleSubmitNew(async (values) => {
         bank_account_number: values.bank_account_number + '',
         bank_account_doc: values.bank_account_doc,
         payment_type_uuid: values.payment_type_uuid.id,
-        job_typeV: values.job_typeV.id,
+        job_type_uuid: values.job_typeV.id,
         work_center_uuid: values.work_center_uuid.id,
         company_uuid: values.company ? values.company.id : companyDefault,
         farm_uuid: values.farm ? values.farm.id : farmDefault,
@@ -369,7 +368,7 @@ const EditRecord = handleSubmitNew(async (values) => {
         document_type: values.document_type.id,
         bank_account_number: values.bank_account_number + '',
         bank_account_doc: values.bank_account_doc,
-        job_typeV: values.job_typeV.id,
+        job_type_uuid: values.job_typeV.id,
         payment_type_uuid: values.payment_type_uuid.id,
         work_center_uuid: values.work_center_uuid.id,
         company_uuid: values.company ? values.company.id : companyDefault,
@@ -404,13 +403,13 @@ const cloneRecord = handleSubmitNew(async (values) => {
         document_type: values.document_type.id,
         bank_account_number: values.bank_account_number + '',
         bank_account_doc: values.bank_account_doc,
-        job_typeV: values.job_typeV.id,
+        job_type_uuid: values.job_typeV.id,
         payment_type_uuid: values.payment_type_uuid.id,
         work_center_uuid: values.work_center_uuid.id,
         company_uuid: values.company ? values.company.id : companyDefault,
         farm_uuid: values.farm ? values.farm.id : farmDefault,
     };
-    
+    console.log(data)
     const restp = await postRequest(endpoint.value, data);
 
     toast.add({ severity: restp.ok ? 'success' : 'error', summary: 'Create', detail: restp.ok ? 'Creado' : restp.error, life: 3000 });
@@ -675,9 +674,9 @@ const remove = (aver) => {
                     </template>
                 </Column>
 
-                <Column field="jobType" filterField="jobType.name" header="Job Type" sortable>
+                <Column field="job_type" filterField="job_type.name" header="Job Type" sortable>
                     <template #body="{ data }">
-                        {{ data.jobType.name }}
+                        {{ data.job_type?data.job_type.name:'N/A' }}
                     </template>
                     <template #filter="{ filterModel }">
                         <InputText v-model="filterModel.value" type="text" class="p-column-filter" placeholder="Search by Job Type" />
@@ -699,15 +698,6 @@ const remove = (aver) => {
                     </template>
                     <template #filter="{ filterModel }">
                         <InputText v-model="filterModel.value" type="text" class="p-column-filter" placeholder="Search by Bank Account Document" />
-                    </template>
-                </Column>
-
-                <Column field="jobType" filterField="jobType.name" header="Job Type" sortable>
-                    <template #body="{ data }">
-                        {{ data.jobType?.name || 'N/A' }}
-                    </template>
-                    <template #filter="{ filterModel }">
-                        <InputText v-model="filterModel.value" type="text" class="p-column-filter" placeholder="Search by Job Type" />
                     </template>
                 </Column>
 

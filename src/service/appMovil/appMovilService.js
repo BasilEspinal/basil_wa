@@ -16,7 +16,7 @@ const tipoActividad = ref([]);
 export function useAppMovilService() {
 
     const error = (e) => ({ data: [], error: e, ok: false });
-
+    
     const initData = async () => {
         await getDataTasksplanner();
         await getHoliDay();
@@ -50,7 +50,7 @@ export function useAppMovilService() {
             let Endpoint = '';
             if (tasksType && listFilterType.includes(tasksType)) {
                 Endpoint = `/appmovil/taskstarif?filter[tasks_of_type_id]=${fetchWorkCenter.value?.taskoftype?.id}&filter[work_type_day]=${holiday.value}&filter[farm_id]=${fetchFarmId.value}&filter[company_id]=${fetchCompannyId.value}&filter[packing_type_id]=${tasksPlaner.value?.packing_type.id}&filter[type_price]=${tasksType}`;
-            }
+            }              // /appmovil/taskstarif?filter[tasks_of_type_id]=4                                       &filter[work_type_day]=Normal         &filter[farm_id]= 1                   &filter[company_id]=1                       &filter[packing_type_id]=1                                    &filter[type_price]=Task
             const response = await getRequest(Endpoint);
 
 
