@@ -7,7 +7,7 @@ import { useToast } from 'primevue/usetoast';
 import UseAppMovil from '@/composables/AppMovil/UseAppMovil.js';
 import ItemUserAppMovil from './ItemUserAppMovil.vue';
 //////////////
-
+const { worksDay, data_planner } = UseAppMovil();
 import {AppMovilDataService_V2} from '@/service/appMovil/appMovilService_V2';
 const errorSummary = ref(false);
 const summary = ref()
@@ -36,8 +36,9 @@ const totalTaskQtyJournal = ref(0);
 const totalJournalTotal = ref(0);
 const idPlannerTask = ref(0);
 
-const getDataEmployeesInfo = async () => {
-    const response = await AppMovilDataService_V2.getInfoEmployeesById(8,127);
+const getDataEmployeesInfo = async (employee_id) => {
+    console.log("hola")
+    const response = await AppMovilDataService_V2.getInfoEmployeesById(props.data.id,employee_id);
     if (!response.ok) {
         toast.add({ severity: 'error', detail: 'Error' + response.error, life: 3000 });
     
@@ -45,8 +46,9 @@ const getDataEmployeesInfo = async () => {
 
         
     }
+    console.log(data_planner.id)
     summary.value = response.data.data;
-    
+    console.log(summary.value)
 
 const lastYearTotal = computed(() => {
     let total = 0;
@@ -135,7 +137,7 @@ totalJournalTotal.value = computed(() => {
 };
 
 ////////////////////////////////////////////////////////////
-const { worksDay, data_planner } = UseAppMovil();
+
 
 
 const props = defineProps({
@@ -160,11 +162,12 @@ const estilo = ref({
 onMounted(async () => {
     supervisoName.value = SUPERVISO_NAME;
     TipoActividad();
+    
     console.log(props.data)
 });
 
 onBeforeMount(async () => {
-getDataEmployeesInfo();
+
 });
 
 const TipoActividad = async () => {
@@ -173,9 +176,21 @@ const TipoActividad = async () => {
     tipoActividad.value = response?.data;
 };
 
-const changeWorkView = (event) => {
+const changeWorkView = async (event) => {
+    
+
     workView.value = !workView.value;
+    
     event.stopPropagation();
+    await getDataEmployeesInfo(127)
+    
+    // if(!workView){
+    //     console.log("work")
+    //     await getDataEmployeesInfo(127)
+    // }
+  
+       // Fetch data when switching to "Detalles" view
+  
 };
 
 const onRowEditSave = (event) => {
@@ -188,7 +203,11 @@ const onRowEditSave = (event) => {
     <div>
         <Toast />
         <Accordion>
-            <AccordionTab v-for="slotProps in dataUsers" :key="slotProps.id" selectOnFocus>
+            <AccordionTab 
+            v-for="slotProps in dataUsers" 
+            :key="slotProps.id" 
+            
+            >
                 <template #header>
                     <span class="flex align-items-center gap-2 w-full">
                         <Avatar style="min-width: 2rem" image="https://primefaces.org/cdn/primevue/images/avatar/amyelsner.png" shape="circle" />
@@ -197,6 +216,7 @@ const onRowEditSave = (event) => {
                         <Button class="w-8rem" :label="t('appmovil.detalles')" :disabled="!workView" @click="changeWorkView" size="small" severity="secondary" outlined />
                     </span>
                 </template>
+                <pre>{{ slotProps.id }}</pre>
                 <div v-if="workView" :key="slotProps.id">
                     <ItemUserAppMovil :slotProps="slotProps" :idUs="slotProps.id" :tipoActividad="tipoActividad" :Lote="Lote" :data="data" />
                 </div>

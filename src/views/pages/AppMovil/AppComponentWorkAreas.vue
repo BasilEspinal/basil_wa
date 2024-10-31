@@ -12,7 +12,8 @@ import ErrorAppMovil from './ErrorAppMovil.vue';
 import ability from '@/service/ability.js';
 //
 // Estoy utilizando otro servicio para el CRUD
-
+import StackErrors from '@/service/StackErrors.js'
+const stack = new StackErrors();
 //Sebastian
 import { CrudService } from '@/service/CRUD/CrudService';
 import {AppMovilDataService_V2} from '@/service/appMovil/appMovilService_V2';
@@ -44,13 +45,12 @@ const totalJournalTotal = ref(0);
 const idPlannerTask = ref(0);
 
 const getDataEmployeesInfo = async () => {
-    const response = await AppMovilDataService_V2.getInfoEmployees(idPlannerTask.value);
+    const response = await AppMovilDataService_V2.getInfoEmployees(data.value.id)
+    
     if (!response.ok) {
         toast.add({ severity: 'error', detail: 'Error' + response.error, life: 3000 });
-    
         errorSummary.value = true;
-
-        
+        console.log(stack.size())        
     }
     summary.value = response.data.data;
     
@@ -190,9 +190,30 @@ const getUser = async () => {
 
 const getData = async () => {
     const response = await getDataTasksplanner();
-    if (!response.ok) toast.add({ severity: 'error', detail: 'Error' + response.error, life: 3000 });
-    data.value = response.data;
-    idPlannerTask.value =data.value.id   
+
+    if (!response.ok || !response.data || response.data.length === 0) {
+        // Handle error if response is not OK or if data is empty
+        const errorMessage = response.error ? `Error: ${response.error}` : 'No data received';
+        toast.add({ severity: 'error', detail: errorMessage, life: 3000 });
+        
+        // Push the failed response to the stack for later processing
+        stack.push({ response: response, category: 'Data task planner', description: "No data available" });
+
+        // Return false to indicate failure
+        return false;
+    } else {
+        // If response is valid, handle the data as usual
+        data.value = response.data;
+        console.log(data.value.product.name);
+        console.log(data.value.customer_request.packing_type.name);
+        console.log(data.value.product_type.name);
+        console.log(data.value.varieties.name);
+        console.log(data.value.transaction_date);
+
+        // Return true to indicate success
+        return true;
+    }
+    
 };
 
 
@@ -422,17 +443,14 @@ function searchUsers() {
 
             </Row>
         </ColumnGroup>
-        </DataTable>
+                    </DataTable>
                     </div>
                     <div v-else>
                         <ErrorAppMovil :title="t('appmovil.nodataplanner')" :description="t('appmovil.infonodataplanner')" :logo-url="logoUrl" />
                         </div>
                 </ScrollPanel>
-                
             </TabPanel>
 
-
-            
             <TabPanel v-if="ability.can('appmovil_shipping_delivered')">
                 <template #header>
                     <div class="flex align-items-center gap-2">
