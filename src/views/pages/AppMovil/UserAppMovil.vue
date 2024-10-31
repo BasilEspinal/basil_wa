@@ -181,7 +181,7 @@ const TipoActividad = async () => {
 
 const changeWorkView = async (id) => {
     
-
+    
     workView.value = !workView.value;
     
     // event.stopPropagation();
