@@ -50,7 +50,7 @@ const getDataEmployeesInfo = async () => {
     if (!response.ok) {
         toast.add({ severity: 'error', detail: 'Error' + response.error, life: 3000 });
         errorSummary.value = true;
-        console.log(stack.size())        
+             
     }
     summary.value = response.data.data;
     
@@ -134,7 +134,7 @@ totalJournalTotal.value = computed(() => {
     for (let item of summary.value) {
         total += parseFloat(item.total_journal) || 0;
     }
-    console.log(total);
+    
     return total;
 });
 
@@ -204,13 +204,6 @@ const getData = async () => {
     } else {
         // If response is valid, handle the data as usual
         data.value = response.data;
-        console.log(data.value.product.name);
-        console.log(data.value.customer_request.packing_type.name);
-        console.log(data.value.product_type.name);
-        console.log(data.value.varieties.name);
-        console.log(data.value.transaction_date);
-
-        // Return true to indicate success
         return true;
     }
     
@@ -243,6 +236,15 @@ function searchUsers() {
         filterUsers.value = users.value;
     }
 }
+
+const onTabChange = async ( event) => {
+    
+    if (event.index === 1) { 
+        console.log('Tab 2');
+        await getDataEmployeesInfo();
+    }
+};
+
 </script>
 
 <template>
@@ -272,7 +274,7 @@ function searchUsers() {
                     </div>
                 </div>
             </div>
-            <TabView class="tabview-custom">
+            <TabView  @tab-change="onTabChange( $event)">
                 <TabPanel v-if="ability.can('appmovil_users')">
                     <template #header>
                         <div class="flex align-items-center gap-2">

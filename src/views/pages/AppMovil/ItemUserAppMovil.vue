@@ -47,6 +47,7 @@ const props = defineProps({
 
 const getLabor = async () => {
     const response = await getDonesWork();
+    
     if (!response.ok) toast.add({ severity: 'error', detail: 'Error' + response.error, life: 3000 });
     dones_work.value = response.data?.data ?? [];
 };
@@ -73,12 +74,14 @@ const UpdateTotal = () => {
 };
 
 const updateTaskTarif = async () => {
-    console.log('select_tasks_type', select_tasks_type.value);
+    
     tarifa.value = await getTarif(select_tasks_type.value.code);
-    console.log(tarifa.value);
+    
     tarifa.value === 0 ? toast.add({ severity: 'error', summary: 'Tarifa', detail: 'NO existe tarifa definida', life: 3000 }) : '';
     laborActive.value = select_tasks_type.value?.label !== 'Task' && select_tasks_type.value?.name !== '' && select_tasks_type.value !== null;
-    if (laborActive.value) getLabor();
+    if (laborActive.value) {
+    
+        getLabor();}
 };
 
 watch(select_tasks_type, () => {
@@ -112,7 +115,7 @@ watch(select_tasks_type, () => {
         </div>
         <div class="field col-12 md:col-4">
             <span class="p-float-label">
-                <InputNumber v-model="selected_quanty" :update:modelValue="UpdateTotal" inputId="minmax" :min="1" :max="5" />
+                <InputNumber v-model="selected_quanty" :update:modelValue="UpdateTotal" inputId="minmax" :min="1" :max="10" />
                 <label class="font-bold" for="quanty">{{ t('appmovil.cantidad') }}</label>
             </span>
             <BackendErrors :name="errorResponseAPI?.errors?.task_qty" />
