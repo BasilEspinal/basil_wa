@@ -35,8 +35,10 @@ export function useAppMovilService() {
 
     const getDonesWork = async () => {
         try {
-            const { taskoftype_id } = JSON.parse(sessionStorage.getItem('accessSessionWorkCenter'));
-            const resp = await getRequest(`/lists/getDoneTypeTasksType?filter[tasks_of_type_id]=${taskoftype_id?.id}`);
+            
+            const  taskoftype_id  = JSON.parse(sessionStorage.getItem('accessSessionWorkCenter')).taskoftype.id
+            
+            const resp = await getRequest(`/lists/getDoneTypeTasksType?filter[tasks_of_type_id]=${taskoftype_id}`);
             return resp;
         } catch (e) {
             return error(e);

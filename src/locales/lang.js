@@ -129,7 +129,7 @@ export const messages = {
             tipoActividad: 'Type of Activity',
             lote: 'Batch',
             labor: 'Work',
-            cantidad: 'Amount',
+            cantidad: 'Quantity',
             pesoAproximado: 'Approximate weight',
             precioUnitario: 'Unit price',
             notas: 'Grades',

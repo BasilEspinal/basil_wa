@@ -335,7 +335,8 @@
                 <div class="mb-3">
                     <div class="flex align-items-center">
                         <label for="username" class="font-semibold w-3">Crop Lots Code :</label>
-                        <MultiSelect v-model="crop_lots_codeV" display="chip" :options="CropLots" optionLabel="code" placeholder="Select Crop Lots" :maxSelectedLabels="100" class="flex-auto">
+                        
+                        <MultiSelect v-model="crop_lots_codeV" display="chip" :options="CropLots" optionLabel="code" filter placeholder="Select Crop Lots" :maxSelectedLabels="5" class="flex-auto">
                             <template #footer>
                                 <div class="py-2 px-4">
                                     <b>{{ crop_lots_codeV ? crop_lots_codeV.length : 0 }}</b> item{{ (crop_lots_codeV ? crop_lots_codeV.length : 0) > 1 ? 's' : '' }} selected.
@@ -502,7 +503,7 @@
                 <div class="mb-3">
                     <div class="flex align-items-center">
                         <label for="username" class="font-semibold w-3">Crop Lots Code :</label>
-                        <MultiSelect v-model="crop_lots_codeV" display="chip" :options="CropLots" optionLabel="code" placeholder="Select Crop Lots" :maxSelectedLabels="100" class="flex-auto">
+                        <MultiSelect v-model="crop_lots_codeV" display="chip" :options="CropLots" optionLabel="code" placeholder="Select Crop Lots" :maxSelectedLabels="5" class="flex-auto">
                             <template #footer>
                                 <div class="py-2 px-4">
                                     <b>{{ crop_lots_codeV ? crop_lots_codeV.length : 0 }}</b> item{{ (crop_lots_codeV ? crop_lots_codeV.length : 0) > 1 ? 's' : '' }} selected.
@@ -669,7 +670,7 @@
                 <div class="mb-3">
                     <div class="flex align-items-center">
                         <label for="username" class="font-semibold w-3">Crop Lots Code :</label>
-                        <MultiSelect v-model="crop_lots_codeV" display="chip" :options="CropLots" optionLabel="code" placeholder="Select Crop Lots" :maxSelectedLabels="100" class="flex-auto">
+                        <MultiSelect v-model="crop_lots_codeV" display="chip" :options="CropLots" optionLabel="code" placeholder="Select Crop Lots" :maxSelectedLabels="5" class="flex-auto">
                             <template #footer>
                                 <div class="py-2 px-4">
                                     <b>{{ crop_lots_codeV ? crop_lots_codeV.length : 0 }}</b> item{{ (crop_lots_codeV ? crop_lots_codeV.length : 0) > 1 ? 's' : '' }} selected.
@@ -1238,10 +1239,8 @@ const openEdit = () => {
         customer_request: customer_request,
         vehicle: vehicle
     } = listRowSelect.value[0];
-    console.log(listRowSelect.value[0]);
-    console.log(date)
-    console.log(new Date(date));    
-    transaction_dateV.value = new Date(date);
+    console.log(listRowSelect.value[0]); 
+    transaction_dateV.value = new Date(date + "T00:00");
 
     task_of_typeV.value = { id: task.uuid, name: task.name };
     crop_lots_codeV.value = crop_lots;
@@ -1275,7 +1274,9 @@ const openClone = () => {
         vehicle: vehicle
     } = listRowSelect.value[0];
 
-    transaction_dateV.value = new Date(date);
+    //transaction_dateV.value = new Date(date);
+    transaction_dateV.value = new Date(date + "T00:00");
+
     task_of_typeV.value = { id: task.uuid, name: task.name };
     crop_lots_codeV.value = crop_lots;
     productV.value = { id: productX.uuid, name: productX.name };

@@ -14,6 +14,7 @@ import { saveAs } from 'file-saver';
 import { z } from 'zod';
 import ability from '@/service/ability.js';
 import { AbilityBuilder } from '@casl/ability';
+import ActionButton from '@/views/pages/PayrollSettlement/DailyPlanner/ActionButton.vue'; // Ajusta el path si es necesario
 const prueba = ref({revisar: 'revisar GET-POST-PUT-DELETE'});
 const backendValidation = ref();
 const backendValidationFlag = ref(false);
@@ -540,6 +541,9 @@ const remove = (aver) => {
                     <Button v-if="ability.can('empleado_crear')" :disabled="headerNames.length > 0" label="Export" icon="pi pi-file-import" class="p-button-warning mb-2 mt-2" @click="openExport" size="large" />
                     <Divider v-if="ability.can('empleado_crear')" layout="vertical" />
                     <Button v-if="ability.can('empleado_eliminar')" :disabled="!selectedRegisters.length > 0" label="Delete" icon="pi pi-trash" class="p-button-danger mb-2 mt-2" @click="openDelete" size="large" />
+                    <Divider v-if="ability.can('planeacion_diaria_editar')" layout="vertical" />
+                    <!-- ActionButton Component -->
+                    <ActionButton :items="items" :listRowSelect="listRowSelect" />
                 </template>
             </Toolbar>
             <DataTable
