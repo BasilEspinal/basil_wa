@@ -54,6 +54,17 @@ export function useAppMovilService() {
                 Endpoint = `/appmovil/taskstarif?filter[tasks_of_type_id]=${fetchWorkCenter.value?.taskoftype?.id}&filter[work_type_day]=${holiday.value}&filter[farm_id]=${fetchFarmId.value}&filter[company_id]=${fetchCompannyId.value}&filter[packing_type_id]=${tasksPlaner.value?.packing_type.id}&filter[type_price]=${tasksType}`;
             }              // /appmovil/taskstarif?filter[tasks_of_type_id]=4                                       &filter[work_type_day]=Normal         &filter[farm_id]= 1                   &filter[company_id]=1                       &filter[packing_type_id]=1                                    &filter[type_price]=Task
             const response = await getRequest(Endpoint);
+            console.log('endpoint', Endpoint);
+            console.log('fetchWorkCenter', fetchWorkCenter.value);
+            console.log('holiday', holiday.value);
+            console.log('fetchFarmId', fetchFarmId.value);
+            console.log('fetchCompannyId', fetchCompannyId.value);
+            console.log('tasksPlaner', tasksPlaner.value);
+            console.log('tasksType', tasksType);
+            console.log('packin_type', tasksPlaner.value?.packing_type.id);
+            console.log('type_price', tasksType);
+            console.log('response', response);
+            
 
 
             return response.data?.data[0]?.price_tarif ?? 0;
@@ -65,7 +76,12 @@ export function useAppMovilService() {
 
     const getDataTasksplanner = async () => {
         
-        const response = await getRequest(`/appmovil/tasksplanner?filter[tasks_of_type_id]=${fetchWorkCenter.value?.taskoftype.id}&filter[company_id]=${fetchCompannyId.value}&filter[farm_id]=${fetchFarmId.value}`);
+        const fetchWorkCenter = ref(JSON.parse(sessionStorage.getItem('accessSessionWorkCenter')));
+        // console.log('Task of type id', fetchWorkCenter.value.taskoftype.id);
+        const endpoint=ref((`/appmovil/tasksplanner?filter[tasks_of_type_id]=${fetchWorkCenter.value?.taskoftype.id}&filter[company_id]=${fetchCompannyId.value}&filter[farm_id]=${fetchFarmId.value}`));
+        // console.log('endpoint', endpoint.value);
+        const response = await getRequest(endpoint.value);
+        console.log('data tasks planner', response);
         tasksPlaner.value = response.data.data[0];
         return { ...response, data: response.data.data[0] };
     };

@@ -36,7 +36,8 @@ const totalTaskQtyJournal = ref(0);
 const totalJournalTotal = ref(0);
 
 const getDataEmployeesInfo = async (employee_id) => {
-    const response = await AppMovilDataService_V2.getInfoEmployeesById(props.data.id, employee_id);
+    console.log(props.data.tasks_of_type.id)
+    const response = await AppMovilDataService_V2.getInfoEmployeesById(props.data.id, props.data.tasks_of_type.id,employee_id);
     if (!response.ok) {
         toast.add({ severity: 'error', detail: 'Error' + response.error, life: 3000 });
 
@@ -164,15 +165,6 @@ const TipoActividad = async () => {
     tipoActividad.value = response?.data;
 };
 
-const changeWorkView = async () => {
-    workView.value = !workView.value;
-
-    // event.stopPropagation();
-    
-    await getDataEmployeesInfo(127);
-
-
-};
 
 const onTabChange = async (id, event) => {
     

@@ -53,7 +53,7 @@ const getLabor = async () => {
 };
 
 async function sendDailyReport() {
-    const restp = await postDailyReport({
+    const data = {
         loteCode: selected_crops_lots.value?.code,
         tasksTypeCode: select_tasks_type.value?.code,
         quantity: selected_quanty.value,
@@ -61,7 +61,9 @@ async function sendDailyReport() {
         tarifXCautity: selected_quanty.value * tarifa.value,
         userId: props.slotProps.uuid,
         labor: selected_dones_work.value?.uuid
-    });
+    };
+    console.log("data", data);
+    const restp = await postDailyReport(data);
     
     
     toast.add({ severity: restp.ok ? 'success' : 'error', summary: 'Create', detail: restp.ok ? 'Creado' : restp.error, life: 3000 });

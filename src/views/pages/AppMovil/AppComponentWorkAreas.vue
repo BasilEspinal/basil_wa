@@ -19,6 +19,25 @@ import { CrudService } from '@/service/CRUD/CrudService';
 import {AppMovilDataService_V2} from '@/service/appMovil/appMovilService_V2';
 const errorSummary = ref(false);
 const summary = ref()
+////////////////////////////////////////////////////////////
+const { t } = useI18n();
+const toast = useToast();
+const { worksDay } = UseAppMovil();
+const { layoutConfig } = useLayout();
+
+const { HOLIDAY, initData, TASK_OF_TYPE, getUsers, getDataTasksplanner } = useAppMovilService();
+
+const titulo = ref('');
+const totalPrices = ref(null);
+const users = ref(null);
+const filterUsers = ref(null);
+const dataApp= ref(null);
+const holiday = ref('Normal');
+const lotes = ref(null);
+const search = ref(null);
+const userEmployee = ref(localStorage.getItem('accesSessionEmployeeUuid'));
+const loading = ref(true); // Initially set to true
+
 const sales = ref([
     {product: 'Bamboo Watch', lastYearSale: 51, thisYearSale: 40, lastYearProfit: 54406, thisYearProfit: 43342},
     {product: 'Black Watch', lastYearSale: 83, thisYearSale: 9, lastYearProfit: 423132, thisYearProfit: 312122},
@@ -45,7 +64,7 @@ const totalJournalTotal = ref(0);
 const idPlannerTask = ref(0);
 
 const getDataEmployeesInfo = async () => {
-    const response = await AppMovilDataService_V2.getInfoEmployees(data.value.id)
+    const response = await AppMovilDataService_V2.getInfoEmployees(dataApp.value.id,dataApp.value.tasks_of_type.id);
     
     if (!response.ok) {
         toast.add({ severity: 'error', detail: 'Error' + response.error, life: 3000 });
@@ -141,24 +160,7 @@ totalJournalTotal.value = computed(() => {
 
 };
 
-////////////////////////////////////////////////////////////
-const { t } = useI18n();
-const toast = useToast();
-const { worksDay } = UseAppMovil();
-const { layoutConfig } = useLayout();
 
-const { HOLIDAY, initData, TASK_OF_TYPE, getUsers, getDataTasksplanner } = useAppMovilService();
-
-const titulo = ref('');
-const totalPrices = ref(null);
-const users = ref(null);
-const filterUsers = ref(null);
-const data = ref(null);
-const holiday = ref('Normal');
-const lotes = ref(null);
-const search = ref(null);
-const userEmployee = ref(localStorage.getItem('accesSessionEmployeeUuid'));
-const loading = ref(true); // Initially set to true
 
 
 onBeforeMount(async () => {
@@ -166,6 +168,14 @@ onBeforeMount(async () => {
     await initData();
     getUser();
     await getData();
+    
+    // console.log("initData",initData)
+    // console.log("TASK_OF_TYPE",TASK_OF_TYPE)
+    // console.log("HOLIDAY",HOLIDAY)
+    // console.log("TASK_OF_TYPE",TASK_OF_TYPE)
+    // console.log("getUsers",getUsers)
+    // console.log("getDataTasksplanner",getDataTasksplanner)
+
     holiday.value = HOLIDAY;
     titulo.value = t('appmovil.titulo') + ' ' + (TASK_OF_TYPE?.name ? TASK_OF_TYPE.name : 'XXXXXXXXXXXXXX');
     loading.value = false; // Set loading to false when data fetching is complete
@@ -198,21 +208,21 @@ const getData = async () => {
         
         // Push the failed response to the stack for later processing
         stack.push({ response: response, category: 'Data task planner', description: "No data available" });
-
+        
         // Return false to indicate failure
         return false;
     } else {
         // If response is valid, handle the data as usual
-        data.value = response.data;
+        dataApp.value = response.data;
         return true;
     }
     
 };
 
 
-watch(data, () => {
+watch(dataApp, () => {
     
-    lotes.value = data.value?.crop_lots;
+    lotes.value = dataApp.value?.crop_lots;
 });
 
 
@@ -240,7 +250,7 @@ function searchUsers() {
 const onTabChange = async ( event) => {
     
     if (event.index === 1) { 
-        console.log('Tab 2');
+        
         await getDataEmployeesInfo();
     }
 };
@@ -255,8 +265,8 @@ const onTabChange = async ( event) => {
     </div>
     
 
-    <div v-else-if="data" class="card maxHeightY">       
-        <div v-if="!data.crop_lots">
+    <div v-else-if="dataApp" class="card maxHeightY">       
+        <div v-if="!dataApp.crop_lots">
             <ErrorAppMovil :title="t('appmovil.nolotes')" :description="t('appmovil.infonolotes')" :logo-url="logoUrl" />
         </div>
 
@@ -284,7 +294,7 @@ const onTabChange = async ( event) => {
                     </template>
                     <ScrollPanel class="maxHeightC">
                         <div v-if="filterUsers">
-                            <UserAppMovil :dataUsers="filterUsers" :Lote="lotes" :data="data" />
+                            <UserAppMovil :dataUsers="filterUsers" :Lote="lotes" :data="dataApp" />
                         </div>
                         <div v-else>
                             <ErrorAppMovil :title="t('appmovil.usersAvailable')" description="Requested resource is not available" :logo-url="logoUrl" />
@@ -463,7 +473,7 @@ const onTabChange = async ( event) => {
                     
                 </template>
                 <ScrollPanel class="maxHeightC">
-                    <ShippingDelivered :data="data" :batchs="lotes" />
+                    <ShippingDelivered :data="dataApp" :batchs="lotes" />
                 </ScrollPanel>                    
             </TabPanel>
 
@@ -476,7 +486,7 @@ const onTabChange = async ( event) => {
                 </template>
                 <ScrollPanel class="maxHeightC">
 
-                    <DeliveringDelivered :data="data" :batchs="lotes" />
+                    <DeliveringDelivered :data="dataApp" :batchs="lotes" />
                 </ScrollPanel>
             </TabPanel>
             </TabView>
@@ -487,7 +497,7 @@ const onTabChange = async ( event) => {
     </div>
 
     <div v-else>
-        <ErrorAppMovil :title="t('appmovil.nodataplanner')" :description="t('appmovil.infonodataplanner')" :logo-url="logoUrl" />
+        <ErrorAppMovil :title="t('appmovil.nodataplanner')+' '+TASK_OF_TYPE?.name" :description="t('appmovil.infonodataplanner') " :logo-url="logoUrl" />
     </div>
 </template>
 
