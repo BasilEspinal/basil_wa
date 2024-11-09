@@ -116,6 +116,7 @@ export const messages = {
 
 
         appmovil: {
+            information: 'Planning information',
             vehicle: 'Vehicle',
             quantityRequested: 'Quantity Requested',
             centroTrabajo: 'Work Centers',
@@ -159,7 +160,8 @@ export const messages = {
             shipping: {
                 shippingProcess: 'Shipping Process',
                 deliveryProcess: 'Delivery Process',
-            }
+            },
+            
         }
     },
     es: {
@@ -286,6 +288,7 @@ export const messages = {
             agronomyCapture: 'Captura de Agronomía'
         },
         appmovil: {
+            information: 'Información de planeación',
             vehicle: 'Vehículo',
             quantityRequested: 'Cantidad Solicitada',
             centroTrabajo: 'Centro de Trabajo',
@@ -307,9 +310,9 @@ export const messages = {
             trabajos: 'Trabajos',
             supervisor: 'Supervisor',
             loteDespacho: 'Lote despacho',
-            variedad: 'Varidad',
+            variedad: 'Variedad',
             producto: 'Producto',
-            empaque: 'Empoque',
+            empaque: 'Empaque',
             fechaPlaneada: 'Fecha Planeada',
             dialaboral: 'Dia laboral',
             empleado: 'Empleado',
@@ -329,6 +332,7 @@ export const messages = {
                 shippingProcess: 'Proceso de Envío',
                 deliveryProcess: 'Proceso de Entrega',
             },
+            
             
             
         }

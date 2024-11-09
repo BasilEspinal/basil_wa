@@ -54,16 +54,16 @@ export function useAppMovilService() {
                 Endpoint = `/appmovil/taskstarif?filter[tasks_of_type_id]=${fetchWorkCenter.value?.taskoftype?.id}&filter[work_type_day]=${holiday.value}&filter[farm_id]=${fetchFarmId.value}&filter[company_id]=${fetchCompannyId.value}&filter[packing_type_id]=${tasksPlaner.value?.packing_type.id}&filter[type_price]=${tasksType}`;
             }              // /appmovil/taskstarif?filter[tasks_of_type_id]=4                                       &filter[work_type_day]=Normal         &filter[farm_id]= 1                   &filter[company_id]=1                       &filter[packing_type_id]=1                                    &filter[type_price]=Task
             const response = await getRequest(Endpoint);
-            console.log('endpoint', Endpoint);
-            console.log('fetchWorkCenter', fetchWorkCenter.value);
-            console.log('holiday', holiday.value);
-            console.log('fetchFarmId', fetchFarmId.value);
-            console.log('fetchCompannyId', fetchCompannyId.value);
-            console.log('tasksPlaner', tasksPlaner.value);
-            console.log('tasksType', tasksType);
-            console.log('packin_type', tasksPlaner.value?.packing_type.id);
-            console.log('type_price', tasksType);
-            console.log('response', response);
+            // console.log('endpoint', Endpoint);
+            // console.log('fetchWorkCenter', fetchWorkCenter.value);
+            // console.log('holiday', holiday.value);
+            // console.log('fetchFarmId', fetchFarmId.value);
+            // console.log('fetchCompannyId', fetchCompannyId.value);
+            // console.log('tasksPlaner', tasksPlaner.value);
+            // console.log('tasksType', tasksType);
+            // console.log('packin_type', tasksPlaner.value?.packing_type.id);
+            // console.log('type_price', tasksType);
+            // console.log('response', response);
             
 
 
@@ -146,6 +146,29 @@ export function useAppMovilService() {
         }
     };
 
+    const getInfoEmployees=async (planner_task_id,task_of_type) => {
+        try {
+            const response = await getRequest(`/appmovil/summary/employees?filter[planner_task_id]=${planner_task_id}&filter[tasks_of_type_id]=${task_of_type}&filter[farm_id]=1`);
+            return response;
+        }
+        catch (error) {
+            console.error('Error fetching employees:', error);
+            return response;
+        }
+    };
+    const getInfoEmployeesById= async(planner_task_id,task_of_type,employee_id)=> {
+        try {
+            console.log('planner_task_id',planner_task_id);
+            console.log('employee_id',employee_id);
+            const response = await getRequest(`/appmovil/summary/employees?filter[planner_task_id]=${planner_task_id}&filter[tasks_of_type_id]=${task_of_type}&filter[farm_id]=1&filter[worker_employee_id]=${employee_id}`);
+            return response;
+        }
+        catch (error) {
+            console.error('Error fetching employees:', error);
+            return response;
+        }
+    };
+
     // Exposing the reactive state and methods
     return {
         WORK_CENTER: fetchWorkCenter,
@@ -153,7 +176,7 @@ export function useAppMovilService() {
         FARM_ID: fetchFarmId,
         COMPANY_ID: fetchCompannyId,
         TASK_OF_TYPE: fetchWorkCenter.value?.taskoftype,
-        SUPERVISO_NAME: fetchSupervisorName,
+        SUPERVISOR_NAME: fetchSupervisorName,
         EMPLOYEE_ID: fetchEmployeeId,
         HOLIDAY: holiday,
         LOTES: tasksPlaner,
@@ -167,6 +190,8 @@ export function useAppMovilService() {
         getTipoActividad,
         getHoliDay,
         getShippingsDelivered,
-        dataInfoUser
+        dataInfoUser,
+        getInfoEmployees,
+        getInfoEmployeesById
     };
 }
