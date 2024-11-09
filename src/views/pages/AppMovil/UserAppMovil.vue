@@ -22,8 +22,6 @@ onMounted(async () => {
     TipoActividad();
 });
 
-onBeforeMount(async () => {});
-
 const TipoActividad = async () => {
     const response = await getTipoActividad();
     if (!response.ok) toast.add({ severity: 'error', detail: 'Error' + response.error, life: 3000 });
