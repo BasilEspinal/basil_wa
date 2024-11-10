@@ -15,7 +15,7 @@ const props = defineProps({
 
 const toast = useToast();
 const { t } = useI18n();
-const {  getTipoActividad, HOLIDAY, dataInfoUser } = useAppMovilService();
+const {  getTipoActividad } = useAppMovilService();
 const tipoActividad = ref(null);
 
 onMounted(async () => {

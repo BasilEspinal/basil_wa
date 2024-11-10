@@ -54,6 +54,8 @@ export function useAppMovilService() {
                 Endpoint = `/appmovil/taskstarif?filter[tasks_of_type_id]=${fetchWorkCenter.value?.taskoftype?.id}&filter[work_type_day]=${holiday.value}&filter[farm_id]=${fetchFarmId.value}&filter[company_id]=${fetchCompannyId.value}&filter[packing_type_id]=${tasksPlaner.value?.packing_type.id}&filter[type_price]=${tasksType}`;
             }              // /appmovil/taskstarif?filter[tasks_of_type_id]=4                                       &filter[work_type_day]=Normal         &filter[farm_id]= 1                   &filter[company_id]=1                       &filter[packing_type_id]=1                                    &filter[type_price]=Task
             const response = await getRequest(Endpoint);
+            console.log('response', response);
+            console.log('endpoint', Endpoint);
             // console.log('endpoint', Endpoint);
             // console.log('fetchWorkCenter', fetchWorkCenter.value);
             // console.log('holiday', holiday.value);
@@ -95,7 +97,7 @@ export function useAppMovilService() {
         }
     };
 
-    const postDailyReport = async ({ loteCode, tasksTypeCode, quantity, notas, tarifXCautity, userId, labor }) => {
+    const postDailyReport = async ({ loteCode, tasksTypeCode, quantity, notas, tarifXCautity, userId, labor,packing_type }) => {
         const dataPost = {
             transaction_date_send: tasksPlaner.value?.transaction_date ?? '',
             tasks_of_type_uuid: tasksPlaner.value?.tasks_of_type.uuid,
@@ -111,7 +113,8 @@ export function useAppMovilService() {
             product_uuid: tasksPlaner.value?.product.uuid ?? '',
             product_type_uuid: tasksPlaner.value?.product_type.uuid ?? '',
             variant_uuid: tasksPlaner.value?.varieties.uuid ?? '',
-            packing_type_uuid: tasksPlaner.value?.packing_type.uuid ?? '',
+            // packing_type_uuid: tasksPlaner.value?.packing_type.uuid ?? '',
+            packing_type_uuid: packing_type,
             device_name: 'Web',
             transdate_sync: null,
             calendar_uuid: null,

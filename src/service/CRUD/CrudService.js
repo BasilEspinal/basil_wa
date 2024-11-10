@@ -11,6 +11,7 @@ export const CrudService = (baseEndpoint) => ({
         const queryParams = new URLSearchParams(params).toString();
         const fullEndpoint = `${baseEndpoint}?${queryParams}`;
         return await getRequest(fullEndpoint);
+
     },
 
     /**

@@ -128,6 +128,19 @@
     </template>
 </Column>
 
+<Column field="tasks_statuses.name" filterField="tasks_statuses.name" header="Task statuses" sortable>
+    <template #body="{ data }">
+        
+        <Tag :value="data.tasks_statuses.name" :severity="'EFC88B'" />
+    </template>
+    <template #filter="{ filterModel }">
+        <InputText v-model="filterModel.value" type="text" class="p-column-filter" placeholder="Search by Type Day Tarif" />
+    </template>
+
+</Column>
+
+
+
 <Column field="type_price_task" filterField="type_price_task" header="Type Price Task" sortable>
     <template #body="{ data }">
         {{ data.type_price_task }}

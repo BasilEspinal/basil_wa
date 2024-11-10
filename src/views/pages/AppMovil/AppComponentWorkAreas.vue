@@ -182,14 +182,6 @@ watch(search, () => {
     searchUsers();
 });
 
-const quantities = computed(() => {
-    let total = 0;
-    for (let workDay of worksDay.value) {
-        total += workDay.quantity;
-    }
-    return total;
-});
-
 function searchUsers() {
     if (search.value) {
         filterUsers.value = users.value.filter((user) => user.first_name.toLowerCase().includes(search.value.toLowerCase()));
@@ -297,13 +289,14 @@ const onTabChange = async (event) => {
                                         <Column header="Type price task" :rowspan="3" />
                                         <Column header="Type Day Tarif" :rowspan="3" />
 
-                                        <Column header="Cortar" :colspan="4" />
+                                        <!-- <Column header="Cortar" :colspan="4" /> -->
                                     </Row>
                                     <Row>
                                         <Column header="Task" :colspan="2" />
                                         <!-- <Column header="Labor" :colspan="2" />
                 <Column header="Journal" :colspan="2" /> -->
                                         <Column header="Hora Extra" :colspan="2" />
+                                        <Column header="" :colspan="2" />
                                     </Row>
                                     <Row>
                                         <Column header="Quantity" sortable field="task_qty_task" />
