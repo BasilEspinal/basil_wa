@@ -19,7 +19,6 @@ const summary = ref();
 ////////////////////////////////////////////////////////////
 const { t } = useI18n();
 const toast = useToast();
-const { worksDay } = UseAppMovil();
 const { layoutConfig } = useLayout();
 
 const { HOLIDAY, initData, TASK_OF_TYPE, getUsers, getDataTasksplanner,getInfoEmployees } = useAppMovilService();
