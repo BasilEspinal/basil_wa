@@ -8,8 +8,9 @@
                     <!--Uncomment when table is done-->
 
                     <div class="col-xs-12 col-sm-6 col-md-6 mb-2 text-center mx-auto">
-                        <Toolbar style="margin-bottom: 2rem">
+                        <Toolbar style="margin-bottom: 1rem">
                             <template #center>
+                                <div class="flex flex-wrap justify-content-center gap-3"> <!-- Added flex-wrap and gap for responsive buttons -->
                                 <Divider layout="vertical" />
                                 <Button :disabled="!(listRowSelect.length > 0 && listRowSelect.length < 2)"
                                     label="Detalles" icon="pi pi-bars" class="p-button-success mb-2 mt-2"
@@ -33,6 +34,7 @@
                                 <Divider layout="vertical" />
                                 <Button :disabled="!listRowSelect.length > 0" label="Delete" icon="pi pi-trash"
                                     class="p-button-danger mb-2 mt-2" @click="openDelete" size="large" />
+                                </div>
                             </template>
                         </Toolbar>
                     </div>
