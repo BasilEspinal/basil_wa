@@ -120,7 +120,7 @@ const getDataEmployeesInfo = async () => {
     });
 };
 
-onBeforeMount(async () => {
+const functionsData = async () => {
     loading.value = true; // Set loading to true when data fetching starts
     await initData();
     getUser();
@@ -140,6 +140,10 @@ onBeforeMount(async () => {
     //Sebastian
     getDataEmployeesInfo();
     ////////////////////////
+};
+
+onBeforeMount(async () => {
+functionsData();
 });
 
 const logoUrl = computed(() => {
@@ -194,6 +198,13 @@ const onTabChange = async (event) => {
         await getDataEmployeesInfo();
     }
 };
+
+// Function to fetch and update data
+const updateData = async () => {
+    // const updatedData = await getData(); // Fetch new data from API
+    // data.value = updatedData; // Update the reactive data ref
+functionsData();
+};
 </script>
 
 <template>
@@ -231,7 +242,7 @@ const onTabChange = async (event) => {
                     </template>
                     <ScrollPanel class="maxHeightC">
                         <div v-if="filterUsers">
-                            <UserAppMovil :dataUsers="filterUsers" :Lote="lotes" :data="dataApp" />
+                            <UserAppMovil :dataUsers="filterUsers" :Lote="lotes" :data="dataApp" @update-grandparent-data="updateData" />
                         </div>
                         <div v-else>
                             <ErrorAppMovil :title="t('appmovil.usersAvailable')" description="Requested resource is not available" :logo-url="logoUrl" />
@@ -281,6 +292,7 @@ const onTabChange = async (event) => {
                         </ColumnGroup>
                     </DataTable> -->
                         <div v-if="!errorSummary">
+                            
                             <DataTable :value="summary" tableStyle="min-width: 50rem">
                                 <ColumnGroup type="header">
                                     <Row>

@@ -38,6 +38,7 @@ const props = defineProps({
     tipoActividad: { type: Array }
 });
 const packing_typeV = ref({uuid: props.data.packing_type.uuid, name: props.data.packing_type.name});
+const emit = defineEmits(['update-data']); // Define the event to emit
 
 onMounted(async () => {
     workCenter.value = WORK_CENTER;
@@ -45,7 +46,7 @@ onMounted(async () => {
     lotes.value = LOTES;
 
     const respPackingsType = await crudService.getAll();
-    console.log("respPackingsType", respPackingsType);
+    //console.log("respPackingsType", respPackingsType);
     if (!respPackingsType.ok) toast.add({ severity: 'error', detail: 'Error' + respPackingsType.error, life: 3000 });
     Packings_type.value = respPackingsType.data.data.map((packing) => ({ uuid: packing.uuid, name: packing.name }));
 
@@ -83,6 +84,9 @@ async function sendDailyReport() {
     
     toast.add({ severity: restp.ok ? 'success' : 'error', summary: 'Create', detail: restp.ok ? 'Creado' : restp.error, life: 3000 });
     //if (restp.ok) await clearFields();
+    if (restp.ok) {
+        emit('update-grandparent-data');
+    }
 }
 
 const UpdateTotal = () => {
@@ -92,7 +96,7 @@ const UpdateTotal = () => {
 const updateTaskTarif = async () => {
     
     tarifa.value = await getTarif(select_tasks_type.value.code);
-    console.log("tarifa", tarifa.value);
+    // console.log("tarifa", tarifa.value);
     tarifa.value === 0 ? toast.add({ severity: 'error', summary: 'Tarifa', detail: 'NO existe tarifa definida', life: 3000 }) : '';
     laborActive.value = select_tasks_type.value?.label !== 'Task' && select_tasks_type.value?.name !== '' && select_tasks_type.value !== null;
     if (laborActive.value) {

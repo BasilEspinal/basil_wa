@@ -1,3 +1,5 @@
+import JournalTransactions from "../views/pages/PayrollSettlement/JournalTransactions/JournalTransactions.vue";
+
 export const messages = {
     en: {
         message: {
@@ -82,7 +84,15 @@ export const messages = {
             workCenters: 'Work Centers',
             jobTypes: 'Job Types',
             employees: 'Employees',
-            payrollSettlement: 'Payroll Settlement',
+            payrollSettlement: 
+            
+            {title:'Payroll Settlement',
+            subTitle: 'Payroll Settlement',
+            JournalTransactions: {
+                title: 'Journal Transactions',
+                subTitle: 'Journal Transactions',
+                }
+            },
             dailyPlanning: 'Daily Planning',
             dailyTransactions: 'Daily Transactions',
             shipping: {
@@ -113,6 +123,7 @@ export const messages = {
             contractorCapture: 'Contractor Capture',
             agronomyCapture: 'Agronomy Capture'
         },
+            
 
 
         appmovil: {
@@ -255,7 +266,15 @@ export const messages = {
             workCenters: 'Centros de Trabajo',
             jobTypes: 'Cargos',
             employees: 'Empleados',
-            payrollSettlement: 'Liquidación de Nómina',
+            payrollSettlement: 
+            {title:'Liquidación de Nómina',
+            subTitle: 'Liquidación de Nómina',
+            JournalTransactions: {
+                title: 'Transacciones de Diario',
+                subTitle: 'Transacciones de Diario',
+                
+                }
+            },
             dailyPlanning: 'Planeación Diaria',
             dailyTransactions: 'Transacciones del Día',
             shipping: {

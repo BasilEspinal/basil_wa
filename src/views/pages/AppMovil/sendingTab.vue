@@ -126,7 +126,7 @@ watch(
 </script>
 <template>
     <div>
-        <pre>Temporal: Id del empleado {{ props.id }}</pre>
+        <!-- <pre>Temporal: Id del empleado {{ props.id }}</pre> -->
         <div class="card">
             <Panel :header="t('appmovil.information')" toggleable>
                 <div class="datalles-bacg p-fluid formgrid grid mb-3">

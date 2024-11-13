@@ -54,8 +54,8 @@ export function useAppMovilService() {
                 Endpoint = `/appmovil/taskstarif?filter[tasks_of_type_id]=${fetchWorkCenter.value?.taskoftype?.id}&filter[work_type_day]=${holiday.value}&filter[farm_id]=${fetchFarmId.value}&filter[company_id]=${fetchCompannyId.value}&filter[packing_type_id]=${tasksPlaner.value?.packing_type.id}&filter[type_price]=${tasksType}`;
             }              // /appmovil/taskstarif?filter[tasks_of_type_id]=4                                       &filter[work_type_day]=Normal         &filter[farm_id]= 1                   &filter[company_id]=1                       &filter[packing_type_id]=1                                    &filter[type_price]=Task
             const response = await getRequest(Endpoint);
-            console.log('response', response);
-            console.log('endpoint', Endpoint);
+            // console.log('response', response);
+            // console.log('endpoint', Endpoint);
             // console.log('endpoint', Endpoint);
             // console.log('fetchWorkCenter', fetchWorkCenter.value);
             // console.log('holiday', holiday.value);
@@ -83,7 +83,7 @@ export function useAppMovilService() {
         const endpoint=ref((`/appmovil/tasksplanner?filter[tasks_of_type_id]=${fetchWorkCenter.value?.taskoftype.id}&filter[company_id]=${fetchCompannyId.value}&filter[farm_id]=${fetchFarmId.value}`));
         // console.log('endpoint', endpoint.value);
         const response = await getRequest(endpoint.value);
-        console.log('data tasks planner', response);
+        // console.log('data tasks planner', response);
         tasksPlaner.value = response.data.data[0];
         return { ...response, data: response.data.data[0] };
     };
@@ -161,8 +161,8 @@ export function useAppMovilService() {
     };
     const getInfoEmployeesById= async(planner_task_id,task_of_type,employee_id)=> {
         try {
-            console.log('planner_task_id',planner_task_id);
-            console.log('employee_id',employee_id);
+            // console.log('planner_task_id',planner_task_id);
+            // console.log('employee_id',employee_id);
             const response = await getRequest(`/appmovil/summary/employees?filter[planner_task_id]=${planner_task_id}&filter[tasks_of_type_id]=${task_of_type}&filter[farm_id]=1&filter[worker_employee_id]=${employee_id}`);
             return response;
         }

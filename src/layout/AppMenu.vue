@@ -703,9 +703,16 @@ const model2 = computed(() => ([
                         //gate: 'liquidaciondenomina_shipping_process_menu'
                         gate: 'liquidaciondenomina_planeaciondiaria_menu'
                     },
+
+                    {
+                        label: t('menu.payrollSettlement.JournalTransactions.title'),
+                        to: '/PayrollSettlement/JournalTransactions',
+                        icon: 'pi pi-tablet',
+                        gate: 'liquidaciondenomina_planeaciondiaria_menu'
+                    },
                     {
                         label: t('menu.transferToPrefrio'),
-                        to: '/PayrollSettlement/TransferTasks',
+                        to: '/PayrollSettlement/JournalTransactions',
                         icon: 'pi pi-bookmark',
                         gate: 'liquidaciondenomina_trasladoaprefrio_menu'
                     },
@@ -713,7 +720,7 @@ const model2 = computed(() => ([
                         label: t('menu.dailySettlement'),
                         to: '/PayrollSettlement/DailySettlement',
                         icon: 'pi pi-bookmark',
-                        gate: 'liquidaciondenomina_liquidacion_diaria_menu'
+                        gate: 'liquidaciondenomina_planeaciondiaria_menu'
                     },
                     {
                         label: t('menu.employeeSummary'),
