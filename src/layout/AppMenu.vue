@@ -820,35 +820,36 @@ const model2 = computed(() => ([
                         gate: 'appmovil_data_capture'
                     },
                     {
-                        label: t('menu.cortaCapture'),
-                        to: '/AppMovil/Corta',
-                        icon: 'pi pi-mobile',
-                        gate: 'appmovil_corta_menu'
-                    },
-                    {
-                        label: t('menu.preFrioCapture'),
-                        to: '/AppMovil/PreFrio',
-                        icon: 'pi pi-mobile',
-                        gate: 'appmovil_prefrio_menu_tmp'
-                    },
-                    {
-                        label: t('menu.selectionCapture'),
-                        to: '/AppMovil/Seleccion',
-                        icon: 'pi pi-mobile',
-                        gate: 'appmovil_seleccion_menu'
-                    },
-                    {
                         label: t('menu.contractorCapture'),
                         to: '/AppMovil/Contractor',
                         icon: 'pi pi-mobile',
                         gate: 'appmovil_contratista_menu'
                     },
-                    {
-                        label: t('menu.agronomyCapture'),
-                        to: '/AppMovil/Agronomo',
-                        icon: 'pi pi-mobile',
-                        gate: 'appmovil_agronomia_menu'
-                    },
+                    // {
+                    //     label: t('menu.cortaCapture'),
+                    //     to: '/AppMovil/Corta',
+                    //     icon: 'pi pi-mobile',
+                    //     gate: 'appmovil_corta_menu'
+                    // },
+                    // {
+                    //     label: t('menu.preFrioCapture'),
+                    //     to: '/AppMovil/PreFrio',
+                    //     icon: 'pi pi-mobile',
+                    //     gate: 'appmovil_prefrio_menu_tmp'
+                    // },
+                    // {
+                    //     label: t('menu.selectionCapture'),
+                    //     to: '/AppMovil/Seleccion',
+                    //     icon: 'pi pi-mobile',
+                    //     gate: 'appmovil_seleccion_menu'
+                    // },
+
+                    // {
+                    //     label: t('menu.agronomyCapture'),
+                    //     to: '/AppMovil/Agronomo',
+                    //     icon: 'pi pi-mobile',
+                    //     gate: 'appmovil_agronomia_menu'
+                    // },
                     {
                         label: t('appmovil.shipping.shippingProcess'),
                         to: '/AppMovil/Corta/Envios',
