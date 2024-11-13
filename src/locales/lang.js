@@ -270,8 +270,8 @@ export const messages = {
             {title:'Liquidación de Nómina',
             subTitle: 'Liquidación de Nómina',
             JournalTransactions: {
-                title: 'Transacciones de Diario',
-                subTitle: 'Transacciones de Diario',
+                title: 'Diario de transacciones',
+                subTitle: 'Diario de transacciones',
                 
                 }
             },
