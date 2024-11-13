@@ -96,6 +96,38 @@ export const InitialDataService = {
         }
     },
 
+
+    async getWorkCenters() {
+        try {
+            const response =  await getRequest(`/work_centers`);
+            return response;
+        } catch (error) {
+            console.error('Error fetching work centers:', error);
+            return errorResponseAPI(error); 
+        }
+    },
+
+    async getJobTypes() {
+        try {
+            const response =  await getRequest(`/job_types`);
+            return response;
+        } catch (error) {
+            console.error('Error fetching job types:', error);
+            return errorResponseAPI(error); 
+        }
+    },
+
+    
+    async getPaymentTypes() {
+        try {
+            const response =  await getRequest(`/payment_types`);
+            return response;
+        } catch (error) {
+            console.error('Error fetching payment types:', error);
+            return errorResponseAPI(error); 
+        }
+    },
+
     async getEmployeesWorkCenter(value) {
 
         try {
@@ -107,7 +139,26 @@ export const InitialDataService = {
         }
 
 
+    },
+    async getDocumentsType() {
+        try {
+            const response =  await getRequest(`/lists/documentType`);
+            return response;
+        } catch (error) {
+            console.error('Error fetching document types', error);
+            return errorResponseAPI(error); 
+        }
+    },
+    async getGenderTypes() {
+        try {
+            const response =  await getRequest(`/lists/genderType`);
+            return response;
+        } catch (error) {
+            console.error('Error fetching gender)', error);
+            return errorResponseAPI(error);
+        }
     }
+
 
 
 

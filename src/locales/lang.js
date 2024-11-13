@@ -1,3 +1,5 @@
+import JournalTransactions from "../views/pages/PayrollSettlement/JournalTransactions/JournalTransactions.vue";
+
 export const messages = {
     en: {
         message: {
@@ -82,7 +84,15 @@ export const messages = {
             workCenters: 'Work Centers',
             jobTypes: 'Job Types',
             employees: 'Employees',
-            payrollSettlement: 'Payroll Settlement',
+            payrollSettlement: 
+            
+            {title:'Payroll Settlement',
+            subTitle: 'Payroll Settlement',
+            JournalTransactions: {
+                title: 'Journal Transactions',
+                subTitle: 'Journal Transactions',
+                }
+            },
             dailyPlanning: 'Daily Planning',
             dailyTransactions: 'Daily Transactions',
             shipping: {
@@ -113,9 +123,11 @@ export const messages = {
             contractorCapture: 'Contractor Capture',
             agronomyCapture: 'Agronomy Capture'
         },
+            
 
 
         appmovil: {
+            information: 'Planning information',
             vehicle: 'Vehicle',
             quantityRequested: 'Quantity Requested',
             centroTrabajo: 'Work Centers',
@@ -159,7 +171,8 @@ export const messages = {
             shipping: {
                 shippingProcess: 'Shipping Process',
                 deliveryProcess: 'Delivery Process',
-            }
+            },
+            
         }
     },
     es: {
@@ -253,7 +266,15 @@ export const messages = {
             workCenters: 'Centros de Trabajo',
             jobTypes: 'Cargos',
             employees: 'Empleados',
-            payrollSettlement: 'Liquidación de Nómina',
+            payrollSettlement: 
+            {title:'Liquidación de Nómina',
+            subTitle: 'Liquidación de Nómina',
+            JournalTransactions: {
+                title: 'Diario de transacciones',
+                subTitle: 'Diario de transacciones',
+                
+                }
+            },
             dailyPlanning: 'Planeación Diaria',
             dailyTransactions: 'Transacciones del Día',
             shipping: {
@@ -286,6 +307,7 @@ export const messages = {
             agronomyCapture: 'Captura de Agronomía'
         },
         appmovil: {
+            information: 'Información de planeación',
             vehicle: 'Vehículo',
             quantityRequested: 'Cantidad Solicitada',
             centroTrabajo: 'Centro de Trabajo',
@@ -307,9 +329,9 @@ export const messages = {
             trabajos: 'Trabajos',
             supervisor: 'Supervisor',
             loteDespacho: 'Lote despacho',
-            variedad: 'Varidad',
+            variedad: 'Variedad',
             producto: 'Producto',
-            empaque: 'Empoque',
+            empaque: 'Empaque',
             fechaPlaneada: 'Fecha Planeada',
             dialaboral: 'Dia laboral',
             empleado: 'Empleado',
@@ -329,6 +351,7 @@ export const messages = {
                 shippingProcess: 'Proceso de Envío',
                 deliveryProcess: 'Proceso de Entrega',
             },
+            
             
             
         }

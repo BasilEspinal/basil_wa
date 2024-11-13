@@ -158,14 +158,26 @@ const router = createRouter({
                     component: () => import('@/views/pages/PayrollSettlement/DailyPlanner/DailyPlanner.vue')
                 },
                 {
+                    path: '/PayrollSettlement/DailyTransactions',
+                    name: 'dailytransactions',
+                    component: () => import('@/views/pages/PayrollSettlement/DailyTransactions/DailyTransactions.vue')
+                },
+
+                {
                     path: '/PayrollSettlement/ShippingProcess/ShippingProcess',
                     name: 'shippingProcess',
                     component: () => import('@/views/pages/PayrollSettlement/ShippingProcess/ShippingProcess.vue')
                 },
                 {
-                    path: '/PayrollSettlement/DailyTransactions',
-                    name: 'dailytransactions',
-                    component: () => import('@/views/pages/PayrollSettlement/DailyTransactions/DailyTransactions.vue')
+                    path: '/PayrollSettlement/JournalTransactions',
+                    name: 'JournalTransactions',
+                    component: () => import('@/views/pages/PayrollSettlement/JournalTransactions/JournalTransactions.vue')
+                },
+
+                {
+                    path: '/PayrollSettlement/TransferTasks',
+                    name: 'TransferTasks',
+                    component: () => import('@/views/pages/PayrollSettlement/TransferTasks/TransfersTasks.vue')
                 },
                 {
                     path: '/PayrollSettlement/DailySettlement',
@@ -178,7 +190,15 @@ const router = createRouter({
                     name: 'employees_information',
                     component: () => import('@/views/pages/PayrollSettlement/EmployeesInformation/EmployeesInformation.vue')
                 },
+                {
+                    path: '/PayrollSettlement/DiscountRegistering',
+                    name: 'DiscountRegistering',
+                    component: () => import('@/views/pages/PayrollSettlement/DiscountRegistering/DiscountRegistering.vue')
+                },
 
+
+                //////////////////////////////////////////////////////////////////
+                ////NOT SURE IF THE FOLLOWING ARE USED
                 {
                     path: '/PayrollSettlement/PaymentPeriodsInformation',
                     name: 'payment_periods_information',
@@ -195,17 +215,10 @@ const router = createRouter({
                     component: () => import('@/views/pages/PayrollSettlement/WorkRegisterSelection/DailyWorkRegistering.vue')
                 },
 
-                {
-                    path: '/PayrollSettlement/TransferTasks',
-                    name: 'TransferTasks',
-                    component: () => import('@/views/pages/PayrollSettlement/TransferTasks/TransfersTasks.vue')
-                },
+                //////////////////////////////////////////////////////////////////
 
-                {
-                    path: '/PayrollSettlement/DiscountRegistering',
-                    name: 'DiscountRegistering',
-                    component: () => import('@/views/pages/PayrollSettlement/DiscountRegistering/DiscountRegistering.vue')
-                },
+
+
                 {
                     path: '/PayrollSettlement/WorkRegisterDaily',
                     name: 'WorkRegisterDaily',
@@ -277,7 +290,7 @@ const router = createRouter({
                 {
                     path: '/AppMovil/Corta',
                     name: 'appmovil_corta',
-                    component: () => import('@/views/pages/AppMovil/AppMovilCorta.vue')
+                    component: () => import('@/views/pages/AppMovil/Deprecated/AppMovilCorta.vue')
                 },
                 {
                     path: '/AppMovil/Corta/Envios',
@@ -292,22 +305,22 @@ const router = createRouter({
                 {
                     path: '/AppMovil/PreFrio',
                     name: 'appmovil_prefio',
-                    component: () => import('@/views/pages/AppMovil/AppMovilPreFrio.vue')
+                    component: () => import('@/views/pages/AppMovil/Deprecated/AppMovilPreFrio.vue')
                 },
                 {
                     path: '/AppMovil/Seleccion',
                     name: 'appmovil_seleccion',
-                    component: () => import('@/views/pages/AppMovil/AppMovilSeleccion.vue')
+                    component: () => import('@/views/pages/AppMovil/Deprecated/AppMovilSeleccion.vue')
                 },
                 {
                     path: '/AppMovil/Contractor',
                     name: 'appmovil_contractor',
-                    component: () => import('@/views/pages/AppMovil/AppMovilContractor.vue')
+                    component: () => import('@/views/pages/AppMovil/Deprecated/AppMovilContractor.vue')
                 },
                 {
                     path: '/AppMovil/Agronomo',
                     name: 'appmovil_agronomo',
-                    component: () => import('@/views/pages/AppMovil/AppMovilAgronomo.vue')
+                    component: () => import('@/views/pages/AppMovil/Deprecated/AppMovilAgronomo.vue')
                 },
                 
             ]

@@ -3,8 +3,10 @@ import { ref, onMounted, watch } from 'vue';
 import { useToast } from 'primevue/usetoast';
 import { useAppMovilService } from '../../../service/appMovil/appMovilService';
 import useData from '@/composables/DataAPI/FetchDataAPICopy.js';
-const { errorResponseAPI } = useData();
-import BackendErrors from '@/views/Errors/BackendErrors.vue';
+import { CrudService } from '@/service/CRUD/CrudService';
+// const { errorResponseAPI } = useData();
+import BackendErrors from '@/layout/composables/Errors/BackendErrors.vue';
+import FrontEndErrors from '@/layout/composables/Errors/FrontendErrors.vue';
 import { useI18n } from 'vue-i18n';
 
 const toast = useToast();
@@ -22,21 +24,12 @@ const dones_work = ref(null);
 const tarifa = ref(null);
 const laborActive = ref(false);
 const lotes = ref({});
+const packings_type = ref([]);
+const Packings_type = ref([]);
 
+const crudService = CrudService('/packing_types');
+const errorResponseAPI = crudService.getErrorResponse();
 const { t } = useI18n();
-onMounted(async () => {
-    workCenter.value = WORK_CENTER;
-    supervisoId.value = SUPERVISO_ID;
-    lotes.value = LOTES;
-});
-
-function clearFiels() {
-    selected_quanty.value = null;
-    Total.value = null;
-    select_tasks_type.value = null;
-    Notas.value = null;
-}
-
 const props = defineProps({
     slotProps: { type: Object },
     Lote: { type: Array },
@@ -44,6 +37,28 @@ const props = defineProps({
     idUs: { type: String },
     tipoActividad: { type: Array }
 });
+const packing_typeV = ref({uuid: props.data.packing_type.uuid, name: props.data.packing_type.name});
+const emit = defineEmits(['update-data']); // Define the event to emit
+
+onMounted(async () => {
+    workCenter.value = WORK_CENTER;
+    supervisoId.value = SUPERVISO_ID;
+    lotes.value = LOTES;
+
+    const respPackingsType = await crudService.getAll();
+    //console.log("respPackingsType", respPackingsType);
+    if (!respPackingsType.ok) toast.add({ severity: 'error', detail: 'Error' + respPackingsType.error, life: 3000 });
+    Packings_type.value = respPackingsType.data.data.map((packing) => ({ uuid: packing.uuid, name: packing.name }));
+
+});
+
+const clearFields = async ()=> {
+    selected_quanty.value = null;
+    Total.value = null;
+    select_tasks_type.value = null;
+    Notas.value = null;
+}
+
 
 const getLabor = async () => {
     const response = await getDonesWork();
@@ -53,20 +68,25 @@ const getLabor = async () => {
 };
 
 async function sendDailyReport() {
-    const restp = await postDailyReport({
+    const data = {
         loteCode: selected_crops_lots.value?.code,
         tasksTypeCode: select_tasks_type.value?.code,
         quantity: selected_quanty.value,
         notas: Notas.value,
         tarifXCautity: selected_quanty.value * tarifa.value,
         userId: props.slotProps.uuid,
-        labor: selected_dones_work.value?.uuid
-    });
+        labor: selected_dones_work.value?.uuid,
+        packing_type:packing_typeV.value?.uuid
+    };
+    console.log("data", data);
+    const restp = await postDailyReport(data);
     
     
     toast.add({ severity: restp.ok ? 'success' : 'error', summary: 'Create', detail: restp.ok ? 'Creado' : restp.error, life: 3000 });
-    //if (restp.ok) 
-    //clearFiels();
+    //if (restp.ok) await clearFields();
+    if (restp.ok) {
+        emit('update-grandparent-data');
+    }
 }
 
 const UpdateTotal = () => {
@@ -76,7 +96,7 @@ const UpdateTotal = () => {
 const updateTaskTarif = async () => {
     
     tarifa.value = await getTarif(select_tasks_type.value.code);
-    
+    // console.log("tarifa", tarifa.value);
     tarifa.value === 0 ? toast.add({ severity: 'error', summary: 'Tarifa', detail: 'NO existe tarifa definida', life: 3000 }) : '';
     laborActive.value = select_tasks_type.value?.label !== 'Task' && select_tasks_type.value?.name !== '' && select_tasks_type.value !== null;
     if (laborActive.value) {
@@ -84,25 +104,46 @@ const updateTaskTarif = async () => {
         getLabor();}
 };
 
+
 watch(select_tasks_type, () => {
     updateTaskTarif();
 });
+
+const searchPackingType = (event) => {
+    setTimeout(() => {
+        if (!event.query.trim().length) {
+            packings_type.value = [...Packings_type.value];
+        } else {
+            packings_type.value = Packings_type.value.filter((fram) => {
+                return fram.name.toLowerCase().startsWith(event.query.toLowerCase());
+            });
+        }
+    }, 200);
+};
+
 </script>
 
 <template>
+    
     <div class="grid p-fluid mt-3">
         <div class="field col-12 md:col-4">
+            
             <span class="p-float-label">
                 <Dropdown v-model="select_tasks_type" :options="tipoActividad" filter optionLabel="label" />
                 <label class="font-bold" for="task_type">{{ t('appmovil.tipoActividad') }}</label>
             </span>
+            <!-- <FrontEndErrors :errorsNew="errorsNew" name="select_tasks_type" /> -->
             <BackendErrors :name="errorResponseAPI?.errors?.planner_task_uuid" />
+
+
+            
         </div>
         <div class="field col-12 md:col-4">
             <span class="p-float-label">
                 <Dropdown v-model="selected_crops_lots" :options="Lote" filter optionLabel="code" />
                 <label class="font-bold" for="crops_lots">{{ t('appmovil.lote') }}</label>
             </span>
+            <!-- <FrontEndErrors :errorsNew="errorsNew" name="selected_crops_lots" /> -->
             <BackendErrors :name="errorResponseAPI?.errors?.crop_lot_code" />
         </div>
 
@@ -111,15 +152,34 @@ watch(select_tasks_type, () => {
                 <Dropdown v-model="selected_dones_work" :options="dones_work" filter optionLabel="name" />
                 <label class="font-bold" for="dones_work">{{ t('appmovil.labor') }}</label>
             </span>
+            <!-- <FrontEndErrors :errorsNew="errorsNew" name="selected_dones_work" /> -->
+            <!--Modificar acá-->
             <BackendErrors :name="errorResponseAPI?.errors?.crop_lot_code" />
+
+            
         </div>
         <div class="field col-12 md:col-4">
             <span class="p-float-label">
                 <InputNumber v-model="selected_quanty" :update:modelValue="UpdateTotal" inputId="minmax" :min="1" :max="10" />
                 <label class="font-bold" for="quanty">{{ t('appmovil.cantidad') }}</label>
             </span>
+            <!-- <FrontEndErrors :errorsNew="errorsNew" name="selected_quanty" /> -->
             <BackendErrors :name="errorResponseAPI?.errors?.task_qty" />
         </div>
+
+        <div class="field col-12 md:col-4">
+            <span class="p-float-label">
+                <!-- <Dropdown v-model="packing_typeV" :options="Lote" filter optionLabel="code" /> -->
+                <AutoComplete v-model="packing_typeV" class="flex-auto" inputId="ac" :suggestions="packings_type" @complete="searchPackingType" field="name" dropdown />
+                <label class="font-bold" for="crops_lots">{{ t('appmovil.empaque') }}</label>
+            </span>
+
+            <!-- <FrontEndErrors :errorsNew="errorsNew" name="packing_typeV" /> -->
+            <!--Modificar acá-->
+            <BackendErrors :name="errorResponseAPI?.errors?.task_qty" />
+        </div>
+
+
         <div class="field col-12 md:col-4">
             <div class="p-inputgroup">
                 <span class="p-float-label border-round border-1">
