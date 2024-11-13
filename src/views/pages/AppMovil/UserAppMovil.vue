@@ -38,6 +38,7 @@ function handleUserClick(slotProps) {
     // console.log('User clicked:', slotProps);
     onTabChange(slotProps, { index: 1 }); 
 }
+
 const emit = defineEmits(['update-grandparent-data']);
 
 const refreshSendingTabData = () => {

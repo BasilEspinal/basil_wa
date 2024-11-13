@@ -26,8 +26,10 @@
                                     label="Clone" icon="pi pi-copy" class="p-button-secondary mb-2 mt-2"
                                     @click="openDialog('clone')" size="large" />
                                 <Divider layout="vertical" />
-                                <Button :disabled="listRowSelect.length > 0" label="Export" icon="pi pi-file-import"
-                                    class="p-button-warning mb-2 mt-2" @click="openExport" size="large" />
+                                <!-- <Button :disabled="listRowSelect.length > 0" label="Export" icon="pi pi-file-import"
+                                    class="p-button-warning mb-2 mt-2" @click="openExport" size="large" /> -->
+                                    <Button  label="Export" icon="pi pi-file-import"
+                                        class="p-button-warning mb-2 mt-2" @click="openExport" size="large" />
                                 <Divider layout="vertical" />
                                 <Button :disabled="!listRowSelect.length > 0" label="Delete" icon="pi pi-trash"
                                     class="p-button-danger mb-2 mt-2" @click="openDelete" size="large" />
@@ -256,34 +258,47 @@ import Summary from '@/components/Summary.vue';
 const { t } = useI18n();
 
 const dynamicColumns = [
-    { field: 'tasks_statuses.name', header: 'Task Status', frozen: false, color: true },
-    { field: 'tasks_statuses.description', header: 'Task Status Description', frozen: false, color: false },
-    { field: 'tasks_of_type.code', header: 'Task Code', frozen: false, color: false },
-    { field: 'tasks_of_type.name', header: 'Task Name', frozen: false, color: false },
-    { field: 'tasks_of_type.created_at', header: 'Task Created At', frozen: false, color: false },
-    { field: 'tasks_of_type.updated_at', header: 'Task Updated At', frozen: false, color: false },
-    { field: 'worker_employee.full_name', header: 'Employee Name', frozen: false, color: false },
-    { field: 'worker_employee.document', header: 'Employee Document', frozen: false, color: false },
-    { field: 'worker_employee.email', header: 'Employee Email', frozen: false, color: false },
-    { field: 'worker_employee.gender.name', header: 'Gender', frozen: false, color: false },
-    { field: 'worker_employee.document_type.name', header: 'Document Type', frozen: false, color: false },
-    { field: 'transaction_date', header: 'Transaction Date', frozen: false, color: false },
-    { field: 'day_Of_Week', header: 'Day of Week', frozen: false, color: false },
-    { field: 'week_Of_Year', header: 'Week of Year', frozen: false, color: false },
-    { field: 'packing_type.name', header: 'Packing Type', frozen: false, color: false },
+    
+    
+
+    // { field: 'tasks_of_type.created_at', header: 'Task Created At', frozen: false, color: false },
+    // { field: 'tasks_of_type.updated_at', header: 'Task Updated At', frozen: false, color: false },
+
+    { field: 'transaction_date', header: 'Transaction Date', frozen: true, color: false },
     { field: 'code_pays_period', header: 'Pays Period Code', frozen: false, color: false },
-    { field: 'type_day_tarif', header: 'Day Tarif Type', frozen: false, color: false },
+    // { field: 'tasks_of_type.code', header: 'Task Code', frozen: false, color: false },
+    { field: 'tasks_of_type.name', header: 'Task Name', frozen: false, color: false },
+    { field: 'tasks_statuses.name', header: 'Task Status', frozen: false, color: true },
+    // { field: 'tasks_statuses.description', header: 'Task Status Description', frozen: false, color: false },
+
+    { field: 'worker_employee.document', header: 'Employee Document', frozen: false, color: false },
+    { field: 'worker_employee.full_name', header: 'Employee Name', frozen: false, color: false },
+    
+    // { field: 'worker_employee.email', header: 'Employee Email', frozen: false, color: false },
+    // { field: 'worker_employee.gender.name', header: 'Gender', frozen: false, color: false },
+    // { field: 'worker_employee.document_type.name', header: 'Document Type', frozen: false, color: false },
+    
     { field: 'type_price_task', header: 'Task Price Type', frozen: false, color: false },
+    { field: 'type_day_tarif', header: 'Day Tarif Type', frozen: false, color: false },
     { field: 'task_qty', header: 'Task Quantity', frozen: false, color: false },
-    { field: 'corrected_task_qty', header: 'Corrected Task Quantity', frozen: false, color: false },
     { field: 'price_tarif_task', header: 'Task Price Tarif', frozen: false, color: false },
     { field: 'task_total_pays', header: 'Task Total Pays', frozen: false, color: false },
-    { field: 'notes_small', header: 'Notes', frozen: false, color: false },
-    { field: 'planner_tasks.transaction_date', header: 'Planner Task Date', frozen: false, color: false },
-    { field: 'planner_tasks.crop_lots', header: 'Crop Lots', frozen: false, color: false },
+    { field: 'packing_type.name', header: 'Packing Type', frozen: false, color: false },
+    { field: 'created_at', header: 'Created at', frozen: false, color: false },
+    { field: 'updated_at', header: 'Updated at', frozen: false, color: false },
     { field: 'farm.name', header: 'Farm Name', frozen: false, color: false },
     { field: 'company.name', header: 'Company Name', frozen: false, color: false },
     { field: 'status.name', header: 'Status Name', frozen: false, color: true },
+
+
+
+    { field: 'day_Of_Week', header: 'Day of Week', frozen: false, color: false },
+    { field: 'week_Of_Year', header: 'Week of Year', frozen: false, color: false },
+    { field: 'corrected_task_qty', header: 'Corrected Task Quantity', frozen: false, color: false },
+    { field: 'notes_small', header: 'Notes', frozen: false, color: false },
+    { field: 'planner_tasks.transaction_date', header: 'Planner Task Date', frozen: false, color: false },
+    { field: 'planner_tasks.crop_lots', header: 'Crop Lots', frozen: false, color: false },
+
 ];
 
 
@@ -762,7 +777,7 @@ function formatXLS(eventos) {
     const binaryData = XLSX.write(workbook, { type: 'array' });
 
     const file = new File([binaryData], { type: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet' });
-    // saveAs(file, filename.value + '.xlsx');
+    saveAs(file, filename.value + '.xlsx');
 }
 
 
