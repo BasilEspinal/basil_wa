@@ -290,7 +290,7 @@ const router = createRouter({
                 {
                     path: '/AppMovil/Corta',
                     name: 'appmovil_corta',
-                    component: () => import('@/views/pages/AppMovil/AppMovilCorta.vue')
+                    component: () => import('@/views/pages/AppMovil/Deprecated/AppMovilCorta.vue')
                 },
                 {
                     path: '/AppMovil/Corta/Envios',
@@ -305,22 +305,22 @@ const router = createRouter({
                 {
                     path: '/AppMovil/PreFrio',
                     name: 'appmovil_prefio',
-                    component: () => import('@/views/pages/AppMovil/AppMovilPreFrio.vue')
+                    component: () => import('@/views/pages/AppMovil/Deprecated/AppMovilPreFrio.vue')
                 },
                 {
                     path: '/AppMovil/Seleccion',
                     name: 'appmovil_seleccion',
-                    component: () => import('@/views/pages/AppMovil/AppMovilSeleccion.vue')
+                    component: () => import('@/views/pages/AppMovil/Deprecated/AppMovilSeleccion.vue')
                 },
                 {
                     path: '/AppMovil/Contractor',
                     name: 'appmovil_contractor',
-                    component: () => import('@/views/pages/AppMovil/AppMovilContractor.vue')
+                    component: () => import('@/views/pages/AppMovil/Deprecated/AppMovilContractor.vue')
                 },
                 {
                     path: '/AppMovil/Agronomo',
                     name: 'appmovil_agronomo',
-                    component: () => import('@/views/pages/AppMovil/AppMovilAgronomo.vue')
+                    component: () => import('@/views/pages/AppMovil/Deprecated/AppMovilAgronomo.vue')
                 },
                 
             ]
