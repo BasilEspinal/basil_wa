@@ -251,7 +251,7 @@ import { onBeforeMount, onMounted, ref, watch } from 'vue';
 import { useI18n } from 'vue-i18n';
 import * as XLSX from 'xlsx';
 import { z } from 'zod';
-import Summary from './Summary.vue';
+import Summary from '@/components/Summary.vue';
 
 const { t } = useI18n();
 

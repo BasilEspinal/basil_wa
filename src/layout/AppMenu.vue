@@ -678,7 +678,7 @@ const model2 = computed(() => ([
     {
         items: [
             {
-                label: t('menu.payrollSettlement'),
+                label: t('menu.payrollSettlement.title'),
                 rol: 'admin',
                 icon: 'pi pi-money-bill',
                 gate: 'liquidacion_nomina_menu',
@@ -712,7 +712,7 @@ const model2 = computed(() => ([
                     },
                     {
                         label: t('menu.transferToPrefrio'),
-                        to: '/PayrollSettlement/JournalTransactions',
+                        to: '/PayrollSettlement/TransferTasks',
                         icon: 'pi pi-bookmark',
                         gate: 'liquidaciondenomina_trasladoaprefrio_menu'
                     },
