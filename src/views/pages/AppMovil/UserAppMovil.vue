@@ -1,10 +1,12 @@
 <script setup>
-import { ref, onMounted, onBeforeMount} from 'vue';
+import { ref, onMounted, onBeforeMount,computed} from 'vue';
 import { useI18n } from 'vue-i18n';
 import { useAppMovilService } from '../../../service/appMovil/appMovilService';
 import { useToast } from 'primevue/usetoast';
 import userTab from './userTab.vue';
 import sendingTab from './sendingTab.vue';
+import ErrorAppMovil from './ErrorAppMovil.vue';
+import { useLayout } from '@/layout/composables/layout';
 
 const id_employee = ref(null);
 const props = defineProps({
@@ -45,13 +47,17 @@ const refreshSendingTabData = () => {
     emit('update-grandparent-data'); // Emit event to grandparent
     console.log('Data updated');
 };
-
+const logoUrl = computed(() => {
+    return `layout/images/${layoutConfig.darkTheme.value ? 'logo-white' : 'logo-dark'}.png`;
+});
+const { layoutConfig } = useLayout();
 </script>
 
 <template>
     <div>
         <Toast />
-        <Accordion>
+        
+        <Accordion v-if="dataUsers.length">
             <AccordionTab v-for="slotProps in dataUsers" :key="slotProps.id" >
                 <template #header >
                     <span class="flex align-items-center gap-2 w-full" @click="handleUserClick(slotProps.id)">
@@ -74,6 +80,11 @@ const refreshSendingTabData = () => {
                 </TabView>
             </AccordionTab>
         </Accordion>
+        <div v-else>
+
+            <ErrorAppMovil :title="t('appmovil.noemployeesAvailable')" description="Requested resource is not available" :logo-url="logoUrl" />
+            
+        </div>
     </div>
 </template>
 

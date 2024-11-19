@@ -1,5 +1,5 @@
 <script setup>
-import { ref, computed, onMounted, watch, onBeforeMount } from 'vue';
+import { ref, computed, onMounted, watch, onBeforeMount,onBeforeUnmount } from 'vue';
 import UseAppMovil from '@/composables/AppMovil/UseAppMovil.js';
 import { useToast } from 'primevue/usetoast';
 import UserAppMovil from './UserAppMovil.vue';
@@ -122,7 +122,7 @@ const getDataEmployeesInfo = async () => {
 
 const functionsData = async () => {
     loading.value = true; // Set loading to true when data fetching starts
-    await initData();
+    //await initData();
     getUser();
     await getData();
 
@@ -164,7 +164,6 @@ const getData = async () => {
         // Handle error if response is not OK or if data is empty
         const errorMessage = response.error ? `Error: ${response.error}` : 'No data received';
         toast.add({ severity: 'error', detail: errorMessage, life: 3000 });
-
         // Push the failed response to the stack for later processing
         stack.push({ response: response, category: 'Data task planner', description: 'No data available' });
 
@@ -173,6 +172,7 @@ const getData = async () => {
     } else {
         // If valid, handle the data as usual
         dataApp.value = response.data;
+        console.log('dataApp', dataApp.value);
         return true;
     }
 };
@@ -205,6 +205,16 @@ const updateData = async () => {
     // data.value = updatedData; // Update the reactive data ref
 functionsData();
 };
+onBeforeUnmount(() => {
+    
+    const titulo = ref('');
+    const users = ref(null);
+    const filterUsers = ref(null);
+    const dataApp = ref(null);
+    const holiday = ref('Normal');
+    const lotes = ref(null);
+    const search = ref(null);
+});
 </script>
 
 <template>

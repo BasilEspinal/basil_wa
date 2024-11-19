@@ -12,6 +12,7 @@ const fetchCompannyuuid = ref(sessionStorage.getItem('accessSessionFarm'));
 const holiday = ref('Normal');
 const tasksPlaner = ref({});
 const tipoActividad = ref([]);
+const counter = ref(0);
 
 export function useAppMovilService() {
 
@@ -21,15 +22,20 @@ export function useAppMovilService() {
         await getDataTasksplanner();
         await getHoliDay();
         await getTipoActividad();
+        counter.value++;
+        console.log('counter', counter.value);
     };
     const dataInfoUser = async (uuid) => {
         try {
             const response = await getRequest(`/appmovil/datastart`);
+            console.log('Ejecutando dataInfo User');
             return response;
+            counter.value++;
+            console.log('counter', counter.value);
             
         }
         catch (e) {
-            return error(e);
+            return error('Error dataInfo User:', e);
         }
     }
 
@@ -39,9 +45,12 @@ export function useAppMovilService() {
             const  taskoftype_id  = JSON.parse(sessionStorage.getItem('accessSessionWorkCenter')).taskoftype.id
             
             const resp = await getRequest(`/lists/getDoneTypeTasksType?filter[tasks_of_type_id]=${taskoftype_id}`);
+            console.log('ejeuctando getDonesWork');
+            counter.value++;
+            console.log('counter', counter.value);
             return resp;
         } catch (e) {
-            return error(e);
+            return error('Error Get Dones Work:', e);
         }
     };
 
@@ -54,6 +63,7 @@ export function useAppMovilService() {
                 Endpoint = `/appmovil/taskstarif?filter[tasks_of_type_id]=${fetchWorkCenter.value?.taskoftype?.id}&filter[work_type_day]=${holiday.value}&filter[farm_id]=${fetchFarmId.value}&filter[company_id]=${fetchCompannyId.value}&filter[packing_type_id]=${tasksPlaner.value?.packing_type.id}&filter[type_price]=${tasksType}`;
             }              // /appmovil/taskstarif?filter[tasks_of_type_id]=4                                       &filter[work_type_day]=Normal         &filter[farm_id]= 1                   &filter[company_id]=1                       &filter[packing_type_id]=1                                    &filter[type_price]=Task
             const response = await getRequest(Endpoint);
+            console.log('Ejecutando getTarif');
             // console.log('response', response);
             // console.log('endpoint', Endpoint);
             // console.log('endpoint', Endpoint);
@@ -67,17 +77,19 @@ export function useAppMovilService() {
             // console.log('type_price', tasksType);
             // console.log('response', response);
             
+            counter.value++;
+            console.log('counter', counter.value);
 
 
             return response.data?.data[0]?.price_tarif ?? 0;
         } catch (e) {
-            console.error('Error:', e);
+            console.error('Error get tarif ', e);
             return 0;
         }
     };
 
     const getDataTasksplanner = async () => {
-        
+        console.log('Ejecutando getDataTasksplanner');
         const fetchWorkCenter = ref(JSON.parse(sessionStorage.getItem('accessSessionWorkCenter')));
         // console.log('Task of type id', fetchWorkCenter.value.taskoftype.id);
         const endpoint=ref((`/appmovil/tasksplanner?filter[tasks_of_type_id]=${fetchWorkCenter.value?.taskoftype.id}&filter[company_id]=${fetchCompannyId.value}&filter[farm_id]=${fetchFarmId.value}`));
@@ -85,15 +97,22 @@ export function useAppMovilService() {
         const response = await getRequest(endpoint.value);
         // console.log('data tasks planner', response);
         tasksPlaner.value = response.data.data[0];
+        counter.value++;
+        console.log('counter', counter.value);
         return { ...response, data: response.data.data[0] };
+        
     };
 
     const getUsers = async () => {
         try {
+            console.log('Ejecutando getUsers');
             const resp = await getRequest(`/appmovil/employees?filter[work_center_id]=${fetchWorkCenter.value.id}`);
+            counter.value++;
+            console.log('counter', counter.value);
             return resp;
+
         } catch (e) {
-            return error(e);
+            return error('Error Get Users:', e);
         }
     };
 
@@ -126,32 +145,47 @@ export function useAppMovilService() {
     };
 
     const getTipoActividad = async () => {
+        console.log('Ejecutando getTipoActividad');
         const response = await getRequest(`/lists/activityTaskType`);
         tipoActividad.value = { ...response, data: response.data?.data };
+        counter.value++;
+        console.log('counter', counter.value);
         return tipoActividad.value;
     };
 
     const getHoliDay = async () => {
+        console.log('Ejecutando getHoliDay');
         try {
             const response = await getRequest(`/appmovil/calendars?filter[company_id]=${fetchCompannyId.value}`);
             holiday.value = response.data.data.length === 0 ? 'Normal' : 'Festivo';
+            counter.value++;
+            console.log('counter', counter.value);
         } catch (e) {
             holiday.value = 'Normal';
+            return error('Error Get Holiday:', e);
         }
     };
 
     const getShippingsDelivered = async () => {
+        console.log('Ejecutando getShippingsDelivered');
         try {
             const response = await getRequest(`/transactions/shipping/shippings`);
+            counter.value++;
+            console.log('counter', counter.value);
             return response;
         } catch (e) {
-            return error(e);
+            return error('Error Get Shippings Delivered:', e);
         }
     };
 
     const getInfoEmployees=async (planner_task_id,task_of_type) => {
+        
         try {
+            
             const response = await getRequest(`/appmovil/summary/employees?filter[planner_task_id]=${planner_task_id}&filter[tasks_of_type_id]=${task_of_type}&filter[farm_id]=1`);
+            console.log('Ejecutando getInfoEmployees');
+            counter.value++;
+            console.log('counter', counter.value);
             return response;
         }
         catch (error) {
@@ -161,9 +195,12 @@ export function useAppMovilService() {
     };
     const getInfoEmployeesById= async(planner_task_id,task_of_type,employee_id)=> {
         try {
+            console.log('Ejecutando getInfoEmployeesById');
             // console.log('planner_task_id',planner_task_id);
             // console.log('employee_id',employee_id);
             const response = await getRequest(`/appmovil/summary/employees?filter[planner_task_id]=${planner_task_id}&filter[tasks_of_type_id]=${task_of_type}&filter[farm_id]=1&filter[worker_employee_id]=${employee_id}`);
+            counter.value++;
+            console.log('counter', counter.value);
             return response;
         }
         catch (error) {
@@ -174,16 +211,16 @@ export function useAppMovilService() {
 
     // Exposing the reactive state and methods
     return {
-        WORK_CENTER: fetchWorkCenter,
-        SUPERVISO_ID: fetchSupervisorId,
-        FARM_ID: fetchFarmId,
-        COMPANY_ID: fetchCompannyId,
+        // WORK_CENTER: fetchWorkCenter,
+        // SUPERVISO_ID: fetchSupervisorId,
+        // FARM_ID: fetchFarmId,
+        // COMPANY_ID: fetchCompannyId,
         TASK_OF_TYPE: fetchWorkCenter.value?.taskoftype,
-        SUPERVISOR_NAME: fetchSupervisorName,
-        EMPLOYEE_ID: fetchEmployeeId,
+        // SUPERVISOR_NAME: fetchSupervisorName,
+        // EMPLOYEE_ID: fetchEmployeeId,
         HOLIDAY: holiday,
-        LOTES: tasksPlaner,
-        TIPO_ACTIVIDAD: tipoActividad,
+        //LOTES: tasksPlaner,
+        // TIPO_ACTIVIDAD: tipoActividad,
         initData,
         getDonesWork,
         getTarif,
