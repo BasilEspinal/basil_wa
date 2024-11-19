@@ -276,7 +276,7 @@ employee_transport_id: values.emplooyesV.id ,
 crop_lot_code: values.selected_crops_lots.code, // Código del lote de cultivo
 vehicle_id: values.vehiclesV? values.vehiclesV.id : dataPlanner.value.data.data[0].vehicle.id, // ID del vehículo
 notes_small: notes.value, // Nota adicional
-voyage_num: values.voyage_num_V.id, // Número de viaje
+voyage_num: values.voyage_num_V.name, // Número de viaje
 
 
 // planner_task_id: dataPlanner.value.data.data[0].id,
