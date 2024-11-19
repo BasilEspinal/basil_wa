@@ -170,6 +170,7 @@ export function useAppMovilService() {
         console.log('Ejecutando getShippingsDelivered');
         try {
             const response = await getRequest(`/transactions/shipping/shippings`);
+            console.log(response)
             counter.value++;
             console.log('counter', counter.value);
             return response;

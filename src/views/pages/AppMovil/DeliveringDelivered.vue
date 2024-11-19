@@ -259,7 +259,7 @@ Vehicles.value = respVehicles.data.data.map((vehicle) => ({ id: vehicle.id, name
 
 const respShippingsDelivered = await getShippingsDelivered();
 if (!respShippingsDelivered.ok) toast.add({ severity: 'error', detail: 'Error' + respShippingsDelivered.error, life: 3000 });
-ShippingsDelivered.value = respShippingsDelivered.data.data.map((shipping) => ({ id: shipping.id, name: shipping.id }));
+ShippingsDelivered.value = respShippingsDelivered.data.data.map((shipping) => ({ id: shipping.id, name: shipping.voyage_num }));
 
 
 };
