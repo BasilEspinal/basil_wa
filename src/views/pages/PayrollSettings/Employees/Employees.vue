@@ -596,7 +596,7 @@ const {
                 id: z.string(),
                 name: z.string().min(3)
             }),
-            email: z.string().email(),
+            email: z.string().email().optional(),
             document_type: z.object({
                 id: z.string(),
                 name: z.string().min(3)

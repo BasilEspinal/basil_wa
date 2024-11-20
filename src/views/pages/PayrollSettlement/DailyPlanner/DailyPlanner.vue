@@ -70,7 +70,7 @@
             <Divider v-if="ability.can('planeacion_diaria_editar')" layout="vertical" />
 
             <!-- ActionButton Component -->
-            <ActionButton :items="items" :listRowSelect="listRowSelect" />
+            <ActionButton :items="items" :listRowSelect="listRowSelect" v-if="ability.can('cambiar_estado_planeacion')"/>
           </div>
 
           <Dialog v-model:visible="flagDialog" :style="{ width: '450px' }" :header="titleDialog" :modal="true">
