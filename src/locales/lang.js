@@ -2,6 +2,38 @@ import JournalTransactions from "../views/pages/PayrollSettlement/JournalTransac
 
 export const messages = {
     en: {
+        status: {
+            ON_VACATION: 'On Vacation',
+            INACTIVE: 'Inactive',
+            RETIRED: 'Retired',
+            DISCREPANCY_PENDING: 'Discrepancy Pending',
+            DISCREPANCY_CORRECTION: 'Discrepancy Corrected',
+            PAID: 'Paid',
+            ACCOUNTED: 'Accounted',
+            SHIPPED_TO: 'Shipped To',
+            SHIPPED: 'Shipped',
+            RECEIVED: 'Received',
+            DISCREPANCY_DETECTED: 'Discrepancy Detected',
+            VALIDATED_WITH_CORRECTION: 'Validated with Correction',
+            COMPLETED: 'Completed',
+            RECEIVED_PENDING: 'Received Pending',
+            RECEIVED_DISCREPANCY_DETECTED: 'Received Discrepancy Detected',
+            ARCHIVED: 'Archived',
+            DELETED: 'Deleted',
+            CREATED: 'Created',
+            APPROVED: 'Approved',
+            PENDING: 'Pending',
+            TRANSFERS: 'Transfers',
+            ON_HOLD: 'On Hold',
+            ACTIVE: 'Active',
+            UNDER_REVIEW: 'Under Review',
+            ESCALATED: 'Escalated',
+            RESOLVED: 'Resolved',
+            IN_PROGRESS: 'In Progress',
+            CLOSED_DAILY: 'Closed Daily',
+            VALIDATED: 'Validated',
+            LIQUIDATED: 'Liquidated'
+        },
         message: {
             titleApp: 'AgroOnline Platform'
         },
@@ -52,6 +84,7 @@ export const messages = {
             name: 'Farm Name'
         },
         menu: {
+
             dashboards: 'Dashboards',
             controlCenter: 'Control Center',
             monitorOnline: 'Online Monitor',
@@ -67,7 +100,14 @@ export const messages = {
             clientRequests: 'Client Requests',
             clients: 'Clients',
             deliveries: 'Deliveries',
-            production: 'Production',
+            production: 
+            {
+                name:'Production',
+                cropLots: 'Crop Lots',
+                vehicles: 'Vehicles',
+                lotScheduling: 'Lot Scheduling',
+            },
+            
             cultivationLots: 'Cultivation Lots',
             vehicles: 'Vehicles',
             lotScheduling: 'Lot Scheduling',
@@ -177,6 +217,38 @@ export const messages = {
         }
     },
     es: {
+        status: {
+            ON_VACATION: 'En Vacaciones',
+            INACTIVE: 'Inactivo',
+            RETIRED: 'Retirado',
+            DISCREPANCY_PENDING: 'Diferencia Pendiente',
+            DISCREPANCY_CORRECTION: 'Diferencia Corregida',
+            PAID: 'Pagado',
+            ACCOUNTED: 'Contabilizado',
+            SHIPPED_TO: 'Traslado a',
+            SHIPPED: 'Enviado',
+            RECEIVED: 'Recibido',
+            DISCREPANCY_DETECTED: 'Discrepancia Detectada',
+            VALIDATED_WITH_CORRECTION: 'Validado con Corrección',
+            COMPLETED: 'Completado',
+            RECEIVED_PENDING: 'Recibido Pendiente',
+            RECEIVED_DISCREPANCY_DETECTED: 'Recibido con Discrepancia Detectada',
+            ARCHIVED: 'Archivado',
+            DELETED: 'Eliminado',
+            CREATED: 'Creado',
+            APPROVED: 'Aprobado',
+            PENDING: 'Pendiente',
+            TRANSFERS: 'Transferencias',
+            ON_HOLD: 'En Espera',
+            ACTIVE: 'Activo',
+            UNDER_REVIEW: 'En Revisión',
+            ESCALATED: 'Escalado',
+            RESOLVED: 'Resuelto',
+            IN_PROGRESS: 'En Progreso',
+            CLOSED_DAILY: 'Cerrado Diario',
+            VALIDATED: 'Validado',
+            LIQUIDATED: 'Liquidado'
+        },
         message: {
             titleApp: 'Plataforma AgroOnline'
         },
@@ -235,6 +307,7 @@ export const messages = {
         },
 
         menu: {
+
             dashboards: 'Tableros',
             controlCenter: 'Centro de Control',
             monitorOnline: 'Monitor en Línea',
@@ -250,7 +323,13 @@ export const messages = {
             clientRequests: 'Solicitudes de Clientes',
             clients: 'Clientes',
             deliveries: 'Despachos',
-            production: 'Producción',
+            production: 
+            {
+                name:'Producción',
+                cropLots: 'Lotes para corte',
+                vehicles: 'Vehiculos',
+                lotScheduling: 'Planeación de lotes',
+            },
             cultivationLots: 'Lotes para Cultivo',
             vehicles: 'Vehículos',
             lotScheduling: 'Programación de Lotes',

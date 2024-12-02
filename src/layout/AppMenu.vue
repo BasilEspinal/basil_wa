@@ -564,7 +564,7 @@ const model2 = computed(() => ([
     {
         items: [
             {
-                label: t('menu.production'),
+                label: t('menu.production.name'),
                 rol: 'admin',
                 icon: 'pi pi-shopping-cart',
                 gate: 'produccion_menu',

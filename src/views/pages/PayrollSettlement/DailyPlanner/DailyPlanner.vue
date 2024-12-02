@@ -5,74 +5,87 @@
                 <h1>{{ titlePage }}</h1>
             </div>
         </div>
+
         <div class="card">
             <div class="grid">
                 <div class="col-xs-12 col-sm-6 col-md-4 mb-2 text-center mx-auto">
                     <!--Uncomment when table is done-->
 
-                    <div class="col-xs-12 col-sm-6 col-md-4 mb-2 text-center mx-auto">
-                        <Toolbar style="margin-bottom: 1rem">
+                    <div class="col-12 text-center">
+                        <Toolbar >
                             <template #center>
-          <div class="flex flex-wrap justify-content-center gap-3"> <!-- Added flex-wrap and gap for responsive buttons -->
-            <Button
-              v-if="ability.can('planeacion_diaria_crear')"
-              :disabled="headerNames.length > 0"
-              label="New"
-              icon="pi pi-plus"
-              class="p-button-success mb-2 mt-2"
-              @click="openNew"
-              size="large"
-            />
-            <Divider v-if="ability.can('planeacion_diaria_crear')" layout="vertical" />
+                                <div class="grid">
 
-            <Button
-              v-if="ability.can('planeacion_diaria_editar')"
-              :disabled="!(listRowSelect.length > 0 && listRowSelect.length < 2)"
-              label="Edit"
-              icon="pi pi-file-edit"
-              class="p-button-help mb-2 mt-2"
-              @click="openEdit"
-              size="large"
-            />
-            <Divider v-if="ability.can('planeacion_diaria_editar')" layout="vertical" />
+                                    <div class="col-12 lg:col-2 text-center">
+                                    <Button
+                                    v-if="ability.can('planeacion_diaria_crear')"
+                                    :disabled="headerNames.length > 0"
+                                    label="New"
+                                    icon="pi pi-plus"
+                                    class="p-button-success w-full mb-2" 
+                                    @click="openNew"
+                                    size="large"
+                                    />
+                                </div>
 
-            <Button
-              v-if="ability.can('planeacion_diaria_crear')"
-              :disabled="!(listRowSelect.length > 0 && listRowSelect.length < 2)"
-              label="Clone"
-              icon="pi pi-copy"
-              class="p-button-secondary mb-2 mt-2"
-              @click="openClone"
-              size="large"
-            />
-            <Divider v-if="ability.can('planeacion_diaria_crear')" layout="vertical" />
+                                    <div class="col-12 lg:col-2 text-center">
+                                    <Button
+                                    v-if="ability.can('planeacion_diaria_editar')"
+                                    :disabled="!(listRowSelect.length > 0 && listRowSelect.length < 2)"
+                                    label="Edit"
+                                    icon="pi pi-file-edit"
+                                    class="p-button-help w-full mb-2" 
+                                    @click="openEdit"
+                                    size="large"
+                                    />
+                                </div>
 
-            <Button
-              v-if="ability.can('planeacion_diaria_editar')"
-              :disabled="headerNames.length > 0"
-              label="Export"
-              icon="pi pi-file-import"
-              class="p-button-warning mb-2 mt-2"
-              @click="openExport"
-              size="large"
-            />
-            <Divider v-if="ability.can('planeacion_diaria_editar')" layout="vertical" />
+                                    <div class="col-12 lg:col-2 text-center">
+                                    <Button
+                                    v-if="ability.can('planeacion_diaria_crear')"
+                                    :disabled="!(listRowSelect.length > 0 && listRowSelect.length < 2)"
+                                    label="Clone"
+                                    icon="pi pi-copy"
+                                    class="p-button-secondary w-full mb-2" 
+                                    @click="openClone"
+                                    size="large"
+                                    />
+                                </div>
 
-            <Button
-              v-if="ability.can('planeacion_diaria_eliminar')"
-              :disabled="!listRowSelect.length > 0"
-              label="Delete"
-              icon="pi pi-trash"
-              class="p-button-danger mb-2 mt-2"
-              @click="openDelete"
-              size="large"
-            />
-            <Divider v-if="ability.can('planeacion_diaria_editar')" layout="vertical" />
+                                    <div class="col-12 lg:col-2 text-center">
+                                    <Button
+                                    v-if="ability.can('planeacion_diaria_editar')"
+                                    :disabled="headerNames.length > 0"
+                                    label="Export"
+                                    icon="pi pi-file-import"
+                                    class="p-button-warning w-full mb-2"
+                                    @click="openExport"
+                                    size="large"
+                                    />
 
-            <!-- ActionButton Component -->
-            <ActionButton :items="items" :listRowSelect="listRowSelect" v-if="ability.can('cambiar_estado_planeacion')"/>
-          </div>
+                                </div>
+                                    <div class="col-12 lg:col-2 text-center">
+                                    <Button
+                                    v-if="ability.can('planeacion_diaria_eliminar')"
+                                    :disabled="!listRowSelect.length > 0"
+                                    label="Delete"
+                                    icon="pi pi-trash"
+                                    class="p-button-danger w-full mb-2"
+                                    @click="openDelete"
+                                    size="large"
+                                    />
+                                </div>
 
+                                </div>
+                            </template>
+                        </Toolbar>
+                    </div>
+                </div>
+            </div>
+            
+            
+
+          
           <Dialog v-model:visible="flagDialog" :style="{ width: '450px' }" :header="titleDialog" :modal="true">
             <label for="username" class="text-2xl font-medium w-6rem"> {{ messageDialog }} </label>
             <Summary :listRowSelect="listRowSelect" />
@@ -81,11 +94,7 @@
               <Button type="button" label="Save" @click="patchRecord" />
             </div>
           </Dialog>
-        </template>
-                        </Toolbar>
-                    </div>
-                </div>
-            </div>
+
 
             <DataTable
                 :value="dataFromComponent"
@@ -149,6 +158,10 @@
                             <SelectButton v-model="size" :options="sizeOptions" optionLabel="label" dataKey="label"/> 
                         </template>
                     </Toolbar>
+
+                    <div class="col-12 lg:col-12 flex align-items-center justify-content-center">
+                                    <ActionButton :items="items" :listRowSelect="listRowSelect" v-if="ability.can('cambiar_estado_planeacion')"/>
+                                </div>
                 </template>
 
                 <template #empty> No customers found. </template>
@@ -1436,13 +1449,6 @@ const CloneRecord = handleSubmitNew(async (values) => {
     }
 });
 
-const ExportRecord = () => {
-    const eventos = exportAll.value.name == 'ALL' ? dataFromComponent.value.map((data) => data) : listRowSelect.value.map((data) => data);
-    formDialogExport.value = false;
-    if (!eventos.length) return;
-    if (format.value.name == 'CSV') formatCSV(eventos);
-    else formatXLS(eventos);
-};
 
 const searchVehicles = (event) => {
     setTimeout(() => {
@@ -1549,50 +1555,136 @@ const searchFarms = (event) => {
     }, 200);
 };
 
-function formatCSV(eventos) {
-    const dataExport = [];
-    dataExport.push(',' + Object.keys(eventos[0]) + '\n');
-    dataExport.push(eventos.map((row) => Object.values(row) + '\n'));
-
-    const blob = new Blob([dataExport.toString()], { type: 'text/csv' });
-    const link = document.createElement('a');
-    link.href = URL.createObjectURL(blob);
-    link.download = filename.value;
-    link.click();
-}
-
-function formatXLS(eventos) {
-    const data = eventos.map((row) => Object.values(row));
-    const headers = Object.keys(eventos[0]);
-    const prueba = [headers, ...data];
-    const workbook = XLSX.utils.book_new();
-    const worksheet = XLSX.utils.aoa_to_sheet(prueba, { headers });
-    XLSX.utils.book_append_sheet(workbook, worksheet, 'Reporte');
-    const binaryData = XLSX.write(workbook, { type: 'array' });
-
-    const file = new File([binaryData], { type: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet' });
-    saveAs(file, filename.value + '.xlsx');
-}
-
 const DeleteRecord = async () => {
     formDialogDelete.value = false;
 
     try {
-        const deletePromises = [];
-        listRowSelect.value.forEach(async (item) => {
-            const deletePromise = await deleteRequest(endpoint.value, item.uuid);
-            deletePromises.push(deletePromise);
+        // Crear una lista de promesas para eliminar
+        const deletePromises = listRowSelect.value.map(async (item) => {
+            const response = await crudService.delete(item.uuid);
+            if (!response.ok) {
+                throw new Error(`Error al eliminar: ${response.error}`);
+            }
+            return response;
         });
+
+        // Esperar a que todas las eliminaciones se completen
         await Promise.all(deletePromises);
-        loadingData();
-        toast.add({ severity: 'success', summary: 'Deleted Record', detail: 'Deleted', life: 3000 });
+
+        // Actualizar la tabla después de la eliminación
+        await loadingData();
+
+        // Mostrar mensaje de éxito
+        toast.add({ severity: 'success', summary: 'Deleted Record', detail: 'Deleted successfully', life: 3000 });
     } catch (error) {
         console.error('Error deleting:', error);
-        toast.add({ severity: 'error', summary: 'Error', detail: 'Error deleting', life: 3000 });
+        toast.add({ severity: 'error', summary: 'Error', detail: 'Error deleting records', life: 3000 });
     } finally {
+        // Limpiar las selecciones
         listRowSelect.value = [];
     }
 };
+
+const ExportRecord = () => {
+    // Determine the data to export
+    const events = exportAll.value.name === 'ALL'
+        ? dataFromComponent.value.map((data) => data) // Export all current records
+        : listRowSelect.value.map((data) => data);   // Export only selected records
+
+    // Close the export dialog
+    formDialogExport.value = false;
+
+    // Check if there is data to export
+    if (!events.length) {
+        toast.add({ severity: 'error', summary: 'Error', detail: 'No data to export', life: 3000 });
+        return;
+    }
+
+    // Export based on the selected format
+    if (format.value.name === 'CSV') formatCSV(events);
+    else formatXLS(events);
+};
+
+function formatCSV(events) {
+    if (!events.length) return;
+
+    // Updated flattenObject to handle arrays and nested objects
+    const flattenObject = (obj, prefix = '') => {
+        return Object.keys(obj).reduce((acc, key) => {
+            const value = obj[key];
+            const fullKey = prefix ? `${prefix}.${key}` : key;
+
+            if (Array.isArray(value)) {
+                // Handle arrays by joining their values into a string
+                acc[fullKey] = value.map(item => (typeof item === 'object' ? JSON.stringify(item) : item)).join('; ');
+            } else if (value && typeof value === 'object' && !(value instanceof Date)) {
+                // Recursively flatten nested objects
+                Object.assign(acc, flattenObject(value, fullKey));
+            } else {
+                acc[fullKey] = value;
+            }
+            return acc;
+        }, {});
+    };
+
+    const flattenedData = events.map((item) => flattenObject(item));
+    const headers = Object.keys(flattenedData[0]);
+
+    // Create CSV content
+    const rows = flattenedData.map((row) =>
+        headers.map((header) => `"${row[header] ?? ''}"`).join(',')
+    );
+    const csvContent = [headers.join(','), ...rows].join('\n');
+
+    // Create and download file
+    const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
+    const link = document.createElement('a');
+    link.href = URL.createObjectURL(blob);
+    link.download = filename.value || 'export.csv';
+    link.click();
+}
+
+function formatXLS(events) {
+    if (!events.length) return;
+
+    // Updated flattenObject to handle arrays and nested objects
+    const flattenObject = (obj, prefix = '') => {
+        return Object.keys(obj).reduce((acc, key) => {
+            const value = obj[key];
+            const fullKey = prefix ? `${prefix}.${key}` : key;
+
+            if (Array.isArray(value)) {
+                // Handle arrays by joining their values into a string
+                acc[fullKey] = value.map(item => (typeof item === 'object' ? JSON.stringify(item) : item)).join('; ');
+            } else if (value && typeof value === 'object' && !(value instanceof Date)) {
+                // Recursively flatten nested objects
+                Object.assign(acc, flattenObject(value, fullKey));
+            } else {
+                acc[fullKey] = value;
+            }
+            return acc;
+        }, {});
+    };
+
+    const flattenedData = events.map((item) => flattenObject(item));
+    const headers = Object.keys(flattenedData[0]);
+    const data = flattenedData.map((row) => headers.map((header) => row[header] ?? ''));
+
+    // Create XLSX worksheet
+    const workbook = XLSX.utils.book_new();
+    const worksheet = XLSX.utils.aoa_to_sheet([headers, ...data]);
+    XLSX.utils.book_append_sheet(workbook, worksheet, 'Report');
+
+    // Generate and download file
+    const binaryData = XLSX.write(workbook, { type: 'array' });
+    const blob = new Blob([binaryData], { type: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet' });
+    const link = document.createElement('a');
+    link.href = URL.createObjectURL(blob);
+    link.download = filename.value || 'export.xlsx';
+    link.click();
+}
+
+
 
 const remove = (aver) => {
     const index = listRowSelect.value.findIndex((x) => x.id === aver.id);

@@ -121,10 +121,21 @@ export default function useData() {
             headers: APISettings.headers,
             body: JSON.stringify({})
         };
+        
         try {
             const response = await fetch(baseUrl, requestOptions);
+            
             responseData.ok = response.ok;
-            responseData.data = await response.json();
+
+                    // Maneja las respuestas con contenido o sin contenido
+        if (response.status === 204) {
+            responseData.data = null; // No hay contenido, data queda como null
+        } else {
+            responseData.data = await response.json(); // Solo intenta parsear si hay contenido
+        }
+
+
+
             if (!response.ok) {
                 responseData.error = response.statusText;
                 throw new Error(`Error ${response.status} al enviar datos.`);

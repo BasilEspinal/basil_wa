@@ -2,15 +2,15 @@
     <div>
       <Toast />
       <SplitButton
-        :disabled="!(listRowSelect.length > 0 && listRowSelect.length < 2)" 
-        class="mb-2 mt-2"
+        :disabled="!(listRowSelect.length > 0)" 
+        class="mb-2 mt-2 w-full" 
         label="Action" 
         icon="pi pi-check" 
         dropdownIcon="pi pi-cog" 
         :model="items"
         size="large"
         severity="contrast"
-        
+        text raised
          />
         
     </div>
