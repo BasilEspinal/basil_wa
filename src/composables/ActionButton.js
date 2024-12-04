@@ -3,17 +3,19 @@ import { useToast } from 'primevue/usetoast';
 import useData from '@/composables/DataAPI/FetchDataAPICopy.js';
 const { getRequest, errorResponseAPI } = useData();
 
-export function useActions() {
-    
+export function useActions(endpoint) {
+    console.log(endpoint);
     const titleDialog = ref('Action');
     const messageDialog = ref('');
     const status_id_Action = ref();
     const flagDialog = ref(false);
     const itemsActions = ref([]);
+    
     const getItems = async (id) => {
         try {
             
-            const response = await getRequest(`/processflow/Employee`);
+            const response = await getRequest(`${endpoint}`);
+            console.log(response);
             itemsActions.value = [];
             // Check if response data is valid and contains the expected data structure
             if (response && response.data && Array.isArray(response.data.data) && response.data.data.length > 0) {

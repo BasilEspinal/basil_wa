@@ -731,55 +731,130 @@ const DeleteRecord = async () => {
     formDialogDelete.value = false;
 
     try {
-        const deletePromises = [];
-        listRowSelect.value.forEach(async (item) => {
-            //const deletePromise = await deleteRequest(endpoint.value, item.uuid);
-            const deletePromise = await crudService.delete(item.uuid);
-
-            deletePromises.push(deletePromise);
+        // Crear una lista de promesas para eliminar
+        const deletePromises = listRowSelect.value.map(async (item) => {
+            const response = await crudService.delete(item.uuid);
+            if (!response.ok) {
+                throw new Error(`Error al eliminar: ${response.error}`);
+            }
+            return response;
         });
+
+        // Esperar a que todas las eliminaciones se completen
         await Promise.all(deletePromises);
-        loadingData();
-        toast.add({ severity: 'success', summary: 'Deleted Record', detail: 'Deleted', life: 3000 });
+
+        // Actualizar la tabla después de la eliminación
+        await loadingData();
+
+        // Mostrar mensaje de éxito
+        toast.add({ severity: 'success', summary: 'Deleted Record', detail: 'Deleted successfully', life: 3000 });
     } catch (error) {
         console.error('Error deleting:', error);
-        toast.add({ severity: 'error', summary: 'Error', detail: 'Error deleting', life: 3000 });
+        toast.add({ severity: 'error', summary: 'Error', detail: 'Error deleting records', life: 3000 });
     } finally {
+        // Limpiar las selecciones
         listRowSelect.value = [];
     }
 };
 
+
 const ExportRecord = () => {
-    const eventos = exportAll.value.name == 'ALL' ? dataFromComponent.value.map((data) => data) : listRowSelect.value.map((data) => data);
+    // Determine the data to export
+    const events = exportAll.value.name === 'ALL'
+        ? dataFromComponent.value.map((data) => data) // Export all current records
+        : listRowSelect.value.map((data) => data);   // Export only selected records
+
+    // Close the export dialog
     formDialogExport.value = false;
-    if (!eventos.length) return;
-    if (format.value.name == 'CSV') formatCSV(eventos);
-    else formatXLS(eventos);
+
+    // Check if there is data to export
+    if (!events.length) {
+        toast.add({ severity: 'error', summary: 'Error', detail: 'No data to export', life: 3000 });
+        return;
+    }
+
+    // Export based on the selected format
+    if (format.value.name === 'CSV') formatCSV(events);
+    else formatXLS(events);
 };
 
-function formatCSV(eventos) {
-    const dataExport = [];
-    dataExport.push(',' + Object.keys(eventos[0]) + '\n');
-    dataExport.push(eventos.map((row) => Object.values(row) + '\n'));
+function formatCSV(events) {
+    if (!events.length) return;
 
-    const blob = new Blob([dataExport.toString()], { type: 'text/csv' });
+    // Updated flattenObject to handle arrays and nested objects
+    const flattenObject = (obj, prefix = '') => {
+        return Object.keys(obj).reduce((acc, key) => {
+            const value = obj[key];
+            const fullKey = prefix ? `${prefix}.${key}` : key;
+
+            if (Array.isArray(value)) {
+                // Handle arrays by joining their values into a string
+                acc[fullKey] = value.map(item => (typeof item === 'object' ? JSON.stringify(item) : item)).join('; ');
+            } else if (value && typeof value === 'object' && !(value instanceof Date)) {
+                // Recursively flatten nested objects
+                Object.assign(acc, flattenObject(value, fullKey));
+            } else {
+                acc[fullKey] = value;
+            }
+            return acc;
+        }, {});
+    };
+
+    const flattenedData = events.map((item) => flattenObject(item));
+    const headers = Object.keys(flattenedData[0]);
+
+    // Create CSV content
+    const rows = flattenedData.map((row) =>
+        headers.map((header) => `"${row[header] ?? ''}"`).join(',')
+    );
+    const csvContent = [headers.join(','), ...rows].join('\n');
+
+    // Create and download file
+    const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
     const link = document.createElement('a');
     link.href = URL.createObjectURL(blob);
-    link.download = filename.value;
+    link.download = filename.value || 'export.csv';
     link.click();
 }
 
-function formatXLS(eventos) {
-    const data = eventos.map((row) => Object.values(row));
-    const headers = Object.keys(eventos[0]);
-    const prueba = [headers, ...data];
-    const workbook = XLSX.utils.book_new();
-    const worksheet = XLSX.utils.aoa_to_sheet(prueba, { headers });
-    XLSX.utils.book_append_sheet(workbook, worksheet, 'Reporte');
-    const binaryData = XLSX.write(workbook, { type: 'array' });
+function formatXLS(events) {
+    if (!events.length) return;
 
-    const file = new File([binaryData], { type: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet' });
-    saveAs(file, filename.value + '.xlsx');
+    // Updated flattenObject to handle arrays and nested objects
+    const flattenObject = (obj, prefix = '') => {
+        return Object.keys(obj).reduce((acc, key) => {
+            const value = obj[key];
+            const fullKey = prefix ? `${prefix}.${key}` : key;
+
+            if (Array.isArray(value)) {
+                // Handle arrays by joining their values into a string
+                acc[fullKey] = value.map(item => (typeof item === 'object' ? JSON.stringify(item) : item)).join('; ');
+            } else if (value && typeof value === 'object' && !(value instanceof Date)) {
+                // Recursively flatten nested objects
+                Object.assign(acc, flattenObject(value, fullKey));
+            } else {
+                acc[fullKey] = value;
+            }
+            return acc;
+        }, {});
+    };
+
+    const flattenedData = events.map((item) => flattenObject(item));
+    const headers = Object.keys(flattenedData[0]);
+    const data = flattenedData.map((row) => headers.map((header) => row[header] ?? ''));
+
+    // Create XLSX worksheet
+    const workbook = XLSX.utils.book_new();
+    const worksheet = XLSX.utils.aoa_to_sheet([headers, ...data]);
+    XLSX.utils.book_append_sheet(workbook, worksheet, 'Report');
+
+    // Generate and download file
+    const binaryData = XLSX.write(workbook, { type: 'array' });
+    const blob = new Blob([binaryData], { type: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet' });
+    const link = document.createElement('a');
+    link.href = URL.createObjectURL(blob);
+    link.download = filename.value || 'export.xlsx';
+    link.click();
 }
 
 

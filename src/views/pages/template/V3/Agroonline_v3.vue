@@ -237,7 +237,10 @@ import { onBeforeMount, onMounted, ref, watch } from 'vue';
 import { useI18n } from 'vue-i18n';
 import * as XLSX from 'xlsx';
 import { z } from 'zod';
-import Summary from './Summary.vue';
+//import Summary from './Summary.vue';
+import Summary from '@/views/pages/template/V3/Summary.vue';
+import ActionButton from '@/components/ActionButton.vue';
+import {useActions} from '@/composables/ActionButton.js';
 
 const { t } = useI18n();
 

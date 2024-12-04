@@ -7,37 +7,50 @@
                 <div class="col-xs-12 col-sm-6 col-md-4 mb-2 text-center mx-auto">
                     <!--Uncomment when table is done-->
 
-                    <div class="col-xs-12 col-sm-6 col-md-6 mb-2 text-center mx-auto">
-                        <Toolbar style="margin-bottom: 2rem">
+                    <div class="col-12 text-center">
+                        <Toolbar style="margin-bottom: 1rem">
                             <template #center>
-                                <Divider layout="vertical" />
+                                <div class="grid">
+                                
+                                    <div class="col-12 lg:col-2 text-center">
                                 <Button :disabled="!(listRowSelect.length > 0 && listRowSelect.length < 2)"
-                                    label="Detalles" icon="pi pi-bars" class="p-button-success mb-2 mt-2"
-                                    @click="openForm('detalles')" size="large" />
-                                <Divider layout="vertical" />
-                                <Button :disabled="!(listRowSelect.length > 0 && listRowSelect.length < 2)" label="Edit"
-                                    icon="pi pi-file-edit" class="p-button-help mb-2 mt-2" @click="openDialog('edit')"
-                                    size="large" />
-                                <Divider layout="vertical" />
+                                        label="Detalles" 
+                                        icon="pi pi-bars" 
+                                        class="p-button-success mb-2 mt-2"
+                                        @click="openForm('detalles')" size="large" />
+                                    </div>
+                                    <div class="col-12 lg:col-2 text-center">
+                                <Button 
+                                        :disabled="!(listRowSelect.length > 0 && listRowSelect.length < 2)" 
+                                        label="Edit"
+                                        icon="pi pi-file-edit" 
+                                        class="p-button-help mb-2 mt-2" 
+                                        @click="openDialog('edit')"
+                                        size="large" />
+                                    </div>
+                                    <div class="col-12 lg:col-2 text-center">
                                 <Button :disabled="listRowSelect.length > 0" label="New" icon="pi pi-plus"
                                     class="p-button-success mb-2 mt-2" @click="openDialog('new')" size="large" />
-                                <Divider layout="vertical" />
+                                </div>
+                                <div class="col-12 lg:col-2 text-center">
                                 <Button :disabled="!(listRowSelect.length > 0 && listRowSelect.length < 2)"
                                     label="Clone" icon="pi pi-copy" class="p-button-secondary mb-2 mt-2"
                                     @click="openDialog('clone')" size="large" />
-                                <Divider layout="vertical" />
+                                </div>
+                                <div class="col-12 lg:col-2 text-center">
                                 <Button :disabled="listRowSelect.length > 0" label="Export" icon="pi pi-file-import"
                                     class="p-button-warning mb-2 mt-2" @click="openExport" size="large" />
-                                <Divider layout="vertical" />
+                                </div>
+                                <div class="col-12 lg:col-2 text-center">
                                 <Button :disabled="!listRowSelect.length > 0" label="Delete" icon="pi pi-trash"
                                     class="p-button-danger mb-2 mt-2" @click="openDelete" size="large" />
-                                <Divider v-if="ability.can('empleado_editar')" layout="vertical" />
-                                <!-- ActionButton Component -->
-                                <ActionButton v-if="ability.can('empleado_editar')" :items="itemsActions" :listRowSelect="listRowSelect" />
-
+                                </div>
+                                
+                            </div>
     
                             </template>
                         </Toolbar>
+
                     </div>
 
                 </div>
@@ -81,6 +94,14 @@
 
                         </template>
                     </Toolbar>
+                    <div class="col-12 lg:col-12 flex align-items-center justify-content-center">
+                        <ActionButton 
+                            v-if="ability.can('empleado_editar')"
+                            :items="itemsActions" 
+                            :listRowSelect="listRowSelect" 
+                            class="w-6" 
+                        />
+                    </div>
                 </template>
 
                 <template #empty> No customers found. </template>
@@ -98,8 +119,11 @@
                     <!-- Body Template -->
                     <template #body="{ data }">
                         <!-- Conditionally render the Tag component if col.color is true -->
+                         <!-- <pre>{{ col.field }}</pre>
+                         <pre>{{ nameStatus(getNestedValue(data, col.field)) }}</pre> -->
+                         
                         <Tag v-if="col.color" :value="getNestedValue(data, col.field)"
-                            :style="{ backgroundColor: data.status.color, color: '#FFFFFF' }" />
+                            :style="{ backgroundColor: data.status.color, color: '#000000' }" />
 
                         <!-- Render the text only if Tag is not rendered -->
                         <span v-else>
@@ -366,12 +390,12 @@ import { z } from 'zod';
 import Summary from '@/views/pages/template/V3/Summary.vue';
 import ActionButton from '@/components/ActionButton.vue';
 import {useActions} from '@/composables/ActionButton.js';
-const { getItems,itemsActions, messageDialog,titleDialog,status_id_Action,flagDialog } = useActions();
+const { getItems,itemsActions, messageDialog,titleDialog,status_id_Action,flagDialog } = useActions(`/processflow/Employee`);
 
 const { t } = useI18n();
 
 const dynamicColumns = [
-    { field: 'document', header: 'Document', frozen: false, color: false },
+    { field: 'document', header: 'Document', frozen: true, color: false },
     { field: 'document_type.name', header: 'Type of Document', frozen: false, color: false },
     { field: 'first_name', header: 'Name', frozen: false, color: false },
     { field: 'last_name', header: 'Last Name', frozen: false, color: false },
@@ -389,6 +413,9 @@ const dynamicColumns = [
     { field: 'status.name', header: 'Status', frozen: false, color: true }
 ];
 
+const nameStatus =(statusName)=>{
+    return t(`status.${statusName}`);
+}
 const formConfig = ref([
   {
     type: 'InputNumber',
@@ -568,9 +595,11 @@ const readAll = async () => {
 };
 const loadingData = async () => {
     //const response = await getRequest(endpoint.value);
+    console.log('recargando datos')
     const response = await crudService.getAll();
+    
     if (!response.ok) toast.add({ severity: 'error', detail: 'Error' + response.error, life: 3000 });
-    dataFromComponent.value = response.data.data;
+    dataFromComponent.value = [...response.data.data];
 };
 watch(
     () => dataFromComponent.value,
@@ -596,7 +625,7 @@ const {
                 id: z.string(),
                 name: z.string().min(3)
             }),
-            email: z.string().email(),
+            email: z.string().email().optional(),
             document_type: z.object({
                 id: z.string(),
                 name: z.string().min(3)
@@ -775,55 +804,90 @@ const actionRecordManager = handleSubmitNew(async (values) => {
 
     }
 
-    // Mostrar notificación y cerrar el diálogo si la operación fue exitosa
+
+
+    if (responseCRUD.value.ok) {
+            // Mostrar notificación y cerrar el diálogo si la operación fue exitosa
     toast.add({
         severity: responseCRUD.value.ok ? 'success' : 'error',
         summary: state.value,
         detail: responseCRUD.value.ok ? 'Done' : responseCRUD.value.error,
         life: 3000
     });
-
-    if (responseCRUD.value.ok) {
+    await loadingData();
         formDialog.value = false;
         listRowSelect.value = [];
         selectedRegisters.value = [];
     }
     else {
-        console.log('Error:', responseCRUD.value.error);
+        console.error('Error:', responseCRUD.value.error);
+        toast.add({
+            severity: 'error',
+            summary: 'Error',
+            detail: responseCRUD.value.error,
+            life: 3000
+        });
     }
 
     // Recargar datos
-    loadingData();
+    
 });
 
 const patchAction = async () => {
 
-    
-    const responseCRUD = ref();
-    const { uuid } = listRowSelect.value[0];
-        const data = {
+    try {
+        const patchPromises = [];
+        listRowSelect.value.forEach(async (item) => {
+            //const deletePromise = await deleteRequest(endpoint.value, item.uuid);
+            const data = {
             status_id: status_id_Action.value
-        };
-    responseCRUD.value = await crudService.patch(uuid, data);
-    console.log('responseCRUD', responseCRUD.value);
+            };
+            const patchPromise = await crudService.patch(item.uuid, data);
+            patchPromises.push(patchPromise);
+        });
+// Await all patch requests to complete
+const responses = await Promise.all(patchPromises);
+
+// Check for success or errors in responses
+const hasError = responses.some(response => !response.ok);
+
+if (!hasError) {
     toast.add({
-        severity: responseCRUD.value.ok ? 'success' : 'error',
-        summary: 'Patch',
-        detail: responseCRUD.value.ok ? 'Done' : responseCRUD.value.error,
+        severity: 'success',
+        summary: 'Success',
+        detail: 'Records updated successfully',
         life: 3000
     });
-    if (responseCRUD.value.ok) {
-        formDialog.value = false;
+
+    // Clear dialog and selections after success
+    formDialog.value = false;
+    listRowSelect.value = [];
+    selectedRegisters.value = [];
+    flagDialog.value = false;
+} else {
+    toast.add({
+        severity: 'error',
+        summary: 'Error',
+        detail: 'Some records could not be updated',
+        life: 3000
+    });
+}
+
+await loadingData(); // Refresh data
+    } catch (error) {
+        console.error('Error updating records:', error);
+        toast.add({
+            severity: 'error',
+            summary: 'Error',
+            detail: 'Error updating records',
+            life: 3000
+        });
+    }
+
+    finally {
+
         listRowSelect.value = [];
-        selectedRegisters.value = [];
-        flagDialog.value = false;
     }
-    else {
-        console.log('Error:', responseCRUD.value.error);
-    }
-    loadingData();
-
-
         
 };
 
@@ -833,55 +897,124 @@ const DeleteRecord = async () => {
     formDialogDelete.value = false;
 
     try {
-        const deletePromises = [];
-        listRowSelect.value.forEach(async (item) => {
-            //const deletePromise = await deleteRequest(endpoint.value, item.uuid);
-            const deletePromise = await crudService.delete(item.uuid);
-
-            deletePromises.push(deletePromise);
+        // Crear una lista de promesas para eliminar
+        const deletePromises = listRowSelect.value.map(async (item) => {
+            const response = await crudService.delete(item.uuid);
+            if (!response.ok) {
+                throw new Error(`Error al eliminar: ${response.error}`);
+            }
+            return response;
         });
+
+        // Esperar a que todas las eliminaciones se completen
         await Promise.all(deletePromises);
-        loadingData();
-        toast.add({ severity: 'success', summary: 'Deleted Record', detail: 'Deleted', life: 3000 });
+
+        // Actualizar la tabla después de la eliminación
+        await loadingData();
+
+        // Mostrar mensaje de éxito
+        toast.add({ severity: 'success', summary: 'Deleted Record', detail: 'Deleted successfully', life: 3000 });
     } catch (error) {
         console.error('Error deleting:', error);
-        toast.add({ severity: 'error', summary: 'Error', detail: 'Error deleting', life: 3000 });
+        toast.add({ severity: 'error', summary: 'Error', detail: 'Error deleting records', life: 3000 });
     } finally {
+        // Limpiar las selecciones
         listRowSelect.value = [];
     }
 };
 
+
 const ExportRecord = () => {
-    const eventos = exportAll.value.name == 'ALL' ? dataFromComponent.value.map((data) => data) : listRowSelect.value.map((data) => data);
+    // Determine the data to export
+    const events = exportAll.value.name === 'ALL'
+        ? dataFromComponent.value.map((data) => data) // Export all current records
+        : listRowSelect.value.map((data) => data);   // Export only selected records
+
+    // Close the export dialog
     formDialogExport.value = false;
-    if (!eventos.length) return;
-    if (format.value.name == 'CSV') formatCSV(eventos);
-    else formatXLS(eventos);
+
+    // Check if there is data to export
+    if (!events.length) {
+        toast.add({ severity: 'error', summary: 'Error', detail: 'No data to export', life: 3000 });
+        return;
+    }
+
+    // Export based on the selected format
+    if (format.value.name === 'CSV') formatCSV(events);
+    else formatXLS(events);
 };
 
-function formatCSV(eventos) {
-    const dataExport = [];
-    dataExport.push(',' + Object.keys(eventos[0]) + '\n');
-    dataExport.push(eventos.map((row) => Object.values(row) + '\n'));
 
-    const blob = new Blob([dataExport.toString()], { type: 'text/csv' });
+function formatCSV(events) {
+    if (!events.length) return;
+
+    // Flatten nested objects for export
+    const flattenObject = (obj, prefix = '') => {
+        return Object.keys(obj).reduce((acc, key) => {
+            const value = obj[key];
+            const fullKey = prefix ? `${prefix}.${key}` : key;
+
+            if (value && typeof value === 'object' && !Array.isArray(value)) {
+                Object.assign(acc, flattenObject(value, fullKey));
+            } else {
+                acc[fullKey] = value;
+            }
+            return acc;
+        }, {});
+    };
+
+    const flattenedData = events.map((item) => flattenObject(item));
+    const headers = Object.keys(flattenedData[0]);
+
+    // Create CSV content
+    const rows = flattenedData.map((row) =>
+        headers.map((header) => `"${row[header] ?? ''}"`).join(',')
+    );
+    const csvContent = [headers.join(','), ...rows].join('\n');
+
+    // Create and download file
+    const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
     const link = document.createElement('a');
     link.href = URL.createObjectURL(blob);
-    link.download = filename.value;
+    link.download = filename.value || 'export.csv';
     link.click();
 }
 
-function formatXLS(eventos) {
-    const data = eventos.map((row) => Object.values(row));
-    const headers = Object.keys(eventos[0]);
-    const prueba = [headers, ...data];
-    const workbook = XLSX.utils.book_new();
-    const worksheet = XLSX.utils.aoa_to_sheet(prueba, { headers });
-    XLSX.utils.book_append_sheet(workbook, worksheet, 'Reporte');
-    const binaryData = XLSX.write(workbook, { type: 'array' });
 
-    const file = new File([binaryData], { type: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet' });
-    // saveAs(file, filename.value + '.xlsx');
+function formatXLS(events) {
+    if (!events.length) return;
+
+    // Flatten nested objects
+    const flattenObject = (obj, prefix = '') => {
+        return Object.keys(obj).reduce((acc, key) => {
+            const value = obj[key];
+            const fullKey = prefix ? `${prefix}.${key}` : key;
+
+            if (value && typeof value === 'object' && !Array.isArray(value)) {
+                Object.assign(acc, flattenObject(value, fullKey));
+            } else {
+                acc[fullKey] = value;
+            }
+            return acc;
+        }, {});
+    };
+
+    const flattenedData = events.map((item) => flattenObject(item));
+    const headers = Object.keys(flattenedData[0]);
+    const data = flattenedData.map((row) => headers.map((header) => row[header] ?? ''));
+
+    // Create XLSX worksheet
+    const workbook = XLSX.utils.book_new();
+    const worksheet = XLSX.utils.aoa_to_sheet([headers, ...data]);
+    XLSX.utils.book_append_sheet(workbook, worksheet, 'Report');
+
+    // Generate and download file
+    const binaryData = XLSX.write(workbook, { type: 'array' });
+    const blob = new Blob([binaryData], { type: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet' });
+    const link = document.createElement('a');
+    link.href = URL.createObjectURL(blob);
+    link.download = filename.value || 'export.xlsx';
+    link.click();
 }
 
 
