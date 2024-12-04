@@ -778,17 +778,20 @@ const ExportRecord = () => {
     else formatXLS(events);
 };
 
-
 function formatCSV(events) {
     if (!events.length) return;
 
-    // Flatten nested objects for export
+    // Updated flattenObject to handle arrays and nested objects
     const flattenObject = (obj, prefix = '') => {
         return Object.keys(obj).reduce((acc, key) => {
             const value = obj[key];
             const fullKey = prefix ? `${prefix}.${key}` : key;
 
-            if (value && typeof value === 'object' && !Array.isArray(value)) {
+            if (Array.isArray(value)) {
+                // Handle arrays by joining their values into a string
+                acc[fullKey] = value.map(item => (typeof item === 'object' ? JSON.stringify(item) : item)).join('; ');
+            } else if (value && typeof value === 'object' && !(value instanceof Date)) {
+                // Recursively flatten nested objects
                 Object.assign(acc, flattenObject(value, fullKey));
             } else {
                 acc[fullKey] = value;
@@ -814,17 +817,20 @@ function formatCSV(events) {
     link.click();
 }
 
-
 function formatXLS(events) {
     if (!events.length) return;
 
-    // Flatten nested objects
+    // Updated flattenObject to handle arrays and nested objects
     const flattenObject = (obj, prefix = '') => {
         return Object.keys(obj).reduce((acc, key) => {
             const value = obj[key];
             const fullKey = prefix ? `${prefix}.${key}` : key;
 
-            if (value && typeof value === 'object' && !Array.isArray(value)) {
+            if (Array.isArray(value)) {
+                // Handle arrays by joining their values into a string
+                acc[fullKey] = value.map(item => (typeof item === 'object' ? JSON.stringify(item) : item)).join('; ');
+            } else if (value && typeof value === 'object' && !(value instanceof Date)) {
+                // Recursively flatten nested objects
                 Object.assign(acc, flattenObject(value, fullKey));
             } else {
                 acc[fullKey] = value;

@@ -351,7 +351,7 @@ import { z } from 'zod';
 import Summary from '@/components/Summary.vue';
 import ActionButton from '@/components/ActionButton.vue';
 import {useActions} from '@/composables/ActionButton.js';
-const { getItems,itemsActions, messageDialog,titleDialog,status_id_Action,flagDialog } = useActions(`/processflow/Employee`);
+const { getItems,itemsActions, messageDialog,titleDialog,status_id_Action,flagDialog } = useActions(`/processflow/CropLot`);
 
 const { t } = useI18n();
 
@@ -372,9 +372,6 @@ const dynamicColumns = [
     // Nested fields for company
     { field: 'company.name', header: 'Company Name', frozen: false, color: false },
 ];
-
-
-
 
 const getNestedValue = (obj, path) => {
     return path.split('.').reduce((value, key) => value && value[key], obj);
@@ -722,6 +719,7 @@ try {
         status_id: status_id_Action.value
         };
         const patchPromise = await crudService.patch(item.uuid, data);
+        console.log('patchPromise:', patchPromise);
         patchPromises.push(patchPromise);
     });
 
