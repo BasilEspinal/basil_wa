@@ -6,6 +6,20 @@ import ability from '@/service/ability.js';
 import { AbilityBuilder } from '@casl/ability';
 import useDataAPI from '@/composables/DataAPI/FetchDataAPI.js';
 import {fetchInfoDataLogged} from '@/composables/Login/InfoStorage.js';
+import ConnectionManager from '@/components/WebSocket/ConnectionManager.vue';
+import ConnectionState from '@/components/WebSocket/ConnectionState.vue';
+import {socket} from '@/service/WebSocket/socket';
+// Reactive state variables
+const isLoading = ref(false);
+const value = ref("");
+
+const onSubmit = () => {
+  isLoading.value = true;
+
+  socket.timeout(5000).emit("create-something", value.value, () => {
+    isLoading.value = false;
+  });
+};
 
 const { layoutConfig } = useLayout();
 let documentStyle = getComputedStyle(document.documentElement);
@@ -364,10 +378,22 @@ watch(
 </script>
 
 <template>
-    <div class="grid">
-        <div class="col-12 lg:col-6 xl:col-3" >
+        
+
             
-            <div class="card mb-0">
+    <div class="grid">
+        <div class="col-12 lg:col-12 xl:col-12" >          
+                <ConnectionManager />
+        </div>
+        <div>
+  </div>
+
+
+                        
+                                
+          <div class="col-12 lg:col-6 xl:col-3"  >
+            
+            <div class="card mb-0" >
                 
                 <div class="flex justify-content-between mb-3">
                     <div>
@@ -464,7 +490,7 @@ watch(
                 <span class="text-green-500 font-medium">520 </span>
                 <span class="text-500">Pendientes</span>
             </div>
-        </div>
+        </div> 
 
 
         
@@ -479,7 +505,7 @@ watch(
                 <h5 class="text-left w-full">Productos Mensual</h5>
                 <Chart type="pie" :data="pieData" :options="pieOptions"></Chart>
             </div>
-        </div>
+        </div> 
 
     </div>
     
