@@ -39,7 +39,16 @@
             <div class="flex align-items-center">
                         
                             <label for="username" class="font-semibold w-6rem">{{t('appmovil.voyage_number')}}</label>
-                            <AutoComplete v-model="voyage_num_V" inputId="ac" class="flex-auto" :suggestions="shippingsDelivered" @complete="searchShippingsDelivered" field="name" dropdown placeholder='Select one' />
+                            <AutoComplete 
+                            v-model="voyage_num_V" 
+                            inputId="ac" 
+                            class="flex-auto" 
+                            :suggestions="shippingsDelivered" 
+                            @complete="searchShippingsDelivered"
+                            @click="readAll"
+                            field="name" 
+                            dropdown 
+                            placeholder='Select one' />
                         <!--Pendiente-->
                         <FrontEndErrors :errorsNew="errorsNew" name="voyage_num_V" />
                         <BackendErrors :name="errorResponseAPI?.errors?.voyage_num" />
@@ -95,7 +104,18 @@
                     <div class="mb-3 col-12 sm:col-12 md:col-12 lg:col-12">
                     <div class="flex align-items-center gap-4 ">
                         <!-- <Button label="Cancel" severity="secondary" outlined class="w-full" /> -->
-                        <Button label="Save" class="w-full" @click="actionRecordManager" />
+                        <!-- <Button label="Save" class="w-full" @click="actionRecordManager" /> -->
+                        <div class="mb-3 col-12 sm:col-12 md:col-12 lg:col-12">
+  <div class="flex align-items-center gap-4">
+    <Button 
+      label="Save" 
+      class="w-full" 
+      @click="actionRecordManager" 
+      :disabled="loading" 
+    />
+    <span v-if="loading" class="pi pi-spin pi-spinner"></span>
+  </div>
+</div>
                     </div>
                 </div>
         </div>
@@ -238,14 +258,10 @@ vehiclesV.value = {
 };
 
 lots.value.push(props.batchs)
-
-
-
 });
 
 const readAll = async () => {
 // const respTasksOfType = await getRequest('/task_of_types');
-
 // const respEmployees = await getRequest('/appmovil/employees?filter[work_center_id]=2');
 const respEmployees = await InitialDataService.getEmployeesWorkCenter(2);
 if (!respEmployees.ok) toast.add({ severity: 'error', detail: 'Error' + respEmployees.error, life: 3000 });
@@ -258,54 +274,59 @@ if (!respVehicles.ok) toast.add({ severity: 'error', detail: 'Error' + respVehic
 Vehicles.value = respVehicles.data.data.map((vehicle) => ({ id: vehicle.id, name: vehicle.vehicle_type }));
 
 const respShippingsDelivered = await getShippingsDelivered();
+console.log('respShippingsDelivered', respShippingsDelivered);
 if (!respShippingsDelivered.ok) toast.add({ severity: 'error', detail: 'Error' + respShippingsDelivered.error, life: 3000 });
 ShippingsDelivered.value = respShippingsDelivered.data.data.map((shipping) => ({ id: shipping.id, name: shipping.voyage_num }));
 
-
 };
 
+
+const loading = ref(false);
 
 const actionRecordManager = handleSubmitNew(async (values) => {
-const responseCRUD = ref();
-const data = {
-trans_dev: false, // Valor booleano directamente asignado
-received_qty: values.received_qty_V,
-// tasks_of_type_id: dataPlanner.value.data.data[0].tasks_of_type.id, // ID del tipo de tarea
-tasks_of_type_id: 5, // ID del tipo de tarea
-employee_transport_id: values.emplooyesV.id ,
-crop_lot_code: values.selected_crops_lots.code, // Código del lote de cultivo
-vehicle_id: values.vehiclesV? values.vehiclesV.id : dataPlanner.value.data.data[0].vehicle.id, // ID del vehículo
-notes_small: notes.value, // Nota adicional
-voyage_num: values.voyage_num_V.name, // Número de viaje
+  loading.value = true; // Block the button
+  try {
+    const responseCRUD = ref();
+    const data = {
+      trans_dev: false,
+      received_qty: values.received_qty_V,
+      tasks_of_type_id: 5,
+      employee_transport_id: values.emplooyesV.id,
+      crop_lot_code: values.selected_crops_lots.code,
+      vehicle_id: values.vehiclesV ? values.vehiclesV.id : dataPlanner.value.data.data[0].vehicle.id,
+      notes_small: notes.value,
+      voyage_num: values.voyage_num_V.name,
+    };
 
-
-// planner_task_id: dataPlanner.value.data.data[0].id,
-// farm_id: values.farm ? 1 : farmDefault,
-// supervisory_employee_id: 2, // ID del empleado supervisor
-//tasks_of_type_id: dataPlanner.value.data.data[0].tasks_of_type.id, // ID del tipo de tarea
-// supervisory_employee_id: values.emplooyesV.id ?values.emplooyesV.id:dataStart.value.data.data.employee.id, // ID del empleado supervisor
-//dispatch_number_lot: dataPlanner.value.data.data[0].customer_request.dispatch_number_lot, // Número de lote de despacho
-};
-
-console.log('data', data);
-
-if (state.value === 'new') {
-
-} else if (state.value === 'edit') {
-
-
-} else if (state.value === 'patch') {
-responseCRUD.value = await crudService.patch('',data);
-} 
-else if (state.value === 'delete') {
-} else {
-
-}    
-toast.add({ severity: responseCRUD.value.ok ? 'success' : 'error', summary: 'Create', detail: responseCRUD.value.ok ? 'Creado' : responseCRUD.error, life: 3000 });
-
-if (responseCRUD.value.ok) {    
     console.log('data', data);
-}
+
+    if (state.value === 'new') {
+      // Handle 'new' state
+    } else if (state.value === 'edit') {
+      // Handle 'edit' state
+    } else if (state.value === 'patch') {
+      responseCRUD.value = await crudService.patch('', data);
+    } else if (state.value === 'delete') {
+      // Handle 'delete' state
+    } else {
+      // Handle other states
+    }
+
+    toast.add({
+      severity: responseCRUD.value.ok ? 'success' : 'error',
+      summary: 'Create',
+      detail: responseCRUD.value.ok ? 'Creado' : responseCRUD.error,
+      life: 3000,
+    });
+
+    if (responseCRUD.value.ok) {
+      console.log('data', data);
+    }
+  } catch (error) {
+    console.error('An error occurred:', error);
+  } finally {
+    loading.value = false; // Unblock the button
+  }
 });
 
 const getCurrentFormattedDate = () => {
@@ -334,6 +355,7 @@ setTimeout(() => {
 }, 200);
 };
 const searchShippingsDelivered = (event) => {
+    
 setTimeout(() => {
     if (!event.query.trim().length) {
         shippingsDelivered.value = [...ShippingsDelivered.value];

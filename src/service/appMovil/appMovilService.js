@@ -1,238 +1,184 @@
-import { ref } from 'vue';
+import { ref, computed } from 'vue';
 import useData from '@/composables/DataAPI/FetchDataAPICopy.js';
 
-const { getRequest, postRequest } = useData();
-const fetchWorkCenter = ref(JSON.parse(sessionStorage.getItem('accessSessionWorkCenter')));
-const fetchSupervisorId = ref(sessionStorage.getItem('accesSessionEmployeeUuid'));
-const fetchFarmId = ref(sessionStorage.getItem('accessSessionFarmId'));
-const fetchCompannyId = ref(sessionStorage.getItem('accessSessionCompanyId'));
-const fetchSupervisorName = ref(sessionStorage.getItem('accessSessionEmployeeName'));
-const fetchEmployeeId = ref(sessionStorage.getItem('accesSessionEmployeeUuid'));
-const fetchCompannyuuid = ref(sessionStorage.getItem('accessSessionFarm'));
-const holiday = ref('Normal');
-const tasksPlaner = ref({});
-const tipoActividad = ref([]);
-const counter = ref(0);
-
 export function useAppMovilService() {
+    const { getRequest, postRequest } = useData();
 
-    const error = (e) => ({ data: [], error: e, ok: false });
-    
+    // Estado reactivo
+    const holiday = ref('Normal');
+    const tasksPlaner = ref({});
+    const tipoActividad = ref([]);
+    const counter = ref(0);
+
+    // Variables dinámicas
+    let fetchWorkCenter = null;
+    let fetchSupervisorId = null;
+    let fetchFarmId = null;
+    let fetchCompanyId = null;
+    let fetchCompanyUuid = null;
+
+    // Computed: valores actualizados dinámicamente
+    const TASK_OF_TYPE = computed(() => fetchWorkCenter?.taskoftype || null);
+
+    // Función de inicialización
     const initData = async () => {
+        resetState();
+        fetchWorkCenter = JSON.parse(sessionStorage.getItem('accessSessionWorkCenter'));
+        fetchSupervisorId = sessionStorage.getItem('accesSessionEmployeeUuid');
+        fetchFarmId = sessionStorage.getItem('accessSessionFarmId');
+        fetchCompanyId = sessionStorage.getItem('accessSessionCompanyId');
+        fetchCompanyUuid = sessionStorage.getItem('accessSessionFarm');
+
         await getDataTasksplanner();
         await getHoliDay();
         await getTipoActividad();
+
         counter.value++;
-        console.log('counter', counter.value);
+        console.log('InitData ejecutado, counter:', counter.value);
     };
-    const dataInfoUser = async (uuid) => {
+
+    const resetState = () => {
+        holiday.value = 'Normal';
+        tasksPlaner.value = {};
+        tipoActividad.value = [];
+        counter.value = 0;
+    };
+
+    const getDataTasksplanner = async () => {
+        const endpoint = `/appmovil/tasksplanner?filter[tasks_of_type_id]=${fetchWorkCenter?.taskoftype?.id}&filter[company_id]=${fetchCompanyId}&filter[farm_id]=${fetchFarmId}`;
+        const response = await getRequest(endpoint);
+        tasksPlaner.value = response.data?.data[0] || {};
+        counter.value++;
+        return { ...response, data: tasksPlaner.value };
+    };
+
+    const getHoliDay = async () => {
         try {
-            const response = await getRequest(`/appmovil/datastart`);
-            console.log('Ejecutando dataInfo User');
-            return response;
+            const response = await getRequest(`/appmovil/calendars?filter[company_id]=${fetchCompanyId}`);
+            holiday.value = response.data?.data.length === 0 ? 'Normal' : 'Festivo';
             counter.value++;
-            console.log('counter', counter.value);
-            
+        } catch {
+            holiday.value = 'Normal';
         }
-        catch (e) {
-            return error('Error dataInfo User:', e);
-        }
-    }
+    };
+
+    const getTipoActividad = async () => {
+        const response = await getRequest(`/lists/activityTaskType`);
+        tipoActividad.value = response.data?.data || [];
+        counter.value++;
+    };
 
     const getDonesWork = async () => {
         try {
-            
-            const  taskoftype_id  = JSON.parse(sessionStorage.getItem('accessSessionWorkCenter')).taskoftype.id
-            
-            const resp = await getRequest(`/lists/getDoneTypeTasksType?filter[tasks_of_type_id]=${taskoftype_id}`);
-            console.log('ejeuctando getDonesWork');
+            const taskoftype_id = fetchWorkCenter?.taskoftype?.id;
+            const response = await getRequest(`/lists/getDoneTypeTasksType?filter[tasks_of_type_id]=${taskoftype_id}`);
             counter.value++;
-            console.log('counter', counter.value);
-            return resp;
+            return response;
         } catch (e) {
-            return error('Error Get Dones Work:', e);
+            return { data: [], error: 'Error Get Dones Work', ok: false };
         }
     };
 
     const getTarif = async (tasksType) => {
         if (!tasksType) return;
         const listFilterType = ['Task', 'HoraExtra'];
-        try {
-            let Endpoint = '';
-            if (tasksType && listFilterType.includes(tasksType)) {
-                Endpoint = `/appmovil/taskstarif?filter[tasks_of_type_id]=${fetchWorkCenter.value?.taskoftype?.id}&filter[work_type_day]=${holiday.value}&filter[farm_id]=${fetchFarmId.value}&filter[company_id]=${fetchCompannyId.value}&filter[packing_type_id]=${tasksPlaner.value?.packing_type.id}&filter[type_price]=${tasksType}`;
-            }              // /appmovil/taskstarif?filter[tasks_of_type_id]=4                                       &filter[work_type_day]=Normal         &filter[farm_id]= 1                   &filter[company_id]=1                       &filter[packing_type_id]=1                                    &filter[type_price]=Task
-            const response = await getRequest(Endpoint);
-            console.log('Ejecutando getTarif');
-            // console.log('response', response);
-            // console.log('endpoint', Endpoint);
-            // console.log('endpoint', Endpoint);
-            // console.log('fetchWorkCenter', fetchWorkCenter.value);
-            // console.log('holiday', holiday.value);
-            // console.log('fetchFarmId', fetchFarmId.value);
-            // console.log('fetchCompannyId', fetchCompannyId.value);
-            // console.log('tasksPlaner', tasksPlaner.value);
-            // console.log('tasksType', tasksType);
-            // console.log('packin_type', tasksPlaner.value?.packing_type.id);
-            // console.log('type_price', tasksType);
-            // console.log('response', response);
-            
+        if (listFilterType.includes(tasksType)) {
+            const endpoint = `/appmovil/taskstarif?filter[tasks_of_type_id]=${fetchWorkCenter?.taskoftype?.id}&filter[work_type_day]=${holiday.value}&filter[farm_id]=${fetchFarmId}&filter[company_id]=${fetchCompanyId}&filter[packing_type_id]=${tasksPlaner.value?.packing_type?.id}&filter[type_price]=${tasksType}`;
+            const response = await getRequest(endpoint);
             counter.value++;
-            console.log('counter', counter.value);
-
-
             return response.data?.data[0]?.price_tarif ?? 0;
-        } catch (e) {
-            console.error('Error get tarif ', e);
-            return 0;
         }
-    };
-
-    const getDataTasksplanner = async () => {
-        console.log('Ejecutando getDataTasksplanner');
-        const fetchWorkCenter = ref(JSON.parse(sessionStorage.getItem('accessSessionWorkCenter')));
-        // console.log('Task of type id', fetchWorkCenter.value.taskoftype.id);
-        const endpoint=ref((`/appmovil/tasksplanner?filter[tasks_of_type_id]=${fetchWorkCenter.value?.taskoftype.id}&filter[company_id]=${fetchCompannyId.value}&filter[farm_id]=${fetchFarmId.value}`));
-        // console.log('endpoint', endpoint.value);
-        const response = await getRequest(endpoint.value);
-        // console.log('data tasks planner', response);
-        tasksPlaner.value = response.data.data[0];
-        counter.value++;
-        console.log('counter', counter.value);
-        return { ...response, data: response.data.data[0] };
-        
     };
 
     const getUsers = async () => {
-        try {
-            console.log('Ejecutando getUsers');
-            const resp = await getRequest(`/appmovil/employees?filter[work_center_id]=${fetchWorkCenter.value.id}`);
-            counter.value++;
-            console.log('counter', counter.value);
-            return resp;
-
-        } catch (e) {
-            return error('Error Get Users:', e);
-        }
+        const response = await getRequest(`/appmovil/employees?filter[work_center_id]=${fetchWorkCenter?.id}`);
+        counter.value++;
+        return response;
     };
 
-    const postDailyReport = async ({ loteCode, tasksTypeCode, quantity, notas, tarifXCautity, userId, labor,packing_type }) => {
+    // const getShippingsDelivered = async () => {
+    //     const response = await getRequest(`/transactions/shipping/shippings`);
+    //     counter.value++;
+    //     return response;
+    // };
+    const getShippingsDelivered = async () => {
+        // Retrieve necessary data from sessionStorage
+        const transDev = false; // This is a fixed value
+        // const tasksOfTypeId = fetchWorkCenter?.taskoftype?.id || null;
+        const tasksOfTypeId= 5
+        const plannerTaskId = 18;
+        // const farmId = fetchFarmId || null;
+        const farmId = 1;
+        console.log('params', transDev, tasksOfTypeId, plannerTaskId, farmId);
+        // Construct the endpoint URL dynamically
+        const url = `/appmovil/shippings/voyage_num?trans_dev=${transDev}&tasks_of_type_id=${tasksOfTypeId}&planner_task_id=${plannerTaskId}&farm_id=${farmId}`;
+    
+        // Perform the GET request
+        const response = await getRequest(url);
+        
+        counter.value++;
+        return response;
+    };
+    
+    
+    const getInfoEmployees = async (planner_task_id, task_of_type) => {
+        const response = await getRequest(
+            `/appmovil/summary/employees?filter[planner_task_id]=${planner_task_id}&filter[tasks_of_type_id]=${task_of_type}&filter[farm_id]=${fetchFarmId}`
+        );
+        counter.value++;
+        return response;
+    };
+
+    const getInfoEmployeesById = async (planner_task_id, task_of_type, employee_id) => {
+        const response = await getRequest(
+            `/appmovil/summary/employees?filter[planner_task_id]=${planner_task_id}&filter[tasks_of_type_id]=${task_of_type}&filter[farm_id]=${fetchFarmId}&filter[worker_employee_id]=${employee_id}`
+        );
+        counter.value++;
+        return response;
+    };
+
+    const dataInfoUser = async () => {
+        const response = await getRequest(`/appmovil/datastart`);
+        counter.value++;
+        return response;
+    };
+
+    const postDailyReport = async ({ loteCode, tasksTypeCode, quantity, notas, tarifXCautity, userId, labor, packing_type }) => {
         const dataPost = {
             transaction_date_send: tasksPlaner.value?.transaction_date ?? '',
-            tasks_of_type_uuid: tasksPlaner.value?.tasks_of_type.uuid,
+            tasks_of_type_uuid: tasksPlaner.value?.tasks_of_type?.uuid,
             crop_lot_code: loteCode ?? '',
             type_price_task: tasksTypeCode ?? '',
             task_qty: quantity && quantity + '',
             notes_small: notas ?? '',
             price_tarif_task: tarifXCautity + '',
-            supervisory_employee_uuid: fetchSupervisorId.value,
+            supervisory_employee_uuid: fetchSupervisorId,
             worker_employee_uuid: userId,
             planner_task_uuid: tasksPlaner.value?.uuid ?? '',
-            customer_request_uuid: tasksPlaner.value?.customer_request.uuid,
-            product_uuid: tasksPlaner.value?.product.uuid ?? '',
-            product_type_uuid: tasksPlaner.value?.product_type.uuid ?? '',
-            variant_uuid: tasksPlaner.value?.varieties.uuid ?? '',
-            // packing_type_uuid: tasksPlaner.value?.packing_type.uuid ?? '',
             packing_type_uuid: packing_type,
+            farm_uuid: fetchCompanyUuid,
             device_name: 'Web',
-            transdate_sync: null,
-            calendar_uuid: null,
-            done_of_type_uuid: labor ?? '',
-            farm_uuid: fetchCompannyuuid.value
         };
-        const restp = await postRequest('/transactions/tasks', dataPost);
-        return restp;
+        return await postRequest('/transactions/tasks', dataPost);
     };
 
-    const getTipoActividad = async () => {
-        console.log('Ejecutando getTipoActividad');
-        const response = await getRequest(`/lists/activityTaskType`);
-        tipoActividad.value = { ...response, data: response.data?.data };
-        counter.value++;
-        console.log('counter', counter.value);
-        return tipoActividad.value;
-    };
-
-    const getHoliDay = async () => {
-        console.log('Ejecutando getHoliDay');
-        try {
-            const response = await getRequest(`/appmovil/calendars?filter[company_id]=${fetchCompannyId.value}`);
-            holiday.value = response.data.data.length === 0 ? 'Normal' : 'Festivo';
-            counter.value++;
-            console.log('counter', counter.value);
-        } catch (e) {
-            holiday.value = 'Normal';
-            return error('Error Get Holiday:', e);
-        }
-    };
-
-    const getShippingsDelivered = async () => {
-        console.log('Ejecutando getShippingsDelivered');
-        try {
-            const response = await getRequest(`/transactions/shipping/shippings`);
-            console.log(response)
-            counter.value++;
-            console.log('counter', counter.value);
-            return response;
-        } catch (e) {
-            return error('Error Get Shippings Delivered:', e);
-        }
-    };
-
-    const getInfoEmployees=async (planner_task_id,task_of_type) => {
-        
-        try {
-            
-            const response = await getRequest(`/appmovil/summary/employees?filter[planner_task_id]=${planner_task_id}&filter[tasks_of_type_id]=${task_of_type}&filter[farm_id]=1`);
-            console.log('Ejecutando getInfoEmployees');
-            counter.value++;
-            console.log('counter', counter.value);
-            return response;
-        }
-        catch (error) {
-            console.error('Error fetching employees:', error);
-            return response;
-        }
-    };
-    const getInfoEmployeesById= async(planner_task_id,task_of_type,employee_id)=> {
-        try {
-            console.log('Ejecutando getInfoEmployeesById');
-            // console.log('planner_task_id',planner_task_id);
-            // console.log('employee_id',employee_id);
-            const response = await getRequest(`/appmovil/summary/employees?filter[planner_task_id]=${planner_task_id}&filter[tasks_of_type_id]=${task_of_type}&filter[farm_id]=1&filter[worker_employee_id]=${employee_id}`);
-            counter.value++;
-            console.log('counter', counter.value);
-            return response;
-        }
-        catch (error) {
-            console.error('Error fetching employees:', error);
-            return response;
-        }
-    };
-
-    // Exposing the reactive state and methods
     return {
-        // WORK_CENTER: fetchWorkCenter,
-        // SUPERVISO_ID: fetchSupervisorId,
-        // FARM_ID: fetchFarmId,
-        // COMPANY_ID: fetchCompannyId,
-        TASK_OF_TYPE: fetchWorkCenter.value?.taskoftype,
-        // SUPERVISOR_NAME: fetchSupervisorName,
-        // EMPLOYEE_ID: fetchEmployeeId,
         HOLIDAY: holiday,
-        //LOTES: tasksPlaner,
-        // TIPO_ACTIVIDAD: tipoActividad,
+        TASK_OF_TYPE, // Ahora dinámico
+        TASKS_PLANNER: tasksPlaner,
+        TIPO_ACTIVIDAD: tipoActividad,
         initData,
+        resetState,
         getDonesWork,
         getTarif,
         getDataTasksplanner,
-        getUsers,
-        postDailyReport,
-        getTipoActividad,
         getHoliDay,
+        getTipoActividad,
+        getUsers,
         getShippingsDelivered,
-        dataInfoUser,
         getInfoEmployees,
-        getInfoEmployeesById
+        getInfoEmployeesById,
+        dataInfoUser,
+        postDailyReport
     };
 }

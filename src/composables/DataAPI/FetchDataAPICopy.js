@@ -20,6 +20,7 @@ export default function useData() {
     initializeToken();
     APISettings.headers.set('Content-Type', 'application/json');
     APISettings.headers.set('Access-Control-Allow-Origin', '*');
+    APISettings.headers.set('Accept-Language', 'es');
     // APISettings.headers.set('Authorization', 'Bearer ' + token.value);
 
     async function getRequest(endPoint) {
@@ -45,6 +46,10 @@ export default function useData() {
         }
         return responseData;
     }
+
+  
+    
+    
 
     async function postRequest(endPoint, data) {
         let responseData = { data: [], error: '', ok: false };

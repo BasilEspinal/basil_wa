@@ -3,83 +3,6 @@
 
         <div class="card">
             <h1>{{ $t('menu.production.cropLots') }}</h1>
-            <div class="grid">
-                <div class="col-xs-12 col-sm-6 col-md-4 mb-2 text-center mx-auto">
-                    <!--Uncomment when table is done-->
-
-                    <div class="col-12 text-center">
-                        <Toolbar>
-                            <template #center>
-                                <div class="grid">
-                                    
-                                    <div class="col-12 lg:col-2 text-center">
-                                        <Button 
-                                            :disabled="!(listRowSelect.length > 0 && listRowSelect.length < 2)"
-                                            label="Details" 
-                                            icon="pi pi-bars" 
-                                            class="p-button-success w-full mb-2" 
-                                            @click="openForm('detalles')" 
-                                        />
-                                    </div>
-                                    <div class="col-12 lg:col-2 text-center">
-                                        <Button 
-                                            :disabled="!(listRowSelect.length > 0 && listRowSelect.length < 2)" 
-                                            label="Edit" 
-                                            icon="pi pi-file-edit" 
-                                            class="p-button-help w-full mb-2" 
-                                            @click="openDialog('edit')" 
-                                        />
-                                    </div>
-
-                                    <!-- Second row -->
-                                    <div class="col-12 lg:col-2 text-center">
-                                        <Button 
-                                            :disabled="listRowSelect.length > 0" 
-                                            label="New" 
-                                            icon="pi pi-plus" 
-                                            class="p-button-success w-full mb-2" 
-                                            @click="openDialog('new')" 
-                                        />
-                                    </div>
-                                    <div class="col-12 lg:col-2 text-center">
-                                        <Button 
-                                            :disabled="!(listRowSelect.length > 0 && listRowSelect.length < 2)" 
-                                            label="Clone" 
-                                            icon="pi pi-copy" 
-                                            class="p-button-secondary w-full mb-2" 
-                                            @click="openDialog('clone')" 
-                                        />
-                                    </div>
-
-                                    <!-- Third row -->
-                                    <div class="col-12 lg:col-2 text-center">
-                                        <Button 
-                                            :disabled="!listRowSelect.length > 0" 
-                                            label="Export" 
-                                            icon="pi pi-file-import" 
-                                            class="p-button-warning w-full mb-2" 
-                                            @click="openExport" 
-                                        />
-                                    </div>
-                                    <div class="col-12 lg:col-2 text-center">
-                                        <Button 
-                                            :disabled="!listRowSelect.length > 0" 
-                                            label="Delete" 
-                                            icon="pi pi-trash" 
-                                            class="p-button-danger w-full mb-2" 
-                                            @click="openDelete" 
-                                        />
-                                    </div>
-
-
-                                </div>
-                            </template>
-                        </Toolbar>
-                    </div>
-
-
-                </div>
-            </div>
 
             <Dialog v-model:visible="flagDialog" :style="{ width: '450px' }" :header="titleDialog" :modal="true">
             <label for="username" class="text-2xl font-medium w-6rem"> {{ messageDialog }} </label>
@@ -105,31 +28,122 @@
                         <template v-slot:start>
                             <Button type="button" icon="pi pi-filter-slash" label="Limpiar"
                                 class="p-button-outlined mb-2" @click="clearFilter()" />
+                                
                         </template>
                         <template v-slot:end>
                             <span class="p-input-icon-left mb-2">
                                 <i class="pi pi-search" />
                                 <InputText v-model="filters['global'].value" placeholder="Buscar" style="width: 100%" />
                             </span>
+                            
                                             <!-- Action Button -->
 
                         </template>
+                        
                         <template v-slot:center>
 
                             <SelectButton v-model="size" :options="sizeOptions" optionLabel="label" dataKey="label">
                             </SelectButton>
+                            
+                            
 
                         </template>
-                    </Toolbar>
-                    <div class="col-12 lg:col-12 flex align-items-center justify-content-center">
-                        <ActionButton 
-                            :items="itemsActions" 
-                            :listRowSelect="listRowSelect" 
-                            class="w-6" 
-                        />
-                    </div>
 
+                        
+                    </Toolbar>
+                    
+                  <Toolbar>
+                    <template v-slot:start>
+                    <div class="grid justify-content-center">
+    <!-- Toolbar -->
+    
+                
+                    <!--Uncomment when table is done-->
+
+                    
+
+                                
+                                    
+                                    <div class="col-12 lg:col-2 text-center">
+                                        <Button 
+                                            :disabled="!(listRowSelect.length > 0 && listRowSelect.length < 2)"
+                                            
+                                            icon="pi pi-bars" 
+                                            class="mr-2" 
+                                            @click="openForm('detalles')" 
+                                        />
+                                    </div>
+                                    <div class="col-12 lg:col-2 text-center">
+                                        <Button 
+                                            :disabled="!(listRowSelect.length > 0 && listRowSelect.length < 2)" 
+                                            
+                                            icon="pi pi-file-edit" 
+                                            class="p-button-help mr-2" 
+                                            @click="openDialog('edit')" 
+                                        />
+                                    </div>
+
+                                    <!-- Second row -->
+                                    <div class="col-12 lg:col-2 text-center">
+                                        <Button 
+                                            :disabled="listRowSelect.length > 0" 
+                                            
+                                            icon="pi pi-plus" 
+                                            class="p-button-success mr-2" 
+                                            @click="openDialog('new')" 
+                                        />
+                                    </div>
+                                    <div class="col-12 lg:col-2 text-center">
+                                        <Button 
+                                            :disabled="!(listRowSelect.length > 0 && listRowSelect.length < 2)" 
+                                            icon="pi pi-copy" 
+                                            class="p-button-secondary mr-2" 
+                                            @click="openDialog('clone')" 
+                                        />
+                                    </div>
+
+                                    <!-- Third row -->
+                                    <div class="col-12 lg:col-2 text-center">
+                                        <Button 
+                                            :disabled="!listRowSelect.length > 0" 
+                                            icon="pi pi-file-import" 
+                                            class="p-button-warning mr-2" 
+                                            @click="openExport" 
+                                        />
+                                    </div>
+                                    <div class="col-12 lg:col-2 text-center">
+                                        <Button 
+                                            :disabled="!listRowSelect.length > 0" 
+                                            icon="pi pi-trash" 
+                                            class="p-button-danger mr-2" 
+                                            @click="openDelete" 
+                                        />
+                                    </div>
+
+
+
+                                
+
+                    
+
+
+                
+    
+</div>
+
+                    </template>
+                    <template v-slot:end>
+    <div class="col-12 lg:col-12 text-center ">
+                                    <ActionButton 
+                                        :items="itemsActions" 
+                                        :listRowSelect="listRowSelect" 
+                                        class="w-12"   
+                                    />
+                                    </div>  
+                    </template>
+                  </Toolbar>  
                 </template>
+                
 
                 <template #empty> No customers found. </template>
                 <template #loading> Loading customers data. Please wait. </template>
@@ -184,9 +198,6 @@
                 </div>
             </Dialog>
             <Dialog v-model:visible="formDialog" modal :header="formDialogTitle" class="p-fluid text-center mx-auto">
-
-
-
             
                 <div class="mb-3">
                     <div class="flex align-items-center gap-3 mb-1">
@@ -532,7 +543,6 @@ const readAll = async () => {
     Farms.value = respFarms.data.data.map((farm) => ({ id: farm.uuid, name: farm.name }));
 
 
-
     const respCompan = await InitialDataService.getCompanies();
     if (!respCompan.ok) toast.add({ severity: 'error', detail: 'Error' + respCompan.error, life: 3000 });
     Compan.value = respCompan.data.data.map((comp) => ({ id: comp.uuid, name: comp.name }));
@@ -609,7 +619,6 @@ const openDialogSettlement = async (mode) => {
     
 };
 
-
 const openDialog = (mode) => {
 
     formDialogTitle.value = 
@@ -650,11 +659,8 @@ const openDelete = () => {
     formDialogDelete.value = true;
 };
 
-
 const actionRecordManager = handleSubmitNew(async (values) => {
     const responseCRUD = ref();
-    
-
     console.log('listRowSelect:', listRowSelect.value);
     console.log(values)
     const data = {
@@ -703,9 +709,6 @@ const actionRecordManager = handleSubmitNew(async (values) => {
     else {
         console.log('Error:', responseCRUD.value.error);
     }
-
-    // Recargar datos
-    
 });
 
 
@@ -736,7 +739,6 @@ toast.add({
     life: 3000
 });
 
-// Clear dialog and selections after success
 formDialog.value = false;
 listRowSelect.value = [];
 selectedRegisters.value = [];
@@ -777,19 +779,14 @@ const DeleteRecord = async () => {
             return response;
         });
 
-        // Esperar a que todas las eliminaciones se completen
         await Promise.all(deletePromises);
-
-        // Actualizar la tabla después de la eliminación
         await loadingData();
-
-        // Mostrar mensaje de éxito
         toast.add({ severity: 'success', summary: 'Deleted Record', detail: 'Deleted successfully', life: 3000 });
     } catch (error) {
         console.error('Error deleting:', error);
         toast.add({ severity: 'error', summary: 'Error', detail: 'Error deleting records', life: 3000 });
     } finally {
-        // Limpiar las selecciones
+        
         listRowSelect.value = [];
     }
 };

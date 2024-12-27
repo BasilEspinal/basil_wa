@@ -3,7 +3,7 @@ import { ref, computed, watch,onMounted } from 'vue';
 
 import { useI18n } from 'vue-i18n';
 import { AppMovilDataService_V2 } from '@/service/appMovil/appMovilService_V2';
-import { useAppMovilService } from '../../../service/appMovil/appMovilService';
+import { useAppMovilService } from '../../../service/appMovil/appMovilService_V3';
 
 import { useToast } from 'primevue/usetoast';
 

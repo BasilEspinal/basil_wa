@@ -21,6 +21,7 @@ export default function useData() {
     initializeToken();
     APISettings.headers.set('Content-Type', 'application/json');
     APISettings.headers.set('Access-Control-Allow-Origin', '*');
+    APISettings.headers.set('Accept-Language', 'es');
     // APISettings.headers.set('Authorization', 'Bearer ' + token.value);
 
     async function getRequest(endPoint) {
