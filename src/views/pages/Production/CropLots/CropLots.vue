@@ -372,8 +372,8 @@ const dynamicColumns = [
     { field: 'area_m2', header: 'Area (m²)', frozen: false, color: false },
     { field: 'channel_average', header: 'Channel Average', frozen: false, color: false },
     { field: 'zone', header: 'Zone', frozen: false, color: false },
-    { field: 'latitude', header: 'Latitude', frozen: false, color: false },
-    { field: 'longitude', header: 'Longitude', frozen: false, color: false },
+    //{ field: 'latitude', header: 'Latitude', frozen: false, color: false },
+    //{ field: 'longitude', header: 'Longitude', frozen: false, color: false },
     { field: 'created_at', header: 'Created At', frozen: false, color: false },
     { field: 'updated_at', header: 'Updated At', frozen: false, color: false },
     // Nested fields for status
