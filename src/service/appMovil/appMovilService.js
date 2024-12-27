@@ -37,17 +37,26 @@ export function useAppMovilService() {
         console.log('InitData ejecutado, counter:', counter.value);
     };
 
+    // const resetState = () => {
+    //     holiday.value = 'Normal';
+    //     tasksPlaner.value = {};
+    //     tipoActividad.value = [];
+    //     counter.value = 0;
+    // };
+
     const resetState = () => {
         holiday.value = 'Normal';
         tasksPlaner.value = {};
         tipoActividad.value = [];
         counter.value = 0;
+        
     };
 
     const getDataTasksplanner = async () => {
         const endpoint = `/appmovil/tasksplanner?filter[tasks_of_type_id]=${fetchWorkCenter?.taskoftype?.id}&filter[company_id]=${fetchCompanyId}&filter[farm_id]=${fetchFarmId}`;
         const response = await getRequest(endpoint);
         tasksPlaner.value = response.data?.data[0] || {};
+        console.log('tasksPlanner inside getDataTaskPlaner', tasksPlaner.value)
         counter.value++;
         return { ...response, data: tasksPlaner.value };
     };
@@ -102,22 +111,36 @@ export function useAppMovilService() {
     //     return response;
     // };
     const getShippingsDelivered = async () => {
-        // Retrieve necessary data from sessionStorage
-        const transDev = false; // This is a fixed value
-        // const tasksOfTypeId = fetchWorkCenter?.taskoftype?.id || null;
-        const tasksOfTypeId= 5
-        const plannerTaskId = 18;
-        // const farmId = fetchFarmId || null;
-        const farmId = 1;
-        console.log('params', transDev, tasksOfTypeId, plannerTaskId, farmId);
-        // Construct the endpoint URL dynamically
-        const url = `/appmovil/shippings/voyage_num?trans_dev=${transDev}&tasks_of_type_id=${tasksOfTypeId}&planner_task_id=${plannerTaskId}&farm_id=${farmId}`;
+        console.log('Ejecutando getShippingsDelivered');
+        initData();
+        try {
+            // Ensure tasksPlaner is updated
+            if (!tasksPlaner.value?.id) {
+                await getDataTasksplanner();
+            }
+            
     
-        // Perform the GET request
-        const response = await getRequest(url);
-        
-        counter.value++;
-        return response;
+            // Use the updated tasksPlaner data
+            const transDev = false;
+            const plannerTaskId = tasksPlaner.value?.id || 'No hay'; // Fallback to 18 if not available
+            const tasksOfTypeId = fetchWorkCenter?.taskoftype?.id || 'No hay'; // Fallback to 5 if not available
+            const farmId = fetchFarmId || 1; // Fallback to 1 if not available
+    
+            console.log('plannerTaskId:', plannerTaskId);
+            console.log('tasksOfTypeId:', tasksOfTypeId);
+            console.log('farmId:', farmId);
+
+            // Construct the endpoint dynamically
+            const url = `/appmovil/shippings/voyage_num?trans_dev=false&tasks_of_type_id=${tasksOfTypeId}&planner_task_id=${plannerTaskId}&farm_id=${farmId}`;
+            const response = await getRequest(url);
+    
+            counter.value++;
+            console.log('Response from getShippingsDelivered:', response);
+            return response;
+        } catch (e) {
+            console.error('Error in getShippingsDelivered:', e);
+            return { data: [], error: 'Error Get Shippings Delivered', ok: false };
+        }
     };
     
     

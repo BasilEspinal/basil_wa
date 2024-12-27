@@ -1,7 +1,24 @@
 <template>
     
+    
     <div class="grid">
-
+        <Dialog 
+            v-model:visible="errorsReceived.visible" 
+            :header="errorsReceived.title" 
+            modal 
+            :style="{ width: '50vw' }"
+            :class="{'p-dialog-error': errorsReceived.severity === 'error', 'p-dialog-success': errorsReceived.severity === 'success'}"
+        >
+            <div class="flex align-items-center gap-3">
+                <i 
+                    class="pi" 
+                    :class="{'pi-times-circle text-red-500': errorsReceived.severity === 'error', 
+                             'pi-check-circle text-green-500': errorsReceived.severity === 'success'}" 
+                    style="font-size: 2rem;"
+                ></i>
+                <span>{{ errorsReceived.message }}</span>
+            </div>
+        </Dialog>
         <div class="mb-3 col-12 md:col-6 lg:col-6">
                         <div class="flex align-items-center">
                             
@@ -119,6 +136,7 @@
                     </div>
                 </div>
         </div>
+        
 </template>
 
 <script setup>
@@ -142,7 +160,36 @@ import {useAppMovilService} from '@/service/appMovil/appMovilService.js';
 const { t } = useI18n();
 const toast = useToast();
 const { getRequest, postRequest, putRequest, deleteRequest, patchRequest, errorResponseAPI } = useData();
-const { getShippingsDelivered } = useAppMovilService();
+const { getShippingsDelivered,getDataTasksplanner } = useAppMovilService();
+const errorsReceived = ref({
+    visible: false,
+    title: '',
+    message: '',
+    severity: 'error',
+    life: 3000, // Duration in milliseconds
+});
+
+
+const showDialog = (title, message, severity = 'error', life = 3000) => {
+    errorsReceived.value = {
+        visible: true,
+        title,
+        message,
+        severity,
+        life,
+    };
+
+    // Auto-close the dialog after the specified duration
+    setTimeout(() => {
+        errorsReceived.value.visible = false;
+    }, life);
+};
+
+
+const closeDialog = () => {
+    errorsReceived.value.visible = false;
+};
+
 // const tasks_of_type = ref([]);
 // const Tasks_of_type = ref([]);
 // const Tasks_of_type_filter = ref([]);
@@ -161,6 +208,7 @@ const ShippingsDelivered = ref([]);
 
 //const endpoint = ref('/appmovil/shippings/send_qty');
 const farmDefault = sessionStorage.getItem('accessSessionFarm');
+const taskOfType = ref()
 
 const props = defineProps({
     data: { type: Object },
@@ -278,19 +326,30 @@ console.log('respShippingsDelivered', respShippingsDelivered);
 if (!respShippingsDelivered.ok) toast.add({ severity: 'error', detail: 'Error' + respShippingsDelivered.error, life: 3000 });
 ShippingsDelivered.value = respShippingsDelivered.data.data.map((shipping) => ({ id: shipping.id, name: shipping.voyage_num }));
 
+const respPlanning = await getDataTasksplanner();
+console.log('respPlanning', respPlanning.data.id);
+if (!respPlanning.ok) toast.add({ severity: 'error', detail: 'Error' + respPlanning.error, life: 3000 });
+dataPlanner.value = respPlanning.data.id;
+console.log('dataPlanner', dataPlanner.value);
+
 };
 
 
 const loading = ref(false);
 
 const actionRecordManager = handleSubmitNew(async (values) => {
+const accessSessionWorkCenter = JSON.parse(sessionStorage.getItem('accessSessionWorkCenter'));
+console.log('Parsed object:', accessSessionWorkCenter);
+console.log('Parsed object task:', accessSessionWorkCenter?.taskoftype?.id);
+
   loading.value = true; // Block the button
   try {
     const responseCRUD = ref();
     const data = {
       trans_dev: false,
       received_qty: values.received_qty_V,
-      tasks_of_type_id: 5,
+      tasks_of_type_id: accessSessionWorkCenter?.taskoftype?.id,
+      planner_of_tasks_id: dataPlanner.value,
       employee_transport_id: values.emplooyesV.id,
       crop_lot_code: values.selected_crops_lots.code,
       vehicle_id: values.vehiclesV ? values.vehiclesV.id : dataPlanner.value.data.data[0].vehicle.id,
@@ -306,29 +365,30 @@ const actionRecordManager = handleSubmitNew(async (values) => {
       // Handle 'edit' state
     } else if (state.value === 'patch') {
       responseCRUD.value = await crudService.patch('', data);
+      console.log('Response from patch:', responseCRUD.value);
+      if (responseCRUD.value.ok) {
+    showDialog('Success', 'Record updated successfully!', 'success', 3000);
+} else {
+    showDialog('Error', responseCRUD.value.error || 'Failed to update record', 'error', 5000);
+}
+
+
+
     } else if (state.value === 'delete') {
       // Handle 'delete' state
     } else {
       // Handle other states
     }
 
-    toast.add({
-      severity: responseCRUD.value.ok ? 'success' : 'error',
-      summary: 'Create',
-      detail: responseCRUD.value.ok ? 'Creado' : responseCRUD.error,
-      life: 3000,
-    });
 
-    if (responseCRUD.value.ok) {
-      console.log('data', data);
-    }
   } catch (error) {
-    console.error('An error occurred:', error);
-  } finally {
-    loading.value = false; // Unblock the button
-  }
+    console.error('Error in actionRecordManager:', error);
+    showDialog('Error', error.message || 'An unexpected error occurred.', 'error');
+}
+ finally {
+        loading.value = false; // Unblock the button
+    }
 });
-
 const getCurrentFormattedDate = () => {
 const date = new Date();
 
