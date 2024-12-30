@@ -1,30 +1,95 @@
 <script setup>
 // This is the Login Page withut any fixed about layout
-
-import { ref,computed } from 'vue';
+import { useLayout } from '@/layout/composables/layout';
+import { computed, ref, inject, provide, onMounted } from 'vue';
 import { useRouter } from 'vue-router';
 import { useToast } from 'primevue/usetoast';
 import Toast from 'primevue/toast';
-import { useLayout } from '@/layout/composables/layout';
+import useDataAPI from '@/composables/DataAPI/FetchDataAPI.js';
+import useData from '@/composables/DataAPI/FetchDataAPICopy.js';
+import {fetchInfoDataLogged} from '@/composables/Login/InfoStorage.js';
+import {fetchAbilities} from '@/composables/Abilities/Abilities.js';
+
+
+import { ABILITY_TOKEN } from '@casl/vue';
+import { useAbility } from '@casl/vue';
 import { useForm } from 'vee-validate';
 import { toTypedSchema } from '@vee-validate/zod';
 import { z } from 'zod';
+
+import { defineAbility } from '@casl/ability';
+import elementosVista from '@/service/permissionsMenuTmp.js';
+import { createMongoAbility } from '@casl/ability';
 import { AbilityBuilder } from '@casl/ability';
-import useData from '@/service/FetchData/FetchDataAPI.js';
-import { useAbilityStore } from '@/stores/abilities';
-import ability from '@/service/ability.js';
-import { useI18n } from 'vue-i18n';
-import { ensureTokenStored } from '@/utils/tokenUtils';
+import { provideAbility } from '@casl/vue';
+
+
+
+
+const { getAllResponseAPI, getAllResponsePermissionsAPI, getAllResponseListAPI, totalRecordsResponseAPI, currentPageResponseAPI, linksResponseAPI, postResponseAPI, putResponseAPI, deleteResponseAPI, errorResponseAPI, dataResponseAPI, dataResponseListAPI, statusCode } =
+  useDataAPI();
+
+const { getRequest, postRequest, putRequest, deleteRequest } = useData();
 
 const { layoutConfig } = useLayout();
-const abilityStore = useAbilityStore()
 const toast = useToast();
-const { t } = useI18n();
-const { getRequest, postRequest, putRequest, deleteRequest,errorResponseAPI } = useData();
-let endpoint = ref('/login');
-const token = ref('')
 const count = ref(0);
-const { values, errors, defineField } = useForm({initialValues: { email: 'admin@agroonline.com', password: '!password!' },
+const token = ref('')
+
+const dataFromComponent = ref();
+let endpoint = ref('/appmovil/datastart');
+
+
+
+// define login
+// const ability = defineAbility((can, cannot) => {
+//   can('read', 'Post');
+//   cannot('read', 'Post', { private: true });
+// });
+// const actions = ['listar_empleado', 'ver_empleado', 'eliminar_empleado'];
+
+// const ability = defineAbility((can, cannot) => actions.forEach(action => can(action)));
+
+// // Verificar cada acción por separado
+// console.log(ability.can('listar_empleado')); // true
+// console.log(ability.can('ver_empleado')); // true
+// console.log(ability.can('eliminar_empleado')); // true
+
+
+const { can, cannot, build } = new AbilityBuilder();
+
+// const ability = defineAbility((can, cannot) => {
+//   can('manage', 'all');
+//   cannot('delete', 'User');
+// });
+// provideAbility(ability)
+
+// const ability = createMongoAbility();
+import ability from '@/service/ability.js';
+
+// const updateAbility = (token) => {
+//   const bearer = 'Bearer ' + token;
+
+// fetch('http://164.90.146.196:81/api/v1/abilities', {
+//     headers: {
+//         Authorization: bearer,
+//         accept: 'application/json'
+//     }
+// })
+//     .then((response) => response.json())
+//     .then((permissions) => {
+//         const { can, rules } = new AbilityBuilder();
+
+//         can(permissions);
+//         console.log(permissions)
+//         ability.update(rules);
+//         console.log(ability.can('rol_crear'))
+
+//     });
+// };
+
+// initPermissions();
+const { values, errors, defineField } = useForm({
     validationSchema: toTypedSchema(
         z.object({
             email: z.string().min(3).email(),
@@ -32,40 +97,86 @@ const { values, errors, defineField } = useForm({initialValues: { email: 'admin@
         })
     )
 });
+const [email, emailAttrs] = defineField('email');
+const [password, passwordAttrs] = defineField('password');
+const router = useRouter();
 
 const logoUrl = computed(() => {
     return `layout/images/${layoutConfig.darkTheme.value ? 'logo-white' : 'logo-dark'}.png`;
 });
 
+const onSubmit = async () => {
+  const resp1 = await fetchInfoPostLogin();
+  if (resp1 == true)
+   {
+    await fetchInfoDataLogged();
+    await fetchAbilities();
+  } else {
+    console.log('Error')
+  }
+
+  
+  
+};
+
+
+
 const fetchInfoPostLogin = async (data) => {
   try {
-    let response = await postRequest(endpoint.value, { email: email.value, password: password.value });
+
+  //  await postResponseAPI({ email: email.value, password: password.value }, '/login');
+    // await postResponseAPI({ email: email.value, password: password.value }, '/loginnew');
+    let response = await postRequest('/login', { email: email.value, password: password.value });
     response = response.data.data;
+    
+    
+    // fetchInfoDataLogged(dataResponseAPI.value.data.token);
+    // console.log(dataResponseAPI.value.data.token)  
+    //await postResponseAPI({ email: "admin@admin.com", password: "password" }, '/login');
+
+
+    
     if (response['error']) throw response.error;
     if (!response['user']) throw response.error;
 
     token.value = response.token;
-
     const user = response.user.name;
+    const emailUser = response.user.email;
+    const farm = response.farm_uuid;
+    const company = response.company_uuid;
+
+    // const employeeName = response.Employee.first_name+' '+response.Employee.lasts_names;
+    // const employeeUuid = response.Employee.uuid;
+
+
+    console.log(response)
+    console.log('Login')
+    // console.log(employeeName, employeeUuid)
+    
     sessionStorage.setItem('accessSessionToken', token.value);
     sessionStorage.setItem('accessSessionUser', user);
+    sessionStorage.setItem('accessSessionFarm', farm);  
+    sessionStorage.setItem('accessSessionCompany', company);
+    localStorage.setItem('accesSessionToken', token.value);
     localStorage.setItem('accesSessionUsers', user);
-    localStorage.setItem('accessSessionToken', token.value);
-    await ensureTokenStored();
+    localStorage.setItem('accesSessionFarms', farm);
+    localStorage.setItem('accesSessionCompanys', company);
 
-    if (!token.value) {
-    console.error('No token found in sessionStorage')
-    
-  } else {
-     await abilityStore.fetchAbilities();
-     const abilities = abilityStore.getAbilities;
-    const { can, cannot, rules } = new AbilityBuilder();
-    abilities.forEach(({ action, subject }) => {
-    can(action, subject); 
-});
-    ability.update(rules);
-  }
-    
+
+    // localStorage.setItem('accesSessionEmployeeName', employeeName);
+    // sessionStorage.setItem('accessSessionEmployeeName', employeeName);
+    // localStorage.setItem('accesSessionEmployeeUuid', employeeUuid);
+    // sessionStorage.setItem('accesSessionEmployeeUuid', employeeUuid);
+
+
+        // updateAbility(token);
+        console.log("data: ", response);
+
+
+    await getRequest('/abilities', token);
+    // await getAllResponsePermissionsAPI("/abilities");
+
+
     toast.add({ severity: 'success', detail: 'Success', content: 'Successful Login', id: count.value++ });
     router.push('/applayout');
     
@@ -77,22 +188,12 @@ const fetchInfoPostLogin = async (data) => {
   }
 };
 
-const onSubmit = async () => {
-    await fetchInfoPostLogin();
-   
-};
-
-const [email, emailAttrs] = defineField('email');
-const [password, passwordAttrs] = defineField('password');
-const router = useRouter();
-
+onMounted(() => {});
 </script>
-
 
 <template>
     <div class="surface-ground flex align-items-center justify-content-center min-h-screen min-w-screen overflow-hidden" style="background: linear-gradient(180deg, var(--paleta-400) 5%, var(--paleta-100) 15%)">
         <div class="flex flex-column align-items-center justify-content-center" @keyup.enter="onSubmit">
-            <FloatingConfigurator />
             <router-link to="/" class="align-items-center mb-5">
                 <img :src="logoUrl" alt="Sakai logo" class="w-6rem flex-shrink-0" />
                 <span class="text-700 font-bold">AGRO-ONLINE</span>
