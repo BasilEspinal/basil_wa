@@ -587,7 +587,7 @@ function formatXLS(events) {
     const headers = Object.keys(flattenedData[0]);
     const data = flattenedData.map((row) => headers.map((header) => row[header] ?? ''));
 
-    // Create XLSX worksheet
+    // Create XLSX worksheet4aaá1        
     const workbook = XLSX.utils.book_new();
     const worksheet = XLSX.utils.aoa_to_sheet([headers, ...data]);
     XLSX.utils.book_append_sheet(workbook, worksheet, 'Report');

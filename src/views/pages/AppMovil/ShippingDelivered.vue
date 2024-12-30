@@ -84,7 +84,19 @@
                         <div class="mb-3 col-12 sm:col-12 md:col-12 lg:col-12">
                         <div class="flex align-items-center gap-4 ">
                             <!-- <Button label="Cancel" severity="secondary" outlined class="w-full" /> -->
-                            <Button label="Save" class="w-full" @click="actionRecordManager" />
+                            <!-- <Button label="Save" class="w-full" @click="actionRecordManager" /> -->
+                            <div class="mb-3 col-12 sm:col-12 md:col-12 lg:col-12">
+                            <div class="flex align-items-center gap-4">
+                                <Button 
+                                label="Save" 
+                                class="w-full" 
+                                @click="actionRecordManager" 
+                                :disabled="loading" 
+                                />
+                                <span v-if="loading" class="pi pi-spin pi-spinner"></span>
+                            </div>
+                            </div>
+
                         </div>
                     </div>
             </div>
@@ -244,42 +256,55 @@ const readAll = async () => {
 
 };
 
+const loading = ref(false); // Tracks if the process is in progress
+
 const actionRecordManager = handleSubmitNew(async (values) => {
-    
+  loading.value = true; // Block the button
+  try {
     const responseCRUD = ref();
     const data = {
-    trans_dev: false, // Valor booleano directamente asignado
-    tasks_of_type_id: dataPlanner.value.data.data[0].tasks_of_type.id, // ID del tipo de tarea
-    dispatch_number_lot: dataPlanner.value.data.data[0].customer_request.dispatch_number_lot, // Número de lote de despacho
-    transaction_date: getCurrentFormattedDate(), // Fecha y hora de transacción
-    sent_qty: values.request_qty_V? values.request_qty_V : '', // Cantidad enviada
-    crop_lot_code: values.selected_crops_lots.code, // Código del lote de cultivo
-    vehicle_id: values.vehiclesV? values.vehiclesV.id : dataPlanner.value.data.data[0].vehicle.id, // ID del vehículo
-    planner_task_id: dataPlanner.value.data.data[0].id,
-    farm_id: values.farm ? 1 : farmDefault,
-    supervisory_employee_id: 2, // ID del empleado supervisor
-    // supervisory_employee_id: values.emplooyesV.id ?values.emplooyesV.id:dataStart.value.data.data.employee.id, // ID del empleado supervisor
-    employee_transport_id: 13, // ID del empleado encargado del transporte
-    notes_small: notes.value, // Nota adicional
-};
+      trans_dev: false, // Boolean directly assigned
+      tasks_of_type_id: dataPlanner.value.data.data[0].tasks_of_type.id, // Task type ID
+      dispatch_number_lot: dataPlanner.value.data.data[0].customer_request.dispatch_number_lot, // Dispatch number
+      transaction_date: getCurrentFormattedDate(), // Current date and time
+      sent_qty: values.request_qty_V || '', // Sent quantity
+      crop_lot_code: values.selected_crops_lots.code, // Crop lot code
+      vehicle_id: values.vehiclesV ? values.vehiclesV.id : dataPlanner.value.data.data[0].vehicle.id, // Vehicle ID
+      planner_task_id: dataPlanner.value.data.data[0].id, // Planner task ID
+      farm_id: values.farm ? 1 : farmDefault, // Farm ID
+      supervisory_employee_id: 2, // Supervisor employee ID
+      employee_transport_id: 13, // Transport employee ID
+      notes_small: notes.value, // Notes
+    };
 
-console.log('data', data);
+    console.log('data', data);
+    console.log('JSON.stringify(data)', JSON.stringify(data, null, 2));
 
-if (state.value === 'new') {
-    responseCRUD.value = await crudService.create(data);
-} else if (state.value === 'edit') {
-    
-    
-} else if (state.value === 'patch') {
-    
-} else {
-    
-}    
-    toast.add({ severity: responseCRUD.value.ok ? 'success' : 'error', summary: 'Create', detail: responseCRUD.value.ok ? 'Creado' : restp.error, life: 3000 });
-    
-    if (responseCRUD.value.ok) {    
-        console.log('data', data);
+    if (state.value === 'new') {
+      responseCRUD.value = await crudService.create(data);
+    } else if (state.value === 'edit') {
+      // Handle 'edit' state
+    } else if (state.value === 'patch') {
+      // Handle 'patch' state
+    } else {
+      // Handle other states
     }
+
+    toast.add({
+      severity: responseCRUD.value.ok ? 'success' : 'error',
+      summary: 'Create',
+      detail: responseCRUD.value.ok ? 'Creado' : responseCRUD.error,
+      life: 3000,
+    });
+
+    if (responseCRUD.value.ok) {
+      console.log('data', data);
+    }
+  } catch (error) {
+    console.error('An error occurred:', error);
+  } finally {
+    loading.value = false; // Unblock the button
+  }
 });
 
 const getCurrentFormattedDate = () => {

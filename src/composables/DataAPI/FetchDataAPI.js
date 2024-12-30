@@ -23,6 +23,10 @@ export default function useDataAPI(datos) {
     APISettings.headers.set('Content-Type', 'application/json');
     APISettings.headers.set('Access-Control-Allow-Origin', '*');
     APISettings.headers.set('Authorization', 'Bearer ' + token);
+    APISettings.headers.set('Authorization', 'Bearer ' + token);
+    APISettings.headers.set('Accept-Language', 'es');
+
+    
 
     const getAllResponseAPI = async (endPoint) => {
         let baseUrl = `${base}${api}${endPoint}`;

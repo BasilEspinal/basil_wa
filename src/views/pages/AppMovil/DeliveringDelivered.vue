@@ -1,7 +1,24 @@
 <template>
     
+    
     <div class="grid">
-
+        <Dialog 
+            v-model:visible="errorsReceived.visible" 
+            :header="errorsReceived.title" 
+            modal 
+            :style="{ width: '50vw' }"
+            :class="{'p-dialog-error': errorsReceived.severity === 'error', 'p-dialog-success': errorsReceived.severity === 'success'}"
+        >
+            <div class="flex align-items-center gap-3">
+                <i 
+                    class="pi" 
+                    :class="{'pi-times-circle text-red-500': errorsReceived.severity === 'error', 
+                             'pi-check-circle text-green-500': errorsReceived.severity === 'success'}" 
+                    style="font-size: 2rem;"
+                ></i>
+                <span>{{ errorsReceived.message }}</span>
+            </div>
+        </Dialog>
         <div class="mb-3 col-12 md:col-6 lg:col-6">
                         <div class="flex align-items-center">
                             
@@ -39,7 +56,16 @@
             <div class="flex align-items-center">
                         
                             <label for="username" class="font-semibold w-6rem">{{t('appmovil.voyage_number')}}</label>
-                            <AutoComplete v-model="voyage_num_V" inputId="ac" class="flex-auto" :suggestions="shippingsDelivered" @complete="searchShippingsDelivered" field="name" dropdown placeholder='Select one' />
+                            <AutoComplete 
+                            v-model="voyage_num_V" 
+                            inputId="ac" 
+                            class="flex-auto" 
+                            :suggestions="shippingsDelivered" 
+                            @complete="searchShippingsDelivered"
+                            @click="readAll"
+                            field="name" 
+                            dropdown 
+                            placeholder='Select one' />
                         <!--Pendiente-->
                         <FrontEndErrors :errorsNew="errorsNew" name="voyage_num_V" />
                         <BackendErrors :name="errorResponseAPI?.errors?.voyage_num" />
@@ -95,10 +121,22 @@
                     <div class="mb-3 col-12 sm:col-12 md:col-12 lg:col-12">
                     <div class="flex align-items-center gap-4 ">
                         <!-- <Button label="Cancel" severity="secondary" outlined class="w-full" /> -->
-                        <Button label="Save" class="w-full" @click="actionRecordManager" />
+                        <!-- <Button label="Save" class="w-full" @click="actionRecordManager" /> -->
+                        <div class="mb-3 col-12 sm:col-12 md:col-12 lg:col-12">
+  <div class="flex align-items-center gap-4">
+    <Button 
+      label="Save" 
+      class="w-full" 
+      @click="actionRecordManager" 
+      :disabled="loading" 
+    />
+    <span v-if="loading" class="pi pi-spin pi-spinner"></span>
+  </div>
+</div>
                     </div>
                 </div>
         </div>
+        
 </template>
 
 <script setup>
@@ -122,7 +160,36 @@ import {useAppMovilService} from '@/service/appMovil/appMovilService.js';
 const { t } = useI18n();
 const toast = useToast();
 const { getRequest, postRequest, putRequest, deleteRequest, patchRequest, errorResponseAPI } = useData();
-const { getShippingsDelivered } = useAppMovilService();
+const { getShippingsDelivered,getDataTasksplanner } = useAppMovilService();
+const errorsReceived = ref({
+    visible: false,
+    title: '',
+    message: '',
+    severity: 'error',
+    life: 3000, // Duration in milliseconds
+});
+
+
+const showDialog = (title, message, severity = 'error', life = 3000) => {
+    errorsReceived.value = {
+        visible: true,
+        title,
+        message,
+        severity,
+        life,
+    };
+
+    // Auto-close the dialog after the specified duration
+    setTimeout(() => {
+        errorsReceived.value.visible = false;
+    }, life);
+};
+
+
+const closeDialog = () => {
+    errorsReceived.value.visible = false;
+};
+
 // const tasks_of_type = ref([]);
 // const Tasks_of_type = ref([]);
 // const Tasks_of_type_filter = ref([]);
@@ -141,6 +208,7 @@ const ShippingsDelivered = ref([]);
 
 //const endpoint = ref('/appmovil/shippings/send_qty');
 const farmDefault = sessionStorage.getItem('accessSessionFarm');
+const taskOfType = ref()
 
 const props = defineProps({
     data: { type: Object },
@@ -238,14 +306,10 @@ vehiclesV.value = {
 };
 
 lots.value.push(props.batchs)
-
-
-
 });
 
 const readAll = async () => {
 // const respTasksOfType = await getRequest('/task_of_types');
-
 // const respEmployees = await getRequest('/appmovil/employees?filter[work_center_id]=2');
 const respEmployees = await InitialDataService.getEmployeesWorkCenter(2);
 if (!respEmployees.ok) toast.add({ severity: 'error', detail: 'Error' + respEmployees.error, life: 3000 });
@@ -258,56 +322,73 @@ if (!respVehicles.ok) toast.add({ severity: 'error', detail: 'Error' + respVehic
 Vehicles.value = respVehicles.data.data.map((vehicle) => ({ id: vehicle.id, name: vehicle.vehicle_type }));
 
 const respShippingsDelivered = await getShippingsDelivered();
+console.log('respShippingsDelivered', respShippingsDelivered);
 if (!respShippingsDelivered.ok) toast.add({ severity: 'error', detail: 'Error' + respShippingsDelivered.error, life: 3000 });
 ShippingsDelivered.value = respShippingsDelivered.data.data.map((shipping) => ({ id: shipping.id, name: shipping.voyage_num }));
 
+const respPlanning = await getDataTasksplanner();
+console.log('respPlanning', respPlanning.data.id);
+if (!respPlanning.ok) toast.add({ severity: 'error', detail: 'Error' + respPlanning.error, life: 3000 });
+dataPlanner.value = respPlanning.data.id;
+console.log('dataPlanner', dataPlanner.value);
 
 };
 
+
+const loading = ref(false);
 
 const actionRecordManager = handleSubmitNew(async (values) => {
-const responseCRUD = ref();
-const data = {
-trans_dev: false, // Valor booleano directamente asignado
-received_qty: values.received_qty_V,
-// tasks_of_type_id: dataPlanner.value.data.data[0].tasks_of_type.id, // ID del tipo de tarea
-tasks_of_type_id: 5, // ID del tipo de tarea
-employee_transport_id: values.emplooyesV.id ,
-crop_lot_code: values.selected_crops_lots.code, // Código del lote de cultivo
-vehicle_id: values.vehiclesV? values.vehiclesV.id : dataPlanner.value.data.data[0].vehicle.id, // ID del vehículo
-notes_small: notes.value, // Nota adicional
-voyage_num: values.voyage_num_V.name, // Número de viaje
+const accessSessionWorkCenter = JSON.parse(sessionStorage.getItem('accessSessionWorkCenter'));
+console.log('Parsed object:', accessSessionWorkCenter);
+console.log('Parsed object task:', accessSessionWorkCenter?.taskoftype?.id);
 
+  loading.value = true; // Block the button
+  try {
+    const responseCRUD = ref();
+    const data = {
+      trans_dev: false,
+      received_qty: values.received_qty_V,
+      tasks_of_type_id: accessSessionWorkCenter?.taskoftype?.id,
+      planner_of_tasks_id: dataPlanner.value,
+      employee_transport_id: values.emplooyesV.id,
+      crop_lot_code: values.selected_crops_lots.code,
+      vehicle_id: values.vehiclesV ? values.vehiclesV.id : dataPlanner.value.data.data[0].vehicle.id,
+      notes_small: notes.value,
+      voyage_num: values.voyage_num_V.name,
+    };
 
-// planner_task_id: dataPlanner.value.data.data[0].id,
-// farm_id: values.farm ? 1 : farmDefault,
-// supervisory_employee_id: 2, // ID del empleado supervisor
-//tasks_of_type_id: dataPlanner.value.data.data[0].tasks_of_type.id, // ID del tipo de tarea
-// supervisory_employee_id: values.emplooyesV.id ?values.emplooyesV.id:dataStart.value.data.data.employee.id, // ID del empleado supervisor
-//dispatch_number_lot: dataPlanner.value.data.data[0].customer_request.dispatch_number_lot, // Número de lote de despacho
-};
-
-console.log('data', data);
-
-if (state.value === 'new') {
-
-} else if (state.value === 'edit') {
-
-
-} else if (state.value === 'patch') {
-responseCRUD.value = await crudService.patch('',data);
-} 
-else if (state.value === 'delete') {
-} else {
-
-}    
-toast.add({ severity: responseCRUD.value.ok ? 'success' : 'error', summary: 'Create', detail: responseCRUD.value.ok ? 'Creado' : responseCRUD.error, life: 3000 });
-
-if (responseCRUD.value.ok) {    
     console.log('data', data);
-}
-});
 
+    if (state.value === 'new') {
+      // Handle 'new' state
+    } else if (state.value === 'edit') {
+      // Handle 'edit' state
+    } else if (state.value === 'patch') {
+      responseCRUD.value = await crudService.patch('', data);
+      console.log('Response from patch:', responseCRUD.value);
+      if (responseCRUD.value.ok) {
+    showDialog('Success', 'Record updated successfully!', 'success', 3000);
+} else {
+    showDialog('Error', responseCRUD.value.error || 'Failed to update record', 'error', 5000);
+}
+
+
+
+    } else if (state.value === 'delete') {
+      // Handle 'delete' state
+    } else {
+      // Handle other states
+    }
+
+
+  } catch (error) {
+    console.error('Error in actionRecordManager:', error);
+    showDialog('Error', error.message || 'An unexpected error occurred.', 'error');
+}
+ finally {
+        loading.value = false; // Unblock the button
+    }
+});
 const getCurrentFormattedDate = () => {
 const date = new Date();
 
@@ -334,6 +415,7 @@ setTimeout(() => {
 }, 200);
 };
 const searchShippingsDelivered = (event) => {
+    
 setTimeout(() => {
     if (!event.query.trim().length) {
         shippingsDelivered.value = [...ShippingsDelivered.value];

@@ -112,8 +112,16 @@ import SidebarItemSubGroup from './layout/SidebarPlugin/ItemSubGroup.vue';
 
 import { abilitiesPlugin } from '@casl/vue';
 import ability from '@/service/ability.js';
+
+import { createPinia } from 'pinia';
 import { createI18n } from 'vue-i18n'
 import { messages } from '@/locales/lang.js'
+
+////////////////////////////////////////////
+//Pinia
+const pinia = createPinia()
+
+///////////////////////////////////////////
 
 const userLocale = navigator.language || navigator.userLanguage;
 const defaultLocale = userLocale.startsWith('es') ? 'es' : 'en';
@@ -129,17 +137,57 @@ const i18n = createI18n({
     messages
 })
 
+/////////////////////////////////////////////////////////////////
+
 const app = createApp(App);
 
-app.use(abilitiesPlugin, ability, { useGlobalProperties: true });
-app.provide('ability', ability);
+
 app.use(router);
 app.use(PrimeVue, { ripple: true });
 app.use(ToastService);
 app.use(DialogService);
 app.use(ConfirmationService);
+/////////////////////////////////////////////////////////////////
+
+
+//////////////////////////////////////////
+
+app.use(pinia)
+////////////////////////////////////////////
+
+app.use(abilitiesPlugin, ability, { useGlobalProperties: true });
+app.provide('ability', ability);
+
+
+/////////////////////////////////////////////////////////////////
+// Fetch abilities on app initialization
+import { useAbilityStore } from '@/stores/abilities';
+import { AbilityBuilder } from '@casl/ability';
+const initializeAbilities = async () => {
+    console.log('Initializing abilities');
+    const abilityStore = useAbilityStore();
+    const { can, rules } = new AbilityBuilder();
+    const token = sessionStorage.getItem('accessSessionToken');
+    if (!token) {
+        return
+    } else {
+        console.log('Fetching abilities');
+        await abilityStore.fetchAbilities();
+        const abilities = abilityStore.getAbilities;
+       const { can, cannot, rules } = new AbilityBuilder();
+       abilities.forEach(({ action, subject }) => {
+       can(action, subject); 
+   });
+       ability.update(rules);
+    }
+};
+
+initializeAbilities(); 
+/////////////////////////////////////////////////////////////////
+//Language package using
 app.use(i18n);
 
+/////////////////////////////////////////////////////////////////
 
 
 

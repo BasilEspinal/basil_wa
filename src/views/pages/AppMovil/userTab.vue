@@ -1,7 +1,7 @@
 <script setup>
 import { ref, onMounted, watch } from 'vue';
 import { useToast } from 'primevue/usetoast';
-import { useAppMovilService } from '../../../service/appMovil/appMovilService';
+import { useAppMovilService } from '../../../service/appMovil/appMovilService_V3';
 import useData from '@/composables/DataAPI/FetchDataAPICopy.js';
 import { CrudService } from '@/service/CRUD/CrudService';
 // const { errorResponseAPI } = useData();

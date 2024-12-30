@@ -1,11 +1,11 @@
 <script setup>
-import { ref, computed, onMounted, watch, onBeforeMount,onBeforeUnmount } from 'vue';
+import { ref, computed, onMounted,onUnmounted, watch, onBeforeMount,onBeforeUnmount } from 'vue';
 import UseAppMovil from '@/composables/AppMovil/UseAppMovil.js';
 import { useToast } from 'primevue/usetoast';
 import UserAppMovil from './UserAppMovil.vue';
 import { useI18n } from 'vue-i18n';
 import { useLayout } from '@/layout/composables/layout';
-import { useAppMovilService } from '../../../service/appMovil/appMovilService';
+import { useAppMovilService } from '../../../service/appMovil/appMovilService_V3';
 import ShippingDelivered from './ShippingDelivered.vue';
 import DeliveringDelivered from './DeliveringDelivered.vue';
 import ErrorAppMovil from './ErrorAppMovil.vue';
@@ -119,6 +119,26 @@ const getDataEmployeesInfo = async () => {
         return total;
     });
 };
+onUnmounted(() => {
+    titulo.value = '';
+    users.value = null;
+    filterUsers.value = null;
+    dataApp.value = null;
+    holiday.value = 'Normal';
+    lotes.value = null;
+    search.value = null;
+    errorSummary.value = false;
+    summary.value = null;
+
+    totalTaskQtyTask.value = 0;
+    totalTaskTotal.value = 0;
+    totalTaskQtyHoraExtra.value = 0;
+    totalHoraExtraTotal.value = 0;
+    totalTaskQtyLabor.value = 0;
+    totalLaborTotal.value = 0;
+    totalTaskQtyJournal.value = 0;
+    totalJournalTotal.value = 0;
+});
 
 const functionsData = async () => {
     loading.value = true; // Set loading to true when data fetching starts
@@ -134,7 +154,7 @@ const functionsData = async () => {
     // console.log("getDataTasksplanner",getDataTasksplanner)
 
     holiday.value = HOLIDAY;
-    titulo.value = t('appmovil.titulo') + ' ' + (TASK_OF_TYPE?.name ? TASK_OF_TYPE.name : 'XXXXXXXXXXXXXX');
+    //titulo.value = t('appmovil.titulo') + ' ' + (TASK_OF_TYPE?.name ? TASK_OF_TYPE.name : 'XXXXXXXXXXXXXX');
     loading.value = false; // Set loading to false when data fetching is complete
     //////////////////////////
     //Sebastian
@@ -144,6 +164,7 @@ const functionsData = async () => {
 
 onBeforeMount(async () => {
 functionsData();
+titulo.value = `Título: ${TASK_OF_TYPE.name || 'Sin nombre'}`;
 });
 
 const logoUrl = computed(() => {
