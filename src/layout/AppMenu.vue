@@ -528,7 +528,7 @@ const model2 = computed(() => ([
     {
         items: [
             {
-                label: t('menu.commercial'),
+                label: t('menu.commercial.name'),
                 rol: 'admin',
                 icon: 'pi pi-sitemap',
                 gate: 'comercial_menu',
