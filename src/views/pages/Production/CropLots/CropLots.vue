@@ -366,22 +366,22 @@ const { getItems,itemsActions, messageDialog,titleDialog,status_id_Action,flagDi
 const { t } = useI18n();
 
 const dynamicColumns = [
-    // { field: 'uuid', header: 'UUID', frozen: false, color: false },
     { field: 'code', header: 'Code', frozen: false, color: false },
     { field: 'area_m2', header: 'Area (m²)', frozen: false, color: false },
     { field: 'channel_average', header: 'Channel Average', frozen: false, color: false },
     { field: 'zone', header: 'Zone', frozen: false, color: false },
-    //{ field: 'latitude', header: 'Latitude', frozen: false, color: false },
-    //{ field: 'longitude', header: 'Longitude', frozen: false, color: false },
+    { field: 'latitude', header: 'Latitude', frozen: false, color: false },
+    { field: 'longitude', header: 'Longitude', frozen: false, color: false },
+    { field: 'status.name', header: 'Status Name', frozen: false, color: true },
+    { field: 'farm.name', header: 'Farm Name', frozen: false, color: false },
+    { field: 'company.name', header: 'Company Name', frozen: false, color: false },
     { field: 'created_at', header: 'Created At', frozen: false, color: false },
     { field: 'updated_at', header: 'Updated At', frozen: false, color: false },
-    // Nested fields for status
-    { field: 'status.name', header: 'Status Name', frozen: false, color: true },
-    // Nested fields for farm
-    { field: 'farm.name', header: 'Farm Name', frozen: false, color: false },
-    // Nested fields for company
-    { field: 'company.name', header: 'Company Name', frozen: false, color: false },
+    
 ];
+
+
+
 
 const getNestedValue = (obj, path) => {
     return path.split('.').reduce((value, key) => value && value[key], obj);
@@ -409,8 +409,8 @@ const Compan = ref([]);
 const compa = ref([]);
 const farmDefault = sessionStorage.getItem('accessSessionFarm');
 const companyDefault = sessionStorage.getItem('accessSessionCompany');
-const formDialogExportTitle = 'Export xxxxxxxxxx';
-const formDialogDeleteTitle = 'Delete xxxxxxxxxx';
+const formDialogExportTitle = 'Export records';
+const formDialogDeleteTitle = 'Delete records';
 const formDialogExport = ref(false);
 const formDialogDelete = ref(false);
 const toast = useToast();
@@ -441,67 +441,72 @@ const onRowSelect = (data) => {
     openDialogSettlement('patch_action');
     const row = listRowSelect.value[0];
     if (row) {
-      cardSections.value = [
-        {
-          title: 'General Information',
-          fields: {
-            // 'UUID': row.uuid,
-            'Code': row.code,
-            'Area (m2)': row.area_m2,
-            'Channel Average': row.channel_average,
-            'Zone': row.zone,
-          },
-          icon: 'pi pi-calendar',
-          bgColor: 'bg-green-100',
-          iconColor: 'text-green-500'
-        },
-        {
-          title: 'Location',
-          fields: {
-            'Latitude': row.latitude,
-            'Longitude': row.longitude,
-
-          },
-          icon: 'pi pi-tasks',
-          bgColor: 'bg-blue-100',
-          iconColor: 'text-blue-500'
-        },
-
-        {
-                    title: 'Farm Information',
-                    fields: {
-                        'Farm Name': row.farm?.name,
-                        'Farm Code': row.farm?.code,
-                        'Farm Website': row.farm?.url_path
-                    },
-                    icon: 'pi pi-building',
-                    bgColor: 'bg-teal-100',
-                    iconColor: 'text-teal-500'
-        },
-        {
-          title: 'Company Information',
-          fields: {
-            'Company Name': row.company?.name,
-            'Company Code': row.company?.code,
-            'Website': row.company?.url_path
-          },
-          icon: 'pi pi-building',
-          bgColor: 'bg-teal-100',
-          iconColor: 'text-teal-500'
-        },
-        {
-          title: 'Status',
-          fields: {
-            'Status': row.status?.name,
-            'Description': row.status?.description
-          },
-          icon: 'pi pi-info-circle',
-          bgColor: 'bg-gray-100',
-          iconColor: 'text-gray-500'
-        }
-      ];
+        cardSections.value = [
+            {
+                title: 'General Information',
+                fields: {
+                    'UUID': row.uuid,
+                    'Code': row.code,
+                    'Area (m²)': row.area_m2,
+                    'Channel Average': row.channel_average,
+                    'Zone': row.zone,
+                    'Latitude': row.latitude || 'Not available',
+                    'Longitude': row.longitude || 'Not available',
+                    'Created At': row.created_at,
+                    'Updated At': row.updated_at
+                },
+                icon: 'pi pi-calendar',
+                bgColor: 'bg-green-100',
+                iconColor: 'text-green-500'
+            },
+            {
+                title: 'Status Information',
+                fields: {
+                    'Status UUID': row.status?.uuid,
+                    'Name': row.status?.name,
+                    'Color': row.status?.color,
+                    'Description': row.status?.description,
+                    'Model': row.status?.model,
+                    'Created At': row.status?.created_at,
+                    'Updated At': row.status?.updated_at
+                },
+                icon: 'pi pi-info-circle',
+                bgColor: 'bg-gray-100',
+                iconColor: 'text-gray-500'
+            },
+            {
+                title: 'Farm Information',
+                fields: {
+                    'Farm UUID': row.farm?.uuid,
+                    'Name': row.farm?.name,
+                    'Code': row.farm?.code,
+                    'Created At': row.farm?.created_at,
+                    'Updated At': row.farm?.updated_at
+                },
+                icon: 'pi pi-map-marker',
+                bgColor: 'bg-teal-100',
+                iconColor: 'text-teal-500'
+            },
+            {
+                title: 'Company Information',
+                fields: {
+                    'Company UUID': row.company?.uuid,
+                    'Name': row.company?.name,
+                    'Code': row.company?.code,
+                    'Website': row.company?.url_path,
+                    'Logo File': row.company?.file_name,
+                    'Created At': row.company?.created_at,
+                    'Updated At': row.company?.updated_at
+                },
+                icon: 'pi pi-building',
+                bgColor: 'bg-blue-100',
+                iconColor: 'text-blue-500'
+            }
+        ];
     }
 };
+
+
 
 watch(listRowSelect, onRowSelect);
 
@@ -620,32 +625,32 @@ const openDialogSettlement = async (mode) => {
 
 const openDialog = (mode) => {
 
-    formDialogTitle.value = 
-    mode === 'new' ? 'Create new register' :
-    mode === 'edit' ? 'Edit new register' :
-    mode === 'clone' ? 'Clone new register' :
-    mode === 'patch' ? 'Patch new register' : '';
+formDialogTitle.value = 
+mode === 'new' ? 'Create new register' :
+mode === 'edit' ? 'Edit new register' :
+mode === 'clone' ? 'Clone new register' :
+mode === 'patch' ? 'Patch new register' : '';
 
-    if (mode === 'new') {
-        resetForm();
-    } else if (listRowSelect.value.length < 1) {
-        toast.add({ severity: 'error', summary: 'Error', detail: 'Select a record', life: 3000 });
-        return;
-    } else {
-        resetForm();
-        const { code, area_m2, channel_average, zone, latitude, longitude, farm, company } = listRowSelect.value[0];
-        codeV.value = code;
-        area_m2V.value = area_m2;
-        channel_averageV.value = channel_average;
-        zoneV.value = zone;
-        latitudeV.value = latitude;
-        longitudeV.value = longitude;
-        farmV.value = { name: farm.name, id: farm.uuid };
-        companyV.value = { name: company.name, id: company.uuid };
-    }
+if (mode === 'new') {
+    resetForm();
+} else if (listRowSelect.value.length < 1) {
+    toast.add({ severity: 'error', summary: 'Error', detail: 'Select a record', life: 3000 });
+    return;
+} else {
+    resetForm();
+    const { code, area_m2, channel_average, zone, latitude, longitude, farm, company } = listRowSelect.value[0];
+    codeV.value = code;
+    area_m2V.value = area_m2;
+    channel_averageV.value = channel_average;
+    zoneV.value = zone;
+    latitudeV.value = latitude;
+    longitudeV.value = longitude;
+    farmV.value = { name: farm.name, id: farm.uuid };
+    companyV.value = { name: company.name, id: company.uuid };
+}
 
-    formDialog.value = true;
-    state.value = mode;
+formDialog.value = true;
+state.value = mode;
 };
 
 
@@ -709,6 +714,8 @@ const actionRecordManager = handleSubmitNew(async (values) => {
         console.log('Error:', responseCRUD.value.error);
     }
 });
+
+
 
 
 const patchAction = async () => {
@@ -889,6 +896,8 @@ function formatXLS(events) {
     link.download = filename.value || 'export.xlsx';
     link.click();
 }
+
+
 
 
 const remove = (aver) => {

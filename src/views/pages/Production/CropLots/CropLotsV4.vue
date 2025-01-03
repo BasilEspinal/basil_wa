@@ -2,7 +2,7 @@
     <div>
 
         <div class="card">
-            <h1>{{ $t('menu.production.vehicles') }}</h1>
+            <h1>{{ $t('menu.production.cropLots') }}</h1>
 
             <Dialog v-model:visible="flagDialog" :style="{ width: '450px' }" :header="titleDialog" :modal="true">
             <label for="username" class="text-2xl font-medium w-6rem"> {{ messageDialog }} </label>
@@ -202,7 +202,7 @@
                 <div class="mb-3">
                     <div class="flex align-items-center gap-3 mb-1">
                         <label for="username" class="font-semibold w-6rem">Code :</label>
-                        <InputText id="username" v-model="codeV" class="flex-auto" placeholder="Introduce the value" autocomplete="off" v-bind="codeVProps" />
+                        <InputText id="username" v-model="codeV" class="flex-auto" autocomplete="off" v-bind="codeVProps" />
                     </div>
 
                     <FrontEndErrors :errorsNew="errorsNew" name="codeV" />
@@ -211,51 +211,71 @@
 
                 <div class="mb-3">
                     <div class="flex align-items-center gap-3 mb-1">
-                        <label for="vehicle_type" class="font-semibold w-6rem">Vehicle Type:</label>
-                        <InputText id="vehicle_type" v-model="vehicle_typeV" class="flex-auto" placeholder="Introduce the value" autocomplete="off" v-bind="vehicle_typePropsV" />
+                        <label for="area_m2V" class="font-semibold w-3">Area(m2):</label>
+                        <InputText id="area_m2V" v-model="area_m2V" class="flex-auto" autocomplete="off" v-bind="area_m2VProps" />
                     </div>
-
-                    <FrontEndErrors :errorsNew="errorsNew" name="vehicle_typeV" />
-                    <BackendErrors :name="errorResponseAPI?.errors?.vehicle_type"/>
+        
+                    <FrontEndErrors :errorsNew="errorsNew" name="area_m2V" />
+                    <BackendErrors :name="errorResponseAPI?.errors?.area_m2"/>
                 </div>
 
                 <div class="mb-3">
                     <div class="flex align-items-center gap-3 mb-1">
-                        <label for="quantity_available" class="font-semibold w-6rem">Quantity Available</label>
-                        <InputNumber id="quantity_available" v-model="quantity_availableV" class="flex-auto" placeholder="Introduce the value" inputId="minmax" :min="0" :max="1000" v-bind="quantity_availablePropsV" />
+                        <label for="channel_averageV" class="font-semibold">Channel avg:</label>
+                        <InputNumber id="channel_averageV" v-model="channel_averageV" class="flex-auto" inputId="minmax" :min="0" :max="1000" />
                     </div>
+                    <FrontEndErrors :errorsNew="errorsNew" name="channel_averageV" />
+                    <BackendErrors :name="errorResponseAPI?.errors?.channel_average"/>
 
-                    <FrontEndErrors :errorsNew="errorsNew" name="quantity_availableV" />
-                    <BackendErrors :name="errorResponseAPI?.errors?.quantity_available"/>
                 </div>
 
                 <div class="mb-3">
                     <div class="flex align-items-center gap-3 mb-1">
-                        <label for="weight_packing_type" class="font-semibold w-6rem">Weight Packing Type:</label>
-                        <InputText id="weight_packing_type" v-model="weight_packing_typeV" class="flex-auto" placeholder="Introduce the value" autocomplete="off" v-bind="weight_packing_typePropsV" />
+                        <label for="zoneV" class="font-semibold w-6rem">Zone :</label>
+                        <InputText id="zoneV" v-model="zoneV" class="flex-auto" autocomplete="off" v-bind="zonePropsV" />
                     </div>
 
-                    <FrontEndErrors :errorsNew="errorsNew" name="weight_packing_typeV" />
-                    <BackendErrors :name="errorResponseAPI?.errors?.weight_packing_type"/>
+                    <FrontEndErrors :errorsNew="errorsNew" name="zoneV" />
+                    <BackendErrors :name="errorResponseAPI?.errors?.zone"/>
                 </div>
 
                 <div class="mb-3">
-                    <div class="flex align-items-center">
+                    <div class="flex align-items-center gap-3 mb-1">
+                        <label for="latitudeV" class="font-semibold">Latitude:</label>
+                        <InputText id="latitudeV" v-model="latitudeV" class="flex-auto" autocomplete="off" v-bind="latitudeVProps" />
+                    </div>
+
+                    <FrontEndErrors :errorsNew="errorsNew" name="latitudeV" />
+                    <BackendErrors :name="errorResponseAPI?.errors?.latitude"/>
+                </div>
+
+                <div class="mb-3">
+                    <div class="flex align-items-center gap-3 mb-1">
+                        <label for="longitudeV" class="font-semibold">Longitude:</label>
+                        <InputText id="longitudeV" v-model="longitudeV" class="flex-auto" autocomplete="off" v-bind="longitudeVProps" />
+                    </div>
+                    <FrontEndErrors :errorsNew="errorsNew" name="longitudeV" />
+                    <BackendErrors :name="errorResponseAPI?.errors?.longitude"/>
+                </div>
+
+                <div class="mb-3">
+                    <div class="flex align-items-center gap-3 mb-1">
                         <label for="username" class="font-semibold w-3">Farm :</label>
-                        <AutoComplete v-model="farm" inputId="ac" :suggestions="farms" @complete="searchFarms" field="name" placeholder="Introduce the value" dropdown />
+                        <AutoComplete v-model="farmV" inputId="ac" class="flex-auto" :suggestions="farms" @complete="searchBranches" field="name" dropdown />
                     </div>
 
-                    <FrontEndErrors :errorsNew="errorsNew" name="farm" />
+                    <FrontEndErrors :errorsNew="errorsNew" name="farmV" />
                     <BackendErrors :name="errorResponseAPI?.errors?.farm_uuid"/>
                 </div>
                 <div class="mb-3">
-                    <div class="flex align-items-center">
+                    <div class="flex align-items-center gap-3 mb-1">
                         <label for="username" class="font-semibold w-3">Company:</label>
-                        <AutoComplete v-model="company" inputId="ac" :suggestions="compa" @complete="searchCompannies" field="name" placeholder="Introduce the value" dropdown />
+                        <AutoComplete v-model="companyV" inputId="ac" class="flex-auto" :suggestions="compa" @complete="searchCompanies" field="name" dropdown />
                     </div>
-                    <FrontEndErrors :errorsNew="errorsNew" name="company" />
+                    <FrontEndErrors :errorsNew="errorsNew" name="companyV" />
                     <BackendErrors :name="errorResponseAPI?.errors?.company"/>
                 </div>
+
 
                 <div class="flex justify-content-end gap-2 flex-auto">
                     <Button class="flex-auto" type="button" label="Cancel" severity="secondary"
@@ -346,38 +366,22 @@ const { getItems,itemsActions, messageDialog,titleDialog,status_id_Action,flagDi
 const { t } = useI18n();
 
 const dynamicColumns = [
-    { field: 'uuid', header: 'UUID', frozen: false, color: false },
+    // { field: 'uuid', header: 'UUID', frozen: false, color: false },
     { field: 'code', header: 'Code', frozen: false, color: false },
-    { field: 'vehicle_type', header: 'Vehicle Type', frozen: false, color: false },
-    { field: 'quantity_available', header: 'Quantity Available', frozen: false, color: false },
-    { field: 'weight_packing_type', header: 'Weight Packing Type', frozen: false, color: false },
-    // Nested fields for company
-    
-    { field: 'company.name', header: 'Company Name', frozen: false, color: false },
-    
-    // Nested fields for status
-    
-    { field: 'status.name', header: 'Status Name', frozen: false, color: true },
-    // Nested fields for farm
-    
-    { field: 'farm.name', header: 'Farm Name', frozen: false, color: false },
-    
-    // Nested fields for unitType
-    
-    { field: 'unitType.name', header: 'Unit Type Name', frozen: false, color: false },
-    
-    // Nested fields for packingType
-    
-    { field: 'packingType.name', header: 'Packing Type Name', frozen: false, color: false },
-    { field: 'packingType.code', header: 'Packing Type Code', frozen: false, color: false },
-    { field: 'packingType.code_dispatch', header: 'Packing Type Code Dispatch', frozen: false, color: false },
-    { field: 'packingType.weight_tare', header: 'Packing Type Weight Tare', frozen: false, color: false },
+    { field: 'area_m2', header: 'Area (m²)', frozen: false, color: false },
+    { field: 'channel_average', header: 'Channel Average', frozen: false, color: false },
+    { field: 'zone', header: 'Zone', frozen: false, color: false },
+    //{ field: 'latitude', header: 'Latitude', frozen: false, color: false },
+    //{ field: 'longitude', header: 'Longitude', frozen: false, color: false },
     { field: 'created_at', header: 'Created At', frozen: false, color: false },
     { field: 'updated_at', header: 'Updated At', frozen: false, color: false },
-    
+    // Nested fields for status
+    { field: 'status.name', header: 'Status Name', frozen: false, color: true },
+    // Nested fields for farm
+    { field: 'farm.name', header: 'Farm Name', frozen: false, color: false },
+    // Nested fields for company
+    { field: 'company.name', header: 'Company Name', frozen: false, color: false },
 ];
-
-
 
 const getNestedValue = (obj, path) => {
     return path.split('.').reduce((value, key) => value && value[key], obj);
@@ -395,7 +399,7 @@ const openForm = (mode) => {
 }
 
 
-let endpoint = ref('/vehicles'); //replace endpoint with your endpoint
+let endpoint = ref(`/crop_lots`);  //replace endpoint with your endpoint
 const crudService = CrudService(endpoint.value);
 const errorResponseAPI = crudService.getErrorResponse();
 const dataFromComponent = ref();
@@ -405,8 +409,8 @@ const Compan = ref([]);
 const compa = ref([]);
 const farmDefault = sessionStorage.getItem('accessSessionFarm');
 const companyDefault = sessionStorage.getItem('accessSessionCompany');
-const formDialogExportTitle = 'Export records';
-const formDialogDeleteTitle = 'Delete records';
+const formDialogExportTitle = 'Export xxxxxxxxxx';
+const formDialogDeleteTitle = 'Delete xxxxxxxxxx';
 const formDialogExport = ref(false);
 const formDialogDelete = ref(false);
 const toast = useToast();
@@ -437,98 +441,67 @@ const onRowSelect = (data) => {
     openDialogSettlement('patch_action');
     const row = listRowSelect.value[0];
     if (row) {
-        cardSections.value = [
-            {
-                title: 'General Information',
-                fields: {
-                    'UUID': row.uuid,
-                    'Code': row.code,
-                    'Vehicle Type': row.vehicle_type,
-                    'Quantity Available': row.quantity_available,
-                    'Weight Packing Type': row.weight_packing_type,
-                    'Created At': row.created_at,
-                    'Updated At': row.updated_at
-                },
-                icon: 'pi pi-calendar',
-                bgColor: 'bg-green-100',
-                iconColor: 'text-green-500'
-            },
-            {
-                title: 'Company Information',
-                fields: {
-                    'Company UUID': row.company?.uuid,
-                    'Name': row.company?.name,
-                    'Code': row.company?.code,
-                    'Website': row.company?.url_path,
-                    'Logo File': row.company?.file_name,
-                    'Created At': row.company?.created_at,
-                    'Updated At': row.company?.updated_at
-                },
-                icon: 'pi pi-building',
-                bgColor: 'bg-blue-100',
-                iconColor: 'text-blue-500'
-            },
-            {
-                title: 'Status Information',
-                fields: {
-                    'Status UUID': row.status?.uuid,
-                    'Name': row.status?.name,
-                    'Color': row.status?.color,
-                    'Description': row.status?.description,
-                    'Model': row.status?.model,
-                    'Created At': row.status?.created_at,
-                    'Updated At': row.status?.updated_at
-                },
-                icon: 'pi pi-info-circle',
-                bgColor: 'bg-gray-100',
-                iconColor: 'text-gray-500'
-            },
-            {
-                title: 'Farm Information',
-                fields: {
-                    'Farm UUID': row.farm?.uuid,
-                    'Name': row.farm?.name,
-                    'Code': row.farm?.code,
-                    'Created At': row.farm?.created_at,
-                    'Updated At': row.farm?.updated_at
-                },
-                icon: 'pi pi-map-marker',
-                bgColor: 'bg-teal-100',
-                iconColor: 'text-teal-500'
-            },
-            {
-                title: 'Unit Type Information',
-                fields: {
-                    'Unit Type UUID': row.unitType?.uuid,
-                    'Name': row.unitType?.name,
-                    'Code': row.unitType?.code,
-                    'Created At': row.unitType?.created_at,
-                    'Updated At': row.unitType?.updated_at
-                },
-                icon: 'pi pi-weight',
-                bgColor: 'bg-orange-100',
-                iconColor: 'text-orange-500'
-            },
-            {
-                title: 'Packing Type Information',
-                fields: {
-                    'Packing Type UUID': row.packingType?.uuid,
-                    'Name': row.packingType?.name,
-                    'Code': row.packingType?.code,
-                    'Code Dispatch': row.packingType?.code_dispatch,
-                    'Weight Tare': row.packingType?.weight_tare,
-                    'Created At': row.packingType?.created_at,
-                    'Updated At': row.packingType?.updated_at
-                },
-                icon: 'pi pi-box',
-                bgColor: 'bg-purple-100',
-                iconColor: 'text-purple-500'
-            }
-        ];
+      cardSections.value = [
+        {
+          title: 'General Information',
+          fields: {
+            // 'UUID': row.uuid,
+            'Code': row.code,
+            'Area (m2)': row.area_m2,
+            'Channel Average': row.channel_average,
+            'Zone': row.zone,
+          },
+          icon: 'pi pi-calendar',
+          bgColor: 'bg-green-100',
+          iconColor: 'text-green-500'
+        },
+        {
+          title: 'Location',
+          fields: {
+            'Latitude': row.latitude,
+            'Longitude': row.longitude,
+
+          },
+          icon: 'pi pi-tasks',
+          bgColor: 'bg-blue-100',
+          iconColor: 'text-blue-500'
+        },
+
+        {
+                    title: 'Farm Information',
+                    fields: {
+                        'Farm Name': row.farm?.name,
+                        'Farm Code': row.farm?.code,
+                        'Farm Website': row.farm?.url_path
+                    },
+                    icon: 'pi pi-building',
+                    bgColor: 'bg-teal-100',
+                    iconColor: 'text-teal-500'
+        },
+        {
+          title: 'Company Information',
+          fields: {
+            'Company Name': row.company?.name,
+            'Company Code': row.company?.code,
+            'Website': row.company?.url_path
+          },
+          icon: 'pi pi-building',
+          bgColor: 'bg-teal-100',
+          iconColor: 'text-teal-500'
+        },
+        {
+          title: 'Status',
+          fields: {
+            'Status': row.status?.name,
+            'Description': row.status?.description
+          },
+          icon: 'pi pi-info-circle',
+          bgColor: 'bg-gray-100',
+          iconColor: 'text-gray-500'
+        }
+      ];
     }
 };
-
-
 
 watch(listRowSelect, onRowSelect);
 
@@ -593,17 +566,19 @@ const {
 } = useForm({
     validationSchema: toTypedSchema(
         z.object({
-            codeV: z.string().min(4),
-            vehicle_typeV: z.string().min(2),
-            quantity_availableV: z.number().min(1),
-            weight_packing_typeV: z.string().min(1),
-            farm: z
+            codeV: z.string().min(2),
+            area_m2V: z.string().min(1),
+            channel_averageV: z.number().min(1).max(100),
+            zoneV: z.string().min(2),
+            latitudeV: z.string().optional(),
+            longitudeV: z.string().optional(),
+            farmV: z
                 .object({
                     name: z.string().min(4),
                     id: z.string().min(4)
                 })
                 .optional(),
-            company: z
+            companyV: z
                 .object({
                     name: z.string().min(4),
                     id: z.string().min(4)
@@ -614,11 +589,13 @@ const {
 });
 
 const [codeV, codeVProps] = defineField('codeV');
-const [vehicle_typeV, vehicle_typePropsV] = defineField('vehicle_typeV');
-const [quantity_availableV, quantity_availablePropsV] = defineField('quantity_availableV');
-const [weight_packing_typeV, weight_packing_typePropsV] = defineField('weight_packing_typeV');
-const [farm] = defineField('farm');
-const [company] = defineField('company');
+const [area_m2V, area_m2VProps] = defineField('area_m2V');
+const [channel_averageV, channel_averageVProps] = defineField('channel_averageV');
+const [zoneV, zonePropsV] = defineField('zoneV');
+const [latitudeV, latitudeVProps] = defineField('latitudeV');
+const [longitudeV, longitudeVProps] = defineField('longitudeV');
+const [farmV] = defineField('farmV');
+const [companyV] = defineField('companyV');
 
 const extenciones = ref([{ name: 'CSV' }, { name: 'XLS' }]);
 const optionsEsport = ref([{ name: 'ALL' }, { name: 'SELECTED' }]);
@@ -656,14 +633,15 @@ const openDialog = (mode) => {
         return;
     } else {
         resetForm();
-        const { code, company: empresa, farm: farmParameter, vehicle_type: vehicle_type, quantity_available: quantity_available, weight_packing_type: weight_packing_type } = listRowSelect.value[0];
-
+        const { code, area_m2, channel_average, zone, latitude, longitude, farm, company } = listRowSelect.value[0];
         codeV.value = code;
-        vehicle_typeV.value = vehicle_type;
-        quantity_availableV.value = quantity_available;
-        weight_packing_typeV.value = weight_packing_type;
-        company.value = { id: empresa.uuid, name: empresa.name };
-        farm.value = { id: farmParameter.uuid, name: farmParameter.name };
+        area_m2V.value = area_m2;
+        channel_averageV.value = channel_average;
+        zoneV.value = zone;
+        latitudeV.value = latitude;
+        longitudeV.value = longitude;
+        farmV.value = { name: farm.name, id: farm.uuid };
+        companyV.value = { name: company.name, id: company.uuid };
     }
 
     formDialog.value = true;
@@ -686,11 +664,14 @@ const actionRecordManager = handleSubmitNew(async (values) => {
     console.log(values)
     const data = {
         code: values.codeV,
-        vehicle_type: values.vehicle_typeV,
-        quantity_available: values.quantity_availableV,
-        weight_packing_type: values.weight_packing_typeV,
-        company_uuid: values.company ? values.company.id : companyDefault,
-        farm_uuid: values.farm ? values.farm.id : farmDefault
+        area_m2: values.area_m2V,
+        channel_average: values.channel_averageV,
+        zone: values.zoneV,
+        latitude: values.latitudeV,
+        longitude: values.longitudeV,
+        farm_uuid: values.farmV?values.farmV.id: farmDefault,
+        company_uuid: values.companyV?values.companyV.id: companyDefault
+
     };
     console.log('data:', data);
     if (state.value === 'new') {
@@ -908,8 +889,6 @@ function formatXLS(events) {
     link.download = filename.value || 'export.xlsx';
     link.click();
 }
-
-
 
 
 const remove = (aver) => {
