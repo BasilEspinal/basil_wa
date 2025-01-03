@@ -113,25 +113,67 @@
     </div>
 
     <div class="card">
-        <PickList v-model="products" listStyle="height:342px" dataKey="id" breakpoint="1400px">
-            <template #sourceheader> Available </template>
-            <template #targetheader> Selected </template>
+        <PickList 
+            v-model="dataPickList" 
+            :source="dataPickList[0]" 
+            :target="dataPickList[1]" 
+            listStyle="height:342px" 
+            dataKey="id" 
+            breakpoint="1400px"
+        >
+            <template #sourceheader>
+                <div class="flex gap-2">
+                    <div class="w-full justify-content-center">Available: {{ dataPickList[0].length }}</div>
+                    <div class="p-inputgroup">
+                        <InputText id="search" v-model="search" placeholder="Filter" size="small" />
+                    </div>
+                </div>    
+            </template>
+            <template #targetheader>
+                <div class="flex gap-2">
+                    <div class="w-full justify-content-center">Selected: {{ dataPickList[1].length }}</div>
+                    <div class="w-full justify-content-center">Max: {{ dataPickList[1].length }}</div>
+                    
+                </div>   
+                </template>
             <template #item="slotProps">
                 <div class="flex flex-wrap p-2 align-items-center gap-3">
-                    <img class="w-4rem flex-shrink-0 border-round" :src="'https://primefaces.org/cdn/primevue/images/product/' + slotProps.item.image" :alt="slotProps.item.name" />
+                    <!-- Conditional rendering for image or icon -->
+                    <div class="w-4rem flex-shrink-0 border-round">
+                        <img 
+                            v-if="slotProps.item.photo" 
+                            :src="slotProps.item.photo" 
+                            :alt="slotProps.item.full_name" 
+                            class="w-full border-round"
+                        />
+                        <i 
+                            v-else 
+                            class="pi pi-user" 
+                            style="font-size: 2rem; color: gray;" 
+                        ></i>
+                    </div>
                     <div class="flex-1 flex flex-column gap-2">
-                        <span class="font-bold">{{ slotProps.item.name }}</span>
+                        <span class="font-bold">{{ slotProps.item.full_name }}</span>
                         <div class="flex align-items-center gap-2">
                             <i class="pi pi-tag text-sm"></i>
-                            <span>{{ slotProps.item.category }}</span>
+                            <span>{{ slotProps.item.document }}</span>
                         </div>
                     </div>
-                    <span class="font-bold">$ {{ slotProps.item.price }}</span>
+                    <span class="font-bold">{{ slotProps.item.workCenter.code }}</span>
+
                 </div>
             </template>
         </PickList>
-    </div>
 
+        <!-- Display a message if PickList is empty -->
+        <div v-if="dataPickList[0].length === 0 && !loading" class="text-center">
+            <p>No available data</p>
+        </div>
+        <div v-if="loading" class="text-center">
+            <i class="pi pi-spin pi-spinner" style="font-size: 2rem"></i>
+            <p>Loading data...</p>
+        </div>
+    </div>
     <div class="p-fluid formgrid grid">
         <div class="field col-12">
             <label for="notas">Notas</label>
@@ -248,30 +290,66 @@ import * as XLSX from 'xlsx';
 import Summary from '@/components/Summary.vue';
 import ActionButton from '@/components/ActionButton.vue';
 import { useActions } from '@/composables/ActionButton.js';
-
+import { useAppMovilService } from '@/service/appMovil/appMovilService_V3';
+const { HOLIDAY, initData, TASK_OF_TYPE, getUsers, getDataTasksplanner,getInfoEmployees } = useAppMovilService();
 // import { ProductService } from '@/service/ProductService'
 
 //const crudService = CrudService(endpoint.value);
+let endpoint = ref('/employees'); //replace endpoint with your endpoint
+const crudService = CrudService(endpoint.value);
+
 const Works = ref([]);
 const works = ref([]);
-const products = ref([[
-        {"id": "1000","code": "f230fh0g3","name": "Empleado Uno","description": "Area Corta","image": "bamboo-watch.jpg","price": 65,"category": "Albaca Nufar","quantity": 24,"inventoryStatus": "282-259","rating": 5},
-        {"id": "1001","code": "nvklal433","name": "Empleado Dos","description": "Area Corta","image": "black-watch.jpg","price": 72,"category": "Albaca Nufar","quantity": 61,"inventoryStatus": "INSTOCK","rating": 4},
-        {"id": "1002","code": "zz21cz3c1","name": "Empleado Tres","description": "Area Selección","image": "blue-band.jpg","price": 79,"category": "Albaca Nufar","quantity": 2,"inventoryStatus": "LOWSTOCK","rating": 3},
-        {"id": "1003","code": "244wgerg2","name": "Empleado Cuatro","description": "Product Description","image": "blue-t-shirt.jpg","price": 29,"category": "Clothing","quantity": 25,"inventoryStatus": "INSTOCK","rating": 5},
-        {"id": "1004","code": "h456wer53","name": "Empleado Cinco","description": "Contratista","image": "bracelet.jpg","price": 150,"category": "DesHierba","quantity": 73,"inventoryStatus": "INSTOCK","rating": 4},
-        {"id": "1005","code": "av2231fwg","name": "Empleado Seis","description": "Contratistas","image": "brown-purse.jpg","price": 120,"category": "Accessories","quantity": 0,"inventoryStatus": "OUTOFSTOCK","rating": 4},
-        {"id": "1006","code": "bib36pfvm","name": "Empleado Ocho","description": "Pre Frio","image": "chakra-bracelet.jpg","price": 320,"category": "Accessories","quantity": 5,"inventoryStatus": "LOWSTOCK","rating": 3},
-        {"id": "1007","code": "mbvjkgip5","name": "Empleado Nueve","description": "Agronomía","image": "galaxy-earrings.jpg","price": 340,"category": "Accessories","quantity": 23,"inventoryStatus": "INSTOCK","rating": 5},
-        {"id": "1008","code": "vbb124btr","name": "Empleado Diez","description": "Empaque","image": "game-controller.jpg","price": 990,"category": "Electronics","quantity": 2,"inventoryStatus": "LOWSTOCK","rating": 4}
-    ],[]]);
+
+
+// Original dataPickList list
+// const originalAvailablePickList = ref([
+//     { document: "1000", code: "f230fh0g3", full_name: "Empleado Uno", description: "Area Corta", image: "bamboo-watch.jpg", price: 65, category: "Albaca Nufar", quantity: 24, inventoryStatus: "282-259", rating: 5 },
+//     { document: "1001", code: "nvklal433", full_name: "Empleado Dos", description: "Area Corta", image: "black-watch.jpg", price: 72, category: "Albaca Nufar", quantity: 61, inventoryStatus: "INSTOCK", rating: 4 },
+//     { document: "1002", code: "zz21cz3c1", full_name: "Empleado Tres", description: "Area Selección", image: "blue-band.jpg", price: 79, category: "Albaca Nufar", quantity: 2, inventoryStatus: "LOWSTOCK", rating: 3 },
+//     { document: "1003", code: "244wgerg2", full_name: "Empleado Cuatro", description: "Product Description", image: "blue-t-shirt.jpg", price: 29, category: "Clothing", quantity: 25, inventoryStatus: "INSTOCK", rating: 5 },
+//     { document: "1004", code: "h456wer53", full_name: "Empleado Cinco", description: "Contratista", image: "bracelet.jpg", price: 150, category: "DesHierba", quantity: 73, inventoryStatus: "INSTOCK", rating: 4 },
+//     { document: "1005", code: "av2231fwg", full_name: "Empleado Seis", description: "Contratistas", image: "brown-purse.jpg", price: 120, category: "Accessories", quantity: 0, inventoryStatus: "OUTOFSTOCK", rating: 4 },
+//     { document: "1006", code: "bib36pfvm", full_name: "Empleado Ocho", description: "Pre Frio", image: "chakra-bracelet.jpg", price: 320, category: "Accessories", quantity: 5, inventoryStatus: "LOWSTOCK", rating: 3 },
+//     { document: "1007", code: "mbvjkgip5", full_name: "Empleado Nueve", description: "Agronomía", image: "galaxy-earrings.jpg", price: 340, category: "Accessories", quantity: 23, inventoryStatus: "INSTOCK", rating: 5 },
+//     { document: "1008", code: "vbb124btr", full_name: "Empleado Diez", description: "Empaque", image: "game-controller.jpg", price: 990, category: "Electronics", quantity: 2, inventoryStatus: "LOWSTOCK", rating: 4 }
+// ]);
+
+const originalAvailablePickList = ref([]);
+
+// Products structure: [availableProducts, selectedProducts]
+const dataPickList = ref([originalAvailablePickList.value.slice(), []]);
+
+// Search term
+const search = ref('');
+
+watch(search, (newSearch) => {
+    const searchTerm = newSearch.toLowerCase();
+
+    // Filtrar la lista original basado en el término de búsqueda y elementos seleccionados
+    dataPickList.value[0] = originalAvailablePickList.value.filter(
+        (item) =>
+            item.full_name.toLowerCase().includes(searchTerm) && // Coincide con la búsqueda
+            !dataPickList.value[1].some((selected) => selected.id === item.id) // No está ya seleccionado
+            // ||
+        // element.description.toLowerCase().includes(searchTerm) ||
+        // element.category.toLowerCase().includes(searchTerm)
+    );
+});
+
+
 
 onMounted(async () => {
     await loadLazyData();
+    
 });
+
+
+
 onBeforeMount(() => {
     readAll();
-    // ProductService.getProductsSmall().then((data) => (products.value = [data, []]));
+    // ProductService.getProductsSmall().then((data) => (dataPickList.value = [data, []]));
+
 });
 const readAll = async () => {
     // const respWorks = await InitialDataService.getBranches();
@@ -290,11 +368,36 @@ const readAll = async () => {
         name: work.name
     }));
     works.value = [...Works.value];
+
+    loading.value = true; // Show loading indicator
+    try {
+        
+        const response = await getUsers();;
+        if (!response.ok) {
+            toast.add({ severity: 'error', detail: 'Error: ' + response.error, life: 3000 });
+            return;
+        }
+
+        // Populate originalAvailablePickList
+        originalAvailablePickList.value = response.data.data;
+// console.log('originalAvailablePickList', originalAvailablePickList.value);
+        // Update the dataPickList with the new data
+        dataPickList.value[0] = [...originalAvailablePickList.value];
+        dataPickList.value[1] = []; // Clear the target list
+    } catch (error) {
+        toast.add({ severity: 'error', detail: 'An error occurred while loading data.', life: 3000 });
+    } finally {
+        loading.value = false; // Hide loading indicator
+    }
+
+    
 };
 const mockTestData = [
     { uuid: 'bcae5809-faeb-4dad-ac08-274f2e1ff280', name: 'Labor 01', code: 'L01' },
     { uuid: '7f93c5c0-251f-456c-9c2c-4c38ab1f6e80', name: 'Labor 02', code: 'L02' }
 ];
+
+
 
 const searchBranches = (event) => {
     setTimeout(() => {
@@ -479,7 +582,7 @@ const items = ref(Array.from({ length: 100000 }, (_, i) => ({ label: `Item #${i}
 const { getAllResponseAPI, getAllResponseListAPI, totalRecordsResponseAPI, currentPageResponseAPI, linksResponseAPI, postResponseAPI, putResponseAPI, deleteResponseAPI, errorResponseAPI, dataResponseAPI, dataResponseListAPI, statusCode } =
     useDataAPI();
 
-let endpoint = ref('/planner_tasks'); //replace endpoint with your endpoint
+
 const loading = ref(false);
 
 const size = ref({ label: 'Normal', value: 'normal' });
