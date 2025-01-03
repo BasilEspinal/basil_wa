@@ -2,7 +2,7 @@
     <div>
 
         <div class="card">
-            <h1>{{ $t('menu.varieties') }}</h1>
+            <h1>{{ $t('menu.production.cropLots') }}</h1>
 
             <Dialog v-model:visible="flagDialog" :style="{ width: '450px' }" :header="titleDialog" :modal="true">
             <label for="username" class="text-2xl font-medium w-6rem"> {{ messageDialog }} </label>
@@ -201,34 +201,78 @@
             
                 <div class="mb-3">
                     <div class="flex align-items-center gap-3 mb-1">
-                        <label for="username" class="font-semibold w-6rem">Name :</label>
-                        <InputText id="username" v-model="name" class="flex-auto" autocomplete="off" v-bind="nameProps" />
-                    </div>
-                    <FrontEndErrors :errorsNew="errorsNew" name="name" />
-                    <BackendErrors :name="errorResponseAPI?.errors?.name"/>
-                </div>
-                <div class="mb-3">
-                    <div class="flex align-items-center gap-3 mb-1">
                         <label for="username" class="font-semibold w-6rem">Code :</label>
                         <InputText id="username" v-model="codeV" class="flex-auto" autocomplete="off" v-bind="codeVProps" />
                     </div>
+
                     <FrontEndErrors :errorsNew="errorsNew" name="codeV" />
                     <BackendErrors :name="errorResponseAPI?.errors?.code"/>
                 </div>
+
                 <div class="mb-3">
-                    <div class="flex align-items-center">
-                        <label for="username" class="font-semibold w-3">Farm :</label>
-                        <AutoComplete v-model="farm" inputId="ac" :suggestions="farms" @complete="searchBranches" field="name" dropdown />
+                    <div class="flex align-items-center gap-3 mb-1">
+                        <label for="area_m2V" class="font-semibold w-3">Area(m2):</label>
+                        <InputText id="area_m2V" v-model="area_m2V" class="flex-auto" autocomplete="off" v-bind="area_m2VProps" />
                     </div>
-                    <FrontEndErrors :errorsNew="errorsNew" name="farm" />
+        
+                    <FrontEndErrors :errorsNew="errorsNew" name="area_m2V" />
+                    <BackendErrors :name="errorResponseAPI?.errors?.area_m2"/>
+                </div>
+
+                <div class="mb-3">
+                    <div class="flex align-items-center gap-3 mb-1">
+                        <label for="channel_averageV" class="font-semibold">Channel avg:</label>
+                        <InputNumber id="channel_averageV" v-model="channel_averageV" class="flex-auto" inputId="minmax" :min="0" :max="1000" />
+                    </div>
+                    <FrontEndErrors :errorsNew="errorsNew" name="channel_averageV" />
+                    <BackendErrors :name="errorResponseAPI?.errors?.channel_average"/>
+
+                </div>
+
+                <div class="mb-3">
+                    <div class="flex align-items-center gap-3 mb-1">
+                        <label for="zoneV" class="font-semibold w-6rem">Zone :</label>
+                        <InputText id="zoneV" v-model="zoneV" class="flex-auto" autocomplete="off" v-bind="zonePropsV" />
+                    </div>
+
+                    <FrontEndErrors :errorsNew="errorsNew" name="zoneV" />
+                    <BackendErrors :name="errorResponseAPI?.errors?.zone"/>
+                </div>
+
+                <div class="mb-3">
+                    <div class="flex align-items-center gap-3 mb-1">
+                        <label for="latitudeV" class="font-semibold">Latitude:</label>
+                        <InputText id="latitudeV" v-model="latitudeV" class="flex-auto" autocomplete="off" v-bind="latitudeVProps" />
+                    </div>
+
+                    <FrontEndErrors :errorsNew="errorsNew" name="latitudeV" />
+                    <BackendErrors :name="errorResponseAPI?.errors?.latitude"/>
+                </div>
+
+                <div class="mb-3">
+                    <div class="flex align-items-center gap-3 mb-1">
+                        <label for="longitudeV" class="font-semibold">Longitude:</label>
+                        <InputText id="longitudeV" v-model="longitudeV" class="flex-auto" autocomplete="off" v-bind="longitudeVProps" />
+                    </div>
+                    <FrontEndErrors :errorsNew="errorsNew" name="longitudeV" />
+                    <BackendErrors :name="errorResponseAPI?.errors?.longitude"/>
+                </div>
+
+                <div class="mb-3">
+                    <div class="flex align-items-center gap-3 mb-1">
+                        <label for="username" class="font-semibold w-3">Farm :</label>
+                        <AutoComplete v-model="farmV" inputId="ac" class="flex-auto" :suggestions="farms" @complete="searchBranches" field="name" dropdown />
+                    </div>
+
+                    <FrontEndErrors :errorsNew="errorsNew" name="farmV" />
                     <BackendErrors :name="errorResponseAPI?.errors?.farm_uuid"/>
                 </div>
                 <div class="mb-3">
-                    <div class="flex align-items-center">
+                    <div class="flex align-items-center gap-3 mb-1">
                         <label for="username" class="font-semibold w-3">Company:</label>
-                        <AutoComplete v-model="company" inputId="ac" :suggestions="compa" @complete="searchCompanies" field="name" dropdown />
+                        <AutoComplete v-model="companyV" inputId="ac" class="flex-auto" :suggestions="compa" @complete="searchCompanies" field="name" dropdown />
                     </div>
-                    <FrontEndErrors :errorsNew="errorsNew" name="company" />
+                    <FrontEndErrors :errorsNew="errorsNew" name="companyV" />
                     <BackendErrors :name="errorResponseAPI?.errors?.company"/>
                 </div>
 
@@ -322,23 +366,22 @@ const { getItems,itemsActions, messageDialog,titleDialog,status_id_Action,flagDi
 const { t } = useI18n();
 
 const dynamicColumns = [
-    { field: 'name', header: 'Name', frozen: false, color: false },
+    // { field: 'uuid', header: 'UUID', frozen: false, color: false },
     { field: 'code', header: 'Code', frozen: false, color: false },
+    { field: 'area_m2', header: 'Area (m²)', frozen: false, color: false },
+    { field: 'channel_average', header: 'Channel Average', frozen: false, color: false },
+    { field: 'zone', header: 'Zone', frozen: false, color: false },
+    //{ field: 'latitude', header: 'Latitude', frozen: false, color: false },
+    //{ field: 'longitude', header: 'Longitude', frozen: false, color: false },
     { field: 'created_at', header: 'Created At', frozen: false, color: false },
     { field: 'updated_at', header: 'Updated At', frozen: false, color: false },
-    // Nested fields for farm
-    { field: 'farm.name', header: 'Farm Name', frozen: false, color: false },
-    { field: 'farm.code', header: 'Farm Code', frozen: false, color: false },
-    // Nested fields for company
-    { field: 'company.name', header: 'Company Name', frozen: false, color: false },
-    { field: 'company.code', header: 'Company Code', frozen: false, color: false },
-    { field: 'company.url_path', header: 'Company Website', frozen: false, color: false },
     // Nested fields for status
     { field: 'status.name', header: 'Status Name', frozen: false, color: true },
-    { field: 'status.description', header: 'Status Description', frozen: false, color: false }
+    // Nested fields for farm
+    { field: 'farm.name', header: 'Farm Name', frozen: false, color: false },
+    // Nested fields for company
+    { field: 'company.name', header: 'Company Name', frozen: false, color: false },
 ];
-
-
 
 const getNestedValue = (obj, path) => {
     return path.split('.').reduce((value, key) => value && value[key], obj);
@@ -356,7 +399,7 @@ const openForm = (mode) => {
 }
 
 
-let endpoint = ref(`/variants`);  //replace endpoint with your endpoint
+let endpoint = ref(`/crop_lots`);  //replace endpoint with your endpoint
 const crudService = CrudService(endpoint.value);
 const errorResponseAPI = crudService.getErrorResponse();
 const dataFromComponent = ref();
@@ -366,8 +409,8 @@ const Compan = ref([]);
 const compa = ref([]);
 const farmDefault = sessionStorage.getItem('accessSessionFarm');
 const companyDefault = sessionStorage.getItem('accessSessionCompany');
-const formDialogExportTitle = 'Export records';
-const formDialogDeleteTitle = 'Delete records';
+const formDialogExportTitle = 'Export xxxxxxxxxx';
+const formDialogDeleteTitle = 'Delete xxxxxxxxxx';
 const formDialogExport = ref(false);
 const formDialogDelete = ref(false);
 const toast = useToast();
@@ -398,64 +441,67 @@ const onRowSelect = (data) => {
     openDialogSettlement('patch_action');
     const row = listRowSelect.value[0];
     if (row) {
-        cardSections.value = [
-            {
-                title: 'General Information',
-                fields: {
-                    'Name': row.name,
-                    'Code': row.code,
-                    'Created At': row.created_at,
-                    'Updated At': row.updated_at,
-                },
-                icon: 'pi pi-calendar',
-                bgColor: 'bg-green-100',
-                iconColor: 'text-green-500'
-            },
-            {
-                title: 'Farm Information',
-                fields: {
-                    'Farm Name': row.farm?.name,
-                    'Farm Code': row.farm?.code,
-                    'Farm UUID': row.farm?.uuid,
-                    'Created At': row.farm?.created_at,
-                    'Updated At': row.farm?.updated_at,
-                },
-                icon: 'pi pi-map-marker',
-                bgColor: 'bg-teal-100',
-                iconColor: 'text-teal-500'
-            },
-            {
-                title: 'Company Information',
-                fields: {
-                    'Company Name': row.company?.name,
-                    'Company Code': row.company?.code,
-                    'Company Website': row.company?.url_path,
-                    'Logo File': row.company?.file_name,
-                    'Created At': row.company?.created_at,
-                    'Updated At': row.company?.updated_at,
-                },
-                icon: 'pi pi-building',
-                bgColor: 'bg-blue-100',
-                iconColor: 'text-blue-500'
-            },
-            {
-                title: 'Status Information',
-                fields: {
-                    'Status Name': row.status?.name,
-                    'Description': row.status?.description,
-                    'Color': row.status?.color,
-                    'Model': row.status?.model,
-                    'Created At': row.status?.created_at,
-                    'Updated At': row.status?.updated_at,
-                },
-                icon: 'pi pi-info-circle',
-                bgColor: 'bg-gray-100',
-                iconColor: 'text-gray-500'
-            }
-        ];
+      cardSections.value = [
+        {
+          title: 'General Information',
+          fields: {
+            // 'UUID': row.uuid,
+            'Code': row.code,
+            'Area (m2)': row.area_m2,
+            'Channel Average': row.channel_average,
+            'Zone': row.zone,
+          },
+          icon: 'pi pi-calendar',
+          bgColor: 'bg-green-100',
+          iconColor: 'text-green-500'
+        },
+        {
+          title: 'Location',
+          fields: {
+            'Latitude': row.latitude,
+            'Longitude': row.longitude,
+
+          },
+          icon: 'pi pi-tasks',
+          bgColor: 'bg-blue-100',
+          iconColor: 'text-blue-500'
+        },
+
+        {
+                    title: 'Farm Information',
+                    fields: {
+                        'Farm Name': row.farm?.name,
+                        'Farm Code': row.farm?.code,
+                        'Farm Website': row.farm?.url_path
+                    },
+                    icon: 'pi pi-building',
+                    bgColor: 'bg-teal-100',
+                    iconColor: 'text-teal-500'
+        },
+        {
+          title: 'Company Information',
+          fields: {
+            'Company Name': row.company?.name,
+            'Company Code': row.company?.code,
+            'Website': row.company?.url_path
+          },
+          icon: 'pi pi-building',
+          bgColor: 'bg-teal-100',
+          iconColor: 'text-teal-500'
+        },
+        {
+          title: 'Status',
+          fields: {
+            'Status': row.status?.name,
+            'Description': row.status?.description
+          },
+          icon: 'pi pi-info-circle',
+          bgColor: 'bg-gray-100',
+          iconColor: 'text-gray-500'
+        }
+      ];
     }
 };
-
 
 watch(listRowSelect, onRowSelect);
 
@@ -520,15 +566,19 @@ const {
 } = useForm({
     validationSchema: toTypedSchema(
         z.object({
-            name: z.string().min(4),
-            codeV: z.string().min(4),
-            farm: z
+            codeV: z.string().min(2),
+            area_m2V: z.string().min(1),
+            channel_averageV: z.number().min(1).max(100),
+            zoneV: z.string().min(2),
+            latitudeV: z.string().optional(),
+            longitudeV: z.string().optional(),
+            farmV: z
                 .object({
                     name: z.string().min(4),
                     id: z.string().min(4)
                 })
                 .optional(),
-            company: z
+            companyV: z
                 .object({
                     name: z.string().min(4),
                     id: z.string().min(4)
@@ -538,10 +588,14 @@ const {
     )
 });
 
-const [name, nameProps] = defineField('name');
 const [codeV, codeVProps] = defineField('codeV');
-const [farm] = defineField('farm');
-const [company] = defineField('company');
+const [area_m2V, area_m2VProps] = defineField('area_m2V');
+const [channel_averageV, channel_averageVProps] = defineField('channel_averageV');
+const [zoneV, zonePropsV] = defineField('zoneV');
+const [latitudeV, latitudeVProps] = defineField('latitudeV');
+const [longitudeV, longitudeVProps] = defineField('longitudeV');
+const [farmV] = defineField('farmV');
+const [companyV] = defineField('companyV');
 
 const extenciones = ref([{ name: 'CSV' }, { name: 'XLS' }]);
 const optionsEsport = ref([{ name: 'ALL' }, { name: 'SELECTED' }]);
@@ -579,12 +633,15 @@ const openDialog = (mode) => {
         return;
     } else {
         resetForm();
-        const { code, company: empresa, farm: finca, name: nombre } = listRowSelect.value[0];
-
-        name.value = nombre;
+        const { code, area_m2, channel_average, zone, latitude, longitude, farm, company } = listRowSelect.value[0];
         codeV.value = code;
-        company.value = { id: empresa.uuid, name: empresa.name };
-        farm.value = { id: finca.uuid, name: finca.name };
+        area_m2V.value = area_m2;
+        channel_averageV.value = channel_average;
+        zoneV.value = zone;
+        latitudeV.value = latitude;
+        longitudeV.value = longitude;
+        farmV.value = { name: farm.name, id: farm.uuid };
+        companyV.value = { name: company.name, id: company.uuid };
     }
 
     formDialog.value = true;
@@ -607,9 +664,14 @@ const actionRecordManager = handleSubmitNew(async (values) => {
     console.log(values)
     const data = {
         code: values.codeV,
-        name: values.name,
-        company_uuid: values.company ? values.company.id : companyDefault,
-        farm_uuid: values.farm ? values.farm.id : farmDefault
+        area_m2: values.area_m2V,
+        channel_average: values.channel_averageV,
+        zone: values.zoneV,
+        latitude: values.latitudeV,
+        longitude: values.longitudeV,
+        farm_uuid: values.farmV?values.farmV.id: farmDefault,
+        company_uuid: values.companyV?values.companyV.id: companyDefault
+
     };
     console.log('data:', data);
     if (state.value === 'new') {
@@ -827,8 +889,6 @@ function formatXLS(events) {
     link.download = filename.value || 'export.xlsx';
     link.click();
 }
-
-
 
 
 const remove = (aver) => {
