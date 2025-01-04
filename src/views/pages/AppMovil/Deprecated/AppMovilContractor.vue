@@ -47,6 +47,7 @@
     </template>
 
     <div class="card">
+        <pre>{{errorsNew}}</pre>
         <div class="p-fluid formgrid grid">
             <!-- Labores -->
             <div class="field col-12 md:col-3">
@@ -61,6 +62,8 @@
                         dropdown
                     />
                 </div>
+                <FrontEndErrors :errorsNew="errorsNew" name="work" />
+                <BackendErrors :name="errorResponseAPI?.errors?.work"/>
             </div>
 
             <!-- Cantidad empleados -->
@@ -82,6 +85,8 @@
                         </template>
                     </InputNumber>
                 </div>
+                <FrontEndErrors :errorsNew="errorsNew" name="quantityEmployees" />
+                <BackendErrors :name="errorResponseAPI?.errors?.quantityEmployees"/>
             </div>
 
             <!-- Precio total -->
@@ -90,11 +95,13 @@
                     <span class="p-float-label border-round border-1">
                         <span class="p-inputgroup font-bold ml-1">Precio total:</span>
                         <span class="p-float-label">
-                            <label class="font-bold" inputId="locale-us" locale="en-US" for="weightunit">{{ tarifa }}</label>
+                            <label class="font-bold" inputId="locale-us" locale="en-US" for="weightunit">{{ totalTarif }}</label>
                         </span>
                         <span class="p-inputgroup-addon">$</span>
                     </span>
                 </div>
+                <FrontEndErrors :errorsNew="errorsNew" name="totalTarif" />
+                <BackendErrors :name="errorResponseAPI?.errors?.totalTarif"/>
             </div>
 
             <!-- Precio unitario -->
@@ -103,13 +110,15 @@
                     <span class="p-float-label border-round border-1">
                         <span class="p-inputgroup font-bold ml-1">Precio unitario:</span>
                         <span class="p-float-label">
-                            <label class="font-bold" inputId="locale-us" locale="en-US" for="weightunit">{{ tarifa }}</label>
+                            <label class="font-bold" inputId="locale-us" locale="en-US" for="weightunit">{{ unitTarif.toFixed(2)}}</label>
                         </span>
                         <span class="p-inputgroup-addon">$</span>
                     </span>
                 </div>
             </div>
         </div>
+        <FrontEndErrors :errorsNew="errorsNew" name="unitTarif" />
+        <BackendErrors :name="errorResponseAPI?.errors?.unitTarif"/>
     </div>
 
     <div class="card">
@@ -177,12 +186,15 @@
     <div class="p-fluid formgrid grid">
         <div class="field col-12">
             <label for="notas">Notas</label>
-            <Textarea id="address" rows="2" />
+            <Textarea id="address" rows="2" v-model="notesV" />
         </div>
+        <FrontEndErrors :errorsNew="errorsNew" name="notesV" />
+        <BackendErrors :name="errorResponseAPI?.errors?.notesV"/>
     </div>
 
     <div class="field col-12">
-        <Button label="Enviar" icon="pi pi-check" />
+        
+        <Button class="flex-auto" type="button" label="Enviar" @click="actionRecordManager(state)" />
     </div>
 </TabPanel>
 
@@ -291,7 +303,7 @@ import Summary from '@/components/Summary.vue';
 import ActionButton from '@/components/ActionButton.vue';
 import { useActions } from '@/composables/ActionButton.js';
 import { useAppMovilService } from '@/service/appMovil/appMovilService_V3';
-const { HOLIDAY, initData, TASK_OF_TYPE, getUsers, getDataTasksplanner,getInfoEmployees } = useAppMovilService();
+const {getDonesWork, HOLIDAY, initData, TASK_OF_TYPE, getUsers, getDataTasksplanner,getInfoEmployees } = useAppMovilService();
 // import { ProductService } from '@/service/ProductService'
 
 //const crudService = CrudService(endpoint.value);
@@ -322,6 +334,14 @@ const dataPickList = ref([originalAvailablePickList.value.slice(), []]);
 
 // Search term
 const search = ref('');
+
+const totalTarif = ref(1000); // Total Tarif input from the user
+const unitTarif = computed(() => {
+    const length = dataPickList.value[1].length;
+    return length > 0 ? totalTarif.value / length : 0; // Avoid division by zero
+});
+const maxEmployees = 20; // Maximum number of employees
+
 
 watch(search, (newSearch) => {
     const searchTerm = newSearch.toLowerCase();
@@ -356,20 +376,22 @@ const readAll = async () => {
     // console.log('respWorks', respWorks);
     // if (!respWorks.ok) toast.add({ severity: 'error', detail: 'Error' + respWorks.error, life: 3000 });
     // Works.value = respWorks.data.data.map((work) => ({ id: work.uuid, name: work.name }));
-    const respWorks = process.env.NODE_ENV === 'development' ? { ok: true, data: { data: mockTestData } } : await InitialDataService.getBranches();
 
-    if (!respWorks.ok) {
-        toast.add({ severity: 'error', detail: `Error: ${respWorks.error}`, life: 3000 });
-        return;
-    }
 
-    Works.value = respWorks.data.data.map((work) => ({
-        id: work.uuid,
-        name: work.name
-    }));
-    works.value = [...Works.value];
+    // const respWorks = process.env.NODE_ENV === 'development' ? { ok: true, data: { data: mockTestData } } : await InitialDataService.getBranches();
 
-    loading.value = true; // Show loading indicator
+    // if (!respWorks.ok) {
+    //     toast.add({ severity: 'error', detail: `Error: ${respWorks.error}`, life: 3000 });
+    //     return;
+    // }
+
+    // Works.value = respWorks.data.data.map((work) => ({
+    //     id: work.uuid,
+    //     name: work.name
+    // }));
+    // works.value = [...Works.value];
+
+    // loading.value = true; // Show loading indicator
     try {
         
         const response = await getUsers();;
@@ -385,6 +407,23 @@ const readAll = async () => {
         dataPickList.value[0] = [...originalAvailablePickList.value];
         dataPickList.value[1] = []; // Clear the target list
     } catch (error) {
+        toast.add({ severity: 'error', detail: 'An error occurred while loading data.', life: 3000 });
+    } finally {
+        loading.value = false; // Hide loading indicator
+    }
+
+    try{
+        const responseDonesWork = await getDonesWork();
+        console.log('responseDonesWork', responseDonesWork);
+        if (!responseDonesWork.ok) {
+            toast.add({ severity: 'error', detail: 'Error: ' + response.error, life: 3000 });
+            return;
+        }
+        Works.value = responseDonesWork.data.data.map((element) => ({ id: element.uuid, name: element.name, work_type_tarif: element.work_type_tarif }));    
+        console.log('Works', Works.value);
+    
+    }
+    catch (error) {
         toast.add({ severity: 'error', detail: 'An error occurred while loading data.', life: 3000 });
     } finally {
         loading.value = false; // Hide loading indicator
@@ -419,7 +458,9 @@ const {
 } = useForm({
     initialValues: {
         work: null,
-        quantityEmployees: 0
+        quantityEmployees: 0,
+
+        notesV: ''
     },
     validationSchema: toTypedSchema(
         z.object({
@@ -429,13 +470,68 @@ const {
                     id: z.string().min(4)
                 })
                 .optional(),
-            quantityEmployees: z.number().min(1).max(20)
+            quantityEmployees: z.number().min(1).max(20),
+
+            notesV: z.string().min(4).max(100)
         })
     )
 });
 
 const [work] = defineField('work');
 const [quantityEmployees] = defineField('quantityEmployees');
+const [notesV] = defineField('notesV');
+
+
+const state = ref('new');
+const actionRecordManager = handleSubmitNew(async (values) => {
+    const responseCRUD = ref();
+    console.log('dataPickList', dataPickList.value[1]);
+    console.log(values)
+    const data = {
+        work: values.work,
+        quantityEmployees: values.quantityEmployees,
+        totalPrice: totalTarif.value,
+        unitPrices: unitTarif.value,
+        employees: dataPickList.value[1].map((item) => ({ id: item.id }))
+    };
+    
+    if (state.value === 'new') {
+        // responseCRUD.value = await crudService.create(data);
+        console.log('data:', data);
+    } else if (state.value === 'edit') {
+        const { uuid } = listRowSelect.value[0];
+        responseCRUD.value = await crudService.update(uuid, data);
+
+    } else if (state.value === 'clone') {
+        
+        responseCRUD.value = await crudService.create(data);
+    }
+    else if (state.value === 'patch') {
+        responseCRUD.value = await crudService.patch(uuid, data);
+    }
+ else {
+        const { uuid } = listRowSelect.value[0];
+    }
+
+    // Mostrar notificación y cerrar el diálogo si la operación fue exitosa
+    if (responseCRUD.value.ok) {
+    toast.add({
+        severity: responseCRUD.value.ok ? 'success' : 'error',
+        summary: state.value,
+        detail: responseCRUD.value.ok ? 'Done' : responseCRUD.value.error,
+        life: 3000
+    });
+    await loadingData();
+    
+        formDialog.value = false;
+        listRowSelect.value = [];
+        selectedRegisters.value = [];
+    }
+    else {
+        console.log('Error:', responseCRUD.value.error);
+    }
+});
+
 
 const selectedCountry = ref();
 const countries = ref([
