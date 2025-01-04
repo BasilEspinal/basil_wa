@@ -76,15 +76,7 @@ export const InitialDataService = {
         }
     },
 
-    async getTaskOfType() {
-        try {
-            const response =  await getRequest(`/task_of_types`);
-            return response;
-        } catch (error) {
-            console.error('Error fetching task of types:', error);
-            return errorResponseAPI(error); 
-        }
-    },
+
 
     async getVehicles() {
         try {
@@ -157,7 +149,49 @@ export const InitialDataService = {
             console.error('Error fetching gender)', error);
             return errorResponseAPI(error);
         }
-    }
+    },
+
+    async getTaskOfType() {
+        try {
+            const response =  await getRequest(`/task_of_types`);
+            return response;
+        } catch (error) {
+            console.error('Error fetching task of types:', error);
+            return errorResponseAPI(error); 
+        }
+    },
+
+    async getTaskTypeTarif() {
+        try {
+            const response = await getRequest('/lists/TaskTypeTarif');
+
+            return response;
+            
+        } catch (error) {
+            console.error('Error fetching task type tarif:', error);
+            return errorResponseAPI(error);
+        }
+    },
+
+    async getPackingTypes() {
+        try {
+            const response = await getRequest('/packing_types');
+           return response;
+        } catch (error) {
+            console.error('Error fetching packing types:', error);
+            return errorResponseAPI(error);
+        }
+    },
+
+    async getWorkTypeDay() {
+        try {
+            const response = await getRequest('/lists/workTypeDay');
+            return response;
+        } catch (error) {
+            console.error('Error fetching work type day:', error);
+            return errorResponseAPI(error);
+        }
+    },
 
 
 

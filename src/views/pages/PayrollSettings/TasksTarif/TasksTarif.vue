@@ -2,7 +2,7 @@
     <div>
 
         <div class="card">
-            <h1>{{ $t('menu.varieties') }}</h1>
+            <h1>{{ $t('menu.taskRates') }}</h1>
 
             <Dialog v-model:visible="flagDialog" :style="{ width: '450px' }" :header="titleDialog" :modal="true">
             <label for="username" class="text-2xl font-medium w-6rem"> {{ messageDialog }} </label>
@@ -198,38 +198,95 @@
                 </div>
             </Dialog>
             <Dialog v-model:visible="formDialog" modal :header="formDialogTitle" class="p-fluid text-center mx-auto">
-            
-                <div class="mb-3">
-                    <div class="flex align-items-center gap-3 mb-1">
-                        <label for="username" class="font-semibold w-6rem">Name :</label>
-                        <InputText id="username" v-model="name" class="flex-auto" autocomplete="off" v-bind="nameProps" />
+                <div class="grid">
+                    <div class="mb-3 col-12 md:col-12 lg:col-12">
+                        <div class="flex align-items-center gap-3 mb-1">
+                            <label for="taskType" class="font-semibold w-3"> Tasks Type </label>
+                            <AutoComplete v-model="taskTypeV" class="w-full" inputId="taskTypeV" :suggestions="taskOfType" @complete="searchTaskOfType" field="name" dropdown />
+                            <div class="flex-auto">
+                                <small id="username-help" :class="{ 'p-invalid text-red-700': errorsNew['taskType'] }">
+                                    {{ errorsNew.taskType }}
+                                </small>
+                                <BackendErrors :name="errorResponseAPI?.errors?.taskType" />
+                            </div>
+                        </div>
                     </div>
-                    <FrontEndErrors :errorsNew="errorsNew" name="name" />
-                    <BackendErrors :name="errorResponseAPI?.errors?.name"/>
-                </div>
-                <div class="mb-3">
-                    <div class="flex align-items-center gap-3 mb-1">
-                        <label for="username" class="font-semibold w-6rem">Code :</label>
-                        <InputText id="username" v-model="codeV" class="flex-auto" autocomplete="off" v-bind="codeVProps" />
+
+                    <div class="mb-3 col-12 md:col-12 lg:col-12">
+                        <div class="flex align-items-center gap-3 mb-1">
+                            <label for="type_date" class="font-semibold w-3"> Type Date </label>
+                            <Dropdown v-model="type_date" :options="typeDateList" optionLabel="name" class="w-full" inputId="type_date" v-bind="type_dateProps" />
+                            <div class="flex-auto">
+                                <small id="username-help" :class="{ 'p-invalid text-red-700 ': errorsNew['type_date'] }">
+                                    {{ errorsNew.type_date }}
+                                </small>
+                                <BackendErrors :name="errorResponseAPI?.errors?.work_type_day" />
+                            </div>
+                        </div>
                     </div>
-                    <FrontEndErrors :errorsNew="errorsNew" name="codeV" />
-                    <BackendErrors :name="errorResponseAPI?.errors?.code"/>
-                </div>
-                <div class="mb-3">
-                    <div class="flex align-items-center">
-                        <label for="username" class="font-semibold w-3">Farm :</label>
-                        <AutoComplete v-model="farm" inputId="ac" :suggestions="farms" @complete="searchBranches" field="name" dropdown />
+
+                    <div class="mb-3">
+                        <div class="flex align-items-center">
+                            <label for="username" class="font-semibold w-3">Task type tarif: </label>
+                            <AutoComplete v-model="task_type_tarifV" dropdown inputId="task_type_tarifV" :suggestions="task_type_tarifObject" field="name" @complete="searchTypeOfTaskTarif" placeholder="Busca o selecciona " />
+                        </div>
+                        <small id="username-help" :class="{ 'p-invalid text-red-700': errorsNew['task_type_tarifV'] }">
+                            {{ errorsNew.task_type_tarifV }}
+                        </small>
+                        <BackendErrors :name="errorResponseAPI?.errors?.type_price" />
                     </div>
-                    <FrontEndErrors :errorsNew="errorsNew" name="farm" />
-                    <BackendErrors :name="errorResponseAPI?.errors?.farm_uuid"/>
-                </div>
-                <div class="mb-3">
-                    <div class="flex align-items-center">
-                        <label for="username" class="font-semibold w-3">Company:</label>
-                        <AutoComplete v-model="company" inputId="ac" :suggestions="compa" @complete="searchCompanies" field="name" dropdown />
+
+                    <div class="mb-3 col-12 md:col-12 lg:col-12">
+                        <div class="flex align-items-center gap-3 mb-1">
+                            <label for="price_tarif" class="font-semibold w-3"> Price Tarif </label>
+                            <InputNumber v-model="price_tarif" class="w-full" inputId="price_tarif" mode="currency" currency="USD" locale="en-US" v-bind="price_tarifProps" />
+                            <div class="flex-auto">
+                                <small id="username-help" :class="{ 'p-invalid text-red-700': errorsNew['price_tarif'] }">
+                                    {{ errorsNew.price_tarif }}
+                                </small>
+                                <BackendErrors :name="errorResponseAPI?.errors?.price_tarif" />
+                            </div>
+                        </div>
                     </div>
-                    <FrontEndErrors :errorsNew="errorsNew" name="company" />
-                    <BackendErrors :name="errorResponseAPI?.errors?.company"/>
+
+                    <div class="mb-3 col-12 md:col-12 lg:col-12">
+                        <div class="flex align-items-center gap-3 mb-1">
+                            <label for="packingType" class="font-semibold w-3"> Packing Types </label>
+                            <AutoComplete v-model="packingType" class="w-full" inputId="packingType" :suggestions="packingTipesL" @complete="searchPackingType" field="name" dropdown />
+                            <div class="flex-auto">
+                                <small id="username-help" :class="{ 'p-invalid text-red-700': errorsNew['packingType'] }">
+                                    {{ errorsNew.packingType }}
+                                </small>
+                                <BackendErrors :name="errorResponseAPI?.errors?.packing_type" />
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="mb-3 col-12 md:col-12 lg:col-12">
+                        <div class="flex align-items-center gap-3 mb-1">
+                            <label for="farm" class="font-semibold w-3"> Farm </label>
+                            <AutoComplete v-model="farm" class="w-full" inputId="farm" :suggestions="farms" @complete="searchBranches" field="name" dropdown />
+                            <div class="flex-auto">
+                                <small id="username-help" :class="{ 'p-invalid text-red-700': errorsNew['farm'] }">
+                                    {{ errorsNew.farm }}
+                                </small>
+                                <BackendErrors :name="errorResponseAPI?.errors?.farm" />
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="mb-3 col-12 md:col-12 lg:col-12">
+                        <div class="flex align-items-center gap-3 mb-1">
+                            <label for="username" class="font-semibold w-3">Company:</label>
+                            <AutoComplete v-model="company" class="w-full" inputId="ac" :suggestions="compa" @complete="searchCompanies" field="name" dropdown />
+                        </div>
+                        <div class="flex-auto">
+                            <small id="username-help" :class="{ 'p-invalid text-red-700': errorsNew['company'] }">
+                                {{ errorsNew.company }}
+                            </small>
+                            <BackendErrors :name="errorResponseAPI?.errors?.company" />
+                        </div>
+                    </div>
                 </div>
 
 
@@ -375,6 +432,9 @@ const PackingTipeList = ref([]);
 const packingTipesL = ref([]);
 const TaskOfType = ref([]);
 const taskOfType = ref([]);
+const task_type_tarif = ref([]);
+const task_type_tarifObject = ref([]);
+const typeDateList = ref([]);
 
 
 const farmDefault = sessionStorage.getItem('accessSessionFarm');
@@ -516,10 +576,25 @@ const readAll = async () => {
     if (!respFarms.ok) toast.add({ severity: 'error', detail: 'Error' + respFarms.error, life: 3000 });
     Farms.value = respFarms.data.data.map((farm) => ({ id: farm.uuid, name: farm.name }));
 
-
     const respCompan = await InitialDataService.getCompanies();
     if (!respCompan.ok) toast.add({ severity: 'error', detail: 'Error' + respCompan.error, life: 3000 });
     Compan.value = respCompan.data.data.map((comp) => ({ id: comp.uuid, name: comp.name }));
+
+    const respTaskOfType = await InitialDataService.getTaskOfType();
+    if (!respTaskOfType.ok) toast.add({ severity: 'error', detail: 'Error' + respTaskOfType.error, life: 3000 });
+    TaskOfType.value = respTaskOfType.data.data.map((taskType) => ({ id: taskType.uuid, name: taskType.name }));
+    
+    const respTaskTypeTarif = await InitialDataService.getTaskTypeTarif();
+    if (!respTaskTypeTarif.ok) toast.add({ severity: 'error', detail: 'Error' + respTaskTypeTarif.error, life: 3000 });
+    task_type_tarif.value = respTaskTypeTarif.data.data.map((taskTypeTarif) => ({ id: taskTypeTarif.code, name: taskTypeTarif.label }));
+
+    const respPacking = await InitialDataService.getPackingTypes();
+    if (!respPacking.ok) toast.add({ severity: 'error', detail: 'Error' + respPacking.error, life: 3000 });
+    PackingTipeList.value = respPacking.data.data.map((comp) => ({ id: comp.uuid, name: comp.name }));
+
+    const resptypeDate = await InitialDataService.getWorkTypeDay();
+    if (!resptypeDate.ok) toast.add({ severity: 'error', detail: 'Error' + resptypeDate.error, life: 3000 });
+    typeDateList.value = resptypeDate.data.data.map((comp) => ({ id: comp.id, name: comp.label }));
 
 };
 const loadingData = async () => {
@@ -539,10 +614,24 @@ const {
     defineField,
     resetForm
 } = useForm({
+    initialValues: {
+        task_type_tarifV: { name: '', id: '' },
+        farm: { id: farmDefault, name: '' },
+        company: { id: companyDefault, name: '' }
+    },
     validationSchema: toTypedSchema(
         z.object({
-            name: z.string().min(4),
-            codeV: z.string().min(4),
+            type_date: z
+                .object({
+                    name: z.string().min(6)
+                })
+                .optional(),
+
+            task_type_tarifV: z.object({
+                name: z.string().min(4),
+                id: z.string().min(2)
+            }),
+            price_tarif: z.number(),
             farm: z
                 .object({
                     name: z.string().min(4),
@@ -554,15 +643,29 @@ const {
                     name: z.string().min(4),
                     id: z.string().min(4)
                 })
+                .optional(),
+            packingType: z
+                .object({
+                    name: z.string().min(4),
+                    id: z.string().min(4)
+                })
+                .optional(),
+            taskTypeV: z
+                .object({
+                    name: z.string().min(4),
+                    id: z.string().min(4)
+                })
                 .optional()
         })
     )
 });
-
-const [name, nameProps] = defineField('name');
-const [codeV, codeVProps] = defineField('codeV');
+const [type_date, type_dateProps] = defineField('type_date');
+const [price_tarif, price_tarifProps] = defineField('price_tarif');
 const [farm] = defineField('farm');
 const [company] = defineField('company');
+const [packingType] = defineField('packingType');
+const [taskTypeV] = defineField('taskTypeV');
+const [task_type_tarifV] = defineField('task_type_tarifV');
 
 const extenciones = ref([{ name: 'CSV' }, { name: 'XLS' }]);
 const optionsEsport = ref([{ name: 'ALL' }, { name: 'SELECTED' }]);
@@ -600,12 +703,16 @@ const openDialog = (mode) => {
         return;
     } else {
         resetForm();
-        const { code, company: empresa, farm: finca, name: nombre } = listRowSelect.value[0];
+        const { work_type_day, type_price: typePrice, price_tarif: priceTarif, taskType, packing_type, farm: Farm } = listRowSelect.value[0];
 
-        name.value = nombre;
-        codeV.value = code;
-        company.value = { id: empresa.uuid, name: empresa.name };
-        farm.value = { id: finca.uuid, name: finca.name };
+        type_date.value = { id: work_type_day, name: work_type_day };
+        task_type_tarifV.value = { id: typePrice, name: typePrice };
+        price_tarif.value = Number(priceTarif);
+        taskTypeV.value = { id: taskType.uuid, name: taskType.name };
+        packingType.value = { id: packing_type.uuid, name: packing_type.name };
+        farm.value = { id: Farm.uuid, name: Farm.name };
+        company.value = { id: Farm.uuid, name: Farm.name };
+        
     }
 
     formDialog.value = true;
@@ -627,10 +734,13 @@ const actionRecordManager = handleSubmitNew(async (values) => {
     console.log('listRowSelect:', listRowSelect.value);
     console.log(values)
     const data = {
-        code: values.codeV,
-        name: values.name,
-        company_uuid: values.company ? values.company.id : companyDefault,
-        farm_uuid: values.farm ? values.farm.id : farmDefault
+        work_type_day: values.type_date.name,
+        type_price: values.task_type_tarifV ? values.task_type_tarifV.id : 'No llega',
+        price_tarif: values.price_tarif,
+        tasks_of_type_uuid: values.taskTypeV ? values.taskTypeV.id : '',
+        packing_type_uuid: values.packingType ? values.packingType.id : '',
+        farm_uuid: values.farm ? values.farm.id : farmDefault,
+        company_uuid: values.company ? values.company.id : companyDefault
     };
     console.log('data:', data);
     if (state.value === 'new') {
@@ -883,6 +993,42 @@ const searchBranches = (event) => {
     }, 200);
 
 
+};
+
+const searchTypeOfTaskTarif = (event) => {
+    setTimeout(() => {
+        if (!event.query.trim().length) {
+            task_type_tarifObject.value = [...task_type_tarif.value];
+        } else {
+            task_type_tarifObject.value = task_type_tarif.value.filter((task) => {
+                return task.name.toLowerCase().startsWith(event.query.toLowerCase());
+            });
+        }
+    }, 200);
+};
+
+const searchTaskOfType = (event) => {
+    setTimeout(() => {
+        if (!event.query.trim().length) {
+            taskOfType.value = [...TaskOfType.value];
+        } else {
+            taskOfType.value = TaskOfType.value.filter((fram) => {
+                return fram.name.toLowerCase().startsWith(event.query.toLowerCase());
+            });
+        }
+    }, 200);
+};
+
+const searchPackingType = (event) => {
+    setTimeout(() => {
+        if (!event.query.trim().length) {
+            packingTipesL.value = [...PackingTipeList.value];
+        } else {
+            packingTipesL.value = PackingTipeList.value.filter((fram) => {
+                return fram.name.toLowerCase().startsWith(event.query.toLowerCase());
+            });
+        }
+    }, 200);
 };
 
 </script>
