@@ -161,6 +161,17 @@ export const InitialDataService = {
         }
     },
 
+    async getDoneTypes() {
+        try {
+            const response =  await getRequest(`/done_types`);
+            return response;
+        } catch (error) {
+            console.error('Error fetching task of types:', error);
+            return errorResponseAPI(error); 
+        }
+    },
+
+
     async getTaskTypeTarif() {
         try {
             const response = await getRequest('/lists/TaskTypeTarif');
