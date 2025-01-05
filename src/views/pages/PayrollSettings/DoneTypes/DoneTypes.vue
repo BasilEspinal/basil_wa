@@ -512,10 +512,12 @@ const readAll = async () => {
     if (!respCompan.ok) toast.add({ severity: 'error', detail: 'Error' + respCompan.error, life: 3000 });
     Compan.value = respCompan.data.data.map((comp) => ({ id: comp.uuid, name: comp.name }));
 
-    // const respWorkTypeTarif = await InitialDataService.getDoneTypes();
-    const respWorkTypeTarif = work_type_tarif_list.value;
+    
+    // const respWorkTypeTarif = work_type_tarif_list.value;
+    const respWorkTypeTarif = await InitialDataService.getWorkTypeTarif()
+    console.log('respWorkTypeTarif:', respWorkTypeTarif);
     if (!respWorkTypeTarif.ok) toast.add({ severity: 'error', detail: 'Error' + respWorkTypeTarif.error, life: 3000 });
-    Work_type_tarif.value = respWorkTypeTarif.map((element) => ({ id: element.id, name: element.name }));
+    Work_type_tarif.value = respWorkTypeTarif.data.data.map((element) => ({ id: element.id, name: element.label }));
 
 
 };
@@ -889,9 +891,9 @@ const searchBranches = (event) => {
 const searchWorkTypeTarif = (event) => {
     setTimeout(() => {
         if (!event.query.trim().length) {
-            work_type_tarif.value = [...work_type_tarif_list.value];
+            work_type_tarif.value = [...Work_type_tarif.value];
         } else {
-            work_type_tarif.value = work_type_tarif_list.value.filter((fram) => {
+            work_type_tarif.value = Work_type_tarif.value.filter((fram) => {
                 return fram.name.toLowerCase().startsWith(event.query.toLowerCase());
             });
         }

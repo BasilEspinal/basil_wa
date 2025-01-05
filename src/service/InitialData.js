@@ -204,6 +204,16 @@ export const InitialDataService = {
         }
     },
 
+    async getWorkTypeTarif() {
+        try {
+            const response = await getRequest('/lists/workTypeTarif');
+            return response;
+        } catch (error) {
+            console.error('Error fetching work type tarif:', error);
+            return errorResponseAPI(error);
+        }
+    }
+
 
 
 

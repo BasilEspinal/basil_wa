@@ -328,14 +328,13 @@ const dynamicColumns = [
     { field: 'updated_at', header: 'Updated At', frozen: false, color: false },
     // Nested fields for farm
     { field: 'farm.name', header: 'Farm Name', frozen: false, color: false },
-    { field: 'farm.code', header: 'Farm Code', frozen: false, color: false },
+    
     // Nested fields for company
     { field: 'company.name', header: 'Company Name', frozen: false, color: false },
-    { field: 'company.code', header: 'Company Code', frozen: false, color: false },
-    { field: 'company.url_path', header: 'Company Website', frozen: false, color: false },
+    
     // Nested fields for status
     { field: 'status.name', header: 'Status Name', frozen: false, color: true },
-    { field: 'status.description', header: 'Status Description', frozen: false, color: false }
+    
 ];
 
 
