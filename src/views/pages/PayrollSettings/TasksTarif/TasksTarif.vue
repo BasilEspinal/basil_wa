@@ -383,11 +383,7 @@ const dynamicColumns = [
     { field: 'work_type_day', header: 'Work Type Day', frozen: false, color: false },
     { field: 'type_price', header: 'Type Price', frozen: false, color: false },
     { field: 'price_tarif', header: 'Price Tarif', frozen: false, color: false },
-    // Nested fields for taskType
-    
     { field: 'taskType.name', header: 'Task Type Name', frozen: false, color: false },
-    // Nested fields for packing_type
-    
     { field: 'packing_type.name', header: 'Packing Type Name', frozen: false, color: false },
     { field: 'packing_type.code_dispatch', header: 'Code Dispatch', frozen: false, color: false },
     { field: 'packing_type.weight_tare', header: 'Weight Tare', frozen: false, color: false },
