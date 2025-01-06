@@ -397,6 +397,7 @@ const dynamicColumns = [
     
     // Nested fields for farm
     { field: 'farm.name', header: 'Farm Name', frozen: false, color: false },
+    { field: 'status.name', header: 'Status Name', frozen: false, color: true },
     
 ];
 
