@@ -154,7 +154,7 @@ const searchPackingType = (event) => {
             </span>
             <!-- <FrontEndErrors :errorsNew="errorsNew" name="selected_dones_work" /> -->
             <!--Modificar acá-->
-            <BackendErrors :name="errorResponseAPI?.errors?.crop_lot_code" />
+            <BackendErrors :name="errorResponseAPI?.errors?.done_of_type_uuid" />
 
             
         </div>
