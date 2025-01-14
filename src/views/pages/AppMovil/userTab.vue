@@ -50,6 +50,8 @@ const {
         name: props.data?.packing_type?.name || '',
         uuid: props.data?.packing_type?.uuid || ''
         },
+
+        
         selected_crops_lots: { code: ''},
         select_tasks_type: {
             code: "",
