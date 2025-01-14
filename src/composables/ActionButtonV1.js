@@ -4,7 +4,6 @@ import useData from '@/composables/DataAPI/FetchDataAPICopy.js';
 const { getRequest, errorResponseAPI } = useData();
 
 export function useActions(endpoint) {
-    
     console.log(endpoint);
     const titleDialog = ref('Action');
     const messageDialog = ref('');
@@ -14,41 +13,42 @@ export function useActions(endpoint) {
     
     const getItems = async (id) => {
         try {
+            
+            const response = await getRequest(`${endpoint}`);
             console.log(id)
-            const response = await getRequest(`${endpoint}/${id}`);
             console.log(response);
             itemsActions.value = [];
-            
             // Check if response data is valid and contains the expected data structure
             if (response && response.data && Array.isArray(response.data.data) && response.data.data.length > 0) {
-                // Sort the data array by priority before processing
-                const sortedData = response.data.data.sort((a, b) => a.priority - b.priority);
-                
-                // Populate itemsActions with sorted data
-                sortedData.forEach(element => {
-                    if (element.flow_status === true) {
-                    itemsActions.value.push({
-                        label: element.workflow_status.name,
-                        icon: 'pi pi-refresh',
-                        command: () => {
-                            titleDialog.value = `${element.workflow_status.description} Action`;
-                            messageDialog.value = `Are you sure you want to mark this action as ${element.workflow_status.name}?`;
-                            status_id_Action.value = element.flow_statuses_id;
-                            flagDialog.value = true; 
-                        }
-                    });
-                }
+                response.data.data.forEach(element => {
+                    
+                    //if (element.flow_status === !true) {
+                        
+                        itemsActions.value.push({
+                            label: element.workflow_status.name,
+                            icon: 'pi pi-refresh',
+                            command: () => {
+                                titleDialog.value = `${element.description} Action`;
+                                messageDialog.value = `Are you sure you want to mark this action as ${element.name}?`;
+                                status_id_Action.value = element.id;
+                                flagDialog.value = true; 
+                            }
+                        });
+                    //}
+                    
                 });
             } else {
+                
                 console.log('No data returned from API');
             }
             console.log(itemsActions.value);
+    
             return response.data;
         } catch (error) {
+            
             errorResponseAPI(error);
         }
     };
-    
     
     
 
