@@ -3,8 +3,6 @@ name: Docker Image CI/CD
 on:
   push:
     branches: [ "main", "staging", "develop_basil" ]
-  pull_request:
-    branches: [ "main", "staging", "develop_basil" ]
 
 jobs:
   push_to_registry:
@@ -28,7 +26,11 @@ jobs:
           images: byepesg/agro_online
           tags: |
             type=ref,event=branch
-            type=raw,value=latest
+
+      - name: Debug Metadata
+        run: |
+          echo "Tags: ${{ steps.meta.outputs.tags }}"
+          echo "Labels: ${{ steps.meta.outputs.labels }}"
 
       - name: Build and push Docker image
         uses: docker/build-push-action@v4
@@ -57,7 +59,7 @@ jobs:
           docker pull byepesg/agro_online:development &&
           docker stop agro_online_dev || true &&
           docker rm agro_online_dev || true &&
-          docker run -d -p 9002:8080 --name agro_online_dev byepesg/agro_online:development"
+          docker run -d --restart unless-stopped -p 9002:8080 --name agro_online_dev byepesg/agro_online:development"
 
   deploy_staging:
     name: Deploy to Staging Environment
@@ -78,7 +80,7 @@ jobs:
           docker pull byepesg/agro_online:staging &&
           docker stop agro_online_stage || true &&
           docker rm agro_online_stage || true &&
-          docker run -d -p 9003:8080 --name agro_online_stage byepesg/agro_online:staging"
+          docker run -d --restart unless-stopped -p 9003:8080 --name agro_online_stage byepesg/agro_online:staging"
 
   deploy_production:
     name: Deploy to Production Environment
@@ -99,4 +101,4 @@ jobs:
           docker pull byepesg/agro_online:main &&
           docker stop agro_online_prod || true &&
           docker rm agro_online_prod || true &&
-          docker run -d -p 9001:8080 --name agro_online_prod byepesg/agro_online:main"
+          docker run -d --restart unless-stopped -p 9001:8080 --name agro_online_prod byepesg/agro_online:main"
