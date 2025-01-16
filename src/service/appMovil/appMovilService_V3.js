@@ -214,6 +214,7 @@ export function useAppMovilService() {
         getShippingsDelivered,
         dataInfoUser,
         getInfoEmployees,
-        getInfoEmployeesById
+        getInfoEmployeesById,
+        error
     };
 }
