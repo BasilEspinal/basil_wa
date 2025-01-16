@@ -521,7 +521,6 @@ const readAll = async () => {
     if (!respWorkTypeTarif.ok) toast.add({ severity: 'error', detail: 'Error' + respWorkTypeTarif.error, life: 3000 });
     Work_type_tarif.value = respWorkTypeTarif.data.data.map((element) => ({ id: element.id, name: element.label }));
 
-
 };
 const loadingData = async () => {
     //const response = await getRequest(endpoint.value);
