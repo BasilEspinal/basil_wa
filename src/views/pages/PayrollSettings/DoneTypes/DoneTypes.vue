@@ -514,6 +514,8 @@ const readAll = async () => {
     if (!respCompan.ok) toast.add({ severity: 'error', detail: 'Error' + respCompan.error, life: 3000 });
     Compan.value = respCompan.data.data.map((comp) => ({ id: comp.uuid, name: comp.name }));
 
+
+
     
     // const respWorkTypeTarif = work_type_tarif_list.value;
     const respWorkTypeTarif = await InitialDataService.getWorkTypeTarif()
