@@ -18,6 +18,7 @@ onMounted(() => {
 <template>
   <div>
     <small id="username-help" :class="{ 'p-invalid text-red-500': props.name }">
+      
         <div v-if="props.name">
             <div v-for="(error, index) in props.name" :key="index">
                 {{ error }}

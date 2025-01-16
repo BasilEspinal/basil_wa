@@ -1,19 +1,21 @@
 <script setup>
-import { ref, onMounted, watch } from 'vue';
+import BackendErrors from '@/layout/composables/Errors/BackendErrors.vue';
+import FrontEndErrors from '@/layout/composables/Errors/FrontendErrors.vue';
+import { CrudService } from '@/service/CRUD/CrudService';
+import { ref, onMounted, watch,computed } from 'vue';
 import { useToast } from 'primevue/usetoast';
 import { useAppMovilService } from '../../../service/appMovil/appMovilService_V3';
 import useData from '@/composables/DataAPI/FetchDataAPICopy.js';
-import { CrudService } from '@/service/CRUD/CrudService';
+
 // const { errorResponseAPI } = useData();
-import BackendErrors from '@/layout/composables/Errors/BackendErrors.vue';
-import FrontEndErrors from '@/layout/composables/Errors/FrontendErrors.vue';
+
 import { useI18n } from 'vue-i18n';
 import { z } from 'zod';
 import { useForm } from 'vee-validate';
 import { toTypedSchema } from '@vee-validate/zod';
 
 const toast = useToast();
-const { getTarif, getDonesWork, postDailyReport, WORK_CENTER, SUPERVISO_ID, LOTES } = useAppMovilService();
+const { error,getTarif, getDonesWork, postDailyReport, WORK_CENTER, SUPERVISO_ID, LOTES } = useAppMovilService();
 //const selected_quanty = ref(null);
 const Total = ref(null);
 //const select_tasks_type = ref(null);
@@ -30,6 +32,7 @@ const lotes = ref({});
 const packings_type = ref([]);
 const Packings_type = ref([]);
 
+
 const props = defineProps({
     slotProps: { type: Object },
     Lote: { type: Array },
@@ -38,67 +41,101 @@ const props = defineProps({
     tipoActividad: { type: Array }
 });
 
+
+const isHoraExtra = ref(false)
+// Initialize select_tasks_type first
+const select_tasks_type = ref({ code: '', label: '', subActivity: null, enPoint: null }); // Default empty object
+
+// Define the validation schema
+const validationSchema = computed(() => {
+   
+
+    return z.object({
+        selected_crops_lots: z.object({
+            code: z.string().min(1, 'Code is required'),
+        }),
+        select_tasks_type: z.object({
+            code: z.string().min(1, 'Task code is required'),
+            label: z.string().min(1, 'Task label is required!'),
+            subActivity: z.any().optional().nullable(),
+            enPoint: z.any().optional().nullable(),
+        }),
+        selected_quanty: z
+            .number()
+            .min(1, 'Quantity must be at least 1')
+            .max(1000, 'Quantity must be less than or equal to 1000'),
+        Notas: z.string().optional(),
+        selected_dones_work: z
+        .object({
+            name: z.string().optional(),
+            id: z.number().optional(),
+            uuid: z.string().optional(),
+            work_type_tarif: z.string().optional(),
+            code: z.string().optional(),
+        })
+        .refine(
+            (val) => {
+                if (isHoraExtra.value) {
+                    // If `isHoraExtra` is true, name and id must be valid
+                    return (
+                        val.name?.length >= 2 &&
+                        typeof val.id === 'number' &&
+                        val.id > 0
+                    );
+                }
+                // If `isHoraExtra` is false, no validation required
+                return true;
+            },
+            {
+                message: isHoraExtra.value
+                    ? 'Name must be at least 2 characters and ID must be greater than 0 for HoraExtra'
+                    : '',
+            }
+        ),
+        packing_typeV: z.object({
+            name: z.string().min(1, 'Packing type name is required'),
+            uuid: z.string().min(1, 'Packing type ID is required'),
+        }),
+    });
+});
+
+
+// Use the computed schema
 const {
     handleSubmit: handleSubmitNew,
     errors: errorsNew,
     defineField,
-    resetForm
-} = useForm(
-    {
+    resetForm,
+} = useForm({
     initialValues: {
-        packing_typeV: {
-        name: props.data?.packing_type?.name || '',
-        uuid: props.data?.packing_type?.uuid || ''
-        },
-
-        
-        selected_crops_lots: { code: ''},
-        select_tasks_type: {
-            code: "",
-            label: "",
-            subActivity: null,
-            enPoint: "" 
-        },
-        selected_quanty: 0,
-        Notas: null,
-        selected_dones_work: null,
-        packing_typeV: { name: '', id: '' }
+        selected_crops_lots: { code: '' },
+        select_tasks_type: { code: '', label: '', subActivity: null, enPoint: null },
+        selected_quanty: 1,
+        Notas: '',
+        selected_dones_work: { id: 0, name: '', uuid: '', work_type_tarif: '', code: '' },
+        packing_typeV: { name: '', uuid: '' },
     },
-    validationSchema: toTypedSchema(
-        z.object({
-            selected_crops_lots: z.object({
-                name: z.string().min(4)
-            }),
-            select_tasks_type: z.object({
-                code: z.string().min(4),
-                label: z.string().min(4) ,  
-                subActivity: z.optional(),
-                enPoint: z.optional(),              
-
-            }),
-            selected_quanty: z.number().min(1).max(1000),
-            Notas: z.string().optional(),
-            selected_dones_work: z.object({
-                name: z.string().min(4),
-                id: z.string().min(4)
-            }),
-            packing_typeV: z.object({
-                name: z.string().min(4, { message: 'Packing type name is required' }),
-                id: z.string().min(4, { message: 'Packing type ID is required' })
-            })
-        })
-    )
+    validationSchema: toTypedSchema(validationSchema.value),
 });
 
-// Define the new fields
+// Initialize other fields after defining the validation schema
 const [selected_crops_lots] = defineField('selected_crops_lots');
-const [select_tasks_type] = defineField('select_tasks_type');
 const [selected_quanty] = defineField('selected_quanty');
 const [Notas] = defineField('Notas');
 const [selected_dones_work] = defineField('selected_dones_work');
 const [packing_typeV] = defineField('packing_typeV');
+const [select_tasks_type_field] = defineField('select_tasks_type'); // This links the form field with the schema
 
-
+watch(select_tasks_type,()=>{
+    //select_tasks_type_field.value=select_tasks_type.value;
+    if (select_tasks_type.value.label ==='HoraExtra'){
+        isHoraExtra.value=true
+    }
+    else{
+        isHoraExtra.value= false
+    }
+    resetForm()
+})
 
 const crudService = CrudService('/packing_types');
 const errorResponseAPI = crudService.getErrorResponse();
@@ -151,18 +188,19 @@ const sendDailyReport = handleSubmitNew(async (values) => {
     tasksTypeCode: values.select_tasks_type?.code,
     quantity: values.selected_quanty,
     notas: values.Notas,
-    tarifXCautity: selected_quanty.value * tarifa.value,
+    tarifXCautity: values.selected_quanty * tarifa.value,
     userId: props.slotProps.uuid,
     labor: values.selected_dones_work?.uuid,
     packing_type: values.packing_typeV?.uuid
-};
+    };
 console.log(data)
 
     console.log("data", data);
     const restp = await postDailyReport(data);
+    console.log(restp)
     
     
-    toast.add({ severity: restp.ok ? 'success' : 'error', summary: 'Create', detail: restp.ok ? 'Creado' : restp.error, life: 3000 });
+    toast.add({ severity: restp.ok ? 'success' : 'error', summary: 'Create', detail: restp.ok ? 'Creado' : restp.error, life: 10000 });
     //if (restp.ok) await clearFields();
     if (restp.ok) {
         emit('update-grandparent-data');
@@ -206,13 +244,19 @@ const searchPackingType = (event) => {
 </script>
 
 <template>
+    <!-- <pre>{{ errorsNew }}</pre>
+    <pre>isHoraExtra: {{isHoraExtra}}</pre> -->
     <div class="grid p-fluid mt-3">
+        
         <div class="field col-12 md:col-4">
-            <pre>{{ errorsNew }}</pre>
+            
+            
+            <!-- <pre>{{ selected_dones_work }}</pre> -->
             <span class="p-float-label">
                 <Dropdown v-model="select_tasks_type" :options="tipoActividad" filter optionLabel="label" />
                 <label class="font-bold" for="task_type">{{ t('appmovil.tipoActividad') }}</label>
-                <pre>{{ select_tasks_type }}</pre>
+                <!-- <pre>{{ select_tasks_type.code }}</pre>
+                <pre>{{select_tasks_type_field}}</pre> -->
             </span>
             <FrontEndErrors :errorsNew="errorsNew" name="select_tasks_type" />
             <BackendErrors :name="errorResponseAPI?.errors?.planner_task_uuid" />
@@ -221,7 +265,7 @@ const searchPackingType = (event) => {
             <span class="p-float-label">
                 <Dropdown v-model="selected_crops_lots" :options="Lote" filter optionLabel="code" />
                 <label class="font-bold" for="crops_lots">{{ t('appmovil.lote') }}</label>
-                <pre>{{ selected_crops_lots }}</pre>
+                <!-- <pre>{{ selected_crops_lots }}</pre> -->
             </span>
             <FrontEndErrors :errorsNew="errorsNew" name="selected_crops_lots" />
             <BackendErrors :name="errorResponseAPI?.errors?.crop_lot_code" />
@@ -231,9 +275,11 @@ const searchPackingType = (event) => {
             <span class="p-float-label">
                 <Dropdown v-model="selected_dones_work" :options="dones_work" filter optionLabel="name" />
                 <label class="font-bold" for="dones_work">{{ t('appmovil.labor') }}</label>
-                <pre>{{ selected_dones_work }}</pre>
+                <!-- <pre>{{ selected_dones_work }}</pre> -->
+                
             </span>
             <FrontEndErrors :errorsNew="errorsNew" name="selected_dones_work" />
+            
             <!--Modificar acá-->
             <BackendErrors :name="errorResponseAPI?.errors?.done_of_type_uuid" />
         </div>
@@ -241,7 +287,7 @@ const searchPackingType = (event) => {
             <span class="p-float-label">
                 <InputNumber v-model="selected_quanty" :update:modelValue="UpdateTotal" inputId="minmax" :min="1" :max="10" />
                 <label class="font-bold" for="quanty">{{ t('appmovil.cantidad') }}</label>
-                <pre>{{ selected_quanty }}</pre>
+                <!-- <pre>{{ selected_quanty }}</pre> -->
             </span>
             <FrontEndErrors :errorsNew="errorsNew" name="selected_quanty" />
             <BackendErrors :name="errorResponseAPI?.errors?.task_qty" />
@@ -252,7 +298,7 @@ const searchPackingType = (event) => {
                 <!-- <Dropdown v-model="packing_typeV" :options="Lote" filter optionLabel="code" /> -->
                 <AutoComplete v-model="packing_typeV" class="flex-auto" inputId="ac" :suggestions="packings_type" @complete="searchPackingType" field="name" dropdown />
                 <label class="font-bold" for="crops_lots">{{ t('appmovil.empaque') }}</label>
-                <pre>{{ packing_typeV }}</pre>
+                <!-- <pre>{{ packing_typeV }}</pre> -->
             </span>
 
             <FrontEndErrors :errorsNew="errorsNew" name="packing_typeV" />
@@ -298,7 +344,7 @@ const searchPackingType = (event) => {
                 <span class="p-inputgroup-addon">$</span>
             </div>
             <BackendErrors :name="errorResponseAPI?.errors?.price_tarif_task" />
-            <Button class="mt-3" :label="t('appmovil.save')" icon="pi pi-check" @click="sendDailyReport()"></Button>
+            <Button class="mt-3" :label="t('appmovil.save')" icon="pi pi-check" @click="sendDailyReport"></Button>
         </div>
     </div>
 </template>
