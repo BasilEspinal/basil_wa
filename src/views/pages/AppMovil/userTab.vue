@@ -217,7 +217,7 @@ const updateTaskTarif = async () => {
     
     tarifa.value = await getTarif(select_tasks_type.value.code);
     // console.log("tarifa", tarifa.value);
-    tarifa.value === 0 ? toast.add({ severity: 'error', summary: 'Tarifa', detail: 'NO existe tarifa definida', life: 3000 }) : '';
+    tarifa.value === 0 ? toast.add({ severity: 'error', summary: 'Tarifa', detail: 'NO existe tarifa definida', life: 10000 }) : '';
     laborActive.value = select_tasks_type.value?.label !== 'Task' && select_tasks_type.value?.name !== '' && select_tasks_type.value !== null;
     if (laborActive.value) {
     

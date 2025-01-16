@@ -335,6 +335,8 @@ const dynamicColumns = [
     { field: 'name', header: 'Name', frozen: false, color: false },
     { field: 'code', header: 'Code', frozen: false, color: false },
     { field: 'work_type_tarif', header: 'Work type Tarif', frozen: false, color: false },
+    { field: 'calculate_work_type', header: 'Calculate work type', frozen: false, color: false },
+    
     // Nested fields for farm
     { field: 'farm.name', header: 'Farm Name', frozen: false, color: false },
     // Nested fields for company
