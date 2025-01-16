@@ -2,13 +2,13 @@ name: Docker Image CI/CD
 
 on:
   push:
-    branches: [ "main" ]
+    branches: [ "main", "staging", "develop_basil" ]
   pull_request:
-    branches: [ "main" ]
+    branches: [ "main", "staging", "develop_basil" ]
 
 jobs:
   push_to_registry:
-    name: Build and Push Docker image to Docker Hub 
+    name: Build and Push Docker Image to Docker Hub
     runs-on: ubuntu-latest
 
     steps:
@@ -26,7 +26,10 @@ jobs:
         uses: docker/metadata-action@v4
         with:
           images: byepesg/agro_online
-          
+          tags: |
+            type=ref,event=branch
+            type=raw,value=latest
+
       - name: Build and push Docker image
         uses: docker/build-push-action@v4
         with:
@@ -35,22 +38,65 @@ jobs:
           tags: ${{ steps.meta.outputs.tags }}
           labels: ${{ steps.meta.outputs.labels }}
 
-  deploy:
-    name: Deploy to DigitalOcean Droplet
+  deploy_development:
+    name: Deploy to Development Environment
     needs: push_to_registry
     runs-on: ubuntu-latest
+    if: github.ref == 'refs/heads/develop_basil'
 
     steps:
       - name: Install SSH Client
         run: sudo apt-get update && sudo apt-get install -y sshpass
 
-      - name: Deploy and Run Docker Container on Droplet
+      - name: Deploy and Run Docker Container on Development
         env:
-          DROPLET_IP: ${{ secrets.DROPLET_IP }}
-          DROPLET_PASSWORD: ${{ secrets.DROPLET_PASSWORD }}
+          DROPLET_IP: ${{ secrets.DEV_DROPLET_IP }}
+          DROPLET_PASSWORD: ${{ secrets.DEV_DROPLET_PASSWORD }}
         run: |
-          sshpass -p "${{ secrets.DROPLET_PASSWORD }}" ssh -o StrictHostKeyChecking=no root@${DROPLET_IP} "
+          sshpass -p "${{ secrets.DEV_DROPLET_PASSWORD }}" ssh -o StrictHostKeyChecking=no root@${DROPLET_IP} "
+          docker pull byepesg/agro_online:development &&
+          docker stop agro_online_dev || true &&
+          docker rm agro_online_dev || true &&
+          docker run -d -p 9002:8080 --name agro_online_dev byepesg/agro_online:development"
+
+  deploy_staging:
+    name: Deploy to Staging Environment
+    needs: push_to_registry
+    runs-on: ubuntu-latest
+    if: github.ref == 'refs/heads/staging'
+
+    steps:
+      - name: Install SSH Client
+        run: sudo apt-get update && sudo apt-get install -y sshpass
+
+      - name: Deploy and Run Docker Container on Staging
+        env:
+          DROPLET_IP: ${{ secrets.STAGE_DROPLET_IP }}
+          DROPLET_PASSWORD: ${{ secrets.STAGE_DROPLET_PASSWORD }}
+        run: |
+          sshpass -p "${{ secrets.STAGE_DROPLET_PASSWORD }}" ssh -o StrictHostKeyChecking=no root@${DROPLET_IP} "
+          docker pull byepesg/agro_online:staging &&
+          docker stop agro_online_stage || true &&
+          docker rm agro_online_stage || true &&
+          docker run -d -p 9003:8080 --name agro_online_stage byepesg/agro_online:staging"
+
+  deploy_production:
+    name: Deploy to Production Environment
+    needs: push_to_registry
+    runs-on: ubuntu-latest
+    if: github.ref == 'refs/heads/main'
+
+    steps:
+      - name: Install SSH Client
+        run: sudo apt-get update && sudo apt-get install -y sshpass
+
+      - name: Deploy and Run Docker Container on Production
+        env:
+          DROPLET_IP: ${{ secrets.PROD_DROPLET_IP }}
+          DROPLET_PASSWORD: ${{ secrets.PROD_DROPLET_PASSWORD }}
+        run: |
+          sshpass -p "${{ secrets.PROD_DROPLET_PASSWORD }}" ssh -o StrictHostKeyChecking=no root@${DROPLET_IP} "
           docker pull byepesg/agro_online:main &&
-          docker stop agro_online_container || true &&
-          docker rm agro_online_container || true &&
-          docker run -d -p 9001:8080 --name agro_online_container byepesg/agro_online:main"
+          docker stop agro_online_prod || true &&
+          docker rm agro_online_prod || true &&
+          docker run -d -p 9001:8080 --name agro_online_prod byepesg/agro_online:main"
