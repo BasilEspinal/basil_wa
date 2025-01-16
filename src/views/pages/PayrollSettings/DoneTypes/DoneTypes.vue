@@ -513,9 +513,6 @@ const readAll = async () => {
     const respCompan = await InitialDataService.getCompanies();
     if (!respCompan.ok) toast.add({ severity: 'error', detail: 'Error' + respCompan.error, life: 3000 });
     Compan.value = respCompan.data.data.map((comp) => ({ id: comp.uuid, name: comp.name }));
-
-
-
     
     // const respWorkTypeTarif = work_type_tarif_list.value;
     const respWorkTypeTarif = await InitialDataService.getWorkTypeTarif()
@@ -523,7 +520,6 @@ const readAll = async () => {
     if (!respWorkTypeTarif.ok) toast.add({ severity: 'error', detail: 'Error' + respWorkTypeTarif.error, life: 3000 });
     Work_type_tarif.value = respWorkTypeTarif.data.data.map((element) => ({ id: element.id, name: element.label }));
 
-    
 
 };
 const loadingData = async () => {
