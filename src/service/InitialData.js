@@ -203,6 +203,15 @@ export const InitialDataService = {
             return errorResponseAPI(error);
         }
     },
+    async getCalculateWorkType() {
+        try {
+            const response = await getRequest('/lists/calculateWorkType');
+            return response;
+        } catch (error) {
+            console.error('Error fetching calculate work type:', error);
+            return errorResponseAPI(error);
+        }
+    },
 
     async getWorkTypeTarif() {
         try {
