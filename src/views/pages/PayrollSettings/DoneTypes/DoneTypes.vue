@@ -224,6 +224,16 @@
                     <FrontEndErrors :errorsNew="errorsNew" name="company" />
                     <BackendErrors :name="errorResponseAPI?.errors?.company"/>
                 </div>
+                
+                <div class="mb-3">
+                    <div class="flex align-items-center">
+                        <label for="username" class="font-semibold w-3">Calculate Work Type:</label>
+                        <AutoComplete v-model="calculate_work_typeV" class="flex-auto"  inputId="ac" :suggestions="calculate_work_type" @complete="searchCalculate_work_type" field="name" dropdown />
+                    </div>
+                    <FrontEndErrors :errorsNew="errorsNew" name="calculate_work_typeV" />
+                    <BackendErrors :name="errorResponseAPI?.errors?.calculate_work_type"/>
+                </div>
+
 
                 <div class="mb-3">
                     <div class="flex align-items-center">
@@ -378,6 +388,10 @@ const compa = ref([]);
 const work_type_tarif_list = ref([{id:1,name:"Individual"},{id:2,name:"Group"}]);
 const work_type_tarif = ref([]);
 const Work_type_tarif = ref();
+
+const calculate_work_type = ref([])
+const Calculate_work_type = ref([])
+
 const farmDefault = sessionStorage.getItem('accessSessionFarm');
 const companyDefault = sessionStorage.getItem('accessSessionCompany');
 const formDialogExportTitle = 'Export records';
@@ -520,6 +534,11 @@ const readAll = async () => {
     if (!respWorkTypeTarif.ok) toast.add({ severity: 'error', detail: 'Error' + respWorkTypeTarif.error, life: 3000 });
     Work_type_tarif.value = respWorkTypeTarif.data.data.map((element) => ({ id: element.id, name: element.label }));
 
+    const respCalculateWorkType = await InitialDataService.getCalculateWorkType()
+    console.log('respCalculateWorkType',respCalculateWorkType)
+    if (!respCalculateWorkType.ok) toast.add({ severity: 'error', detail: 'Error' + respCalculateWorkType.error, life: 3000 });
+    Calculate_work_type.value = respCalculateWorkType.data.data.map((element) => ({ id: element.id, name: element.label }));
+
 
 };
 const loadingData = async () => {
@@ -544,6 +563,11 @@ const {
             name: z.string().min(4),
             codeV: z.string().min(4),
             work_type_tarifV: z.string().min(4),
+            calculate_work_typeV: z
+                .object({
+                    name: z.string().min(4),
+                    id: z.string().min(4)
+                }),
             farm: z
                 .object({
                     name: z.string().min(4),
@@ -563,6 +587,8 @@ const {
 const [name, nameProps] = defineField('name');
 const [codeV, codeVProps] = defineField('codeV');
 const [work_type_tarifV, work_type_tarifVProps] = defineField('work_type_tarifV');
+const [calculate_work_typeV, calculate_work_typeVProps] = defineField('calculate_work_typeV');
+
 const [farm] = defineField('farm');
 const [company] = defineField('company');
 
@@ -602,11 +628,12 @@ const openDialog = (mode) => {
         return;
     } else {
         resetForm();
-        const { code, company: empresa, farm: finca, name: nombre, work_type_tarif:tarif } = listRowSelect.value[0];
+        const { code, company: empresa, farm: finca, name: nombre, work_type_tarif:tarif,calculate_work_type:calculatewt } = listRowSelect.value[0];
 
         name.value = nombre;
         codeV.value = code;
         work_type_tarifV.value = tarif;
+        calculate_work_typeV.value=calculatewt;
         company.value = { id: empresa.uuid, name: empresa.name };
         farm.value = { id: finca.uuid, name: finca.name };
     }
@@ -633,6 +660,7 @@ const actionRecordManager = handleSubmitNew(async (values) => {
         code: values.codeV,
         name: values.name,
         work_type_tarif: values.work_type_tarifV,
+        calculate_work_type: values.calculate_work_typeV.id,
         company_uuid: values.company ? values.company.id : companyDefault,
         farm_uuid: values.farm ? values.farm.id : farmDefault
     };
@@ -900,6 +928,20 @@ const searchWorkTypeTarif = (event) => {
         }
     }, 200);
 };
+
+
+const searchCalculate_work_type = (event) => {
+    setTimeout(() => {
+        if (!event.query.trim().length) {
+            calculate_work_type.value = [...Calculate_work_type.value];
+        } else {
+            calculate_work_type.value = Calculate_work_type.value.filter((fram) => {
+                return fram.name.toLowerCase().startsWith(event.query.toLowerCase());
+            });
+        }
+    }, 200);
+};
+
 
 
 

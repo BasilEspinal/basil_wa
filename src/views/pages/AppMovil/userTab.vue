@@ -127,14 +127,14 @@ const [packing_typeV] = defineField('packing_typeV');
 const [select_tasks_type_field] = defineField('select_tasks_type'); // This links the form field with the schema
 
 watch(select_tasks_type,()=>{
-    //select_tasks_type_field.value=select_tasks_type.value;
+    select_tasks_type_field.value=select_tasks_type.value;
     if (select_tasks_type.value.label ==='HoraExtra'){
         isHoraExtra.value=true
     }
     else{
         isHoraExtra.value= false
     }
-    resetForm()
+    
 })
 
 const crudService = CrudService('/packing_types');
@@ -185,11 +185,12 @@ const sendDailyReport = handleSubmitNew(async (values) => {
 
     const data = {
     loteCode: values.selected_crops_lots?.code,
-    tasksTypeCode: values.select_tasks_type?.code,
+    
     quantity: values.selected_quanty,
     notas: values.Notas,
     tarifXCautity: values.selected_quanty * tarifa.value,
     userId: props.slotProps.uuid,
+    tasksTypeCode: values.select_tasks_type?.code,
     labor: values.selected_dones_work?.uuid,
     packing_type: values.packing_typeV?.uuid
     };
@@ -244,10 +245,11 @@ const searchPackingType = (event) => {
 </script>
 
 <template>
-    <!-- <pre>{{ errorsNew }}</pre>
+    
+    <!-- 
     <pre>isHoraExtra: {{isHoraExtra}}</pre> -->
     <div class="grid p-fluid mt-3">
-        
+        <pre>{{ errorsNew }}</pre>    
         <div class="field col-12 md:col-4">
             
             
@@ -255,7 +257,8 @@ const searchPackingType = (event) => {
             <span class="p-float-label">
                 <Dropdown v-model="select_tasks_type" :options="tipoActividad" filter optionLabel="label" />
                 <label class="font-bold" for="task_type">{{ t('appmovil.tipoActividad') }}</label>
-                <!-- <pre>{{ select_tasks_type.code }}</pre>
+                <pre>{{ select_tasks_type }}</pre>
+                <!-- 
                 <pre>{{select_tasks_type_field}}</pre> -->
             </span>
             <FrontEndErrors :errorsNew="errorsNew" name="select_tasks_type" />
