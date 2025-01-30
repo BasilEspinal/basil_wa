@@ -159,6 +159,7 @@ import {useAppMovilService} from '@/service/appMovil/appMovilService.js';
 
 const { t } = useI18n();
 const toast = useToast();
+const emit = defineEmits(['update-grandparent-data']); // Define the event to emit
 const { getRequest, postRequest, putRequest, deleteRequest, patchRequest, errorResponseAPI } = useData();
 const { getShippingsDelivered,getDataTasksplanner } = useAppMovilService();
 const errorsReceived = ref({
@@ -379,7 +380,18 @@ console.log('Parsed object task:', accessSessionWorkCenter?.taskoftype?.id);
     } else {
       // Handle other states
     }
+    toast.add({
+      severity: responseCRUD.value.ok ? 'success' : 'error',
+      summary: 'Create',
+      detail: responseCRUD.value.ok ? 'Creado' : responseCRUD.error,
+      life: 3000,
+    });
+    
+    if (responseCRUD.value.ok) {
+      console.log('data', data);
+      emit('update-grandparent-data');
 
+    }
 
   } catch (error) {
     console.error('Error in actionRecordManager:', error);

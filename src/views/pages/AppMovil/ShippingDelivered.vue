@@ -299,6 +299,8 @@ const actionRecordManager = handleSubmitNew(async (values) => {
 
     if (responseCRUD.value.ok) {
       console.log('data', data);
+      emit('update-grandparent-data');
+
     }
   } catch (error) {
     console.error('An error occurred:', error);
@@ -306,6 +308,10 @@ const actionRecordManager = handleSubmitNew(async (values) => {
     loading.value = false; // Unblock the button
   }
 });
+
+const emit = defineEmits(['update-grandparent-data']); // Define the event to emit
+
+
 
 const getCurrentFormattedDate = () => {
     const date = new Date();
