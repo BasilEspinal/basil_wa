@@ -16,7 +16,9 @@
             <!-- <pre>{{ listRowSelect }}</pre> -->
             <DataTable :value="dataFromComponent" dataKey="uuid" tableStyle="min-width: 75rem" showGridlines
                 :loading="loading" scrollable scrollHeight="600px" resizableColumns columnResizeMode="expand"
-                sortMode="multiple" :paginator="true" :rows="50" :rowsPerPageOptions="[5, 10, 20, 50]"
+                sortMode="multiple" :paginator="true" paginatorTemplate="RowsPerPageDropdown FirstPageLink PrevPageLink CurrentPageReport NextPageLink LastPageLink"
+                currentPageReportTemplate="{first} to {last} of {totalRecords}"
+                :rows="50" :rowsPerPageOptions="[5, 10, 20, 50]"
                 :class="`p-datatable-${size?.class || 'default-size'}`" @row-select="onRowSelect(listRowSelect)"
                 @row-unselect="onRowSelect(listRowSelect)" @select-all-change="onSelectAllChange"
                 v-model:selection="listRowSelect" filterDisplay="menu" v-model:filters="filters"

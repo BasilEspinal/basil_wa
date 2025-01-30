@@ -433,20 +433,24 @@ const { t } = useI18n();
 
 const dynamicColumns = [
     { field: 'transaction_date', header: 'Transaction Date', frozen: false, color: false },
-    { field: 'customer_request.customer_name', header: 'Customer Name', frozen: false, color: false },
-    { field: 'customer_request.order_number_customer', header: 'Order Number', frozen: false, color: false },
-    { field: 'customer_request.invoice_number_customer', header: 'Invoice Number', frozen: false, color: false },
-    { field: 'customer_request.place_of_delivery', header: 'Place of Delivery', frozen: false, color: false },
+    { field: 'tasks_of_type.name', header: 'Task Of Type', frozen: false, color: false },
     { field: 'product.name', header: 'Product Name', frozen: false, color: false },
-    { field: 'product_type.name', header: 'Product Type', frozen: false, color: false },
     { field: 'variant.name', header: 'Variant', frozen: false, color: false },
+    { field: 'status.name', header: 'Status Name', frozen: false, color: true },
     { field: 'packing_type.name', header: 'Packing Type', frozen: false, color: false },
     { field: 'vehicle.vehicle_type', header: 'Vehicle Type', frozen: false, color: false },
-    { field: 'status.name', header: 'Status Name', frozen: false, color: true },
-    { field: 'farm.name', header: 'Farm Name', frozen: false, color: false },
-    { field: 'company.name', header: 'Company Name', frozen: false, color: false },
-    { field: 'created_at', header: 'Created At', frozen: false, color: false },
-    { field: 'updated_at', header: 'Updated At', frozen: false, color: false },
+
+    // { field: 'customer_request.customer_name', header: 'Customer Name', frozen: false, color: false },
+    // { field: 'customer_request.dispatch_number_lot', header: 'Customer Name', frozen: false, color: false },
+    // { field: 'customer_request.order_number_customer', header: 'Order Number', frozen: false, color: false },
+    // { field: 'customer_request.invoice_number_customer', header: 'Invoice Number', frozen: false, color: false },
+    // { field: 'customer_request.place_of_delivery', header: 'Place of Delivery', frozen: false, color: false },
+    
+    // { field: 'product_type.name', header: 'Product Type', frozen: false, color: false },
+    // { field: 'farm.name', header: 'Farm Name', frozen: false, color: false },
+    // { field: 'company.name', header: 'Company Name', frozen: false, color: false },
+    // { field: 'created_at', header: 'Created At', frozen: false, color: false },
+    // { field: 'updated_at', header: 'Updated At', frozen: false, color: false },
 ];
 
 
