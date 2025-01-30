@@ -451,7 +451,7 @@ onBeforeUnmount(() => {
                         </div>
                     </template>
                     <ScrollPanel class="maxHeightC">
-                        <ShippingDelivered :data="dataApp" :batchs="lotes" />
+                        <ShippingDelivered :data="dataApp" :batchs="lotes" @update-grandparent-data="updateData"/>
                     </ScrollPanel>
                 </TabPanel>
 
@@ -463,7 +463,7 @@ onBeforeUnmount(() => {
                         </div>
                     </template>
                     <ScrollPanel class="maxHeightC">
-                        <DeliveringDelivered :data="dataApp" :batchs="lotes" />
+                        <DeliveringDelivered :data="dataApp" :batchs="lotes" @update-grandparent-data="updateData" />
                     </ScrollPanel>
                 </TabPanel>
             </TabView>
