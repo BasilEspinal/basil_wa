@@ -1,5 +1,6 @@
 <template>
     <div>
+    
 
         <div class="card">
             <!-- <h1 v-if="!ability.can('menux','comercialx')">{{ $t('menux') }}</h1> -->
@@ -516,7 +517,7 @@ const openDialogSettlement = async (mode) => {
     
     if(listRowSelect.value.length != 0){
         // await getItems(listRowSelect.value[0].status.id);
-        await getItems();
+        await getItems(listRowSelect.value[0].status.id);
     }
     state.value = mode;
     console.log('mode', mode);
