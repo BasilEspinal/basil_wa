@@ -2,7 +2,7 @@
     <div>
 
         <div class="card">
-            
+            <h1>{{ $t('menu.JournalTransactions') }}</h1>
             <!-- <pre>{{ listRowSelect }}</pre> -->
             <DataTable :value="dataFromComponent" dataKey="uuid" tableStyle="min-width: 75rem" showGridlines
                 :loading="loading" scrollable scrollHeight="600px" resizableColumns columnResizeMode="expand"
