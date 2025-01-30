@@ -903,6 +903,7 @@ const Compan = ref([]);
 const compa = ref([]);
 const farmDefault = sessionStorage.getItem('accessSessionFarm');
 const companyDefault = sessionStorage.getItem('accessSessionCompany');
+
 const CropLots = ref([]);
 const products = ref([]);
 const Products = ref([]);
