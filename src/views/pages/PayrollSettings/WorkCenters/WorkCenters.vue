@@ -338,7 +338,7 @@ const dynamicColumns = [
     { field: 'name', header: 'Name', frozen: false, color: false },
     { field: 'code', header: 'Code', frozen: false, color: false },
     { field: 'taskoftype.name', header: 'Task Name', frozen: false, color: false },
-    { field: 'taskoftype.code', header: 'Task Code', frozen: false, color: false },
+    // { field: 'taskoftype.code', header: 'Task Code', frozen: false, color: false },
     { field: 'status.name', header: 'Status Name', frozen: false, color: true },
     { field: 'farm.name', header: 'Farm Name', frozen: false, color: false },
     { field: 'company.name', header: 'Company Name', frozen: false, color: false },

@@ -1,9 +1,61 @@
 <template>
     <div>
+    
 
         <div class="card">
-            <h1>{{ $t('menu.employees') }}</h1>
+            <!-- <h1 v-if="!ability.can('menux','comercialx')">{{ $t('menux') }}</h1> -->
+            <div class="grid">
+                <div class="col-xs-12 col-sm-6 col-md-4 mb-2 text-center mx-auto">
+                    <!--Uncomment when table is done-->
 
+                    <div class="col-12 text-center">
+                        <Toolbar style="margin-bottom: 1rem">
+                            <template #center>
+                                <div class="grid">
+                                
+                                    <div class="col-12 lg:col-2 text-center">
+                                <Button :disabled="!(listRowSelect.length > 0 && listRowSelect.length < 2)"
+                                        label="Detalles" 
+                                        icon="pi pi-bars" 
+                                        class="p-button-success mb-2 mt-2"
+                                        @click="openForm('detalles')" size="large" />
+                                    </div>
+                                    <div class="col-12 lg:col-2 text-center">
+                                <Button 
+                                        :disabled="!(listRowSelect.length > 0 && listRowSelect.length < 2)" 
+                                        label="Edit"
+                                        icon="pi pi-file-edit" 
+                                        class="p-button-help mb-2 mt-2" 
+                                        @click="openDialog('edit')"
+                                        size="large" />
+                                    </div>
+                                    <div class="col-12 lg:col-2 text-center">
+                                <Button :disabled="listRowSelect.length > 0" label="New" icon="pi pi-plus"
+                                    class="p-button-success mb-2 mt-2" @click="openDialog('new')" size="large" />
+                                </div>
+                                <div class="col-12 lg:col-2 text-center">
+                                <Button :disabled="!(listRowSelect.length > 0 && listRowSelect.length < 2)"
+                                    label="Clone" icon="pi pi-copy" class="p-button-secondary mb-2 mt-2"
+                                    @click="openDialog('clone')" size="large" />
+                                </div>
+                                <div class="col-12 lg:col-2 text-center">
+                                <Button :disabled="listRowSelect.length > 0" label="Export" icon="pi pi-file-import"
+                                    class="p-button-warning mb-2 mt-2" @click="openExport" size="large" />
+                                </div>
+                                <div class="col-12 lg:col-2 text-center">
+                                <Button :disabled="!listRowSelect.length > 0" label="Delete" icon="pi pi-trash"
+                                    class="p-button-danger mb-2 mt-2" @click="openDelete" size="large" />
+                                </div>
+                                
+                            </div>
+    
+                            </template>
+                        </Toolbar>
+
+                    </div>
+
+                </div>
+            </div>
             <Dialog v-model:visible="flagDialog" :style="{ width: '450px' }" :header="titleDialog" :modal="true">
             <label for="username" class="text-2xl font-medium w-6rem"> {{ messageDialog }} </label>
             <!-- <Summary :listRowSelect="listRowSelect" /> -->
@@ -13,6 +65,7 @@
               
             </div>
           </Dialog>
+        
             <!-- <pre>{{ listRowSelect }}</pre> -->
             <DataTable :value="dataFromComponent" dataKey="uuid" tableStyle="min-width: 75rem" showGridlines
                 :loading="loading" scrollable scrollHeight="600px" resizableColumns columnResizeMode="expand"
@@ -28,122 +81,29 @@
                         <template v-slot:start>
                             <Button type="button" icon="pi pi-filter-slash" label="Limpiar"
                                 class="p-button-outlined mb-2" @click="clearFilter()" />
-                                
                         </template>
                         <template v-slot:end>
                             <span class="p-input-icon-left mb-2">
                                 <i class="pi pi-search" />
                                 <InputText v-model="filters['global'].value" placeholder="Buscar" style="width: 100%" />
                             </span>
-                            
-                                            <!-- Action Button -->
-
                         </template>
-                        
                         <template v-slot:center>
 
                             <SelectButton v-model="size" :options="sizeOptions" optionLabel="label" dataKey="label">
                             </SelectButton>
-                            
-                            
 
                         </template>
-
-                        
                     </Toolbar>
-                    
-                  <Toolbar>
-                    <template v-slot:start>
-                    <div class="grid justify-content-center">
-    <!-- Toolbar -->
-    
-                
-                    <!--Uncomment when table is done-->
-
-                    
-
-                                
-                                    
-                                    <div class="col-12 lg:col-2 text-center">
-                                        <Button 
-                                            :disabled="!(listRowSelect.length > 0 && listRowSelect.length < 2)"
-                                            
-                                            icon="pi pi-bars" 
-                                            class="mr-2" 
-                                            @click="openForm('detalles')" 
-                                        />
-                                    </div>
-                                    <div class="col-12 lg:col-2 text-center">
-                                        <Button 
-                                            :disabled="!(listRowSelect.length > 0 && listRowSelect.length < 2)" 
-                                            
-                                            icon="pi pi-file-edit" 
-                                            class="p-button-help mr-2" 
-                                            @click="openDialog('edit')" 
-                                        />
-                                    </div>
-
-                                    <!-- Second row -->
-                                    <div class="col-12 lg:col-2 text-center">
-                                        <Button 
-                                            :disabled="listRowSelect.length > 0" 
-                                            
-                                            icon="pi pi-plus" 
-                                            class="p-button-success mr-2" 
-                                            @click="openDialog('new')" 
-                                        />
-                                    </div>
-                                    <div class="col-12 lg:col-2 text-center">
-                                        <Button 
-                                            :disabled="!(listRowSelect.length > 0 && listRowSelect.length < 2)" 
-                                            icon="pi pi-copy" 
-                                            class="p-button-secondary mr-2" 
-                                            @click="openDialog('clone')" 
-                                        />
-                                    </div>
-
-                                    <!-- Third row -->
-                                    <div class="col-12 lg:col-2 text-center">
-                                        <Button 
-                                            :disabled="!listRowSelect.length > 0" 
-                                            icon="pi pi-file-import" 
-                                            class="p-button-warning mr-2" 
-                                            @click="openExport" 
-                                        />
-                                    </div>
-                                    <div class="col-12 lg:col-2 text-center">
-                                        <Button 
-                                            :disabled="!listRowSelect.length > 0" 
-                                            icon="pi pi-trash" 
-                                            class="p-button-danger mr-2" 
-                                            @click="openDelete" 
-                                        />
-                                    </div>
-
-
-
-                                
-
-                    
-
-
-                
-    
-</div>
-
-                    </template>
-                    <template v-slot:end>
-    <div class="col-12 lg:col-12 text-center ">
-                                    <ActionButton 
-                                        :items="itemsActions" 
-                                        :listRowSelect="listRowSelect" 
-                                        class="w-12"   
-                                    />
-                                    </div>  
-                    </template>
-                  </Toolbar>  
+                    <div class="col-12 lg:col-12 flex align-items-center justify-content-center">
+                        <ActionButton 
+                            v-if="ability.can('empleado_editar')"
+                            :items="itemsActions" 
+                            :listRowSelect="listRowSelect" 
+                            class="w-6" 
+                        />
+                    </div>
                 </template>
-                
 
                 <template #empty> No customers found. </template>
                 <template #loading> Loading customers data. Please wait. </template>
@@ -160,8 +120,11 @@
                     <!-- Body Template -->
                     <template #body="{ data }">
                         <!-- Conditionally render the Tag component if col.color is true -->
+                         <!-- <pre>{{ col.field }}</pre>
+                         <pre>{{ nameStatus(getNestedValue(data, col.field)) }}</pre> -->
+                         
                         <Tag v-if="col.color" :value="getNestedValue(data, col.field)"
-                            :style="{ backgroundColor: data.status.color, color: '#FFFFFF' }" />
+                            :style="{ backgroundColor: data.status.color, color: '#000000' }" />
 
                         <!-- Render the text only if Tag is not rendered -->
                         <span v-else>
@@ -175,30 +138,54 @@
                             :placeholder="'Search by ' + col.header" />
                     </template>
                 </Column>
-
-
-
-
             </DataTable>
             <Dialog v-model:visible="formProperties.open" modal :header="formProperties.title"
                 class="p-fluid text-center mx-auto">
-                <div class="grid"> 
-                <Summary
-                    v-for="(cardData, index) in cardSections"
-                    :key="index"
-                    :title="cardData.title"
-                    :fields="cardData.fields"
-                    :icon="cardData.icon"
-                    :bgColor="cardData.bgColor"
-                    :iconColor="cardData.iconColor"
-                    />
-                </div>
+
+                <Summary :listRowSelect="listRowSelect" />
                 <div class="flex justify-content-end gap-2">
                     <Button type="button" label="Cancel" severity="secondary" @click="formProperties.open = false" />
                 </div>
             </Dialog>
-            <Dialog v-model:visible="formDialog" modal :header="formDialogTitle" class="p-fluid text-center mx-auto">
-            
+            <Dialog v-model:visible="formDialog" modal :header="formDialogTitle" class="p-fluid mx-auto">
+                <!-- <div class="grid">
+                    <div class="mb-3 col-12 md:col-12 lg:col-12">
+                        <div class="flex align-items-center">
+
+                            <label for="confirmed_qty_V" class="font-semibold w-6rem"> {{
+                                    t('appmovil.quantityRequested') }}</label>
+
+                            <InputNumber v-model="confirmed_qty_V" class="flex-auto" showButtons
+                                buttonLayout="horiontal" :min="0">
+                                <template #incrementbuttonicon>
+                                    <span class="pi pi-plus" />
+                                </template>
+                                <template #decrementbuttonicon>
+                                    <span class="pi pi-minus" />
+                                </template>
+                            </InputNumber>
+                        </div>
+
+                        <FrontEndErrors :errorsNew="errorsNew" name="confirmed_qty_V" />
+                        <BackendErrors :name="errorResponseAPI?.errors?.request_qty" />
+
+                    </div>
+
+                    <div class="mb-3 col-12 md:col-12 lg:col-12">
+                        <div class="flex align-items-center">
+
+                            <label class="font-semibold w-6rem" for="textarea">{{ t('appmovil.notas') }}</label>
+                            <Textarea v-model="notes" class="flex-auto" inputId="textarea" rows="5" cols="30"
+                                variant="filled" />
+                            <FrontEndErrors :errorsNew="errorsNew" name="notes" />
+                            <BackendErrors :name="errorResponseAPI?.errors?.notes_small" />
+
+                        </div>
+                    </div>
+
+
+
+                </div> -->
                 <Card class="p-fluid text-center mx-auto flex flex-wrap gap-3 mb-3 p-fluid flex-auto" v-if="backendValidationFlag">
                     <template #title>Please check this</template>
                         <template #content>
@@ -313,15 +300,18 @@
 
                     <div class="flex-auto" >
                         <label for="farm" class="font-bold block mb-2"> Farm </label>
-                        <AutoComplete v-model="farm_uuid" class="w-full md:w-15rem" inputId="farm" :suggestions="farms" @complete="searchBranches" field="name" dropdown />
+                        <AutoComplete v-model="farm_uuid" class="w-full md:w-15rem" inputId="farm" :suggestions="farms" @complete="searchFarms" field="name" dropdown />
                         <FrontEndErrors :errorsNew="errorsNew" name="farm_uuid" />
                         <BackendErrors :name="errorResponseAPI?.errors?.farm_uuid" />
                     </div>
-                </div>                <div class="flex justify-content-end gap-2 flex-auto">
+                </div>
+
+                <div class="flex justify-content-end gap-2 flex-auto">
                     <Button class="flex-auto" type="button" label="Cancel" severity="secondary"
                         @click="formDialog = false" />
                     <Button class="flex-auto" type="button" label="Save" @click="actionRecordManager(state)" />
                 </div>
+
             </Dialog>
 
             <Dialog v-model:visible="formDialogExport" :style="{ width: '290px' }" :header="formDialogExportTitle"
@@ -358,8 +348,7 @@
                 </label>
                 <div class="card flex flex-wrap mt-2 gap-2">
                     <div v-for="item in listRowSelect" :key="item.id">
-                        
-                        <Chip :label="item.code" removable @remove="remove(item)" icon="pi pi-ban" />
+                        <Chip :label="item.name" removable @remove="remove(item)" icon="pi pi-ban" />
                     </div>
                 </div>
                 <div class="flex justify-content-end gap-2">
@@ -386,6 +375,7 @@ const documentFrozen = ref(false); change name field
 <script setup>
 import BackendErrors from '@/layout/composables/Errors/BackendErrors.vue';
 import FrontEndErrors from '@/layout/composables/Errors/FrontendErrors.vue';
+import ability from '@/service/ability.js';
 import { CrudService } from '@/service/CRUD/CrudService';
 import { InitialDataService } from '@/service/InitialData';
 import { FilterMatchMode, FilterOperator } from 'primevue/api';
@@ -398,7 +388,7 @@ import { onBeforeMount, onMounted, ref, watch } from 'vue';
 import { useI18n } from 'vue-i18n';
 import * as XLSX from 'xlsx';
 import { z } from 'zod';
-import Summary from '@/components/Summary.vue';
+import Summary from '@/views/pages/template/V3/Summary.vue';
 import ActionButton from '@/components/ActionButton.vue';
 import {useActions} from '@/composables/ActionButton.js';
 const { getItems,itemsActions, messageDialog,titleDialog,status_id_Action,flagDialog } = useActions(`/processflow/Employee`);
@@ -406,26 +396,55 @@ const { getItems,itemsActions, messageDialog,titleDialog,status_id_Action,flagDi
 const { t } = useI18n();
 
 const dynamicColumns = [
-    { field: 'full_name', header: 'Full Name', frozen: false, color: false },
-    { field: 'document', header: 'Document', frozen: false, color: false },
-    { field: 'document_type.name', header: 'Document Type', frozen: false, color: false },
-    { field: 'email', header: 'Email', frozen: false, color: false },
+    { field: 'document', header: 'Document', frozen: true, color: false },
+    { field: 'document_type.name', header: 'Type of Document', frozen: false, color: false },
+    { field: 'first_name', header: 'Name', frozen: false, color: false },
+    { field: 'last_name', header: 'Last Name', frozen: false, color: false },
     { field: 'gender.name', header: 'Gender', frozen: false, color: false },
-    { field: 'phone_movil_number', header: 'Mobile Phone', frozen: false, color: false },
-    { field: 'bank_account_number', header: 'Bank Account Number', frozen: false, color: false },
-    { field: 'payment_type.name', header: 'Payment Type', frozen: false, color: false },
+    { field: 'email', header: 'Email', frozen: false, color: false },
     { field: 'workCenter.name', header: 'Work Center Name', frozen: false, color: false },
-    { field: 'jobType.name', header: 'Job Type Name', frozen: false, color: false },
-    { field: 'status.name', header: 'Status Name', frozen: false, color: true },
+    { field: 'jobType.name', header: 'Job Type', frozen: false, color: false },
+    { field: 'bank_account_number', header: 'Bank Account Number', frozen: false, color: false },
+    { field: 'bank_account_doc', header: 'Bank Account Document', frozen: false, color: false },
+    { field: 'payment_type.name', header: 'Payment Type', frozen: false, color: false },
     { field: 'farm.name', header: 'Farm Name', frozen: false, color: false },
     { field: 'company.name', header: 'Company Name', frozen: false, color: false },
-    { field: 'created_at', header: 'Created At', frozen: false, color: false },
-    { field: 'updated_at', header: 'Updated At', frozen: false, color: false },
+    { field: 'created_at', header: 'Creation Date', frozen: false, color: false },
+    { field: 'updated_at', header: 'Modification Date', frozen: false, color: false },
+    { field: 'status.name', header: 'Status', frozen: false, color: true }
 ];
 
+const nameStatus =(statusName)=>{
+    return t(`status.${statusName}`);
+}
+const formConfig = ref([
+  {
+    type: 'InputNumber',
+    label: 'Quantity Requested',
+    model: 'confirmed_qty_V',
+    props: {
+      min: 0,
+      max: 1000,
+      showButtons: true,
+      buttonLayout: 'horizontal'
+    }
+  },
+  {
+    type: 'Textarea',
+    label: 'Notes',
+    model: 'notes',
+    props: {
+      rows: 5,
+      cols: 30
+    }
+  }
+]);
 
-
-
+// Form data that holds values for the form fields
+const formData = ref({
+  confirmed_qty_V: null,
+  notes: ''
+});
 
 const getNestedValue = (obj, path) => {
     return path.split('.').reduce((value, key) => value && value[key], obj);
@@ -443,6 +462,8 @@ const openForm = (mode) => {
 }
 
 
+
+const prueba = ref({ revisar: 'revisar GET-POST-PUT-DELETE' });
 let endpoint = ref(`/employees`);  //replace endpoint with your endpoint
 const crudService = CrudService(endpoint.value);
 const errorResponseAPI = crudService.getErrorResponse();
@@ -453,7 +474,6 @@ const Compan = ref([]);
 const compa = ref([]);
 const farmDefault = sessionStorage.getItem('accessSessionFarm');
 const companyDefault = sessionStorage.getItem('accessSessionCompany');
-
 const GenderList = ref([]);
 const DocumentTypeList = ref([]);
 const WorkCenterList = ref([]);
@@ -461,9 +481,8 @@ const PaymentTypeList = ref([]);
 const jobTypeList = ref([]);
 const JobTypeList = ref([]);
 
-
-const formDialogExportTitle = 'Export records';
-const formDialogDeleteTitle = 'Delete records';
+const formDialogExportTitle = 'Export xxxxxxxxxx';
+const formDialogDeleteTitle = 'Delete xxxxxxxxxx';
 const formDialogExport = ref(false);
 const formDialogDelete = ref(false);
 const toast = useToast();
@@ -488,111 +507,22 @@ const RowSelect = (data) => {
     listRowSelect.value = data;
 };
 watch(listRowSelect, RowSelect);
-const cardSections = ref([]);
 const onRowSelect = (data) => {
     listRowSelect.value = data;
     openDialogSettlement('patch_action');
-    const row = listRowSelect.value[0];
-    if (row) {
-        cardSections.value = [
-            {
-                title: 'Personal Information',
-                fields: {
-                    'UUID': row.uuid,
-                    'Full Name': row.full_name,
-                    'First Name': row.first_name,
-                    'Last Name': row.last_name,
-                    'Second Last Name': row.last_name_b,
-                    'Document': row.document,
-                    'Document Type': row.document_type?.name,
-                    'Email': row.email,
-                    'Mobile Phone': row.phone_movil_number || 'Not available',
-                    'Gender': row.gender?.name,
-                    'Created At': row.created_at,
-                    'Updated At': row.updated_at
-                },
-                icon: 'pi pi-user',
-                bgColor: 'bg-green-100',
-                iconColor: 'text-green-500'
-            },
-            {
-                title: 'Bank Information',
-                fields: {
-                    'Bank Account Number': row.bank_account_number,
-                    'Bank Account Doc': row.bank_account_doc,
-                    'Payment Type': row.payment_type?.name,
-                    'Payment Code': row.payment_type?.code,
-                    'Created At': row.payment_type?.created_at,
-                    'Updated At': row.payment_type?.updated_at
-                },
-                icon: 'pi pi-credit-card',
-                bgColor: 'bg-purple-100',
-                iconColor: 'text-purple-500'
-            },
-            {
-                title: 'Job Information',
-                fields: {
-                    'Work Center UUID': row.workCenter?.uuid,
-                    'Work Center Name': row.workCenter?.name,
-                    'Work Center Code': row.workCenter?.code,
-                    'Job Type UUID': row.jobType?.uuid,
-                    'Job Type Name': row.jobType?.name,
-                    'Job Type Code': row.jobType?.code,
-                    'Created At': row.jobType?.created_at,
-                    'Updated At': row.jobType?.updated_at
-                },
-                icon: 'pi pi-briefcase',
-                bgColor: 'bg-yellow-100',
-                iconColor: 'text-yellow-500'
-            },
-            {
-                title: 'Status Information',
-                fields: {
-                    'Status UUID': row.status?.uuid,
-                    'Name': row.status?.name,
-                    'Color': row.status?.color,
-                    'Description': row.status?.description,
-                    'Model': row.status?.model,
-                    'Created At': row.status?.created_at,
-                    'Updated At': row.status?.updated_at
-                },
-                icon: 'pi pi-info-circle',
-                bgColor: 'bg-gray-100',
-                iconColor: 'text-gray-500'
-            },
-            {
-                title: 'Farm Information',
-                fields: {
-                    'Farm UUID': row.farm?.uuid,
-                    'Name': row.farm?.name,
-                    'Code': row.farm?.code,
-                    'Created At': row.farm?.created_at,
-                    'Updated At': row.farm?.updated_at
-                },
-                icon: 'pi pi-map-marker',
-                bgColor: 'bg-teal-100',
-                iconColor: 'text-teal-500'
-            },
-            {
-                title: 'Company Information',
-                fields: {
-                    'Company UUID': row.company?.uuid,
-                    'Name': row.company?.name,
-                    'Code': row.company?.code,
-                    'Website': row.company?.url_path,
-                    'Logo File': row.company?.file_name,
-                    'Created At': row.company?.created_at,
-                    'Updated At': row.company?.updated_at
-                },
-                icon: 'pi pi-building',
-                bgColor: 'bg-blue-100',
-                iconColor: 'text-blue-500'
-            }
-        ];
-    }
 };
 
+const openDialogSettlement = async (mode) => {
+    
+    if(listRowSelect.value.length != 0){
+        // await getItems(listRowSelect.value[0].status.id);
+        await getItems(listRowSelect.value[0].status.id);
+    }
+    state.value = mode;
+    console.log('mode', mode);
+    console.log('state', state.value);
 
+};
 
 watch(listRowSelect, onRowSelect);
 
@@ -632,13 +562,12 @@ const readAll = async () => {
     if (!respFarms.ok) toast.add({ severity: 'error', detail: 'Error' + respFarms.error, life: 3000 });
     Farms.value = respFarms.data.data.map((farm) => ({ id: farm.uuid, name: farm.name }));
 
-
     const respCompan = await InitialDataService.getCompanies();
     if (!respCompan.ok) toast.add({ severity: 'error', detail: 'Error' + respCompan.error, life: 3000 });
     Compan.value = respCompan.data.data.map((comp) => ({ id: comp.uuid, name: comp.name }));
 
-     //const respDocumentTypeList = await getRequest('/lists/documentType');
-     const respDocumentTypeList = await InitialDataService.getDocumentsType();
+    //const respDocumentTypeList = await getRequest('/lists/documentType');
+    const respDocumentTypeList = await InitialDataService.getDocumentsType();
     if (!respDocumentTypeList.ok) toast.add({ severity: 'error', detail: 'Error' + respDocumentTypeList.error, life: 3000 });
     DocumentTypeList.value = respDocumentTypeList.data.data.map((comp) => ({ id: comp.id, name: comp.label }));
 
@@ -667,9 +596,11 @@ const readAll = async () => {
 };
 const loadingData = async () => {
     //const response = await getRequest(endpoint.value);
+    console.log('recargando datos')
     const response = await crudService.getAll();
+    
     if (!response.ok) toast.add({ severity: 'error', detail: 'Error' + response.error, life: 3000 });
-    dataFromComponent.value = response.data.data;
+    dataFromComponent.value = [...response.data.data];
 };
 watch(
     () => dataFromComponent.value,
@@ -759,31 +690,25 @@ const formDialog = ref(false);
 
 const state = ref('');
 
-const openDialogSettlement = async (mode) => {
-    
-    if(listRowSelect.value.length != 0){
-        await getItems(listRowSelect.value[0].status.id);
-    }
-    state.value = mode;
-    
-};
 
 const openDialog = (mode) => {
 
-formDialogTitle.value = 
-mode === 'new' ? 'Create new register' :
-mode === 'edit' ? 'Edit new register' :
-mode === 'clone' ? 'Clone new register' :
-mode === 'patch' ? 'Patch new register' : '';
+    formDialogTitle.value = 
+    mode === 'new' ? 'Create new register' :
+    mode === 'edit' ? 'Edit new register' :
+    mode === 'clone' ? 'Clone new register' :
+    mode === 'patch' ? 'Patch new register' : '';
 
-if (mode === 'new') {
-    resetForm();
-} else if (listRowSelect.value.length < 1) {
-    toast.add({ severity: 'error', summary: 'Error', detail: 'Select a record', life: 3000 });
-    return;
-} else {
-    resetForm();
-    const {
+    if (mode === 'new') {
+        resetForm();
+        
+    } else if (listRowSelect.value.length < 1) {
+        toast.add({ severity: 'error', summary: 'Error', detail: 'Select a record', life: 3000 });
+        return;
+    } else {
+
+        resetForm();
+        const {
         document: documentoN,
         first_name: firstName,
         last_name: lastName,
@@ -814,10 +739,13 @@ if (mode === 'new') {
     work_center_uuid.value = { id: WorkC.uuid, name: WorkC.name };
     farm_uuid.value = { id: Farm.uuid, name: Farm.name };
     company.value = { id: empresa.uuid, name: empresa.name };
-}
+    
 
-formDialog.value = true;
-state.value = mode;
+
+    }
+
+    formDialog.value = true;
+    state.value = mode;
 };
 
 
@@ -830,10 +758,12 @@ const openDelete = () => {
     formDialogDelete.value = true;
 };
 
+
+
+
 const actionRecordManager = handleSubmitNew(async (values) => {
+    
     const responseCRUD = ref();
-    console.log('listRowSelect:', listRowSelect.value);
-    console.log(values)
     const data = {
         document: values.documento + '',
         first_name: values.first_name,
@@ -854,23 +784,31 @@ const actionRecordManager = handleSubmitNew(async (values) => {
     console.log('data:', data);
     if (state.value === 'new') {
         responseCRUD.value = await crudService.create(data);
+
     } else if (state.value === 'edit') {
         const { uuid } = listRowSelect.value[0];
         responseCRUD.value = await crudService.update(uuid, data);
-
-    } else if (state.value === 'clone') {
-        
+    } 
+    else if (state.value === 'clone') {
+        const { uuid } = listRowSelect.value[0];
         responseCRUD.value = await crudService.create(data);
     }
     else if (state.value === 'patch') {
+        const { uuid } = listRowSelect.value[0];
         responseCRUD.value = await crudService.patch(uuid, data);
     }
- else {
+    else if (state.value === 'delete') {
         const { uuid } = listRowSelect.value[0];
     }
 
-    // Mostrar notificación y cerrar el diálogo si la operación fue exitosa
+    else {
+
+    }
+
+
+
     if (responseCRUD.value.ok) {
+            // Mostrar notificación y cerrar el diálogo si la operación fue exitosa
     toast.add({
         severity: responseCRUD.value.ok ? 'success' : 'error',
         summary: state.value,
@@ -878,72 +816,83 @@ const actionRecordManager = handleSubmitNew(async (values) => {
         life: 3000
     });
     await loadingData();
-    
         formDialog.value = false;
         listRowSelect.value = [];
         selectedRegisters.value = [];
     }
     else {
-        console.log('Error:', responseCRUD.value.error);
+        console.error('Error:', responseCRUD.value.error);
+        toast.add({
+            severity: 'error',
+            summary: 'Error',
+            detail: responseCRUD.value.error,
+            life: 3000
+        });
     }
+
+    // Recargar datos
+    
 });
-
-
-
 
 const patchAction = async () => {
 
-try {
-    const patchPromises = [];
-    listRowSelect.value.forEach(async (item) => {
-        
-        const data = {
-        status_id: status_id_Action.value
-        };
-        const patchPromise = await crudService.patch(item.uuid, data);
-        console.log('patchPromise:', patchPromise);
-        patchPromises.push(patchPromise);
-    });
-
+    try {
+        const patchPromises = [];
+        listRowSelect.value.forEach(async (item) => {
+            //const deletePromise = await deleteRequest(endpoint.value, item.uuid);
+            const data = {
+            status_id: status_id_Action.value
+            };
+            const patchPromise = await crudService.patch(item.uuid, data);
+            patchPromises.push(patchPromise);
+        });
+// Await all patch requests to complete
 const responses = await Promise.all(patchPromises);
 
-
+// Check for success or errors in responses
 const hasError = responses.some(response => !response.ok);
 
 if (!hasError) {
-toast.add({
-    severity: 'success',
-    summary: 'Success',
-    detail: 'Records updated successfully',
-    life: 3000
-});
+    toast.add({
+        severity: 'success',
+        summary: 'Success',
+        detail: 'Records updated successfully',
+        life: 3000
+    });
 
-formDialog.value = false;
-listRowSelect.value = [];
-selectedRegisters.value = [];
-flagDialog.value = false;
+    // Clear dialog and selections after success
+    formDialog.value = false;
+    listRowSelect.value = [];
+    selectedRegisters.value = [];
+    flagDialog.value = false;
 } else {
-toast.add({
-    severity: 'error',
-    summary: 'Error',
-    detail: 'Some records could not be updated',
-    life: 3000
-});
-}
-
-await loadingData(); // Refresh data
-} catch (error) {
-    console.error('Error updating records:', error);
     toast.add({
         severity: 'error',
         summary: 'Error',
-        detail: 'Error updating records',
+        detail: 'Some records could not be updated',
         life: 3000
     });
 }
 
-finally {listRowSelect.value = [];}
+await loadingData(); // Refresh data
+    } catch (error) {
+        console.error('Error updating records:', error);
+        toast.add({
+            severity: 'error',
+            summary: 'Error',
+            detail: 'Error updating records',
+            life: 3000
+        });
+    }
+
+    finally {
+
+        listRowSelect.value = [];
+    }
+        
 };
+
+
 
 const DeleteRecord = async () => {
     formDialogDelete.value = false;
@@ -958,14 +907,19 @@ const DeleteRecord = async () => {
             return response;
         });
 
+        // Esperar a que todas las eliminaciones se completen
         await Promise.all(deletePromises);
+
+        // Actualizar la tabla después de la eliminación
         await loadingData();
+
+        // Mostrar mensaje de éxito
         toast.add({ severity: 'success', summary: 'Deleted Record', detail: 'Deleted successfully', life: 3000 });
     } catch (error) {
         console.error('Error deleting:', error);
         toast.add({ severity: 'error', summary: 'Error', detail: 'Error deleting records', life: 3000 });
     } finally {
-        
+        // Limpiar las selecciones
         listRowSelect.value = [];
     }
 };
@@ -991,20 +945,17 @@ const ExportRecord = () => {
     else formatXLS(events);
 };
 
+
 function formatCSV(events) {
     if (!events.length) return;
 
-    // Updated flattenObject to handle arrays and nested objects
+    // Flatten nested objects for export
     const flattenObject = (obj, prefix = '') => {
         return Object.keys(obj).reduce((acc, key) => {
             const value = obj[key];
             const fullKey = prefix ? `${prefix}.${key}` : key;
 
-            if (Array.isArray(value)) {
-                // Handle arrays by joining their values into a string
-                acc[fullKey] = value.map(item => (typeof item === 'object' ? JSON.stringify(item) : item)).join('; ');
-            } else if (value && typeof value === 'object' && !(value instanceof Date)) {
-                // Recursively flatten nested objects
+            if (value && typeof value === 'object' && !Array.isArray(value)) {
                 Object.assign(acc, flattenObject(value, fullKey));
             } else {
                 acc[fullKey] = value;
@@ -1030,20 +981,17 @@ function formatCSV(events) {
     link.click();
 }
 
+
 function formatXLS(events) {
     if (!events.length) return;
 
-    // Updated flattenObject to handle arrays and nested objects
+    // Flatten nested objects
     const flattenObject = (obj, prefix = '') => {
         return Object.keys(obj).reduce((acc, key) => {
             const value = obj[key];
             const fullKey = prefix ? `${prefix}.${key}` : key;
 
-            if (Array.isArray(value)) {
-                // Handle arrays by joining their values into a string
-                acc[fullKey] = value.map(item => (typeof item === 'object' ? JSON.stringify(item) : item)).join('; ');
-            } else if (value && typeof value === 'object' && !(value instanceof Date)) {
-                // Recursively flatten nested objects
+            if (value && typeof value === 'object' && !Array.isArray(value)) {
                 Object.assign(acc, flattenObject(value, fullKey));
             } else {
                 acc[fullKey] = value;
@@ -1071,14 +1019,11 @@ function formatXLS(events) {
 }
 
 
-
-
 const remove = (aver) => {
     const index = listRowSelect.value.findIndex((x) => x.id === aver.id);
     if (index !== -1) {
         listRowSelect.value.splice(index, 1);
     }
-    
 };
 
 const searchJobTypes = (event) => {
@@ -1092,7 +1037,6 @@ const searchJobTypes = (event) => {
         }
     }, 200);
 };
-
 const searchCompanies = (event) => {
     setTimeout(() => {
         if (!event.query.trim().length) {
@@ -1104,7 +1048,7 @@ const searchCompanies = (event) => {
         }
     }, 200);
 };
-const searchBranches = (event) => {
+const searchFarms = (event) => {
     setTimeout(() => {
         if (!event.query.trim().length) {
             farms.value = [...Farms.value];
@@ -1114,8 +1058,6 @@ const searchBranches = (event) => {
             });
         }
     }, 200);
-
-
 };
 
 </script>
