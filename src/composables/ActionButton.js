@@ -13,13 +13,13 @@ export function useActions(endpoint) {
     const itemsActions = ref([]);
     
     const getItems = async (id) => {
-        console.log("id",id)
+
         try {
             const finalId = id !== undefined ? id : 1; // Use `1` as the default ID if `id` is undefined
-            console.log("Using ID:", finalId);
+            
     
             const response = await getRequest(`${endpoint}/${finalId}`);
-            console.log("Response:", response);
+            
             itemsActions.value = [];
             
             // Check if response data is valid and contains the expected data structure
@@ -43,7 +43,7 @@ export function useActions(endpoint) {
                 }
                 });
             } else {
-                console.log('No data returned from API');
+                
             }
             console.log(itemsActions.value);
             return response.data;

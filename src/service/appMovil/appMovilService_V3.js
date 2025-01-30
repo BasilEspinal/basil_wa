@@ -198,6 +198,7 @@ export function useAppMovilService() {
         // FARM_ID: fetchFarmId,
         // COMPANY_ID: fetchCompannyId,
         TASK_OF_TYPE: fetchWorkCenter.value?.taskoftype,
+        fetchWorkCenter,
         // SUPERVISOR_NAME: fetchSupervisorName,
         // EMPLOYEE_ID: fetchEmployeeId,
         HOLIDAY: holiday,

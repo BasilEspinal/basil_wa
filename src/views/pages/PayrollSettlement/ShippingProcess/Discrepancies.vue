@@ -2,35 +2,7 @@
     <div>
 
     <div class="card">
-        <!-- <h1 v-if="!ability.can('menux','comercialx')">{{ $t('menux') }}</h1> -->
-        <div class="grid">
-            <div class="col-xs-12 col-sm-6 col-md-4 mb-2 text-center mx-auto">
-                <!--Uncomment when table is done-->
-                
-                <div class="col-xs-12 col-sm-6 col-md-4 mb-2 text-center mx-auto">
-            <Toolbar style="margin-bottom: 1rem">
-                <template #center>
-                    <Divider layout="vertical" />
-                    <Button :disabled="!(listRowSelect.length > 0 && listRowSelect.length < 2)" label="Detalles" icon="pi pi-bars" class="p-button-success mb-2 mt-2" @click="openForm('detalles')" size="large" />
-                        <Divider layout="vertical" />
-                        
-                        <Button :disabled="!(listRowSelect.length > 0 && listRowSelect.length < 2)" label="Edit" icon="pi pi-file-edit" class="p-button-help mb-2 mt-2" @click="openDialog('patch')" size="large" />    
-                            <Divider layout="vertical" />
-                    <!-- 
-                    <Button :disabled="listRowSelect.length > 0" label="New" icon="pi pi-plus" class="p-button-success mb-2 mt-2" @click="openDialog('new')" size="large" />
-                    <Divider layout="vertical" />
-                    <Button :disabled="!(listRowSelect.length > 0 && listRowSelect.length < 2)" label="Clone" icon="pi pi-copy" class="p-button-secondary mb-2 mt-2" @click="openDialog('clone')" size="large" />
-                    <Divider layout="vertical" />
-                    <Button :disabled="listRowSelect.length > 0" label="Export" icon="pi pi-file-import" class="p-button-warning mb-2 mt-2" @click="openExport" size="large" />
-                    <Divider layout="vertical" />
-                    <Button :disabled="!listRowSelect.length > 0" label="Delete" icon="pi pi-trash" class="p-button-danger mb-2 mt-2" @click="openDelete" size="large" /> -->
-                </template>
-            </Toolbar>
-            </div>
 
-            </div>
-        </div>
-        <!-- <pre>{{ listRowSelect }}</pre> -->
         <DataTable
         :value="dataFromComponent"
         dataKey="uuid"
@@ -72,7 +44,46 @@
                         <SelectButton v-model="size" :options="sizeOptions" optionLabel="label" dataKey="label"> </SelectButton>
                         
                     </template>       
-                </Toolbar>
+
+             </Toolbar>
+
+
+
+
+                <Toolbar >
+                    <template v-slot:start>
+                    <div class="grid justify-content-center"> 
+
+
+
+
+                        
+                    <div class="col-12 lg:col-6 text-center">
+                        <Button 
+                        :disabled="!(listRowSelect.length > 0 && listRowSelect.length < 2)" 
+                        icon="pi pi-bars" 
+                        class="mr-2" 
+                        @click="openForm('detalles')" size="large" />
+                    </div>
+
+                    <div class="col-12 lg:col-6 text-center">
+                        <Button 
+                        :disabled="!(listRowSelect.length > 0 && listRowSelect.length < 2)" 
+                        icon="pi pi-file-edit" 
+                        class="p-button-help mr-2" 
+                        @click="openDialog('patch')" 
+                        size="large" />        
+                    </div>
+
+
+                    
+            </div>
+
+                </template>
+                
+
+            </Toolbar>
+
         </template>
 
         <template #empty> No customers found. </template>

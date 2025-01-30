@@ -221,6 +221,56 @@ export const InitialDataService = {
             console.error('Error fetching work type tarif:', error);
             return errorResponseAPI(error);
         }
+    },
+
+    async getCustomerRequests(){
+        try {
+            const response = await getRequest('/customer_requests');
+            return response;
+        } catch (error) {
+            console.error('Error fetching customer requests:', error);
+            return errorResponseAPI(error);
+        }
+    },
+
+    async getProducts() {
+        try {
+            const response = await getRequest('/products');
+            return response;
+        } catch (error) {
+            console.error('Error fetching products:', error);
+            return errorResponseAPI(error);
+        }
+    },
+
+    async getProductTypes() {
+        try {
+            const response = await getRequest('/product_types');
+            return response;
+        } catch (error) {
+            console.error('Error fetching products types:', error);
+            return errorResponseAPI(error);
+        }
+    },
+
+    async getVariants() {
+        try {
+            const response = await getRequest('/variants');
+            return response;
+        } catch (error) {
+            console.error('Error fetching variants:', error);
+            return errorResponseAPI(error);
+        }
+    },
+
+    async getCropLots() {
+        try {
+            const response = await getRequest('/crop_lots');
+            return response;
+        } catch (error) {
+            console.error('Error fetching crop lots:', error);
+            return errorResponseAPI(error);
+        }
     }
 
 

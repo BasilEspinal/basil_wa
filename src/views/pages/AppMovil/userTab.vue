@@ -128,7 +128,7 @@ const [select_tasks_type_field] = defineField('select_tasks_type'); // This link
 
 watch(select_tasks_type,()=>{
     select_tasks_type_field.value=select_tasks_type.value;
-    if (select_tasks_type.value.label ==='HoraExtra'){
+    if (select_tasks_type.value.label ==='HossraExtra'){
         isHoraExtra.value=true
     }
     else{
@@ -249,7 +249,7 @@ const searchPackingType = (event) => {
     <!-- 
     <pre>isHoraExtra: {{isHoraExtra}}</pre> -->
     <div class="grid p-fluid mt-3">
-        <pre>{{ errorsNew }}</pre>    
+          
         <div class="field col-12 md:col-4">
             
             
@@ -257,7 +257,7 @@ const searchPackingType = (event) => {
             <span class="p-float-label">
                 <Dropdown v-model="select_tasks_type" :options="tipoActividad" filter optionLabel="label" />
                 <label class="font-bold" for="task_type">{{ t('appmovil.tipoActividad') }}</label>
-                <pre>{{ select_tasks_type }}</pre>
+                
                 <!-- 
                 <pre>{{select_tasks_type_field}}</pre> -->
             </span>

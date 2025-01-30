@@ -21,9 +21,10 @@ const { t } = useI18n();
 const toast = useToast();
 const { layoutConfig } = useLayout();
 
-const { HOLIDAY, initData, TASK_OF_TYPE, getUsers, getDataTasksplanner,getInfoEmployees } = useAppMovilService();
+const { HOLIDAY, initData, TASK_OF_TYPE, fetchWorkCenter, getUsers, getDataTasksplanner,getInfoEmployees } = useAppMovilService();
 
 const titulo = ref('');
+
 const users = ref(null);
 const filterUsers = ref(null);
 const dataApp = ref(null);
@@ -165,6 +166,7 @@ const functionsData = async () => {
 onBeforeMount(async () => {
 functionsData();
 titulo.value = `Título: ${TASK_OF_TYPE.name || 'Sin nombre'}`;
+
 });
 
 const logoUrl = computed(() => {
@@ -239,7 +241,11 @@ onBeforeUnmount(() => {
 </script>
 
 <template>
-    <h2>{{ titulo }}</h2>
+    <h2>{{ titulo }} Departamento: {{ fetchWorkCenter.name }}</h2>
+    
+
+    
+    
 
     <div v-if="loading" class="flex align-items-center justify-content-center" style="height: 100vh">
         <ProgressSpinner />

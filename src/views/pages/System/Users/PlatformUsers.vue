@@ -7,10 +7,15 @@ import { useForm } from 'vee-validate';
 import ability from '@/service/ability.js';
 import { z } from 'zod';
 
-import useData from '@/composables/DataAPI/FetchDataAPICopy.js';
-const { getRequest, postRequest, putRequest, deleteRequest } = useData();
+//import useData from '@/composables/DataAPI/FetchDataAPICopy.js';
+//const { getRequest, postRequest, putRequest, deleteRequest } = useData();
+
+import { CrudService } from '@/service/CRUD/CrudService';
+
 const prueba = ref({revisar: 'revisar GET-POST-PUT-DELETE'});
 let endpoint = ref('/users');
+
+const crudService = CrudService(endpoint.value);
 const loading = ref(false);
 const selectedRegisters = ref([]);
 const expandedRows = ref([]);
@@ -77,7 +82,9 @@ onMounted(() => {
 
 const loadingData = async () => {
     loading.value = true;
-    const response = await getRequest(endpoint.value);
+    //const response = await getRequest(endpoint.value);
+    const response = await crudService.getAll();
+
     if (!response.ok) toast.add({ severity: 'error', detail: 'Error' + response.error, life: 3000 });
     users.value = response.data.data;
     loading.value = false;
@@ -124,7 +131,9 @@ const newUser = handleSubmit(async (values) => {
         farm_uuid: values.farm ? values.farm.uuid : farmDefault,
         roles: [{ id: 1 }]
     };
-    const restp = await postRequest(endpoint.value, data);
+    //const restp = await postRequest(endpoint.value, data);
+    const restp =await crudService.create(data);
+
     toast.add({ severity: restp.ok ? 'success' : 'error', summary: 'Create', detail: restp.ok ? 'Creado' : restp.error, life: 3000 });
     loadingData();
 });
@@ -140,7 +149,8 @@ const editUser = submitEdit(async (values) => {
     if (values.passwordEdit) {
         data.password = values.passwordEdit;
     }
-    const restp = await putRequest(endpoint.value, data, id);
+    //const restp = await putRequest(endpoint.value, data, id);
+    const restp = await crudService.update(id, data);
     toast.add({ severity: restp.ok ? 'success' : 'error', summary: 'Edit', detail: restp.ok ? 'Editado' : restp.error, life: 3000 });
     DialogEdit.value = false;
     loadingData();
@@ -152,7 +162,9 @@ const deleteUsers = async () => {
     try {
         const deletePromises = [];
         selectedRegisters.value.forEach(async (item) => {
-            const deletePromise = await deleteRequest(endpoint.value, item.id);
+            //const deletePromise = await deleteRequest(endpoint.value, item.id);
+            const deletePromise = await await crudService.delete(item.id);
+            
             deletePromises.push(deletePromise);
         });
         await Promise.all(deletePromises);
@@ -190,17 +202,7 @@ const collapseAll = () => {
             </div>
         </div>
         <div class="card">
-            <Toolbar style="margin-bottom: 1rem">
-                <template #center>
-                    <Button v-if="ability.can('usuario_crear')" label="New" icon="pi pi-plus" class="p-button-success" @click="openNew" size="large" />
-                    <Divider layout="vertical" />
-                    <Button v-if="ability.can('usuario_editar')" :disabled="selectedRegisters.length != 1" label="Edit" icon="pi pi-file-edit" class="p-button-help" @click="openEdit" size="large" />
-                    <Divider layout="vertical" />
-                    <Button v-if="ability.can('usuario_crear')" :disabled="selectedRegisters.length != 1" label="Clone" icon="pi pi-copy" class="p-button-secondary" @click="openClone" size="large" />
-                    <Divider layout="vertical" />
-                    <Button v-if="ability.can('usuario_eliminar')" :disabled="!selectedRegisters.length" label="Delete" icon="pi pi-trash" class="p-button-danger" @click="openDelete" size="large" />
-                </template>
-            </Toolbar>
+
             <DataTable
                 v-model:expandedRows="expandedRows"
                 :loading="loading"
@@ -213,10 +215,38 @@ const collapseAll = () => {
                 :paginator="true"
                 v-model:selection="selectedRegisters"
             >
+            <template #header>
+                <Toolbar >
+
+                    <template v-slot:start>
+
+                        <div class="grid justify-content-center">
+                            
+                        <div class="col-12 lg:col-2 text-center">
+                    <Button v-if="ability.can('usuario_crear')"  icon="pi pi-plus" 
+                    class="p-button-success mr-2" 
+                    @click="openNew" size="large" />
+                </div>
+                    <div class="col-12 lg:col-2 text-center">
+                    <Button v-if="ability.can('usuario_editar')" :disabled="selectedRegisters.length != 1" icon="pi pi-file-edit" 
+                    class="p-button-help mr-2"  @click="openEdit" size="large" />
+                </div>
+                    <div class="col-12 lg:col-2 text-center">
+                    <Button v-if="ability.can('usuario_crear')" :disabled="selectedRegisters.length != 1" icon="pi pi-copy" class="p-button-secondary mr-2"  @click="openClone" size="large" />
+                </div>
+                    <div class="col-12 lg:col-2 text-center">
+                    <Button v-if="ability.can('usuario_eliminar')" :disabled="!selectedRegisters.length"  icon="pi pi-trash" class="p-button-danger mr-2"  @click="openDelete" size="large" />
+                </div>
+            </div>
+                </template>
+            </Toolbar>
+
+            </template>
                 <template #empty> No customers found. </template>
                 <template #loading> Loading customers data. Please wait. </template>
 
                 <template>
+
                     <Column selectionMode="multiple" headerStyle="width: 3rem"></Column>
                     <Column expander style="width: 5rem" />
                     <Column field="xxxxxx" filterField="xxxxxx" header="Name" sortable frozen="">

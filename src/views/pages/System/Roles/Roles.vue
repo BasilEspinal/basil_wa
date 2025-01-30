@@ -8,10 +8,16 @@ import ability from '@/service/ability.js';
 import { z } from 'zod';
 import FormPermissions from './FormPermissions.vue';
 
-import useData from '@/composables/DataAPI/FetchDataAPICopy.js';
-const { getRequest, postRequest, deleteRequest } = useData();
+//import useData from '@/composables/DataAPI/FetchDataAPICopy.js';
+//const { getRequest, postRequest, deleteRequest } = useData();
+
+
+import { CrudService } from '@/service/CRUD/CrudService';
 
 let endpoint = ref('/roles');
+
+const crudService = CrudService(endpoint.value);
+
 const loading = ref(false);
 const selectedRegisters = ref([]);
 const expandedRows = ref([]);
@@ -45,7 +51,8 @@ const newRol = handleSubmit(async (values) => {
         name: values.name,
         permissions: [{ id: 1 }]
     };
-    const restp = await postRequest(endpoint.value, data);
+    //const restp = await postRequest(endpoint.value, data);
+    const restp =await crudService.create(data);
     toast.add({ severity: restp.ok ? 'success' : 'error', summary: 'Create', detail: restp.ok ? 'Creado' : restp.error, life: 3000 });
     loadingData();
 });
@@ -56,14 +63,17 @@ const CloneRol = handleSubmit(async (values) => {
         name: values.name,
         permissions: selectedRegisters.value[0].permissions.map((perm) => ({ id: perm.id }))
     };
-    const restp = await postRequest(endpoint.value, data);
+    //const restp = await postRequest(endpoint.value, data);
+    const restp = await crudService.create(data);
     toast.add({ severity: restp.ok ? 'success' : 'error', summary: 'Clone', detail: restp.ok ? 'Clonado' : restp.error, life: 3000 });
     loadingData();
 });
 
 const loadLazyData = async () => {
     loading.value = true;
-    const response = await getRequest(endpoint.value);
+    //const response = await getRequest(endpoint.value);
+    const response = await crudService.getAll();
+    
     if (!response.ok) toast.add({ severity: 'error', detail: 'Error' + response.error, life: 3000 });
     roles.value = response.data.data ?? [];
     loading.value = false;
@@ -104,7 +114,8 @@ const deleteRoles = async () => {
     try {
         const deletePromises = [];
         selectedRegisters.value.forEach(async item => {
-            const deletePromise = await deleteRequest(endpoint.value, item.id);
+            //const deletePromise = await deleteRequest(endpoint.value, item.id);
+            const deletePromise = await await crudService.delete(item.id);
             deletePromises.push(deletePromise);
         });
         await Promise.all(deletePromises);
@@ -129,7 +140,7 @@ const deleteRoles = async () => {
         </div>
 
         <div class="card">
-            <Toolbar style="margin-bottom: 1rem">
+            <!-- <Toolbar style="margin-bottom: 1rem">
                 <template #center>
                     <Button v-if="ability.can('rol_crear')" label="New" icon="pi pi-plus" class="p-button-success" @click="openNew" size="large" />
                     <Divider layout="vertical" />
@@ -137,7 +148,7 @@ const deleteRoles = async () => {
                     <Divider layout="vertical" />
                     <Button v-if="ability.can('rol_eliminar')" :disabled="!selectedRegisters.length" label="Delete" icon="pi pi-trash" class="p-button-danger" @click="openDelete" size="large" />
                 </template>
-            </Toolbar>
+            </Toolbar> -->
             <DataTable
                 v-model:expandedRows="expandedRows"
                 :loading="loading"
@@ -150,6 +161,33 @@ const deleteRoles = async () => {
                 :paginator="true"
                 v-model:selection="selectedRegisters"
             >
+            <template #header>
+
+                <Toolbar>
+    <template v-slot:start>
+        <div class="grid justify-content-center">
+            <div class="col-12 lg:col-2 text-center">
+                <Button v-if="ability.can('rol_crear')" icon="pi pi-plus" 
+                    class="p-button-success mr-6" 
+                    @click="openNew" size="large" />
+            </div>
+            <div class="col-12 lg:col-2 text-center">
+                <Button v-if="ability.can('rol_editar')" :disabled="selectedRegisters.length != 1" 
+                    icon="pi pi-copy" 
+                    class="p-button-secondary mr-6"  
+                    @click="openClone" size="large" />
+            </div>
+            <div class="col-12 lg:col-2 text-center">
+                <Button v-if="ability.can('rol_eliminar')" :disabled="!selectedRegisters.length"  
+                    icon="pi pi-trash" 
+                    class="p-button-danger mr-6"  
+                    @click="openDelete" size="large" />
+            </div>
+        </div>
+    </template>
+</Toolbar>
+
+                </template>
                 <template #empty> No customers found. </template>
                 <template #loading> Loading customers data. Please wait. </template>
                 <template>
@@ -175,7 +213,8 @@ const deleteRoles = async () => {
                     <label for="username" class="font-semibold w-6rem">Name</label>
                     <InputText id="username" v-model="name" class="flex-auto" autocomplete="off" v-bind="nameProps" />
                 </div>
-                <small id="username-help" :class="{ 'p-invalid text-red-700': errors['name'] }">{{ errors.name }}</small>
+                <FrontEndErrors :errorsNew="errorsNew" name="name" />
+                <BackendErrors :name="errorResponseAPI?.errors?.name"/>
             </div>
             <Divider />
             <div class="flex justify-content-end gap-2">
@@ -189,9 +228,8 @@ const deleteRoles = async () => {
                     <label for="username" class="font-bold w-6rem">Name</label>
                     <InputText id="username" v-model="name" class="flex-auto" autocomplete="off" v-bind="nameProps" />
                 </div>
-                <small id="username-help" :class="{ 'p-invalid text-red-700': errors['name'] }">
-                    {{ errors.name }}
-                </small>
+                <FrontEndErrors :errorsNew="errorsNew" name="name" />
+                <BackendErrors :name="errorResponseAPI?.errors?.name"/>
             </div>
             <div class="mb-3">
                 <label for="username" class="font-bold w-6rem mb-2">Permissions</label>
