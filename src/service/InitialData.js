@@ -272,6 +272,16 @@ export const InitialDataService = {
             return errorResponseAPI(error);
         }
     }
+,
+    async postContractor(data) {    
+        try {
+            const response = await postRequest('/transactions/contractor/work', data);
+            return response;
+        } catch (error) {
+            console.error('Error posting contractor:', error);
+            return errorResponseAPI(error);
+        }
+    },
 
 
 

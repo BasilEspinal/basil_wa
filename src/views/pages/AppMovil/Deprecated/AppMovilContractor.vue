@@ -16,12 +16,12 @@
         </div>
 
         <TabView class="tabview-custom">
-            <TabPanel>
+            <!-- <TabPanel>
                 <template #header>
                     <div class="flex align-items-center gap-2">
-                        <!-- Empleado avatar-->
+                        
                         <i class="pi pi-user" style="font-size: 2rem"></i>
-                        <!-- <span class="font-bold white-space-nowrap">Empleados</span> -->
+                        <span class="font-bold white-space-nowrap">Empleados</span>
                     </div>
                 </template>
 
@@ -36,6 +36,7 @@
                     </Listbox>
                 </div>
             </TabPanel>
+             -->
             <TabPanel>
     <template #header>
         <div class="flex align-items-center gap-2">
@@ -47,7 +48,7 @@
     </template>
 
     <div class="card">
-        <pre>{{errorsNew}}</pre>
+        <!-- <pre>{{errorsNew}}</pre> -->
         <div class="p-fluid formgrid grid">
             <!-- Labores -->
             <div class="field col-12 md:col-3">
@@ -86,7 +87,7 @@
                     </InputNumber>
                 </div>
                 <FrontEndErrors :errorsNew="errorsNew" name="quantityEmployees" />
-                <BackendErrors :name="errorResponseAPI?.errors?.quantityEmployees"/>
+                <BackendErrors :name="errorResponseAPI?.errors?.employee_qty"/>
             </div>
 
             <!-- Precio total -->
@@ -279,7 +280,9 @@
                 </DataTable>
             </TabPanel>
         </TabView>
+        <Toast />
     </div>
+    
 </template>
     
     <script setup>
@@ -305,11 +308,12 @@ import { useActions } from '@/composables/ActionButton.js';
 import { useAppMovilService } from '@/service/appMovil/appMovilService_V3';
 const {getDonesWork, HOLIDAY, initData, TASK_OF_TYPE, getUsers, getDataTasksplanner,getInfoEmployees } = useAppMovilService();
 // import { ProductService } from '@/service/ProductService'
-
+const farmDefault = sessionStorage.getItem('accessSessionFarm');
+const supervisoryEmployee = sessionStorage.getItem('accesSessionEmployeeUuid');
 //const crudService = CrudService(endpoint.value);
-let endpoint = ref('/employees'); //replace endpoint with your endpoint
+let endpoint = ref('/transactions/contractor/work'); //replace endpoint with your endpoint
 const crudService = CrudService(endpoint.value);
-
+const toast = useToast();
 const Works = ref([]);
 const works = ref([]);
 
@@ -466,11 +470,14 @@ const {
         z.object({
             work: z
                 .object({
+                    work_type_tarif: z.string().min(4),
                     name: z.string().min(4),
                     id: z.string().min(4)
                 })
                 .optional(),
-            quantityEmployees: z.number().min(1).max(20),
+            quantityEmployees: z.number().min(1).max(20).refine(val => val === dataPickList.value[1].length, {
+                    message: "La cantidad de empleados debe coincidir con los seleccionados."
+                }),
 
             notesV: z.string().min(4).max(100)
         })
@@ -487,17 +494,42 @@ const actionRecordManager = handleSubmitNew(async (values) => {
     const responseCRUD = ref();
     console.log('dataPickList', dataPickList.value[1]);
     console.log(values)
+    const today = new Date();
     const data = {
-        work: values.work,
-        quantityEmployees: values.quantityEmployees,
-        totalPrice: totalTarif.value,
+        trans_dev: false,
+        transaction_date_send: `${today.getFullYear()}-${String(today.getMonth() + 1).padStart(2, '0')}-${String(today.getDate()).padStart(2, '0')}`,
+        calendar_uuid: null,
+        tasks_of_type_uuid: TASK_OF_TYPE.uuid,
+        supervisory_employee_uuid: supervisoryEmployee,
+        type_price_task: 'WorkDone',
+        done_of_type_uuid: values.work.id,
+        work_type_tarif: values.work?.work_type_tarif || "No me llega nada", 
+        
+        // employee_qty: dataPickList.value[1].map((item) => (item.id)).length,
+        employee_qty: values.quantityEmployees,
+        
+        //employees_ids:dataPickList.value[1].map((item) => ({ id: item.id })),
+        employees_ids:dataPickList.value[1].map((item) => (item.id)),
+        total_tarif_task:totalTarif.value,
+        
         unitPrices: unitTarif.value,
-        employees: dataPickList.value[1].map((item) => ({ id: item.id }))
+
+
+
+
+        farm_uuid: farmDefault,
+	    notes_small: "",
+	    transdate_sync: null,
+	    device_name: "Web"
     };
+    console.log(JSON.stringify(data, null, 2));
+    console.log(work.value)
+
     
     if (state.value === 'new') {
-        // responseCRUD.value = await crudService.create(data);
-        console.log('data:', data);
+         responseCRUD.value = await crudService.create(data);
+         loadLazyData();
+        // console.log('data:', data);
     } else if (state.value === 'edit') {
         const { uuid } = listRowSelect.value[0];
         responseCRUD.value = await crudService.update(uuid, data);
@@ -513,16 +545,34 @@ const actionRecordManager = handleSubmitNew(async (values) => {
         const { uuid } = listRowSelect.value[0];
     }
 
+    console.log('responseCRUD', responseCRUD.value);
     // Mostrar notificación y cerrar el diálogo si la operación fue exitosa
     if (responseCRUD.value.ok) {
+        console.log('Entreeeeeee')
+
     toast.add({
         severity: responseCRUD.value.ok ? 'success' : 'error',
         summary: state.value,
         detail: responseCRUD.value.ok ? 'Done' : responseCRUD.value.error,
         life: 3000
     });
-    await loadingData();
     
+    resetForm(); // Reset the form fields
+
+// Reset selected employees
+    dataPickList.value = [originalAvailablePickList.value.slice(), []];
+
+    // Reset other variables
+    totalTarif.value = 1000;
+    works.value = [];
+    work.value = null;
+    quantityEmployees.value = 0;
+    notesV.value = "";
+
+    // Reload Data
+    await loadLazyData();
+    await readAll();
+
         formDialog.value = false;
         listRowSelect.value = [];
         selectedRegisters.value = [];
