@@ -281,7 +281,7 @@ onBeforeUnmount(() => {
 </script>
 
 <template>
-    <pre>{{ compareStoredDate() }}</pre>
+    <!-- <pre>{{ compareStoredDate() }}</pre> -->
     <h2>{{ titulo }} Departamento: {{ fetchWorkCenter.name }}</h2>
     
 

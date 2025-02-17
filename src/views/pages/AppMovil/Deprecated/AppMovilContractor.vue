@@ -1,10 +1,12 @@
 <template>
+    
     <div class="card">
+        <h2>{{ titulo }} Departamento: {{ fetchWorkCenter.name }}</h2>
         <div class="p-fluid formgrid grid">
             <div class="field col-12 md:col-6">
-                <h4>Trabajo diario de: {{ areawork }}</h4>
+                <!-- <h4>Trabajo diario de: {{ areawork }}</h4> -->
             </div>
-            <div class="field col-12 md:col-6">
+            <!-- <div class="field col-12 md:col-6">
                 <h4>
                     Empleado:
                     <span v-if="selectedEmployee && selectedEmployee.name">
@@ -12,7 +14,7 @@
                     </span>
                     <span v-else> No selected employee </span>
                 </h4>
-            </div>
+            </div> -->
         </div>
 
         <TabView class="tabview-custom">
@@ -306,7 +308,7 @@ import Summary from '@/components/Summary.vue';
 import ActionButton from '@/components/ActionButton.vue';
 import { useActions } from '@/composables/ActionButton.js';
 import { useAppMovilService } from '@/service/appMovil/appMovilService_V3';
-const {getDonesWork, HOLIDAY, initData, TASK_OF_TYPE, getUsers, getDataTasksplanner,getInfoEmployees } = useAppMovilService();
+const {getDonesWork, HOLIDAY, initData, TASK_OF_TYPE, getUsers, getDataTasksplanner,getInfoEmployees,fetchWorkCenter } = useAppMovilService();
 // import { ProductService } from '@/service/ProductService'
 const farmDefault = sessionStorage.getItem('accessSessionFarm');
 const supervisoryEmployee = sessionStorage.getItem('accesSessionEmployeeUuid');
@@ -316,6 +318,7 @@ const crudService = CrudService(endpoint.value);
 const toast = useToast();
 const Works = ref([]);
 const works = ref([]);
+const titulo = ref('');
 
 
 // Original dataPickList list
@@ -365,6 +368,7 @@ watch(search, (newSearch) => {
 
 onMounted(async () => {
     await loadLazyData();
+    titulo.value = `Título: ${TASK_OF_TYPE.name || 'Sin nombre'}`;
     
 });
 
