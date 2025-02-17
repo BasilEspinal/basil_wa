@@ -8,6 +8,8 @@ export const fetchInfoDataLogged = async () => {
     try {
         const response = await getRequest('/appmovil/datastart');
         console.log('response :', response);
+        console.log('Date :', response.data.meta.server_date_answer);
+        const meta = response.data.meta;
         const { farm, company, employee, user_email } = response.data.data;
         const employeeName = employee.full_name; 
         sessionStorage.setItem('accessSessionEmail', user_email);
@@ -27,6 +29,9 @@ export const fetchInfoDataLogged = async () => {
         sessionStorage.setItem('accesSessionEmployeeUuid', employee.uuid);
         localStorage.setItem('accessSessionWorkCenter', JSON.stringify(employee.workCenter));
         sessionStorage.setItem('accessSessionWorkCenter', JSON.stringify(employee.workCenter));
+        // localStorage.setItem('accessSessionDate', meta.server_date_answer);
+        sessionStorage.setItem('accessSessionDate', meta.server_date_answer);
+
 
         return response;
     } catch (error) {

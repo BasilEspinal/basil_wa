@@ -41,6 +41,7 @@ const fetchInfoPostLogin = async (data) => {
   try {
     let response = await postRequest(endpoint.value, { email: email.value, password: password.value });
     response = response.data.data;
+    console.log(response);
     if (response['error']) throw response.error;
     if (!response['user']) throw response.error;
 

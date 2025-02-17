@@ -13,6 +13,7 @@ import ability from '@/service/ability.js';
 //
 // Estoy utilizando otro servicio para el CRUD
 import StackErrors from '@/service/StackErrors.js';
+import { date } from 'zod';
 const stack = new StackErrors();
 const errorSummary = ref(false);
 const summary = ref();
@@ -32,7 +33,41 @@ const holiday = ref('Normal');
 const lotes = ref(null);
 const search = ref(null);
 const userEmployee = ref(localStorage.getItem('accesSessionEmployeeUuid'));
+
 const loading = ref(true); // Initially set to true
+
+const compareStoredDate=()=> {
+    // Get the stored date from sessionStorage
+    const storedDateStr = sessionStorage.getItem("accessSessionDate");
+
+    // Check if the date exists
+    if (!storedDateStr) {
+        console.log("No date found in sessionStorage.");
+        return {condition:false, message:"No date found in sessionStorage.",dateStored:storedDateStr};
+    }
+
+    // Convert stored date string to a Date object
+    const storedDate = new Date(storedDateStr);
+
+    // Get the current date (only YYYY-MM-DD)
+    const today = new Date();
+    const currentDate = new Date(today.getFullYear(), today.getMonth(), today.getDate());
+
+    // Compare the dates
+    if (storedDate.getTime() === currentDate.getTime()) {
+        console.log("The stored date is today.");
+        return {condition:true, message:"The stored date is today.",dateStored:storedDateStr};
+    } else if (storedDate.getTime() < currentDate.getTime()) {
+        console.log("The stored date is in the past.");
+        return {condition:false, message:"The stored date is in the past.",dateStored:storedDateStr,dateGet:currentDate};
+    } else {
+        console.log("The stored date is in the future.");
+        return {condition:false, message:"The stored date is in the future.",dateStored:storedDateStr};
+    }
+}
+
+// Example usage
+
 
 const formatCurrency = (value) => {
     return value.toLocaleString('en-US', { style: 'currency', currency: 'USD' });
@@ -182,6 +217,8 @@ const getUser = async () => {
 
 const getData = async () => {
     const response = await getDataTasksplanner();
+    
+    console.log('response', response);
 
     if (!response.ok || !response.data || response.data.length === 0) {
         // Handle error if response is not OK or if data is empty
@@ -189,6 +226,7 @@ const getData = async () => {
         toast.add({ severity: 'error', detail: errorMessage, life: 3000 });
         // Push the failed response to the stack for later processing
         stack.push({ response: response, category: 'Data task planner', description: 'No data available' });
+
 
         // Return false to indicate failure
         return false;
@@ -237,10 +275,13 @@ onBeforeUnmount(() => {
     const holiday = ref('Normal');
     const lotes = ref(null);
     const search = ref(null);
+
+    
 });
 </script>
 
 <template>
+    <!-- <pre>{{ compareStoredDate() }}</pre> -->
     <h2>{{ titulo }} Departamento: {{ fetchWorkCenter.name }}</h2>
     
 
