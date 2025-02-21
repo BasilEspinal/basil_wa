@@ -164,6 +164,12 @@ const router = createRouter({
                 },
 
                 {
+                    path: '/PayrollSettlement/DailyTransactionsContractor',
+                    name: 'dailytransactionscontractor',
+                    component: () => import('@/views/pages/PayrollSettlement/DailyTransactionsContractor/DailyTransactionsContractor.vue')
+                },
+
+                {
                     path: '/PayrollSettlement/ShippingProcess/ShippingProcess',
                     name: 'shippingProcess',
                     component: () => import('@/views/pages/PayrollSettlement/ShippingProcess/ShippingProcess.vue')

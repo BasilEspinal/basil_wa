@@ -50,7 +50,8 @@
     </template>
 
     <div class="card">
-        <!-- <pre>{{errorsNew}}</pre> -->
+         <!-- <pre>{{errorsNew}}</pre> 
+         <pre>{{ work }}</pre> -->
         <div class="p-fluid formgrid grid">
             <!-- Labores -->
             <div class="field col-12 md:col-3">
@@ -308,7 +309,7 @@ import Summary from '@/components/Summary.vue';
 import ActionButton from '@/components/ActionButton.vue';
 import { useActions } from '@/composables/ActionButton.js';
 import { useAppMovilService } from '@/service/appMovil/appMovilService_V3';
-const {getDonesWork, HOLIDAY, initData, TASK_OF_TYPE, getUsers, getDataTasksplanner,getInfoEmployees,fetchWorkCenter } = useAppMovilService();
+const {getDonesWork, HOLIDAY, initData, TASK_OF_TYPE, getUsers, getDataTasksplanner,getInfoEmployees,fetchWorkCenter,getTarifOfTasksDoneAppMob,getTarifOfWorks } = useAppMovilService();
 // import { ProductService } from '@/service/ProductService'
 const farmDefault = sessionStorage.getItem('accessSessionFarm');
 const supervisoryEmployee = sessionStorage.getItem('accesSessionEmployeeUuid');
@@ -427,7 +428,7 @@ const readAll = async () => {
             toast.add({ severity: 'error', detail: 'Error: ' + response.error, life: 3000 });
             return;
         }
-        Works.value = responseDonesWork.data.data.map((element) => ({ id: element.uuid, name: element.name, work_type_tarif: element.work_type_tarif }));    
+        Works.value = responseDonesWork.data.data.map((element) => ({ id:element.id,uuid: element.uuid, name: element.name, work_type_tarif: element.work_type_tarif }));    
         console.log('Works', Works.value);
     
     }
@@ -476,7 +477,7 @@ const {
                 .object({
                     work_type_tarif: z.string().min(4),
                     name: z.string().min(4),
-                    id: z.string().min(4)
+                    uuid: z.string().min(4)
                 })
                 .optional(),
             quantityEmployees: z.number().min(1).max(20).refine(val => val === dataPickList.value[1].length, {
@@ -506,7 +507,7 @@ const actionRecordManager = handleSubmitNew(async (values) => {
         tasks_of_type_uuid: TASK_OF_TYPE.uuid,
         supervisory_employee_uuid: supervisoryEmployee,
         type_price_task: 'WorkDone',
-        done_of_type_uuid: values.work.id,
+        done_of_type_uuid: values.work.uuid,
         work_type_tarif: values.work?.work_type_tarif || "No me llega nada", 
         
         // employee_qty: dataPickList.value[1].map((item) => (item.id)).length,
@@ -586,6 +587,24 @@ const actionRecordManager = handleSubmitNew(async (values) => {
     }
 });
 
+watch(work, async () => {
+    console.log('work', work.value.work_type_tarif);
+    // console.log('work', work.value);
+    // console.log('TaskOfTypeID',TASK_OF_TYPE.id)
+
+    //const tarifOfWors = await getTarifOfWorks();
+    //console.log('tarifOfWors', tarifOfWors.data.data.filter(item => item.done_type.name === work.value.name));
+    const valueTarif = await getTarifOfTasksDoneAppMob(TASK_OF_TYPE.id,HOLIDAY,work.value.work_type_tarif,work.value.id)
+    console.log('valueTarif', valueTarif.data.data[0].price_tarif);
+    
+    totalTarif.value = valueTarif.data.data[0].price_tarif;
+    
+});
+
+watch(totalTarif, (newTotalTarif) => {
+    // Update the unit price when the total price changes
+    unitTarif.value = dataPickList.value[1].length > 0 ? newTotalTarif / dataPickList.value[1].length : 0;
+});
 
 const selectedCountry = ref();
 const countries = ref([
@@ -766,7 +785,7 @@ const loadLazyData = async (event) => {
 
     await getAllResponseAPI(endpoint.value);
     loading.value = false;
-    data_planner.product_type.value = dataResponseAPI.data[0].product.name;
+    //data_planner.product_type.value = dataResponseAPI.data[0].product.name;
 };
 
 const listRowSelect = ref([]);
