@@ -142,6 +142,7 @@ export const messages = {
             },
             dailyPlanning: 'Daily Planning',
             dailyTransactions: 'Daily Transactions',
+            dailyTransactionsContractor: 'Daily Transactions Contractor',
             shipping: {
                 shippingProcess: 'Shipping Process',
                 tabs:{
@@ -372,6 +373,7 @@ export const messages = {
             },
             dailyPlanning: 'Planeación Diaria',
             dailyTransactions: 'Transacciones del Día',
+            dailyTransactionsContractor: 'Transacciones del Día Contratista',
             shipping: {
                 shippingProcess: 'Proceso de Envío',
                 tabs:{

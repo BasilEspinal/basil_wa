@@ -2,10 +2,9 @@
     <div>
 
         <div class="card">
-            <h1>{{ $t('menu.workTypes') }}</h1>
+            <h1>{{ $t('menu.dailyTransactionsContractor') }}</h1>
 
             <Dialog v-model:visible="flagDialog" :style="{ width: '450px' }" :header="titleDialog" :modal="true">
-                
             <label for="username" class="text-2xl font-medium w-6rem"> {{ messageDialog }} </label>
             <!-- <Summary :listRowSelect="listRowSelect" /> -->
             <div class="flex justify-content-end gap-2">
@@ -199,13 +198,10 @@
                 </div>
             </Dialog>
             <Dialog v-model:visible="formDialog" modal :header="formDialogTitle" class="p-fluid text-center mx-auto">
-                <pre>{{ errorsNew }}</pre>
-                <pre>{{ errorResponseAPI }}</pre>
-                <pre>{{ calculate_work_typeV }}</pre>
             
                 <div class="mb-3">
                     <div class="flex align-items-center gap-3 mb-1">
-                        <label for="username" class="font-semibold w-3">Name :</label>
+                        <label for="username" class="font-semibold w-6rem">Name :</label>
                         <InputText id="username" v-model="name" class="flex-auto" autocomplete="off" v-bind="nameProps" />
                     </div>
                     <FrontEndErrors :errorsNew="errorsNew" name="name" />
@@ -213,36 +209,16 @@
                 </div>
                 <div class="mb-3">
                     <div class="flex align-items-center gap-3 mb-1">
-                        <label for="username" class="font-semibold w-3">Code :</label>
+                        <label for="username" class="font-semibold w-6rem">Code :</label>
                         <InputText id="username" v-model="codeV" class="flex-auto" autocomplete="off" v-bind="codeVProps" />
                     </div>
                     <FrontEndErrors :errorsNew="errorsNew" name="codeV" />
                     <BackendErrors :name="errorResponseAPI?.errors?.code"/>
                 </div>
-
-                <div class="mb-3">
-                    <div class="flex align-items-center">
-                        <label for="username" class="font-semibold w-3">Work Type Tarif:</label>
-                        <AutoComplete v-model="work_type_tarifV" class="flex-auto"  inputId="ac" :suggestions="work_type_tarif" @complete="searchWorkTypeTarif" field="name" dropdown />
-                    </div>
-                    <FrontEndErrors :errorsNew="errorsNew" name="work_type_tarifV" />
-                    <BackendErrors :name="errorResponseAPI?.errors?.work_type_tarif_uuid"/>
-                </div>
-                
-                <div class="mb-3">
-                    <div class="flex align-items-center">
-                        <label for="username" class="font-semibold w-3">Calculate Work Type:</label>
-                        <AutoComplete v-model="calculate_work_typeV" class="flex-auto"  inputId="ac" :suggestions="calculate_work_type" @complete="searchCalculate_work_type" field="name" dropdown />
-                    </div>
-                    <FrontEndErrors :errorsNew="errorsNew" name="calculate_work_typeV" />
-                    <BackendErrors :name="errorResponseAPI?.errors?.calculate_work_type_uuid"/>
-                </div>
-
-
                 <div class="mb-3">
                     <div class="flex align-items-center">
                         <label for="username" class="font-semibold w-3">Farm :</label>
-                        <AutoComplete v-model="farm" inputId="ac" class="flex-auto" :suggestions="farms" @complete="searchBranches" field="name" dropdown />
+                        <AutoComplete v-model="farm" inputId="ac" :suggestions="farms" @complete="searchBranches" field="name" dropdown />
                     </div>
                     <FrontEndErrors :errorsNew="errorsNew" name="farm" />
                     <BackendErrors :name="errorResponseAPI?.errors?.farm_uuid"/>
@@ -250,7 +226,7 @@
                 <div class="mb-3">
                     <div class="flex align-items-center">
                         <label for="username" class="font-semibold w-3">Company:</label>
-                        <AutoComplete v-model="company" inputId="ac" class="flex-auto" :suggestions="compa" @complete="searchCompanies" field="name" dropdown />
+                        <AutoComplete v-model="company" inputId="ac" :suggestions="compa" @complete="searchCompanies" field="name" dropdown />
                     </div>
                     <FrontEndErrors :errorsNew="errorsNew" name="company" />
                     <BackendErrors :name="errorResponseAPI?.errors?.company"/>
@@ -346,21 +322,31 @@ const { getItems,itemsActions, messageDialog,titleDialog,status_id_Action,flagDi
 const { t } = useI18n();
 
 const dynamicColumns = [
-    { field: 'name', header: 'Name', frozen: false, color: false },
-    { field: 'code', header: 'Code', frozen: false, color: false },
-    { field: 'work_type_tarif', header: 'Work type Tarif', frozen: false, color: false },
-    { field: 'calculate_work_type', header: 'Calculate work type', frozen: false, color: false },
+{ field: 'transaction_date', header: 'Transaction Date', frozen: false, color: false },
+{ field: 'doneType.name', header: 'Done Type Name', frozen: false, color: false },
+{ field: 'employee_qty', header: 'Employee Quantity', frozen: false, color: false },
+{ field: 'unit_price_task', header: 'Unit Price Task', frozen: false, color: false },
+{ field: 'total_tarif_task', header: 'Total Tarif Task', frozen: false, color: false },
+{ field: 'type_price_task', header: 'Type Price Task', frozen: false, color: false },
+    { field: 'type_day_tarif', header: 'Type Day Tarif', frozen: false, color: false },
+    // { field: 'tasks_statuses', header: 'Task Statuses', frozen: false, color: false },
     
-    // Nested fields for farm
+    
+
+    
+    { field: 'device_name', header: 'Device Name', frozen: false, color: false },
+    { field: 'code_pays_period', header: 'Code Pays Period', frozen: false, color: false },
+    { field: 'day_week_num', header: 'Day Week Number', frozen: false, color: false },
+    
+    { field: 'tasks_of_type.name', header: 'Task of Type Name', frozen: false, color: false },
+    { field: 'supervisory_employee.full_name', header: 'Supervisor Name', frozen: false, color: false },
     { field: 'farm.name', header: 'Farm Name', frozen: false, color: false },
-    // Nested fields for company
     { field: 'company.name', header: 'Company Name', frozen: false, color: false },
-    // Nested fields for status
     { field: 'status.name', header: 'Status Name', frozen: false, color: true },
     { field: 'created_at', header: 'Created At', frozen: false, color: false },
-    { field: 'updated_at', header: 'Updated At', frozen: false, color: false },
-    
+    { field: 'updated_at', header: 'Updated At', frozen: false, color: false }
 ];
+
 
 
 
@@ -381,7 +367,7 @@ const openForm = (mode) => {
 }
 
 
-let endpoint = ref('/done_types'); //replace endpoint with your endpoint
+let endpoint = ref("/transactions/contractor/work")  //replace endpoint with your endpoint
 const crudService = CrudService(endpoint.value);
 const errorResponseAPI = crudService.getErrorResponse();
 const dataFromComponent = ref();
@@ -389,14 +375,6 @@ const Farms = ref([]);
 const farms = ref([]);
 const Compan = ref([]);
 const compa = ref([]);
-const work_type_tarif_list = ref([{id:1,name:"Individual"},{id:2,name:"Group"}]);
-const work_type_tarif = ref([]);
-//const Work_type_tarif = ref();
-const Work_type_tarif = ref([]);
-
-const calculate_work_type = ref([])
-const Calculate_work_type = ref([])
-
 const farmDefault = sessionStorage.getItem('accessSessionFarm');
 const companyDefault = sessionStorage.getItem('accessSessionCompany');
 const formDialogExportTitle = 'Export records';
@@ -430,15 +408,22 @@ const onRowSelect = (data) => {
     listRowSelect.value = data;
     openDialogSettlement('patch_action');
     const row = listRowSelect.value[0];
+
     if (row) {
         cardSections.value = [
             {
                 title: 'General Information',
                 fields: {
-                    'Name': row.name,
-                    'Code': row.code,
-                    'Created At': row.created_at,
-                    'Updated At': row.updated_at,
+                    'UUID': row.uuid,
+                    'Transaction Date': row.transaction_date,
+                    'Week of Year': row.week_Of_Year,
+                    'Day of Week': row.day_Of_Week,
+                    'Code Pays Period': row.code_pays_period,
+                    'Type Day Tarif': row.type_day_tarif,
+                    'Total Tarif Task': row.total_tarif_task,
+                    'Unit Price Task': row.unit_price_task,
+                    'Employee Quantity': row.employee_qty,
+                    'Device Name': row.device_name,
                 },
                 icon: 'pi pi-calendar',
                 bgColor: 'bg-green-100',
@@ -449,9 +434,6 @@ const onRowSelect = (data) => {
                 fields: {
                     'Farm Name': row.farm?.name,
                     'Farm Code': row.farm?.code,
-                    'Farm UUID': row.farm?.uuid,
-                    'Created At': row.farm?.created_at,
-                    'Updated At': row.farm?.updated_at,
                 },
                 icon: 'pi pi-map-marker',
                 bgColor: 'bg-teal-100',
@@ -462,10 +444,7 @@ const onRowSelect = (data) => {
                 fields: {
                     'Company Name': row.company?.name,
                     'Company Code': row.company?.code,
-                    'Company Website': row.company?.url_path,
-                    'Logo File': row.company?.file_name,
-                    'Created At': row.company?.created_at,
-                    'Updated At': row.company?.updated_at,
+                    'Website': row.company?.url_path,
                 },
                 icon: 'pi pi-building',
                 bgColor: 'bg-blue-100',
@@ -477,17 +456,46 @@ const onRowSelect = (data) => {
                     'Status Name': row.status?.name,
                     'Description': row.status?.description,
                     'Color': row.status?.color,
-                    'Model': row.status?.model,
-                    'Created At': row.status?.created_at,
-                    'Updated At': row.status?.updated_at,
                 },
                 icon: 'pi pi-info-circle',
                 bgColor: 'bg-gray-100',
                 iconColor: 'text-gray-500'
+            },
+            {
+                title: 'Done Type Information',
+                fields: {
+                    'Done Type Name': row.doneType?.name,
+                    'Work Type Tarif': row.doneType?.work_type_tarif,
+                    'Calculate Work Type': row.doneType?.calculate_work_type,
+                },
+                icon: 'pi pi-check',
+                bgColor: 'bg-yellow-100',
+                iconColor: 'text-yellow-500'
+            },
+            {
+                title: 'Task Information',
+                fields: {
+                    'Task Type': row.tasks_of_type?.name,
+                },
+                icon: 'pi pi-tasks',
+                bgColor: 'bg-purple-100',
+                iconColor: 'text-purple-500'
+            },
+            {
+                title: 'Supervisor Information',
+                fields: {
+                    'Supervisor Name': row.supervisory_employee?.full_name,
+                    'Supervisor Document': row.supervisory_employee?.document,
+                    'Supervisor Bank Account': row.supervisory_employee?.bank_account_number,
+                },
+                icon: 'pi pi-user',
+                bgColor: 'bg-pink-100',
+                iconColor: 'text-pink-500'
             }
         ];
     }
 };
+
 
 
 watch(listRowSelect, onRowSelect);
@@ -532,18 +540,6 @@ const readAll = async () => {
     const respCompan = await InitialDataService.getCompanies();
     if (!respCompan.ok) toast.add({ severity: 'error', detail: 'Error' + respCompan.error, life: 3000 });
     Compan.value = respCompan.data.data.map((comp) => ({ id: comp.uuid, name: comp.name }));
-    
-    // const respWorkTypeTarif = work_type_tarif_list.value;
-    const respWorkTypeTarif = await InitialDataService.getWorkTypeTarif()
-    console.log('respWorkTypeTarif:', respWorkTypeTarif);
-    if (!respWorkTypeTarif.ok) toast.add({ severity: 'error', detail: 'Error' + respWorkTypeTarif.error, life: 3000 });
-    Work_type_tarif.value = respWorkTypeTarif.data.data.map((element) => ({ id: element.id, name: element.label }));
-
-    const respCalculateWorkType = await InitialDataService.getCalculateWorkType()
-    console.log('respCalculateWorkType',respCalculateWorkType)
-    if (!respCalculateWorkType.ok) toast.add({ severity: 'error', detail: 'Error' + respCalculateWorkType.error, life: 3000 });
-    Calculate_work_type.value = respCalculateWorkType.data.data.map((element) => ({ id: element.id, name: element.label }));
-
 
 };
 const loadingData = async () => {
@@ -563,30 +559,10 @@ const {
     defineField,
     resetForm
 } = useForm({
-    initialValues: {
-        name: '',
-        codeV: '',
-        work_type_tarifV: '',
-        calculate_work_typeV: '',
-        farm: '',
-        company: ''
-    },
     validationSchema: toTypedSchema(
         z.object({
             name: z.string().min(4),
             codeV: z.string().min(4),
-            // work_type_tarifV: z.string().min(4),
-            work_type_tarifV: z
-                .object({
-                    name: z.string().min(4),
-                    id: z.string().min(4)
-                }),
-            calculate_work_typeV: z
-                .object({
-                    name: z.string().min(4),
-                    id: z.string().min(4)
-                }),
-            // calculate_work_typeV: z.string().min(4),
             farm: z
                 .object({
                     name: z.string().min(4),
@@ -605,9 +581,6 @@ const {
 
 const [name, nameProps] = defineField('name');
 const [codeV, codeVProps] = defineField('codeV');
-const [work_type_tarifV, work_type_tarifVProps] = defineField('work_type_tarifV');
-const [calculate_work_typeV, calculate_work_typeVProps] = defineField('calculate_work_typeV');
-
 const [farm] = defineField('farm');
 const [company] = defineField('company');
 
@@ -647,13 +620,10 @@ const openDialog = (mode) => {
         return;
     } else {
         resetForm();
-        const { code, company: empresa, farm: finca, name: nombre, work_type_tarif:tarif,calculate_work_type:calculatewt } = listRowSelect.value[0];
+        const { code, company: empresa, farm: finca, name: nombre } = listRowSelect.value[0];
 
         name.value = nombre;
         codeV.value = code;
-        work_type_tarifV.value = tarif;
-        
-        calculate_work_typeV.value=calculatewt;
         company.value = { id: empresa.uuid, name: empresa.name };
         farm.value = { id: finca.uuid, name: finca.name };
     }
@@ -679,8 +649,6 @@ const actionRecordManager = handleSubmitNew(async (values) => {
     const data = {
         code: values.codeV,
         name: values.name,
-        work_type_tarif: values.work_type_tarifV.name,
-        calculate_work_type: values.calculate_work_typeV.name,
         company_uuid: values.company ? values.company.id : companyDefault,
         farm_uuid: values.farm ? values.farm.id : farmDefault
     };
@@ -936,34 +904,6 @@ const searchBranches = (event) => {
 
 
 };
-
-const searchWorkTypeTarif = (event) => {
-    setTimeout(() => {
-        if (!event.query.trim().length) {
-            work_type_tarif.value = [...Work_type_tarif.value];
-        } else {
-            work_type_tarif.value = Work_type_tarif.value.filter((fram) => {
-                return fram.name.toLowerCase().startsWith(event.query.toLowerCase());
-            });
-        }
-    }, 200);
-};
-
-
-const searchCalculate_work_type = (event) => {
-    setTimeout(() => {
-        if (!event.query.trim().length) {
-            calculate_work_type.value = [...Calculate_work_type.value];
-        } else {
-            calculate_work_type.value = Calculate_work_type.value.filter((fram) => {
-                return fram.name.toLowerCase().startsWith(event.query.toLowerCase());
-            });
-        }
-    }, 200);
-};
-
-
-
 
 </script>
 

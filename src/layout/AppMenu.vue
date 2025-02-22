@@ -697,6 +697,13 @@ const model2 = computed(() => ([
                         gate: 'liquidaciondenomina_planeaciondiaria_menu'
                     },
                     {
+                        label: t('menu.dailyTransactionsContractor'),
+                        to: '/PayrollSettlement/DailyTransactionsContractor',
+                        icon: 'pi pi-bookmark',
+                        // gate: 'liquidaciondenomina_transacciones_diarias_menu'
+                        gate: 'liquidaciondenomina_planeaciondiaria_menu'
+                    },
+                    {
                         label: t('menu.shipping.shippingProcess'),
                         to: '/PayrollSettlement/ShippingProcess/ShippingProcess',
                         icon: 'pi pi-bookmark',
@@ -824,6 +831,7 @@ const model2 = computed(() => ([
                         to: '/AppMovil/Contractor',
                         icon: 'pi pi-mobile',
                         gate: 'appmovil_contratista_menu'
+                      //  gate: 'appmovil_menu',
                     },
                     // {
                     //     label: t('menu.cortaCapture'),

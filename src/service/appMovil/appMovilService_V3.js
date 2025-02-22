@@ -37,6 +37,29 @@ export function useAppMovilService() {
         }
     }
 
+    const getTarifOfTasksDoneAppMob = async (task_of_type_id,work_type_day,work_type_tarif,done_of_type_id) => {
+        try {
+            const response = await getRequest(`/appmovil/donetarif?filter[tasks_of_type_id]=${task_of_type_id}&filter[work_type_day]=${work_type_day}&filter[work_type_tarif]=${work_type_tarif}&filter[done_of_type_id]=${done_of_type_id}&filter[farm_id]=${fetchFarmId.value}&filter[company_id]=${fetchCompannyId.value}`);
+            
+            counter.value++;
+            console.log('counter', counter.value);
+            return response;
+        } catch (e) {
+            return error('Error Get Tarif Of Tasks Done AppMob:', e);
+        }
+    };
+
+    const getTarifOfWorks = async ()=>{
+        try {
+            const response = await getRequest(`/tarif_of_works`);
+            counter.value++;
+            console.log('counter', counter.value);
+            return response;
+        } catch (e) {
+            return error('Error Get Tarif Of Works:', e);
+        }
+    }
+
     const getDonesWork = async () => {
         try {
             
@@ -216,6 +239,8 @@ export function useAppMovilService() {
         dataInfoUser,
         getInfoEmployees,
         getInfoEmployeesById,
+        getTarifOfTasksDoneAppMob,
+        getTarifOfWorks,
         error
     };
 }
