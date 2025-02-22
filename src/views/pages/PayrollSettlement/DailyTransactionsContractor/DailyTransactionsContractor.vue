@@ -332,7 +332,7 @@ const dynamicColumns = [
     // { field: 'tasks_statuses', header: 'Task Statuses', frozen: false, color: false },
     
     
-    
+
     
     { field: 'device_name', header: 'Device Name', frozen: false, color: false },
     { field: 'code_pays_period', header: 'Code Pays Period', frozen: false, color: false },

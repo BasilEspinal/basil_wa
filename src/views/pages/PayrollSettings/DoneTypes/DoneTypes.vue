@@ -5,6 +5,7 @@
             <h1>{{ $t('menu.workTypes') }}</h1>
 
             <Dialog v-model:visible="flagDialog" :style="{ width: '450px' }" :header="titleDialog" :modal="true">
+                
             <label for="username" class="text-2xl font-medium w-6rem"> {{ messageDialog }} </label>
             <!-- <Summary :listRowSelect="listRowSelect" /> -->
             <div class="flex justify-content-end gap-2">
@@ -198,6 +199,9 @@
                 </div>
             </Dialog>
             <Dialog v-model:visible="formDialog" modal :header="formDialogTitle" class="p-fluid text-center mx-auto">
+                <pre>{{ errorsNew }}</pre>
+                <pre>{{ errorResponseAPI }}</pre>
+                <pre>{{ calculate_work_typeV }}</pre>
             
                 <div class="mb-3">
                     <div class="flex align-items-center gap-3 mb-1">
@@ -221,8 +225,8 @@
                         <label for="username" class="font-semibold w-3">Work Type Tarif:</label>
                         <AutoComplete v-model="work_type_tarifV" class="flex-auto"  inputId="ac" :suggestions="work_type_tarif" @complete="searchWorkTypeTarif" field="name" dropdown />
                     </div>
-                    <FrontEndErrors :errorsNew="errorsNew" name="company" />
-                    <BackendErrors :name="errorResponseAPI?.errors?.company"/>
+                    <FrontEndErrors :errorsNew="errorsNew" name="work_type_tarifV" />
+                    <BackendErrors :name="errorResponseAPI?.errors?.work_type_tarif_uuid"/>
                 </div>
                 
                 <div class="mb-3">
@@ -231,7 +235,7 @@
                         <AutoComplete v-model="calculate_work_typeV" class="flex-auto"  inputId="ac" :suggestions="calculate_work_type" @complete="searchCalculate_work_type" field="name" dropdown />
                     </div>
                     <FrontEndErrors :errorsNew="errorsNew" name="calculate_work_typeV" />
-                    <BackendErrors :name="errorResponseAPI?.errors?.calculate_work_type"/>
+                    <BackendErrors :name="errorResponseAPI?.errors?.calculate_work_type_uuid"/>
                 </div>
 
 
@@ -387,7 +391,8 @@ const Compan = ref([]);
 const compa = ref([]);
 const work_type_tarif_list = ref([{id:1,name:"Individual"},{id:2,name:"Group"}]);
 const work_type_tarif = ref([]);
-const Work_type_tarif = ref();
+//const Work_type_tarif = ref();
+const Work_type_tarif = ref([]);
 
 const calculate_work_type = ref([])
 const Calculate_work_type = ref([])
@@ -558,16 +563,30 @@ const {
     defineField,
     resetForm
 } = useForm({
+    initialValues: {
+        name: '',
+        codeV: '',
+        work_type_tarifV: '',
+        calculate_work_typeV: '',
+        farm: '',
+        company: ''
+    },
     validationSchema: toTypedSchema(
         z.object({
             name: z.string().min(4),
             codeV: z.string().min(4),
-            work_type_tarifV: z.string().min(4),
+            // work_type_tarifV: z.string().min(4),
+            work_type_tarifV: z
+                .object({
+                    name: z.string().min(4),
+                    id: z.string().min(4)
+                }),
             calculate_work_typeV: z
                 .object({
                     name: z.string().min(4),
                     id: z.string().min(4)
                 }),
+            // calculate_work_typeV: z.string().min(4),
             farm: z
                 .object({
                     name: z.string().min(4),
@@ -633,6 +652,7 @@ const openDialog = (mode) => {
         name.value = nombre;
         codeV.value = code;
         work_type_tarifV.value = tarif;
+        
         calculate_work_typeV.value=calculatewt;
         company.value = { id: empresa.uuid, name: empresa.name };
         farm.value = { id: finca.uuid, name: finca.name };
@@ -659,8 +679,8 @@ const actionRecordManager = handleSubmitNew(async (values) => {
     const data = {
         code: values.codeV,
         name: values.name,
-        work_type_tarif: values.work_type_tarifV,
-        calculate_work_type: values.calculate_work_typeV.id,
+        work_type_tarif: values.work_type_tarifV.name,
+        calculate_work_type: values.calculate_work_typeV.name,
         company_uuid: values.company ? values.company.id : companyDefault,
         farm_uuid: values.farm ? values.farm.id : farmDefault
     };

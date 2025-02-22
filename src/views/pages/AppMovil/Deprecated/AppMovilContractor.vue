@@ -588,14 +588,17 @@ const actionRecordManager = handleSubmitNew(async (values) => {
 });
 
 watch(work, async () => {
-    console.log('work', work.value.work_type_tarif);
+    // console.log('work', work.value.work_type_tarif);
+
     // console.log('work', work.value);
     // console.log('TaskOfTypeID',TASK_OF_TYPE.id)
 
     //const tarifOfWors = await getTarifOfWorks();
     //console.log('tarifOfWors', tarifOfWors.data.data.filter(item => item.done_type.name === work.value.name));
-    const valueTarif = await getTarifOfTasksDoneAppMob(TASK_OF_TYPE.id,HOLIDAY,work.value.work_type_tarif,work.value.id)
-    console.log('valueTarif', valueTarif.data.data[0].price_tarif);
+
+    // console.log("Holiday",HOLIDAY.value);
+    const valueTarif = await getTarifOfTasksDoneAppMob(TASK_OF_TYPE.id,HOLIDAY.value,work.value.work_type_tarif,work.value.id)
+    // console.log('valueTarif', valueTarif.data.data[0].price_tarif);
     
     totalTarif.value = valueTarif.data.data[0].price_tarif;
     
