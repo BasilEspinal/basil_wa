@@ -322,53 +322,99 @@ const { getItems,itemsActions, messageDialog,titleDialog,status_id_Action,flagDi
 const { t } = useI18n();
 
 const dynamicColumns = [
-{ field: 'type_day_tarif', header: 'Type Day Tarif', frozen: false, color: false },
-{ field: 'tasks_statuses.name', header: 'Task statuses', frozen: false, color: false },
-{ field: 'type_price_task', header: 'Type Price Task', frozen: false, color: false },
-{ field: 'task_qty', header: 'Task Quantity', frozen: false, color: false },
-{ field: 'price_tarif_task', header: 'Price Tarif Task', frozen: false, color: false },
-{ field: 'task_total_pays', header: 'Task Total Pays', frozen: false, color: false },
-{ field: 'notes_small', header: 'Notes', frozen: false, color: false },
-{ field: 'day_week_num', header: 'Day Week Number', frozen: false, color: false },
-{ field: 'tasks_of_type.name', header: 'Task of Type Name', frozen: false, color: false },
-{ field: 'packing_type_name', header: 'Packing Type Name', frozen: false, color: false },
-{ field: 'product.name', header: 'Product Name', frozen: false, color: false },
-{ field: 'vehicle.vehicle_type', header: 'Vehicle Type', frozen: false, color: false },
-{ field: 'supervisory_employee.full_name', header: 'Supervisor Name', frozen: false, color: false },
-{ field: 'supervisory_jobtype.name', header: '"Supervisor job type', frozen: false, color: false },
-{ field: 'worker_employee.full_name', header: 'Worker Name', frozen: false, color: false },
-{ field: 'worker_jobtype.name', header: 'Worker Employee Job Type', frozen: false, color: false },
-{ field: 'customer_request_id.dispatch_number_lot', header: 'Dispatch Number Lot', frozen: false, color: false },
-{ field: 'farm.name', header: 'Farm Name', frozen: false, color: false },
-{ field: 'company.name', header: 'Company Name', frozen: false, color: false },
-{ field: 'status.name', header: 'Status Name', frozen: false, color: true },
-{ field: 'created_at', header: 'Created At', frozen: false, color: false },
-{ field: 'updated_at', header: 'Updated At', frozen: false, color: false },
+    { field: 'transaction_date', header: 'Transaction Date', frozen: false, color: false },
+    { field: 'tasks_of_type.name', header: 'Task of Type Name', frozen: false, color: false },
+    { field: 'code_pays_period', header: 'Code Pays Period', frozen: false, color: false },
+    { field: 'type_day_tarif', header: 'Type Day Tarif', frozen: false, color: false },
+    { field: 'type_price_task', header: 'Type Price Task', frozen: false, color: false },
+    { field: 'task_qty', header: 'Task Quantity', frozen: false, color: false },
+    { field: 'price_tarif_task', header: 'Price Tarif Task', frozen: false, color: false },
+    { field: 'task_total_pays', header: 'Task Total Pays', frozen: false, color: false },
+    { field: 'tasks_statuses.name', header: 'Task statuses', frozen: false, color: true },
 
+    { field: 'packing_type.name', header: 'Packing Type Name', frozen: false, color: false },
+    { field: 'product.name', header: 'Product Name', frozen: false, color: false },
+    { field: 'vehicle.vehicle_type', header: 'Vehicle Type', frozen: false, color: false },
+    // { field: 'supervisory_employee.full_name', header: 'Supervisor Name', frozen: false, color: false },
+    { field: 'worker_employee.document', header: 'Employee Document', frozen: false, color: false },
+    { field: 'worker_employee.full_name', header: 'Worker Name', frozen: false, color: false },
+    // { field: 'worker_jobtype.name', header: 'Worker Employee Job Type', frozen: false, color: false },
+    { field: 'customer_request_id.dispatch_number_lot', header: 'Dispatch Number Lot', frozen: false, color: false },
+    { field: 'notes_small', header: 'Notes', frozen: false, color: false },
+    // { field: 'day_week_num', header: 'Day Week Number', frozen: false, color: false },
+    { field: 'farm.name', header: 'Farm Name', frozen: false, color: false },
+    { field: 'company.name', header: 'Company Name', frozen: false, color: false },
+    { field: 'status.name', header: 'Status Name', frozen: false, color: true },
+    { field: 'created_at', header: 'Created At', frozen: false, color: false },
+    { field: 'updated_at', header: 'Updated At', frozen: false, color: false }
+
+    // { field: 'supervisory_jobtype.name', header: '"Supervisor job type', frozen: false, color: false },
     // //{ field: 'uuid', header: 'UUID', frozen: false, color: false },
     // { field: 'planner_task_id', header: 'Planner Task ID', frozen: false, color: false },
-    // { field: 'transaction_date', header: 'Transaction Date', frozen: false, color: false },
     // { field: 'week_Of_Year', header: 'Week of Year', frozen: false, color: false },
     // { field: 'day_Of_Week', header: 'Day of Week', frozen: false, color: false },
-    
-    // { field: 'code_pays_period', header: 'Code Pays Period', frozen: false, color: false },
-    
-    
+
     //{ field: 'farm.code', header: 'Farm Code', frozen: false, color: false },
-    
+
     //{ field: 'company.code', header: 'Company Code', frozen: false, color: false },
     //{ field: 'company.url_path', header: 'Company Website', frozen: false, color: false },
-    
+
     //{ field: 'status.description', header: 'Status Description', frozen: false, color: false },
-    
-   // { field: 'product.short_name', header: 'Product Short Name', frozen: false, color: false },
-   // { field: 'variant.name', header: 'Variant Name', frozen: false, color: false },
-   // { field: 'vehicle.code', header: 'Vehicle Code', frozen: false, color: false },
-    
-    
-    
-   // { field: 'customer_request_id.customer_name', header: 'Customer Name', frozen: false, color: false },
+
+    // { field: 'product.short_name', header: 'Product Short Name', frozen: false, color: false },
+    // { field: 'variant.name', header: 'Variant Name', frozen: false, color: false },
+    // { field: 'vehicle.code', header: 'Vehicle Code', frozen: false, color: false },
+
+    // { field: 'customer_request_id.customer_name', header: 'Customer Name', frozen: false, color: false },
 ];
+// const dynamicColumns = [
+// { field: 'type_day_tarif', header: 'Type Day Tarif', frozen: false, color: false },
+// { field: 'tasks_statuses.name', header: 'Task statuses', frozen: false, color: false },
+// { field: 'type_price_task', header: 'Type Price Task', frozen: false, color: false },
+// { field: 'task_qty', header: 'Task Quantity', frozen: false, color: false },
+// { field: 'price_tarif_task', header: 'Price Tarif Task', frozen: false, color: false },
+// { field: 'task_total_pays', header: 'Task Total Pays', frozen: false, color: false },
+// { field: 'notes_small', header: 'Notes', frozen: false, color: false },
+// { field: 'day_week_num', header: 'Day Week Number', frozen: false, color: false },
+// { field: 'tasks_of_type.name', header: 'Task of Type Name', frozen: false, color: false },
+// { field: 'packing_type_name', header: 'Packing Type Name', frozen: false, color: false },
+// { field: 'product.name', header: 'Product Name', frozen: false, color: false },
+// { field: 'vehicle.vehicle_type', header: 'Vehicle Type', frozen: false, color: false },
+// { field: 'supervisory_employee.full_name', header: 'Supervisor Name', frozen: false, color: false },
+// { field: 'supervisory_jobtype.name', header: '"Supervisor job type', frozen: false, color: false },
+// { field: 'worker_employee.full_name', header: 'Worker Name', frozen: false, color: false },
+// { field: 'worker_jobtype.name', header: 'Worker Employee Job Type', frozen: false, color: false },
+// { field: 'customer_request_id.dispatch_number_lot', header: 'Dispatch Number Lot', frozen: false, color: false },
+// { field: 'farm.name', header: 'Farm Name', frozen: false, color: false },
+// { field: 'company.name', header: 'Company Name', frozen: false, color: false },
+// { field: 'status.name', header: 'Status Name', frozen: false, color: true },
+// { field: 'created_at', header: 'Created At', frozen: false, color: false },
+// { field: 'updated_at', header: 'Updated At', frozen: false, color: false },
+
+//     // //{ field: 'uuid', header: 'UUID', frozen: false, color: false },
+//     // { field: 'planner_task_id', header: 'Planner Task ID', frozen: false, color: false },
+//     // { field: 'transaction_date', header: 'Transaction Date', frozen: false, color: false },
+//     // { field: 'week_Of_Year', header: 'Week of Year', frozen: false, color: false },
+//     // { field: 'day_Of_Week', header: 'Day of Week', frozen: false, color: false },
+    
+//     // { field: 'code_pays_period', header: 'Code Pays Period', frozen: false, color: false },
+    
+    
+//     //{ field: 'farm.code', header: 'Farm Code', frozen: false, color: false },
+    
+//     //{ field: 'company.code', header: 'Company Code', frozen: false, color: false },
+//     //{ field: 'company.url_path', header: 'Company Website', frozen: false, color: false },
+    
+//     //{ field: 'status.description', header: 'Status Description', frozen: false, color: false },
+    
+//    // { field: 'product.short_name', header: 'Product Short Name', frozen: false, color: false },
+//    // { field: 'variant.name', header: 'Variant Name', frozen: false, color: false },
+//    // { field: 'vehicle.code', header: 'Vehicle Code', frozen: false, color: false },
+    
+    
+    
+//    // { field: 'customer_request_id.customer_name', header: 'Customer Name', frozen: false, color: false },
+// ];
 
 
 

@@ -54,6 +54,7 @@
          <pre>{{ work }}</pre> -->
         <div class="p-fluid formgrid grid">
             <!-- Labores -->
+            <pre>{{works}}</pre>
             <div class="field col-12 md:col-3">
                 <div class="flex align-items-center">
                     <label for="username" class="font-semibold w-3">Labores:</label>
