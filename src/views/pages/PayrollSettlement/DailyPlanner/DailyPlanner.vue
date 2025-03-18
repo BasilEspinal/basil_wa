@@ -1,6 +1,7 @@
 <template>
     <div>
-
+<!-- <pre>{{ listRowSelect }}</pre> -->
+ 
         <div class="card">
             <h1>{{ $t('menu.dailyPlanning') }}</h1>
 
@@ -1069,6 +1070,7 @@ toast.add({
     detail: 'Records updated successfully',
     life: 3000
 });
+await loadingData();   
 
 formDialog.value = false;
 listRowSelect.value = [];
@@ -1083,7 +1085,10 @@ toast.add({
 });
 }
 
-await loadingData(); // Refresh data
+
+
+        
+
 } catch (error) {
     console.error('Error updating records:', error);
     toast.add({
@@ -1096,6 +1101,7 @@ await loadingData(); // Refresh data
 
 finally {listRowSelect.value = [];}
 };
+
 
 const DeleteRecord = async () => {
     formDialogDelete.value = false;

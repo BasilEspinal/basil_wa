@@ -246,9 +246,12 @@ const searchPackingType = (event) => {
 
 <template>
     
+    
     <!-- 
     <pre>isHoraExtra: {{isHoraExtra}}</pre> -->
     <div class="grid p-fluid mt-3">
+        <pre>{{ errorsNew }}</pre>
+        <pre>{{ BackendErrors }}</pre>
           
         <div class="field col-12 md:col-4">
             

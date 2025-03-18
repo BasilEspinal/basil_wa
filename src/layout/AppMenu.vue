@@ -820,7 +820,7 @@ const model2 = computed(() => ([
                 icon: 'pi pi-box',
                 gate: 'appmovil_menu',
                 items: [
-                    {
+                {
                         label: t('menu.dataCapture'),
                         to: '/AppMovil/General',
                         icon: 'pi pi-mobile',
@@ -831,8 +831,10 @@ const model2 = computed(() => ([
                         to: '/AppMovil/Contractor',
                         icon: 'pi pi-mobile',
                         gate: 'appmovil_contratista_menu'
-                      //  gate: 'appmovil_menu',
+                      
                     },
+
+
                     // {
                     //     label: t('menu.cortaCapture'),
                     //     to: '/AppMovil/Corta',

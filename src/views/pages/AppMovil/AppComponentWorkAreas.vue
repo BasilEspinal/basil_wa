@@ -14,6 +14,8 @@ import ability from '@/service/ability.js';
 // Estoy utilizando otro servicio para el CRUD
 import StackErrors from '@/service/StackErrors.js';
 import { date } from 'zod';
+
+import { useRoute } from 'vue-router';
 const stack = new StackErrors();
 const errorSummary = ref(false);
 const summary = ref();
@@ -24,7 +26,9 @@ const { layoutConfig } = useLayout();
 
 const { HOLIDAY, initData, TASK_OF_TYPE, fetchWorkCenter, getUsers, getDataTasksplanner,getInfoEmployees } = useAppMovilService();
 
+
 const titulo = ref('');
+
 
 const users = ref(null);
 const filterUsers = ref(null);
@@ -155,7 +159,13 @@ const getDataEmployeesInfo = async () => {
         return total;
     });
 };
+onBeforeMount(async () => {
+    functionsData();
+    titulo.value = `Título: ${TASK_OF_TYPE.name || 'Sin nombre'}`;
+});
 onUnmounted(() => {
+     // Reinitialize useAppMovilService() to get fresh data
+     
     titulo.value = '';
     users.value = null;
     filterUsers.value = null;
@@ -176,21 +186,18 @@ onUnmounted(() => {
     totalJournalTotal.value = 0;
 });
 
+
+
 const functionsData = async () => {
     loading.value = true; // Set loading to true when data fetching starts
     //await initData();
     getUser();
     await getData();
 
-    // console.log("initData",initData)
-    // console.log("TASK_OF_TYPE",TASK_OF_TYPE)
-    // console.log("HOLIDAY",HOLIDAY)
-    // console.log("TASK_OF_TYPE",TASK_OF_TYPE)
-    // console.log("getUsers",getUsers)
-    // console.log("getDataTasksplanner",getDataTasksplanner)
+
 
     holiday.value = HOLIDAY;
-    //titulo.value = t('appmovil.titulo') + ' ' + (TASK_OF_TYPE?.name ? TASK_OF_TYPE.name : 'XXXXXXXXXXXXXX');
+    titulo.value = t('appmovil.titulo') + ' ' + (TASK_OF_TYPE?.name ? TASK_OF_TYPE.name : 'XXXXXXXXXXXXXX');
     loading.value = false; // Set loading to false when data fetching is complete
     //////////////////////////
     //Sebastian
@@ -200,9 +207,10 @@ const functionsData = async () => {
 
 onBeforeMount(async () => {
 functionsData();
-titulo.value = `Título: ${TASK_OF_TYPE.name || 'Sin nombre'}`;
+
 
 });
+
 
 const logoUrl = computed(() => {
     return `layout/images/${layoutConfig.darkTheme.value ? 'logo-white' : 'logo-dark'}.png`;
@@ -281,6 +289,7 @@ onBeforeUnmount(() => {
 </script>
 
 <template>
+
     <!-- <pre>{{ compareStoredDate() }}</pre> -->
     <h2>{{ titulo }} Departamento: {{ fetchWorkCenter.name }}</h2>
     

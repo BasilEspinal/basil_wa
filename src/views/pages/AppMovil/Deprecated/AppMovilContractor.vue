@@ -50,11 +50,11 @@
     </template>
 
     <div class="card">
-         <!-- <pre>{{errorsNew}}</pre> 
-         <pre>{{ work }}</pre> -->
+        
+         <Message  closable v-if ="flagIndividual">This activity is Individual</Message>
         <div class="p-fluid formgrid grid">
             <!-- Labores -->
-            <pre>{{works}}</pre>
+            
             <div class="field col-12 md:col-3">
                 <div class="flex align-items-center">
                     <label for="username" class="font-semibold w-3">Labores:</label>
@@ -70,7 +70,9 @@
                 <FrontEndErrors :errorsNew="errorsNew" name="work" />
                 <BackendErrors :name="errorResponseAPI?.errors?.work"/>
             </div>
-
+            
+<!-- <pre>{{ flagIndividual }}</pre>
+<pre>{{ quantityEmployees }}</pre> -->
             <!-- Cantidad empleados -->
             <div class="field col-12 md:col-3">
                 <div class="flex align-items-center">
@@ -78,7 +80,7 @@
                     <InputNumber
                         v-model="quantityEmployees"
                         showButtons
-                        
+                        :disabled="flagIndividual"
                         style="width: 6rem"
                         :min="0"
                         :max="99">
@@ -297,6 +299,7 @@ import { FilterMatchMode, FilterOperator } from 'primevue/api';
 import { CrudService } from '@/service/CRUD/CrudService';
 import { InitialDataService } from '@/service/InitialData';
 import { z } from 'zod';
+import Message from 'primevue/message';
 
 import BackendErrors from '@/layout/composables/Errors/BackendErrors.vue';
 import FrontEndErrors from '@/layout/composables/Errors/FrontendErrors.vue';
@@ -321,6 +324,7 @@ const toast = useToast();
 const Works = ref([]);
 const works = ref([]);
 const titulo = ref('');
+
 
 
 // Original dataPickList list
@@ -378,30 +382,11 @@ onMounted(async () => {
 
 onBeforeMount(() => {
     readAll();
-    // ProductService.getProductsSmall().then((data) => (dataPickList.value = [data, []]));
+    
 
 });
 const readAll = async () => {
-    // const respWorks = await InitialDataService.getBranches();
-    // console.log('respWorks', respWorks);
-    // if (!respWorks.ok) toast.add({ severity: 'error', detail: 'Error' + respWorks.error, life: 3000 });
-    // Works.value = respWorks.data.data.map((work) => ({ id: work.uuid, name: work.name }));
 
-
-    // const respWorks = process.env.NODE_ENV === 'development' ? { ok: true, data: { data: mockTestData } } : await InitialDataService.getBranches();
-
-    // if (!respWorks.ok) {
-    //     toast.add({ severity: 'error', detail: `Error: ${respWorks.error}`, life: 3000 });
-    //     return;
-    // }
-
-    // Works.value = respWorks.data.data.map((work) => ({
-    //     id: work.uuid,
-    //     name: work.name
-    // }));
-    // works.value = [...Works.value];
-
-    // loading.value = true; // Show loading indicator
     try {
         
         const response = await getUsers();;
@@ -412,7 +397,7 @@ const readAll = async () => {
 
         // Populate originalAvailablePickList
         originalAvailablePickList.value = response.data.data;
-// console.log('originalAvailablePickList', originalAvailablePickList.value);
+
         // Update the dataPickList with the new data
         dataPickList.value[0] = [...originalAvailablePickList.value];
         dataPickList.value[1] = []; // Clear the target list
@@ -459,7 +444,7 @@ const searchBranches = (event) => {
         }
     }, 200);
 };
-
+const flagIndividual = ref(false);
 const {
     handleSubmit: handleSubmitNew,
     errors: errorsNew,
@@ -481,11 +466,30 @@ const {
                     uuid: z.string().min(4)
                 })
                 .optional(),
-            quantityEmployees: z.number().min(1).max(20).refine(val => val === dataPickList.value[1].length, {
-                    message: "La cantidad de empleados debe coincidir con los seleccionados."
-                }),
+            // quantityEmployees: z.number().min(1).max(20).refine(val => val === dataPickList.value[1].length, {
+            //         message: "La cantidad de empleados debe coincidir con los seleccionados."
+            //     }),
+            quantityEmployees: z
+            .number()
+            .min(1)
+            .max(20)
+            .superRefine((val, ctx) => {
+                if (!flagIndividual.value && val < 2) {
+                    ctx.addIssue({
+                        code: z.ZodIssueCode.custom,
+                        message: "Debe haber al menos 2 empleados si es una actividad individual."
+                    });
+                }
+            })
+            .refine(val => val === dataPickList.value[1].length, {
+                message: "La cantidad de empleados debe coincidir con los seleccionados."
+            })
 
-            notesV: z.string().min(4).max(100)
+            ,
+            
+
+
+            notesV: z.string().optional()
         })
     )
 });
@@ -494,6 +498,22 @@ const [work] = defineField('work');
 const [quantityEmployees] = defineField('quantityEmployees');
 const [notesV] = defineField('notesV');
 
+watch(flagIndividual, () => {
+    quantityEmployees.value = flagIndividual.value ? 1 : 2; // Ensure default value
+});
+
+
+watch(work,() => {
+    
+    if (work.value.work_type_tarif=='Individual') {
+        flagIndividual.value = true;
+        quantityEmployees.value = 1;
+    }
+    else {
+        flagIndividual.value = false;
+        
+    }
+});
 
 const state = ref('new');
 const actionRecordManager = handleSubmitNew(async (values) => {
@@ -589,18 +609,8 @@ const actionRecordManager = handleSubmitNew(async (values) => {
 });
 
 watch(work, async () => {
-    // console.log('work', work.value.work_type_tarif);
 
-    // console.log('work', work.value);
-    // console.log('TaskOfTypeID',TASK_OF_TYPE.id)
-
-    //const tarifOfWors = await getTarifOfWorks();
-    //console.log('tarifOfWors', tarifOfWors.data.data.filter(item => item.done_type.name === work.value.name));
-
-    // console.log("Holiday",HOLIDAY.value);
-    const valueTarif = await getTarifOfTasksDoneAppMob(TASK_OF_TYPE.id,HOLIDAY.value,work.value.work_type_tarif,work.value.id)
-    // console.log('valueTarif', valueTarif.data.data[0].price_tarif);
-    
+    const valueTarif = await getTarifOfTasksDoneAppMob(TASK_OF_TYPE.id,HOLIDAY.value,work.value.work_type_tarif,work.value.id)    
     totalTarif.value = valueTarif.data.data[0].price_tarif;
     
 });
