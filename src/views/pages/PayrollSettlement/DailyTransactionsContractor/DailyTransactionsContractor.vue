@@ -232,6 +232,7 @@
                     <BackendErrors :name="errorResponseAPI?.errors?.company"/>
                 </div>
 
+                <AppMovilContractor/>
 
                 <div class="flex justify-content-end gap-2 flex-auto">
                     <Button class="flex-auto" type="button" label="Cancel" severity="secondary"
@@ -317,6 +318,7 @@ import { z } from 'zod';
 import Summary from '@/components/Summary.vue';
 import ActionButton from '@/components/ActionButton.vue';
 import {useActions} from '@/composables/ActionButton.js';
+import AppMovilContractor from '@/views/pages/AppMovil/Deprecated/AppMovilContractor.vue';
 const { getItems,itemsActions, messageDialog,titleDialog,status_id_Action,flagDialog } = useActions(`/processflow/CropLot`);
 
 const { t } = useI18n();
@@ -325,11 +327,15 @@ const dynamicColumns = [
 { field: 'transaction_date', header: 'Transaction Date', frozen: false, color: false },
 { field: 'doneType.name', header: 'Done Type Name', frozen: false, color: false },
 { field: 'employee_qty', header: 'Employee Quantity', frozen: false, color: false },
+{ field: 'work_type_tarif', header: 'Work Type Tarif', frozen: false, color: false },
+{ field: 'calculate_work_type', header: 'Calculate work type', frozen: false, color: false },
 { field: 'unit_price_task', header: 'Unit Price Task', frozen: false, color: false },
 { field: 'total_tarif_task', header: 'Total Tarif Task', frozen: false, color: false },
 { field: 'type_price_task', header: 'Type Price Task', frozen: false, color: false },
-    { field: 'type_day_tarif', header: 'Type Day Tarif', frozen: false, color: false },
-    // { field: 'tasks_statuses', header: 'Task Statuses', frozen: false, color: false },
+{ field: 'type_day_tarif', header: 'Type Day Tarif', frozen: false, color: false },
+// { field: 'tasks_statuses', header: 'Task Statuses', frozen: false, color: false },
+
+    
     
     
 

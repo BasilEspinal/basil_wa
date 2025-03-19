@@ -4,41 +4,17 @@
         <h2>{{ titulo }} Departamento: {{ fetchWorkCenter.name }}</h2>
         <div class="p-fluid formgrid grid">
             <div class="field col-12 md:col-6">
-                <!-- <h4>Trabajo diario de: {{ areawork }}</h4> -->
+
             </div>
-            <!-- <div class="field col-12 md:col-6">
-                <h4>
-                    Empleado:
-                    <span v-if="selectedEmployee && selectedEmployee.name">
-                        {{ selectedEmployee.name }}
-                    </span>
-                    <span v-else> No selected employee </span>
-                </h4>
-            </div> -->
+
         </div>
+        <Message severity="error" variant="outlined" v-if="errorsMessageFlag">{{ errorsMessage }}</Message>
+
 
         <TabView class="tabview-custom">
-            <!-- <TabPanel>
-                <template #header>
-                    <div class="flex align-items-center gap-2">
-                        
-                        <i class="pi pi-user" style="font-size: 2rem"></i>
-                        <span class="font-bold white-space-nowrap">Empleados</span>
-                    </div>
-                </template>
 
-                <div class="card flex justify-content-center">
-                    <Listbox v-model="selectedEmployee" :options="availableAreaEmployees" optionLabel="name" filter class="w-full sm:w-64 md:w-96 lg:w-128 xl:w-1/2 2xl:w-2/3" listStyle="max-height:250px">
-                        <template #option="slotProps">
-                            <div class="flex align-items-center">
-                                <img :alt="slotProps.option.name" src="https://primefaces.org/cdn/primevue/images/flag/flag_placeholder.png" :class="`flag flag-${slotProps.option.code.toLowerCase()} mr-2`" style="width: 18px" />
-                                <div>{{ slotProps.option.name }}</div>
-                            </div>
-                        </template>
-                    </Listbox>
-                </div>
-            </TabPanel>
-             -->
+
+
             <TabPanel>
     <template #header>
         <div class="flex align-items-center gap-2">
@@ -50,11 +26,11 @@
     </template>
 
     <div class="card">
-         <!-- <pre>{{errorsNew}}</pre> 
-         <pre>{{ work }}</pre> -->
+        
+         <Message  closable v-if ="flagIndividual">This activity is Individual</Message>
         <div class="p-fluid formgrid grid">
             <!-- Labores -->
-            <pre>{{works}}</pre>
+            
             <div class="field col-12 md:col-3">
                 <div class="flex align-items-center">
                     <label for="username" class="font-semibold w-3">Labores:</label>
@@ -70,15 +46,15 @@
                 <FrontEndErrors :errorsNew="errorsNew" name="work" />
                 <BackendErrors :name="errorResponseAPI?.errors?.work"/>
             </div>
+            
 
-            <!-- Cantidad empleados -->
             <div class="field col-12 md:col-3">
                 <div class="flex align-items-center">
                     <label for="username" class="font-semibold w-6">Cantidad empleados:</label>
                     <InputNumber
                         v-model="quantityEmployees"
                         showButtons
-                        
+                        :disabled="flagIndividual"
                         style="width: 6rem"
                         :min="0"
                         :max="99">
@@ -297,6 +273,7 @@ import { FilterMatchMode, FilterOperator } from 'primevue/api';
 import { CrudService } from '@/service/CRUD/CrudService';
 import { InitialDataService } from '@/service/InitialData';
 import { z } from 'zod';
+import Message from 'primevue/message';
 
 import BackendErrors from '@/layout/composables/Errors/BackendErrors.vue';
 import FrontEndErrors from '@/layout/composables/Errors/FrontendErrors.vue';
@@ -323,22 +300,11 @@ const works = ref([]);
 const titulo = ref('');
 
 
-// Original dataPickList list
-// const originalAvailablePickList = ref([
-//     { document: "1000", code: "f230fh0g3", full_name: "Empleado Uno", description: "Area Corta", image: "bamboo-watch.jpg", price: 65, category: "Albaca Nufar", quantity: 24, inventoryStatus: "282-259", rating: 5 },
-//     { document: "1001", code: "nvklal433", full_name: "Empleado Dos", description: "Area Corta", image: "black-watch.jpg", price: 72, category: "Albaca Nufar", quantity: 61, inventoryStatus: "INSTOCK", rating: 4 },
-//     { document: "1002", code: "zz21cz3c1", full_name: "Empleado Tres", description: "Area Selección", image: "blue-band.jpg", price: 79, category: "Albaca Nufar", quantity: 2, inventoryStatus: "LOWSTOCK", rating: 3 },
-//     { document: "1003", code: "244wgerg2", full_name: "Empleado Cuatro", description: "Product Description", image: "blue-t-shirt.jpg", price: 29, category: "Clothing", quantity: 25, inventoryStatus: "INSTOCK", rating: 5 },
-//     { document: "1004", code: "h456wer53", full_name: "Empleado Cinco", description: "Contratista", image: "bracelet.jpg", price: 150, category: "DesHierba", quantity: 73, inventoryStatus: "INSTOCK", rating: 4 },
-//     { document: "1005", code: "av2231fwg", full_name: "Empleado Seis", description: "Contratistas", image: "brown-purse.jpg", price: 120, category: "Accessories", quantity: 0, inventoryStatus: "OUTOFSTOCK", rating: 4 },
-//     { document: "1006", code: "bib36pfvm", full_name: "Empleado Ocho", description: "Pre Frio", image: "chakra-bracelet.jpg", price: 320, category: "Accessories", quantity: 5, inventoryStatus: "LOWSTOCK", rating: 3 },
-//     { document: "1007", code: "mbvjkgip5", full_name: "Empleado Nueve", description: "Agronomía", image: "galaxy-earrings.jpg", price: 340, category: "Accessories", quantity: 23, inventoryStatus: "INSTOCK", rating: 5 },
-//     { document: "1008", code: "vbb124btr", full_name: "Empleado Diez", description: "Empaque", image: "game-controller.jpg", price: 990, category: "Electronics", quantity: 2, inventoryStatus: "LOWSTOCK", rating: 4 }
-// ]);
+
 
 const originalAvailablePickList = ref([]);
 
-// Products structure: [availableProducts, selectedProducts]
+
 const dataPickList = ref([originalAvailablePickList.value.slice(), []]);
 
 // Search term
@@ -360,9 +326,7 @@ watch(search, (newSearch) => {
         (item) =>
             item.full_name.toLowerCase().includes(searchTerm) && // Coincide con la búsqueda
             !dataPickList.value[1].some((selected) => selected.id === item.id) // No está ya seleccionado
-            // ||
-        // element.description.toLowerCase().includes(searchTerm) ||
-        // element.category.toLowerCase().includes(searchTerm)
+
     );
 });
 
@@ -378,30 +342,11 @@ onMounted(async () => {
 
 onBeforeMount(() => {
     readAll();
-    // ProductService.getProductsSmall().then((data) => (dataPickList.value = [data, []]));
+    
 
 });
 const readAll = async () => {
-    // const respWorks = await InitialDataService.getBranches();
-    // console.log('respWorks', respWorks);
-    // if (!respWorks.ok) toast.add({ severity: 'error', detail: 'Error' + respWorks.error, life: 3000 });
-    // Works.value = respWorks.data.data.map((work) => ({ id: work.uuid, name: work.name }));
 
-
-    // const respWorks = process.env.NODE_ENV === 'development' ? { ok: true, data: { data: mockTestData } } : await InitialDataService.getBranches();
-
-    // if (!respWorks.ok) {
-    //     toast.add({ severity: 'error', detail: `Error: ${respWorks.error}`, life: 3000 });
-    //     return;
-    // }
-
-    // Works.value = respWorks.data.data.map((work) => ({
-    //     id: work.uuid,
-    //     name: work.name
-    // }));
-    // works.value = [...Works.value];
-
-    // loading.value = true; // Show loading indicator
     try {
         
         const response = await getUsers();;
@@ -412,7 +357,7 @@ const readAll = async () => {
 
         // Populate originalAvailablePickList
         originalAvailablePickList.value = response.data.data;
-// console.log('originalAvailablePickList', originalAvailablePickList.value);
+
         // Update the dataPickList with the new data
         dataPickList.value[0] = [...originalAvailablePickList.value];
         dataPickList.value[1] = []; // Clear the target list
@@ -441,10 +386,6 @@ const readAll = async () => {
 
     
 };
-const mockTestData = [
-    { uuid: 'bcae5809-faeb-4dad-ac08-274f2e1ff280', name: 'Labor 01', code: 'L01' },
-    { uuid: '7f93c5c0-251f-456c-9c2c-4c38ab1f6e80', name: 'Labor 02', code: 'L02' }
-];
 
 
 
@@ -459,7 +400,7 @@ const searchBranches = (event) => {
         }
     }, 200);
 };
-
+const flagIndividual = ref(false);
 const {
     handleSubmit: handleSubmitNew,
     errors: errorsNew,
@@ -481,11 +422,27 @@ const {
                     uuid: z.string().min(4)
                 })
                 .optional(),
-            quantityEmployees: z.number().min(1).max(20).refine(val => val === dataPickList.value[1].length, {
-                    message: "La cantidad de empleados debe coincidir con los seleccionados."
-                }),
+            quantityEmployees: z
+            .number()
+            .min(1)
+            .max(20)
+            .superRefine((val, ctx) => {
+                if (!flagIndividual.value && val < 2) {
+                    ctx.addIssue({
+                        code: z.ZodIssueCode.custom,
+                        message: "Debe haber al menos 2 empleados si es una actividad individual."
+                    });
+                }
+            })
+            .refine(val => val === dataPickList.value[1].length, {
+                message: "La cantidad de empleados debe coincidir con los seleccionados."
+            })
 
-            notesV: z.string().min(4).max(100)
+            ,
+            
+
+
+            notesV: z.string().optional()
         })
     )
 });
@@ -494,8 +451,26 @@ const [work] = defineField('work');
 const [quantityEmployees] = defineField('quantityEmployees');
 const [notesV] = defineField('notesV');
 
+watch(flagIndividual, () => {
+    quantityEmployees.value = flagIndividual.value ? 1 : 2; // Ensure default value
+});
+
+
+watch(work,() => {
+    
+    if (work.value.work_type_tarif=='Individual') {
+        flagIndividual.value = true;
+        quantityEmployees.value = 1;
+    }
+    else {
+        flagIndividual.value = false;
+        
+    }
+});
 
 const state = ref('new');
+const errorsMessage = ref('');
+const errorsMessageFlag = ref(false);
 const actionRecordManager = handleSubmitNew(async (values) => {
     const responseCRUD = ref();
     console.log('dataPickList', dataPickList.value[1]);
@@ -510,32 +485,20 @@ const actionRecordManager = handleSubmitNew(async (values) => {
         type_price_task: 'WorkDone',
         done_of_type_uuid: values.work.uuid,
         work_type_tarif: values.work?.work_type_tarif || "No me llega nada", 
-        
-        // employee_qty: dataPickList.value[1].map((item) => (item.id)).length,
         employee_qty: values.quantityEmployees,
-        
-        //employees_ids:dataPickList.value[1].map((item) => ({ id: item.id })),
         employees_ids:dataPickList.value[1].map((item) => (item.id)),
         total_tarif_task:totalTarif.value,
-        
         unitPrices: unitTarif.value,
-
-
-
-
         farm_uuid: farmDefault,
 	    notes_small: "",
 	    transdate_sync: null,
 	    device_name: "Web"
     };
-    console.log(JSON.stringify(data, null, 2));
-    console.log(work.value)
-
     
     if (state.value === 'new') {
          responseCRUD.value = await crudService.create(data);
          loadLazyData();
-        // console.log('data:', data);
+
     } else if (state.value === 'edit') {
         const { uuid } = listRowSelect.value[0];
         responseCRUD.value = await crudService.update(uuid, data);
@@ -551,11 +514,10 @@ const actionRecordManager = handleSubmitNew(async (values) => {
         const { uuid } = listRowSelect.value[0];
     }
 
-    console.log('responseCRUD', responseCRUD.value);
-    // Mostrar notificación y cerrar el diálogo si la operación fue exitosa
+    
     if (responseCRUD.value.ok) {
-        console.log('Entreeeeeee')
-
+        
+    
     toast.add({
         severity: responseCRUD.value.ok ? 'success' : 'error',
         summary: state.value,
@@ -583,24 +545,23 @@ const actionRecordManager = handleSubmitNew(async (values) => {
         listRowSelect.value = [];
         selectedRegisters.value = [];
     }
+
     else {
         console.log('Error:', responseCRUD.value.error);
+        toast.add({
+        severity: 'error',
+        summary: "Error",
+        detail: responseCRUD.value.ok ? 'Done' : responseCRUD.value.error,
+        life: 30000
+        });
+        errorsMessage.value = responseCRUD.value.error;
+        errorsMessageFlag.value = true;
     }
 });
 
 watch(work, async () => {
-    // console.log('work', work.value.work_type_tarif);
 
-    // console.log('work', work.value);
-    // console.log('TaskOfTypeID',TASK_OF_TYPE.id)
-
-    //const tarifOfWors = await getTarifOfWorks();
-    //console.log('tarifOfWors', tarifOfWors.data.data.filter(item => item.done_type.name === work.value.name));
-
-    // console.log("Holiday",HOLIDAY.value);
-    const valueTarif = await getTarifOfTasksDoneAppMob(TASK_OF_TYPE.id,HOLIDAY.value,work.value.work_type_tarif,work.value.id)
-    // console.log('valueTarif', valueTarif.data.data[0].price_tarif);
-    
+    const valueTarif = await getTarifOfTasksDoneAppMob(TASK_OF_TYPE.id,HOLIDAY.value,work.value.work_type_tarif,work.value.id)    
     totalTarif.value = valueTarif.data.data[0].price_tarif;
     
 });

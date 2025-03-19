@@ -143,7 +143,7 @@ const { t } = useI18n();
 
 //const packing_typeV = ref({uuid: props.data.packing_type.uuid, name: props.data.packing_type.name});
 const emit = defineEmits(['update-data']); // Define the event to emit
-
+const packingTypeFlag = ref(true);
 onMounted(async () => {
     workCenter.value = WORK_CENTER;
     supervisoId.value = SUPERVISO_ID;
@@ -153,6 +153,12 @@ onMounted(async () => {
     //console.log("respPackingsType", respPackingsType);
     if (!respPackingsType.ok) toast.add({ severity: 'error', detail: 'Error' + respPackingsType.error, life: 3000 });
     Packings_type.value = respPackingsType.data.data.map((packing) => ({ uuid: packing.uuid, name: packing.name }));
+    console.log(props.data.tasks_of_type.name)
+    if(props.data.tasks_of_type.name == 'CORTAR'){
+        packing_typeV.value = {"uuid":props.data.packing_type.uuid,"name":props.data.packing_type.name};
+        packingTypeFlag.value = false;
+    }
+            // data.packing_type.name 
 
 });
 
@@ -246,12 +252,12 @@ const searchPackingType = (event) => {
 
 <template>
     
-    <!-- 
-    <pre>isHoraExtra: {{isHoraExtra}}</pre> -->
-    <div class="grid p-fluid mt-3">
-          
+    
+    
+    <div class="grid p-fluid mt-3">      
         <div class="field col-12 md:col-4">
-            
+            <pre>{{data.tasks_of_type.name  }}</pre>
+            <pre>{{ data.packing_type }}</pre>
             
             <!-- <pre>{{ selected_dones_work }}</pre> -->
             <span class="p-float-label">
@@ -299,9 +305,9 @@ const searchPackingType = (event) => {
         <div class="field col-12 md:col-4">
             <span class="p-float-label">
                 <!-- <Dropdown v-model="packing_typeV" :options="Lote" filter optionLabel="code" /> -->
-                <AutoComplete v-model="packing_typeV" class="flex-auto" inputId="ac" :suggestions="packings_type" @complete="searchPackingType" field="name" dropdown />
+                <AutoComplete :disabled="packingTypeFlag" v-model="packing_typeV" class="flex-auto" inputId="ac" :suggestions="packings_type" @complete="searchPackingType" field="name" dropdown />
                 <label class="font-bold" for="crops_lots">{{ t('appmovil.empaque') }}</label>
-                <!-- <pre>{{ packing_typeV }}</pre> -->
+                <pre>{{ packing_typeV }}</pre>
             </span>
 
             <FrontEndErrors :errorsNew="errorsNew" name="packing_typeV" />
