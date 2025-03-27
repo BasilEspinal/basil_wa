@@ -256,8 +256,8 @@ const searchPackingType = (event) => {
     
     <div class="grid p-fluid mt-3">      
         <div class="field col-12 md:col-4">
-            <pre>{{data.tasks_of_type.name  }}</pre>
-            <pre>{{ data.packing_type }}</pre>
+            <!-- <pre>{{data.tasks_of_type.name  }}</pre>
+            <pre>{{ data.packing_type }}</pre> -->
             
             <!-- <pre>{{ selected_dones_work }}</pre> -->
             <span class="p-float-label">
@@ -307,7 +307,7 @@ const searchPackingType = (event) => {
                 <!-- <Dropdown v-model="packing_typeV" :options="Lote" filter optionLabel="code" /> -->
                 <AutoComplete :disabled="packingTypeFlag" v-model="packing_typeV" class="flex-auto" inputId="ac" :suggestions="packings_type" @complete="searchPackingType" field="name" dropdown />
                 <label class="font-bold" for="crops_lots">{{ t('appmovil.empaque') }}</label>
-                <pre>{{ packing_typeV }}</pre>
+                <!-- <pre>{{ packing_typeV }}</pre> -->
             </span>
 
             <FrontEndErrors :errorsNew="errorsNew" name="packing_typeV" />
