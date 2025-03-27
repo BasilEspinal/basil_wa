@@ -850,7 +850,7 @@ const actionRecordManager = handleSubmitNew(async (values) => {
         job_type_uuid: values.job_typeV.id,
         work_center_uuid: values.work_center_uuid.id,
         company_uuid: values.company ? values.company.id : companyDefault,
-        farm_uuid: values.farm ? values.farm.id : farmDefault,
+        farm_uuid: values.farm_uuid ? values.farm_uuid.id : farmDefault,
         status_id: 33
     };
     console.log('data:', data);
