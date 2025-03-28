@@ -870,7 +870,8 @@ const actionRecordManager = handleSubmitNew(async (values) => {
  else {
         const { uuid } = listRowSelect.value[0];
     }
-
+console.log('responseCRUD:', responseCRUD.value);
+console.log('state:', state.value);
     // Mostrar notificación y cerrar el diálogo si la operación fue exitosa
     if (responseCRUD.value.ok) {
     toast.add({

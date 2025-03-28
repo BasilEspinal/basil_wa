@@ -128,7 +128,7 @@ const [select_tasks_type_field] = defineField('select_tasks_type'); // This link
 
 watch(select_tasks_type,()=>{
     select_tasks_type_field.value=select_tasks_type.value;
-    if (select_tasks_type.value.label ==='HossraExtra'){
+    if (select_tasks_type.value.label ==='HoraExtra'){
         isHoraExtra.value=true
     }
     else{
@@ -158,8 +158,10 @@ onMounted(async () => {
         packing_typeV.value = {"uuid":props.data.packing_type.uuid,"name":props.data.packing_type.name};
         packingTypeFlag.value = false;
     }
-            // data.packing_type.name 
-
+    else if(props.data.tasks_of_type.name == 'CLASIFICAR PRODUCTO'){
+        packing_typeV.value = {"uuid":props.data.packing_type.uuid,"name":props.data.packing_type.name};
+        packingTypeFlag.value = false;
+    }
 });
 
 const clearFields = async ()=> {
