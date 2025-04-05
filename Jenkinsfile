@@ -35,6 +35,13 @@ pipeline {
             }
         }
 
+        stage('Check kubectl') {
+            steps {
+                sh "which kubectl && kubectl version --client"
+            }
+        }
+
+
         stage('Deploy to Home K8s (Dev)') {
             steps {
                 script {
