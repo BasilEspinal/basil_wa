@@ -101,7 +101,7 @@ const router = useRouter();
             <div style="border-radius: 56px; padding: 0.3rem; background: linear-gradient(160deg, var(--primary-color) 10%, var(--paleta-100) 60%, var(--primary-color) 100%)">
                 <div class="w-full py-7 px-3 sm:px-6" style="border-radius: 153px; background-color: var(--paleta-100)">
                     <div class="text-center mb-5">
-                        <div class="text-900 text-4xl font-bold mb-3">Welcome to the digital countryside!</div>
+                        <div class="text-900 text-4xl font-bold mb-3">Welcome!</div>
                         <span class="text-600 font-medium">Please Sign in to continue</span>
                     </div>
                     <Toast />
