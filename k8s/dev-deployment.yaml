@@ -1,0 +1,21 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: agro-online
+  labels:
+    app: agro-online
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: agro-online
+  template:
+    metadata:
+      labels:
+        app: agro-online
+    spec:
+      containers:
+        - name: agro-online
+          image: byepesg/agro_online:latest
+          ports:
+            - containerPort: 8080
