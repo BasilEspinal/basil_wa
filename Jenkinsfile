@@ -46,6 +46,7 @@ pipeline {
             steps {
                 script {
                     // Apply Kubernetes manifests
+                    sh "kubectl delete deployment agro-online"
                     sh "kubectl apply -f k8s/dev-deployment.yaml"
                     sh "kubectl apply -f k8s/dev-service.yaml"
                 }
