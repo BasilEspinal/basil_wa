@@ -194,10 +194,16 @@ const isOutsideClicked = (event) => {
 };
 
 const Exit = () => {
+    
+
     localStorage.clear();
     sessionStorage.clear();
-    logout();
-    router.push('/#');
+    logout().then(() => {
+        location.reload();
+        router.push('/#/auth/login');
+    });
+    
+    // logout();
 };
 
 const editUser = submitEdit(async (values) => {

@@ -199,9 +199,7 @@
                 </div>
             </Dialog>
             <Dialog v-model:visible="formDialog" modal :header="formDialogTitle" class="p-fluid text-center mx-auto">
-                <pre>{{ errorsNew }}</pre>
-                <pre>{{ errorResponseAPI }}</pre>
-                <pre>{{ calculate_work_typeV }}</pre>
+                
             
                 <div class="mb-3">
                     <div class="flex align-items-center gap-3 mb-1">
@@ -538,6 +536,7 @@ const readAll = async () => {
     console.log('respWorkTypeTarif:', respWorkTypeTarif);
     if (!respWorkTypeTarif.ok) toast.add({ severity: 'error', detail: 'Error' + respWorkTypeTarif.error, life: 3000 });
     Work_type_tarif.value = respWorkTypeTarif.data.data.map((element) => ({ id: element.id, name: element.label }));
+   // Work_type_tarif.value = respWorkTypeTarif.data.data.map((element) => (element.label));
 
     const respCalculateWorkType = await InitialDataService.getCalculateWorkType()
     console.log('respCalculateWorkType',respCalculateWorkType)
@@ -575,18 +574,32 @@ const {
         z.object({
             name: z.string().min(4),
             codeV: z.string().min(4),
-            // work_type_tarifV: z.string().min(4),
-            work_type_tarifV: z
-                .object({
+            work_type_tarifV: z.union([
+                z.string().min(4),
+                z.object({
                     name: z.string().min(4),
                     id: z.string().min(4)
-                }),
-            calculate_work_typeV: z
-                .object({
+                })
+                ]),
+                calculate_work_typeV: z.union([
+                z.string().min(4),
+                z.object({
                     name: z.string().min(4),
                     id: z.string().min(4)
-                }),
-            // calculate_work_typeV: z.string().min(4),
+                })
+                ]),
+            //work_type_tarifV: z.string().min(4),
+            // work_type_tarifV: z
+            //     .object({
+            //         name: z.string().min(4),
+            //         id: z.string().min(4)
+            //     }),
+            // calculate_work_typeV: z
+            //     .object({
+            //         name: z.string().min(4),
+            //         id: z.string().min(4)
+            //     }),
+            //calculate_work_typeV: z.string().min(4),
             farm: z
                 .object({
                     name: z.string().min(4),
@@ -651,9 +664,10 @@ const openDialog = (mode) => {
 
         name.value = nombre;
         codeV.value = code;
-        work_type_tarifV.value = tarif;
-        
-        calculate_work_typeV.value=calculatewt;
+        // work_type_tarifV.value = tarif;
+        // calculate_work_typeV.value=calculatewt;
+        work_type_tarifV.value = { id: tarif, name: tarif };
+        calculate_work_typeV.value = { id: calculatewt, name: calculatewt };
         company.value = { id: empresa.uuid, name: empresa.name };
         farm.value = { id: finca.uuid, name: finca.name };
     }
