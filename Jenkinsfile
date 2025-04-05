@@ -36,8 +36,9 @@ pipeline {
         stage('Deploy to Home K8s (Dev)') {
             steps {
                 script {
-                    sh "echo Deploy to Home Kubernetes will go here"
-                    // Example: sh "kubectl apply -f k8s/dev.yaml"
+                    // Apply Kubernetes manifests
+                    sh "kubectl apply -f k8s/dev-deployment.yaml"
+                    sh "kubectl apply -f k8s/dev-service.yaml"
                 }
             }
         }
