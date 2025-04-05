@@ -4,6 +4,8 @@ pipeline {
     environment {
         DOCKER_CREDENTIALS = credentials('dockerhub-credentials')
         IMAGE_NAME = "byepesg/agro_online"
+        KUBECONFIG = "/var/jenkins_home/.kube/config"
+        
     }
 
 
