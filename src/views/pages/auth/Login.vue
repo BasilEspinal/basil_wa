@@ -102,7 +102,8 @@ const router = useRouter();
                 <div class="w-full py-7 px-3 sm:px-6" style="border-radius: 153px; background-color: var(--paleta-100)">
                     <div class="text-center mb-5">
                         <div class="text-900 text-4xl font-bold mb-3">Welcome!</div>
-                        <span class="text-600 font-medium">Please Sign in to continue</span>
+                        <span class="text-600 font-medium">Sign in to continue</span>
+                        <span class="text-600 font-medium">The Digital Countryside </span>
                     </div>
                     <Toast />
 
