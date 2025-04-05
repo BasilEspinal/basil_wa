@@ -29,7 +29,7 @@ pipeline {
                 script {
                     sh """
                     echo ${DOCKER_CREDENTIALS_PSW} | docker login -u ${DOCKER_CREDENTIALS_USR} --password-stdin
-                    docker push ${IMAGE_NAME}:latest
+                    docker push ${IMAGE_NAME}:main
                     """
                 }
             }
