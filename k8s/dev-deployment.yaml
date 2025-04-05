@@ -17,6 +17,7 @@ spec:
       containers:
         - name: agro-online
           image: byepesg/agro_online:main
+          imagePullPolicy: Always
           ports:
             - containerPort: 8080
       imagePullSecrets:
