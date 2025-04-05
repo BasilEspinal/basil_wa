@@ -16,6 +16,8 @@ spec:
     spec:
       containers:
         - name: agro-online
-          image: byepesg/agro_online:latest
+          image: byepesg/agro_online:main
           ports:
             - containerPort: 8080
+      imagePullSecrets:
+        - name: regcred
