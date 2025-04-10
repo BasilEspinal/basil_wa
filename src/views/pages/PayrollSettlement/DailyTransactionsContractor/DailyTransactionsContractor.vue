@@ -330,10 +330,12 @@ const dynamicColumns = [
 { field: 'work_type_tarif', header: 'Work Type Tarif', frozen: false, color: false },
 { field: 'calculate_work_type', header: 'Calculate work type', frozen: false, color: false },
 { field: 'unit_price_task', header: 'Unit Price Task', frozen: false, color: false },
+{ field: 'crop_lot_qty', header: 'Crop Lots Quantity', frozen: false, color: false },
 { field: 'total_tarif_task', header: 'Total Tarif Task', frozen: false, color: false },
 { field: 'type_price_task', header: 'Type Price Task', frozen: false, color: false },
 { field: 'type_day_tarif', header: 'Type Day Tarif', frozen: false, color: false },
 // { field: 'tasks_statuses', header: 'Task Statuses', frozen: false, color: false },
+
 
     
     
@@ -429,6 +431,7 @@ const onRowSelect = (data) => {
                     'Total Tarif Task': row.total_tarif_task,
                     'Unit Price Task': row.unit_price_task,
                     'Employee Quantity': row.employee_qty,
+                    'Crop Lot Quantity': row.crop_lot_qty,
                     'Device Name': row.device_name,
                 },
                 icon: 'pi pi-calendar',
