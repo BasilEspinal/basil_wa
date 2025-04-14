@@ -7,7 +7,7 @@ export default defineAbility((can, cannot) => {
     can('ver', elemento);
     
   });
-  can('hola','chao')
+  can('Permiso 1','Permiso 2')
 
   cannot('delete', 'User');
 });

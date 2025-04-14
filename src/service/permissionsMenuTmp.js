@@ -1,4 +1,3 @@
-// nombre-del-archivo.js
 
 const elementosVista = [
     

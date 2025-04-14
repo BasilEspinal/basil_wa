@@ -140,7 +140,7 @@
 </template>
 
 <script setup>
-import SearchManager from './SearchManager.js'
+
 import { ref, watch, provide, onBeforeMount, onMounted } from 'vue';
 
 import { useForm } from 'vee-validate';

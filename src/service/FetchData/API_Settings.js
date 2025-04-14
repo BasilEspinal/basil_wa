@@ -16,31 +16,3 @@ export default function useSettingsAPI() {
         pathAPI
     };
 }
-
-
-// // useSettingsAPI.js
-// import { computed, watchEffect } from 'vue';
-
-// export default function useSettingsAPI(locale) {
-//     const pathAPI = () => {
-//         // Example: return { base: 'http://localhost:8000', apiVer: '/api/v1' };
-//         return { base: 'http://agroonline.co:81', apiVer: '/api/v1' };
-//     };
-
-//     const APISettings = computed(() => {
-//         return {
-//             token: '',
-//             baseURL: `${pathAPI().base}${pathAPI().apiVer}`,
-//             headers: new Headers({
-//                 Accept: 'application/json',
-//                 'Accept-Language': locale.value // ← inject current language here
-//             })
-//         };
-//     });
-
-//     return {
-//         APISettings,
-//         pathAPI
-//     };
-// }
-

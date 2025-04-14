@@ -10,13 +10,8 @@ import ShippingDelivered from './ShippingDelivered.vue';
 import DeliveringDelivered from './DeliveringDelivered.vue';
 import ErrorAppMovil from './ErrorAppMovil.vue';
 import ability from '@/service/ability.js';
-//
-// Estoy utilizando otro servicio para el CRUD
-import StackErrors from '@/service/StackErrors.js';
-import { date } from 'zod';
 
-import { useRoute } from 'vue-router';
-const stack = new StackErrors();
+
 const errorSummary = ref(false);
 const summary = ref();
 ////////////////////////////////////////////////////////////
@@ -189,8 +184,8 @@ onUnmounted(() => {
 
 
 const functionsData = async () => {
-    loading.value = true; // Set loading to true when data fetching starts
-    //await initData();
+    loading.value = true; 
+    
     getUser();
     await getData();
 
@@ -198,7 +193,7 @@ const functionsData = async () => {
 
     holiday.value = HOLIDAY;
     titulo.value = t('appmovil.titulo') + ' ' + (TASK_OF_TYPE?.name ? TASK_OF_TYPE.name : 'XXXXXXXXXXXXXX');
-    loading.value = false; // Set loading to false when data fetching is complete
+    loading.value = false; 
     //////////////////////////
     //Sebastian
     getDataEmployeesInfo();
@@ -232,11 +227,7 @@ const getData = async () => {
         // Handle error if response is not OK or if data is empty
         const errorMessage = response.error ? `Error: ${response.error}` : 'No data received';
         toast.add({ severity: 'error', detail: errorMessage, life: 3000 });
-        // Push the failed response to the stack for later processing
-        stack.push({ response: response, category: 'Data task planner', description: 'No data available' });
 
-
-        // Return false to indicate failure
         return false;
     } else {
         // If valid, handle the data as usual

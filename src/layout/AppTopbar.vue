@@ -14,10 +14,10 @@ import useSettingsAPI from '@/composables/DataAPI/settings_API.js';
 //const { APISettings, pathAPI } = useSettingsAPI(locale);
 const { APISettings, pathAPI } = useSettingsAPI();
 const { locale } = useI18n();
-watch(locale, (newLocale) => {
-    console.log('Language changed to:', newLocale);
-    console.log('Updated headers:', APISettings.value.headers.get('Accept-Language'));
-});
+// watch(locale, (newLocale) => {
+//     console.log('Language changed to:', newLocale);
+//     console.log('Updated headers:', APISettings.value.headers.get('Accept-Language'));
+// });
 
 
 
