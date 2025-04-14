@@ -1,6 +1,6 @@
 <template>
     <div class="card">
-        <h2>{{ titulo }} Departamento: {{ fetchWorkCenter.name }}</h2>
+        <h2>{{ titulo }} Departamento: {{ fetchWorkCenter?.name || 'Cargando...' }}</h2>
         <div class="p-fluid formgrid grid">
             <div class="field col-12 md:col-6"></div>
         </div>

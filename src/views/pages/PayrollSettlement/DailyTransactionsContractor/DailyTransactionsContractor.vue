@@ -231,7 +231,7 @@
                     <FrontEndErrors :errorsNew="errorsNew" name="company" />
                     <BackendErrors :name="errorResponseAPI?.errors?.company"/>
                 </div>
-
+<pre>Hola</pre>
                 <AppMovilContractor/>
 
                 <div class="flex justify-content-end gap-2 flex-auto">
@@ -318,7 +318,7 @@ import { z } from 'zod';
 import Summary from '@/components/Summary.vue';
 import ActionButton from '@/components/ActionButton.vue';
 import {useActions} from '@/composables/ActionButton.js';
-import AppMovilContractor from '@/views/pages/AppMovil/Deprecated/AppMovilContractor.vue';
+import AppMovilContractor from '@/views/pages/AppMovil/Contractor/AppMovilContractor.vue';
 const { getItems,itemsActions, messageDialog,titleDialog,status_id_Action,flagDialog } = useActions(`/processflow/CropLot`);
 
 const { t } = useI18n();

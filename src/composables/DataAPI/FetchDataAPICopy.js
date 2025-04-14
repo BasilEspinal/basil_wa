@@ -1,7 +1,12 @@
 import useSettingsAPI from '@/composables/DataAPI/settings_API';
 import { ref } from 'vue';
-export default function useData() {
+
+
+
+export default function useData(locale) {
     const { pathAPI, APISettings } = useSettingsAPI();
+    //const { pathAPI, APISettings } = useSettingsAPI(locale); 
+
     const token = ref();
     let errorResponseAPI = ref('Error no filled');
     let base = pathAPI().base;

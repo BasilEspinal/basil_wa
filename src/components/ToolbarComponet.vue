@@ -4,7 +4,6 @@ import { useToast } from 'primevue/usetoast';
 
 
 import useRestrictionUnitTypes from '@/composables/Product/UnitsType/restrictionsUnitType.js'
-import useDataAPI from '@/composables/DataAPI/FetchDataAPI.js'
 
 const emits = defineEmits([]);
 const toast = useToast();

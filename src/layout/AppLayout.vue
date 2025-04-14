@@ -7,10 +7,9 @@ import AppSidebar from './AppSidebar.vue';
 import useDataAPI from '@/composables/DataAPI/FetchDataAPI.js';
 import { useLayout } from '@/layout/composables/layout';
 import ability from '@/service/ability.js';
-const {getAllResponsePermissionsAPI,dataResponsePermissionsAPI  } =
-    useDataAPI();
-const { layoutConfig, layoutState, isSidebarActive } = useLayout();
 
+const { layoutConfig, layoutState, isSidebarActive } = useLayout();
+const { getAllResponsePermissionsAPI, dataResponsePermissionsAPI } = useDataAPI();
 const outsideClickListener = ref(null);
 const router = useRouter();
 const lengthPermissions = ref(0);

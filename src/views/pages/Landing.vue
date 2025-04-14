@@ -3,6 +3,9 @@ import { useLayout } from '@/layout/composables/layout';
 import { computed, ref } from 'vue';
 import { useRouter } from 'vue-router';
 
+import { useI18n } from 'vue-i18n';
+const { locale } = useI18n(); // ✅ AQUÍ sí se puede usar
+
 const { layoutConfig, changeThemeSettings } = useLayout();
 const router = useRouter();
 

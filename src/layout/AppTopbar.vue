@@ -10,7 +10,17 @@ import { toTypedSchema } from '@vee-validate/zod';
 import { z } from 'zod';
 import { useI18n } from 'vue-i18n';
 
+import useSettingsAPI from '@/composables/DataAPI/settings_API.js';
+//const { APISettings, pathAPI } = useSettingsAPI(locale);
+const { APISettings, pathAPI } = useSettingsAPI();
 const { locale } = useI18n();
+watch(locale, (newLocale) => {
+    console.log('Language changed to:', newLocale);
+    console.log('Updated headers:', APISettings.value.headers.get('Accept-Language'));
+});
+
+
+
 const countries = ref([
     { name: 'ES', code: 'ES', id: 'es' },
     { name: 'EN', code: 'US', id: 'en' }

@@ -108,7 +108,7 @@ import { ref, watch, provide, onBeforeMount, onMounted } from 'vue';
 
 import { useForm } from 'vee-validate';
 import { toTypedSchema } from '@vee-validate/zod';
-import useData from '@/composables/DataAPI/FetchDataAPICopy.js';
+
 import { z } from 'zod';
 import { useToast } from 'primevue/usetoast';
 import { useI18n } from 'vue-i18n';
@@ -120,7 +120,7 @@ import { InitialDataService } from '@/service/InitialData';
 import {computed} from 'vue';
 const { t } = useI18n();
 const toast = useToast();
-const { getRequest, postRequest, putRequest, deleteRequest, patchRequest, errorResponseAPI } = useData();
+
 const tasks_of_type = ref([]);
 const Tasks_of_type = ref([]);
 const Tasks_of_type_filter = ref([]);

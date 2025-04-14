@@ -5,9 +5,6 @@ import { CrudService } from '@/service/CRUD/CrudService';
 import { ref, onMounted, watch,computed } from 'vue';
 import { useToast } from 'primevue/usetoast';
 import { useAppMovilService } from '../../../service/appMovil/appMovilService_V3';
-import useData from '@/composables/DataAPI/FetchDataAPICopy.js';
-
-// const { errorResponseAPI } = useData();
 
 import { useI18n } from 'vue-i18n';
 import { z } from 'zod';
