@@ -38,6 +38,8 @@ export function useActions(endpoint) {
                             messageDialog.value = `Are you sure you want to mark this action as ${element.workflow_status.name}?`;
                             status_id_Action.value = element.flow_statuses_id;
                             flagDialog.value = true; 
+
+                            
                         }
                     });
                 }
