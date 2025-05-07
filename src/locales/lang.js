@@ -138,8 +138,13 @@ export const messages = {
             JournalTransactions: {
                 title: 'Journal Transactions',
                 subTitle: 'Journal Transactions',
-                }
+                },
+            LedgerTransactions: {
+                    title: 'Ledger Transactions',
+                    subTitle: 'Ledger Transactions',
+                    },
             },
+
             dailyPlanning: 'Daily Planning',
             dailyTransactions: 'Daily Transactions',
             dailyTransactionsContractor: 'Daily Transactions Contractor',
@@ -369,8 +374,13 @@ export const messages = {
                 title: 'Diario de transacciones',
                 subTitle: 'Diario de transacciones',
                 
-                }
+                },
+                LedgerTransactions: {
+                    title: 'Totalizado por libro',
+                    subTitle: 'Transacciones por libro',
+                    },
             },
+
             dailyPlanning: 'Planeación Diaria',
             dailyTransactions: 'Transacciones del Día',
             dailyTransactionsContractor: 'Transacciones del Día Contratista',

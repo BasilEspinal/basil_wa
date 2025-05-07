@@ -284,6 +284,12 @@ const model2 = computed(() => ([
                         gate: 'liquidaciondenomina_planeaciondiaria_menu'
                     },
                     {
+                        label: t('menu.payrollSettlement.LedgerTransactions.title'),
+                        to: '/PayrollSettlement/LedgerTransactions',
+                        icon: 'pi pi-tablet',
+                        gate: 'liquidaciondenomina_planeaciondiaria_menu'
+                    },
+                    {
                         label: t('menu.transferToPrefrio'),
                         to: '/PayrollSettlement/TransferTasks',
                         icon: 'pi pi-bookmark',

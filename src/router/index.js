@@ -179,6 +179,11 @@ const router = createRouter({
                     name: 'JournalTransactions',
                     component: () => import('@/views/pages/PayrollSettlement/JournalTransactions/JournalTransactions.vue')
                 },
+                {
+                    path: '/PayrollSettlement/LedgerTransactions',
+                    name: 'LedgerTransactions',
+                    component: () => import('@/views/pages/PayrollSettlement/LedgerTransactions/LedgerTransactions.vue')
+                },
 
                 {
                     path: '/PayrollSettlement/TransferTasks',
