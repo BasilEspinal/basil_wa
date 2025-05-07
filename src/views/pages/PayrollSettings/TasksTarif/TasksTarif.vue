@@ -225,10 +225,10 @@
                         </div>
                     </div>
 
-                    <div class="mb-3">
-                        <div class="flex align-items-center">
+                    <div class="mb-3 col-12 md:col-12 lg:col-12">
+                        <div class="flex align-items-center gap-3 mb-1">
                             <label for="username" class="font-semibold w-3">Task type tarif: </label>
-                            <AutoComplete v-model="task_type_tarifV" dropdown inputId="task_type_tarifV" :suggestions="task_type_tarifObject" field="name" @complete="searchTypeOfTaskTarif" placeholder="Busca o selecciona " />
+                            <AutoComplete v-model="task_type_tarifV" class="w-full" dropdown inputId="task_type_tarifV" :suggestions="task_type_tarifObject" field="name" @complete="searchTypeOfTaskTarif" placeholder="Busca o selecciona " />
                         </div>
                         <small id="username-help" :class="{ 'p-invalid text-red-700': errorsNew['task_type_tarifV'] }">
                             {{ errorsNew.task_type_tarifV }}

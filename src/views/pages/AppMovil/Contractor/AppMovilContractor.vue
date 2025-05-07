@@ -82,7 +82,7 @@
                 <div class="card">
                     <div class="field col-12 md:col-6">
                         <div class="flex align-items-center">
-                            <label for="username" class="font-semibold w-6">Cantidad lotes:</label>
+                            <label for="username" class="font-semibold w-6">Cantidad:</label>
                             <InputNumber v-model="crop_lot_qtyV" showButtons style="width: 6rem" :min="0" :max="99">
                                 <template #incrementbuttonicon>
                                     <span class="pi pi-plus" />

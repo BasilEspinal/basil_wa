@@ -256,39 +256,43 @@ const model2 = computed(() => ([
                         gate: 'liquidaciondenomina_planeaciondiaria_menu'
                     },
                     {
-                        label: t('menu.dailyTransactions'),
-                        to: '/PayrollSettlement/DailyTransactions',
-                        icon: 'pi pi-bookmark',
-                        // gate: 'liquidaciondenomina_transacciones_diarias_menu'
-                        gate: 'liquidaciondenomina_planeaciondiaria_menu'
-                    },
-                    {
                         label: t('menu.dailyTransactionsContractor'),
                         to: '/PayrollSettlement/DailyTransactionsContractor',
-                        icon: 'pi pi-bookmark',
+                        icon: 'pi pi-money-bill',
                         // gate: 'liquidaciondenomina_transacciones_diarias_menu'
                         gate: 'liquidaciondenomina_planeaciondiaria_menu'
                     },
                     {
-                        label: t('menu.shipping.shippingProcess'),
-                        to: '/PayrollSettlement/ShippingProcess/ShippingProcess',
-                        icon: 'pi pi-bookmark',
-                        //gate: 'liquidaciondenomina_shipping_process_menu'
+                        label: t('menu.dailyTransactions'),
+                        to: '/PayrollSettlement/DailyTransactions',
+                        icon: 'pi pi-money-bill',
+                        // gate: 'liquidaciondenomina_transacciones_diarias_menu'
                         gate: 'liquidaciondenomina_planeaciondiaria_menu'
                     },
+
 
                     {
                         label: t('menu.payrollSettlement.JournalTransactions.title'),
                         to: '/PayrollSettlement/JournalTransactions',
-                        icon: 'pi pi-tablet',
+                        icon: 'pi pi-money-bill',
                         gate: 'liquidaciondenomina_planeaciondiaria_menu'
                     },
                     {
                         label: t('menu.payrollSettlement.LedgerTransactions.title'),
                         to: '/PayrollSettlement/LedgerTransactions',
-                        icon: 'pi pi-tablet',
+                        icon: 'pi pi-money-bill',
                         gate: 'liquidaciondenomina_planeaciondiaria_menu'
                     },
+
+
+                    {
+                        label: t('menu.shipping.shippingProcess'),
+                        to: '/PayrollSettlement/ShippingProcess/ShippingProcess',
+                        icon: 'pi pi-briefcase',
+                        //gate: 'liquidaciondenomina_shipping_process_menu'
+                        gate: 'liquidaciondenomina_planeaciondiaria_menu'
+                    },
+
                     {
                         label: t('menu.transferToPrefrio'),
                         to: '/PayrollSettlement/TransferTasks',
