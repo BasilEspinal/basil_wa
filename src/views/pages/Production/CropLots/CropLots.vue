@@ -361,7 +361,7 @@ import { z } from 'zod';
 import Summary from '@/components/Summary.vue';
 import ActionButton from '@/components/ActionButton.vue';
 import {useActions} from '@/composables/ActionButton.js';
-const { getItems,itemsActions, messageDialog,titleDialog,status_id_Action,flagDialog } = useActions(`/processflow/CropLot`);
+const { getItems,itemsActions, messageDialog,titleDialog,status_id_Action,flagDialog } = useActions(`/processflow/CropLot/`);
 
 const { t } = useI18n();
 
@@ -617,7 +617,10 @@ const state = ref('');
 const openDialogSettlement = async (mode) => {
     
     if(listRowSelect.value.length != 0){
-        await getItems(listRowSelect.value[0].status.id);
+        //await getItems(listRowSelect.value[0].status.id);
+        await getItems('non-flow')
+        console.log('listRowSelect:', listRowSelect.value[0].status.id);
+        console.log(itemsActions.value)
     }
     state.value = mode;
     
@@ -749,6 +752,8 @@ formDialog.value = false;
 listRowSelect.value = [];
 selectedRegisters.value = [];
 flagDialog.value = false;
+await loadingData();
+dataFromComponent.value = [...dataFromComponent.value]; // 🧠 force array reference change
 } else {
 toast.add({
     severity: 'error',
@@ -758,7 +763,8 @@ toast.add({
 });
 }
 
-await loadingData(); // Refresh data
+await loadingData();
+dataFromComponent.value = [...dataFromComponent.value]; // 🧠 force array reference change
 } catch (error) {
     console.error('Error updating records:', error);
     toast.add({
@@ -769,7 +775,10 @@ await loadingData(); // Refresh data
     });
 }
 
-finally {listRowSelect.value = [];}
+finally {listRowSelect.value = [];
+    await loadingData();
+dataFromComponent.value = [...dataFromComponent.value]; // 🧠 force array reference change
+}
 };
 
 const DeleteRecord = async () => {

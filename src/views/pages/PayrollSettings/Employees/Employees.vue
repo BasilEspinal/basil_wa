@@ -925,6 +925,8 @@ formDialog.value = false;
 listRowSelect.value = [];
 selectedRegisters.value = [];
 flagDialog.value = false;
+await loadingData(); // Refresh data
+dataFromComponent.value = [...dataFromComponent.value]; // 🧠 force array reference change
 } else {
 toast.add({
     severity: 'error',
@@ -935,6 +937,7 @@ toast.add({
 }
 
 await loadingData(); // Refresh data
+dataFromComponent.value = [...dataFromComponent.value]; // 🧠 force array reference change
 } catch (error) {
     console.error('Error updating records:', error);
     toast.add({
@@ -945,7 +948,10 @@ await loadingData(); // Refresh data
     });
 }
 
-finally {listRowSelect.value = [];}
+finally {listRowSelect.value = [];
+    await loadingData(); // Refresh data
+dataFromComponent.value = [...dataFromComponent.value]; // 🧠 force array reference change
+}
 };
 
 const DeleteRecord = async () => {

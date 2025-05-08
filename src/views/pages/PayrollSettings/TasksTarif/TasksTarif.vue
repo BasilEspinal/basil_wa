@@ -198,8 +198,10 @@
                 </div>
             </Dialog>
             <Dialog v-model:visible="formDialog" modal :header="formDialogTitle" class="p-fluid text-center mx-auto">
-                <div class="grid">
-                    <div class="mb-3 col-12 md:col-12 lg:col-12">
+
+
+                
+                    <div class="mb-3">
                         <div class="flex align-items-center gap-3 mb-1">
                             <label for="taskType" class="font-semibold w-3"> Tasks Type </label>
                             <AutoComplete v-model="taskTypeV" class="w-full" inputId="taskTypeV" :suggestions="taskOfType" @complete="searchTaskOfType" field="name" dropdown />
@@ -212,7 +214,7 @@
                         </div>
                     </div>
 
-                    <div class="mb-3 col-12 md:col-12 lg:col-12">
+                    <div class="mb-3">
                         <div class="flex align-items-center gap-3 mb-1">
                             <label for="type_date" class="font-semibold w-3"> Type Date </label>
                             <Dropdown v-model="type_date" :options="typeDateList" optionLabel="name" class="w-full" inputId="type_date" v-bind="type_dateProps" />
@@ -225,18 +227,20 @@
                         </div>
                     </div>
 
-                    <div class="mb-3 col-12 md:col-12 lg:col-12">
+                    <div class="mb-3">
                         <div class="flex align-items-center gap-3 mb-1">
                             <label for="username" class="font-semibold w-3">Task type tarif: </label>
                             <AutoComplete v-model="task_type_tarifV" class="w-full" dropdown inputId="task_type_tarifV" :suggestions="task_type_tarifObject" field="name" @complete="searchTypeOfTaskTarif" placeholder="Busca o selecciona " />
-                        </div>
-                        <small id="username-help" :class="{ 'p-invalid text-red-700': errorsNew['task_type_tarifV'] }">
+                            <div class="flex-auto">
+                                <small id="username-help" :class="{ 'p-invalid text-red-700': errorsNew['task_type_tarifV'] }">
                             {{ errorsNew.task_type_tarifV }}
                         </small>
                         <BackendErrors :name="errorResponseAPI?.errors?.type_price" />
+                            </div>
+                        </div>
                     </div>
 
-                    <div class="mb-3 col-12 md:col-12 lg:col-12">
+                    <div class="mb-3">
                         <div class="flex align-items-center gap-3 mb-1">
                             <label for="price_tarif" class="font-semibold w-3"> Price Tarif </label>
                             <InputNumber v-model="price_tarif" class="w-full" inputId="price_tarif" mode="currency" currency="USD" locale="en-US" v-bind="price_tarifProps" />
@@ -249,7 +253,7 @@
                         </div>
                     </div>
 
-                    <div class="mb-3 col-12 md:col-12 lg:col-12">
+                    <div class="mb-3">
                         <div class="flex align-items-center gap-3 mb-1">
                             <label for="packingType" class="font-semibold w-3"> Packing Types </label>
                             <AutoComplete v-model="packingType" class="w-full" inputId="packingType" :suggestions="packingTipesL" @complete="searchPackingType" field="name" dropdown />
@@ -262,7 +266,7 @@
                         </div>
                     </div>
 
-                    <div class="mb-3 col-12 md:col-12 lg:col-12">
+                    <div class="mb-3">
                         <div class="flex align-items-center gap-3 mb-1">
                             <label for="farm" class="font-semibold w-3"> Farm </label>
                             <AutoComplete v-model="farm" class="w-full" inputId="farm" :suggestions="farms" @complete="searchBranches" field="name" dropdown />
@@ -275,19 +279,20 @@
                         </div>
                     </div>
 
-                    <div class="mb-3 col-12 md:col-12 lg:col-12">
+                    <div class="mb-3">
                         <div class="flex align-items-center gap-3 mb-1">
-                            <label for="username" class="font-semibold w-3">Company:</label>
+                            <label for="username" class="font-semibold w-3">Company</label>
                             <AutoComplete v-model="company" class="w-full" inputId="ac" :suggestions="compa" @complete="searchCompanies" field="name" dropdown />
-                        </div>
-                        <div class="flex-auto">
-                            <small id="username-help" :class="{ 'p-invalid text-red-700': errorsNew['company'] }">
+                            <div class="flex-auto">
+                                <small id="username-help" :class="{ 'p-invalid text-red-700': errorsNew['company'] }">
                                 {{ errorsNew.company }}
                             </small>
                             <BackendErrors :name="errorResponseAPI?.errors?.company" />
+                            </div>
                         </div>
                     </div>
-                </div>
+
+
 
 
                 <div class="flex justify-content-end gap-2 flex-auto">

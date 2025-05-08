@@ -1072,9 +1072,12 @@ toast.add({
 });
 await loadingData();   
 
-formDialog.value = false;
+
 listRowSelect.value = [];
 selectedRegisters.value = [];
+await loadingData();
+dataFromComponent.value = [...dataFromComponent.value]; // 🧠 force array reference change
+formDialog.value = false;
 flagDialog.value = false;
 } else {
 toast.add({
