@@ -19,7 +19,7 @@ const { t } = useI18n();
 const toast = useToast();
 const { layoutConfig } = useLayout();
 
-const { HOLIDAY, initData, TASK_OF_TYPE, fetchWorkCenter, getUsers, getDataTasksplanner,getInfoEmployees } = useAppMovilService();
+const {refreshSessionState,HOLIDAY, initData, TASK_OF_TYPE, fetchWorkCenter, getUsers, getDataTasksplanner,getInfoEmployees } = useAppMovilService();
 
 
 const titulo = ref('');
@@ -81,6 +81,11 @@ const totalTaskQtyJournal = ref(0);
 const totalJournalTotal = ref(0);
 
 const getDataEmployeesInfo = async () => {
+    if (!dataApp.value || !dataApp.value.tasks_of_type) {
+        console.warn('No se puede ejecutar getDataEmployeesInfo porque dataApp o tasks_of_type es null');
+        return;
+    }
+
     const response = await getInfoEmployees(dataApp.value.id, dataApp.value.tasks_of_type.id);
 
     if (!response.ok) {
@@ -156,7 +161,7 @@ const getDataEmployeesInfo = async () => {
 };
 onBeforeMount(async () => {
     functionsData();
-    titulo.value = `Título: ${TASK_OF_TYPE.name || 'Sin nombre'}`;
+    //titulo.value = `Título: ${TASK_OF_TYPE.name || 'Sin nombre'}`;
 });
 onUnmounted(() => {
      // Reinitialize useAppMovilService() to get fresh data
@@ -184,27 +189,36 @@ onUnmounted(() => {
 
 
 const functionsData = async () => {
-    loading.value = true; 
-    
-    getUser();
-    await getData();
+    loading.value = true;
+        
+    // ✅ Inicializa los datos de sesión
+    await refreshSessionState(); // <--- LLAMAR ESTO ANTES DE initData()
+
+    console.log('TASK_OF_TYPE:', TASK_OF_TYPE?.id);
+console.log('fetchWorkCenter:', fetchWorkCenter.value);
+console.log('fetchFarmId:', sessionStorage.getItem('accessSessionFarmId'));
+console.log('fetchCompanyId:', sessionStorage.getItem('accessSessionCompanyId'));
 
 
+    await initData(); // this refreshes session and loads planner/holiday/type
 
-    holiday.value = HOLIDAY;
-    titulo.value = t('appmovil.titulo') + ' ' + (TASK_OF_TYPE?.name ? TASK_OF_TYPE.name : 'XXXXXXXXXXXXXX');
-    loading.value = false; 
-    //////////////////////////
-    //Sebastian
-    getDataEmployeesInfo();
+    const response = await getDataTasksplanner();
+    if (!response.ok) {
+        toast.add({ severity: 'error', detail: response.error, life: 3000 });
+        loading.value = false;
+        return;
+    }
+
+    dataApp.value = response.data;
+    lotes.value = dataApp.value?.crop_lots;
+
+    await getUser();
+    titulo.value = t('appmovil.titulo') + ' ' + (TASK_OF_TYPE?.name || 'Sin nombre');
+
+    await getDataEmployeesInfo(); // optional if not on summary tab
+    loading.value = false;
     ////////////////////////
 };
-
-onBeforeMount(async () => {
-functionsData();
-
-
-});
 
 
 const logoUrl = computed(() => {
@@ -282,7 +296,8 @@ onBeforeUnmount(() => {
 <template>
 
     <!-- <pre>{{ compareStoredDate() }}</pre> -->
-    <h2>{{ titulo }} Departamento: {{ fetchWorkCenter.name }}</h2>
+     <pre>{{fetchWorkCenter}}</pre>
+    <h2>{{ titulo }} Departamento: {{ fetchWorkCenter?.name || 'Cargando...' }}</h2>
     
 
     

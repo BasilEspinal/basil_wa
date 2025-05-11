@@ -26,6 +26,17 @@ export default function useDataAPI(datos) {
     APISettings.headers.set('Authorization', 'Bearer ' + token);
     APISettings.headers.set('Accept-Language', 'es');
 
+    const resetDataAPI = () => {
+        dataResponseAPI.value = {};
+        dataResponseListAPI.value = {};
+        dataResponsPUT.value = {};
+        dataResponsePermissionsAPI.value = {};
+        totalRecordsResponseAPI.value = 0;
+        currentPageResponseAPI.value = 0;
+        linksResponseAPI.value = {};
+        errorResponseAPI.value = '';
+        statusCode.value = [];
+    };
     
 
     const getAllResponseAPI = async (endPoint) => {
@@ -246,6 +257,8 @@ export default function useDataAPI(datos) {
         getAllResponseListAPI,
         postResponseAPI,
         putResponseAPI,
-        deleteResponseAPI
+        deleteResponseAPI,
+        resetDataAPI,
+        
     };
 }

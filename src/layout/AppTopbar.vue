@@ -3,16 +3,19 @@ import { ref, computed, onMounted, onBeforeUnmount, onBeforeMount, watch } from 
 import { useLayout } from '@/layout/composables/layout';
 import { useRouter } from 'vue-router';
 import useDataAPI from '@/composables/DataAPI/FetchDataAPI.js';
-
+import { useAppMovilService } from '@/service/AppMovil/appMovilService_V3';
 import OverlayPanel from 'primevue/overlaypanel';
 import { useForm } from 'vee-validate';
 import { toTypedSchema } from '@vee-validate/zod';
 import { z } from 'zod';
 import { useI18n } from 'vue-i18n';
 
-import useSettingsAPI from '@/composables/DataAPI/settings_API.js';
+const { resetDataAPI } = useDataAPI();
+const { resetAppMovilService } = useAppMovilService();
+
+
 //const { APISettings, pathAPI } = useSettingsAPI(locale);
-const { APISettings, pathAPI } = useSettingsAPI();
+
 const { locale } = useI18n();
 // watch(locale, (newLocale) => {
 //     console.log('Language changed to:', newLocale);
@@ -110,7 +113,16 @@ const farmDefault = sessionStorage.getItem('accessSessionFarm');
 
 const logout = async () => {
     await postResponseAPI({}, '/logout');
+    resetDataAPI();
+    resetAppMovilService();
+    
+    // 🧹 Clear session/local storage BEFORE calling any composables
+    sessionStorage.clear();
+    localStorage.clear();
+
+    router.push('/auth/login');
 };
+
 
 const checkStorageAndInitialize = async (key, callback, retries = 10, delay = 500) => {
     let value = sessionStorage.getItem(key);
@@ -204,17 +216,19 @@ const isOutsideClicked = (event) => {
 };
 
 const Exit = () => {
-    
-
-    localStorage.clear();
-    sessionStorage.clear();
     logout().then(() => {
-        location.reload();
-        router.push('/#/auth/login');
+        resetAppMovilService(); // <-- aquí
+        resetDataAPI(); 
+        localStorage.clear();
+        sessionStorage.clear();
+        router.push({ path: '/auth/login' }).then(() => {
+  window.location.reload(); // ✅ Ensures all states are fresh
+});
+
+
     });
-    
-    // logout();
 };
+
 
 const editUser = submitEdit(async (values) => {
     // const { farm, roles, id } = selectedRegisters.value[0];

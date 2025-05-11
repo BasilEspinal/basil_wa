@@ -1,6 +1,6 @@
 <template>
     <div>
-
+<!-- <pre>{{ listRowSelect.value[0].status.id}}</pre> -->
         <div class="card">
             <h1>{{ $t('menu.dailyTransactionsContractor') }}</h1>
 
@@ -286,7 +286,7 @@ import Summary from '@/components/Summary.vue';
 import ActionButton from '@/components/ActionButton.vue';
 import {useActions} from '@/composables/ActionButton.js';
 import AppMovilContractor from '@/views/pages/AppMovil/Contractor/AppMovilContractor.vue';
-const { getItems,itemsActions, messageDialog,titleDialog,status_id_Action,flagDialog } = useActions(`/processflow/CropLot`);
+const { getItems,itemsActions, messageDialog,titleDialog,status_id_Action,flagDialog } = useActions(`/processflow/TasksContractor`);
 
 const { t } = useI18n();
 
@@ -575,6 +575,7 @@ const state = ref('');
 const openDialogSettlement = async (mode) => {
     
     if(listRowSelect.value.length != 0){
+        console.log('listRowSelect.value[0].status.id:', listRowSelect.value[0].status.id);
         await getItems(listRowSelect.value[0].status.id);
     }
     state.value = mode;

@@ -3,8 +3,11 @@ import { ref } from 'vue';
 
 
 
-export default function useData(locale) {
-    const { pathAPI, APISettings } = useSettingsAPI();
+export default function useData(locale = 'en') {
+    
+    
+    const { pathAPI, APISettings } = useSettingsAPI(locale);
+    
     //const { pathAPI, APISettings } = useSettingsAPI(locale); 
 
     const token = ref();
@@ -25,8 +28,7 @@ export default function useData(locale) {
     initializeToken();
     APISettings.headers.set('Content-Type', 'application/json');
     APISettings.headers.set('Access-Control-Allow-Origin', '*');
-    APISettings.headers.set('Accept-Language', 'es');
-    // APISettings.headers.set('Authorization', 'Bearer ' + token.value);
+
 
     async function getRequest(endPoint) {
         initializeToken();

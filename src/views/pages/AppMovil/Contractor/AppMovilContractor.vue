@@ -1,6 +1,9 @@
 <template>
     <div class="card">
-        <h2>{{ titulo }} Departamento: {{ fetchWorkCenter?.name || 'Cargando...' }}</h2>
+
+        
+
+        <h2> Titulo: {{ fetchWorkCenter?.taskoftype.name || 'Cargando...' }} Departamento: {{ fetchWorkCenter?.name || 'Cargando...' }}</h2>
         <div class="p-fluid formgrid grid">
             <div class="field col-12 md:col-6"></div>
         </div>
@@ -204,7 +207,7 @@ import { useToast } from 'primevue/usetoast';
 import { useForm } from 'vee-validate';
 import { useI18n } from 'vue-i18n';
 import { useAppMovilService } from '@/service/appMovil/appMovilService_V3';
-const { getDonesWork, HOLIDAY, initData, TASK_OF_TYPE, getUsers, getDataTasksplanner, getInfoEmployees, fetchWorkCenter, getTarifOfTasksDoneAppMob, getTarifOfWorks } = useAppMovilService();
+const { initializeAppMovilSession,getDonesWork, HOLIDAY, initData, TASK_OF_TYPE, getUsers, getDataTasksplanner, getInfoEmployees, fetchWorkCenter, getTarifOfTasksDoneAppMob, getTarifOfWorks } = useAppMovilService();
 // import { ProductService } from '@/service/ProductService'
 const farmDefault = sessionStorage.getItem('accessSessionFarm');
 const supervisoryEmployee = sessionStorage.getItem('accesSessionEmployeeUuid');
@@ -242,23 +245,27 @@ watch(search, (newSearch) => {
 });
 
 const initializeComponent = async () => {
+    if (!fetchWorkCenter.value) {
+    toast.add({ severity: 'warn', detail: 'Work center no disponible aún.', life: 5000 });
+    return;
+}
     await loadLazyData();
-    titulo.value = `Título: ${TASK_OF_TYPE.name || 'Sin nombre'}`;
+    if (TASK_OF_TYPE?.name) {
+    titulo.value = `Título: ${TASK_OF_TYPE.name}`;
+} else {
+    titulo.value = 'Título: Sin nombre';
+}
+
     flagIndividual.value = false;
     await readAll(); // Also refresh the lists and PickList data
-    // toast.add({
-    //     severity: 'info',
-    //     summary: 'Contractor register information',
-    //     detail: 'Please enter the information based on the worker.',
-    //     life: 3000
-    // });
+    toast.add({
+        severity: 'info',
+        summary: 'Contractor register information',
+        detail: 'Please enter the information based on the worker.',
+        life: 3000
+    });
 };
 
-// onMounted(async () => {
-//     await loadLazyData();
-//     titulo.value = `Título: ${TASK_OF_TYPE.name || 'Sin nombre'}`;
-
-// });
 
 onMounted(initializeComponent);
 
@@ -277,12 +284,13 @@ const readAll = async () => {
         dataPickList.value[0] = [...originalAvailablePickList.value];
         dataPickList.value[1] = []; // Clear the target list
     } catch (error) {
-        toast.add({ severity: 'error', detail: 'An error occurred while loading data.', life: 3000 });
+        toast.add({ severity: 'error', detail: 'An error occurred while loading data. in try', life: 3000 });
     } finally {
         loading.value = false; // Hide loading indicator
     }
 
     try {
+        console.log("Holaaa")
         const responseDonesWork = await getDonesWork();
         console.log('responseDonesWork', responseDonesWork);
         if (!responseDonesWork.ok) {
@@ -292,9 +300,10 @@ const readAll = async () => {
         Works.value = responseDonesWork.data.data.map((element) => ({ id: element.id, uuid: element.uuid, name: element.name, work_type_tarif: element.work_type_tarif }));
         console.log('Works', Works.value);
     } catch (error) {
-        toast.add({ severity: 'error', detail: 'An error occurred while loading data.', life: 3000 });
+        toast.add({ severity: 'error', detail: 'An error occurred while loading data in catch.', life: 3000 });
     } finally {
         loading.value = false; // Hide loading indicator
+        
     }
 };
 
@@ -403,7 +412,12 @@ const resetAll = async () => {
     // Refresh data and title
     await loadLazyData();
     await readAll();
-    titulo.value = `Título: ${TASK_OF_TYPE.name || 'Sin nombre'}`;
+    if (TASK_OF_TYPE?.name) {
+    titulo.value = `Título: ${TASK_OF_TYPE.name}`;
+} else {
+    titulo.value = 'Título: Sin nombre';
+}
+
 };
 
 const state = ref('new');
@@ -525,6 +539,7 @@ const sizeOptions = ref([
 const filters = ref();
 onBeforeMount(() => {
     initFilters();
+    initializeAppMovilSession();
 });
 
 const clearFilter = () => {

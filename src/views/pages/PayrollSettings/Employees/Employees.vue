@@ -950,7 +950,7 @@ dataFromComponent.value = [...dataFromComponent.value]; // 🧠 force array refe
 
 finally {listRowSelect.value = [];
     await loadingData(); // Refresh data
-dataFromComponent.value = [...dataFromComponent.value]; // 🧠 force array reference change
+dataFromComponent.value = [...dataFromComponent.value]; 
 }
 };
 

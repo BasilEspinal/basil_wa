@@ -15,6 +15,8 @@ import { useAbilityStore } from '@/stores/abilities';
 import ability from '@/service/ability.js';
 import { useI18n } from 'vue-i18n';
 import { ensureTokenStored } from '@/utils/tokenUtils';
+import { useAppMovilService } from '@/service/appMovil/appMovilService_V3';
+const { refreshSessionState } = useAppMovilService();
 
 const { layoutConfig } = useLayout();
 const abilityStore = useAbilityStore()
@@ -24,7 +26,9 @@ const { getRequest, postRequest, putRequest, deleteRequest,errorResponseAPI } = 
 let endpoint = ref('/login');
 const token = ref('')
 const count = ref(0);
-const { values, errors, defineField } = useForm({initialValues: { email: 'admin@agroonline.com', password: '!password!' },
+//const { values, errors, defineField } = useForm({initialValues: { email: 'admin@agroonline.com', password: '!password!' },
+const { values, errors, defineField } = useForm({initialValues: { email: 'admin@agroonline.com', password: '' },
+
     validationSchema: toTypedSchema(
         z.object({
             email: z.string().min(3).email(),
@@ -32,6 +36,8 @@ const { values, errors, defineField } = useForm({initialValues: { email: 'admin@
         })
     )
 });
+
+
 
 const logoUrl = computed(() => {
     return `layout/images/${layoutConfig.darkTheme.value ? 'logo-white' : 'logo-dark'}.png`;
@@ -50,8 +56,10 @@ const fetchInfoPostLogin = async (data) => {
     const user = response.user.name;
     sessionStorage.setItem('accessSessionToken', token.value);
     sessionStorage.setItem('accessSessionUser', user);
+    
     localStorage.setItem('accesSessionUsers', user);
     localStorage.setItem('accessSessionToken', token.value);
+    await refreshSessionState(); // ✅ RELOAD reactivity
     await ensureTokenStored();
 
     if (!token.value) {
@@ -66,7 +74,7 @@ const fetchInfoPostLogin = async (data) => {
 });
     ability.update(rules);
   }
-    
+   
     toast.add({ severity: 'success', detail: 'Success', content: 'Successful Login', id: count.value++ });
     router.push('/applayout');
     
@@ -80,6 +88,7 @@ const fetchInfoPostLogin = async (data) => {
 
 const onSubmit = async () => {
     await fetchInfoPostLogin();
+
    
 };
 

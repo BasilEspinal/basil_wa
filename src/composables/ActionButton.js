@@ -15,12 +15,12 @@ export function useActions(endpoint) {
     const getItems = async (id) => {
 
         try {
-            const finalId = id !== undefined ? id : 1; // Use `1` as the default ID if `id` is undefined
+            const finalId = id !== undefined ? id : 0; // Use `1` as the default ID if `id` is undefined
             
 
     
             const response = await getRequest(`${endpoint}/${finalId}`);
-            
+            console.log(response);
             itemsActions.value = [];
             
             // Check if response data is valid and contains the expected data structure

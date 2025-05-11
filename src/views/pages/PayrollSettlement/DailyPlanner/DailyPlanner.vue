@@ -911,6 +911,7 @@ const state = ref('');
 const openDialogSettlement = async (mode) => {
     
     if(listRowSelect.value.length != 0){
+        console.log('listRowSelect.value[0].status.id:', listRowSelect.value[0].status.id);
         await getItems(listRowSelect.value[0].status.id);
     }
     state.value = mode;
