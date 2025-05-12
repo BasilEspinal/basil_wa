@@ -1,4 +1,4 @@
-import { ref, computed } from 'vue';
+import { ref, computed,watch } from 'vue';
 import useData from '@/composables/DataAPI/FetchDataAPICopy.js';
 
 export function useAppMovilService() {
@@ -11,19 +11,26 @@ export function useAppMovilService() {
     const counter = ref(0);
 
     // Variables dinámicas
-    let fetchWorkCenter = null;
+    const fetchWorkCenter = ref(null);
     let fetchSupervisorId = null;
     let fetchFarmId = null;
     let fetchCompanyId = null;
     let fetchCompanyUuid = null;
 
     // Computed: valores actualizados dinámicamente
-    const TASK_OF_TYPE = computed(() => fetchWorkCenter?.taskoftype || null);
+    const TASK_OF_TYPE = computed(() => fetchWorkCenter.value?.taskoftype || null);
+    watch(fetchWorkCenter, (val) => {
+        console.log('Nuevo fetchWorkCenter:', val);
+        console.log('Nuevo TASK_OF_TYPE:', TASK_OF_TYPE.value);
+    });
+    
 
     // Función de inicialización
     const initData = async () => {
         resetState();
-        fetchWorkCenter = JSON.parse(sessionStorage.getItem('accessSessionWorkCenter'));
+        
+
+        fetchWorkCenter.value = JSON.parse(sessionStorage.getItem('accessSessionWorkCenter'));
         fetchSupervisorId = sessionStorage.getItem('accesSessionEmployeeUuid');
         fetchFarmId = sessionStorage.getItem('accessSessionFarmId');
         fetchCompanyId = sessionStorage.getItem('accessSessionCompanyId');
@@ -37,12 +44,6 @@ export function useAppMovilService() {
         console.log('InitData ejecutado, counter:', counter.value);
     };
 
-    // const resetState = () => {
-    //     holiday.value = 'Normal';
-    //     tasksPlaner.value = {};
-    //     tipoActividad.value = [];
-    //     counter.value = 0;
-    // };
 
     const resetState = () => {
         holiday.value = 'Normal';
@@ -138,10 +139,13 @@ export function useAppMovilService() {
         } catch (e) {
             console.error('Error in getShippingsDelivered:', e);
             return { data: [], error: 'Error Get Shippings Delivered', ok: false };
-        }
+        }  
     };
 
     const getInfoEmployees = async (planner_task_id, task_of_type) => {
+        console.log("getInfoEmployees");
+        console.log('planner_task_id', planner_task_id);
+        console.log('task_of_type', task_of_type);
         const response = await getRequest(`/appmovil/summary/employees?filter[planner_task_id]=${planner_task_id}&filter[tasks_of_type_id]=${task_of_type}&filter[farm_id]=${fetchFarmId}`);
         counter.value++;
         return response;
@@ -183,6 +187,7 @@ export function useAppMovilService() {
         TASK_OF_TYPE, // Ahora dinámico
         TASKS_PLANNER: tasksPlaner,
         TIPO_ACTIVIDAD: tipoActividad,
+        fetchWorkCenter,
         initData,
         resetState,
         getDonesWork,

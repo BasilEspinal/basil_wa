@@ -10,6 +10,8 @@ import ShippingDelivered from './ShippingDelivered.vue';
 import DeliveringDelivered from './DeliveringDelivered.vue';
 import ErrorAppMovil from './ErrorAppMovil.vue';
 import ability from '@/service/ability.js';
+import { watchEffect } from 'vue';
+
 
 const errorSummary = ref(false);
 const summary = ref();
@@ -182,19 +184,29 @@ onUnmounted(() => {
     totalTaskQtyJournal.value = 0;
     totalJournalTotal.value = 0;
 });
+watch(TASK_OF_TYPE, (newVal) => {
+  if (newVal && newVal.name) {
+    titulo.value = t('appmovil.titulo') + ' ' + newVal.name;
+  }
+  
+});
+
+watchEffect(() => {
+  if (fetchWorkCenter.value?.taskoftype?.name) {
+    titulo.value = t('appmovil.titulo') + ' ' + fetchWorkCenter.value.taskoftype.name;
+  }
+});
 
 const functionsData = async () => {
     loading.value = true;
 
     // ✅ Inicializa los datos de sesión
-    //await refreshSessionState(); // <--- LLAMAR ESTO ANTES DE initData()
+//    await refreshSessionState(); // <--- LLAMAR ESTO ANTES DE initData()
 
-    // console.log('TASK_OF_TYPE:', TASK_OF_TYPE?.id);
-    // console.log('fetchWorkCenter:', fetchWorkCenter.value);
-    // console.log('fetchFarmId:', sessionStorage.getItem('accessSessionFarmId'));
-    // console.log('fetchCompanyId:', sessionStorage.getItem('accessSessionCompanyId'));
 
     await initData(); // this refreshes session and loads planner/holiday/type
+
+    
 
     const response = await getDataTasksplanner();
     if (!response.ok) {
@@ -202,15 +214,24 @@ const functionsData = async () => {
         loading.value = false;
         return;
     }
+    
+    console.log('response,',response);
 
     dataApp.value = response.data;
     lotes.value = dataApp.value?.crop_lots;
+    console.log('dataApp.value', dataApp.value);
 
     await getUser();
-    titulo.value = t('appmovil.titulo') + ' ' + (TASK_OF_TYPE?.name || 'Sin nombre');
+    //titulo.value = t('appmovil.titulo') + ' ' + (TASK_OF_TYPE?.name || 'Sin nombre');
 
     await getDataEmployeesInfo(); // optional if not on summary tab
     loading.value = false;
+
+    console.log('TASK_OF_TYPE:', TASK_OF_TYPE?.id);
+    console.log('fetchWorkCenter:', fetchWorkCenter.value);
+    console.log('fetchFarmId:', sessionStorage.getItem('accessSessionFarmId'));
+    console.log('fetchCompanyId:', sessionStorage.getItem('accessSessionCompanyId'));
+
     ////////////////////////
 };
 
@@ -277,8 +298,8 @@ const updateData = async () => {
 
 <template>
     <!-- <pre>{{ compareStoredDate() }}</pre> -->
-    <pre>{{ fetchWorkCenter }}</pre>
-    <h2>{{ titulo }} Departamento: {{ fetchWorkCenter?.name || 'Cargando...' }}</h2>
+    <h1>El empleado pertenece a:</h1>
+    <h2>{{ titulo}} Departamento: {{ fetchWorkCenter?.name || 'Cargando...' }}</h2>
 
     <div v-if="loading" class="flex align-items-center justify-content-center" style="height: 100vh">
         <ProgressSpinner />
