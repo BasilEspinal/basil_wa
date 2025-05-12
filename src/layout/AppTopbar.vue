@@ -3,7 +3,7 @@ import { ref, computed, onMounted, onBeforeUnmount, onBeforeMount, watch } from 
 import { useLayout } from '@/layout/composables/layout';
 import { useRouter } from 'vue-router';
 import useDataAPI from '@/composables/DataAPI/FetchDataAPI.js';
-import { useAppMovilService } from '@/service/AppMovil/appMovilService_V3';
+import { useAppMovilService } from '@/service/appMovil/appMovilService_V3';
 import OverlayPanel from 'primevue/overlaypanel';
 import { useForm } from 'vee-validate';
 import { toTypedSchema } from '@vee-validate/zod';
