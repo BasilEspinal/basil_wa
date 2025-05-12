@@ -1,109 +1,4 @@
-<template>
-    
-        <div class="grid">
-
-            <div class="mb-3 col-12 md:col-6 lg:col-6">
-                            <div class="flex align-items-center">
-                                
-                                    <label for="request_qty_V" class="font-semibold w-6rem"> {{ t('appmovil.quantityRequested') }}</label>
-                                    <!-- <InputNumber id="request_qty_V" v-model="request_qty_V" class="flex-auto" inputId="minmax" :min="0" :max="1000" /> -->
-                                    <InputNumber v-model="request_qty_V" class="flex-auto" showButtons buttonLayout="horiontal" :min="0">
-                                                <template #incrementbuttonicon>
-                                                    <span class="pi pi-plus" />
-                                                </template>
-                                                <template #decrementbuttonicon>
-                                                    <span class="pi pi-minus" />
-                                                </template>
-                                            </InputNumber>
-                                </div>
-                                <!-- <pre>{{request_qty_V}}</pre> -->
-                                <FrontEndErrors :errorsNew="errorsNew" name="request_qty_V" />
-                                <BackendErrors :name="errorResponseAPI?.errors?.request_qty" />
-                                
-                            </div>
-                            
-            
-
-            <div class="mb-3 col-12 md:col-6 lg:col-6">
-                <div class="flex align-items-center">
-                            
-                                <label for="username" class="font-semibold w-6rem">{{t('appmovil.vehicle_employee')}}</label>
-                                <AutoComplete v-model="emplooyesV" inputId="ac" class="flex-auto" :suggestions="employees" @complete="searchEmployees" field="name" dropdown placeholder="Select Employees" />
-
-                            <!--Pendiente-->
-                            <FrontEndErrors :errorsNew="errorsNew" name="emplooyesV" />
-                            <BackendErrors :name="errorResponseAPI?.errors?.employee_transport_id" />
-                        </div>
-                    </div>
-                    
-
-
-
-
-                    
-                            <div class="mb-3 col-12 md:col-6 lg:col-6">
-                        <div class="flex align-items-center">
-                                
-                                    <label for="username" class="font-semibold w-6rem">{{ t('appmovil.vehicle') }}</label>
-                                    <AutoComplete v-model="vehiclesV" inputId="ac" class="flex-auto" :suggestions="vehicles" @complete="searchVehicles" field="name" dropdown placeholder="Select Vehicles" />
-                                
-                                <FrontEndErrors :errorsNew="errorsNew" name="vehiclesV" />
-                                <BackendErrors :name="errorResponseAPI?.errors?.vehicle_id" />
-                            </div>
-                        </div>
-                        
-
-
-                        <div class="mb-3 col-12 md:col-6 lg:col-6">
-                            <div class="flex align-items-center">
-                                    
-                                    <label class="font-semibold w-6rem" for="crops_lots">{{ t('appmovil.lote') }}</label>
-                                    <!-- <AutoComplete v-model="selected_crops_lots" inputId="ac" class="flex-auto" :suggestions="lots" @complete="searchLots" field="code" dropdown placeholder="Select lots" /> -->
-                                    <Dropdown v-model="selected_crops_lots" :options="batchs" filter optionLabel="code" class="flex-auto" />
-
-                                <FrontEndErrors :errorsNew="errorsNew" name="selected_crops_lots" />
-                                <BackendErrors :name="errorResponseAPI?.errors?.crop_lot_code" />
-                            
-                            </div>
-
-
-                        </div>
-
-                        <div class="mb-3 col-12 md:col-12 lg:col-12">
-                            <div class="flex align-items-center">
-                                    
-                                    <label class="font-semibold w-6rem" for="textarea">{{ t('appmovil.notas') }}</label>
-                                    <Textarea v-model="notes" class="flex-auto" inputId="textarea" rows="5" cols="30"  variant="filled"  />
-                                
-                                    
-                                </div>
-                            </div>
-
-
-
-                        <div class="mb-3 col-12 sm:col-12 md:col-12 lg:col-12">
-                        <div class="flex align-items-center gap-4 ">
-                            <!-- <Button label="Cancel" severity="secondary" outlined class="w-full" /> -->
-                            <!-- <Button label="Save" class="w-full" @click="actionRecordManager" /> -->
-                            <div class="mb-3 col-12 sm:col-12 md:col-12 lg:col-12">
-                            <div class="flex align-items-center gap-4">
-                                <Button 
-                                label="Save" 
-                                class="w-full" 
-                                @click="actionRecordManager" 
-                                :disabled="loading" 
-                                />
-                                <span v-if="loading" class="pi pi-spin pi-spinner"></span>
-                            </div>
-                            </div>
-
-                        </div>
-                    </div>
-            </div>
-</template>
-  
-  <script setup>
-  
+<script setup>
 import { ref, watch, provide, onBeforeMount, onMounted } from 'vue';
 
 import { useForm } from 'vee-validate';
@@ -117,7 +12,7 @@ import FrontEndErrors from '@/layout/composables/Errors/FrontendErrors.vue';
 import ability from '@/service/ability.js';
 import { CrudService } from '@/service/CRUD/CrudService';
 import { InitialDataService } from '@/service/InitialData';
-import {computed} from 'vue';
+import { computed } from 'vue';
 const { t } = useI18n();
 const toast = useToast();
 
@@ -142,12 +37,10 @@ const props = defineProps({
     data: {
         type: Object,
         required: true
-        
-        
     },
     batchs: {
-        type: Array,
-    },
+        type: Array
+    }
 });
 
 const {
@@ -160,7 +53,7 @@ const {
         transaction_dateV: '',
         product_typeV: { name: '', id: '' },
         emplooyesV: { name: '', id: '' },
-        vehiclesV: { name: '', id: null},
+        vehiclesV: { name: '', id: null },
         request_qty_V: 0,
         farm: { name: '', id: '' },
         company: { name: '', id: '' }
@@ -168,7 +61,7 @@ const {
     validationSchema: toTypedSchema(
         z.object({
             // transaction_dateV: z.date(),
-            request_qty_V:z.number().min(1),
+            request_qty_V: z.number().min(1),
             task_of_typeV: z
                 .object({
                     name: z.string().min(4),
@@ -181,7 +74,7 @@ const {
                     id: z.string().optional()
                 })
                 .optional(),
-                request_qty_V: z.number().min(1).max(1000),
+            request_qty_V: z.number().min(1).max(1000),
             vehiclesV: z
                 .object({
                     name: z.string().optional(),
@@ -189,11 +82,9 @@ const {
                 })
                 .optional(),
             selected_crops_lots: z.object({
-                code: z.string().min(4),
-                
+                code: z.string().min(4)
             }),
             notes: z.string().optional(),
-
 
             farm: z
                 .object({
@@ -217,23 +108,18 @@ const [request_qty_V, request_qty_VProps] = defineField('request_qty_V');
 const [selected_crops_lots] = defineField('selected_crops_lots');
 const [notes] = defineField('notes');
 
-
 onBeforeMount(async () => {
     readAll();
-    
-    dataStart.value= await InitialDataService.getDatastart();
-    dataPlanner.value = await InitialDataService.getTasksPlanner(dataStart.value);    
+
+    dataStart.value = await InitialDataService.getDatastart();
+    dataPlanner.value = await InitialDataService.getTasksPlanner(dataStart.value);
     vehiclesV.value = {
-    name: dataPlanner.value.data.data[0].vehicle.vehicle_type,  
-    id: dataPlanner.value.data.data[0].vehicle.id       
-};
+        name: dataPlanner.value.data.data[0].vehicle.vehicle_type,
+        id: dataPlanner.value.data.data[0].vehicle.id
+    };
 
-    lots.value.push(props.batchs)
-
-    
-
+    lots.value.push(props.batchs);
 });
-
 
 const readAll = async () => {
     // const respTasksOfType = await getRequest('/task_of_types');
@@ -253,65 +139,61 @@ const readAll = async () => {
     if (!respVehicles.ok) toast.add({ severity: 'error', detail: 'Error' + respVehicles.error, life: 3000 });
     Vehicles.value = respVehicles.data.data.map((vehicle) => ({ id: vehicle.id, name: vehicle.vehicle_type }));
     //console.log(Vehicles.value);
-
 };
 
 const loading = ref(false); // Tracks if the process is in progress
 
 const actionRecordManager = handleSubmitNew(async (values) => {
-  loading.value = true; // Block the button
-  try {
-    const responseCRUD = ref();
-    const data = {
-      trans_dev: false, // Boolean directly assigned
-      tasks_of_type_id: dataPlanner.value.data.data[0].tasks_of_type.id, // Task type ID
-      dispatch_number_lot: dataPlanner.value.data.data[0].customer_request.dispatch_number_lot, // Dispatch number
-      transaction_date: getCurrentFormattedDate(), // Current date and time
-      sent_qty: values.request_qty_V || '', // Sent quantity
-      crop_lot_code: values.selected_crops_lots.code, // Crop lot code
-      vehicle_id: values.vehiclesV ? values.vehiclesV.id : dataPlanner.value.data.data[0].vehicle.id, // Vehicle ID
-      planner_task_id: dataPlanner.value.data.data[0].id, // Planner task ID
-      farm_id: values.farm ? 1 : farmDefault, // Farm ID
-      supervisory_employee_id: 2, // Supervisor employee ID
-      employee_transport_id: 13, // Transport employee ID
-      notes_small: notes.value, // Notes
-    };
+    loading.value = true; // Block the button
+    try {
+        const responseCRUD = ref();
+        const data = {
+            trans_dev: false, // Boolean directly assigned
+            tasks_of_type_id: dataPlanner.value.data.data[0].tasks_of_type.id, // Task type ID
+            dispatch_number_lot: dataPlanner.value.data.data[0].customer_request.dispatch_number_lot, // Dispatch number
+            transaction_date: getCurrentFormattedDate(), // Current date and time
+            sent_qty: values.request_qty_V || '', // Sent quantity
+            crop_lot_code: values.selected_crops_lots.code, // Crop lot code
+            vehicle_id: values.vehiclesV ? values.vehiclesV.id : dataPlanner.value.data.data[0].vehicle.id, // Vehicle ID
+            planner_task_id: dataPlanner.value.data.data[0].id, // Planner task ID
+            farm_id: values.farm ? 1 : farmDefault, // Farm ID
+            supervisory_employee_id: 2, // Supervisor employee ID
+            employee_transport_id: 13, // Transport employee ID
+            notes_small: notes.value // Notes
+        };
 
-    console.log('data', data);
-    console.log('JSON.stringify(data)', JSON.stringify(data, null, 2));
+        console.log('data', data);
+        console.log('JSON.stringify(data)', JSON.stringify(data, null, 2));
 
-    if (state.value === 'new') {
-      responseCRUD.value = await crudService.create(data);
-    } else if (state.value === 'edit') {
-      // Handle 'edit' state
-    } else if (state.value === 'patch') {
-      // Handle 'patch' state
-    } else {
-      // Handle other states
+        if (state.value === 'new') {
+            responseCRUD.value = await crudService.create(data);
+        } else if (state.value === 'edit') {
+            // Handle 'edit' state
+        } else if (state.value === 'patch') {
+            // Handle 'patch' state
+        } else {
+            // Handle other states
+        }
+
+        toast.add({
+            severity: responseCRUD.value.ok ? 'success' : 'error',
+            summary: 'Create',
+            detail: responseCRUD.value.ok ? 'Creado' : responseCRUD.value.error,
+            life: 3000
+        });
+
+        if (responseCRUD.value.ok) {
+            console.log('data', data);
+            emit('update-grandparent-data');
+        }
+    } catch (error) {
+        console.error('An error occurred:', error);
+    } finally {
+        loading.value = false; // Unblock the button
     }
-
-    toast.add({
-      severity: responseCRUD.value.ok ? 'success' : 'error',
-      summary: 'Create',
-      detail: responseCRUD.value.ok ? 'Creado' : responseCRUD.error,
-      life: 3000,
-    });
-
-    if (responseCRUD.value.ok) {
-      console.log('data', data);
-      emit('update-grandparent-data');
-
-    }
-  } catch (error) {
-    console.error('An error occurred:', error);
-  } finally {
-    loading.value = false; // Unblock the button
-  }
 });
 
 const emit = defineEmits(['update-grandparent-data']); // Define the event to emit
-
-
 
 const getCurrentFormattedDate = () => {
     const date = new Date();
@@ -325,7 +207,6 @@ const getCurrentFormattedDate = () => {
 
     return `${year}-${month}-${day} ${hours}:${minutes}:${seconds}`;
 };
-
 
 const searchLots = (event) => {
     setTimeout(() => {
@@ -373,7 +254,79 @@ const searchVehicles = (event) => {
 //     }, 200);
 // };
 </script>
-  
-  <style scoped>
-</style>
-  
+
+<template>
+    <div class="grid">
+        <div class="mb-3 col-12 md:col-6 lg:col-6">
+            <div class="flex align-items-center">
+                <label for="request_qty_V" class="font-semibold w-6rem"> {{ t('appmovil.quantityRequested') }}</label>
+                <!-- <InputNumber id="request_qty_V" v-model="request_qty_V" class="flex-auto" inputId="minmax" :min="0" :max="1000" /> -->
+                <InputNumber v-model="request_qty_V" class="flex-auto" showButtons buttonLayout="horiontal" :min="0">
+                    <template #incrementbuttonicon>
+                        <span class="pi pi-plus" />
+                    </template>
+                    <template #decrementbuttonicon>
+                        <span class="pi pi-minus" />
+                    </template>
+                </InputNumber>
+            </div>
+            <!-- <pre>{{request_qty_V}}</pre> -->
+            <FrontEndErrors :errorsNew="errorsNew" name="request_qty_V" />
+            <BackendErrors :name="errorResponseAPI?.errors?.request_qty" />
+        </div>
+
+        <div class="mb-3 col-12 md:col-6 lg:col-6">
+            <div class="flex align-items-center">
+                <label for="username" class="font-semibold w-6rem">{{ t('appmovil.vehicle_employee') }}</label>
+                <AutoComplete v-model="emplooyesV" inputId="ac" class="flex-auto" :suggestions="employees" @complete="searchEmployees" field="name" dropdown placeholder="Select Employees" />
+
+                <!--Pendiente-->
+                <FrontEndErrors :errorsNew="errorsNew" name="emplooyesV" />
+                <BackendErrors :name="errorResponseAPI?.errors?.employee_transport_id" />
+            </div>
+        </div>
+
+        <div class="mb-3 col-12 md:col-6 lg:col-6">
+            <div class="flex align-items-center">
+                <label for="username" class="font-semibold w-6rem">{{ t('appmovil.vehicle') }}</label>
+                <AutoComplete v-model="vehiclesV" inputId="ac" class="flex-auto" :suggestions="vehicles" @complete="searchVehicles" field="name" dropdown placeholder="Select Vehicles" />
+
+                <FrontEndErrors :errorsNew="errorsNew" name="vehiclesV" />
+                <BackendErrors :name="errorResponseAPI?.errors?.vehicle_id" />
+            </div>
+        </div>
+
+        <div class="mb-3 col-12 md:col-6 lg:col-6">
+            <div class="flex align-items-center">
+                <label class="font-semibold w-6rem" for="crops_lots">{{ t('appmovil.lote') }}</label>
+                <!-- <AutoComplete v-model="selected_crops_lots" inputId="ac" class="flex-auto" :suggestions="lots" @complete="searchLots" field="code" dropdown placeholder="Select lots" /> -->
+                <Dropdown v-model="selected_crops_lots" :options="batchs" filter optionLabel="code" class="flex-auto" />
+
+                <FrontEndErrors :errorsNew="errorsNew" name="selected_crops_lots" />
+                <BackendErrors :name="errorResponseAPI?.errors?.crop_lot_code" />
+            </div>
+        </div>
+
+        <div class="mb-3 col-12 md:col-12 lg:col-12">
+            <div class="flex align-items-center">
+                <label class="font-semibold w-6rem" for="textarea">{{ t('appmovil.notas') }}</label>
+                <Textarea v-model="notes" class="flex-auto" inputId="textarea" rows="5" cols="30" variant="filled" />
+            </div>
+        </div>
+
+        <div class="mb-3 col-12 sm:col-12 md:col-12 lg:col-12">
+            <div class="flex align-items-center gap-4">
+                <!-- <Button label="Cancel" severity="secondary" outlined class="w-full" /> -->
+                <!-- <Button label="Save" class="w-full" @click="actionRecordManager" /> -->
+                <div class="mb-3 col-12 sm:col-12 md:col-12 lg:col-12">
+                    <div class="flex align-items-center gap-4">
+                        <Button label="Save" class="w-full" @click="actionRecordManager" :disabled="loading" />
+                        <span v-if="loading" class="pi pi-spin pi-spinner"></span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</template>
+
+<style scoped></style>

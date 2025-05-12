@@ -2,20 +2,19 @@
 import useData from '@/service/FetchData/FetchDataAPI.js';
 import { defineStore } from 'pinia';
 import { ref } from 'vue';
-const { getRequest, postRequest, putRequest, deleteRequest,errorResponseAPI } = useData();
+const { getRequest, postRequest, putRequest, deleteRequest, errorResponseAPI } = useData();
 const token = ref();
 
 export const useAbilityStore = defineStore('abilities', {
-    
     state: () => ({
         name: 'Tiago Rizzo',
         role: 'user',
         abilities: [
             {
                 action: 'create',
-                subject: 'user',
-            },
-        ],
+                subject: 'user'
+            }
+        ]
     }),
     actions: {
         changeRole(role) {
@@ -32,20 +31,19 @@ export const useAbilityStore = defineStore('abilities', {
                     return;
                 }
                 const response = await getRequest('/abilities');
-                
+
                 const abilities = response.data.map((element) => {
-                    
                     return {
-                        action: element, 
-                        subject: element,
+                        action: element,
+                        subject: element
                     };
                 });
-                
-                this.setAbilities(abilities);  
+
+                this.setAbilities(abilities);
             } catch (error) {
                 console.error('Error fetching abilities:', error);
             }
-        },
+        }
     },
     getters: {
         getAbilities() {
@@ -53,7 +51,6 @@ export const useAbilityStore = defineStore('abilities', {
         },
         getRole() {
             return this.role;
-        },
-        
-    },
+        }
+    }
 });

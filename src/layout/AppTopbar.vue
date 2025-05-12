@@ -13,7 +13,6 @@ import { useI18n } from 'vue-i18n';
 const { resetDataAPI } = useDataAPI();
 const { resetAppMovilService } = useAppMovilService();
 
-
 //const { APISettings, pathAPI } = useSettingsAPI(locale);
 
 const { locale } = useI18n();
@@ -21,8 +20,6 @@ const { locale } = useI18n();
 //     console.log('Language changed to:', newLocale);
 //     console.log('Updated headers:', APISettings.value.headers.get('Accept-Language'));
 // });
-
-
 
 const countries = ref([
     { name: 'ES', code: 'ES', id: 'es' },
@@ -32,23 +29,22 @@ const countries = ref([
 const selectedCountry = ref();
 
 import ability from '@/service/ability.js';
-const userDefault = ref('')
-const emailDefault = ref('')
+const userDefault = ref('');
+const emailDefault = ref('');
 const props = defineProps({
-  userStoraged: {
-    type: Object,
-    required: true,
-  },
-  nameStoraged: {
-    type: String,
-    required: true,
-  },
-  emailStoraged: {
-    type: String,
-    required: true,
-  },
+    userStoraged: {
+        type: Object,
+        required: true
+    },
+    nameStoraged: {
+        type: String,
+        required: true
+    },
+    emailStoraged: {
+        type: String,
+        required: true
+    }
 });
-
 
 const { getAllResponsePermissionsAPI, dataResponsePermissionsAPI } = useDataAPI();
 const lengthPermissions = ref(0);
@@ -109,20 +105,17 @@ const router = useRouter();
 const toggleValue = ref(layoutConfig.darkTheme.value);
 const farmDefault = sessionStorage.getItem('accessSessionFarm');
 
-
-
 const logout = async () => {
     await postResponseAPI({}, '/logout');
     resetDataAPI();
     resetAppMovilService();
-    
+
     // 🧹 Clear session/local storage BEFORE calling any composables
     sessionStorage.clear();
     localStorage.clear();
 
     router.push('/auth/login');
 };
-
 
 const checkStorageAndInitialize = async (key, callback, retries = 10, delay = 500) => {
     let value = sessionStorage.getItem(key);
@@ -136,14 +129,19 @@ const checkStorageAndInitialize = async (key, callback, retries = 10, delay = 50
 };
 
 const initializeValues = async () => {
-    checkStorageAndInitialize('accessSessionUser', (value) => { dataUser.value = value; });
-    checkStorageAndInitialize('accessSessionEmployeeName', (value) => { nameEdit.value = value; });
-    checkStorageAndInitialize('accessSessionEmail', (value) => { emailEdit.value = value; });
+    checkStorageAndInitialize('accessSessionUser', (value) => {
+        dataUser.value = value;
+    });
+    checkStorageAndInitialize('accessSessionEmployeeName', (value) => {
+        nameEdit.value = value;
+    });
+    checkStorageAndInitialize('accessSessionEmail', (value) => {
+        emailEdit.value = value;
+    });
 
     // If you need to log the values only after they are set
     await new Promise((resolve) => setTimeout(resolve, 5000)); // Adjust the timeout as needed
 };
-
 
 onBeforeMount(async () => {
     await initializeValues();
@@ -218,17 +216,14 @@ const isOutsideClicked = (event) => {
 const Exit = () => {
     logout().then(() => {
         resetAppMovilService(); // <-- aquí
-        resetDataAPI(); 
+        resetDataAPI();
         localStorage.clear();
         sessionStorage.clear();
         router.push({ path: '/auth/login' }).then(() => {
-  window.location.reload(); // ✅ Ensures all states are fresh
-});
-
-
+            window.location.reload(); // ✅ Ensures all states are fresh
+        });
     });
 };
-
 
 const editUser = submitEdit(async (values) => {
     // const { farm, roles, id } = selectedRegisters.value[0];

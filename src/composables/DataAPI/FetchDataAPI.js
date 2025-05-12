@@ -37,7 +37,6 @@ export default function useDataAPI(datos) {
         errorResponseAPI.value = '';
         statusCode.value = [];
     };
-    
 
     const getAllResponseAPI = async (endPoint) => {
         let baseUrl = `${base}${api}${endPoint}`;
@@ -93,7 +92,6 @@ export default function useDataAPI(datos) {
                 can(permissions);
                 dataResponsePermissionsAPI.value = permissions;
                 ability.update(rules);
-                
             });
     };
     const getAllResponseListAPI = async (endPoint) => {
@@ -144,15 +142,12 @@ export default function useDataAPI(datos) {
                 return response.json();
             })
             .then((data) => {
-                
                 if (data.errors) {
                     errorResponseAPI.value = data.errors;
                 } else {
-                
                     dataResponseAPI.value = JSON.parse(JSON.stringify(data, null, 2));
                     console.log('Esta es la respuesta ' + data.value);
                 }
-                
             })
             .catch((error) => {
                 if (error.name === 'TypeError') {
@@ -177,7 +172,7 @@ export default function useDataAPI(datos) {
 
         await fetch(baseUrl, requestOptions)
             .then((response) => {
-                respon.value = response
+                respon.value = response;
                 statusCode.value = response.status;
                 return response.json();
             })
@@ -258,7 +253,6 @@ export default function useDataAPI(datos) {
         postResponseAPI,
         putResponseAPI,
         deleteResponseAPI,
-        resetDataAPI,
-        
+        resetDataAPI
     };
 }

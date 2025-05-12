@@ -49,14 +49,13 @@ export function useAppMovilService() {
         tasksPlaner.value = {};
         tipoActividad.value = [];
         counter.value = 0;
-        
     };
 
     const getDataTasksplanner = async () => {
         const endpoint = `/appmovil/tasksplanner?filter[tasks_of_type_id]=${fetchWorkCenter?.taskoftype?.id}&filter[company_id]=${fetchCompanyId}&filter[farm_id]=${fetchFarmId}`;
         const response = await getRequest(endpoint);
         tasksPlaner.value = response.data?.data[0] || {};
-        console.log('tasksPlanner inside getDataTaskPlaner', tasksPlaner.value)
+        console.log('tasksPlanner inside getDataTaskPlaner', tasksPlaner.value);
         counter.value++;
         return { ...response, data: tasksPlaner.value };
     };
@@ -118,14 +117,13 @@ export function useAppMovilService() {
             if (!tasksPlaner.value?.id) {
                 await getDataTasksplanner();
             }
-            
-    
+
             // Use the updated tasksPlaner data
             const transDev = false;
             const plannerTaskId = tasksPlaner.value?.id || 'No hay'; // Fallback to 18 if not available
             const tasksOfTypeId = fetchWorkCenter?.taskoftype?.id || 'No hay'; // Fallback to 5 if not available
             const farmId = fetchFarmId || 1; // Fallback to 1 if not available
-    
+
             console.log('plannerTaskId:', plannerTaskId);
             console.log('tasksOfTypeId:', tasksOfTypeId);
             console.log('farmId:', farmId);
@@ -133,7 +131,7 @@ export function useAppMovilService() {
             // Construct the endpoint dynamically
             const url = `/appmovil/shippings/voyage_num?trans_dev=false&tasks_of_type_id=${tasksOfTypeId}&planner_task_id=${plannerTaskId}&farm_id=${farmId}`;
             const response = await getRequest(url);
-    
+
             counter.value++;
             console.log('Response from getShippingsDelivered:', response);
             return response;
@@ -142,20 +140,15 @@ export function useAppMovilService() {
             return { data: [], error: 'Error Get Shippings Delivered', ok: false };
         }
     };
-    
-    
+
     const getInfoEmployees = async (planner_task_id, task_of_type) => {
-        const response = await getRequest(
-            `/appmovil/summary/employees?filter[planner_task_id]=${planner_task_id}&filter[tasks_of_type_id]=${task_of_type}&filter[farm_id]=${fetchFarmId}`
-        );
+        const response = await getRequest(`/appmovil/summary/employees?filter[planner_task_id]=${planner_task_id}&filter[tasks_of_type_id]=${task_of_type}&filter[farm_id]=${fetchFarmId}`);
         counter.value++;
         return response;
     };
 
     const getInfoEmployeesById = async (planner_task_id, task_of_type, employee_id) => {
-        const response = await getRequest(
-            `/appmovil/summary/employees?filter[planner_task_id]=${planner_task_id}&filter[tasks_of_type_id]=${task_of_type}&filter[farm_id]=${fetchFarmId}&filter[worker_employee_id]=${employee_id}`
-        );
+        const response = await getRequest(`/appmovil/summary/employees?filter[planner_task_id]=${planner_task_id}&filter[tasks_of_type_id]=${task_of_type}&filter[farm_id]=${fetchFarmId}&filter[worker_employee_id]=${employee_id}`);
         counter.value++;
         return response;
     };
@@ -180,7 +173,7 @@ export function useAppMovilService() {
             planner_task_uuid: tasksPlaner.value?.uuid ?? '',
             packing_type_uuid: packing_type,
             farm_uuid: fetchCompanyUuid,
-            device_name: 'Web',
+            device_name: 'Web'
         };
         return await postRequest('/transactions/tasks', dataPost);
     };

@@ -69,9 +69,7 @@ const route = () => {
                         </li>
                         -->
                         <li>
-                            
                             <!-- <Button @click="onChangeTheme(!toggleValue)" v-model="toggleValue" icon="pi pi-cog" outlined rounded class="button-icon ml-3 mr-2 mr-1" style="width: 3.5rem; height: 3.5rem" /> -->
-                            
                         </li>
                     </ul>
                 </div>

@@ -119,7 +119,6 @@ export function useAppMovilService() {
     };
 
     const getDonesWork = async () => {
-        
         try {
             const taskoftype_id = fetchWorkCenter?.value.taskoftype?.id;
             //const taskoftype_id  = TASK_OF_TYPE()
@@ -132,7 +131,6 @@ export function useAppMovilService() {
             return { data: [], error: 'Error Get Dones Work', ok: false };
         }
     };
-
 
     const getInfoEmployeesById = async (planner_task_id, task_of_type, employee_id) => {
         try {
@@ -166,7 +164,9 @@ export function useAppMovilService() {
 
     const getTarifOfTasksDoneAppMob = async (task_of_type_id, work_type_day, work_type_tarif, done_of_type_id) => {
         try {
-            const response = await getRequest(`/appmovil/donetarif?filter[tasks_of_type_id]=${task_of_type_id}&filter[work_type_day]=${work_type_day}&filter[work_type_tarif]=${work_type_tarif}&filter[done_of_type_id]=${done_of_type_id}&filter[farm_id]=${fetchFarmId.value}&filter[company_id]=${fetchCompannyId.value}`);
+            const response = await getRequest(
+                `/appmovil/donetarif?filter[tasks_of_type_id]=${task_of_type_id}&filter[work_type_day]=${work_type_day}&filter[work_type_tarif]=${work_type_tarif}&filter[done_of_type_id]=${done_of_type_id}&filter[farm_id]=${fetchFarmId.value}&filter[company_id]=${fetchCompannyId.value}`
+            );
             counter.value++;
             return response;
         } catch (e) {

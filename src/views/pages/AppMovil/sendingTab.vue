@@ -1,9 +1,9 @@
-<script setup >
-import { ref, computed, watch,onMounted } from 'vue';
+<script setup>
+import { ref, computed, watch, onMounted } from 'vue';
 
 import { useI18n } from 'vue-i18n';
-import { AppMovilDataService_V2 } from '@/service/appMovil/appMovilService_V2';
-import { useAppMovilService } from '../../../service/appMovil/appMovilService_V3';
+
+import { useAppMovilService } from '@/service/appMovil/oldFiles/appMovilService.js';
 
 import { useToast } from 'primevue/usetoast';
 
@@ -19,14 +19,12 @@ const totalTaskQtyLabor = ref(0);
 const totalLaborTotal = ref(0);
 const totalTaskQtyJournal = ref(0);
 const totalJournalTotal = ref(0);
-const { SUPERVISOR_NAME,getInfoEmployeesById } = useAppMovilService();
+const { SUPERVISOR_NAME, getInfoEmployeesById } = useAppMovilService();
 const supervisorName = ref('');
 
 onMounted(async () => {
     supervisorName.value = SUPERVISOR_NAME;
-    
 });
-
 
 const getDataEmployeesInfo = async (employee_id) => {
     const response = await getInfoEmployeesById(props.data.id, props.data.tasks_of_type.id, employee_id);
@@ -131,7 +129,7 @@ watch(
             <Panel :header="t('appmovil.information')" toggleable>
                 <div class="datalles-bacg p-fluid formgrid grid mb-3">
                     <div class="datalles-header w-full">
-                        <h5 class="col-12 m-3">{{ t('appmovil.supervisor') }}: {{ supervisorName?supervisorName: 'No supervisor' }}</h5>
+                        <h5 class="col-12 m-3">{{ t('appmovil.supervisor') }}: {{ supervisorName ? supervisorName : 'No supervisor' }}</h5>
                     </div>
 
                     <div class="col-12 md:col-6">

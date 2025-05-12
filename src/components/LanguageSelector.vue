@@ -1,25 +1,25 @@
-<template>
-  <div>
-    <button @click="changeLanguage('en')">English</button>
-    <button @click="changeLanguage('es')">Español</button>
-  </div>
-</template>
-
 <script>
-import { useI18n } from 'vue-i18n'
+import { useI18n } from 'vue-i18n';
 
 export default {
-  setup() {
-    const { locale } = useI18n()
+    setup() {
+        const { locale } = useI18n();
 
-    const changeLanguage = (newLocale) => {
-      locale.value = newLocale
-      localStorage.setItem('locale', newLocale)
-    }
+        const changeLanguage = (newLocale) => {
+            locale.value = newLocale;
+            localStorage.setItem('locale', newLocale);
+        };
 
-    return {
-      changeLanguage
+        return {
+            changeLanguage
+        };
     }
-  }
-}
+};
 </script>
+
+<template>
+    <div>
+        <button @click="changeLanguage('en')">English</button>
+        <button @click="changeLanguage('es')">Español</button>
+    </div>
+</template>

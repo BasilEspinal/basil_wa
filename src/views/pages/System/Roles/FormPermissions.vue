@@ -19,7 +19,6 @@ const props = defineProps({
 
 onMounted(async () => {
     searchPermisRol();
-    
 });
 
 watch(search, () => {
@@ -48,10 +47,7 @@ function searchPermis() {
 }
 
 watch(filterPermiss, () => {
-
-        savePermiss();
-
-
+    savePermiss();
 });
 const savePermiss = async () => {
     const dataJson = {

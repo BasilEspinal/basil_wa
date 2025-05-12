@@ -7,14 +7,9 @@ import useDataAPI from '@/composables/DataAPI/FetchDataAPI.js';
 import { useI18n } from 'vue-i18n';
 
 const { t } = useI18n();
-const {
-    getAllResponseAPI,
-    getAllResponsePermissionsAPI,
-    
-} = useDataAPI();
+const { getAllResponseAPI, getAllResponsePermissionsAPI } = useDataAPI();
 
-
-const model2 = computed(() => ([
+const model2 = computed(() => [
     {
         items: [
             {
@@ -270,7 +265,6 @@ const model2 = computed(() => ([
                         gate: 'liquidaciondenomina_planeaciondiaria_menu'
                     },
 
-
                     {
                         label: t('menu.payrollSettlement.JournalTransactions.title'),
                         to: '/PayrollSettlement/JournalTransactions',
@@ -283,7 +277,6 @@ const model2 = computed(() => ([
                         icon: 'pi pi-money-bill',
                         gate: 'liquidaciondenomina_planeaciondiaria_menu'
                     },
-
 
                     {
                         label: t('menu.shipping.shippingProcess'),
@@ -396,7 +389,7 @@ const model2 = computed(() => ([
                 icon: 'pi pi-box',
                 gate: 'appmovil_menu',
                 items: [
-                {
+                    {
                         label: t('menu.dataCapture'),
                         to: '/AppMovil/General',
                         icon: 'pi pi-mobile',
@@ -407,9 +400,7 @@ const model2 = computed(() => ([
                         to: '/AppMovil/Contractor',
                         icon: 'pi pi-mobile',
                         gate: 'appmovil_contratista_menu'
-                      
                     },
-
 
                     // {
                     //     label: t('menu.cortaCapture'),
@@ -453,7 +444,7 @@ const model2 = computed(() => ([
         ]
     },
     {
-        items:[
+        items: [
             {
                 label: t('menu.template'),
                 rol: 'admin',
@@ -467,11 +458,10 @@ const model2 = computed(() => ([
                         gate: 'appmovil_agronomia_menu'
                     }
                 ]
-
             }
         ]
     }
-]));
+]);
 
 onBeforeMount(() => {
     fetchInfoAndUpdateValue();

@@ -117,16 +117,16 @@ function fetchInfoAndUpdateValue() {
         if (!props.dataGot) {
             return;
         } else {
-            dataFromComponent = JSON.parse(JSON.stringify(props.dataGot));
+            dataFromComponent.value = JSON.parse(JSON.stringify(props.dataGot));
         }
 
-        tableData.value = dataFromComponent['data'];
+        tableData.value = dataFromComponent.value['data'];
         let mappedArray1 = [];
-        console.log(dataFromComponent['data'][0]);
+        console.log(dataFromComponent.value['data'][0]);
         const types = ['string', 'number', 'boolean'];
-        if (dataFromComponent['data']) {
-            for (let key in dataFromComponent['data'][0]) {
-                if (types.includes(typeof dataFromComponent['data'][0][key])) mappedArray1.push(key);
+        if (dataFromComponent.value['data']) {
+            for (let key in dataFromComponent.value['data'][0]) {
+                if (types.includes(typeof dataFromComponent.value['data'][0][key])) mappedArray1.push(key);
             }
             // console.log(tableData.value)
             // console.log(allLabels.value)
@@ -145,7 +145,7 @@ function fetchInfoAndUpdateValue() {
 
             initFilters();
 
-            emits('HeaderNames', dataFromComponent['data'][0]);
+            emits('HeaderNames', dataFromComponent.value['data'][0]);
         } else {
         }
     } catch (error) {

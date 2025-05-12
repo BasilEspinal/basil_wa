@@ -9,7 +9,7 @@ const router = createRouter({
     routes: [
         {
             path: '/',
-            component: Landing,
+            component: Landing
         },
         {
             path: '/applayout',
@@ -69,7 +69,7 @@ const router = createRouter({
                     name: 'unitTypes',
                     component: () => import('@/views/pages/product/UnitTypes/UnitTypes.vue')
                 },
-               
+
                 {
                     path: '/payrollsettings/PaymentTypes',
                     name: 'PaymentTypes',
@@ -80,7 +80,6 @@ const router = createRouter({
                     name: 'taskstarif',
                     component: () => import('@/views/pages/PayrollSettings/TasksTarif/TasksTarif.vue')
                 },
-
 
                 {
                     path: '/payrollsettings/taskstypes',
@@ -130,7 +129,6 @@ const router = createRouter({
                     name: 'cropslots',
                     component: () => import('@/views/pages/Production/CropLots/CropLots.vue')
                 },
-
 
                 {
                     path: '/production/Vehicles',
@@ -207,7 +205,6 @@ const router = createRouter({
                     component: () => import('@/views/pages/PayrollSettlement/DiscountRegistering/DiscountRegistering.vue')
                 },
 
-
                 //////////////////////////////////////////////////////////////////
                 ////NOT SURE IF THE FOLLOWING ARE USED
                 {
@@ -228,14 +225,12 @@ const router = createRouter({
 
                 //////////////////////////////////////////////////////////////////
 
-
-
                 {
                     path: '/PayrollSettlement/WorkRegisterDaily',
                     name: 'WorkRegisterDaily',
                     component: () => import('@/views/pages/PayrollSettlement/WorkRegisterDaily/EmployeeDailyWork.vue')
                 },
-                
+
                 {
                     path: '/Commercial/CustomersRequests/CustomersRequests',
                     name: '/CustomersRequests',
@@ -274,13 +269,12 @@ const router = createRouter({
                     component: () => import('@/views/pages/System/Users/PlatformUsers.vue')
                 },
 
-                
                 {
                     path: '/system/roles',
                     name: 'roles',
                     component: () => import('@/views/pages/System/Roles/Roles.vue')
                 },
-                
+
                 {
                     path: '/system/permissions',
                     name: 'permissions',
@@ -317,12 +311,10 @@ const router = createRouter({
                     path: '/AppMovil/Contractor',
                     name: 'appmovil_contractor',
                     component: () => import('@/views/pages/AppMovil/Contractor/AppMovilContractor.vue')
-                },
-
-                
+                }
             ]
         },
-        
+
         {
             path: '/pages/crud',
             name: 'crud',
@@ -337,7 +329,7 @@ const router = createRouter({
             path: '/access',
             name: 'accessDenied',
             component: () => import('@/views/pages/auth/Access.vue')
-        },
+        }
     ]
 });
 

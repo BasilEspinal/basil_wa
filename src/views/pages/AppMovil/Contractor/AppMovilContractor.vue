@@ -1,195 +1,4 @@
-<template>
-    <div class="card">
-
-        
-
-        <h2> Titulo: {{ fetchWorkCenter?.taskoftype.name || 'Cargando...' }} Departamento: {{ fetchWorkCenter?.name || 'Cargando...' }}</h2>
-        <div class="p-fluid formgrid grid">
-            <div class="field col-12 md:col-6"></div>
-        </div>
-        <Message severity="error" variant="outlined" v-if="errorsMessageFlag">{{ errorsMessage }}</Message>
-
-        <TabView class="tabview-custom">
-            <TabPanel>
-                <template #header>
-                    <div class="flex align-items-center gap-2">
-                        <!-- Trabajo avatar -->
-                        <i class="pi pi-wrench" style="font-size: 2rem"></i>
-
-                        <span class="font-bold white-space-nowrap">Trabajo</span>
-                    </div>
-                </template>
-
-                <div class="card">
-                    <Message closable v-if="flagIndividual">This activity is Individual</Message>
-                    <div class="p-fluid formgrid grid">
-                        <!-- Labores -->
-
-                        <div class="field col-12 md:col-3">
-                            <div class="flex align-items-center">
-                                <label for="username" class="font-semibold w-3">Labores:</label>
-                                <AutoComplete v-model="work" inputId="ac" :suggestions="works" @complete="searchBranches" field="name" dropdown />
-                            </div>
-                            <FrontEndErrors :errorsNew="errorsNew" name="work" />
-                            <BackendErrors :name="errorResponseAPI?.errors?.work" />
-                        </div>
-
-                        <div class="field col-12 md:col-3">
-                            <div class="flex align-items-center">
-                                <label for="username" class="font-semibold w-6">Cantidad empleados:</label>
-                                <InputNumber v-model="quantityEmployees" showButtons :disabled="flagIndividual" style="width: 6rem" :min="0" :max="99">
-                                    <template #incrementbuttonicon>
-                                        <span class="pi pi-plus" />
-                                    </template>
-                                    <template #decrementbuttonicon>
-                                        <span class="pi pi-minus" />
-                                    </template>
-                                </InputNumber>
-                            </div>
-                            <FrontEndErrors :errorsNew="errorsNew" name="quantityEmployees" />
-                            <BackendErrors :name="errorResponseAPI?.errors?.employee_qty" />
-                        </div>
-
-                        <!-- Precio total -->
-                        <div class="field col-12 md:col-3">
-                            <div class="p-inputgroup">
-                                <span class="p-float-label border-round border-1">
-                                    <span class="p-inputgroup font-bold ml-1">Precio total:</span>
-                                    <span class="p-float-label">
-                                        <label class="font-bold" inputId="locale-us" locale="en-US" for="weightunit">{{ totalTarif }}</label>
-                                    </span>
-                                    <span class="p-inputgroup-addon">$</span>
-                                </span>
-                            </div>
-                            <FrontEndErrors :errorsNew="errorsNew" name="totalTarif" />
-                            <BackendErrors :name="errorResponseAPI?.errors?.totalTarif" />
-                        </div>
-
-                        <!-- Precio unitario -->
-                        <div class="field col-12 md:col-3">
-                            <div class="p-inputgroup">
-                                <span class="p-float-label border-round border-1">
-                                    <span class="p-inputgroup font-bold ml-1">Precio unitario:</span>
-                                    <span class="p-float-label">
-                                        <label class="font-bold" inputId="locale-us" locale="en-US" for="weightunit">{{ unitTarif.toFixed(2) }}</label>
-                                    </span>
-                                    <span class="p-inputgroup-addon">$</span>
-                                </span>
-                            </div>
-                        </div>
-                    </div>
-                    <FrontEndErrors :errorsNew="errorsNew" name="unitTarif" />
-                    <BackendErrors :name="errorResponseAPI?.errors?.unitTarif" />
-                </div>
-
-                <div class="card">
-                    <div class="field col-12 md:col-6">
-                        <div class="flex align-items-center">
-                            <label for="username" class="font-semibold w-6">Cantidad:</label>
-                            <InputNumber v-model="crop_lot_qtyV" showButtons style="width: 6rem" :min="0" :max="99">
-                                <template #incrementbuttonicon>
-                                    <span class="pi pi-plus" />
-                                </template>
-                                <template #decrementbuttonicon>
-                                    <span class="pi pi-minus" />
-                                </template>
-                            </InputNumber>
-                        </div>
-                        <FrontEndErrors :errorsNew="errorsNew" name="crop_lot_qtyV" />
-                        <BackendErrors :name="errorResponseAPI?.errors?.crop_lot_qty" />
-                    </div>
-
-                    <PickList v-model="dataPickList" :source="dataPickList[0]" :target="dataPickList[1]" listStyle="height:342px" dataKey="id" breakpoint="1400px">
-                        <template #sourceheader>
-                            <div class="flex gap-2">
-                                <div class="w-full justify-content-center">Available: {{ dataPickList[0].length }}</div>
-                                <div class="p-inputgroup">
-                                    <InputText id="search" v-model="search" placeholder="Filter" size="small" />
-                                </div>
-                            </div>
-                        </template>
-                        <template #targetheader>
-                            <div class="flex gap-2">
-                                <div class="w-full justify-content-center">Selected: {{ dataPickList[1].length }}</div>
-                                <div class="w-full justify-content-center">Max: {{ dataPickList[1].length }}</div>
-                            </div>
-                        </template>
-                        <template #item="slotProps">
-                            <div class="flex flex-wrap p-2 align-items-center gap-3">
-                                <!-- Conditional rendering for image or icon -->
-                                <div class="w-4rem flex-shrink-0 border-round">
-                                    <img v-if="slotProps.item.photo" :src="slotProps.item.photo" :alt="slotProps.item.full_name" class="w-full border-round" />
-                                    <i v-else class="pi pi-user" style="font-size: 2rem; color: gray"></i>
-                                </div>
-                                <div class="flex-1 flex flex-column gap-2">
-                                    <span class="font-bold">{{ slotProps.item.full_name }}</span>
-                                    <div class="flex align-items-center gap-2">
-                                        <i class="pi pi-tag text-sm"></i>
-                                        <span>{{ slotProps.item.document }}</span>
-                                    </div>
-                                </div>
-                                <span class="font-bold">{{ slotProps.item.workCenter.code }}</span>
-                            </div>
-                        </template>
-                    </PickList>
-
-                    <!-- Display a message if PickList is empty -->
-                    <div v-if="dataPickList[0].length === 0 && !loading" class="text-center">
-                        <p>No available data</p>
-                    </div>
-                    <div v-if="loading" class="text-center">
-                        <i class="pi pi-spin pi-spinner" style="font-size: 2rem"></i>
-                        <p>Loading data...</p>
-                    </div>
-                </div>
-                <div class="p-fluid formgrid grid">
-                    <div class="field col-12">
-                        <label for="notas">Notas</label>
-                        <Textarea id="address" rows="2" v-model="notesV" />
-                    </div>
-                    <FrontEndErrors :errorsNew="errorsNew" name="notesV" />
-                    <BackendErrors :name="errorResponseAPI?.errors?.notesV" />
-                </div>
-
-                <div class="field col-12">
-                    <Button 
-                    class="flex-auto" 
-                    type="button" 
-                    label="Enviar" 
-                    :disabled="isSubmitting" 
-                    @click="actionRecordManager(state)" 
-                />
-
-                </div>
-            </TabPanel>
-
-            <TabPanel>
-                <template #header>
-                    <div class="flex align-items-center gap-2">
-                        <!-- Detalles avatar -->
-                        <i class="pi pi-info-circle" style="font-size: 2rem"></i>
-                        <!-- <Avatar image="https://primefaces.org/cdn/primevue/images/avatar/onyamalimba.png" shape="circle" /> -->
-                        <span class="font-bold white-space-nowrap">Detalles</span>
-                    </div>
-                </template>
-            </TabPanel>
-            <TabPanel>
-                <template #header>
-                    <div class="flex align-items-center gap-2">
-                        <!-- Resumen avatar-->
-                        <i class="pi pi-bars" style="font-size: 2rem"></i>
-                        <!-- <Avatar image="https://primefaces.org/cdn/primevue/images/avatar/ionibowcher.png" shape="circle" /> -->
-                        <span class="font-bold white-space-nowrap">Resumen</span>
-                        <Badge value="2" />
-                    </div>
-                </template>
-            </TabPanel>
-        </TabView>
-        <Toast />
-    </div>
-</template>
-    
-    <script setup>
+<script setup>
 import { ref, computed, watch, provide, onBeforeMount, onMounted } from 'vue';
 import useDataAPI from '@/composables/DataAPI/FetchDataAPI.js';
 import { FilterMatchMode, FilterOperator } from 'primevue/api';
@@ -207,7 +16,7 @@ import { useToast } from 'primevue/usetoast';
 import { useForm } from 'vee-validate';
 import { useI18n } from 'vue-i18n';
 import { useAppMovilService } from '@/service/appMovil/appMovilService_V3';
-const { initializeAppMovilSession,getDonesWork, HOLIDAY, initData, TASK_OF_TYPE, getUsers, getDataTasksplanner, getInfoEmployees, fetchWorkCenter, getTarifOfTasksDoneAppMob, getTarifOfWorks } = useAppMovilService();
+const { initializeAppMovilSession, getDonesWork, HOLIDAY, initData, TASK_OF_TYPE, getUsers, getDataTasksplanner, getInfoEmployees, fetchWorkCenter, getTarifOfTasksDoneAppMob, getTarifOfWorks } = useAppMovilService();
 // import { ProductService } from '@/service/ProductService'
 const farmDefault = sessionStorage.getItem('accessSessionFarm');
 const supervisoryEmployee = sessionStorage.getItem('accesSessionEmployeeUuid');
@@ -246,15 +55,15 @@ watch(search, (newSearch) => {
 
 const initializeComponent = async () => {
     if (!fetchWorkCenter.value) {
-    toast.add({ severity: 'warn', detail: 'Work center no disponible aún.', life: 5000 });
-    return;
-}
+        toast.add({ severity: 'warn', detail: 'Work center no disponible aún.', life: 5000 });
+        return;
+    }
     await loadLazyData();
     if (TASK_OF_TYPE?.name) {
-    titulo.value = `Título: ${TASK_OF_TYPE.name}`;
-} else {
-    titulo.value = 'Título: Sin nombre';
-}
+        titulo.value = `Título: ${TASK_OF_TYPE.name}`;
+    } else {
+        titulo.value = 'Título: Sin nombre';
+    }
 
     flagIndividual.value = false;
     await readAll(); // Also refresh the lists and PickList data
@@ -265,7 +74,6 @@ const initializeComponent = async () => {
         life: 3000
     });
 };
-
 
 onMounted(initializeComponent);
 
@@ -290,7 +98,7 @@ const readAll = async () => {
     }
 
     try {
-        console.log("Holaaa")
+        console.log('Holaaa');
         const responseDonesWork = await getDonesWork();
         console.log('responseDonesWork', responseDonesWork);
         if (!responseDonesWork.ok) {
@@ -303,7 +111,6 @@ const readAll = async () => {
         toast.add({ severity: 'error', detail: 'An error occurred while loading data in catch.', life: 3000 });
     } finally {
         loading.value = false; // Hide loading indicator
-        
     }
 };
 
@@ -413,11 +220,10 @@ const resetAll = async () => {
     await loadLazyData();
     await readAll();
     if (TASK_OF_TYPE?.name) {
-    titulo.value = `Título: ${TASK_OF_TYPE.name}`;
-} else {
-    titulo.value = 'Título: Sin nombre';
-}
-
+        titulo.value = `Título: ${TASK_OF_TYPE.name}`;
+    } else {
+        titulo.value = 'Título: Sin nombre';
+    }
 };
 
 const state = ref('new');
@@ -577,6 +383,186 @@ const formDialog = ref(false);
 
 const resetValues = () => {};
 </script>
-    
-    <style lang="scss" scoped>
-</style>
+
+<template>
+    <div class="card">
+        <h2>Titulo: {{ fetchWorkCenter?.taskoftype.name || 'Cargando...' }} Departamento: {{ fetchWorkCenter?.name || 'Cargando...' }}</h2>
+        <div class="p-fluid formgrid grid">
+            <div class="field col-12 md:col-6"></div>
+        </div>
+        <Message severity="error" variant="outlined" v-if="errorsMessageFlag">{{ errorsMessage }}</Message>
+
+        <TabView class="tabview-custom">
+            <TabPanel>
+                <template #header>
+                    <div class="flex align-items-center gap-2">
+                        <!-- Trabajo avatar -->
+                        <i class="pi pi-wrench" style="font-size: 2rem"></i>
+
+                        <span class="font-bold white-space-nowrap">Trabajo</span>
+                    </div>
+                </template>
+
+                <div class="card">
+                    <Message closable v-if="flagIndividual">This activity is Individual</Message>
+                    <div class="p-fluid formgrid grid">
+                        <!-- Labores -->
+
+                        <div class="field col-12 md:col-3">
+                            <div class="flex align-items-center">
+                                <label for="username" class="font-semibold w-3">Labores:</label>
+                                <AutoComplete v-model="work" inputId="ac" :suggestions="works" @complete="searchBranches" field="name" dropdown />
+                            </div>
+                            <FrontEndErrors :errorsNew="errorsNew" name="work" />
+                            <BackendErrors :name="errorResponseAPI?.errors?.work" />
+                        </div>
+
+                        <div class="field col-12 md:col-3">
+                            <div class="flex align-items-center">
+                                <label for="username" class="font-semibold w-6">Cantidad empleados:</label>
+                                <InputNumber v-model="quantityEmployees" showButtons :disabled="flagIndividual" style="width: 6rem" :min="0" :max="99">
+                                    <template #incrementbuttonicon>
+                                        <span class="pi pi-plus" />
+                                    </template>
+                                    <template #decrementbuttonicon>
+                                        <span class="pi pi-minus" />
+                                    </template>
+                                </InputNumber>
+                            </div>
+                            <FrontEndErrors :errorsNew="errorsNew" name="quantityEmployees" />
+                            <BackendErrors :name="errorResponseAPI?.errors?.employee_qty" />
+                        </div>
+
+                        <!-- Precio total -->
+                        <div class="field col-12 md:col-3">
+                            <div class="p-inputgroup">
+                                <span class="p-float-label border-round border-1">
+                                    <span class="p-inputgroup font-bold ml-1">Precio total:</span>
+                                    <span class="p-float-label">
+                                        <label class="font-bold" inputId="locale-us" locale="en-US" for="weightunit">{{ totalTarif }}</label>
+                                    </span>
+                                    <span class="p-inputgroup-addon">$</span>
+                                </span>
+                            </div>
+                            <FrontEndErrors :errorsNew="errorsNew" name="totalTarif" />
+                            <BackendErrors :name="errorResponseAPI?.errors?.totalTarif" />
+                        </div>
+
+                        <!-- Precio unitario -->
+                        <div class="field col-12 md:col-3">
+                            <div class="p-inputgroup">
+                                <span class="p-float-label border-round border-1">
+                                    <span class="p-inputgroup font-bold ml-1">Precio unitario:</span>
+                                    <span class="p-float-label">
+                                        <label class="font-bold" inputId="locale-us" locale="en-US" for="weightunit">{{ unitTarif.toFixed(2) }}</label>
+                                    </span>
+                                    <span class="p-inputgroup-addon">$</span>
+                                </span>
+                            </div>
+                        </div>
+                    </div>
+                    <FrontEndErrors :errorsNew="errorsNew" name="unitTarif" />
+                    <BackendErrors :name="errorResponseAPI?.errors?.unitTarif" />
+                </div>
+
+                <div class="card">
+                    <div class="field col-12 md:col-6">
+                        <div class="flex align-items-center">
+                            <label for="username" class="font-semibold w-6">Cantidad:</label>
+                            <InputNumber v-model="crop_lot_qtyV" showButtons style="width: 6rem" :min="0" :max="99">
+                                <template #incrementbuttonicon>
+                                    <span class="pi pi-plus" />
+                                </template>
+                                <template #decrementbuttonicon>
+                                    <span class="pi pi-minus" />
+                                </template>
+                            </InputNumber>
+                        </div>
+                        <FrontEndErrors :errorsNew="errorsNew" name="crop_lot_qtyV" />
+                        <BackendErrors :name="errorResponseAPI?.errors?.crop_lot_qty" />
+                    </div>
+
+                    <PickList v-model="dataPickList" :source="dataPickList[0]" :target="dataPickList[1]" listStyle="height:342px" dataKey="id" breakpoint="1400px">
+                        <template #sourceheader>
+                            <div class="flex gap-2">
+                                <div class="w-full justify-content-center">Available: {{ dataPickList[0].length }}</div>
+                                <div class="p-inputgroup">
+                                    <InputText id="search" v-model="search" placeholder="Filter" size="small" />
+                                </div>
+                            </div>
+                        </template>
+                        <template #targetheader>
+                            <div class="flex gap-2">
+                                <div class="w-full justify-content-center">Selected: {{ dataPickList[1].length }}</div>
+                                <div class="w-full justify-content-center">Max: {{ dataPickList[1].length }}</div>
+                            </div>
+                        </template>
+                        <template #item="slotProps">
+                            <div class="flex flex-wrap p-2 align-items-center gap-3">
+                                <!-- Conditional rendering for image or icon -->
+                                <div class="w-4rem flex-shrink-0 border-round">
+                                    <img v-if="slotProps.item.photo" :src="slotProps.item.photo" :alt="slotProps.item.full_name" class="w-full border-round" />
+                                    <i v-else class="pi pi-user" style="font-size: 2rem; color: gray"></i>
+                                </div>
+                                <div class="flex-1 flex flex-column gap-2">
+                                    <span class="font-bold">{{ slotProps.item.full_name }}</span>
+                                    <div class="flex align-items-center gap-2">
+                                        <i class="pi pi-tag text-sm"></i>
+                                        <span>{{ slotProps.item.document }}</span>
+                                    </div>
+                                </div>
+                                <span class="font-bold">{{ slotProps.item.workCenter.code }}</span>
+                            </div>
+                        </template>
+                    </PickList>
+
+                    <!-- Display a message if PickList is empty -->
+                    <div v-if="dataPickList[0].length === 0 && !loading" class="text-center">
+                        <p>No available data</p>
+                    </div>
+                    <div v-if="loading" class="text-center">
+                        <i class="pi pi-spin pi-spinner" style="font-size: 2rem"></i>
+                        <p>Loading data...</p>
+                    </div>
+                </div>
+                <div class="p-fluid formgrid grid">
+                    <div class="field col-12">
+                        <label for="notas">Notas</label>
+                        <Textarea id="address" rows="2" v-model="notesV" />
+                    </div>
+                    <FrontEndErrors :errorsNew="errorsNew" name="notesV" />
+                    <BackendErrors :name="errorResponseAPI?.errors?.notesV" />
+                </div>
+
+                <div class="field col-12">
+                    <Button class="flex-auto" type="button" label="Enviar" :disabled="isSubmitting" @click="actionRecordManager(state)" />
+                </div>
+            </TabPanel>
+
+            <TabPanel>
+                <template #header>
+                    <div class="flex align-items-center gap-2">
+                        <!-- Detalles avatar -->
+                        <i class="pi pi-info-circle" style="font-size: 2rem"></i>
+                        <!-- <Avatar image="https://primefaces.org/cdn/primevue/images/avatar/onyamalimba.png" shape="circle" /> -->
+                        <span class="font-bold white-space-nowrap">Detalles</span>
+                    </div>
+                </template>
+            </TabPanel>
+            <TabPanel>
+                <template #header>
+                    <div class="flex align-items-center gap-2">
+                        <!-- Resumen avatar-->
+                        <i class="pi pi-bars" style="font-size: 2rem"></i>
+                        <!-- <Avatar image="https://primefaces.org/cdn/primevue/images/avatar/ionibowcher.png" shape="circle" /> -->
+                        <span class="font-bold white-space-nowrap">Resumen</span>
+                        <Badge value="2" />
+                    </div>
+                </template>
+            </TabPanel>
+        </TabView>
+        <Toast />
+    </div>
+</template>
+
+<style lang="scss" scoped></style>

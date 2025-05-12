@@ -1,16 +1,15 @@
 <script setup>
-import { ref, computed, onMounted,onUnmounted, watch, onBeforeMount,onBeforeUnmount } from 'vue';
+import { ref, computed, onMounted, onUnmounted, watch, onBeforeMount } from 'vue';
 import UseAppMovil from '@/composables/AppMovil/UseAppMovil.js';
 import { useToast } from 'primevue/usetoast';
 import UserAppMovil from './UserAppMovil.vue';
 import { useI18n } from 'vue-i18n';
 import { useLayout } from '@/layout/composables/layout';
-import { useAppMovilService } from '../../../service/appMovil/appMovilService_V3';
+import { useAppMovilService } from '@/service/appMovil/oldFiles/appMovilService.js';
 import ShippingDelivered from './ShippingDelivered.vue';
 import DeliveringDelivered from './DeliveringDelivered.vue';
 import ErrorAppMovil from './ErrorAppMovil.vue';
 import ability from '@/service/ability.js';
-
 
 const errorSummary = ref(false);
 const summary = ref();
@@ -19,11 +18,9 @@ const { t } = useI18n();
 const toast = useToast();
 const { layoutConfig } = useLayout();
 
-const {refreshSessionState,HOLIDAY, initData, TASK_OF_TYPE, fetchWorkCenter, getUsers, getDataTasksplanner,getInfoEmployees } = useAppMovilService();
-
+const { refreshSessionState, HOLIDAY, initData, TASK_OF_TYPE, fetchWorkCenter, getUsers, getDataTasksplanner, getInfoEmployees } = useAppMovilService();
 
 const titulo = ref('');
-
 
 const users = ref(null);
 const filterUsers = ref(null);
@@ -35,14 +32,14 @@ const userEmployee = ref(localStorage.getItem('accesSessionEmployeeUuid'));
 
 const loading = ref(true); // Initially set to true
 
-const compareStoredDate=()=> {
+const compareStoredDate = () => {
     // Get the stored date from sessionStorage
-    const storedDateStr = sessionStorage.getItem("accessSessionDate");
+    const storedDateStr = sessionStorage.getItem('accessSessionDate');
 
     // Check if the date exists
     if (!storedDateStr) {
-        console.log("No date found in sessionStorage.");
-        return {condition:false, message:"No date found in sessionStorage.",dateStored:storedDateStr};
+        console.log('No date found in sessionStorage.');
+        return { condition: false, message: 'No date found in sessionStorage.', dateStored: storedDateStr };
     }
 
     // Convert stored date string to a Date object
@@ -54,19 +51,18 @@ const compareStoredDate=()=> {
 
     // Compare the dates
     if (storedDate.getTime() === currentDate.getTime()) {
-        console.log("The stored date is today.");
-        return {condition:true, message:"The stored date is today.",dateStored:storedDateStr};
+        console.log('The stored date is today.');
+        return { condition: true, message: 'The stored date is today.', dateStored: storedDateStr };
     } else if (storedDate.getTime() < currentDate.getTime()) {
-        console.log("The stored date is in the past.");
-        return {condition:false, message:"The stored date is in the past.",dateStored:storedDateStr,dateGet:currentDate};
+        console.log('The stored date is in the past.');
+        return { condition: false, message: 'The stored date is in the past.', dateStored: storedDateStr, dateGet: currentDate };
     } else {
-        console.log("The stored date is in the future.");
-        return {condition:false, message:"The stored date is in the future.",dateStored:storedDateStr};
+        console.log('The stored date is in the future.');
+        return { condition: false, message: 'The stored date is in the future.', dateStored: storedDateStr };
     }
-}
+};
 
 // Example usage
-
 
 const formatCurrency = (value) => {
     return value.toLocaleString('en-US', { style: 'currency', currency: 'USD' });
@@ -164,8 +160,8 @@ onBeforeMount(async () => {
     //titulo.value = `Título: ${TASK_OF_TYPE.name || 'Sin nombre'}`;
 });
 onUnmounted(() => {
-     // Reinitialize useAppMovilService() to get fresh data
-     
+    // Reinitialize useAppMovilService() to get fresh data
+
     titulo.value = '';
     users.value = null;
     filterUsers.value = null;
@@ -186,19 +182,16 @@ onUnmounted(() => {
     totalJournalTotal.value = 0;
 });
 
-
-
 const functionsData = async () => {
     loading.value = true;
-        
+
     // ✅ Inicializa los datos de sesión
-    await refreshSessionState(); // <--- LLAMAR ESTO ANTES DE initData()
+    //await refreshSessionState(); // <--- LLAMAR ESTO ANTES DE initData()
 
     console.log('TASK_OF_TYPE:', TASK_OF_TYPE?.id);
-console.log('fetchWorkCenter:', fetchWorkCenter.value);
-console.log('fetchFarmId:', sessionStorage.getItem('accessSessionFarmId'));
-console.log('fetchCompanyId:', sessionStorage.getItem('accessSessionCompanyId'));
-
+    console.log('fetchWorkCenter:', fetchWorkCenter.value);
+    console.log('fetchFarmId:', sessionStorage.getItem('accessSessionFarmId'));
+    console.log('fetchCompanyId:', sessionStorage.getItem('accessSessionCompanyId'));
 
     await initData(); // this refreshes session and loads planner/holiday/type
 
@@ -220,7 +213,6 @@ console.log('fetchCompanyId:', sessionStorage.getItem('accessSessionCompanyId'))
     ////////////////////////
 };
 
-
 const logoUrl = computed(() => {
     return `layout/images/${layoutConfig.darkTheme.value ? 'logo-white' : 'logo-dark'}.png`;
 });
@@ -234,7 +226,7 @@ const getUser = async () => {
 
 const getData = async () => {
     const response = await getDataTasksplanner();
-    
+
     console.log('response', response);
 
     if (!response.ok || !response.data || response.data.length === 0) {
@@ -277,31 +269,15 @@ const onTabChange = async (event) => {
 const updateData = async () => {
     // const updatedData = await getData(); // Fetch new data from API
     // data.value = updatedData; // Update the reactive data ref
-functionsData();
+    functionsData();
 };
-onBeforeUnmount(() => {
-    
-    const titulo = ref('');
-    const users = ref(null);
-    const filterUsers = ref(null);
-    const dataApp = ref(null);
-    const holiday = ref('Normal');
-    const lotes = ref(null);
-    const search = ref(null);
 
-    
-});
 </script>
 
 <template>
-
     <!-- <pre>{{ compareStoredDate() }}</pre> -->
-     <pre>{{fetchWorkCenter}}</pre>
+    <pre>{{ fetchWorkCenter }}</pre>
     <h2>{{ titulo }} Departamento: {{ fetchWorkCenter?.name || 'Cargando...' }}</h2>
-    
-
-    
-    
 
     <div v-if="loading" class="flex align-items-center justify-content-center" style="height: 100vh">
         <ProgressSpinner />
@@ -385,7 +361,6 @@ onBeforeUnmount(() => {
                         </ColumnGroup>
                     </DataTable> -->
                         <div v-if="!errorSummary">
-                            
                             <DataTable :value="summary" tableStyle="min-width: 50rem">
                                 <ColumnGroup type="header">
                                     <Row>
@@ -507,7 +482,7 @@ onBeforeUnmount(() => {
                         </div>
                     </template>
                     <ScrollPanel class="maxHeightC">
-                        <ShippingDelivered :data="dataApp" :batchs="lotes" @update-grandparent-data="updateData"/>
+                        <ShippingDelivered :data="dataApp" :batchs="lotes" @update-grandparent-data="updateData" />
                     </ScrollPanel>
                 </TabPanel>
 

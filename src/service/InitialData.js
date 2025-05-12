@@ -1,55 +1,53 @@
 import useData from '@/service/FetchData/FetchDataAPI.js';
-const { getRequest, postRequest, putRequest, deleteRequest,errorResponseAPI } = useData();
+const { getRequest, postRequest, putRequest, deleteRequest, errorResponseAPI } = useData();
 export const InitialDataService = {
-    
-    sizeData(){
-        
-        return { label: 'Normal', value: 'normal' }
+    sizeData() {
+        return { label: 'Normal', value: 'normal' };
     },
     sizeOptions() {
-    return [
-        { label: 'Small', value: 'small', class: 'sm' },
-        { label: 'Normal', value: 'normal' },
-        { label: 'Large', value: 'large', class: 'lg' }
-        ]
+        return [
+            { label: 'Small', value: 'small', class: 'sm' },
+            { label: 'Normal', value: 'normal' },
+            { label: 'Large', value: 'large', class: 'lg' }
+        ];
     },
-        getSize() {
-            return Promise.resolve(this.sizeData());
-        },
+    getSize() {
+        return Promise.resolve(this.sizeData());
+    },
 
-        getSizeOptions() {
-            return Promise.resolve(this.sizeOptions());
-        },
-    
-        async getBranches() {
-            try {
-                const response = await getRequest('/farms');
-                return response;
-            } catch (error) {
-                console.error('Error fetching branches:', error);
-                return response;; 
-            }
-        },
+    getSizeOptions() {
+        return Promise.resolve(this.sizeOptions());
+    },
 
-        async getCompanies() {
-            try {
-                const response = await getRequest('/companies');
-                return response;
-            } catch (error) {
-                console.error('Error fetching company:', error);
-                return errorResponseAPI(error); 
-            }
-        },
+    async getBranches() {
+        try {
+            const response = await getRequest('/farms');
+            return response;
+        } catch (error) {
+            console.error('Error fetching branches:', error);
+            return response;
+        }
+    },
 
-        async getDatastart() {
-            try {
-                const response =  await getRequest(`/appmovil/datastart`);
-                return response;
-            } catch (error) {
-                console.error('Error fetching company:', error);
-                return errorResponseAPI(error); 
-            }
-        },
+    async getCompanies() {
+        try {
+            const response = await getRequest('/companies');
+            return response;
+        } catch (error) {
+            console.error('Error fetching company:', error);
+            return errorResponseAPI(error);
+        }
+    },
+
+    async getDatastart() {
+        try {
+            const response = await getRequest(`/appmovil/datastart`);
+            return response;
+        } catch (error) {
+            console.error('Error fetching company:', error);
+            return errorResponseAPI(error);
+        }
+    },
 
     getCustomers(params) {
         const queryParams = params
@@ -63,7 +61,6 @@ export const InitialDataService = {
 
     async getTasksPlanner(value) {
         try {
-            
             const employeeId = value?.data?.data?.employee?.workCenter?.taskoftype?.id;
             const companyId = value?.data?.data?.company?.id;
             const farmId = value?.data?.data?.farm?.id;
@@ -76,74 +73,67 @@ export const InitialDataService = {
         }
     },
 
-
-
     async getVehicles() {
         try {
-            const response =  await getRequest(`/vehicles`);
+            const response = await getRequest(`/vehicles`);
             return response;
         } catch (error) {
             console.error('Error fetching vehicles:', error);
-            return errorResponseAPI(error); 
+            return errorResponseAPI(error);
         }
     },
 
-
     async getWorkCenters() {
         try {
-            const response =  await getRequest(`/work_centers`);
+            const response = await getRequest(`/work_centers`);
             return response;
         } catch (error) {
             console.error('Error fetching work centers:', error);
-            return errorResponseAPI(error); 
+            return errorResponseAPI(error);
         }
     },
 
     async getJobTypes() {
         try {
-            const response =  await getRequest(`/job_types`);
+            const response = await getRequest(`/job_types`);
             return response;
         } catch (error) {
             console.error('Error fetching job types:', error);
-            return errorResponseAPI(error); 
+            return errorResponseAPI(error);
         }
     },
 
-    
     async getPaymentTypes() {
         try {
-            const response =  await getRequest(`/payment_types`);
+            const response = await getRequest(`/payment_types`);
             return response;
         } catch (error) {
             console.error('Error fetching payment types:', error);
-            return errorResponseAPI(error); 
+            return errorResponseAPI(error);
         }
     },
 
     async getEmployeesWorkCenter(value) {
-
         try {
-            const response =  await getRequest(`/appmovil/employees?filter[work_center_id]=${value}`);
+            const response = await getRequest(`/appmovil/employees?filter[work_center_id]=${value}`);
             return response;
         } catch (error) {
             console.error('Error fetching vehicles:', error);
-            return errorResponseAPI(error); 
+            return errorResponseAPI(error);
         }
-
-
     },
     async getDocumentsType() {
         try {
-            const response =  await getRequest(`/lists/documentType`);
+            const response = await getRequest(`/lists/documentType`);
             return response;
         } catch (error) {
             console.error('Error fetching document types', error);
-            return errorResponseAPI(error); 
+            return errorResponseAPI(error);
         }
     },
     async getGenderTypes() {
         try {
-            const response =  await getRequest(`/lists/genderType`);
+            const response = await getRequest(`/lists/genderType`);
             return response;
         } catch (error) {
             console.error('Error fetching gender)', error);
@@ -153,31 +143,29 @@ export const InitialDataService = {
 
     async getTaskOfType() {
         try {
-            const response =  await getRequest(`/task_of_types`);
+            const response = await getRequest(`/task_of_types`);
             return response;
         } catch (error) {
             console.error('Error fetching task of types:', error);
-            return errorResponseAPI(error); 
+            return errorResponseAPI(error);
         }
     },
 
     async getDoneTypes() {
         try {
-            const response =  await getRequest(`/done_types`);
+            const response = await getRequest(`/done_types`);
             return response;
         } catch (error) {
             console.error('Error fetching task of types:', error);
-            return errorResponseAPI(error); 
+            return errorResponseAPI(error);
         }
     },
-
 
     async getTaskTypeTarif() {
         try {
             const response = await getRequest('/lists/TaskTypeTarif');
 
             return response;
-            
         } catch (error) {
             console.error('Error fetching task type tarif:', error);
             return errorResponseAPI(error);
@@ -187,7 +175,7 @@ export const InitialDataService = {
     async getPackingTypes() {
         try {
             const response = await getRequest('/packing_types');
-           return response;
+            return response;
         } catch (error) {
             console.error('Error fetching packing types:', error);
             return errorResponseAPI(error);
@@ -223,7 +211,7 @@ export const InitialDataService = {
         }
     },
 
-    async getCustomerRequests(){
+    async getCustomerRequests() {
         try {
             const response = await getRequest('/customer_requests');
             return response;
@@ -271,9 +259,8 @@ export const InitialDataService = {
             console.error('Error fetching crop lots:', error);
             return errorResponseAPI(error);
         }
-    }
-,
-    async postContractor(data) {    
+    },
+    async postContractor(data) {
         try {
             const response = await postRequest('/transactions/contractor/work', data);
             return response;
@@ -281,9 +268,5 @@ export const InitialDataService = {
             console.error('Error posting contractor:', error);
             return errorResponseAPI(error);
         }
-    },
-
-
-
-
+    }
 };

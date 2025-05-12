@@ -20,24 +20,21 @@ const props = defineProps({
 });
 
 onMounted(async () => {
-    
     const respRoles = await getRequest('/roles');
     if (!respRoles.ok) toast.add({ severity: 'error', detail: 'Error' + respRoles.error, life: 3000 });
     const rolsList = respRoles.data.data.map((role) => ({ id: role.id, name: role.name })) ?? [];
-    console.log(rolsList)
-    
+    console.log(rolsList);
+
     picklistValue.value = [rolsList, props.data.roles];
-    
+
     const respFarms = await getRequest('/farms');
     if (!respFarms.ok) toast.add({ severity: 'error', detail: 'Error' + respFarms.error, life: 3000 });
     Farms.value = respFarms.data.data.map((farm) => ({ id: farm.uuid, name: farm.name }));
-    [farm.value] = respFarms.data.data.filter((farm) => farm.name === props.data.farm.name).map((farm) => ({ id: farm.uuid, name: farm.name}));
+    [farm.value] = respFarms.data.data.filter((farm) => farm.name === props.data.farm.name).map((farm) => ({ id: farm.uuid, name: farm.name }));
 
     const respEmployes = await getRequest('/employees');
     if (!respEmployes.ok) toast.add({ severity: 'error', detail: 'Error' + respEmployes.error, life: 3000 });
     Employees.value = respEmployes.data.data.map((emplo) => ({ id: emplo.uuid, name: emplo.first_name + ' ' + emplo.last_name }));
-
-
 });
 
 const searchEmployees = (event) => {
@@ -89,19 +86,15 @@ const saveRoles = async () => {
                 <label class="font-medium"
                     >Name: <b>{{ props.data.name }}</b></label
                 >
-                
+
                 <Divider layout="vertical" />
                 <label class="font-medium">
-                Employee Name: 
-                <b>
-                    {{ props.data.employee.id
-                        ? props.data.employee.full_name
-                        : 'NULL' 
-                    }}
-                </b>
+                    Employee Name:
+                    <b>
+                        {{ props.data.employee.id ? props.data.employee.full_name : 'NULL' }}
+                    </b>
                 </label>
                 <Divider layout="vertical" />
-                
             </template>
             <template #end>
                 <AutoComplete v-model="farm" inputId="ac" :suggestions="farms" placeholder="Finca" @complete="searchFarms" field="name" dropdown />
@@ -110,9 +103,8 @@ const saveRoles = async () => {
                 <Button label="Save" icon="pi pi-save" class="p-button-success ml-3" @click="saveRoles" />
             </template>
         </Toolbar>
-        
+
         <div class="field mt-4">
-            
             <PickList v-model="picklistValue" listStyle="height:250px" dataKey="id">
                 <template #sourceheader> From </template>
                 <template #targetheader> To </template>

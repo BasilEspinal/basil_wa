@@ -12,7 +12,7 @@ import { z } from 'zod';
 
 import { CrudService } from '@/service/CRUD/CrudService';
 
-const prueba = ref({revisar: 'revisar GET-POST-PUT-DELETE'});
+const prueba = ref({ revisar: 'revisar GET-POST-PUT-DELETE' });
 let endpoint = ref('/users');
 
 const crudService = CrudService(endpoint.value);
@@ -22,7 +22,6 @@ const expandedRows = ref([]);
 const users = ref([]);
 
 const farmDefault = sessionStorage.getItem('accessSessionFarm');
-
 
 const headerDialogNew = ref('');
 const headerDialogEdit = ref('');
@@ -132,7 +131,7 @@ const newUser = handleSubmit(async (values) => {
         roles: [{ id: 1 }]
     };
     //const restp = await postRequest(endpoint.value, data);
-    const restp =await crudService.create(data);
+    const restp = await crudService.create(data);
 
     toast.add({ severity: restp.ok ? 'success' : 'error', summary: 'Create', detail: restp.ok ? 'Creado' : restp.error, life: 3000 });
     loadingData();
@@ -164,7 +163,7 @@ const deleteUsers = async () => {
         selectedRegisters.value.forEach(async (item) => {
             //const deletePromise = await deleteRequest(endpoint.value, item.id);
             const deletePromise = await await crudService.delete(item.id);
-            
+
             deletePromises.push(deletePromise);
         });
         await Promise.all(deletePromises);
@@ -202,7 +201,6 @@ const collapseAll = () => {
             </div>
         </div>
         <div class="card">
-
             <DataTable
                 v-model:expandedRows="expandedRows"
                 :loading="loading"
@@ -215,38 +213,30 @@ const collapseAll = () => {
                 :paginator="true"
                 v-model:selection="selectedRegisters"
             >
-            <template #header>
-                <Toolbar >
-
-                    <template v-slot:start>
-
-                        <div class="grid justify-content-center">
-                            
-                        <div class="col-12 lg:col-2 text-center">
-                    <Button v-if="ability.can('usuario_crear')"  icon="pi pi-plus" 
-                    class="p-button-success mr-2" 
-                    @click="openNew" size="large" />
-                </div>
-                    <div class="col-12 lg:col-2 text-center">
-                    <Button v-if="ability.can('usuario_editar')" :disabled="selectedRegisters.length != 1" icon="pi pi-file-edit" 
-                    class="p-button-help mr-2"  @click="openEdit" size="large" />
-                </div>
-                    <div class="col-12 lg:col-2 text-center">
-                    <Button v-if="ability.can('usuario_crear')" :disabled="selectedRegisters.length != 1" icon="pi pi-copy" class="p-button-secondary mr-2"  @click="openClone" size="large" />
-                </div>
-                    <div class="col-12 lg:col-2 text-center">
-                    <Button v-if="ability.can('usuario_eliminar')" :disabled="!selectedRegisters.length"  icon="pi pi-trash" class="p-button-danger mr-2"  @click="openDelete" size="large" />
-                </div>
-            </div>
+                <template #header>
+                    <Toolbar>
+                        <template v-slot:start>
+                            <div class="grid justify-content-center">
+                                <div class="col-12 lg:col-2 text-center">
+                                    <Button v-if="ability.can('usuario_crear')" icon="pi pi-plus" class="p-button-success mr-2" @click="openNew" size="large" />
+                                </div>
+                                <div class="col-12 lg:col-2 text-center">
+                                    <Button v-if="ability.can('usuario_editar')" :disabled="selectedRegisters.length != 1" icon="pi pi-file-edit" class="p-button-help mr-2" @click="openEdit" size="large" />
+                                </div>
+                                <div class="col-12 lg:col-2 text-center">
+                                    <Button v-if="ability.can('usuario_crear')" :disabled="selectedRegisters.length != 1" icon="pi pi-copy" class="p-button-secondary mr-2" @click="openClone" size="large" />
+                                </div>
+                                <div class="col-12 lg:col-2 text-center">
+                                    <Button v-if="ability.can('usuario_eliminar')" :disabled="!selectedRegisters.length" icon="pi pi-trash" class="p-button-danger mr-2" @click="openDelete" size="large" />
+                                </div>
+                            </div>
+                        </template>
+                    </Toolbar>
                 </template>
-            </Toolbar>
-
-            </template>
                 <template #empty> No customers found. </template>
                 <template #loading> Loading customers data. Please wait. </template>
 
                 <template>
-
                     <Column selectionMode="multiple" headerStyle="width: 3rem"></Column>
                     <Column expander style="width: 5rem" />
                     <Column field="xxxxxx" filterField="xxxxxx" header="Name" sortable frozen="">

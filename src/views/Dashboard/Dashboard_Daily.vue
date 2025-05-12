@@ -121,8 +121,5 @@ const onSortChange = (event) => {
                 </DataView>
             </div>
         </div>
-
-      
-       
     </div>
 </template>
