@@ -3,6 +3,9 @@ import { useLayout } from '@/layout/composables/layout';
 import { computed, ref } from 'vue';
 import { useRouter } from 'vue-router';
 
+import { useI18n } from 'vue-i18n';
+const { locale } = useI18n(); // ✅ AQUÍ sí se puede usar
+
 const { layoutConfig, changeThemeSettings } = useLayout();
 const router = useRouter();
 
@@ -66,9 +69,7 @@ const route = () => {
                         </li>
                         -->
                         <li>
-                            
                             <!-- <Button @click="onChangeTheme(!toggleValue)" v-model="toggleValue" icon="pi pi-cog" outlined rounded class="button-icon ml-3 mr-2 mr-1" style="width: 3.5rem; height: 3.5rem" /> -->
-                            
                         </li>
                     </ul>
                 </div>

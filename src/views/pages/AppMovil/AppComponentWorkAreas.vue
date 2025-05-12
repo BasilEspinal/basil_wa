@@ -1,22 +1,18 @@
 <script setup>
-import { ref, computed, onMounted,onUnmounted, watch, onBeforeMount,onBeforeUnmount } from 'vue';
+import { ref, computed, onMounted, onUnmounted, watch, onBeforeMount } from 'vue';
 import UseAppMovil from '@/composables/AppMovil/UseAppMovil.js';
 import { useToast } from 'primevue/usetoast';
 import UserAppMovil from './UserAppMovil.vue';
 import { useI18n } from 'vue-i18n';
 import { useLayout } from '@/layout/composables/layout';
-import { useAppMovilService } from '../../../service/appMovil/appMovilService_V3';
+import { useAppMovilService } from '@/service/appMovil/OldFiles/appMovilService.js';
 import ShippingDelivered from './ShippingDelivered.vue';
 import DeliveringDelivered from './DeliveringDelivered.vue';
 import ErrorAppMovil from './ErrorAppMovil.vue';
 import ability from '@/service/ability.js';
-//
-// Estoy utilizando otro servicio para el CRUD
-import StackErrors from '@/service/StackErrors.js';
-import { date } from 'zod';
+import { watchEffect } from 'vue';
 
-import { useRoute } from 'vue-router';
-const stack = new StackErrors();
+
 const errorSummary = ref(false);
 const summary = ref();
 ////////////////////////////////////////////////////////////
@@ -24,11 +20,10 @@ const { t } = useI18n();
 const toast = useToast();
 const { layoutConfig } = useLayout();
 
-const { HOLIDAY, initData, TASK_OF_TYPE, fetchWorkCenter, getUsers, getDataTasksplanner,getInfoEmployees } = useAppMovilService();
 
+const { refreshSessionState, HOLIDAY, initData, TASK_OF_TYPE, fetchWorkCenter, getUsers, getDataTasksplanner, getInfoEmployees } = useAppMovilService();
 
 const titulo = ref('');
-
 
 const users = ref(null);
 const filterUsers = ref(null);
@@ -40,14 +35,14 @@ const userEmployee = ref(localStorage.getItem('accesSessionEmployeeUuid'));
 
 const loading = ref(true); // Initially set to true
 
-const compareStoredDate=()=> {
+const compareStoredDate = () => {
     // Get the stored date from sessionStorage
-    const storedDateStr = sessionStorage.getItem("accessSessionDate");
+    const storedDateStr = sessionStorage.getItem('accessSessionDate');
 
     // Check if the date exists
     if (!storedDateStr) {
-        console.log("No date found in sessionStorage.");
-        return {condition:false, message:"No date found in sessionStorage.",dateStored:storedDateStr};
+        console.log('No date found in sessionStorage.');
+        return { condition: false, message: 'No date found in sessionStorage.', dateStored: storedDateStr };
     }
 
     // Convert stored date string to a Date object
@@ -59,19 +54,18 @@ const compareStoredDate=()=> {
 
     // Compare the dates
     if (storedDate.getTime() === currentDate.getTime()) {
-        console.log("The stored date is today.");
-        return {condition:true, message:"The stored date is today.",dateStored:storedDateStr};
+        console.log('The stored date is today.');
+        return { condition: true, message: 'The stored date is today.', dateStored: storedDateStr };
     } else if (storedDate.getTime() < currentDate.getTime()) {
-        console.log("The stored date is in the past.");
-        return {condition:false, message:"The stored date is in the past.",dateStored:storedDateStr,dateGet:currentDate};
+        console.log('The stored date is in the past.');
+        return { condition: false, message: 'The stored date is in the past.', dateStored: storedDateStr, dateGet: currentDate };
     } else {
-        console.log("The stored date is in the future.");
-        return {condition:false, message:"The stored date is in the future.",dateStored:storedDateStr};
+        console.log('The stored date is in the future.');
+        return { condition: false, message: 'The stored date is in the future.', dateStored: storedDateStr };
     }
-}
+};
 
 // Example usage
-
 
 const formatCurrency = (value) => {
     return value.toLocaleString('en-US', { style: 'currency', currency: 'USD' });
@@ -86,6 +80,11 @@ const totalTaskQtyJournal = ref(0);
 const totalJournalTotal = ref(0);
 
 const getDataEmployeesInfo = async () => {
+    if (!dataApp.value || !dataApp.value.tasks_of_type) {
+        console.warn('No se puede ejecutar getDataEmployeesInfo porque dataApp o tasks_of_type es null');
+        return;
+    }
+
     const response = await getInfoEmployees(dataApp.value.id, dataApp.value.tasks_of_type.id);
 
     if (!response.ok) {
@@ -161,11 +160,11 @@ const getDataEmployeesInfo = async () => {
 };
 onBeforeMount(async () => {
     functionsData();
-    titulo.value = `Título: ${TASK_OF_TYPE.name || 'Sin nombre'}`;
+    //titulo.value = `Título: ${TASK_OF_TYPE.name || 'Sin nombre'}`;
 });
 onUnmounted(() => {
-     // Reinitialize useAppMovilService() to get fresh data
-     
+    // Reinitialize useAppMovilService() to get fresh data
+
     titulo.value = '';
     users.value = null;
     filterUsers.value = null;
@@ -185,32 +184,56 @@ onUnmounted(() => {
     totalTaskQtyJournal.value = 0;
     totalJournalTotal.value = 0;
 });
-
-
-
-const functionsData = async () => {
-    loading.value = true; // Set loading to true when data fetching starts
-    //await initData();
-    getUser();
-    await getData();
-
-
-
-    holiday.value = HOLIDAY;
-    titulo.value = t('appmovil.titulo') + ' ' + (TASK_OF_TYPE?.name ? TASK_OF_TYPE.name : 'XXXXXXXXXXXXXX');
-    loading.value = false; // Set loading to false when data fetching is complete
-    //////////////////////////
-    //Sebastian
-    getDataEmployeesInfo();
-    ////////////////////////
-};
-
-onBeforeMount(async () => {
-functionsData();
-
-
+watch(TASK_OF_TYPE, (newVal) => {
+  if (newVal && newVal.name) {
+    titulo.value = t('appmovil.titulo') + ' ' + newVal.name;
+  }
+  
 });
 
+watchEffect(() => {
+  if (fetchWorkCenter.value?.taskoftype?.name) {
+    titulo.value = t('appmovil.titulo') + ' ' + fetchWorkCenter.value.taskoftype.name;
+  }
+});
+
+const functionsData = async () => {
+    loading.value = true;
+
+    // ✅ Inicializa los datos de sesión
+//    await refreshSessionState(); // <--- LLAMAR ESTO ANTES DE initData()
+
+
+    await initData(); // this refreshes session and loads planner/holiday/type
+
+    
+
+    const response = await getDataTasksplanner();
+    if (!response.ok) {
+        toast.add({ severity: 'error', detail: response.error, life: 3000 });
+        loading.value = false;
+        return;
+    }
+    
+    console.log('response,',response);
+
+    dataApp.value = response.data;
+    lotes.value = dataApp.value?.crop_lots;
+    console.log('dataApp.value', dataApp.value);
+
+    await getUser();
+    //titulo.value = t('appmovil.titulo') + ' ' + (TASK_OF_TYPE?.name || 'Sin nombre');
+
+    await getDataEmployeesInfo(); // optional if not on summary tab
+    loading.value = false;
+
+    console.log('TASK_OF_TYPE:', TASK_OF_TYPE?.id);
+    console.log('fetchWorkCenter:', fetchWorkCenter.value);
+    console.log('fetchFarmId:', sessionStorage.getItem('accessSessionFarmId'));
+    console.log('fetchCompanyId:', sessionStorage.getItem('accessSessionCompanyId'));
+
+    ////////////////////////
+};
 
 const logoUrl = computed(() => {
     return `layout/images/${layoutConfig.darkTheme.value ? 'logo-white' : 'logo-dark'}.png`;
@@ -225,18 +248,14 @@ const getUser = async () => {
 
 const getData = async () => {
     const response = await getDataTasksplanner();
-    
+
     console.log('response', response);
 
     if (!response.ok || !response.data || response.data.length === 0) {
         // Handle error if response is not OK or if data is empty
         const errorMessage = response.error ? `Error: ${response.error}` : 'No data received';
         toast.add({ severity: 'error', detail: errorMessage, life: 3000 });
-        // Push the failed response to the stack for later processing
-        stack.push({ response: response, category: 'Data task planner', description: 'No data available' });
 
-
-        // Return false to indicate failure
         return false;
     } else {
         // If valid, handle the data as usual
@@ -272,36 +291,27 @@ const onTabChange = async (event) => {
 const updateData = async () => {
     // const updatedData = await getData(); // Fetch new data from API
     // data.value = updatedData; // Update the reactive data ref
-functionsData();
+    functionsData();
 };
-onBeforeUnmount(() => {
-    
-    const titulo = ref('');
-    const users = ref(null);
-    const filterUsers = ref(null);
-    const dataApp = ref(null);
-    const holiday = ref('Normal');
-    const lotes = ref(null);
-    const search = ref(null);
 
-    
-});
 </script>
 
 <template>
-
     <!-- <pre>{{ compareStoredDate() }}</pre> -->
-    <h2>{{ titulo }} Departamento: {{ fetchWorkCenter.name }}</h2>
-    
+    <h1 v-if="fetchWorkCenter?.name ">El empleado pertenece a:</h1>
+    <h2 v-if="fetchWorkCenter?.name ">{{ titulo}} Departamento: {{ fetchWorkCenter?.name || 'Cargando...' }}</h2>
 
-    
-    
+    <h3 v-if="!fetchWorkCenter?.name ">
+        
+        <ErrorAppMovil title="No tiene empleado asociado a ningún departamento" :logo-url="logoUrl" />
+    </h3>
 
     <div v-if="loading" class="flex align-items-center justify-content-center" style="height: 100vh">
         <ProgressSpinner />
     </div>
+    
 
-    <div v-else-if="dataApp" class="card maxHeightY">
+    <div v-else-if="dataApp && fetchWorkCenter?.name" class="card maxHeightY">
         <div v-if="!dataApp.crop_lots">
             <ErrorAppMovil :title="t('appmovil.nolotes')" :description="t('appmovil.infonolotes')" :logo-url="logoUrl" />
         </div>
@@ -379,7 +389,6 @@ onBeforeUnmount(() => {
                         </ColumnGroup>
                     </DataTable> -->
                         <div v-if="!errorSummary">
-                            
                             <DataTable :value="summary" tableStyle="min-width: 50rem">
                                 <ColumnGroup type="header">
                                     <Row>
@@ -501,7 +510,7 @@ onBeforeUnmount(() => {
                         </div>
                     </template>
                     <ScrollPanel class="maxHeightC">
-                        <ShippingDelivered :data="dataApp" :batchs="lotes" @update-grandparent-data="updateData"/>
+                        <ShippingDelivered :data="dataApp" :batchs="lotes" @update-grandparent-data="updateData" />
                     </ScrollPanel>
                 </TabPanel>
 
@@ -524,7 +533,7 @@ onBeforeUnmount(() => {
     </div>
 
     <div v-else>
-        <ErrorAppMovil :title="t('appmovil.nodataplanner') + ' ' + TASK_OF_TYPE?.name" :description="t('appmovil.infonodataplanner')" :logo-url="logoUrl" />
+        <ErrorAppMovil :title="t('appmovil.nodataplanner') + ' ' + TASK_OF_TYPE?.name" :description="t('appmovil.infonodataplanner')" :logo-url="logoUrl" v-if="fetchWorkCenter?.name"/>
     </div>
 </template>
 

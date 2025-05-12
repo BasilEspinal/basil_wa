@@ -17,20 +17,17 @@ const props = defineProps({
     }
 });
 
-const newDataRols = () =>{
+const newDataRols = () => {
     console.log('CAMBIAAAA', picklistValue.value[1]);
-    emit('SelectDataListB', { list: picklistValue.value[1]});
+    emit('SelectDataListB', { list: picklistValue.value[1] });
 };
-
 </script>
 <template>
-    
-        <PickList v-model="picklistValue" listStyle="height:250px" dataKey="code" @selection-change="newDataRols">
-            <template #sourceheader> From </template>
-            <template #targetheader> To </template>
-            <template #item="slotProps">
-                <div>{{ slotProps.item.name }}</div>
-            </template>
-        </PickList>
-    
+    <PickList v-model="picklistValue" listStyle="height:250px" dataKey="code" @selection-change="newDataRols">
+        <template #sourceheader> From </template>
+        <template #targetheader> To </template>
+        <template #item="slotProps">
+            <div>{{ slotProps.item.name }}</div>
+        </template>
+    </PickList>
 </template>

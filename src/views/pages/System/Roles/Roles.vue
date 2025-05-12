@@ -11,7 +11,6 @@ import FormPermissions from './FormPermissions.vue';
 //import useData from '@/composables/DataAPI/FetchDataAPICopy.js';
 //const { getRequest, postRequest, deleteRequest } = useData();
 
-
 import { CrudService } from '@/service/CRUD/CrudService';
 
 let endpoint = ref('/roles');
@@ -52,7 +51,7 @@ const newRol = handleSubmit(async (values) => {
         permissions: [{ id: 1 }]
     };
     //const restp = await postRequest(endpoint.value, data);
-    const restp =await crudService.create(data);
+    const restp = await crudService.create(data);
     toast.add({ severity: restp.ok ? 'success' : 'error', summary: 'Create', detail: restp.ok ? 'Creado' : restp.error, life: 3000 });
     loadingData();
 });
@@ -73,7 +72,7 @@ const loadLazyData = async () => {
     loading.value = true;
     //const response = await getRequest(endpoint.value);
     const response = await crudService.getAll();
-    
+
     if (!response.ok) toast.add({ severity: 'error', detail: 'Error' + response.error, life: 3000 });
     roles.value = response.data.data ?? [];
     loading.value = false;
@@ -113,7 +112,7 @@ const deleteRoles = async () => {
     DialogDelete.value = false;
     try {
         const deletePromises = [];
-        selectedRegisters.value.forEach(async item => {
+        selectedRegisters.value.forEach(async (item) => {
             //const deletePromise = await deleteRequest(endpoint.value, item.id);
             const deletePromise = await await crudService.delete(item.id);
             deletePromises.push(deletePromise);
@@ -136,7 +135,6 @@ const deleteRoles = async () => {
             <div>
                 <h1>Información de roles</h1>
             </div>
-
         </div>
 
         <div class="card">
@@ -161,32 +159,22 @@ const deleteRoles = async () => {
                 :paginator="true"
                 v-model:selection="selectedRegisters"
             >
-            <template #header>
-
-                <Toolbar>
-    <template v-slot:start>
-        <div class="grid justify-content-center">
-            <div class="col-12 lg:col-2 text-center">
-                <Button v-if="ability.can('rol_crear')" icon="pi pi-plus" 
-                    class="p-button-success mr-6" 
-                    @click="openNew" size="large" />
-            </div>
-            <div class="col-12 lg:col-2 text-center">
-                <Button v-if="ability.can('rol_editar')" :disabled="selectedRegisters.length != 1" 
-                    icon="pi pi-copy" 
-                    class="p-button-secondary mr-6"  
-                    @click="openClone" size="large" />
-            </div>
-            <div class="col-12 lg:col-2 text-center">
-                <Button v-if="ability.can('rol_eliminar')" :disabled="!selectedRegisters.length"  
-                    icon="pi pi-trash" 
-                    class="p-button-danger mr-6"  
-                    @click="openDelete" size="large" />
-            </div>
-        </div>
-    </template>
-</Toolbar>
-
+                <template #header>
+                    <Toolbar>
+                        <template v-slot:start>
+                            <div class="grid justify-content-center">
+                                <div class="col-12 lg:col-2 text-center">
+                                    <Button v-if="ability.can('rol_crear')" icon="pi pi-plus" class="p-button-success mr-6" @click="openNew" size="large" />
+                                </div>
+                                <div class="col-12 lg:col-2 text-center">
+                                    <Button v-if="ability.can('rol_editar')" :disabled="selectedRegisters.length != 1" icon="pi pi-copy" class="p-button-secondary mr-6" @click="openClone" size="large" />
+                                </div>
+                                <div class="col-12 lg:col-2 text-center">
+                                    <Button v-if="ability.can('rol_eliminar')" :disabled="!selectedRegisters.length" icon="pi pi-trash" class="p-button-danger mr-6" @click="openDelete" size="large" />
+                                </div>
+                            </div>
+                        </template>
+                    </Toolbar>
                 </template>
                 <template #empty> No customers found. </template>
                 <template #loading> Loading customers data. Please wait. </template>
@@ -214,7 +202,7 @@ const deleteRoles = async () => {
                     <InputText id="username" v-model="name" class="flex-auto" autocomplete="off" v-bind="nameProps" />
                 </div>
                 <FrontEndErrors :errorsNew="errorsNew" name="name" />
-                <BackendErrors :name="errorResponseAPI?.errors?.name"/>
+                <BackendErrors :name="errorResponseAPI?.errors?.name" />
             </div>
             <Divider />
             <div class="flex justify-content-end gap-2">
@@ -229,7 +217,7 @@ const deleteRoles = async () => {
                     <InputText id="username" v-model="name" class="flex-auto" autocomplete="off" v-bind="nameProps" />
                 </div>
                 <FrontEndErrors :errorsNew="errorsNew" name="name" />
-                <BackendErrors :name="errorResponseAPI?.errors?.name"/>
+                <BackendErrors :name="errorResponseAPI?.errors?.name" />
             </div>
             <div class="mb-3">
                 <label for="username" class="font-bold w-6rem mb-2">Permissions</label>
@@ -256,10 +244,7 @@ const deleteRoles = async () => {
                 <Button type="button" label="Delete" @click="deleteRoles" />
             </div>
         </Dialog>
-
-        </div>
-
-    
+    </div>
 </template>
 
 <style lang="scss" scoped></style>

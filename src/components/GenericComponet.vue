@@ -39,7 +39,6 @@ watch(
         rutaDecodificada.value = decodeURIComponent(router.currentRoute.value.query.ruta);
     }
 );
-
 </script>
 
 <template>

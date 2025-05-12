@@ -6,30 +6,29 @@ import useRestrictionUnitTypes from '@/composables/Product/UnitsType/restriction
 import { useToast } from 'primevue/usetoast';
 
 export default {
-  props: {
-    pathApi: {
-      type: String,
-      default: ''
+    props: {
+        pathApi: {
+            type: String,
+            default: ''
+        },
+        title: {
+            type: String,
+            default: 'Tabla de registro de corte'
+        },
+        jsonDataPath: {
+            type: String,
+            default: 'data'
+        },
+        dataMod: {
+            type: String
+        },
+        dataGot: {
+            type: Object
+        }
     },
-    title: {
-      type: String,
-      default: 'Tabla de registro de corte'
-    },
-    jsonDataPath: {
-      type: String,
-      default: 'data'
-    },
-    dataMod: {
-      type: String
-    },
-    dataGot: {
-      type: Object
+    setup(props) {
+        return {};
     }
-  },
-  setup(props) {
-
-    return {};
-  }
 };
 </script>
 

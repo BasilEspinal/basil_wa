@@ -1,5 +1,5 @@
 import useData from '@/service/FetchData/FetchDataAPI.js';
-const { getRequest, postRequest, putRequest, deleteRequest,patchRequest,errorResponseAPI } = useData();
+const { getRequest, postRequest, putRequest, deleteRequest, patchRequest, errorResponseAPI } = useData();
 
 export const CrudService = (baseEndpoint) => ({
     /**
@@ -11,7 +11,6 @@ export const CrudService = (baseEndpoint) => ({
         const queryParams = new URLSearchParams(params).toString();
         const fullEndpoint = `${baseEndpoint}?${queryParams}`;
         return await getRequest(fullEndpoint);
-
     },
 
     /**
@@ -33,7 +32,6 @@ export const CrudService = (baseEndpoint) => ({
         return await postRequest(baseEndpoint, data);
     },
 
-    
     /**
      * Update an existing record by UUID
      * @param {String} uuid - The UUID of the record to update.
@@ -41,8 +39,7 @@ export const CrudService = (baseEndpoint) => ({
      * @returns {Promise} - A promise that resolves to the response from the PUT request.
      */
     async update(uuid, data) {
-        
-        return await putRequest(baseEndpoint, data,uuid);
+        return await putRequest(baseEndpoint, data, uuid);
     },
 
     /**
@@ -51,13 +48,10 @@ export const CrudService = (baseEndpoint) => ({
      * @returns {Promise} - A promise that resolves to the response from the DELETE request.
      */
     async delete(uuid) {
-        
-
         return await deleteRequest(baseEndpoint, uuid);
     },
     async patch(uuid, data) {
-        return await patchRequest(baseEndpoint, data,uuid);
-        
+        return await patchRequest(baseEndpoint, data, uuid);
     },
     getErrorResponse() {
         return errorResponseAPI;

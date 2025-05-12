@@ -2,12 +2,9 @@
 import BackendErrors from '@/layout/composables/Errors/BackendErrors.vue';
 import FrontEndErrors from '@/layout/composables/Errors/FrontendErrors.vue';
 import { CrudService } from '@/service/CRUD/CrudService';
-import { ref, onMounted, watch,computed } from 'vue';
+import { ref, onMounted, watch, computed } from 'vue';
 import { useToast } from 'primevue/usetoast';
 import { useAppMovilService } from '../../../service/appMovil/appMovilService_V3';
-import useData from '@/composables/DataAPI/FetchDataAPICopy.js';
-
-// const { errorResponseAPI } = useData();
 
 import { useI18n } from 'vue-i18n';
 import { z } from 'zod';
@@ -15,7 +12,7 @@ import { useForm } from 'vee-validate';
 import { toTypedSchema } from '@vee-validate/zod';
 
 const toast = useToast();
-const { error,getTarif, getDonesWork, postDailyReport, WORK_CENTER, SUPERVISO_ID, LOTES } = useAppMovilService();
+const { error, getTarif, getDonesWork, postDailyReport, WORK_CENTER, SUPERVISO_ID, LOTES } = useAppMovilService();
 //const selected_quanty = ref(null);
 const Total = ref(null);
 //const select_tasks_type = ref(null);
@@ -32,7 +29,6 @@ const lotes = ref({});
 const packings_type = ref([]);
 const Packings_type = ref([]);
 
-
 const props = defineProps({
     slotProps: { type: Object },
     Lote: { type: Array },
@@ -41,71 +37,58 @@ const props = defineProps({
     tipoActividad: { type: Array }
 });
 
-
-const isHoraExtra = ref(false)
+const isHoraExtra = ref(false);
 // Initialize select_tasks_type first
 const select_tasks_type = ref({ code: '', label: '', subActivity: null, enPoint: null }); // Default empty object
 
 // Define the validation schema
 const validationSchema = computed(() => {
-   
-
     return z.object({
         selected_crops_lots: z.object({
-            code: z.string().min(1, 'Code is required'),
+            code: z.string().min(1, 'Code is required')
         }),
         select_tasks_type: z.object({
             code: z.string().min(1, 'Task code is required'),
             label: z.string().min(1, 'Task label is required!'),
             subActivity: z.any().optional().nullable(),
-            enPoint: z.any().optional().nullable(),
+            enPoint: z.any().optional().nullable()
         }),
-        selected_quanty: z
-            .number()
-            .min(1, 'Quantity must be at least 1')
-            .max(1000, 'Quantity must be less than or equal to 1000'),
+        selected_quanty: z.number().min(1, 'Quantity must be at least 1').max(1000, 'Quantity must be less than or equal to 1000'),
         Notas: z.string().optional(),
         selected_dones_work: z
-        .object({
-            name: z.string().optional(),
-            id: z.number().optional(),
-            uuid: z.string().optional(),
-            work_type_tarif: z.string().optional(),
-            code: z.string().optional(),
-        })
-        .refine(
-            (val) => {
-                if (isHoraExtra.value) {
-                    // If `isHoraExtra` is true, name and id must be valid
-                    return (
-                        val.name?.length >= 2 &&
-                        typeof val.id === 'number' &&
-                        val.id > 0
-                    );
+            .object({
+                name: z.string().optional(),
+                id: z.number().optional(),
+                uuid: z.string().optional(),
+                work_type_tarif: z.string().optional(),
+                code: z.string().optional()
+            })
+            .refine(
+                (val) => {
+                    if (isHoraExtra.value) {
+                        // If `isHoraExtra` is true, name and id must be valid
+                        return val.name?.length >= 2 && typeof val.id === 'number' && val.id > 0;
+                    }
+                    // If `isHoraExtra` is false, no validation required
+                    return true;
+                },
+                {
+                    message: isHoraExtra.value ? 'Name must be at least 2 characters and ID must be greater than 0 for HoraExtra' : ''
                 }
-                // If `isHoraExtra` is false, no validation required
-                return true;
-            },
-            {
-                message: isHoraExtra.value
-                    ? 'Name must be at least 2 characters and ID must be greater than 0 for HoraExtra'
-                    : '',
-            }
-        ),
+            ),
         packing_typeV: z.object({
             name: z.string().min(1, 'Packing type name is required'),
-            uuid: z.string().min(1, 'Packing type ID is required'),
-        }),
+            uuid: z.string().min(1, 'Packing type ID is required')
+        })
     });
 });
-
 
 // Use the computed schema
 const {
     handleSubmit: handleSubmitNew,
     errors: errorsNew,
     defineField,
-    resetForm,
+    resetForm
 } = useForm({
     initialValues: {
         selected_crops_lots: { code: '' },
@@ -113,9 +96,9 @@ const {
         selected_quanty: 1,
         Notas: '',
         selected_dones_work: { id: 0, name: '', uuid: '', work_type_tarif: '', code: '' },
-        packing_typeV: { name: '', uuid: '' },
+        packing_typeV: { name: '', uuid: '' }
     },
-    validationSchema: toTypedSchema(validationSchema.value),
+    validationSchema: toTypedSchema(validationSchema.value)
 });
 
 // Initialize other fields after defining the validation schema
@@ -126,16 +109,14 @@ const [selected_dones_work] = defineField('selected_dones_work');
 const [packing_typeV] = defineField('packing_typeV');
 const [select_tasks_type_field] = defineField('select_tasks_type'); // This links the form field with the schema
 
-watch(select_tasks_type,()=>{
-    select_tasks_type_field.value=select_tasks_type.value;
-    if (select_tasks_type.value.label ==='HoraExtra'){
-        isHoraExtra.value=true
+watch(select_tasks_type, () => {
+    select_tasks_type_field.value = select_tasks_type.value;
+    if (select_tasks_type.value.label === 'HoraExtra') {
+        isHoraExtra.value = true;
+    } else {
+        isHoraExtra.value = false;
     }
-    else{
-        isHoraExtra.value= false
-    }
-    
-})
+});
 
 const crudService = CrudService('/packing_types');
 const errorResponseAPI = crudService.getErrorResponse();
@@ -153,33 +134,31 @@ onMounted(async () => {
     //console.log("respPackingsType", respPackingsType);
     if (!respPackingsType.ok) toast.add({ severity: 'error', detail: 'Error' + respPackingsType.error, life: 3000 });
     Packings_type.value = respPackingsType.data.data.map((packing) => ({ uuid: packing.uuid, name: packing.name }));
-    console.log(props.data.tasks_of_type.name)
-    if(props.data.tasks_of_type.name == 'CORTAR'){
-        packing_typeV.value = {"uuid":props.data.packing_type.uuid,"name":props.data.packing_type.name};
+    console.log(props.data.tasks_of_type.name);
+    if (props.data.tasks_of_type.name == 'CORTAR') {
+        packing_typeV.value = { uuid: props.data.packing_type.uuid, name: props.data.packing_type.name };
         packingTypeFlag.value = false;
-    }
-    else if(props.data.tasks_of_type.name == 'CLASIFICAR PRODUCTO'){
-        packing_typeV.value = {"uuid":props.data.packing_type.uuid,"name":props.data.packing_type.name};
+    } else if (props.data.tasks_of_type.name == 'CLASIFICAR PRODUCTO') {
+        packing_typeV.value = { uuid: props.data.packing_type.uuid, name: props.data.packing_type.name };
         packingTypeFlag.value = false;
     }
 });
 
-const clearFields = async ()=> {
+const clearFields = async () => {
     selected_quanty.value = null;
     Total.value = null;
     select_tasks_type.value = null;
     Notas.value = null;
-}
-
+};
 
 const getLabor = async () => {
     const response = await getDonesWork();
-    
+
     if (!response.ok) toast.add({ severity: 'error', detail: 'Error' + response.error, life: 3000 });
     dones_work.value = response.data?.data ?? [];
 };
 
-const sendDailyReport = handleSubmitNew(async (values) => { 
+const sendDailyReport = handleSubmitNew(async (values) => {
     // const data = {
     //     loteCode: selected_crops_lots.value?.code,
     //     tasksTypeCode: select_tasks_type.value?.code,
@@ -192,47 +171,42 @@ const sendDailyReport = handleSubmitNew(async (values) => {
     // };
 
     const data = {
-    loteCode: values.selected_crops_lots?.code,
-    
-    quantity: values.selected_quanty,
-    notas: values.Notas,
-    tarifXCautity: values.selected_quanty * tarifa.value,
-    userId: props.slotProps.uuid,
-    tasksTypeCode: values.select_tasks_type?.code,
-    labor: values.selected_dones_work?.uuid,
-    packing_type: values.packing_typeV?.uuid
-    };
-console.log(data)
+        loteCode: values.selected_crops_lots?.code,
 
-    console.log("data", data);
+        quantity: values.selected_quanty,
+        notas: values.Notas,
+        tarifXCautity: values.selected_quanty * tarifa.value,
+        userId: props.slotProps.uuid,
+        tasksTypeCode: values.select_tasks_type?.code,
+        labor: values.selected_dones_work?.uuid,
+        packing_type: values.packing_typeV?.uuid
+    };
+    console.log(data);
+
+    console.log('data', data);
     const restp = await postDailyReport(data);
-    console.log(restp)
-    
-    
+    console.log(restp);
+
     toast.add({ severity: restp.ok ? 'success' : 'error', summary: 'Create', detail: restp.ok ? 'Creado' : restp.error, life: 10000 });
     //if (restp.ok) await clearFields();
     if (restp.ok) {
         emit('update-grandparent-data');
     }
-
 });
-
 
 const UpdateTotal = () => {
     Total.value = selected_quanty.value * tarifa.value;
 };
 
 const updateTaskTarif = async () => {
-    
     tarifa.value = await getTarif(select_tasks_type.value.code);
     // console.log("tarifa", tarifa.value);
     tarifa.value === 0 ? toast.add({ severity: 'error', summary: 'Tarifa', detail: 'NO existe tarifa definida', life: 10000 }) : '';
     laborActive.value = select_tasks_type.value?.label !== 'Task' && select_tasks_type.value?.name !== '' && select_tasks_type.value !== null;
     if (laborActive.value) {
-    
-        getLabor();}
+        getLabor();
+    }
 };
-
 
 watch(select_tasks_type, () => {
     updateTaskTarif();
@@ -249,23 +223,19 @@ const searchPackingType = (event) => {
         }
     }, 200);
 };
-
 </script>
 
 <template>
-    
-    
-    
-    <div class="grid p-fluid mt-3">      
+    <div class="grid p-fluid mt-3">
         <div class="field col-12 md:col-4">
             <!-- <pre>{{data.tasks_of_type.name  }}</pre>
             <pre>{{ data.packing_type }}</pre> -->
-            
+
             <!-- <pre>{{ selected_dones_work }}</pre> -->
             <span class="p-float-label">
                 <Dropdown v-model="select_tasks_type" :options="tipoActividad" filter optionLabel="label" />
                 <label class="font-bold" for="task_type">{{ t('appmovil.tipoActividad') }}</label>
-                
+
                 <!-- 
                 <pre>{{select_tasks_type_field}}</pre> -->
             </span>
@@ -287,10 +257,9 @@ const searchPackingType = (event) => {
                 <Dropdown v-model="selected_dones_work" :options="dones_work" filter optionLabel="name" />
                 <label class="font-bold" for="dones_work">{{ t('appmovil.labor') }}</label>
                 <!-- <pre>{{ selected_dones_work }}</pre> -->
-                
             </span>
             <FrontEndErrors :errorsNew="errorsNew" name="selected_dones_work" />
-            
+
             <!--Modificar acá-->
             <BackendErrors :name="errorResponseAPI?.errors?.done_of_type_uuid" />
         </div>

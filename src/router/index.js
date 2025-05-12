@@ -9,7 +9,7 @@ const router = createRouter({
     routes: [
         {
             path: '/',
-            component: Landing,
+            component: Landing
         },
         {
             path: '/applayout',
@@ -69,7 +69,7 @@ const router = createRouter({
                     name: 'unitTypes',
                     component: () => import('@/views/pages/product/UnitTypes/UnitTypes.vue')
                 },
-               
+
                 {
                     path: '/payrollsettings/PaymentTypes',
                     name: 'PaymentTypes',
@@ -80,7 +80,6 @@ const router = createRouter({
                     name: 'taskstarif',
                     component: () => import('@/views/pages/PayrollSettings/TasksTarif/TasksTarif.vue')
                 },
-
 
                 {
                     path: '/payrollsettings/taskstypes',
@@ -131,7 +130,6 @@ const router = createRouter({
                     component: () => import('@/views/pages/Production/CropLots/CropLots.vue')
                 },
 
-
                 {
                     path: '/production/Vehicles',
                     name: 'vehicles',
@@ -179,6 +177,11 @@ const router = createRouter({
                     name: 'JournalTransactions',
                     component: () => import('@/views/pages/PayrollSettlement/JournalTransactions/JournalTransactions.vue')
                 },
+                {
+                    path: '/PayrollSettlement/LedgerTransactions',
+                    name: 'LedgerTransactions',
+                    component: () => import('@/views/pages/PayrollSettlement/LedgerTransactions/LedgerTransactions.vue')
+                },
 
                 {
                     path: '/PayrollSettlement/TransferTasks',
@@ -202,7 +205,6 @@ const router = createRouter({
                     component: () => import('@/views/pages/PayrollSettlement/DiscountRegistering/DiscountRegistering.vue')
                 },
 
-
                 //////////////////////////////////////////////////////////////////
                 ////NOT SURE IF THE FOLLOWING ARE USED
                 {
@@ -223,14 +225,12 @@ const router = createRouter({
 
                 //////////////////////////////////////////////////////////////////
 
-
-
                 {
                     path: '/PayrollSettlement/WorkRegisterDaily',
                     name: 'WorkRegisterDaily',
                     component: () => import('@/views/pages/PayrollSettlement/WorkRegisterDaily/EmployeeDailyWork.vue')
                 },
-                
+
                 {
                     path: '/Commercial/CustomersRequests/CustomersRequests',
                     name: '/CustomersRequests',
@@ -269,13 +269,12 @@ const router = createRouter({
                     component: () => import('@/views/pages/System/Users/PlatformUsers.vue')
                 },
 
-                
                 {
                     path: '/system/roles',
                     name: 'roles',
                     component: () => import('@/views/pages/System/Roles/Roles.vue')
                 },
-                
+
                 {
                     path: '/system/permissions',
                     name: 'permissions',
@@ -296,7 +295,7 @@ const router = createRouter({
                 {
                     path: '/AppMovil/Corta',
                     name: 'appmovil_corta',
-                    component: () => import('@/views/pages/AppMovil/Deprecated/AppMovilCorta.vue')
+                    component: () => import('@/views/pages/AppMovil/Corta/AppMovilCorta.vue')
                 },
                 {
                     path: '/AppMovil/Corta/Envios',
@@ -309,29 +308,13 @@ const router = createRouter({
                     component: () => import('@/views/pages/AppMovil/Information/Receivings_appmovil.vue')
                 },
                 {
-                    path: '/AppMovil/PreFrio',
-                    name: 'appmovil_prefio',
-                    component: () => import('@/views/pages/AppMovil/Deprecated/AppMovilPreFrio.vue')
-                },
-                {
-                    path: '/AppMovil/Seleccion',
-                    name: 'appmovil_seleccion',
-                    component: () => import('@/views/pages/AppMovil/Deprecated/AppMovilSeleccion.vue')
-                },
-                {
                     path: '/AppMovil/Contractor',
                     name: 'appmovil_contractor',
-                    component: () => import('@/views/pages/AppMovil/Deprecated/AppMovilContractor.vue')
-                },
-                {
-                    path: '/AppMovil/Agronomo',
-                    name: 'appmovil_agronomo',
-                    component: () => import('@/views/pages/AppMovil/Deprecated/AppMovilAgronomo.vue')
-                },
-                
+                    component: () => import('@/views/pages/AppMovil/Contractor/AppMovilContractor.vue')
+                }
             ]
         },
-        
+
         {
             path: '/pages/crud',
             name: 'crud',
@@ -346,7 +329,7 @@ const router = createRouter({
             path: '/access',
             name: 'accessDenied',
             component: () => import('@/views/pages/auth/Access.vue')
-        },
+        }
     ]
 });
 

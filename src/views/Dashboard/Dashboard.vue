@@ -5,20 +5,20 @@ import { useLayout } from '@/layout/composables/layout';
 import ability from '@/service/ability.js';
 import { AbilityBuilder } from '@casl/ability';
 import useDataAPI from '@/composables/DataAPI/FetchDataAPI.js';
-import {fetchInfoDataLogged} from '@/composables/Login/InfoStorage.js';
+import { fetchInfoDataLogged } from '@/composables/Login/InfoStorage.js';
 import ConnectionManager from '@/components/WebSocket/ConnectionManager.vue';
 import ConnectionState from '@/components/WebSocket/ConnectionState.vue';
-import {socket} from '@/service/WebSocket/socket';
+import { socket } from '@/service/WebSocket/socket';
 // Reactive state variables
 const isLoading = ref(false);
-const value = ref("");
+const value = ref('');
 
 const onSubmit = () => {
-  isLoading.value = true;
+    isLoading.value = true;
 
-  socket.timeout(5000).emit("create-something", value.value, () => {
-    isLoading.value = false;
-  });
+    socket.timeout(5000).emit('create-something', value.value, () => {
+        isLoading.value = false;
+    });
 };
 
 const { layoutConfig } = useLayout();
@@ -41,37 +41,30 @@ const radarOptions = ref(null);
 
 let endpoint = ref('/employees');
 
-
 const updateAbility = async (token) => {
-  //const bearer = 'Bearer ' + token; 
-//   await getAllResponsePermissionsAPI("/abilities");
-//   console.log('updateAbility')
-// fetch('http://164.90.146.196:81/api/v1/abilities', {
-//     headers: {
-//         Authorization: bearer,
-//         accept: 'application/json'
-//     }
-// })
-//     .then((response) => response.json())
-//     .then((permissions) => {
-//         const { can, rules } = new AbilityBuilder();
-
-//         can(permissions);
-//         console.log(permissions)
-//         ability.update(rules);
-//         console.log(ability.can('rol_crear'))
-        
-//     });
+    //const bearer = 'Bearer ' + token;
+    //   await getAllResponsePermissionsAPI("/abilities");
+    //   console.log('updateAbility')
+    // fetch('http://164.90.146.196:81/api/v1/abilities', {
+    //     headers: {
+    //         Authorization: bearer,
+    //         accept: 'application/json'
+    //     }
+    // })
+    //     .then((response) => response.json())
+    //     .then((permissions) => {
+    //         const { can, rules } = new AbilityBuilder();
+    //         can(permissions);
+    //         console.log(permissions)
+    //         ability.update(rules);
+    //         console.log(ability.can('rol_crear'))
+    //     });
 };
 onMounted(async () => {
     fetchInfoDataLogged();
-    
+
     //updateAbility(sessionStorage.getItem('accessSessionToken'));
     //updateAbility();
-    
-    
-
-    
 });
 const setColorOptions = () => {
     documentStyle = getComputedStyle(document.documentElement);
@@ -289,11 +282,10 @@ watch(
     },
     { immediate: true }
 );
- 
+
 //=======================================================================
 const { isDarkTheme } = useLayout();
 const products = ref(null);
-
 
 const productService = new ProductService();
 
@@ -378,26 +370,16 @@ watch(
 </script>
 
 <template>
-        
-
-            
     <div class="grid">
-        <div class="col-12 lg:col-12 xl:col-12" >          
-                <ConnectionManager />
+        <div class="col-12 lg:col-12 xl:col-12">
+            <ConnectionManager />
         </div>
-        <div>
-  </div>
+        <div></div>
 
-
-                        
-                                
-          <div class="col-12 lg:col-6 xl:col-3"  >
-            
-            <div class="card mb-0" >
-                
+        <div class="col-12 lg:col-6 xl:col-3">
+            <div class="card mb-0">
                 <div class="flex justify-content-between mb-3">
                     <div>
-                        
                         <span class="block text-500 font-medium mb-3">Icopores (Corta)</span>
                         <div class="text-900 font-medium text-xl">152 Recogidos</div>
                     </div>
@@ -406,13 +388,13 @@ watch(
                     </div>
                 </div>
                 <div>
-                <span class="text-green-500 font-medium">102 </span>
-                <span class="text-500">Enviados</span>
-            </div>
-            <div>
-                <span class="text-red-500 font-medium">50 </span>
-                <span class="text-500">Por enviar</span>
-            </div>
+                    <span class="text-green-500 font-medium">102 </span>
+                    <span class="text-500">Enviados</span>
+                </div>
+                <div>
+                    <span class="text-red-500 font-medium">50 </span>
+                    <span class="text-500">Por enviar</span>
+                </div>
             </div>
         </div>
 
@@ -428,17 +410,17 @@ watch(
                     </div>
                 </div>
                 <div>
-                <span class="text-green-500 font-medium">71 </span>
-                <span class="text-500">Enviados</span>
-            </div>
-            <div>
-                <span class="text-red-500 font-medium">31 </span>
-                <span class="text-500">Por enviar</span>
-            </div>
+                    <span class="text-green-500 font-medium">71 </span>
+                    <span class="text-500">Enviados</span>
+                </div>
+                <div>
+                    <span class="text-red-500 font-medium">31 </span>
+                    <span class="text-500">Por enviar</span>
+                </div>
             </div>
         </div>
 
-        <div class="col-12 lg:col-6 xl:col-3" >
+        <div class="col-12 lg:col-6 xl:col-3">
             <div class="card mb-0">
                 <div class="flex justify-content-between mb-3">
                     <div>
@@ -450,18 +432,17 @@ watch(
                     </div>
                 </div>
                 <div>
-                <span class="text-green-500 font-medium">41 </span>
-                <span class="text-500">Enviados</span>
-            </div>
-            <div>
-                <span class="text-red-500 font-medium">30 </span>
-                <span class="text-500">Por enviar</span>
-            </div>
-                
+                    <span class="text-green-500 font-medium">41 </span>
+                    <span class="text-500">Enviados</span>
+                </div>
+                <div>
+                    <span class="text-red-500 font-medium">30 </span>
+                    <span class="text-500">Por enviar</span>
+                </div>
             </div>
         </div>
-        
-        <div class="col-12 lg:col-6 xl:col-3" >
+
+        <div class="col-12 lg:col-6 xl:col-3">
             <div class="card mb-0">
                 <div class="flex justify-content-between mb-3">
                     <div>
@@ -490,10 +471,8 @@ watch(
                 <span class="text-green-500 font-medium">520 </span>
                 <span class="text-500">Pendientes</span>
             </div>
-        </div> 
+        </div>
 
-
-        
         <div class="col-12 xl:col-12">
             <div class="card">
                 <h5>Icopores por semana</h5>
@@ -505,8 +484,6 @@ watch(
                 <h5 class="text-left w-full">Productos Mensual</h5>
                 <Chart type="pie" :data="pieData" :options="pieOptions"></Chart>
             </div>
-        </div> 
-
+        </div>
     </div>
-    
 </template>

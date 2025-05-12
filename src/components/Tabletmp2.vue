@@ -2,9 +2,8 @@
 import { FilterMatchMode, FilterOperator } from 'primevue/api';
 import TableService from '@/service/TableService';
 import { onMounted, ref, toRefs, onBeforeMount, watch, inject } from 'vue';
-import useRestrictionUnitTypes from '@/composables/Product/UnitsType/restrictionsUnitType.js'
+import useRestrictionUnitTypes from '@/composables/Product/UnitsType/restrictionsUnitType.js';
 import { useToast } from 'primevue/usetoast';
-
 
 /**
  * The `const props = defineProps({ ... })` statement is defining the props for the Table component.
@@ -28,15 +27,11 @@ const props = defineProps({
     dataMod: {
         type: String
     },
-    
-        dataGot:{
-            type: Object
-        }
-    
+
+    dataGot: {
+        type: Object
+    }
 });
-
-
-
 </script>
 <template>
     <div class="col-12 md:col-12">

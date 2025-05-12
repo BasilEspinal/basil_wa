@@ -1,7 +1,7 @@
 <script setup>
 // This is the Login Page withut any fixed about layout
 
-import { ref,computed } from 'vue';
+import { ref, computed } from 'vue';
 import { useRouter } from 'vue-router';
 import { useToast } from 'primevue/usetoast';
 import Toast from 'primevue/toast';
@@ -15,16 +15,21 @@ import { useAbilityStore } from '@/stores/abilities';
 import ability from '@/service/ability.js';
 import { useI18n } from 'vue-i18n';
 import { ensureTokenStored } from '@/utils/tokenUtils';
+import { useAppMovilService } from '@/service/appMovil/appMovilService_V3';
+const { refreshSessionState } = useAppMovilService();
 
 const { layoutConfig } = useLayout();
-const abilityStore = useAbilityStore()
+const abilityStore = useAbilityStore();
 const toast = useToast();
 const { t } = useI18n();
-const { getRequest, postRequest, putRequest, deleteRequest,errorResponseAPI } = useData();
+const { getRequest, postRequest, putRequest, deleteRequest, errorResponseAPI } = useData();
 let endpoint = ref('/login');
-const token = ref('')
+const token = ref('');
 const count = ref(0);
-const { values, errors, defineField } = useForm({initialValues: { email: 'admin@agroonline.com', password: '!password!' },
+//const { values, errors, defineField } = useForm({initialValues: { email: 'admin@agroonline.com', password: '!password!' },
+const { values, errors, defineField } = useForm({
+    initialValues: { email: 'admin@agroonline.com', password: '' },
+
     validationSchema: toTypedSchema(
         z.object({
             email: z.string().min(3).email(),
@@ -38,57 +43,55 @@ const logoUrl = computed(() => {
 });
 
 const fetchInfoPostLogin = async (data) => {
-  try {
-    let response = await postRequest(endpoint.value, { email: email.value, password: password.value });
-    response = response.data.data;
-    console.log(response);
-    if (response['error']) throw response.error;
-    if (!response['user']) throw response.error;
+    try {
+        let response = await postRequest(endpoint.value, { email: email.value, password: password.value });
+        response = response.data.data;
+        console.log(response);
+        if (response['error']) throw response.error;
+        if (!response['user']) throw response.error;
 
-    token.value = response.token;
+        token.value = response.token;
 
-    const user = response.user.name;
-    sessionStorage.setItem('accessSessionToken', token.value);
-    sessionStorage.setItem('accessSessionUser', user);
-    localStorage.setItem('accesSessionUsers', user);
-    localStorage.setItem('accessSessionToken', token.value);
-    await ensureTokenStored();
+        const user = response.user.name;
+        sessionStorage.setItem('accessSessionToken', token.value);
+        sessionStorage.setItem('accessSessionUser', user);
 
-    if (!token.value) {
-    console.error('No token found in sessionStorage')
-    
-  } else {
-     await abilityStore.fetchAbilities();
-     const abilities = abilityStore.getAbilities;
-    const { can, cannot, rules } = new AbilityBuilder();
-    abilities.forEach(({ action, subject }) => {
-    can(action, subject); 
-});
-    ability.update(rules);
-  }
-    
-    toast.add({ severity: 'success', detail: 'Success', content: 'Successful Login', id: count.value++ });
-    router.push('/applayout');
-    
-    return true;
-  } catch (error) {
-    toast.add({ severity: 'error', detail: 'Error Response', content: error, id: count.value++ });
-    console.error('Error:', error);
-    return false;
-  }
+        localStorage.setItem('accesSessionUsers', user);
+        localStorage.setItem('accessSessionToken', token.value);
+        await refreshSessionState(); // ✅ RELOAD reactivity
+        await ensureTokenStored();
+
+        if (!token.value) {
+            console.error('No token found in sessionStorage');
+        } else {
+            await abilityStore.fetchAbilities();
+            const abilities = abilityStore.getAbilities;
+            const { can, cannot, rules } = new AbilityBuilder();
+            abilities.forEach(({ action, subject }) => {
+                can(action, subject);
+            });
+            ability.update(rules);
+        }
+
+        toast.add({ severity: 'Autorizado', detail: 'Success', content: 'Credenciales correctas', id: count.value++ });
+        router.push('/applayout');
+
+        return true;
+    } catch (error) {
+        toast.add({ severity: 'error', detail: 'Credenciales incorrectas', content: error, id: count.value++ });
+        console.error('Error:', error);
+        return false;
+    }
 };
 
 const onSubmit = async () => {
     await fetchInfoPostLogin();
-   
 };
 
 const [email, emailAttrs] = defineField('email');
 const [password, passwordAttrs] = defineField('password');
 const router = useRouter();
-
 </script>
-
 
 <template>
     <div class="surface-ground flex align-items-center justify-content-center min-h-screen min-w-screen overflow-hidden" style="background: linear-gradient(180deg, var(--paleta-400) 5%, var(--paleta-100) 15%)">

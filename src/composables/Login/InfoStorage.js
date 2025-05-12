@@ -11,7 +11,7 @@ export const fetchInfoDataLogged = async () => {
         console.log('Date :', response.data.meta.server_date_answer);
         const meta = response.data.meta;
         const { farm, company, employee, user_email } = response.data.data;
-        const employeeName = employee.full_name; 
+        const employeeName = employee.full_name;
         sessionStorage.setItem('accessSessionEmail', user_email);
         sessionStorage.setItem('accessSessionEmail', user_email);
         localStorage.setItem('accesSessionEmail', user_email);
@@ -31,7 +31,6 @@ export const fetchInfoDataLogged = async () => {
         sessionStorage.setItem('accessSessionWorkCenter', JSON.stringify(employee.workCenter));
         // localStorage.setItem('accessSessionDate', meta.server_date_answer);
         sessionStorage.setItem('accessSessionDate', meta.server_date_answer);
-
 
         return response;
     } catch (error) {

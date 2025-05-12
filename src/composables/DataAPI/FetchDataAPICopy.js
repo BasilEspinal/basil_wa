@@ -1,7 +1,11 @@
 import useSettingsAPI from '@/composables/DataAPI/settings_API';
 import { ref } from 'vue';
-export default function useData() {
-    const { pathAPI, APISettings } = useSettingsAPI();
+
+export default function useData(locale = 'en') {
+    const { pathAPI, APISettings } = useSettingsAPI(locale);
+
+    //const { pathAPI, APISettings } = useSettingsAPI(locale);
+
     const token = ref();
     let errorResponseAPI = ref('Error no filled');
     let base = pathAPI().base;
@@ -20,8 +24,6 @@ export default function useData() {
     initializeToken();
     APISettings.headers.set('Content-Type', 'application/json');
     APISettings.headers.set('Access-Control-Allow-Origin', '*');
-    APISettings.headers.set('Accept-Language', 'es');
-    // APISettings.headers.set('Authorization', 'Bearer ' + token.value);
 
     async function getRequest(endPoint) {
         initializeToken();
@@ -46,10 +48,6 @@ export default function useData() {
         }
         return responseData;
     }
-
-  
-    
-    
 
     async function postRequest(endPoint, data) {
         let responseData = { data: [], error: '', ok: false };

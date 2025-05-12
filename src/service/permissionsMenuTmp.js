@@ -1,7 +1,4 @@
-// nombre-del-archivo.js
-
 const elementosVista = [
-    
     'rol_menu',
     'permisos_menu',
     'usuario_menu',
@@ -52,7 +49,6 @@ const elementosVista = [
     'sistema_roles_menu',
     'sistema_permisos_menu',
     'sistema_estadoDeRegistros_menu'
-  ];
-  
-  export default elementosVista;
-  
+];
+
+export default elementosVista;

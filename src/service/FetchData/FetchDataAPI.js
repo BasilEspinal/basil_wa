@@ -1,8 +1,8 @@
 // Objetivo: Crear un hook para realizar peticiones a la API
 import useSettingsAPI from '@/service/FetchData/API_Settings';
 import { ref } from 'vue';
-export default function useData() {
-    const { pathAPI, APISettings } = useSettingsAPI();
+export default function useData(locale = 'en') {
+    const { pathAPI, APISettings } = useSettingsAPI(locale);
     const token = ref();
     let errorResponseAPI = ref('Error no filled');
     let base = pathAPI().base;
@@ -13,9 +13,7 @@ export default function useData() {
         token.value = sessionStorage.getItem('accessSessionToken');
         if (token.value) {
             APISettings.headers.set('Authorization', 'Bearer ' + token.value);
-            
         }
-
     };
 
     initializeToken();
@@ -108,7 +106,6 @@ export default function useData() {
         } catch (e) {
             console.error('Error en la solicitud POST:', e.message);
             responseData.error += ' ' + e.message;
-
         }
         return responseData;
     }
@@ -122,20 +119,18 @@ export default function useData() {
             headers: APISettings.headers,
             body: JSON.stringify({})
         };
-        
+
         try {
             const response = await fetch(baseUrl, requestOptions);
-            
+
             responseData.ok = response.ok;
 
-                    // Maneja las respuestas con contenido o sin contenido
-        if (response.status === 204) {
-            responseData.data = null; // No hay contenido, data queda como null
-        } else {
-            responseData.data = await response.json(); // Solo intenta parsear si hay contenido
-        }
-
-
+            // Maneja las respuestas con contenido o sin contenido
+            if (response.status === 204) {
+                responseData.data = null; // No hay contenido, data queda como null
+            } else {
+                responseData.data = await response.json(); // Solo intenta parsear si hay contenido
+            }
 
             if (!response.ok) {
                 responseData.error = response.statusText;

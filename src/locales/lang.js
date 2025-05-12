@@ -1,4 +1,4 @@
-import JournalTransactions from "../views/pages/PayrollSettlement/JournalTransactions/JournalTransactions.vue";
+import JournalTransactions from '../views/pages/PayrollSettlement/JournalTransactions/JournalTransactions.vue';
 
 export const messages = {
     en: {
@@ -84,7 +84,6 @@ export const messages = {
             name: 'Farm Name'
         },
         menu: {
-
             dashboards: 'Dashboards',
             controlCenter: 'Control Center',
             monitorOnline: 'Online Monitor',
@@ -101,20 +100,19 @@ export const messages = {
                 productOffers: 'Product Offers',
                 clientRequests: 'Client Requests',
                 clients: 'Clients',
-                deliveries: 'Deliveries',
+                deliveries: 'Deliveries'
             },
             productOffers: 'Product Offers',
             clientRequests: 'Client Requests',
             clients: 'Clients',
             deliveries: 'Deliveries',
-            production: 
-            {
-                name:'Production',
+            production: {
+                name: 'Production',
                 cropLots: 'Crop Lots',
                 vehicles: 'Vehicles',
-                lotScheduling: 'Lot Scheduling',
+                lotScheduling: 'Lot Scheduling'
             },
-            
+
             cultivationLots: 'Cultivation Lots',
             vehicles: 'Vehicles',
             lotScheduling: 'Lot Scheduling',
@@ -131,25 +129,30 @@ export const messages = {
             workCenters: 'Work Centers',
             jobTypes: 'Job Types',
             employees: 'Employees',
-            payrollSettlement: 
-            
-            {title:'Payroll Settlement',
-            subTitle: 'Payroll Settlement',
-            JournalTransactions: {
-                title: 'Journal Transactions',
-                subTitle: 'Journal Transactions',
+            payrollSettlement: {
+                title: 'Payroll Settlement',
+                subTitle: 'Payroll Settlement',
+                JournalTransactions: {
+                    title: 'Journal Transactions',
+                    subTitle: 'Journal Transactions'
+                },
+                LedgerTransactions: {
+                    title: 'Ledger Transactions',
+                    subTitle: 'Ledger Transactions'
                 }
             },
+
             dailyPlanning: 'Daily Planning',
             dailyTransactions: 'Daily Transactions',
             dailyTransactionsContractor: 'Daily Transactions Contractor',
             shipping: {
                 shippingProcess: 'Shipping Process',
-                tabs:{
+                tabs: {
                     shipping: 'Shipping',
                     received: 'Received',
-                    discrepancies: 'Discrepancies',
-                }},
+                    discrepancies: 'Discrepancies'
+                }
+            },
             transferToPrefrio: 'Transfer to Prefrio',
             dailySettlement: 'Daily Settlement',
             employeeSummary: 'Employee Summary',
@@ -172,8 +175,6 @@ export const messages = {
             contractorCapture: 'Contractor Capture',
             agronomyCapture: 'Agronomy Capture'
         },
-            
-
 
         appmovil: {
             information: 'Planning information',
@@ -181,7 +182,7 @@ export const messages = {
             quantityRequested: 'Quantity Requested',
             centroTrabajo: 'Work Centers',
             titulo: 'Daily work of ',
-            
+
             users: 'Users',
             detalles: ' Details',
             resumen: 'Summary',
@@ -220,9 +221,8 @@ export const messages = {
             infonolotes: 'There are no batches scheduled for today despite the data planned',
             shipping: {
                 shippingProcess: 'Shipping Process',
-                deliveryProcess: 'Delivery Process',
-            },
-            
+                deliveryProcess: 'Delivery Process'
+            }
         }
     },
     es: {
@@ -316,7 +316,6 @@ export const messages = {
         },
 
         menu: {
-
             dashboards: 'Tableros',
             controlCenter: 'Centro de Control',
             monitorOnline: 'Monitor en Línea',
@@ -333,18 +332,17 @@ export const messages = {
                 productOffers: 'Ofertas de Producto',
                 clientRequests: 'Solicitudes de Clientes',
                 clients: 'Clientes',
-                deliveries: 'Despachos',
+                deliveries: 'Despachos'
             },
             productOffers: 'Ofertas de Producto',
             clientRequests: 'Solicitudes de Clientes',
             clients: 'Clientes',
             deliveries: 'Despachos',
-            production: 
-            {
-                name:'Producción',
+            production: {
+                name: 'Producción',
                 cropLots: 'Lotes para corte',
                 vehicles: 'Vehiculos',
-                lotScheduling: 'Planeación de lotes',
+                lotScheduling: 'Planeación de lotes'
             },
             cultivationLots: 'Lotes para Cultivo',
             vehicles: 'Vehículos',
@@ -362,24 +360,28 @@ export const messages = {
             workCenters: 'Centros de Trabajo',
             jobTypes: 'Cargos',
             employees: 'Empleados',
-            payrollSettlement: 
-            {title:'Liquidación de Nómina',
-            subTitle: 'Liquidación de Nómina',
-            JournalTransactions: {
-                title: 'Diario de transacciones',
-                subTitle: 'Diario de transacciones',
-                
+            payrollSettlement: {
+                title: 'Liquidación de Nómina',
+                subTitle: 'Liquidación de Nómina',
+                JournalTransactions: {
+                    title: 'Diario de transacciones',
+                    subTitle: 'Diario de transacciones'
+                },
+                LedgerTransactions: {
+                    title: 'Totalizado por libro',
+                    subTitle: 'Transacciones por libro'
                 }
             },
+
             dailyPlanning: 'Planeación Diaria',
             dailyTransactions: 'Transacciones del Día',
             dailyTransactionsContractor: 'Transacciones del Día Contratista',
             shipping: {
                 shippingProcess: 'Proceso de Envío',
-                tabs:{
+                tabs: {
                     shipping: 'Envío',
                     received: 'Recibidos',
-                    discrepancies: 'Discrepancias',
+                    discrepancies: 'Discrepancias'
                 }
             },
             transferToPrefrio: 'Traslado a Prefrio',
@@ -442,17 +444,14 @@ export const messages = {
             noemployeeAssigned: 'No hay empleado asignado',
             noemployeesAvailable: 'No hay empleados disponibles',
             infonoemployeeAssigned: 'No hay empleado asignado al usuario',
-            nodataplanner: 'No hay planeación diaria' ,
+            nodataplanner: 'No hay planeación diaria',
             infonodataplanner: 'No hay datos planeados, por favor verifique la configuración del centro de trabajo, la compañía y la finca.',
             nolotes: 'No hay lotes',
             infonolotes: 'No hay lotes programados para hoy a pesar de los datos planeados',
             shipping: {
                 shippingProcess: 'Proceso de Envío',
-                deliveryProcess: 'Proceso de Entrega',
-            },
-            
-            
-            
+                deliveryProcess: 'Proceso de Entrega'
+            }
         }
     }
 };

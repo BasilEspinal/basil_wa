@@ -1,10 +1,8 @@
 <script setup>
-import { ref,watch, onMounted, provide } from 'vue';
+import { ref, watch, onMounted, provide } from 'vue';
 import { useToast } from 'primevue/usetoast';
 
-
-import useRestrictionUnitTypes from '@/composables/Product/UnitsType/restrictionsUnitType.js'
-import useDataAPI from '@/composables/DataAPI/FetchDataAPI.js'
+import useRestrictionUnitTypes from '@/composables/Product/UnitsType/restrictionsUnitType.js';
 
 const emits = defineEmits([]);
 const toast = useToast();
@@ -25,18 +23,14 @@ const extenciones = ref([
     }
 ]);
 const format = ref('');
-let requestData = {}
+let requestData = {};
 
 const listRowSelect = ref([]);
 const RowSelect = (data) => {
     listRowSelect.value = data;
-
 };
 let headerNames = ref([]);
-const onHeaderNames = (data) => (
-    headerNames.value = data
-
-);
+const onHeaderNames = (data) => (headerNames.value = data);
 
 const isChanging = ref(false);
 provide('isChanging', isChanging);
@@ -59,10 +53,9 @@ const openEdit = () => {
 
     for (let key in listRowSelect.value[0]) {
         if (key == 'id') {
-            idEditUnitTypes.value = listRowSelect.value[0][key]
+            idEditUnitTypes.value = listRowSelect.value[0][key];
             continue;
-        }
-        else if (!(key == conditionsUnitType[0].label || key == conditionsUnitType[1].label)) continue
+        } else if (!(key == conditionsUnitType[0].label || key == conditionsUnitType[1].label)) continue;
         headerNamesRow.value.push({
             label: key,
             type: typeof listRowSelect.value[0][key] == 'number' ? 'number' : 'text',
@@ -70,10 +63,8 @@ const openEdit = () => {
             id: idEditUnitTypes,
             selecti: true
         });
-
     }
     productDialog.value = true;
-    
 };
 
 const openNew = () => {
@@ -82,18 +73,16 @@ const openNew = () => {
     for (let key in headerNamesRow.value) {
         if (key == 'id') continue;
         else if (!(key == conditionsUnitType[0].label || key == conditionsUnitType[1].label)) {
-            continue
+            continue;
         }
         headerNamesRow.value.push({
             label: key,
             type: typeof headerNamesRow.value[key] == 'number' ? 'number' : 'text',
             data: ''
         });
-
     }
 
     productDialog.value = true;
-
 };
 
 const openClone = () => {
@@ -103,8 +92,7 @@ const openClone = () => {
     for (let key in headerNamesRow.value) {
         if (key == 'id') continue;
         else if (!(key == conditionsUnitType[0].label || key == conditionsUnitType[1].label)) {
-
-            continue
+            continue;
         }
         headerNamesRow.value.push({
             label: key,
@@ -138,16 +126,16 @@ const hideDialog = () => {
 };
 
 const saveProduct = () => {
-  let data = [];
+    let data = [];
 
     if (mode.value == 'DELETE') {
         headerNamesRow.value.map((item) => {
             if (item.selecti) {
                 data.push(item.id);
-                dropUnitTypes(item.id)
+                dropUnitTypes(item.id);
             }
         });
-        isChanging.value = true
+        isChanging.value = true;
     } else if (mode.value == 'EXPORT') {
         if (format.value == '') {
             toast.add({ severity: 'error', summary: 'Select Format', detail: 'Must select a format', life: 3000 });
@@ -157,50 +145,44 @@ const saveProduct = () => {
             data: format.value.code,
             name: filename.value + (format.value.code ? '.csv' : '.xls')
         };
-        isChanging.value = true
-    }
-    else if (mode.value == 'NEW') {
+        isChanging.value = true;
+    } else if (mode.value == 'NEW') {
         data = headerNamesRow.value.map((heade) => {
             const data = {};
             data[heade.label] = heade.data;
-            dataTmp = data
+            dataTmp = data;
             return data;
         });
 
-
         requestData = data.reduce((result, currentObject) => {
-
             const [key] = Object.keys(currentObject);
             const value = currentObject[key];
             result[key] = value;
             return result;
         }, {});
 
-        newUnitTypes(requestData)
-        isChanging.value = true
+        newUnitTypes(requestData);
+        isChanging.value = true;
 
         toast.add({ severity: 'success', summary: 'Successful', detail: 'UnitTypes Updated', life: 3000 });
         toast.add({ severity: 'error', summary: 'There are some errores', detail: 'Must correct those ones', life: 3000 });
         if (errorUnitTypes) {
             const keys = Object.keys(errorUnitTypes);
-            console.log("Lista de errores")
-            console.log(errorUnitTypes)
-            keys.forEach(key => {
-                console.log("Tengo un error")
+            console.log('Lista de errores');
+            console.log(errorUnitTypes);
+            keys.forEach((key) => {
+                console.log('Tengo un error');
                 console.log(`[${key}]:`, errorUnitTypes[key]);
             });
         }
-    }
-
-    else if (mode.value == 'CLONE') {
+    } else if (mode.value == 'CLONE') {
         data = headerNamesRow.value.map((heade) => {
             const data = {};
             data[heade.label] = heade.data;
-            dataTmp = data
+            dataTmp = data;
 
             return data;
         });
-
 
         requestData = data.reduce((result, currentObject) => {
             const [key] = Object.keys(currentObject);
@@ -208,21 +190,17 @@ const saveProduct = () => {
             result[key] = value;
             return result;
         }, {});
-        newUnitTypes(requestData)
-        isChanging.value = true
-    }
-    else if (mode.value == 'EDIT') {
-        let id = 0
+        newUnitTypes(requestData);
+        isChanging.value = true;
+    } else if (mode.value == 'EDIT') {
+        let id = 0;
         data = headerNamesRow.value.map((heade) => {
             const data = {};
             data[heade.label] = heade.data;
-            dataTmp = data
-            if (heade.selecti)
-                id = heade.id
+            dataTmp = data;
+            if (heade.selecti) id = heade.id;
             return data;
-
         });
-
 
         requestData = data.reduce((result, currentObject) => {
             const [key] = Object.keys(currentObject);
@@ -231,24 +209,19 @@ const saveProduct = () => {
             return result;
         }, {});
 
-        updateUnitTypes(requestData, id)
-        isChanging.value = true
-
+        updateUnitTypes(requestData, id);
+        isChanging.value = true;
     }
     //toast.add({ severity: 'success', summary: 'Successful', detail: 'Product Updated', life: 3000 });
     productDialog.value = false;
     deleteProducts.value = false;
     exportDialog.value = false;
-
-    
 };
-
 </script>
 
 <template>
     <div class="grid">
         <div class="col-12">
-
             <Toolbar>
                 <template v-slot:start>
                     <div>
@@ -279,7 +252,6 @@ const saveProduct = () => {
                 <div>
                     <Button label="Cancel" icon="pi pi-times" class="p-button-text" @click="hideDialog" />
                     <Button label="Save" icon="pi pi-check" class="p-button-text" @click="saveProduct" />
-                    
                 </div>
             </template>
         </Dialog>

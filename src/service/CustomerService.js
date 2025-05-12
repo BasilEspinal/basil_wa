@@ -29,5 +29,4 @@ export default class CustomerService {
             .join('&');
         return fetch('https://www.primefaces.org//demo/data/customers?' + queryParams).then((res) => res.json());
     }
-
 }
