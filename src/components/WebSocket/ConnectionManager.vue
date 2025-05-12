@@ -83,10 +83,10 @@ const updateKPICard = (kpiName, data) => {
     <div>
         <div>
             <h2>
-                Connection Status:
+                Conexión WebSocket:
 
-                <span v-if="isConnected">Connected ✅</span>
-                <span v-else>Disconnected ❌</span>
+                <span v-if="isConnected">Conectada ✅</span>
+                <span v-else>Desactivada ❌</span>
             </h2>
 
             <!-- <div id="indicatorCards">
@@ -103,10 +103,10 @@ const updateKPICard = (kpiName, data) => {
           Update {{ kpi.name }}
         </button>
       </div> -->
-            <pre>{{ kpis }}</pre>
+            <!-- <pre>{{ kpis }}</pre> -->
             <div id="jsonResponse">
-                <h3>JSON Response:</h3>
-                <pre>{{ jsonResponse }}</pre>
+                <!-- <h3>JSON Response:</h3> -->
+                <!-- <pre>{{ jsonResponse }}</pre> -->
             </div>
 
             <!-- <input v-model="sentValue" type="number" placeholder="Sent Value" />

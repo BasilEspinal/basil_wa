@@ -188,10 +188,10 @@ const functionsData = async () => {
     // ✅ Inicializa los datos de sesión
     //await refreshSessionState(); // <--- LLAMAR ESTO ANTES DE initData()
 
-    console.log('TASK_OF_TYPE:', TASK_OF_TYPE?.id);
-    console.log('fetchWorkCenter:', fetchWorkCenter.value);
-    console.log('fetchFarmId:', sessionStorage.getItem('accessSessionFarmId'));
-    console.log('fetchCompanyId:', sessionStorage.getItem('accessSessionCompanyId'));
+    // console.log('TASK_OF_TYPE:', TASK_OF_TYPE?.id);
+    // console.log('fetchWorkCenter:', fetchWorkCenter.value);
+    // console.log('fetchFarmId:', sessionStorage.getItem('accessSessionFarmId'));
+    // console.log('fetchCompanyId:', sessionStorage.getItem('accessSessionCompanyId'));
 
     await initData(); // this refreshes session and loads planner/holiday/type
 

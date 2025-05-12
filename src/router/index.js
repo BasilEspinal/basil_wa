@@ -295,7 +295,7 @@ const router = createRouter({
                 {
                     path: '/AppMovil/Corta',
                     name: 'appmovil_corta',
-                    component: () => import('@/views/pages/AppMovil/Contractor/AppMovilCorta.vue')
+                    component: () => import('@/views/pages/AppMovil/Corta/AppMovilCorta.vue')
                 },
                 {
                     path: '/AppMovil/Corta/Envios',
