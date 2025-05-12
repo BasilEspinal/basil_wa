@@ -73,12 +73,12 @@ const fetchInfoPostLogin = async (data) => {
             ability.update(rules);
         }
 
-        toast.add({ severity: 'success', detail: 'Success', content: 'Successful Login', id: count.value++ });
+        toast.add({ severity: 'Autorizado', detail: 'Success', content: 'Credenciales correctas', id: count.value++ });
         router.push('/applayout');
 
         return true;
     } catch (error) {
-        toast.add({ severity: 'error', detail: 'Error Response', content: error, id: count.value++ });
+        toast.add({ severity: 'error', detail: 'Credenciales incorrectas', content: error, id: count.value++ });
         console.error('Error:', error);
         return false;
     }
