@@ -298,14 +298,20 @@ const updateData = async () => {
 
 <template>
     <!-- <pre>{{ compareStoredDate() }}</pre> -->
-    <h1>El empleado pertenece a:</h1>
-    <h2>{{ titulo}} Departamento: {{ fetchWorkCenter?.name || 'Cargando...' }}</h2>
+    <h1 v-if="fetchWorkCenter?.name ">El empleado pertenece a:</h1>
+    <h2 v-if="fetchWorkCenter?.name ">{{ titulo}} Departamento: {{ fetchWorkCenter?.name || 'Cargando...' }}</h2>
+
+    <h3 v-if="!fetchWorkCenter?.name ">
+        
+        <ErrorAppMovil title="No tiene empleado asociado a ningún departamento" :logo-url="logoUrl" />
+    </h3>
 
     <div v-if="loading" class="flex align-items-center justify-content-center" style="height: 100vh">
         <ProgressSpinner />
     </div>
+    
 
-    <div v-else-if="dataApp" class="card maxHeightY">
+    <div v-else-if="dataApp && fetchWorkCenter?.name" class="card maxHeightY">
         <div v-if="!dataApp.crop_lots">
             <ErrorAppMovil :title="t('appmovil.nolotes')" :description="t('appmovil.infonolotes')" :logo-url="logoUrl" />
         </div>
@@ -527,7 +533,7 @@ const updateData = async () => {
     </div>
 
     <div v-else>
-        <ErrorAppMovil :title="t('appmovil.nodataplanner') + ' ' + TASK_OF_TYPE?.name" :description="t('appmovil.infonodataplanner')" :logo-url="logoUrl" />
+        <ErrorAppMovil :title="t('appmovil.nodataplanner') + ' ' + TASK_OF_TYPE?.name" :description="t('appmovil.infonodataplanner')" :logo-url="logoUrl" v-if="fetchWorkCenter?.name"/>
     </div>
 </template>
 
