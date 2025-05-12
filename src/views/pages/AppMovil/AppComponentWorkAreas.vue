@@ -18,6 +18,7 @@ const { t } = useI18n();
 const toast = useToast();
 const { layoutConfig } = useLayout();
 
+
 const { refreshSessionState, HOLIDAY, initData, TASK_OF_TYPE, fetchWorkCenter, getUsers, getDataTasksplanner, getInfoEmployees } = useAppMovilService();
 
 const titulo = ref('');
