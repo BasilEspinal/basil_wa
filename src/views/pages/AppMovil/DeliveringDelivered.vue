@@ -13,7 +13,7 @@ import ability from '@/service/ability.js';
 import { CrudService } from '@/service/CRUD/CrudService';
 import { InitialDataService } from '@/service/InitialData';
 import { computed } from 'vue';
-import { useAppMovilService } from '@/service/appMovil/oldFiles/appMovilService.js';
+import { useAppMovilService } from '@/service/appMovil/OldFiles/appMovilService.js';
 
 const { t } = useI18n();
 const toast = useToast();
