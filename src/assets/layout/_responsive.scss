@@ -3,6 +3,7 @@
         width: 1504px;
         margin-left: auto !important;
         margin-right: auto !important;
+        
     }
 
 }
@@ -22,6 +23,7 @@
                 height: 100vh;
                 border-top-left-radius: 0;
                 border-bottom-left-radius: 0;
+                
             }
 
             &.layout-overlay-active {
@@ -64,6 +66,7 @@
         .layout-main-container {
             margin-left: 0;
             padding-left: 2rem;
+            
         }
 
         .layout-sidebar {

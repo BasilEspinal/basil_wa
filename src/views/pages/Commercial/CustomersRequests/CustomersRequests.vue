@@ -260,6 +260,38 @@ const readAll = async () => {
         sizeOptions.value = data;
     });
 
+    const respPackingsType = await InitialDataService.getPackingTypes();
+    if (!respPackingsType.ok) toast.add({ severity: 'error', detail: 'Error' + respPackingsType.error, life: 3000 });
+    PackingTypes.value = respPackingsType.data.data.map((packing) => ({ id: packing.uuid, name: packing.name }));
+
+    const respProducts = await InitialDataService.getProducts();
+    if (!respProducts.ok) toast.add({ severity: 'error', detail: 'Error' + respProducts.error, life: 3000 });
+    Products.value = respProducts.data.data.map((product) => ({ id: product.uuid, name: product.name }));
+
+    const respVariants = await InitialDataService.getVariants();
+    if (!respVariants.ok) toast.add({ severity: 'error', detail: 'Error' + respVariants.error, life: 3000 });
+    Variants.value = respVariants.data.data.map((variant) => ({ id: variant.uuid, name: variant.name }));
+
+    const respProductsType = await InitialDataService.getProductTypes();
+    if (!respProductsType.ok) toast.add({ severity: 'error', detail: 'Error' + respProductsType.error, life: 3000 });
+    ProductsType.value = respProductsType.data.data.map((productType) => ({ id: productType.uuid, name: productType.name }));
+
+    const respPackingQtyDispatch = await InitialDataService.getPackingQtyDispatch();
+    if (!respPackingQtyDispatch.ok) toast.add({ severity: 'error', detail: 'Error' + respPackingQtyDispatch.error, life: 3000 });
+    PackingsQtyDispatch.value = respPackingQtyDispatch.data.data.map((packing) => ({ id: packing.id, name: packing.label }));
+
+    const respPackingTypesDispatch = await InitialDataService.getPackingTypes();
+    if (!respPackingTypesDispatch.ok) toast.add({ severity: 'error', detail: 'Error' + respPackingTypesDispatch.error, life: 3000 });
+    PackingsTypesDispatch.value = respPackingTypesDispatch.data.data.map((packing) => ({ id: packing.uuid, name: packing.name }));
+
+    const respPackingWeightDispatch = await InitialDataService.getPackingWeightDispatch();
+    if (!respPackingWeightDispatch.ok) toast.add({ severity: 'error', detail: 'Error' + respPackingWeightDispatch.error, life: 3000 });
+    PackingsWeightDispatch.value = respPackingWeightDispatch.data.data.map((packing) => ({ id: packing.id, name: packing.label }));
+
+    const respUnitsTypeDispatch = await InitialDataService.getUnitsType();
+    if (!respUnitsTypeDispatch.ok) toast.add({ severity: 'error', detail: 'Error' + respUnitsTypeDispatch.error, life: 3000 });
+    UnitsTypeDispatch.value = respUnitsTypeDispatch.data.data.map((packing) => ({ id: packing.uuid, name: packing.name }));
+
     const respFarms = await InitialDataService.getBranches();
     if (!respFarms.ok) toast.add({ severity: 'error', detail: 'Error' + respFarms.error, life: 3000 });
     Farms.value = respFarms.data.data.map((farm) => ({ id: farm.uuid, name: farm.name }));

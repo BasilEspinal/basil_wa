@@ -53,8 +53,10 @@ export function useAppMovilService() {
     };
 
     const getDataTasksplanner = async () => {
-        const endpoint = `/appmovil/tasksplanner?filter[tasks_of_type_id]=${fetchWorkCenter?.taskoftype?.id}&filter[company_id]=${fetchCompanyId}&filter[farm_id]=${fetchFarmId}`;
+        console.log('fetchWorkCenter', fetchWorkCenter.value);
+        const endpoint = `/appmovil/tasksplanner?filter[tasks_of_type_id]=${fetchWorkCenter.value?.taskoftype?.id}&filter[company_id]=${fetchCompanyId}&filter[farm_id]=${fetchFarmId}`;
         const response = await getRequest(endpoint);
+        console.log('Response from getDataTasksplanner:', response);
         tasksPlaner.value = response.data?.data[0] || {};
         console.log('tasksPlanner inside getDataTaskPlaner', tasksPlaner.value);
         counter.value++;
@@ -79,7 +81,7 @@ export function useAppMovilService() {
 
     const getDonesWork = async () => {
         try {
-            const taskoftype_id = fetchWorkCenter?.taskoftype?.id;
+            const taskoftype_id = fetchWorkCenter.value?.taskoftype?.id;
             const response = await getRequest(`/lists/getDoneTypeTasksType?filter[tasks_of_type_id]=${taskoftype_id}`);
             counter.value++;
             return response;
@@ -92,7 +94,7 @@ export function useAppMovilService() {
         if (!tasksType) return;
         const listFilterType = ['Task', 'HoraExtra'];
         if (listFilterType.includes(tasksType)) {
-            const endpoint = `/appmovil/taskstarif?filter[tasks_of_type_id]=${fetchWorkCenter?.taskoftype?.id}&filter[work_type_day]=${holiday.value}&filter[farm_id]=${fetchFarmId}&filter[company_id]=${fetchCompanyId}&filter[packing_type_id]=${tasksPlaner.value?.packing_type?.id}&filter[type_price]=${tasksType}`;
+            const endpoint = `/appmovil/taskstarif?filter[tasks_of_type_id]=${fetchWorkCenter.value?.taskoftype?.id}&filter[work_type_day]=${holiday.value}&filter[farm_id]=${fetchFarmId}&filter[company_id]=${fetchCompanyId}&filter[packing_type_id]=${tasksPlaner.value?.packing_type?.id}&filter[type_price]=${tasksType}`;
             const response = await getRequest(endpoint);
             counter.value++;
             return response.data?.data[0]?.price_tarif ?? 0;
@@ -100,7 +102,7 @@ export function useAppMovilService() {
     };
 
     const getUsers = async () => {
-        const response = await getRequest(`/appmovil/employees?filter[work_center_id]=${fetchWorkCenter?.id}`);
+        const response = await getRequest(`/appmovil/employees?filter[work_center_id]=${fetchWorkCenter.value?.id}`);
         counter.value++;
         return response;
     };
@@ -122,7 +124,7 @@ export function useAppMovilService() {
             // Use the updated tasksPlaner data
             const transDev = false;
             const plannerTaskId = tasksPlaner.value?.id || 'No hay'; // Fallback to 18 if not available
-            const tasksOfTypeId = fetchWorkCenter?.taskoftype?.id || 'No hay'; // Fallback to 5 if not available
+            const tasksOfTypeId = fetchWorkCenter.value?.taskoftype?.id || 'No hay'; // Fallback to 5 if not available
             const farmId = fetchFarmId || 1; // Fallback to 1 if not available
 
             console.log('plannerTaskId:', plannerTaskId);
@@ -147,6 +149,7 @@ export function useAppMovilService() {
         console.log('planner_task_id', planner_task_id);
         console.log('task_of_type', task_of_type);
         const response = await getRequest(`/appmovil/summary/employees?filter[planner_task_id]=${planner_task_id}&filter[tasks_of_type_id]=${task_of_type}&filter[farm_id]=${fetchFarmId}`);
+        console.log('UserTab', response);
         counter.value++;
         return response;
     };

@@ -32,6 +32,7 @@ const getDataEmployeesInfo = async (employee_id) => {
         toast.add({ severity: 'error', detail: 'Error' + response.error, life: 3000 });
         errorSummary.value = true;
     }
+    console.log('ResponseTabEmployees:', response);
     summary.value = response.data.data;
 };
 

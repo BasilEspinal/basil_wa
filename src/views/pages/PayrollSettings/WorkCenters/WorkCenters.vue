@@ -206,6 +206,7 @@ const readAll = async () => {
     Farms.value = respFarms.data.data.map((farm) => ({ id: farm.uuid, name: farm.name }));
 
     const respTaskOfType = await InitialDataService.getTaskOfType();
+    console.log('respTaskOfType', respTaskOfType);
     if (!respTaskOfType.ok) toast.add({ severity: 'error', detail: 'Error' + respTaskOfType.error, life: 3000 });
     TaskOfType.value = respTaskOfType.data.data.map((taskType) => ({ id: taskType.uuid, name: taskType.name }));
 
@@ -732,7 +733,7 @@ const documentFrozen = ref(false); change name field
                 <div class="mb-3">
                     <div class="flex align-items-center">
                         <label for="taskType" class="font-semibold w-3"> Tasks Type </label>
-                        <AutoComplete v-model="taskTypeV" class="w-full" inputId="taskTypeV" :suggestions="searchTaskOfType" @complete="searchTaskOfType" field="name" dropdown />
+                        <AutoComplete v-model="taskTypeV" class="w-full" inputId="taskTypeV" :suggestions="taskOfType" @complete="searchTaskOfType" field="name" dropdown />
                     </div>
                     <FrontEndErrors :errorsNew="errorsNew" name="taskTypeV" />
                     <BackendErrors :name="errorResponseAPI?.errors?.taskType" />
