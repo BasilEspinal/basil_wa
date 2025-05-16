@@ -231,6 +231,55 @@ export const InitialDataService = {
         }
     },
 
+    async getPackingQtyDispatch() { 
+        try {
+            const response = await getRequest('/lists/packingQtyDispatch');
+            return response;
+        } catch (error) {
+            console.error('Error fetching packing qty dispatch:', error);
+            return errorResponseAPI(error);
+        }
+    },
+        
+    async getPackingTypesDispatch() {
+        try {
+            const response = await getRequest('/lists/packingTypeDispatch');
+            return response;
+        } catch (error) {
+            console.error('Error fetching packing types dispatch:', error);
+            return errorResponseAPI(error);
+        }
+    }
+    ,
+      
+async getPackingWeightDispatch() {
+        try {
+            const response = await getRequest('/lists/packingWeightDispatch');
+            return response;
+        } catch (error) {
+            console.error('Error fetching packing weight dispatch:', error);
+            return errorResponseAPI(error);
+        }
+    },
+    async getUnitsTypeDispatch() {
+        try {
+            const response = await getRequest('/lists/packingUnitDispatch');
+            return response;
+        } catch (error) {
+            console.error('Error fetching units type dispatch:', error);
+            return errorResponseAPI(error);
+        }
+    },
+
+    async getUnitsType() {
+        try {
+            const response = await getRequest('/unit_types');
+            return response;
+        } catch (error) {
+            console.error('Error fetching units type:', error);
+            return errorResponseAPI(error);
+        }
+    },
     async getProductTypes() {
         try {
             const response = await getRequest('/product_types');
@@ -260,6 +309,18 @@ export const InitialDataService = {
             return errorResponseAPI(error);
         }
     },
+
+    async getCropLotsForPlannerTasks() {
+        try {
+            const response = await getRequest('/appmovil/crop_lots');
+            return response;
+        } catch (error) {
+            console.error('Error fetching crop lots:', error);
+            return errorResponseAPI(error);
+        }
+    },
+
+
     async postContractor(data) {
         try {
             const response = await postRequest('/transactions/contractor/work', data);

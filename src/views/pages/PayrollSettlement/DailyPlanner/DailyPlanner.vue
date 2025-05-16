@@ -352,7 +352,8 @@ const readAll = async () => {
     if (!respVehicles.ok) toast.add({ severity: 'error', detail: 'Error' + respVehicles.error, life: 3000 });
     Vehicles.value = respVehicles.data.data.map((vehicle) => ({ id: vehicle.uuid, name: vehicle.vehicle_type }));
 
-    const respCropLots = await InitialDataService.getCropLots();
+    const respCropLots = await InitialDataService.getCropLotsForPlannerTasks();
+    console.log('respCropLots:', respCropLots);
     if (!respCropLots.ok) {
         toast.add({ severity: 'error', detail: 'Error: ' + respCropLots.error, life: 3000 });
         console.log(respCropLots);
