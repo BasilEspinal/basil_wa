@@ -121,7 +121,7 @@ const isOutsideClicked = (event) => {
             <Card class="bg-warning" v-if="hasCriticalError" :style="{ width: '100%', height: '100%' }">
     <template #title >
         <p class="m-0 text-red-600 font-semibold">
-        Señor usuario usted debe corregir los siguientes errores
+        Señor usuario usted debe configurar estos parámetros para que pueda funcionar correctamente la plataforma.
     </p></template>
     <template #content>
         <ErrorsUnknown/>

@@ -69,6 +69,7 @@ const fetchInfoPostLogin = async (data) => {
             const { can, cannot, rules } = new AbilityBuilder();
             abilities.forEach(({ action, subject }) => {
                 can(action, subject);
+                console.log(`Ability: ${action} on ${subject}`);
             });
             ability.update(rules);
         }

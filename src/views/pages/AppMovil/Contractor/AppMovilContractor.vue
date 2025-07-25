@@ -35,7 +35,7 @@ const isSubmitting = ref(false);
 // Search term
 const search = ref('');
 
-const totalTarif = ref(1000); // Total Tarif input from the user
+const totalTarif = ref(0); // Total Tarif input from the user
 const unitTarif = computed(() => {
     const length = dataPickList.value[1].length;
     return length > 0 ? totalTarif.value / length : 0; // Avoid division by zero
@@ -212,7 +212,7 @@ const resetAll = async () => {
 
     // Reset flags and state
     flagIndividual.value = false;
-    totalTarif.value = 1000;
+    totalTarif.value = 0;
     works.value = [];
     dataPickList.value = [originalAvailablePickList.value.slice(), []];
 

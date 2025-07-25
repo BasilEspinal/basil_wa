@@ -168,6 +168,7 @@ export function useAppMovilService() {
                 `/appmovil/donetarif?filter[tasks_of_type_id]=${task_of_type_id}&filter[work_type_day]=${work_type_day}&filter[work_type_tarif]=${work_type_tarif}&filter[done_of_type_id]=${done_of_type_id}&filter[farm_id]=${fetchFarmId.value}&filter[company_id]=${fetchCompannyId.value}`
             );
             counter.value++;
+            console.log('responseGetTarifOfTasksDoneAppMob', response);
             return response;
         } catch (e) {
             return error('Error Tarif Tasks Done:', e);
