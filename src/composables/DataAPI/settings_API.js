@@ -12,6 +12,7 @@ export default function useSettingsAPI(locale) {
             'Accept-Language': locale //
         })
     };
+    
 
     return {
         APISettings,
