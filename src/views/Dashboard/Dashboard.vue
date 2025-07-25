@@ -371,9 +371,9 @@ watch(
 
 <template>
     <div class="grid">
-        <div class="col-12 lg:col-12 xl:col-12">
+<!--         <div class="col-12 lg:col-12 xl:col-12">
             <ConnectionManager />
-        </div>
+        </div> -->
         <div></div>
 
         <div class="col-12 lg:col-6 xl:col-3">
