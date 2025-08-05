@@ -239,7 +239,7 @@ const actionRecordManager = handleSubmitNew(async (values) => {
     toast.add({
         severity: 'error',
         summary: 'Error',
-        detail: 'Debes seleccionar una labor válida.',
+        detail: 'Debes seleccionar una labor válida',
         life: 3000
     });
     return;
