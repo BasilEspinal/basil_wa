@@ -235,6 +235,15 @@ const actionRecordManager = handleSubmitNew(async (values) => {
     const responseCRUD = ref();
     try {
         const today = new Date();
+        if (!values.work?.uuid) {
+    toast.add({
+        severity: 'error',
+        summary: 'Error',
+        detail: 'Debes seleccionar una labor válida.',
+        life: 3000
+    });
+    return;
+}
         const data = {
             trans_dev: false,
             transaction_date_send: `${today.getFullYear()}-${String(today.getMonth() + 1).padStart(2, '0')}-${String(today.getDate()).padStart(2, '0')}`,
@@ -242,7 +251,8 @@ const actionRecordManager = handleSubmitNew(async (values) => {
             tasks_of_type_uuid: TASK_OF_TYPE.uuid,
             supervisory_employee_uuid: supervisoryEmployee,
             type_price_task: 'WorkDone',
-            done_of_type_uuid: values.work.uuid,
+            done_of_type_uuid: values.work?.uuid || null,
+            //done_of_type_uuid: values.work.uuid,
             work_type_tarif: values.work?.work_type_tarif || 'No me llega nada en work type tarif',
             employee_qty: values.quantityEmployees,
             crop_lot_qty: values.crop_lot_qtyV,
@@ -301,8 +311,20 @@ const actionRecordManager = handleSubmitNew(async (values) => {
 });
 
 watch(work, async () => {
-    const valueTarif = await getTarifOfTasksDoneAppMob(TASK_OF_TYPE.id, HOLIDAY.value, work.value.work_type_tarif, work.value.id);
+    //const valueTarif = await getTarifOfTasksDoneAppMob(TASK_OF_TYPE.id, HOLIDAY.value, work.value.work_type_tarif, work.value.id);
+    
+    if (work.value && work.value.work_type_tarif && work.value.id) {
+    const valueTarif = await getTarifOfTasksDoneAppMob(
+        TASK_OF_TYPE.id,
+        HOLIDAY.value,
+        work.value.work_type_tarif,
+        work.value.id
+    );
     totalTarif.value = valueTarif.data.data[0].price_tarif;
+}
+
+
+   // totalTarif.value = valueTarif.data.data[0].price_tarif;
 });
 
 watch(totalTarif, (newTotalTarif) => {
