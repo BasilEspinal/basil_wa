@@ -241,6 +241,7 @@ const actionRecordManager = handleSubmitNew(async (values) => {
         summary: 'Error',
         detail: 'Debes seleccionar una labor válida',
         life: 3000
+        
     });
     return;
 }
