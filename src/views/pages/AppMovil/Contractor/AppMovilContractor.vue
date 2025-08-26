@@ -28,6 +28,8 @@ const Works = ref([]);
 const works = ref([]);
 const titulo = ref('');
 
+
+
 const originalAvailablePickList = ref([]);
 
 const dataPickList = ref([originalAvailablePickList.value.slice(), []]);
@@ -249,7 +251,8 @@ const actionRecordManager = handleSubmitNew(async (values) => {
             trans_dev: false,
             transaction_date_send: `${today.getFullYear()}-${String(today.getMonth() + 1).padStart(2, '0')}-${String(today.getDate()).padStart(2, '0')}`,
             calendar_uuid: null,
-            tasks_of_type_uuid: TASK_OF_TYPE.uuid,
+            // tasks_of_type_uuid: TASK_OF_TYPE.uuid,
+            tasks_of_type_uuid: taskOfType.value?.uuid,
             supervisory_employee_uuid: supervisoryEmployee,
             type_price_task: 'WorkDone',
             done_of_type_uuid: values.work?.uuid || null,
@@ -265,6 +268,12 @@ const actionRecordManager = handleSubmitNew(async (values) => {
             transdate_sync: null,
             device_name: 'Web'
         };
+
+       // Valida antes de enviar:
+        if (!taskOfType.value?.uuid) {
+        toast.add({ severity:'error', summary:'Error', detail:'No hay tasks_of_type disponible aún', life:4000 });
+        return;
+        }     
 
         if (state.value === 'new') {
             responseCRUD.value = await crudService.create(data);
@@ -328,10 +337,10 @@ watch(work, async () => {
    // totalTarif.value = valueTarif.data.data[0].price_tarif;
 });
 
-watch(totalTarif, (newTotalTarif) => {
-    // Update the unit price when the total price changes
-    unitTarif.value = dataPickList.value[1].length > 0 ? newTotalTarif / dataPickList.value[1].length : 0;
-});
+// watch(totalTarif, (newTotalTarif) => {
+//     // Update the unit price when the total price changes
+//     unitTarif.value = dataPickList.value[1].length > 0 ? newTotalTarif / dataPickList.value[1].length : 0;
+// });
 
 const data_planner = ref({
     document: 'XXXXXX',
@@ -405,6 +414,58 @@ watch(listRowSelect, onRowSelect);
 const formDialog = ref(false);
 
 const resetValues = () => {};
+
+const taskOfType    = computed(() => fetchWorkCenter.value?.taskoftype ?? null);
+const taskOfTypeId = computed(() => fetchWorkCenter.value?.taskoftype?.id ?? null);
+
+// watch([work, taskOfTypeId], async ([w, toId]) => {
+//   // No sigas si falta algo
+//   if (!w || !w.work_type_tarif || !w.id || !toId) return;
+
+//   try {
+//     const resp = await getTarifOfTasksDoneAppMob(
+//       toId,
+//       HOLIDAY.value,
+//       w.work_type_tarif,
+//       w.id
+//     );
+//     totalTarif.value = resp?.data?.data?.[0]?.price_tarif ?? 0;
+//   } catch (e) {
+//     console.error('getTarifOfTasksDoneAppMob error:', e);
+//     totalTarif.value = 0;
+//   }
+// });
+
+
+
+watch([work, taskOfTypeId], async ([w, toId]) => {
+  if (!w || !w.work_type_tarif || !w.id || !toId) return;
+
+  try {
+    const resp = await getTarifOfTasksDoneAppMob(
+      toId,
+      HOLIDAY.value,
+      w.work_type_tarif,
+      w.id
+    );
+    totalTarif.value = resp?.data?.data?.[0]?.price_tarif ?? 0;
+  } catch (e) {
+    console.error('getTarifOfTasksDoneAppMob error:', e);
+    totalTarif.value = 0;
+  }
+});
+
+
+watch(work, () => {
+  if (work.value?.work_type_tarif === 'Individual') {
+    flagIndividual.value = true;
+    quantityEmployees.value = 1;
+  } else {
+    flagIndividual.value = false;
+  }
+});
+
+
 </script>
 
 <template>
@@ -534,7 +595,7 @@ const resetValues = () => {};
                                         <span>{{ slotProps.item.document }}</span>
                                     </div>
                                 </div>
-                                <span class="font-bold">{{ slotProps.item.workCenter.code }}</span>
+                                <span class="font-bold">{{ slotProps.item.workCenter?.code ?? '' }}</span>
                             </div>
                         </template>
                     </PickList>
