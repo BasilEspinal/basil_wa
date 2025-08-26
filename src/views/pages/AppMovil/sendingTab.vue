@@ -120,8 +120,8 @@ watch(
     async () => props.id,
     async (newId) => {
         currentEmployeeId.value = newId;
-        await getDataEmployeesInfo(props.id);
-        await calculations();
+        //await getDataEmployeesInfo(props.id);
+        //await calculations();
     }
 );
 </script>
