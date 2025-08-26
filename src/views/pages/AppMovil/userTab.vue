@@ -12,7 +12,7 @@ import { useForm } from 'vee-validate';
 import { toTypedSchema } from '@vee-validate/zod';
 
 const toast = useToast();
-const { error, getTarif, getDonesWork, postDailyReport, WORK_CENTER, SUPERVISO_ID, LOTES } = useAppMovilService();
+const { error, getTarif, getDonesWork, initData,postDailyReport, WORK_CENTER, SUPERVISO_ID, LOTES } = useAppMovilService();
 //const selected_quanty = ref(null);
 const Total = ref(null);
 //const select_tasks_type = ref(null);
@@ -126,6 +126,8 @@ const { t } = useI18n();
 const emit = defineEmits(['update-data']); // Define the event to emit
 const packingTypeFlag = ref(true);
 onMounted(async () => {
+
+    initData();
     workCenter.value = WORK_CENTER;
     supervisoId.value = SUPERVISO_ID;
     lotes.value = LOTES;

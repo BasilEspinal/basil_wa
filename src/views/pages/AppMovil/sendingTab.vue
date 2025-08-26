@@ -10,7 +10,7 @@ import { useToast } from 'primevue/usetoast';
 const { t } = useI18n();
 const toast = useToast();
 const errorSummary = ref(false);
-const summary = ref();
+const summary = ref([]);
 const totalTaskQtyTask = ref(0);
 const totalTaskTotal = ref(0);
 const totalTaskQtyHoraExtra = ref(0);
@@ -27,6 +27,8 @@ onMounted(async () => {
 });
 
 const getDataEmployeesInfo = async (employee_id) => {
+    console.log('Getting data for employee ID:', employee_id);
+    console.log(props.data.id, props.data.tasks_of_type.id, employee_id);
     const response = await getInfoEmployeesById(props.data.id, props.data.tasks_of_type.id, employee_id);
     if (!response.ok) {
         toast.add({ severity: 'error', detail: 'Error' + response.error, life: 3000 });
