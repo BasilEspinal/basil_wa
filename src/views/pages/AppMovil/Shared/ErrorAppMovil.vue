@@ -1,22 +1,56 @@
 <script setup>
+import { useI18n } from 'vue-i18n';
+const { t } = useI18n();
+
 const props = defineProps({
     title: { type: String },
     description: { type: String },
     logoUrl: { type: String },
     checklist: { type: Array, default: () => [] },
-    steps: { type: Array, default: () => [] } // New prop for step-by-step instructions
+    steps: { type: Array, default: () => [] },
+    details: { type: Array, default: () => [] } // New prop for diagnostic data
 });
 </script>
 
 <template>
     <div class="flex flex-column align-items-center justify-content-center m-2">
-        <div class="w-full max-w-30rem" style="border-radius: 40px; padding: 0.2rem; background: linear-gradient(180deg, rgba(255, 30, 60, 0.2) 0%, rgba(33, 150, 243, 0) 100%)">
+        <div class="w-full max-w-40rem" style="border-radius: 40px; padding: 0.2rem; background: linear-gradient(180deg, rgba(255, 30, 60, 0.2) 0%, rgba(33, 150, 243, 0) 100%)">
             <div class="w-full surface-card py-5 px-4 sm:px-6 flex flex-column align-items-center shadow-4" style="border-radius: 38px">
                 <!-- Header -->
                 <div class="flex flex-column align-items-center text-center">
                     <img :src="logoUrl" alt="logo" class="mb-3 w-3rem flex-shrink-0" />
                     <h1 class="text-900 font-bold text-2xl mb-2 line-height-2">{{ title || 'Reporte de Situación' }}</h1>
-                    <img src="/demo/images/error/asset-error.svg" alt="Error" class="mb-3 opacity-80" width="120px" />
+                    <img src="/demo/images/error/asset-error.svg" alt="Error" class="mb-3 opacity-80" width="100px" />
+                </div>
+
+                <!-- NEW: Diagnostic Planning Table -->
+                <div v-if="details && details.length > 0" class="w-full mb-4">
+                    <p class="text-700 font-bold mb-2 ml-1 text-sm uppercase tracking-wider text-center">
+                        <i class="pi pi-search mr-2"></i>Planeaciones Encontradas en Base de Datos
+                    </p>
+                    <div class="border-round-xl border-1 border-300 overflow-hidden">
+                        <table class="w-full text-sm border-collapse">
+                            <thead>
+                                <tr class="bg-surface-100 text-800 font-bold">
+                                    <th class="p-2 text-left border-bottom-1 border-300">Fecha</th>
+                                    <th class="p-2 text-left border-bottom-1 border-300">Tarea</th>
+                                    <th class="p-2 text-center border-bottom-1 border-300">Estado</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr v-for="(p, i) in details" :key="i" class="border-bottom-1 border-200">
+                                    <td class="p-2 text-700 font-medium">{{ p.transaction_date }}</td>
+                                    <td class="p-2 text-600">{{ p.tasks_of_type?.name }}</td>
+                                    <td class="p-2 text-center">
+                                        <span class="px-2 py-1 border-round text-xs font-bold"
+                                            :class="p.status?.name?.toUpperCase() === 'EN PROGRESO' ? 'bg-green-100 text-green-700 border-1 border-green-300' : 'bg-orange-100 text-orange-700 border-1 border-orange-300'">
+                                            {{ p.status?.name }}
+                                        </span>
+                                    </td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
                 </div>
 
                 <!-- Checklist: Structural Verification -->

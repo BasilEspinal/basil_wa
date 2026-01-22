@@ -54,7 +54,7 @@ const resetAppMovilService = () => {
 };
 
 export function useAppMovilService() {
-    const error = (e, checks = null, steps = []) => ({ data: [], error: e, ok: false, checks, steps });
+    const error = (e, checks = null, steps = [], details = []) => ({ data: [], error: e, ok: false, checks, steps, details });
 
     const refreshSessionState = async () => {
         await Promise.resolve().then(() => initializeAppMovilSession());
@@ -100,7 +100,6 @@ export function useAppMovilService() {
         }
 
         // --- ROBUST RETRIEVAL ---
-        // We try to pull all records for this unit to find the one the user says exists.
         const endpoints = [
             `/appmovil/tasksplanner?filter[company_uuid]=${companyUuid}&filter[farm_uuid]=${farmUuid}`,
             `/appmovil/tasksplanner?filter[company_id]=${companyId}&filter[farm_id]=${farmId}`
@@ -145,7 +144,8 @@ export function useAppMovilService() {
                 [
                     { title: 'Verificar Fecha en Web', desc: `Se encontraron planeaciones para: [${otherDates}], pero ninguna para hoy.` },
                     { title: 'Corregir Fecha', desc: 'Ajuste la fecha de la planeación en la web para que coincida con el día de hoy.' }
-                ]
+                ],
+                uniquePlanners // Return details for comparison
             );
         }
 
@@ -165,7 +165,8 @@ export function useAppMovilService() {
                     [
                         { title: 'Mismatch de Actividad', desc: `Usted está en "${fetchWorkCenter.value.name}" (${activeTaskName}), pero hoy se planeó: [${uniqueOthers.join(', ')}].` },
                         { title: 'Cambiar de Área', desc: 'Seleccione el Centro de Trabajo que coincida con la tarea planeada.' }
-                    ]
+                    ],
+                    plannersToday // Details of what WAS planned
                 );
             }
 
@@ -175,7 +176,8 @@ export function useAppMovilService() {
                 [
                     { title: 'Crear Tarea en Web', desc: `Hoy hay planeación en ${farmName}, pero no incluye la tarea de "${activeTaskName}".` },
                     { title: 'Agregar Tarea', desc: 'Añada esta tarea a la planeación diaria en la plataforma administrativa.' }
-                ]
+                ],
+                plannersToday
             );
         }
 
@@ -190,7 +192,8 @@ export function useAppMovilService() {
                 [
                     { title: 'Activar Planeación', desc: `La planeación de "${activeTaskName}" existe, pero está en estado "${anyPlanner.status?.name}".` },
                     { title: 'Cambiar a "En Progreso"', desc: 'Vaya a la web y cambie el estado a "En progreso" para poder capturar datos.' }
-                ]
+                ],
+                myTaskPlanners
             );
         }
 

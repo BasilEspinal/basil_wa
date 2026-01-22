@@ -17,7 +17,8 @@ const errorSummary = ref(false);
 const summary = ref();
 const plannerErrorMessage = ref('');
 const serverChecks = ref(null);
-const serverSteps = ref([]); // New ref for step-by-step instructions
+const serverSteps = ref([]); 
+const serverDetails = ref([]); // New ref for the diagnostic planning list
 ////////////////////////////////////////////////////////////
 const { t } = useI18n();
 const toast = useToast();
@@ -226,12 +227,14 @@ const functionsData = async () => {
         plannerErrorMessage.value = response.error;
         serverChecks.value = response.checks;
         serverSteps.value = response.steps || [];
+        serverDetails.value = response.details || []; // Capture existing plannings
         loading.value = false;
         return;
     }
     plannerErrorMessage.value = '';
     serverChecks.value = null;
     serverSteps.value = [];
+    serverDetails.value = [];
     
     console.log('response,',response);
 
@@ -345,7 +348,7 @@ const updateData = async () => {
 
     <h3 v-if="!fetchWorkCenter?.name ">
         
-        <ErrorAppMovil :title="t('appmovil.noEmployeeDepartment')" :logo-url="logoUrl" :checklist="configChecklist" :steps="serverSteps" />
+        <ErrorAppMovil :title="t('appmovil.noEmployeeDepartment')" :logo-url="logoUrl" :checklist="configChecklist" :steps="serverSteps" :details="serverDetails" />
     </h3>
 
     <div v-if="loading" class="flex align-items-center justify-content-center" style="height: 100vh">
@@ -575,7 +578,7 @@ const updateData = async () => {
     </div>
 
     <div v-else>
-        <ErrorAppMovil :title="plannerErrorMessage || (t('appmovil.nodataplanner') + ' ' + TASK_OF_TYPE?.name)" :description="t('appmovil.infonodataplanner')" :logo-url="logoUrl" :checklist="configChecklist" :steps="serverSteps" v-if="fetchWorkCenter?.name"/>
+        <ErrorAppMovil :title="plannerErrorMessage || (t('appmovil.nodataplanner') + ' ' + TASK_OF_TYPE?.name)" :description="t('appmovil.infonodataplanner')" :logo-url="logoUrl" :checklist="configChecklist" :steps="serverSteps" :details="serverDetails" v-if="fetchWorkCenter?.name"/>
     </div>
 </template>
 
