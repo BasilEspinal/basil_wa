@@ -1,127 +1,86 @@
-// api.js
+/**
+ * @file productsAPI.js
+ * @description Composable for managing product data via API.
+ */
 import { ref } from 'vue';
-import useSettingsAPI from '@/composables/settings_API';
+import useData from '@/service/FetchData/FetchDataAPI.js';
 
 export default function useProducts(datos) {
-    const { pathAPI, APISettings } = useSettingsAPI();
+    const { postRequest, putRequest, deleteRequest } = useData();
+
     // Define data y error en el ámbito de useProducts
     let data = null;
     let errorProducts = ref('');
-    let base = pathAPI().base;
-    let api = pathAPI().apiVer;
     const statusCode = ref([]);
-    const token = sessionStorage.getItem('accessSessionToken');
-    APISettings.headers.set('Content-Type', 'application/json');
-    APISettings.headers.set('Access-Control-Allow-Origin', '*');
-    APISettings.headers.set('Authorization', 'Bearer ' + token);
 
+    /**
+     * Creates a new product.
+     * @param {Object} requestData - Product data.
+     * @param {string} endPoint - API endpoint.
+     */
     const postProducts = async (requestData, endPoint) => {
-        console.log('This is data got', requestData);
-        let baseUrl = `${base}${api}${endPoint}`;
-        const requestOptions = {
-            method: 'POST',
-            headers: APISettings.headers,
-            body: JSON.stringify(requestData)
-        };
-        await fetch(baseUrl, requestOptions)
-            .then((response) => {
-                statusCode.value = response.status;
-                return response.json();
-            })
-            .then((data) => {
-                // actions to data answer
-                console.log(statusCode.value);
-                if (data.errors) {
-                    errorProducts.value = data.errors;
-                } else {
-                    console.log('Esta es la respuesta ' + data);
-                }
-                // console.log(errors)
-                console.log(data);
-            })
-            .catch((error) => {
-                if (error.name === 'TypeError') {
-                    // Error de red
-                    console.error('Error de red:', error.message);
-                } else {
-                    // Error en la respuesta
-                    console.error('Error en la respuesta:', error.message);
-                }
-                console.error('Error :', error);
-            });
+        console.log('[ProductsAPI] Creating product with data:', requestData);
+
+        try {
+            const response = await postRequest(endPoint, requestData);
+            statusCode.value = response.ok ? 200 : response.statusCode || 400;
+
+            if (!response.ok) {
+                errorProducts.value = response.error;
+                console.error('[ProductsAPI] Error in response:', response.error);
+            } else {
+                console.log('[ProductsAPI] Product created successfully:', response.data);
+            }
+        } catch (error) {
+            console.error('[ProductsAPI] Unexpected error:', error);
+            errorProducts.value = error;
+        }
     };
 
+    /**
+     * Updates an existing product.
+     * @param {Object} requestData - Updated product data.
+     * @param {string} endPoint - API endpoint.
+     * @param {string|number} id - Product ID.
+     */
     const putProducts = async (requestData, endPoint, id) => {
-        let baseUrl = `${base}${api}${endPoint}${'/'}${id}`;
+        try {
+            const response = await putRequest(endPoint, requestData, id);
+            statusCode.value = response.ok ? 200 : response.statusCode || 400;
 
-        const requestOptions = {
-            method: 'PUT',
-            headers: APISettings.headers,
-            body: JSON.stringify(requestData)
-        };
-
-        await fetch(baseUrl, requestOptions)
-            .then((response) => {
-                statusCode.value = response.status;
-                return response.json();
-            })
-            .then((data) => {
-                // actions to data answer
-                console.log(statusCode.value);
-                if (data.errors) {
-                    errorProducts.value = data.errors;
-                } else {
-                    console.log('Esta es la respuesta ' + data);
-                }
-                // console.log(errors)
-                console.log(data);
-            })
-            .catch((error) => {
-                if (error.name === 'TypeError') {
-                    // Error de red
-                    console.error('Error de red:', error.message);
-                } else {
-                    // Error en la respuesta
-                    console.error('Error en la respuesta:', error.message);
-                }
-                console.error('Error :', error);
-            });
+            if (!response.ok) {
+                errorProducts.value = response.error;
+                console.error('[ProductsAPI] Error in response:', response.error);
+            } else {
+                console.log('[ProductsAPI] Product updated successfully:', response.data);
+            }
+        } catch (error) {
+            console.error('[ProductsAPI] Unexpected error:', error);
+            errorProducts.value = error;
+        }
     };
 
+    /**
+     * Deletes a product.
+     * @param {Object} requestData - (Optional) Request data, note that centralized deleteRequest might ignore this.
+     * @param {string} endPoint - API endpoint.
+     * @param {string|number} id - Product ID.
+     */
     const deleteProducts = async (requestData, endPoint, id) => {
-        let baseUrl = `${base}${api}${endPoint}${'/'}${id}`;
+        try {
+            const response = await deleteRequest(endPoint, id);
+            statusCode.value = response.ok ? 200 : response.statusCode || 400;
 
-        const requestOptions = {
-            method: 'DELETE',
-            headers: APISettings.headers,
-            body: JSON.stringify(requestData)
-        };
-        await fetch(baseUrl, requestOptions)
-            .then((response) => {
-                statusCode.value = response.status;
-                return response.json();
-            })
-            .then((data) => {
-                // actions to data answer
-                console.log(statusCode.value);
-                if (data.errors) {
-                    errorProducts.value = data.errors;
-                } else {
-                    console.log('Esta es la respuesta ' + data);
-                }
-                // console.log(errors)
-                console.log(data);
-            })
-            .catch((error) => {
-                if (error.name === 'TypeError') {
-                    // Error de red
-                    console.error('Error de red:', error.message);
-                } else {
-                    // Error en la respuesta
-                    console.error('Error en la respuesta:', error.message);
-                }
-                console.error('Error :', error);
-            });
+            if (!response.ok) {
+                errorProducts.value = response.error;
+                console.error('[ProductsAPI] Error in response:', response.error);
+            } else {
+                console.log('[ProductsAPI] Product deleted successfully:', response.data);
+            }
+        } catch (error) {
+            console.error('[ProductsAPI] Unexpected error:', error);
+            errorProducts.value = error;
+        }
     };
 
     return {

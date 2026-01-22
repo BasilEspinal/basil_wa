@@ -2,8 +2,8 @@
 import { ref, computed, onMounted, onBeforeUnmount, onBeforeMount, watch } from 'vue';
 import { useLayout } from '@/layout/composables/layout';
 import { useRouter } from 'vue-router';
-import useDataAPI from '@/composables/DataAPI/FetchDataAPI.js';
-import { useAppMovilService } from '@/service/appMovil/appMovilService_V3';
+import useDataAPI from '@/service/FetchData/FetchDataAPI.js';
+import { useAppMovilService } from '@/service/appMovil/appMovilService';
 import OverlayPanel from 'primevue/overlaypanel';
 import { useForm } from 'vee-validate';
 import { toTypedSchema } from '@vee-validate/zod';
@@ -154,9 +154,19 @@ onBeforeUnmount(() => {
     unbindOutsideClickListener();
 });
 
-const logoUrl = computed(() => {
-    return `layout/images/${layoutConfig.darkTheme.value ? 'logo-white' : 'logo-dark'}.png`;
+    const logoUrl = computed(() => {
+    const lightLogo = import.meta.env.VITE_APP_LOGO_LIGHT; // Logo for Light Theme (usually dark logo)
+    const darkLogo = import.meta.env.VITE_APP_LOGO_DARK;   // Logo for Dark Theme (usually white logo)
+
+    // Fallback logic if env vars are missing
+    if (!lightLogo || !darkLogo) {
+        return `layout/images/${layoutConfig.darkTheme.value ? 'logo-white' : 'logo-dark'}.png`;
+    }
+
+    return layoutConfig.darkTheme.value ? darkLogo : lightLogo;
 });
+
+const appName = import.meta.env.VITE_APP_NAME || 'AgroOnline';
 
 const onTopBarMenuButton = () => {
     topbarMenuActive.value = !topbarMenuActive.value;
@@ -260,7 +270,7 @@ const toggleOverlayPanel2 = (event) => {
     <div class="layout-topbar">
         <router-link to="/" class="layout-topbar-logo">
             <img :src="logoUrl" alt="logo" />
-            <span>AgroOnline</span>
+            <span>{{ appName }}</span>
         </router-link>
 
         <button v-if="!(ability.can('agro_tv_menu') && lengthPermissions == 1)" class="p-link layout-menu-button layout-topbar-button" @click="onMenuToggle()">
@@ -273,12 +283,12 @@ const toggleOverlayPanel2 = (event) => {
 
         <div class="layout-topbar-menu" :class="topbarMenuClasses">
             <div class="flex flex-wrap align-items-center justify-content-center md:justify-content-start">
-                <Button @click="toggleOverlayPanel1" icon="pi pi-user" severity="success" text rounded aria-label="User" />
+                <Button @click="toggleOverlayPanel1" icon="pi pi-user" severity="primary" text rounded aria-label="User" />
                 <p>{{ dataUser }}</p>
             </div>
 
             <OverlayPanel ref="op" :dismissable="true">
-                <span class="font-medium text-900 block mb-2">Edit user</span>
+                <span class="font-medium text-color block mb-2">Edit user</span>
 
                 <div class="mb-3">
                     <div class="flex align-items-center gap-3 mb-1">
@@ -318,11 +328,11 @@ const toggleOverlayPanel2 = (event) => {
             </Button>
 
             <Button @click="toggleOverlayPanel2" rounded outlined class="p-link layout-topbar-button">
-                <i :class="{ 'pi pi-globe': !toggleValue, 'pi pi-sun': toggleValue }"></i>
+                <i class="pi pi-globe"></i>
             </Button>
 
             <OverlayPanel ref="op2" :dismissable="true">
-                <span class="font-medium text-900 block mb-2">Change language</span>
+                <span class="font-medium text-color block mb-2">Change language</span>
 
                 <Dropdown v-model="selectedCountry" :options="countries" optionLabel="name" placeholder="Change language" class="w-full">
                     <template #value="slotProps">

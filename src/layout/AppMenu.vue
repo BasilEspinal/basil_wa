@@ -3,7 +3,7 @@ import { ref, onBeforeMount } from 'vue';
 import { computed } from 'vue';
 import AppMenuItem from './AppMenuItem.vue';
 import ability from '@/service/ability.js';
-import useDataAPI from '@/composables/DataAPI/FetchDataAPI.js';
+import useDataAPI from '@/service/FetchData/FetchDataAPI.js';
 import { useI18n } from 'vue-i18n';
 
 const { t } = useI18n();
@@ -48,38 +48,38 @@ const model2 = computed(() => [
         items: [
             {
                 rol: 'admin',
-                icon: 'pi pi-bars',
+                icon: 'pi pi-box',
                 label: t('menu.product'),
                 gate: 'producto_menu',
                 items: [
                     {
                         label: t('menu.varieties'),
                         to: '/product/varieties',
-                        icon: 'pi pi-th-large',
+                        icon: 'pi pi-tags',
                         gate: 'producto_variedades_menu'
                     },
                     {
-                        icon: 'pi pi-bars',
+                        icon: 'pi pi-box',
                         label: t('menu.products'),
                         to: '/product/products',
                         gate: 'producto_productos_menu'
                     },
                     {
                         label: t('menu.productTypes'),
-                        icon: 'pi pi-bookmark',
+                        icon: 'pi pi-list',
                         to: '/product/productTypes',
                         gate: 'producto_tiposdeproducto_menu'
                     },
                     {
                         label: t('menu.unitTypes'),
                         to: '/product/unit_types',
-                        icon: 'pi pi-bookmark',
+                        icon: 'pi pi-chart-bar',
                         gate: 'producto_tiposdeunidades_menu'
                     },
                     {
                         label: t('menu.packingTypes'),
                         to: '/product/packing_types',
-                        icon: 'pi pi-bookmark',
+                        icon: 'pi pi-inbox',
                         gate: 'producto_tiposdeempaque_menu'
                     }
                 ]
@@ -91,31 +91,31 @@ const model2 = computed(() => [
             {
                 label: t('menu.commercial.name'),
                 rol: 'admin',
-                icon: 'pi pi-sitemap',
+                icon: 'pi pi-briefcase',
                 gate: 'comercial_menu',
                 items: [
                     {
                         label: t('menu.productOffers'),
                         to: '/Commercial/ProductAvailability/ProductAvailability',
-                        icon: 'pi pi-folder',
+                        icon: 'pi pi-percentage',
                         gate: 'comercial_ofertasdeproducto_menu'
                     },
                     {
                         label: t('menu.clientRequests'),
                         to: '/Commercial/CustomersRequests/CustomersRequests',
-                        icon: 'pi pi-bookmark',
+                        icon: 'pi pi-envelope',
                         gate: 'comercial_solicitudesdeclientes_menu'
                     },
                     {
                         label: t('menu.clients'),
                         to: '/Commercial/Customers/Customers',
-                        icon: 'pi pi-bookmark',
+                        icon: 'pi pi-users',
                         gate: 'comercial_clientes_menu'
                     },
                     {
                         label: t('menu.deliveries'),
                         to: '/Commercial/Delivery/Delivery',
-                        icon: 'pi pi-bolt',
+                        icon: 'pi pi-truck',
                         gate: 'comercial_despachos_menu'
                     }
                 ]
@@ -127,13 +127,13 @@ const model2 = computed(() => [
             {
                 label: t('menu.production.name'),
                 rol: 'admin',
-                icon: 'pi pi-shopping-cart',
+                icon: 'pi pi-cog',
                 gate: 'produccion_menu',
                 items: [
                     {
                         label: t('menu.cultivationLots'),
                         to: '/production/croplots',
-                        icon: 'pi pi-bars',
+                        icon: 'pi pi-microsoft',
                         gate: 'produccion_lotesparacultivo_menu'
                     },
                     {
@@ -145,19 +145,19 @@ const model2 = computed(() => [
                     {
                         label: t('menu.lotScheduling'),
                         to: '/production/LotsSchedule',
-                        icon: 'pi pi-calendar-minus',
+                        icon: 'pi pi-calendar',
                         gate: 'produccion_programaciondelotes_menu'
                     },
                     {
                         label: t('menu.temperatureControl'),
                         to: '/production/TemperatureControl',
-                        icon: 'pi pi-calendar-minus',
+                        icon: 'pi pi-thermometer',
                         gate: ''
                     },
                     {
                         label: t('menu.meteoStation'),
                         to: '/production/MetereologicalStation',
-                        icon: 'pi pi-calendar-minus',
+                        icon: 'pi pi-cloud',
                         gate: ''
                     }
                 ]
@@ -169,13 +169,13 @@ const model2 = computed(() => [
             {
                 label: t('menu.paymentSettings'),
                 rol: 'admin',
-                icon: 'pi pi-dollar',
+                icon: 'pi pi-wallet',
                 gate: 'configuraciondepagos_menu',
                 items: [
                     {
                         label: t('menu.paymentTypes'),
                         to: '/payrollsettings/PaymentTypes',
-                        icon: 'pi pi-tablet',
+                        icon: 'pi pi-credit-card',
                         gate: 'configuraciondepagos_tiposdepago_menu'
                     },
                     {
@@ -187,13 +187,13 @@ const model2 = computed(() => [
                     {
                         label: t('menu.taskRates'),
                         to: '/payrollsettings/taskstarif',
-                        icon: 'pi pi-bookmark',
+                        icon: 'pi pi-money-bill',
                         gate: 'configuraciondepagos_tarifasportarea_menu'
                     },
                     {
                         label: t('menu.workTypes'),
                         to: '/payrollsettings/donetypes',
-                        icon: 'pi pi-list',
+                        icon: 'pi pi-check-square',
                         gate: 'configuraciondetiposdetareas_menu'
                     },
                     {
@@ -217,19 +217,19 @@ const model2 = computed(() => [
                     {
                         label: t('menu.workCenters'),
                         to: '/payrollsettings/Workcenters',
-                        icon: 'pi pi-bookmark',
+                        icon: 'pi pi-building',
                         gate: 'configuraciondepagos_centrosdetrabajo_menu'
                     },
                     {
                         label: t('menu.jobTypes'),
                         to: '/payrollsettings/Jobtypes',
-                        icon: 'pi pi-bolt',
+                        icon: 'pi pi-briefcase',
                         gate: 'configuraciondepagos_cargos_menu'
                     },
                     {
                         label: t('menu.employees'),
                         to: '/payrollsettings/Employees',
-                        icon: 'pi pi-users',
+                        icon: 'pi pi-id-card',
                         gate: 'configuraciondepagos_empleados_menu'
                     }
                 ]
@@ -253,14 +253,14 @@ const model2 = computed(() => [
                     {
                         label: t('menu.dailyTransactionsContractor'),
                         to: '/PayrollSettlement/DailyTransactionsContractor',
-                        icon: 'pi pi-money-bill',
+                        icon: 'pi pi-user-edit',
                         // gate: 'liquidaciondenomina_transacciones_diarias_menu'
                         gate: 'liquidaciondenomina_planeaciondiaria_menu'
                     },
                     {
                         label: t('menu.dailyTransactions'),
                         to: '/PayrollSettlement/DailyTransactions',
-                        icon: 'pi pi-money-bill',
+                        icon: 'pi pi-wallet',
                         // gate: 'liquidaciondenomina_transacciones_diarias_menu'
                         gate: 'liquidaciondenomina_planeaciondiaria_menu'
                     },
@@ -268,20 +268,20 @@ const model2 = computed(() => [
                     {
                         label: t('menu.payrollSettlement.JournalTransactions.title'),
                         to: '/PayrollSettlement/JournalTransactions',
-                        icon: 'pi pi-money-bill',
+                        icon: 'pi pi-book',
                         gate: 'liquidaciondenomina_planeaciondiaria_menu'
                     },
                     {
                         label: t('menu.payrollSettlement.LedgerTransactions.title'),
                         to: '/PayrollSettlement/LedgerTransactions',
-                        icon: 'pi pi-money-bill',
+                        icon: 'pi pi-database',
                         gate: 'liquidaciondenomina_planeaciondiaria_menu'
                     },
 
                     {
                         label: t('menu.shipping.shippingProcess'),
                         to: '/PayrollSettlement/ShippingProcess/ShippingProcess',
-                        icon: 'pi pi-briefcase',
+                        icon: 'pi pi-truck',
                         //gate: 'liquidaciondenomina_shipping_process_menu'
                         gate: 'liquidaciondenomina_planeaciondiaria_menu'
                     },
@@ -289,32 +289,32 @@ const model2 = computed(() => [
                     {
                         label: t('menu.transferToPrefrio'),
                         to: '/PayrollSettlement/TransferTasks',
-                        icon: 'pi pi-bookmark',
+                        icon: 'pi pi-sort-alt',
                         gate: 'liquidaciondenomina_trasladoaprefrio_menu'
                     },
                     {
                         label: t('menu.dailySettlement'),
                         to: '/PayrollSettlement/DailySettlement',
-                        icon: 'pi pi-bookmark',
+                        icon: 'pi pi-check-circle',
                         gate: 'liquidaciondenomina_planeaciondiaria_menu'
                     },
                     {
                         label: t('menu.employeeSummary'),
                         to: '/PayrollSettlement/EmployeesInformation',
-                        icon: 'pi pi-bookmark',
+                        icon: 'pi pi-users',
                         gate: 'liquidaciondenomina_planeaciondiaria_menu'
                         // gate: 'liquidaciondenomina_employees_information_menu'
                     },
                     {
                         label: t('menu.periodSummary'),
                         to: '/PayrollSettlement/PaymentPeriodsInformation',
-                        icon: 'pi pi-bookmark',
+                        icon: 'pi pi-calendar-times',
                         gate: 'liquidaciondenomina_payment_periods_information_menu'
                     },
                     {
                         label: t('menu.payrollDiscounts'),
                         to: '/PayrollSettlement/DiscountRegistering',
-                        icon: 'pi pi-ticket',
+                        icon: 'pi pi-percentage',
                         gate: 'liquidaciondenomina_descuentosdenomina_menu'
                     }
                 ]
@@ -332,13 +332,13 @@ const model2 = computed(() => [
                     {
                         label: t('menu.company'),
                         to: '/admon/companies',
-                        icon: 'pi pi-folder',
+                        icon: 'pi pi-globe',
                         gate: 'administracion_empresa_menu'
                     },
                     {
                         label: t('menu.farms'),
                         to: '/admon/farms',
-                        icon: 'pi pi-bookmark',
+                        icon: 'pi pi-map',
                         gate: 'administracion_fincas_menu'
                     }
                 ]
@@ -386,7 +386,7 @@ const model2 = computed(() => [
             {
                 label: t('menu.mobileApp'),
                 rol: 'admin',
-                icon: 'pi pi-box',
+                icon: 'pi pi-mobile',
                 gate: 'appmovil_menu',
                 items: [
                     {
@@ -454,7 +454,7 @@ const model2 = computed(() => [
                     {
                         label: t('menu.template'),
                         to: '/pages/template',
-                        icon: 'pi pi-fw pi-home',
+                        icon: 'pi pi-file',
                         gate: 'appmovil_agronomia_menu'
                     }
                 ]

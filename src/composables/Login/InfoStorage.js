@@ -1,6 +1,6 @@
 // src/composables/dataService.js
 
-import useData from '@/composables/DataAPI/FetchDataAPICopy.js';
+import useData from '@/service/FetchData/FetchDataAPI.js';
 
 const { getRequest } = useData();
 
@@ -19,10 +19,15 @@ export const fetchInfoDataLogged = async () => {
         sessionStorage.setItem('accessSessionFarm', farm.uuid);
         localStorage.setItem('accessSessionFarmId', farm.id);
         sessionStorage.setItem('accessSessionFarmId', farm.id);
+        localStorage.setItem('accessSessionFarmName', farm.name);
+        sessionStorage.setItem('accessSessionFarmName', farm.name);
+
         sessionStorage.setItem('accessSessionCompany', company.uuid);
         localStorage.setItem('accesSessionCompany', company.uuid);
         localStorage.setItem('accessSessionCompanyId', company.id);
         sessionStorage.setItem('accessSessionCompanyId', company.id);
+        localStorage.setItem('accessSessionCompanyName', company.name);
+        sessionStorage.setItem('accessSessionCompanyName', company.name);
         localStorage.setItem('accesSessionEmployeeName', employeeName);
         sessionStorage.setItem('accessSessionEmployeeName', employeeName);
         localStorage.setItem('accesSessionEmployeeUuid', employee.uuid);

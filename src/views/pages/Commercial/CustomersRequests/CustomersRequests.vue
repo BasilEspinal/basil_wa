@@ -143,8 +143,8 @@ const onRowSelect = (data) => {
                     'Updated At': row.updated_at
                 },
                 icon: 'pi pi-calendar',
-                bgColor: 'bg-green-100',
-                iconColor: 'text-green-500'
+                bgColor: 'var(--primary-50)',
+                iconColor: 'var(--primary-color)'
             },
             {
                 title: 'Employee Information',
@@ -160,8 +160,8 @@ const onRowSelect = (data) => {
                     'Updated At': row.employee_id?.updated_at
                 },
                 icon: 'pi pi-user',
-                bgColor: 'bg-teal-100',
-                iconColor: 'text-teal-500'
+                bgColor: 'var(--primary-100)',
+                iconColor: 'var(--primary-color)'
             },
             {
                 title: 'Product Information',
@@ -175,8 +175,8 @@ const onRowSelect = (data) => {
                     'Updated At': row.product?.updated_at
                 },
                 icon: 'pi pi-box',
-                bgColor: 'bg-blue-100',
-                iconColor: 'text-blue-500'
+                bgColor: 'var(--primary-200)',
+                iconColor: 'var(--primary-color)'
             },
             {
                 title: 'Company Information',
@@ -215,8 +215,8 @@ const onRowSelect = (data) => {
                     'Updated At': row.status?.updated_at
                 },
                 icon: 'pi pi-info-circle',
-                bgColor: 'bg-gray-100',
-                iconColor: 'text-gray-500'
+                bgColor: 'var(--surface-100)',
+                iconColor: 'var(--text-color-secondary)'
             }
         ];
     }

@@ -127,8 +127,8 @@ const onRowSelect = (data) => {
                     'Updated At': row.updated_at
                 },
                 icon: 'pi pi-calendar',
-                bgColor: 'bg-green-100',
-                iconColor: 'text-green-500'
+                bgColor: 'var(--primary-50)',
+                iconColor: 'var(--primary-color)'
             },
             {
                 title: 'Crop Lots',
@@ -160,8 +160,8 @@ const onRowSelect = (data) => {
                     'Updated At': row.customer_request?.updated_at
                 },
                 icon: 'pi pi-truck',
-                bgColor: 'bg-blue-100',
-                iconColor: 'text-blue-500'
+                bgColor: 'var(--primary-200)',
+                iconColor: 'var(--primary-color)'
             },
             {
                 title: 'Product Information',
@@ -216,8 +216,8 @@ const onRowSelect = (data) => {
                     'Updated At': row.packing_type?.updated_at
                 },
                 icon: 'pi pi-box',
-                bgColor: 'bg-teal-100',
-                iconColor: 'text-teal-500'
+                bgColor: 'var(--primary-100)',
+                iconColor: 'var(--primary-color)'
             },
             {
                 title: 'Vehicle Information',
@@ -231,8 +231,8 @@ const onRowSelect = (data) => {
                     'Updated At': row.vehicle?.updated_at
                 },
                 icon: 'pi pi-car',
-                bgColor: 'bg-gray-100',
-                iconColor: 'text-gray-500'
+                bgColor: 'var(--surface-100)',
+                iconColor: 'var(--text-color-secondary)'
             },
             {
                 title: 'Company Information',

@@ -218,10 +218,27 @@ export const messages = {
             nodataplanner: 'No data in daily planner',
             infonodataplanner: 'There is no data for the planner, please check the configuration of the work center, the company and the farm',
             nolotes: 'No batches',
-            infonolotes: 'There are no batches scheduled for today despite the data planned',
+            infonolotes: 'There are no scheduled batches because the daily planning is active but you must change the status of the daily planning to in progress',
+
             shipping: {
                 shippingProcess: 'Shipping Process',
                 deliveryProcess: 'Delivery Process'
+            },
+            employeeBelongsTo: 'The employee belongs to:',
+            department: 'Department:',
+            loading: 'Loading...',
+            noEmployeeDepartment: 'No employee associated with any department',
+            toasts: {
+                error: 'Error',
+                create: 'Create',
+                created: 'Created',
+                rate: 'Rate',
+                noRateDefined: 'NO rate defined'
+            },
+            checklist: {
+                workCenter: 'Work Center',
+                company: 'Company',
+                farm: 'Farm'
             }
         }
     },
@@ -447,10 +464,26 @@ export const messages = {
             nodataplanner: 'No hay planeación diaria',
             infonodataplanner: 'No hay datos planeados, por favor verifique la configuración del centro de trabajo, la compañía y la finca.',
             nolotes: 'No hay lotes',
-            infonolotes: 'No hay lotes programados para hoy a pesar de los datos planeados',
+            infonolotes: 'No hay lotes programados porque la planeación diaria se encuentra activa sin embargo debe cambiar el estado de la planeación diaria a en progreso',
             shipping: {
                 shippingProcess: 'Proceso de Envío',
                 deliveryProcess: 'Proceso de Entrega'
+            },
+            employeeBelongsTo: 'El empleado pertenece a:',
+            department: 'Departamento:',
+            loading: 'Cargando...',
+            noEmployeeDepartment: 'No tiene empleado asociado a ningún departamento',
+            toasts: {
+                error: 'Error',
+                create: 'Crear',
+                created: 'Creado',
+                rate: 'Tarifa',
+                noRateDefined: 'NO existe tarifa definida'
+            },
+            checklist: {
+                workCenter: 'Centro de Trabajo',
+                company: 'Compañía',
+                farm: 'Finca'
             }
         }
     }

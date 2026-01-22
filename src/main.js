@@ -123,17 +123,14 @@ const pinia = createPinia();
 
 ///////////////////////////////////////////
 
-const userLocale = navigator.language || navigator.userLanguage;
-const defaultLocale = userLocale.startsWith('es') ? 'es' : 'en';
-localStorage.setItem('locale', defaultLocale);
-const savedLocale = localStorage.getItem('locale');
 
 const i18n = createI18n({
     legacy: false, // disable legacy mode because of vue 3
-    locale: savedLocale,
-    fallbackLocale: 'en',
+    locale: localStorage.getItem('locale') || 'es',
+    fallbackLocale: 'es',
     messages
 });
+
 
 /////////////////////////////////////////////////////////////////
 

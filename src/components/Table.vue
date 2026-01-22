@@ -122,24 +122,22 @@ function fetchInfoAndUpdateValue() {
 
         tableData.value = dataFromComponent.value['data'];
         let mappedArray1 = [];
-        console.log(dataFromComponent.value['data'][0]);
-        const types = ['string', 'number', 'boolean'];
-        if (dataFromComponent.value['data']) {
-            for (let key in dataFromComponent.value['data'][0]) {
-                if (types.includes(typeof dataFromComponent.value['data'][0][key])) mappedArray1.push(key);
-            }
-            // console.log(tableData.value)
-            // console.log(allLabels.value)
-            // console.log(mappedArray1)
-            //Here the condition of columns is applied
-            columnas.value = mappedArray1
-                .filter((item) => allLabels.value.includes(item))
-                .map((item, index) => ({
-                    field: item,
-                    header: item.replaceAll('_', ' ').toUpperCase(),
-                    position: index
-                }));
-            console.log(columnas.value);
+            console.log('[Table] Column data identified:', dataFromComponent.value['data'][0]);
+            const types = ['string', 'number', 'boolean'];
+            if (dataFromComponent.value['data']) {
+                for (let key in dataFromComponent.value['data'][0]) {
+                    if (types.includes(typeof dataFromComponent.value['data'][0][key])) mappedArray1.push(key);
+                }
+                
+                // Column condition applied
+                columnas.value = mappedArray1
+                    .filter((item) => allLabels.value.includes(item))
+                    .map((item, index) => ({
+                        field: item,
+                        header: item.replaceAll('_', ' ').toUpperCase(),
+                        position: index
+                    }));
+                console.log('[Table] Configured columns:', columnas.value);
             column.value = columnas.value;
             headerNames.value = column.value.map((col) => col.field);
 
@@ -168,7 +166,7 @@ watch(
     () => isChanging2.value,
     () => {
         loadingData();
-        console.log('CIsChanging' + isChanging2.value);
+        console.log('[Table] isChanging triggered:', isChanging2.value);
         isChanging2.value = false;
     }
 );

@@ -69,26 +69,8 @@ export default function UseAppMovil() {
 
     const priceunit = ref(1950);
 
-    async function getPlannerTask(endPoint) {
-        isLoading.value = true;
-        try {
-            const response = await axios.get(`/api/products/${productId}`);
-        } catch (e) {
-            error.value = e;
-        } finally {
-            isLoading.value = false;
-        }
-    }
-    async function getEmployeesWorkCenter(endPoint) {
-        isLoading.value = true;
-        try {
-            const response = await axios.get(`/api/products/${productId}`);
-        } catch (e) {
-            error.value = e;
-        } finally {
-            isLoading.value = false;
-        }
-    }
+    // Removed unused async functions getPlannerTask and getEmployeesWorkCenter that relied on undefined axios.
+    // These are now handled by appMovilService.js called from the component.
 
     return {
         availableAreaEmployees,

@@ -5,7 +5,7 @@ const layoutConfig = reactive({
     darkTheme: false,
     inputStyle: 'outlined',
     menuMode: 'static',
-    theme: 'lara-light-teal',
+    theme: import.meta.env.VITE_APP_THEME_LIGHT || 'lara-light-teal',
     scale: 14,
     activeMenuItem: null
 });

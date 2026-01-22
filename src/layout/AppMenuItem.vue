@@ -3,7 +3,7 @@ import { ref, onBeforeMount, watch } from 'vue';
 import { useRoute } from 'vue-router';
 import { useLayout } from '@/layout/composables/layout';
 import ability from '@/service/ability.js';
-import useDataAPI from '@/composables/DataAPI/FetchDataAPI.js';
+import useDataAPI from '@/service/FetchData/FetchDataAPI.js';
 const {
     getAllResponseAPI,
     getAllResponsePermissionsAPI,

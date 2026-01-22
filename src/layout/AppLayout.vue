@@ -4,7 +4,7 @@ import AppTopbar from './AppTopbar.vue';
 import AppFooter from './AppFooter.vue';
 import { useRouter } from 'vue-router';
 import AppSidebar from './AppSidebar.vue';
-import useDataAPI from '@/composables/DataAPI/FetchDataAPI.js';
+import useDataAPI from '@/service/FetchData/FetchDataAPI.js';
 import { useLayout } from '@/layout/composables/layout';
 import ability from '@/service/ability.js';
 import ErrorsUnknown from '../components/ErrorsBackendUnknown/ErrorsUnknown.vue';

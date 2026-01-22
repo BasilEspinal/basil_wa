@@ -1,6 +1,6 @@
 <script setup>
 import { ref, computed, watch, provide, onBeforeMount, onMounted } from 'vue';
-import useDataAPI from '@/composables/DataAPI/FetchDataAPI.js';
+import useDataAPI from '@/service/FetchData/FetchDataAPI.js';
 import { FilterMatchMode, FilterOperator } from 'primevue/api';
 ///Demo  App Movil
 import { CrudService } from '@/service/CRUD/CrudService';
@@ -15,12 +15,19 @@ import { toTypedSchema } from '@vee-validate/zod';
 import { useToast } from 'primevue/usetoast';
 import { useForm } from 'vee-validate';
 import { useI18n } from 'vue-i18n';
-import { useAppMovilService } from '@/service/appMovil/appMovilService_V3';
+import { useAppMovilService } from '@/service/appMovil/appMovilService';
 const { initializeAppMovilSession, getDonesWork, HOLIDAY, initData, TASK_OF_TYPE, getUsers, getDataTasksplanner, getInfoEmployees, fetchWorkCenter, getTarifOfTasksDoneAppMob, getTarifOfWorks } = useAppMovilService();
 // import { ProductService } from '@/service/ProductService'
 const farmDefault = sessionStorage.getItem('accessSessionFarm');
 const supervisoryEmployee = sessionStorage.getItem('accesSessionEmployeeUuid');
 //const crudService = CrudService(endpoint.value);
+
+const props = defineProps({
+    editData: {
+        type: Object,
+        default: null
+    }
+});
 let endpoint = ref('/transactions/contractor/work'); //replace endpoint with your endpoint
 const crudService = CrudService(endpoint.value);
 const toast = useToast();
@@ -76,6 +83,8 @@ const initializeComponent = async () => {
         life: 3000
     });
 };
+
+
 
 onMounted(initializeComponent);
 
@@ -279,7 +288,8 @@ const actionRecordManager = handleSubmitNew(async (values) => {
             responseCRUD.value = await crudService.create(data);
             loadLazyData();
         } else if (state.value === 'edit') {
-            const { uuid } = listRowSelect.value[0];
+            const uuid = props.editData?.uuid;
+            if (!uuid) throw new Error('No UUID found for update');
             responseCRUD.value = await crudService.update(uuid, data);
         } else if (state.value === 'clone') {
             responseCRUD.value = await crudService.create(data);
@@ -330,11 +340,16 @@ watch(work, async () => {
         work.value.work_type_tarif,
         work.value.id
     );
-    totalTarif.value = valueTarif.data.data[0].price_tarif;
-}
 
-
+    // Safe access: check if data exists and is an array with items
+    if (valueTarif?.ok && Array.isArray(valueTarif?.data?.data) && valueTarif.data.data.length > 0) {
+        totalTarif.value = valueTarif.data.data[0].price_tarif;
+    } else {
+        totalTarif.value = 0;
+    }
+} else {
    // totalTarif.value = valueTarif.data.data[0].price_tarif;
+}
 });
 
 // watch(totalTarif, (newTotalTarif) => {
@@ -448,7 +463,12 @@ watch([work, taskOfTypeId], async ([w, toId]) => {
       w.work_type_tarif,
       w.id
     );
-    totalTarif.value = resp?.data?.data?.[0]?.price_tarif ?? 0;
+    // Safe access: check if data exists and is an array with items
+    if (resp?.ok && Array.isArray(resp?.data?.data) && resp.data.data.length > 0) {
+        totalTarif.value = resp.data.data[0].price_tarif;
+    } else {
+        totalTarif.value = 0;
+    }
   } catch (e) {
     console.error('getTarifOfTasksDoneAppMob error:', e);
     totalTarif.value = 0;
@@ -464,6 +484,139 @@ watch(work, () => {
     flagIndividual.value = false;
   }
 });
+
+
+// Start: Edit Mode Logic (Correct Placement)
+// Start: Edit Mode Logic (Correct Placement)
+watch([() => props.editData, Works, originalAvailablePickList], async ([newDataRaw, currentWorks, currentUsers]) => {
+    console.log('WATCH TRIGGERED');
+    console.log('newDataRaw:', newDataRaw);
+    console.log('Works length:', currentWorks?.length);
+    console.log('Users length:', currentUsers?.length);
+
+    if (newDataRaw?.uuid) {
+        console.log('Edit Data & Dependencies Update. Fetching full details for UUID:', newDataRaw.uuid);
+        loading.value = true;
+
+        try {
+            // Fetch full data with 'employees' relation included
+            const response = await crudService.getById(newDataRaw.uuid, { include: 'employees' }); // Try standard include
+            if (!response.ok) {
+                toast.add({ severity: 'error', detail: 'Error loading details: ' + response.error, life: 3000 });
+                return;
+            }
+            
+            // Assume the full object is in response.data.data (standard structure) 
+            // adjust if response structure is different (e.g. response.data)
+            const newData = response.data.data || response.data;
+            
+            // Merge logic: Start with editData (prop), then overwrite with NON-NULL fetched data
+            const finalData = { ...newDataRaw }; // Clone prop details
+            
+            // Only overwrite if fetched has value
+            for (const key in newData) {
+                if (newData[key] !== null && newData[key] !== undefined) {
+                    finalData[key] = newData[key];
+                }
+            }
+
+            console.log('Final Merged Data (JSON):', JSON.stringify(finalData, null, 2));
+
+            // 1. Set simple fields 
+            // Note: Verify field names against API response.
+            crop_lot_qtyV.value = finalData.crop_lot_qty ?? 1;
+            console.log('Set crop_lot_qtyV:', crop_lot_qtyV.value);
+            notesV.value = finalData.notes_small || finalData.notes || '';
+            console.log('Set notesV:', notesV.value);
+            quantityEmployees.value = finalData.employee_qty ?? 0;
+            console.log('Set quantityEmployees:', quantityEmployees.value);
+            // totalTarif.value = finalData.total_tarif_task; 
+
+            // 2. Set Work
+            if (currentWorks.length > 0) {
+                // Check multiple possible keys from both sources
+                const doneTypeUuid = finalData.doneType?.uuid || finalData.done_of_type_uuid;
+                const doneTypeId = finalData.doneType?.id || finalData.done_of_type_id; 
+
+                // Use loose matching (String comparison)
+                const foundWork = currentWorks.find(w => 
+                    (doneTypeUuid && String(w.uuid) === String(doneTypeUuid)) || 
+                    (doneTypeId && String(w.id) === String(doneTypeId))
+                );
+                
+                if (foundWork) {
+                    work.value = foundWork;
+                } else {
+                    // Fallback: Inject the work item from the transaction details if available
+                    // Check if doneType exists. It might lack an ID property but we have done_of_type_id at root.
+                    if (finalData.doneType) {
+                        const workToInject = { ...finalData.doneType };
+                        // Ensure it has an ID
+                        if (!workToInject.id && !workToInject.uuid) {
+                            workToInject.id = finalData.done_of_type_id;
+                            workToInject.uuid = finalData.done_of_type_uuid; // Might be undefined but that's ok
+                        }
+
+                        if (workToInject.id) {
+                            Works.value.push(workToInject);
+                            works.value = [...Works.value]; 
+                            work.value = workToInject;
+                        }
+                    }
+                }
+            } else {
+                 console.warn('Skipping Work set: Works list is empty');
+            }
+
+            // 3. Set PickList
+            if (currentUsers.length > 0) {
+                const processEmployees = (ids, fieldType) => {
+                     // Normalize target IDs to strings
+                     const selectedIds = new Set(ids.map(id => String(id)));
+
+                     const available = [];
+                     const selected = [];
+                     
+                     currentUsers.forEach(user => {
+                         const userVal = fieldType === 'uuid' ? user.uuid : user.id;
+                         // Normalize candidate ID to string
+                         if (selectedIds.has(String(userVal))) {
+                             selected.push(user);
+                         } else {
+                             available.push(user);
+                         }
+                     });
+                     dataPickList.value = [available, selected];
+                };
+
+                // Check for 'employees' array (objects) or 'employees_ids' (ids)
+                // Also check inside 'finalData' which includes prop data
+                if (finalData.employees && Array.isArray(finalData.employees)) {
+                    // Start by assuming employees have 'id' or 'uuid'
+                     processEmployees(finalData.employees.map(e => e.id), 'id');
+                } else if (finalData.employees_ids && Array.isArray(finalData.employees_ids)) {
+                     processEmployees(finalData.employees_ids, 'id');
+                } else if (finalData.employees_ids) {
+                    // It might be a string if comma separated?
+                     console.warn('employees_ids exists but is not an array:', finalData.employees_ids);
+                } else {
+                    // Fallback: if no list found, reset to all available
+                    dataPickList.value = [[...currentUsers], []];
+                }
+            }
+        } catch (error) {
+            console.error(error);
+            toast.add({ severity: 'error', detail: 'Failed to fetch details', life: 3000 });
+        } finally {
+            loading.value = false;
+        }
+
+    } else {
+       // If no editData, or just clearing
+        // Optional: resetAll();
+    }
+}, { immediate: true });
+
 
 
 </script>

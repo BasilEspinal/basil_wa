@@ -18,8 +18,9 @@ export const CrudService = (baseEndpoint) => ({
      * @param {String} uuid - The UUID of the record to retrieve.
      * @returns {Promise} - A promise that resolves to the record data.
      */
-    async getById(uuid) {
-        const fullEndpoint = `${baseEndpoint}/${uuid}`;
+    async getById(uuid, params = {}) {
+        const queryParams = new URLSearchParams(params).toString();
+        const fullEndpoint = queryParams ? `${baseEndpoint}/${uuid}?${queryParams}` : `${baseEndpoint}/${uuid}`;
         return await getRequest(fullEndpoint);
     },
 

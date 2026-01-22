@@ -3,6 +3,9 @@
     "version": "3.8.0",
     "scripts": {
         "dev": "vite",
+        "dev:innovatrix": "vite --mode innovatrix",
+        "dev:basil": "vite --mode basil",
+        "dev:volgatech": "vite --mode volgatech",
         "build": "vite build",
         "preview": "vite preview",
         "lint": "eslint . --ext .vue,.js,.jsx,.cjs,.mjs --fix --ignore-path .gitignore",

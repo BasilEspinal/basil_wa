@@ -290,7 +290,7 @@ const router = createRouter({
                 {
                     path: '/AppMovil/General',
                     name: 'captura de datos',
-                    component: () => import('@/views/pages/AppMovil/AppComponentWorkAreas.vue')
+                    component: () => import('@/views/pages/AppMovil/WorkAreaSelector.vue')
                 },
                 {
                     path: '/AppMovil/Corta',
@@ -307,6 +307,7 @@ const router = createRouter({
                     name: 'appmovil_corta_recibidos',
                     component: () => import('@/views/pages/AppMovil/Information/Receivings_appmovil.vue')
                 },
+
                 {
                     path: '/AppMovil/Contractor',
                     name: 'appmovil_contractor',

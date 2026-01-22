@@ -1,8 +1,8 @@
 <script setup>
 import { ref, onMounted, watch } from 'vue';
 import { useToast } from 'primevue/usetoast';
-import useDataAPI from '@/composables/DataAPI/FetchDataAPI.js';
-import useData from '@/composables/DataAPI/FetchDataAPICopy.js';
+import useDataAPI from '@/service/FetchData/FetchDataAPI.js';
+import useData from '@/service/FetchData/FetchDataAPI.js';
 
 let endpoint = ref('/roles');
 const { getRequest } = useData();

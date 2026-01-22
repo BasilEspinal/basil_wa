@@ -4,7 +4,7 @@ import ProductService from '@/service/ProductService';
 import { useLayout } from '@/layout/composables/layout';
 import ability from '@/service/ability.js';
 import { AbilityBuilder } from '@casl/ability';
-import useDataAPI from '@/composables/DataAPI/FetchDataAPI.js';
+import useDataAPI from '@/service/FetchData/FetchDataAPI.js';
 import { fetchInfoDataLogged } from '@/composables/Login/InfoStorage.js';
 import ConnectionManager from '@/components/WebSocket/ConnectionManager.vue';
 import ConnectionState from '@/components/WebSocket/ConnectionState.vue';
@@ -135,8 +135,8 @@ const setChart = () => {
         datasets: [
             {
                 data: [540, 325, 702],
-                backgroundColor: [documentStyle.getPropertyValue('--indigo-500'), documentStyle.getPropertyValue('--purple-500'), documentStyle.getPropertyValue('--teal-500')],
-                hoverBackgroundColor: [documentStyle.getPropertyValue('--indigo-400'), documentStyle.getPropertyValue('--purple-400'), documentStyle.getPropertyValue('--teal-400')]
+                backgroundColor: [documentStyle.getPropertyValue('--indigo-500'), documentStyle.getPropertyValue('--purple-500'), documentStyle.getPropertyValue('--orange-500')],
+                hoverBackgroundColor: [documentStyle.getPropertyValue('--indigo-400'), documentStyle.getPropertyValue('--purple-400'), documentStyle.getPropertyValue('--orange-400')]
             }
         ]
     };
@@ -208,11 +208,11 @@ const setChart = () => {
         datasets: [
             {
                 data: [11, 16, 7, 3],
-                backgroundColor: [documentStyle.getPropertyValue('--indigo-500'), documentStyle.getPropertyValue('--purple-500'), documentStyle.getPropertyValue('--teal-500'), documentStyle.getPropertyValue('--orange-500')],
+                backgroundColor: [documentStyle.getPropertyValue('--indigo-500'), documentStyle.getPropertyValue('--purple-500'), documentStyle.getPropertyValue('--cyan-500'), documentStyle.getPropertyValue('--orange-500')],
                 label: 'My dataset'
             }
         ],
-        labels: ['Indigo', 'Purple', 'Teal', 'Orange']
+        labels: ['Indigo', 'Purple', 'Cyan', 'Orange']
     };
 
     polarOptions.value = {
@@ -277,8 +277,60 @@ const setChart = () => {
 watch(
     layoutConfig.theme,
     () => {
-        setColorOptions();
-        setChart();
+        // Smart Wait: Poll until the CSS variable matches the expected brand color.
+        // This avoids flickering and ensures we only paint when the DOM is ready.
+        let attempts = 0;
+        const maxAttempts = 50; // 2.5 seconds max wait
+        const targetColor = import.meta.env.VITE_APP_PRIMARY_COLOR?.toLowerCase() || '';
+        
+        // Default Teal to avoid (rgb or hex)
+        // #14B8A6 is rgb(20, 184, 166)
+        
+        const checkColorAndDraw = () => {
+            setColorOptions();
+            const currentPrimary = documentStyle.getPropertyValue('--primary-500').trim().toLowerCase();
+            
+            // Logic:
+            // 1. If we have a target color (e.g. #06b6d4), we want currentPrimary to match it (or be close/converted).
+            //    Note: browsers often return rgb() even if we set hex.
+            // 2. OR, simpler: We just check if it's NOT the default Teal anymore.
+            //    But if the User *wants* Teal (Basil), this check fails.
+            
+            // Better Logic:
+            // If VITE_APP_PRIMARY_COLOR is set, wait until currentPrimary represents it.
+            // Converting hex to rgb is annoying here.
+            
+            // Let's rely on the assumption that if the Theme switched, the color-mix/variables should be present.
+            // But we don't know the exact string value of color-mix result easily.
+            
+            // Fallback strategy:
+            // Just wait until the primary color is NOT the generic theme color (#14B8A6 or rgb(20, 184, 166))
+            // UNLESS the target color IS teal.
+            
+            // Given the complexity of hex-to-rgb comparison, we will use a hybrid approach:
+            // Poll for up to 500ms guaranteed, checking for change.
+            // If it changes from the "previous" state, it might be ready.
+            
+            // Actually, the simplest robust fix for the "Second Switch" green flash is:
+            // The green flash happens because we read the default CSS.
+            // We just need to wait for App.vue to finish.
+            // App.vue doesn't emit an event.
+            
+            // Resetting to a polling mechanism that DOES NOT call setChart() until the End.
+            // But how do we know the end? 
+            // We can check if dynamic-theme-style exists in HEAD?
+            const dynamicStyle = document.getElementById('dynamic-theme-style');
+            const isReady = !!dynamicStyle; 
+            
+            if (isReady || attempts > 20) { // 1 second timeout
+                 setChart();
+            } else {
+                 attempts++;
+                 setTimeout(checkColorAndDraw, 50);
+            }
+        };
+
+        checkColorAndDraw();
     },
     { immediate: true }
 );
@@ -383,12 +435,12 @@ watch(
                         <span class="block text-500 font-medium mb-3">Icopores (Corta)</span>
                         <div class="text-900 font-medium text-xl">152 Recogidos</div>
                     </div>
-                    <div class="flex align-items-center justify-content-center bg-green-100 border-round" style="width: 2.5rem; height: 2.5rem">
-                        <i class="pi pi-shopping-cart text-green-500 text-xl"></i>
+                    <div class="flex align-items-center justify-content-center border-round" style="width: 2.5rem; height: 2.5rem; background-color: var(--primary-50)">
+                        <i class="pi pi-shopping-cart text-xl" style="color: var(--primary-color)"></i>
                     </div>
                 </div>
                 <div>
-                    <span class="text-green-500 font-medium">102 </span>
+                    <span class="font-medium" style="color: var(--primary-color)">102 </span>
                     <span class="text-500">Enviados</span>
                 </div>
                 <div>
@@ -405,12 +457,12 @@ watch(
                         <span class="block text-500 font-medium mb-3">Icopores (prefrio)</span>
                         <div class="text-900 font-medium text-xl">102 recibidos</div>
                     </div>
-                    <div class="flex align-items-center justify-content-center bg-green-100 border-round" style="width: 2.5rem; height: 2.5rem">
-                        <i class="pi pi-shopping-cart text-green-500 text-xl"></i>
+                    <div class="flex align-items-center justify-content-center border-round" style="width: 2.5rem; height: 2.5rem; background-color: var(--primary-50)">
+                        <i class="pi pi-shopping-cart text-xl" style="color: var(--primary-color)"></i>
                     </div>
                 </div>
                 <div>
-                    <span class="text-green-500 font-medium">71 </span>
+                    <span class="font-medium" style="color: var(--primary-color)">71 </span>
                     <span class="text-500">Enviados</span>
                 </div>
                 <div>
@@ -427,12 +479,12 @@ watch(
                         <span class="block text-500 font-medium mb-3">Tabacos Clasificados</span>
                         <div class="text-900 font-medium text-xl">71</div>
                     </div>
-                    <div class="flex align-items-center justify-content-center bg-green-100 border-round" style="width: 2.5rem; height: 2.5rem">
-                        <i class="pi pi-shopping-cart text-green-500 text-xl"></i>
+                    <div class="flex align-items-center justify-content-center border-round" style="width: 2.5rem; height: 2.5rem; background-color: var(--primary-50)">
+                        <i class="pi pi-shopping-cart text-xl" style="color: var(--primary-color)"></i>
                     </div>
                 </div>
                 <div>
-                    <span class="text-green-500 font-medium">41 </span>
+                    <span class="font-medium" style="color: var(--primary-color)">41 </span>
                     <span class="text-500">Enviados</span>
                 </div>
                 <div>
@@ -449,11 +501,11 @@ watch(
                         <span class="block text-500 font-medium mb-3">Tabacos Empacados</span>
                         <div class="text-900 font-medium text-xl">41</div>
                     </div>
-                    <div class="flex align-items-center justify-content-center bg-green-100 border-round" style="width: 2.5rem; height: 2.5rem">
-                        <i class="pi pi-shopping-cart text-green-500 text-xl"></i>
+                    <div class="flex align-items-center justify-content-center border-round" style="width: 2.5rem; height: 2.5rem; background-color: var(--primary-50)">
+                        <i class="pi pi-shopping-cart text-xl" style="color: var(--primary-color)"></i>
                     </div>
                 </div>
-                <span class="text-green-500 font-medium">%52+ </span>
+                <span class="font-medium" style="color: var(--primary-color)">%52+ </span>
                 <span class="text-500">Meta del dia</span>
             </div>
         </div>
@@ -464,11 +516,11 @@ watch(
                         <span class="block text-500 font-medium mb-3">Labores Contratistas</span>
                         <div class="text-900 font-medium text-xl">28</div>
                     </div>
-                    <div class="flex align-items-center justify-content-center bg-green-100 border-round" style="width: 2.5rem; height: 2.5rem">
-                        <i class="pi pi-inbox text-green-500 text-xl"></i>
+                    <div class="flex align-items-center justify-content-center border-round" style="width: 2.5rem; height: 2.5rem; background-color: var(--primary-50)">
+                        <i class="pi pi-inbox text-xl" style="color: var(--primary-color)"></i>
                     </div>
                 </div>
-                <span class="text-green-500 font-medium">520 </span>
+                <span class="font-medium" style="color: var(--primary-color)">520 </span>
                 <span class="text-500">Pendientes</span>
             </div>
         </div>
