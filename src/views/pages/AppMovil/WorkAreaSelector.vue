@@ -16,6 +16,7 @@ import { watchEffect } from 'vue';
 const errorSummary = ref(false);
 const summary = ref();
 const plannerErrorMessage = ref('');
+const serverChecks = ref(null);
 ////////////////////////////////////////////////////////////
 const { t } = useI18n();
 const toast = useToast();
@@ -25,9 +26,9 @@ const { layoutConfig } = useLayout();
 const { refreshSessionState, HOLIDAY, initData, TASK_OF_TYPE, fetchWorkCenter, getUsers, getDataTasksplanner, getInfoEmployees } = useAppMovilService();
 
 const configChecklist = computed(() => [
-    { label: `${t('appmovil.checklist.workCenter')}: ${fetchWorkCenter.value?.name || '---'}`, ok: !!fetchWorkCenter.value },
-    { label: `${t('appmovil.checklist.company')}: ${sessionStorage.getItem('accessSessionCompanyName') || '---'}`, ok: !!sessionStorage.getItem('accessSessionCompanyId') },
-    { label: `${t('appmovil.checklist.farm')}: ${sessionStorage.getItem('accessSessionFarmName') || '---'}`, ok: !!sessionStorage.getItem('accessSessionFarmId') }
+    { label: `${t('appmovil.checklist.workCenter')}: ${fetchWorkCenter.value?.name || '---'}`, ok: serverChecks.value ? serverChecks.value.workCenter : !!fetchWorkCenter.value },
+    { label: `${t('appmovil.checklist.company')}: ${sessionStorage.getItem('accessSessionCompanyName') || '---'}`, ok: serverChecks.value ? serverChecks.value.company : !!sessionStorage.getItem('accessSessionCompanyId') },
+    { label: `${t('appmovil.checklist.farm')}: ${sessionStorage.getItem('accessSessionFarmName') || '---'}`, ok: serverChecks.value ? serverChecks.value.farm : !!sessionStorage.getItem('accessSessionFarmId') }
 ]);
 
 const titulo = ref('');
@@ -222,10 +223,12 @@ const functionsData = async () => {
             toast.add({ severity: 'error', detail: response.error, life: 3000 });
         }
         plannerErrorMessage.value = response.error;
+        serverChecks.value = response.checks;
         loading.value = false;
         return;
     }
     plannerErrorMessage.value = '';
+    serverChecks.value = null;
     
     console.log('response,',response);
 

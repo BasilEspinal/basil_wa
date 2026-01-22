@@ -46,7 +46,7 @@ const resetAppMovilService = () => {
 };
 
 export function useAppMovilService() {
-    const error = (e) => ({ data: [], error: e, ok: false });
+    const error = (e, checks = null) => ({ data: [], error: e, ok: false, checks });
 
     const refreshSessionState = async () => {
         await Promise.resolve().then(() => initializeAppMovilSession());
@@ -65,8 +65,16 @@ export function useAppMovilService() {
         const farmUuid = sessionStorage.getItem('accessSessionFarm');
         const tasksOfTypedId = fetchWorkCenter.value?.taskoftype?.id;
 
+        // --- SESSION PRESENCE CHECKS ---
+        const baseChecks = {
+            workCenter: !!fetchWorkCenter.value,
+            company: !!companyUuid,
+            farm: !!farmUuid,
+            date: true // Assume date is OK until we check records
+        };
+
         if (!tasksOfTypedId || !companyUuid || !farmUuid) {
-            return error('Faltan datos de sesión (Empresa/Finca). Por favor, cierre sesión y vuelva a entrar.');
+            return error('Faltan datos de sesión (Empresa/Finca). Por favor, cierre sesión y vuelva a entrar.', baseChecks);
         }
 
         // Broaden search: Filter ONLY by task type to see all potential plannings
@@ -74,24 +82,34 @@ export function useAppMovilService() {
         const response = await getRequest(endpoint);
 
         if (!response.ok || !Array.isArray(response.data?.data) || response.data.data.length === 0) {
-            return error(`No se encontró ninguna planeación para el tipo: ${fetchWorkCenter.value.taskoftype.name}`);
+            return error(`No se encontró ninguna planeación para el tipo: ${fetchWorkCenter.value.taskoftype.name}`, { ...baseChecks, workCenter: false });
         }
 
         console.log('Total plannings found for this type:', response.data.data.length);
 
-        // Filter by Company and Farm in Javascript to provide better error messages
+        // --- UNIT MATCH CHECKS (Company & Farm) ---
         const plannersForMyUnit = response.data.data.filter(p =>
             p.company?.uuid === companyUuid && p.farm?.uuid === farmUuid
         );
 
         if (plannersForMyUnit.length === 0) {
             const firstFound = response.data.data[0];
+            const companyMatch = firstFound.company?.uuid === companyUuid;
+            const farmMatch = firstFound.farm?.uuid === farmUuid;
+
+            const detailedChecks = {
+                ...baseChecks,
+                company: companyMatch,
+                farm: farmMatch
+            };
+
             const foundUnit = `${firstFound.company?.name || 'Desconocida'} / ${firstFound.farm?.name || 'Desconocida'}`;
             const myUnit = `${sessionStorage.getItem('accessSessionCompanyName') || 'su sesión'} / ${sessionStorage.getItem('accessSessionFarmName') || 'su sesión'}`;
-            return error(`Planeaciones encontradas (${response.data.data.length}), pero pertenecen a [${foundUnit}] y usted está en [${myUnit}].`);
+
+            return error(`Planeaciones encontradas (${response.data.data.length}), pero pertenecen a [${foundUnit}] y usted está en [${myUnit}].`, detailedChecks);
         }
 
-        // Date Validation (Robust localized date)
+        // --- DATE & STATUS CHECKS ---
         const now = new Date();
         const year = now.getFullYear();
         const month = String(now.getMonth() + 1).padStart(2, '0');
@@ -108,10 +126,10 @@ export function useAppMovilService() {
             const todayPlanner = plannersForMyUnit.find(p => p.transaction_date === today);
             if (!todayPlanner) {
                 const dates = plannersForMyUnit.map(p => p.transaction_date).join(', ');
-                return error(`No hay planeación para hoy (${today}). Fechas encontradas para su unidad: [${dates}]`);
+                return error(`No hay planeación para hoy (${today}). Fechas encontradas para su unidad: [${dates}]`, { ...baseChecks, date: false });
             }
             // Use the specific instruction requested by the user
-            return error(`Planeación de hoy encontrada (Estado: ${todayPlanner.status?.name}). Debe cambiar el estado a "En progreso" en la web para continuar.`);
+            return error(`Planeación de hoy encontrada (Estado: ${todayPlanner.status?.name}). Debe cambiar el estado a "En progreso" en la web para continuar.`, baseChecks);
         }
 
         tasksPlaner.value = validPlanner;
