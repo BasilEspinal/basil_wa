@@ -46,7 +46,7 @@ const resetAppMovilService = () => {
 };
 
 export function useAppMovilService() {
-    const error = (e, checks = null) => ({ data: [], error: e, ok: false, checks });
+    const error = (e, checks = null, steps = []) => ({ data: [], error: e, ok: false, checks, steps });
 
     const refreshSessionState = async () => {
         await Promise.resolve().then(() => initializeAppMovilSession());
@@ -63,6 +63,8 @@ export function useAppMovilService() {
     const getDataTasksplanner = async () => {
         const companyUuid = sessionStorage.getItem('accessSessionCompany');
         const farmUuid = sessionStorage.getItem('accessSessionFarm');
+        const companyName = sessionStorage.getItem('accessSessionCompanyName');
+        const farmName = sessionStorage.getItem('accessSessionFarmName');
         const tasksOfTypedId = fetchWorkCenter.value?.taskoftype?.id;
 
         // --- SESSION PRESENCE CHECKS ---
@@ -70,11 +72,21 @@ export function useAppMovilService() {
             workCenter: !!fetchWorkCenter.value,
             company: !!companyUuid,
             farm: !!farmUuid,
-            date: true // Assume date is OK until we check records
+            date: true
         };
 
-        if (!tasksOfTypedId || !companyUuid || !farmUuid) {
-            return error('Faltan datos de sesión (Empresa/Finca). Por favor, cierre sesión y vuelva a entrar.', baseChecks);
+        // Check if names are missing (the "---" issue)
+        const needsSessionRefresh = !companyName || !farmName;
+
+        if (!tasksOfTypedId || !companyUuid || !farmUuid || needsSessionRefresh) {
+            return error(
+                'Sesión incompleta o desactualizada.',
+                baseChecks,
+                [
+                    { title: 'Cerrar Sesión', desc: 'Presione el botón de salir en el menú superior.' },
+                    { title: 'Volver a Ingresar', desc: 'Ingrese sus credenciales nuevamente para sincronizar su empresa y finca.' }
+                ]
+            );
         }
 
         // Broaden search: Filter ONLY by task type to see all potential plannings
@@ -82,7 +94,14 @@ export function useAppMovilService() {
         const response = await getRequest(endpoint);
 
         if (!response.ok || !Array.isArray(response.data?.data) || response.data.data.length === 0) {
-            return error(`No se encontró ninguna planeación para el tipo: ${fetchWorkCenter.value.taskoftype.name}`, { ...baseChecks, workCenter: false });
+            return error(
+                `Sin planeación para "${fetchWorkCenter.value.taskoftype.name}"`,
+                { ...baseChecks, workCenter: false },
+                [
+                    { title: 'Verificar en Web', desc: 'Vaya al módulo de Planeación Diaria en la plataforma web.' },
+                    { title: 'Crear Planeación', desc: `Asegúrese de que exista una planeación para el centro de trabajo "${fetchWorkCenter.value.name}".` }
+                ]
+            );
         }
 
         console.log('Total plannings found for this type:', response.data.data.length);
@@ -103,10 +122,17 @@ export function useAppMovilService() {
                 farm: farmMatch
             };
 
-            const foundUnit = `${firstFound.company?.name || 'Desconocida'} / ${firstFound.farm?.name || 'Desconocida'}`;
-            const myUnit = `${sessionStorage.getItem('accessSessionCompanyName') || 'su sesión'} / ${sessionStorage.getItem('accessSessionFarmName') || 'su sesión'}`;
+            const foundUnit = `${firstFound.company?.name || '---'} / ${firstFound.farm?.name || '---'}`;
+            const myUnit = `${companyName} / ${farmName}`;
 
-            return error(`Planeaciones encontradas (${response.data.data.length}), pero pertenecen a [${foundUnit}] y usted está en [${myUnit}].`, detailedChecks);
+            return error(
+                'Conflicto de Ubicación Detectado',
+                detailedChecks,
+                [
+                    { title: 'Verificar Ubicación en Web', desc: `La planeación encontrada pertenece a "${foundUnit}", pero usted está en "${myUnit}".` },
+                    { title: 'Corregir en Web', desc: 'Mueva la planeación a la finca correcta o cambie su finca de trabajo en la web.' }
+                ]
+            );
         }
 
         // --- DATE & STATUS CHECKS ---
@@ -126,10 +152,24 @@ export function useAppMovilService() {
             const todayPlanner = plannersForMyUnit.find(p => p.transaction_date === today);
             if (!todayPlanner) {
                 const dates = plannersForMyUnit.map(p => p.transaction_date).join(', ');
-                return error(`No hay planeación para hoy (${today}). Fechas encontradas para su unidad: [${dates}]`, { ...baseChecks, date: false });
+                return error(
+                    `Fecha Incorrecta (${today})`,
+                    { ...baseChecks, date: false },
+                    [
+                        { title: 'Verificar Fecha en Web', desc: `Se encontraron planeaciones para: [${dates}], pero ninguna para hoy.` },
+                        { title: 'Actualizar Fecha', desc: 'Cambie la fecha de la planeación en la web al día de hoy.' }
+                    ]
+                );
             }
             // Use the specific instruction requested by the user
-            return error(`Planeación de hoy encontrada (Estado: ${todayPlanner.status?.name}). Debe cambiar el estado a "En progreso" en la web para continuar.`, baseChecks);
+            return error(
+                `Planeación Inactiva (${todayPlanner.status?.name})`,
+                baseChecks,
+                [
+                    { title: 'Activar Planeación', desc: 'Vaya a la web y cambie el estado de la planeación a "En progreso".' },
+                    { title: 'Refrescar App', desc: 'Una vez activada, regrese a esta pantalla para continuar.' }
+                ]
+            );
         }
 
         tasksPlaner.value = validPlanner;
