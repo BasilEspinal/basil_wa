@@ -61,25 +61,59 @@ export function useAppMovilService() {
     };
 
     const getDataTasksplanner = async () => {
-        if (!fetchWorkCenter.value?.taskoftype?.id || !fetchCompannyId.value || !fetchFarmId.value) {
-            console.log('fetchWorkCenter.value?.taskoftype?.id', fetchWorkCenter.value?.taskoftype?.id);
-            console.log('fetchCompannyId.value', fetchCompannyId.value);
-            console.log('fetchFarmId.value', fetchFarmId.value);
-            return error('Faltan datos para construir el endpoint');
+        const companyUuid = sessionStorage.getItem('accessSessionCompany');
+        const farmUuid = sessionStorage.getItem('accessSessionFarm');
+        const tasksOfTypedId = fetchWorkCenter.value?.taskoftype?.id;
+
+        if (!tasksOfTypedId || !companyUuid || !farmUuid) {
+            return error('Faltan datos de sesión (Empresa/Finca). Por favor, cierre sesión y vuelva a entrar.');
         }
 
-        const endpoint = `/appmovil/tasksplanner?filter[tasks_of_type_id]=${fetchWorkCenter.value.taskoftype.id}&filter[company_id]=${fetchCompannyId.value}&filter[farm_id]=${fetchFarmId.value}`;
+        // Broaden search: Filter ONLY by task type to see all potential plannings
+        const endpoint = `/appmovil/tasksplanner?filter[tasks_of_type_id]=${tasksOfTypedId}`;
         const response = await getRequest(endpoint);
 
         if (!response.ok || !Array.isArray(response.data?.data) || response.data.data.length === 0) {
-            return error('No hay planner asignado');
+            return error(`No se encontró ninguna planeación para el tipo: ${fetchWorkCenter.value.taskoftype.name}`);
         }
 
-        console.log('responseGetDataTasksplanner', response);
+        console.log('Total plannings found for this type:', response.data.data.length);
 
-        tasksPlaner.value = response.data.data[0];
+        // Filter by Company and Farm in Javascript to provide better error messages
+        const plannersForMyUnit = response.data.data.filter(p =>
+            p.company?.uuid === companyUuid && p.farm?.uuid === farmUuid
+        );
+
+        if (plannersForMyUnit.length === 0) {
+            return error(`Planeaciones encontradas (${response.data.data.length}), pero ninguna pertenece a su Empresa/Finca actual.`);
+        }
+
+        // Date Validation (Robust localized date)
+        const now = new Date();
+        const year = now.getFullYear();
+        const month = String(now.getMonth() + 1).padStart(2, '0');
+        const day = String(now.getDate()).padStart(2, '0');
+        const today = `${year}-${month}-${day}`;
+
+        const validPlanner = plannersForMyUnit.find(planner => {
+            const isToday = planner.transaction_date === today;
+            const statusName = planner.status?.name?.toUpperCase();
+            return isToday && statusName === 'EN PROGRESO';
+        });
+
+        if (!validPlanner) {
+            const todayPlanner = plannersForMyUnit.find(p => p.transaction_date === today);
+            if (!todayPlanner) {
+                const dates = plannersForMyUnit.map(p => p.transaction_date).join(', ');
+                return error(`No hay planeación para hoy (${today}). Fechas encontradas para su unidad: [${dates}]`);
+            }
+            // Use the specific instruction requested by the user
+            return error(`Planeación de hoy encontrada (Estado: ${todayPlanner.status?.name}). Debe cambiar el estado a "En progreso" en la web para continuar.`);
+        }
+
+        tasksPlaner.value = validPlanner;
         counter.value++;
-        return { ...response, data: response.data.data[0] };
+        return { ...response, data: validPlanner };
     };
 
     const getHoliDay = async () => {

@@ -136,11 +136,10 @@ onMounted(async () => {
     //console.log("respPackingsType", respPackingsType);
     if (!respPackingsType.ok) toast.add({ severity: 'error', detail: t('appmovil.toasts.error') + ' ' + respPackingsType.error, life: 3000 });
     Packings_type.value = respPackingsType.data.data.map((packing) => ({ uuid: packing.uuid, name: packing.name }));
-    console.log(props.data.tasks_of_type.name);
-    if (props.data.tasks_of_type.name == 'CORTAR') {
-        packing_typeV.value = { uuid: props.data.packing_type.uuid, name: props.data.packing_type.name };
-        packingTypeFlag.value = false;
-    } else if (props.data.tasks_of_type.name == 'CLASIFICAR PRODUCTO') {
+    const taskName = props.data.tasks_of_type?.name?.toUpperCase() || '';
+    const autoPackingTasks = ['CORTAR', 'CORTA', 'CLASIFICAR', 'CLASIFICACION', 'CLASIFICACIÓN', 'PREFRIO', 'PRE-FRIO'];
+    
+    if (autoPackingTasks.some(t => taskName.includes(t))) {
         packing_typeV.value = { uuid: props.data.packing_type.uuid, name: props.data.packing_type.name };
         packingTypeFlag.value = false;
     }

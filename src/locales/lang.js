@@ -234,6 +234,11 @@ export const messages = {
                 created: 'Created',
                 rate: 'Rate',
                 noRateDefined: 'NO rate defined'
+            },
+            checklist: {
+                workCenter: 'Work Center',
+                company: 'Company',
+                farm: 'Farm'
             }
         }
     },
@@ -474,6 +479,11 @@ export const messages = {
                 created: 'Creado',
                 rate: 'Tarifa',
                 noRateDefined: 'NO existe tarifa definida'
+            },
+            checklist: {
+                workCenter: 'Centro de Trabajo',
+                company: 'Compañía',
+                farm: 'Finca'
             }
         }
     }

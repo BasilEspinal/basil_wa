@@ -292,17 +292,24 @@ const totalPrices = computed(() => {
 
 
 onMounted(async () => {
-    // const appmovilcortaService = new AppMovilCortaService(getAllResponseAPI);
-    // plannertask.value = await appmovilcortaService.getPlannerTask(4,1,1);
-    // workcenters.value = await appmovilcortaService.getEmployeesWorkCenter(2);
-    // tasktarifs.value = await appmovilcortaService.getTasksTarif(4, 1);
-    
-    // Using new service methods
-    plannertask.value = await getPlannerTask(4,1,1);
-    workcenters.value = await getEmployeesWorkCenterById(2);
-    tasktarifs.value = await getTasksTarif(4, 1);
+    // Get dynamic values from session/service
+    const wcId = fetchWorkCenter.value?.id;
+    const taskTypeId = fetchWorkCenter.value?.taskoftype?.id;
+    const companyId = sessionStorage.getItem('accessSessionCompanyId');
+    const farmId = sessionStorage.getItem('accessSessionFarmId');
+    const packingTypeId = plannertask.value?.packing_type?.id;
 
-    // await loadLazyData();
+    if (taskTypeId && companyId && farmId) {
+        plannertask.value = await getPlannerTask(taskTypeId, companyId, farmId);
+    }
+    
+    if (wcId) {
+        workcenters.value = await getEmployeesWorkCenterById(wcId);
+    }
+
+    if (taskTypeId && packingTypeId) {
+        tasktarifs.value = await getTasksTarif(taskTypeId, packingTypeId);
+    }
 });
 
 

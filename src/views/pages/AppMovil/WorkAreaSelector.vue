@@ -15,6 +15,7 @@ import { watchEffect } from 'vue';
 
 const errorSummary = ref(false);
 const summary = ref();
+const plannerErrorMessage = ref('');
 ////////////////////////////////////////////////////////////
 const { t } = useI18n();
 const toast = useToast();
@@ -22,6 +23,12 @@ const { layoutConfig } = useLayout();
 
 
 const { refreshSessionState, HOLIDAY, initData, TASK_OF_TYPE, fetchWorkCenter, getUsers, getDataTasksplanner, getInfoEmployees } = useAppMovilService();
+
+const configChecklist = computed(() => [
+    { label: t('appmovil.checklist.workCenter'), ok: !!fetchWorkCenter.value },
+    { label: t('appmovil.checklist.company'), ok: !!sessionStorage.getItem('accessSessionCompanyId') },
+    { label: t('appmovil.checklist.farm'), ok: !!sessionStorage.getItem('accessSessionFarmId') }
+]);
 
 const titulo = ref('');
 
@@ -210,10 +217,15 @@ const functionsData = async () => {
 
     const response = await getDataTasksplanner();
     if (!response.ok) {
-        toast.add({ severity: 'error', detail: response.error, life: 3000 });
+        // Only toast if it's a real API error, otherwise we show the friendly ErrorAppMovil
+        if (!response.error.includes('No hay planeación')) {
+            toast.add({ severity: 'error', detail: response.error, life: 3000 });
+        }
+        plannerErrorMessage.value = response.error;
         loading.value = false;
         return;
     }
+    plannerErrorMessage.value = '';
     
     console.log('response,',response);
 
@@ -303,7 +315,7 @@ const updateData = async () => {
 
     <h3 v-if="!fetchWorkCenter?.name ">
         
-        <ErrorAppMovil :title="t('appmovil.noEmployeeDepartment')" :logo-url="logoUrl" />
+        <ErrorAppMovil :title="t('appmovil.noEmployeeDepartment')" :logo-url="logoUrl" :checklist="configChecklist" />
     </h3>
 
     <div v-if="loading" class="flex align-items-center justify-content-center" style="height: 100vh">
@@ -533,7 +545,7 @@ const updateData = async () => {
     </div>
 
     <div v-else>
-        <ErrorAppMovil :title="t('appmovil.nodataplanner') + ' ' + TASK_OF_TYPE?.name" :description="t('appmovil.infonodataplanner')" :logo-url="logoUrl" v-if="fetchWorkCenter?.name"/>
+        <ErrorAppMovil :title="plannerErrorMessage || (t('appmovil.nodataplanner') + ' ' + TASK_OF_TYPE?.name)" :description="t('appmovil.infonodataplanner')" :logo-url="logoUrl" :checklist="configChecklist" v-if="fetchWorkCenter?.name"/>
     </div>
 </template>
 
