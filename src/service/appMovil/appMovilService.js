@@ -9,6 +9,8 @@ const fetchSupervisorId = ref(null);
 const fetchFarmId = ref(null);
 const fetchCompannyId = ref(null);
 const fetchCompannyuuid = ref(null);
+const fetchCompannyName = ref(null);
+const fetchFarmName = ref(null);
 const holiday = ref('Normal');
 const tasksPlaner = ref({});
 const tipoActividad = ref([]);
@@ -27,10 +29,14 @@ const initializeAppMovilSession = () => {
     setSessionValue(fetchFarmId, 'accessSessionFarmId');
     setSessionValue(fetchCompannyId, 'accessSessionCompanyId');
     setSessionValue(fetchCompannyuuid, 'accessSessionFarm');
+    setSessionValue(fetchCompannyName, 'accessSessionCompanyName');
+    setSessionValue(fetchFarmName, 'accessSessionFarmName');
 
-    console.log('[AppMovil] fetchWorkCenter', fetchWorkCenter.value);
-    console.log('[AppMovil] fetchCompannyId', fetchCompannyId.value);
-    console.log('[AppMovil] fetchFarmId', fetchFarmId.value);
+    console.log('[AppMovil] Session Loaded:', {
+        workCenter: fetchWorkCenter.value?.name,
+        company: fetchCompannyName.value,
+        farm: fetchFarmName.value
+    });
 };
 
 const resetAppMovilService = () => {
@@ -63,19 +69,20 @@ export function useAppMovilService() {
     const getDataTasksplanner = async () => {
         const companyUuid = sessionStorage.getItem('accessSessionCompany');
         const farmUuid = sessionStorage.getItem('accessSessionFarm');
-        const companyName = sessionStorage.getItem('accessSessionCompanyName');
-        const farmName = sessionStorage.getItem('accessSessionFarmName');
+        const companyId = sessionStorage.getItem('accessSessionCompanyId');
+        const farmId = sessionStorage.getItem('accessSessionFarmId');
+        const companyName = fetchCompannyName.value;
+        const farmName = fetchFarmName.value;
         const tasksOfTypedId = fetchWorkCenter.value?.taskoftype?.id;
 
         // --- SESSION PRESENCE CHECKS ---
         const baseChecks = {
             workCenter: !!fetchWorkCenter.value,
-            company: !!companyUuid,
-            farm: !!farmUuid,
+            company: !!companyUuid || !!companyId,
+            farm: !!farmUuid || !!farmId,
             date: true
         };
 
-        // Check if names are missing (the "---" issue)
         const needsSessionRefresh = !companyName || !farmName;
 
         if (!tasksOfTypedId || !companyUuid || !farmUuid || needsSessionRefresh) {
@@ -89,7 +96,6 @@ export function useAppMovilService() {
             );
         }
 
-        // Broaden search: Filter ONLY by task type to see all potential plannings
         const endpoint = `/appmovil/tasksplanner?filter[tasks_of_type_id]=${tasksOfTypedId}`;
         const response = await getRequest(endpoint);
 
@@ -104,32 +110,40 @@ export function useAppMovilService() {
             );
         }
 
-        console.log('Total plannings found for this type:', response.data.data.length);
-
         // --- UNIT MATCH CHECKS (Company & Farm) ---
-        const plannersForMyUnit = response.data.data.filter(p =>
-            p.company?.uuid === companyUuid && p.farm?.uuid === farmUuid
-        );
+        // Robust check: Compare by UUID String OR Numeric ID
+        const plannersForMyUnit = response.data.data.filter(p => {
+            const cMatch = p.company?.uuid === companyUuid || String(p.company?.id) === String(companyId);
+            const fMatch = p.farm?.uuid === farmUuid || String(p.farm?.id) === String(farmId);
+            return cMatch && fMatch;
+        });
 
         if (plannersForMyUnit.length === 0) {
             const firstFound = response.data.data[0];
-            const companyMatch = firstFound.company?.uuid === companyUuid;
-            const farmMatch = firstFound.farm?.uuid === farmUuid;
+            const companyMatch = firstFound.company?.uuid === companyUuid || String(firstFound.company?.id) === String(companyId);
+            const farmMatch = firstFound.farm?.uuid === farmUuid || String(firstFound.farm?.id) === String(farmId);
 
-            const detailedChecks = {
-                ...baseChecks,
-                company: companyMatch,
-                farm: farmMatch
-            };
+            const detailedChecks = { ...baseChecks, company: companyMatch, farm: farmMatch };
+            const foundUnitName = `${firstFound.company?.name || '---'} / ${firstFound.farm?.name || '---'}`;
+            const myUnitName = `${companyName} / ${farmName}`;
 
-            const foundUnit = `${firstFound.company?.name || '---'} / ${firstFound.farm?.name || '---'}`;
-            const myUnit = `${companyName} / ${farmName}`;
+            // Handle the "Mirror Conflict": Identical names but different internal IDs
+            if (foundUnitName === myUnitName) {
+                return error(
+                    'Conflicto de Registros Duplicados',
+                    detailedChecks,
+                    [
+                        { title: 'Nombres Idénticos, IDs Diferentes', desc: `El sistema encontró una planeación en una finca llamada "${farmName}", pero internamente tiene un código distinto al suyo.` },
+                        { title: 'Sincronizar Maestro de Fincas', desc: 'Verifique si existen fincas duplicadas con el mismo nombre en la plataforma web y unifique el registro.' }
+                    ]
+                );
+            }
 
             return error(
                 'Conflicto de Ubicación Detectado',
                 detailedChecks,
                 [
-                    { title: 'Verificar Ubicación en Web', desc: `La planeación encontrada pertenece a "${foundUnit}", pero usted está en "${myUnit}".` },
+                    { title: 'Verificar Ubicación en Web', desc: `La planeación encontrada pertenece a "${foundUnitName}", pero usted está en "${myUnitName}".` },
                     { title: 'Corregir en Web', desc: 'Mueva la planeación a la finca correcta o cambie su finca de trabajo en la web.' }
                 ]
             );
@@ -161,7 +175,6 @@ export function useAppMovilService() {
                     ]
                 );
             }
-            // Use the specific instruction requested by the user
             return error(
                 `Planeación Inactiva (${todayPlanner.status?.name})`,
                 baseChecks,
@@ -436,7 +449,9 @@ export function useAppMovilService() {
         getDonesWork,
         postDailyReport,
         error,
-        errorResponseAPI, // Exposed for UI validation
+        errorResponseAPI,
+        fetchCompannyName,
+        fetchFarmName,
         // Merged from AppMovilCorta
         getPlannerTask,
         getEmployeesWorkCenterById,

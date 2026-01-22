@@ -24,12 +24,12 @@ const toast = useToast();
 const { layoutConfig } = useLayout();
 
 
-const { refreshSessionState, HOLIDAY, initData, TASK_OF_TYPE, fetchWorkCenter, getUsers, getDataTasksplanner, getInfoEmployees } = useAppMovilService();
+const { refreshSessionState, HOLIDAY, initData, TASK_OF_TYPE, fetchWorkCenter, getUsers, getDataTasksplanner, getInfoEmployees, fetchCompannyName, fetchFarmName } = useAppMovilService();
 
 const configChecklist = computed(() => [
     { label: `${t('appmovil.checklist.workCenter')}: ${fetchWorkCenter.value?.name || '---'}`, ok: serverChecks.value ? serverChecks.value.workCenter : !!fetchWorkCenter.value },
-    { label: `${t('appmovil.checklist.company')}: ${sessionStorage.getItem('accessSessionCompanyName') || '---'}`, ok: serverChecks.value ? serverChecks.value.company : !!sessionStorage.getItem('accessSessionCompanyId') },
-    { label: `${t('appmovil.checklist.farm')}: ${sessionStorage.getItem('accessSessionFarmName') || '---'}`, ok: serverChecks.value ? serverChecks.value.farm : !!sessionStorage.getItem('accessSessionFarmId') }
+    { label: `${t('appmovil.checklist.company')}: ${fetchCompannyName.value || '---'}`, ok: serverChecks.value ? serverChecks.value.company : !!sessionStorage.getItem('accessSessionCompanyId') },
+    { label: `${t('appmovil.checklist.farm')}: ${fetchFarmName.value || '---'}`, ok: serverChecks.value ? serverChecks.value.farm : !!sessionStorage.getItem('accessSessionFarmId') }
 ]);
 
 const titulo = ref('');
