@@ -1,6 +1,6 @@
 <script setup>
 import { ref, onMounted } from 'vue';
-import useDataAPI from '@/composables/DataAPI/FetchDataAPI.js';
+import useDataAPI from '@/service/FetchData/FetchDataAPI.js';
 import { useToast } from 'primevue/usetoast';
 import { toTypedSchema } from '@vee-validate/zod';
 import { useForm } from 'vee-validate';
@@ -8,7 +8,7 @@ import ability from '@/service/ability.js';
 import { z } from 'zod';
 import FormPermissions from './FormPermissions.vue';
 
-//import useData from '@/composables/DataAPI/FetchDataAPICopy.js';
+//import useData from '@/service/FetchData/FetchDataAPI.js';
 //const { getRequest, postRequest, deleteRequest } = useData();
 
 import { CrudService } from '@/service/CRUD/CrudService';

@@ -1,6 +1,6 @@
 // src/composables/dataService.js
 
-import useData from '@/composables/DataAPI/FetchDataAPICopy.js';
+import useData from '@/service/FetchData/FetchDataAPI.js';
 
 const { getRequest } = useData();
 

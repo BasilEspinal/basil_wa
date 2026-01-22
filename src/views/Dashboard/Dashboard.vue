@@ -4,7 +4,7 @@ import ProductService from '@/service/ProductService';
 import { useLayout } from '@/layout/composables/layout';
 import ability from '@/service/ability.js';
 import { AbilityBuilder } from '@casl/ability';
-import useDataAPI from '@/composables/DataAPI/FetchDataAPI.js';
+import useDataAPI from '@/service/FetchData/FetchDataAPI.js';
 import { fetchInfoDataLogged } from '@/composables/Login/InfoStorage.js';
 import ConnectionManager from '@/components/WebSocket/ConnectionManager.vue';
 import ConnectionState from '@/components/WebSocket/ConnectionState.vue';

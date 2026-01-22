@@ -2,13 +2,13 @@
 import { ref, computed, onMounted, onUnmounted, watch, onBeforeMount } from 'vue';
 import UseAppMovil from '@/composables/AppMovil/UseAppMovil.js';
 import { useToast } from 'primevue/usetoast';
-import UserAppMovil from './UserAppMovil.vue';
+import UserAppMovil from './Shared/UserAppMovil.vue';
 import { useI18n } from 'vue-i18n';
 import { useLayout } from '@/layout/composables/layout';
-import { useAppMovilService } from '@/service/appMovil/OldFiles/appMovilService.js';
-import ShippingDelivered from './ShippingDelivered.vue';
-import DeliveringDelivered from './DeliveringDelivered.vue';
-import ErrorAppMovil from './ErrorAppMovil.vue';
+import { useAppMovilService } from '@/service/appMovil/appMovilService.js';
+import ShippingDelivered from './Logistics/ShippingDelivered.vue';
+import DeliveringDelivered from './Logistics/DeliveringDelivered.vue';
+import ErrorAppMovil from './Shared/ErrorAppMovil.vue';
 import ability from '@/service/ability.js';
 import { watchEffect } from 'vue';
 
@@ -88,7 +88,7 @@ const getDataEmployeesInfo = async () => {
     const response = await getInfoEmployees(dataApp.value.id, dataApp.value.tasks_of_type.id);
 
     if (!response.ok) {
-        toast.add({ severity: 'error', detail: 'Error' + response.error, life: 3000 });
+        toast.add({ severity: 'error', detail: t('appmovil.toasts.error') + ' ' + response.error, life: 3000 });
         errorSummary.value = true;
     }
     summary.value = response.data.data;
@@ -241,7 +241,7 @@ const logoUrl = computed(() => {
 
 const getUser = async () => {
     const response = await getUsers();
-    if (!response.ok) toast.add({ severity: 'error', detail: 'Error' + response.error, life: 3000 });
+    if (!response.ok) toast.add({ severity: 'error', detail: t('appmovil.toasts.error') + ' ' + response.error, life: 3000 });
     users.value = response.data.ok ?? response.data.data;
     filterUsers.value = response.data.ok ?? response.data.data;
 };
@@ -298,12 +298,12 @@ const updateData = async () => {
 
 <template>
     <!-- <pre>{{ compareStoredDate() }}</pre> -->
-    <h1 v-if="fetchWorkCenter?.name ">El empleado pertenece a:</h1>
-    <h2 v-if="fetchWorkCenter?.name ">{{ titulo}} Departamento: {{ fetchWorkCenter?.name || 'Cargando...' }}</h2>
+    <h1 v-if="fetchWorkCenter?.name ">{{ t('appmovil.employeeBelongsTo') }}</h1>
+    <h2 v-if="fetchWorkCenter?.name ">{{ titulo}} {{ t('appmovil.department') }} {{ fetchWorkCenter?.name || t('appmovil.loading') }}</h2>
 
     <h3 v-if="!fetchWorkCenter?.name ">
         
-        <ErrorAppMovil title="No tiene empleado asociado a ningún departamento" :logo-url="logoUrl" />
+        <ErrorAppMovil :title="t('appmovil.noEmployeeDepartment')" :logo-url="logoUrl" />
     </h3>
 
     <div v-if="loading" class="flex align-items-center justify-content-center" style="height: 100vh">

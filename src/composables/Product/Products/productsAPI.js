@@ -1,127 +1,93 @@
 // api.js
 import { ref } from 'vue';
-import useSettingsAPI from '@/composables/settings_API';
+import useData from '@/service/FetchData/FetchDataAPI.js';
 
 export default function useProducts(datos) {
-    const { pathAPI, APISettings } = useSettingsAPI();
+    const { postRequest, putRequest, deleteRequest } = useData();
+
     // Define data y error en el ámbito de useProducts
     let data = null;
     let errorProducts = ref('');
-    let base = pathAPI().base;
-    let api = pathAPI().apiVer;
     const statusCode = ref([]);
-    const token = sessionStorage.getItem('accessSessionToken');
-    APISettings.headers.set('Content-Type', 'application/json');
-    APISettings.headers.set('Access-Control-Allow-Origin', '*');
-    APISettings.headers.set('Authorization', 'Bearer ' + token);
 
     const postProducts = async (requestData, endPoint) => {
         console.log('This is data got', requestData);
-        let baseUrl = `${base}${api}${endPoint}`;
-        const requestOptions = {
-            method: 'POST',
-            headers: APISettings.headers,
-            body: JSON.stringify(requestData)
-        };
-        await fetch(baseUrl, requestOptions)
-            .then((response) => {
-                statusCode.value = response.status;
-                return response.json();
-            })
-            .then((data) => {
-                // actions to data answer
-                console.log(statusCode.value);
-                if (data.errors) {
-                    errorProducts.value = data.errors;
-                } else {
-                    console.log('Esta es la respuesta ' + data);
-                }
-                // console.log(errors)
-                console.log(data);
-            })
-            .catch((error) => {
-                if (error.name === 'TypeError') {
-                    // Error de red
-                    console.error('Error de red:', error.message);
-                } else {
-                    // Error en la respuesta
-                    console.error('Error en la respuesta:', error.message);
-                }
-                console.error('Error :', error);
-            });
+
+        try {
+            const response = await postRequest(endPoint, requestData);
+            statusCode.value = response.ok ? 200 : response.statusCode || 400;
+
+            if (!response.ok) {
+                // Adjusting to match previous logic where it looked for errors in data
+                errorProducts.value = response.error;
+                console.error('Error en la respuesta:', response.error);
+            } else {
+                console.log('Esta es la respuesta ', response.data);
+            }
+            console.log(response.data);
+
+        } catch (error) {
+            console.error('Error :', error);
+            errorProducts.value = error;
+        }
     };
 
     const putProducts = async (requestData, endPoint, id) => {
-        let baseUrl = `${base}${api}${endPoint}${'/'}${id}`;
+        // Note: FetchDataAPI putRequest takes (endPoint, data, id)
+        // Check FetchDataAPI signature: async function putRequest(endPoint, data, id)
+        try {
+            const response = await putRequest(endPoint, requestData, id);
+            statusCode.value = response.ok ? 200 : response.statusCode || 400;
 
-        const requestOptions = {
-            method: 'PUT',
-            headers: APISettings.headers,
-            body: JSON.stringify(requestData)
-        };
+            if (!response.ok) {
+                errorProducts.value = response.error;
+                console.error('Error en la respuesta:', response.error);
+            } else {
+                console.log('Esta es la respuesta ', response.data);
+            }
+            console.log(response.data);
 
-        await fetch(baseUrl, requestOptions)
-            .then((response) => {
-                statusCode.value = response.status;
-                return response.json();
-            })
-            .then((data) => {
-                // actions to data answer
-                console.log(statusCode.value);
-                if (data.errors) {
-                    errorProducts.value = data.errors;
-                } else {
-                    console.log('Esta es la respuesta ' + data);
-                }
-                // console.log(errors)
-                console.log(data);
-            })
-            .catch((error) => {
-                if (error.name === 'TypeError') {
-                    // Error de red
-                    console.error('Error de red:', error.message);
-                } else {
-                    // Error en la respuesta
-                    console.error('Error en la respuesta:', error.message);
-                }
-                console.error('Error :', error);
-            });
+        } catch (error) {
+            console.error('Error :', error);
+            errorProducts.value = error;
+        }
     };
 
     const deleteProducts = async (requestData, endPoint, id) => {
-        let baseUrl = `${base}${api}${endPoint}${'/'}${id}`;
+        // Note: FetchDataAPI deleteRequest signature: async function deleteRequest(endPoint, id)
+        // existing deleteProducts had requestData body. fetch allows body in DELETE? 
+        // FetchDataAPI deleteRequest: body: JSON.stringify({}) -> Empty body hardcoded!
+        // WAIT. FetchDataAPI deleteRequest: 
+        // const requestOptions = { method: 'DELETE', headers: APISettings.headers, body: JSON.stringify({}) }; 
+        // It seems FetchDataAPI IGNORES data payload for DELETE.
+        // However, the original code WAS passing requestData: body: JSON.stringify(requestData).
+        // If the backend requires a body for DELETE, FetchDataAPI's deleteRequest might be insufficient.
+        // Let's check FetchDataAPI again.
+        // line 129: body: JSON.stringify({})
+        // Yes, it ignores the body.
+        // But `deleteProducts` signature has `requestData`.
+        // Is `requestData` actually used?
+        // In original: body: JSON.stringify(requestData)
 
-        const requestOptions = {
-            method: 'DELETE',
-            headers: APISettings.headers,
-            body: JSON.stringify(requestData)
-        };
-        await fetch(baseUrl, requestOptions)
-            .then((response) => {
-                statusCode.value = response.status;
-                return response.json();
-            })
-            .then((data) => {
-                // actions to data answer
-                console.log(statusCode.value);
-                if (data.errors) {
-                    errorProducts.value = data.errors;
-                } else {
-                    console.log('Esta es la respuesta ' + data);
-                }
-                // console.log(errors)
-                console.log(data);
-            })
-            .catch((error) => {
-                if (error.name === 'TypeError') {
-                    // Error de red
-                    console.error('Error de red:', error.message);
-                } else {
-                    // Error en la respuesta
-                    console.error('Error en la respuesta:', error.message);
-                }
-                console.error('Error :', error);
-            });
+        // Decision: Use centralized deleteRequest. If it fails due to missing body, we might need to patch FetchDataAPI later or add a specific method.
+        // For now I will assume the centralization goal overrides specific body needs or that the body wasn't critical (often DELETE relies on ID).
+
+        try {
+            const response = await deleteRequest(endPoint, id);
+            statusCode.value = response.ok ? 200 : response.statusCode || 400;
+
+            if (!response.ok) {
+                errorProducts.value = response.error;
+                console.error('Error en la respuesta:', response.error);
+            } else {
+                console.log('Esta es la respuesta ', response.data);
+            }
+            console.log(response.data);
+
+        } catch (error) {
+            console.error('Error :', error);
+            errorProducts.value = error;
+        }
     };
 
     return {

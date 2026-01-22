@@ -1,5 +1,7 @@
 // Objetivo: Crear un hook para realizar peticiones a la API
 import useSettingsAPI from '@/service/FetchData/API_Settings';
+import ability from '@/service/ability.js';
+import { AbilityBuilder } from '@casl/ability';
 import { ref } from 'vue';
 export default function useData(locale = 'en') {
     const { pathAPI, APISettings } = useSettingsAPI(locale);
@@ -7,6 +9,13 @@ export default function useData(locale = 'en') {
     let errorResponseAPI = ref('Error no filled');
     let base = pathAPI().base;
     let api = pathAPI().apiVer;
+
+    // Datos reactivos para compatibilidad con la interfaz antigua
+    let dataResponseAPI = ref({});
+    let dataResponseListAPI = ref({});
+    let dataResponsePermissionsAPI = ref({});
+    let statusCode = ref(0);
+
     token.value = sessionStorage.getItem('accessSessionToken');
 
     const initializeToken = () => {
@@ -175,12 +184,98 @@ export default function useData(locale = 'en') {
         return responseData;
     }
 
+    // Método para obtener permisos/abilities e integrar con CASL
+    async function getAllResponsePermissionsAPI(endPoint) {
+        const response = await getRequest(endPoint);
+        if (response.ok && response.data) {
+            try {
+                const { can, rules } = new AbilityBuilder();
+                can(response.data);
+                ability.update(rules);
+                dataResponsePermissionsAPI.value = response.data;
+            } catch (e) {
+                console.error('Error actualizando abilities:', e.message);
+                response.error = 'Error al procesar permisos: ' + e.message;
+            }
+        }
+        return response;
+    }
+
+    // Método para obtener listas (alias de getRequest para compatibilidad)
+    async function getAllResponseListAPI(endPoint) {
+        const response = await getRequest(endPoint);
+        if (response.ok) {
+            dataResponseListAPI.value = response.data;
+        }
+        return response;
+    }
+
+    // Método legacy para obtener datos (con compatibilidad)
+    async function getAllResponseAPI(endPoint) {
+        const response = await getRequest(endPoint);
+        if (response.ok) {
+            dataResponseAPI.value = response.data;
+        }
+        statusCode.value = response.ok ? 200 : 400;
+        return response;
+    }
+
+    // Métodos legacy POST/PUT/DELETE que llenan las refs
+    async function postResponseAPI(requestData, endPoint) {
+        const response = await postRequest(endPoint, requestData);
+        if (response.ok) {
+            dataResponseAPI.value = response.data;
+        }
+        statusCode.value = response.ok ? 200 : 400;
+        return response;
+    }
+
+    async function putResponseAPI(requestData, endPoint, id) {
+        const response = await putRequest(endPoint, requestData, id);
+        if (response.ok) {
+            dataResponseAPI.value = response.data;
+        }
+        statusCode.value = response.ok ? 200 : 400;
+        return response;
+    }
+
+    async function deleteResponseAPI(requestData, endPoint, id) {
+        const response = await deleteRequest(endPoint, id);
+        if (response.ok) {
+            dataResponseAPI.value = response.data;
+        }
+        statusCode.value = response.ok ? 200 : 400;
+        return response;
+    }
+
+    function resetDataAPI() {
+        dataResponseAPI.value = {};
+        dataResponseListAPI.value = {};
+        dataResponsePermissionsAPI.value = {};
+        statusCode.value = 0;
+        errorResponseAPI.value = 'Error no filled';
+        token.value = null;
+    }
+
     return {
+
         getRequest,
         postRequest,
         putRequest,
         deleteRequest,
         patchRequest,
-        errorResponseAPI
+        getAllResponsePermissionsAPI,
+        getAllResponseListAPI,
+        getAllResponseAPI,
+        postResponseAPI,
+        putResponseAPI,
+        deleteResponseAPI,
+        errorResponseAPI,
+        dataResponseAPI,
+        dataResponseListAPI,
+        dataResponsePermissionsAPI,
+        dataResponsePermissionsAPI,
+        statusCode,
+        resetDataAPI
     };
 }

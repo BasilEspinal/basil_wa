@@ -225,9 +225,10 @@
 
 <script setup>
 import { ref, computed, watch, provide, onBeforeMount, onMounted } from 'vue';
-import useDataAPI from '@/composables/DataAPI/FetchDataAPI.js';
+import useDataAPI from '@/service/FetchData/FetchDataAPI.js';
 import { FilterMatchMode, FilterOperator } from 'primevue/api';
-import AppMovilCortaService from '@/service/AppMovilCorta.js';
+// import AppMovilCortaService from '@/service/AppMovilCorta.js'; // REMOVED
+import { useAppMovilService } from '@/service/appMovil/appMovilService.js'; // ADDED
 import UseAppMovil from '@/composables/AppMovil/UseAppMovil.js';
 
 let endpoint = ref('/planner_tasks'); //replace endpoint with your endpoint
@@ -238,6 +239,8 @@ const { availableAreaEmployees, worksDay, task_type, crops_lots, dones_work, siz
 const { getAllResponseAPI, getAllResponseListAPI, totalRecordsResponseAPI, currentPageResponseAPI, linksResponseAPI,
         postResponseAPI, putResponseAPI, deleteResponseAPI, errorResponseAPI, dataResponseAPI, dataResponseListAPI, statusCode } =
         useDataAPI();
+
+const { getPlannerTask, getEmployeesWorkCenterById, getTasksTarif } = useAppMovilService(); // Destructuring from composable
 
 const quanty = ref();
 const pricetotal = ref();
@@ -253,9 +256,9 @@ const formatCurrency = (value) => {
 
 const lastYearTotal = computed(() => {
     let total = 0;
-    for (let sale of sales.value) {
-        total += sale.lastYearProfit;
-    }
+    // for (let sale of sales.value) { // sales is not defined in original either?
+    //     total += sale.lastYearProfit;
+    // }
 
     return formatCurrency(total);
 });
@@ -271,9 +274,9 @@ const quantities = computed(() => {
 
 const thisYearTotal = computed(() => {
     let total = 0;
-    for (let sale of sales.value) {
-        total += sale.thisYearProfit;
-    }
+    // for (let sale of sales.value) {
+    //     total += sale.thisYearProfit;
+    // }
 
     return formatCurrency(total);
 });
@@ -289,10 +292,16 @@ const totalPrices = computed(() => {
 
 
 onMounted(async () => {
-    const appmovilcortaService = new AppMovilCortaService(getAllResponseAPI);
-    plannertask.value = await appmovilcortaService.getPlannerTask(4,1,1);
-    workcenters.value = await appmovilcortaService.getEmployeesWorkCenter(2);
-    tasktarifs.value = await appmovilcortaService.getTasksTarif(4, 1);
+    // const appmovilcortaService = new AppMovilCortaService(getAllResponseAPI);
+    // plannertask.value = await appmovilcortaService.getPlannerTask(4,1,1);
+    // workcenters.value = await appmovilcortaService.getEmployeesWorkCenter(2);
+    // tasktarifs.value = await appmovilcortaService.getTasksTarif(4, 1);
+    
+    // Using new service methods
+    plannertask.value = await getPlannerTask(4,1,1);
+    workcenters.value = await getEmployeesWorkCenterById(2);
+    tasktarifs.value = await getTasksTarif(4, 1);
+
     // await loadLazyData();
 });
 

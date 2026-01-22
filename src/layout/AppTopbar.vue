@@ -2,8 +2,8 @@
 import { ref, computed, onMounted, onBeforeUnmount, onBeforeMount, watch } from 'vue';
 import { useLayout } from '@/layout/composables/layout';
 import { useRouter } from 'vue-router';
-import useDataAPI from '@/composables/DataAPI/FetchDataAPI.js';
-import { useAppMovilService } from '@/service/appMovil/appMovilService_V3';
+import useDataAPI from '@/service/FetchData/FetchDataAPI.js';
+import { useAppMovilService } from '@/service/appMovil/appMovilService';
 import OverlayPanel from 'primevue/overlaypanel';
 import { useForm } from 'vee-validate';
 import { toTypedSchema } from '@vee-validate/zod';
@@ -154,9 +154,19 @@ onBeforeUnmount(() => {
     unbindOutsideClickListener();
 });
 
-const logoUrl = computed(() => {
-    return `layout/images/${layoutConfig.darkTheme.value ? 'logo-white' : 'logo-dark'}.png`;
+    const logoUrl = computed(() => {
+    const lightLogo = import.meta.env.VITE_APP_LOGO_LIGHT; // Logo for Light Theme (usually dark logo)
+    const darkLogo = import.meta.env.VITE_APP_LOGO_DARK;   // Logo for Dark Theme (usually white logo)
+
+    // Fallback logic if env vars are missing
+    if (!lightLogo || !darkLogo) {
+        return `layout/images/${layoutConfig.darkTheme.value ? 'logo-white' : 'logo-dark'}.png`;
+    }
+
+    return layoutConfig.darkTheme.value ? darkLogo : lightLogo;
 });
+
+const appName = import.meta.env.VITE_APP_NAME || 'AgroOnline';
 
 const onTopBarMenuButton = () => {
     topbarMenuActive.value = !topbarMenuActive.value;
@@ -260,7 +270,7 @@ const toggleOverlayPanel2 = (event) => {
     <div class="layout-topbar">
         <router-link to="/" class="layout-topbar-logo">
             <img :src="logoUrl" alt="logo" />
-            <span>AgroOnline</span>
+            <span>{{ appName }}</span>
         </router-link>
 
         <button v-if="!(ability.can('agro_tv_menu') && lengthPermissions == 1)" class="p-link layout-menu-button layout-topbar-button" @click="onMenuToggle()">

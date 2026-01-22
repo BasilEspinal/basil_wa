@@ -15,7 +15,7 @@ const props = defineProps({
                         <img :src="logoUrl" alt="logo" class="mb-2 w-4rem flex-shrink-0" />
                         <h1 class="text-900 font-bold text-3xl mb-1">{{ title ? title : 'Unknown error' }}</h1>
                         <img src="/demo/images/error/asset-error.svg" alt="Error" class="mb-4" width="50%" />
-                        <span class="text-700 mb-4">{{ description ? description : 'Unknown error' }}</span>
+                        <span class="text-700 mb-4"> <h2>{{ description ? description : 'Unknown error' }}</h2></span>
                     </div>
                 </div>
             </div>

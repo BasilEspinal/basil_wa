@@ -1,9 +1,9 @@
 <script setup>
 import { ref, watch, provide, onBeforeMount, onMounted } from 'vue';
-import useDataAPI from '@/composables/DataAPI/FetchDataAPI.js';
+import useDataAPI from '@/service/FetchData/FetchDataAPI.js';
 import { useToast } from 'primevue/usetoast';
 import { FilterMatchMode, FilterOperator } from 'primevue/api';
-import useData from '@/composables/DataAPI/FetchDataAPICopy.js';
+import useData from '@/service/FetchData/FetchDataAPI.js';
 const { getRequest, postRequest, putRequest, deleteRequest, errorResponseAPI } = useData();
 import { useRouter } from 'vue-router';
 import { useForm } from 'vee-validate';

@@ -1,7 +1,7 @@
 <script setup>
 import { ref, onMounted, onBeforeMount, computed } from 'vue';
 import { useI18n } from 'vue-i18n';
-import { useAppMovilService } from '../../../service/appMovil/appMovilService_V3';
+import { useAppMovilService } from '@/service/appMovil/appMovilService';
 import { useToast } from 'primevue/usetoast';
 import userTab from './userTab.vue';
 import sendingTab from './sendingTab.vue';

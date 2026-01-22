@@ -1,7 +1,7 @@
 <script setup>
 import { ref, onMounted } from 'vue';
 import { useToast } from 'primevue/usetoast';
-import useData from '@/composables/DataAPI/FetchDataAPICopy.js';
+import useData from '@/service/FetchData/FetchDataAPI.js';
 const { getRequest, putRequest } = useData();
 
 let endpoint = ref('/users');

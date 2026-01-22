@@ -4,7 +4,7 @@ import FrontEndErrors from '@/layout/composables/Errors/FrontendErrors.vue';
 import { CrudService } from '@/service/CRUD/CrudService';
 import { ref, onMounted, watch, computed } from 'vue';
 import { useToast } from 'primevue/usetoast';
-import { useAppMovilService } from '../../../service/appMovil/appMovilService_V3';
+import { useAppMovilService } from '@/service/appMovil/appMovilService';
 
 import { useI18n } from 'vue-i18n';
 import { z } from 'zod';
@@ -12,7 +12,7 @@ import { useForm } from 'vee-validate';
 import { toTypedSchema } from '@vee-validate/zod';
 
 const toast = useToast();
-const { error, getTarif, getDonesWork, initData,postDailyReport, WORK_CENTER, SUPERVISO_ID, LOTES } = useAppMovilService();
+const { error, getTarif, getDonesWork, initData,postDailyReport, WORK_CENTER, SUPERVISO_ID, LOTES, errorResponseAPI } = useAppMovilService(); // Destructure errorResponseAPI
 //const selected_quanty = ref(null);
 const Total = ref(null);
 //const select_tasks_type = ref(null);
@@ -119,7 +119,7 @@ watch(select_tasks_type, () => {
 });
 
 const crudService = CrudService('/packing_types');
-const errorResponseAPI = crudService.getErrorResponse();
+// const errorResponseAPI = crudService.getErrorResponse(); // Removed: Using centralized errorResponseAPI
 const { t } = useI18n();
 
 //const packing_typeV = ref({uuid: props.data.packing_type.uuid, name: props.data.packing_type.name});
@@ -134,7 +134,7 @@ onMounted(async () => {
 
     const respPackingsType = await crudService.getAll();
     //console.log("respPackingsType", respPackingsType);
-    if (!respPackingsType.ok) toast.add({ severity: 'error', detail: 'Error' + respPackingsType.error, life: 3000 });
+    if (!respPackingsType.ok) toast.add({ severity: 'error', detail: t('appmovil.toasts.error') + ' ' + respPackingsType.error, life: 3000 });
     Packings_type.value = respPackingsType.data.data.map((packing) => ({ uuid: packing.uuid, name: packing.name }));
     console.log(props.data.tasks_of_type.name);
     if (props.data.tasks_of_type.name == 'CORTAR') {
@@ -156,7 +156,7 @@ const clearFields = async () => {
 const getLabor = async () => {
     const response = await getDonesWork();
 
-    if (!response.ok) toast.add({ severity: 'error', detail: 'Error' + response.error, life: 3000 });
+    if (!response.ok) toast.add({ severity: 'error', detail: t('appmovil.toasts.error') + ' ' + response.error, life: 3000 });
     dones_work.value = response.data?.data ?? [];
 };
 
@@ -189,7 +189,7 @@ const sendDailyReport = handleSubmitNew(async (values) => {
     const restp = await postDailyReport(data);
     console.log(restp);
 
-    toast.add({ severity: restp.ok ? 'success' : 'error', summary: 'Create', detail: restp.ok ? 'Creado' : restp.error, life: 10000 });
+    toast.add({ severity: restp.ok ? 'success' : 'error', summary: t('appmovil.toasts.create'), detail: restp.ok ? t('appmovil.toasts.created') : restp.error, life: 10000 });
     //if (restp.ok) await clearFields();
     if (restp.ok) {
         emit('update-grandparent-data');
@@ -203,7 +203,7 @@ const UpdateTotal = () => {
 const updateTaskTarif = async () => {
     tarifa.value = await getTarif(select_tasks_type.value.code);
     // console.log("tarifa", tarifa.value);
-    tarifa.value === 0 ? toast.add({ severity: 'error', summary: 'Tarifa', detail: 'NO existe tarifa definida', life: 10000 }) : '';
+    tarifa.value === 0 ? toast.add({ severity: 'error', summary: t('appmovil.toasts.rate'), detail: t('appmovil.toasts.noRateDefined'), life: 10000 }) : '';
     laborActive.value = select_tasks_type.value?.label !== 'Task' && select_tasks_type.value?.name !== '' && select_tasks_type.value !== null;
     if (laborActive.value) {
         getLabor();
@@ -285,7 +285,7 @@ const searchPackingType = (event) => {
 
             <FrontEndErrors :errorsNew="errorsNew" name="packing_typeV" />
             <!--Modificar acá-->
-            <BackendErrors :name="errorResponseAPI?.errors?.task_qty" />
+            <BackendErrors :name="errorResponseAPI?.errors?.packing_type_uuid" />
         </div>
 
         <div class="field col-12 md:col-4">
@@ -317,6 +317,8 @@ const searchPackingType = (event) => {
                 <Textarea inputId="textarea" rows="4" cols="40" v-model="Notas" />
                 <label for="textarea">{{ t('appmovil.notas') }}</label>
             </span>
+            <FrontEndErrors :errorsNew="errorsNew" name="Notas" />
+            <BackendErrors :name="errorResponseAPI?.errors?.notes_small" />
         </div>
         <div class="field col-12 md:col-4">
             <div class="p-inputgroup border-round border-1">

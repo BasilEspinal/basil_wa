@@ -102,8 +102,8 @@ const onRowSelect = (data) => {
                     'Updated At': row.updated_at
                 },
                 icon: 'pi pi-calendar',
-                bgColor: 'bg-green-100',
-                iconColor: 'text-green-500'
+                bgColor: 'surface-card',
+                iconColor: 'text-primary'
             },
             {
                 title: 'Status Information',
@@ -117,8 +117,8 @@ const onRowSelect = (data) => {
                     'Updated At': row.status?.updated_at
                 },
                 icon: 'pi pi-info-circle',
-                bgColor: 'bg-gray-100',
-                iconColor: 'text-gray-500'
+                bgColor: 'surface-card',
+                iconColor: 'text-primary'
             },
             {
                 title: 'Farm Information',
@@ -130,8 +130,8 @@ const onRowSelect = (data) => {
                     'Updated At': row.farm?.updated_at
                 },
                 icon: 'pi pi-map-marker',
-                bgColor: 'bg-teal-100',
-                iconColor: 'text-teal-500'
+                bgColor: 'surface-card',
+                iconColor: 'text-primary'
             },
             {
                 title: 'Company Information',
@@ -145,8 +145,8 @@ const onRowSelect = (data) => {
                     'Updated At': row.company?.updated_at
                 },
                 icon: 'pi pi-building',
-                bgColor: 'bg-blue-100',
-                iconColor: 'text-blue-500'
+                bgColor: 'surface-card',
+                iconColor: 'text-primary'
             }
         ];
     }
@@ -638,23 +638,21 @@ const documentFrozen = ref(false); change name field
                                     <Button :disabled="!(listRowSelect.length > 0 && listRowSelect.length < 2)" icon="pi pi-bars" class="mr-2" @click="openForm('detalles')" />
                                 </div>
                                 <div class="col-12 lg:col-2 text-center">
-                                    <Button :disabled="!(listRowSelect.length > 0 && listRowSelect.length < 2)" icon="pi pi-file-edit" class="p-button-help mr-2" @click="openDialog('edit')" />
+                                    <Button :disabled="!(listRowSelect.length > 0 && listRowSelect.length < 2)" icon="pi pi-file-edit" severity="help" class="mr-2" @click="openDialog('edit')" />
                                 </div>
 
-                                <!-- Second row -->
                                 <div class="col-12 lg:col-2 text-center">
-                                    <Button :disabled="listRowSelect.length > 0" icon="pi pi-plus" class="p-button-success mr-2" @click="openDialog('new')" />
+                                    <Button :disabled="listRowSelect.length > 0" icon="pi pi-plus" severity="success" class="mr-2" @click="openDialog('new')" />
                                 </div>
                                 <div class="col-12 lg:col-2 text-center">
-                                    <Button :disabled="!(listRowSelect.length > 0 && listRowSelect.length < 2)" icon="pi pi-copy" class="p-button-secondary mr-2" @click="openDialog('clone')" />
+                                    <Button :disabled="!(listRowSelect.length > 0 && listRowSelect.length < 2)" icon="pi pi-copy" severity="secondary" class="mr-2" @click="openDialog('clone')" />
                                 </div>
 
-                                <!-- Third row -->
                                 <div class="col-12 lg:col-2 text-center">
-                                    <Button :disabled="!listRowSelect.length > 0" icon="pi pi-file-import" class="p-button-warning mr-2" @click="openExport" />
+                                    <Button :disabled="!listRowSelect.length > 0" icon="pi pi-file-import" severity="warning" class="mr-2" @click="openExport" />
                                 </div>
                                 <div class="col-12 lg:col-2 text-center">
-                                    <Button :disabled="!listRowSelect.length > 0" icon="pi pi-trash" class="p-button-danger mr-2" @click="openDelete" />
+                                    <Button :disabled="!listRowSelect.length > 0" icon="pi pi-trash" severity="danger" class="mr-2" @click="openDelete" />
                                 </div>
                             </div>
                         </template>

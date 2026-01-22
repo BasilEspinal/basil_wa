@@ -1,6 +1,6 @@
 <script setup>
 import { ref, watch, provide, onBeforeMount, onMounted } from 'vue';
-import useDataAPI from '@/composables/DataAPI/FetchDataAPI.js';
+import useDataAPI from '@/service/FetchData/FetchDataAPI.js';
 import { FilterMatchMode, FilterOperator } from 'primevue/api';
 import { useRouter } from 'vue-router';
 import { useForm } from 'vee-validate';

@@ -715,7 +715,7 @@ const documentFrozen = ref(false); change name field
                 </div>
             </Dialog>
             <Dialog v-model:visible="formDialog" modal :header="formDialogTitle" class="p-fluid text-center mx-auto">
-                <AppMovilContractor />
+                <AppMovilContractor :editData="state === 'edit' ? listRowSelect[0] : null" />
 
                 <div class="flex justify-content-end gap-2 flex-auto">
                     <Button class="flex-auto" type="button" label="Cancel" severity="secondary" @click="formDialog = false" />
