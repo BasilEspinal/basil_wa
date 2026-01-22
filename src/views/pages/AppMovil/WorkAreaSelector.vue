@@ -25,9 +25,9 @@ const { layoutConfig } = useLayout();
 const { refreshSessionState, HOLIDAY, initData, TASK_OF_TYPE, fetchWorkCenter, getUsers, getDataTasksplanner, getInfoEmployees } = useAppMovilService();
 
 const configChecklist = computed(() => [
-    { label: t('appmovil.checklist.workCenter'), ok: !!fetchWorkCenter.value },
-    { label: t('appmovil.checklist.company'), ok: !!sessionStorage.getItem('accessSessionCompanyId') },
-    { label: t('appmovil.checklist.farm'), ok: !!sessionStorage.getItem('accessSessionFarmId') }
+    { label: `${t('appmovil.checklist.workCenter')}: ${fetchWorkCenter.value?.name || '---'}`, ok: !!fetchWorkCenter.value },
+    { label: `${t('appmovil.checklist.company')}: ${sessionStorage.getItem('accessSessionCompanyName') || '---'}`, ok: !!sessionStorage.getItem('accessSessionCompanyId') },
+    { label: `${t('appmovil.checklist.farm')}: ${sessionStorage.getItem('accessSessionFarmName') || '---'}`, ok: !!sessionStorage.getItem('accessSessionFarmId') }
 ]);
 
 const titulo = ref('');

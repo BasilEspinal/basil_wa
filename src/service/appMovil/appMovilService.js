@@ -85,7 +85,10 @@ export function useAppMovilService() {
         );
 
         if (plannersForMyUnit.length === 0) {
-            return error(`Planeaciones encontradas (${response.data.data.length}), pero ninguna pertenece a su Empresa/Finca actual.`);
+            const firstFound = response.data.data[0];
+            const foundUnit = `${firstFound.company?.name || 'Desconocida'} / ${firstFound.farm?.name || 'Desconocida'}`;
+            const myUnit = `${sessionStorage.getItem('accessSessionCompanyName') || 'su sesión'} / ${sessionStorage.getItem('accessSessionFarmName') || 'su sesión'}`;
+            return error(`Planeaciones encontradas (${response.data.data.length}), pero pertenecen a [${foundUnit}] y usted está en [${myUnit}].`);
         }
 
         // Date Validation (Robust localized date)
