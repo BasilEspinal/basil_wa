@@ -45,6 +45,8 @@ const resetAppMovilService = () => {
     fetchFarmId.value = null;
     fetchCompannyId.value = null;
     fetchCompannyuuid.value = null;
+    fetchCompannyName.value = null;
+    fetchFarmName.value = null;
     holiday.value = 'Normal';
     tasksPlaner.value = {};
     tipoActividad.value = [];
@@ -74,6 +76,7 @@ export function useAppMovilService() {
         const companyName = fetchCompannyName.value;
         const farmName = fetchFarmName.value;
         const tasksOfTypedId = fetchWorkCenter.value?.taskoftype?.id;
+        const activeTaskName = fetchWorkCenter.value?.taskoftype?.name;
 
         // --- SESSION PRESENCE CHECKS ---
         const baseChecks = {
@@ -96,90 +99,83 @@ export function useAppMovilService() {
             );
         }
 
-        const endpoint = `/appmovil/tasksplanner?filter[tasks_of_type_id]=${tasksOfTypedId}`;
+        // Broad search for THIS unit (Company/Farm) to see ALL tasks planned today
+        const endpoint = `/appmovil/tasksplanner?filter[company_uuid]=${companyUuid}&filter[farm_uuid]=${farmUuid}`;
         const response = await getRequest(endpoint);
 
-        if (!response.ok || !Array.isArray(response.data?.data) || response.data.data.length === 0) {
-            return error(
-                `Sin planeación para "${fetchWorkCenter.value.taskoftype.name}"`,
-                { ...baseChecks, workCenter: false },
-                [
-                    { title: 'Verificar en Web', desc: 'Vaya al módulo de Planeación Diaria en la plataforma web.' },
-                    { title: 'Crear Planeación', desc: `Asegúrese de que exista una planeación para el centro de trabajo "${fetchWorkCenter.value.name}".` }
-                ]
-            );
-        }
-
-        // --- UNIT MATCH CHECKS (Company & Farm) ---
-        // Robust check: Compare by UUID String OR Numeric ID
-        const plannersForMyUnit = response.data.data.filter(p => {
-            const cMatch = p.company?.uuid === companyUuid || String(p.company?.id) === String(companyId);
-            const fMatch = p.farm?.uuid === farmUuid || String(p.farm?.id) === String(farmId);
-            return cMatch && fMatch;
-        });
-
-        if (plannersForMyUnit.length === 0) {
-            const firstFound = response.data.data[0];
-            const companyMatch = firstFound.company?.uuid === companyUuid || String(firstFound.company?.id) === String(companyId);
-            const farmMatch = firstFound.farm?.uuid === farmUuid || String(firstFound.farm?.id) === String(farmId);
-
-            const detailedChecks = { ...baseChecks, company: companyMatch, farm: farmMatch };
-            const foundUnitName = `${firstFound.company?.name || '---'} / ${firstFound.farm?.name || '---'}`;
-            const myUnitName = `${companyName} / ${farmName}`;
-
-            // Handle the "Mirror Conflict": Identical names but different internal IDs
-            if (foundUnitName === myUnitName) {
-                return error(
-                    'Conflicto de Registros Duplicados',
-                    detailedChecks,
-                    [
-                        { title: 'Nombres Idénticos, IDs Diferentes', desc: `El sistema encontró una planeación en una finca llamada "${farmName}", pero internamente tiene un código distinto al suyo.` },
-                        { title: 'Sincronizar Maestro de Fincas', desc: 'Verifique si existen fincas duplicadas con el mismo nombre en la plataforma web y unifique el registro.' }
-                    ]
-                );
+        if (!response.ok || !Array.isArray(response.data?.data)) {
+            // Fallback to numeric IDs if UUID search fails
+            const plannersById = await getRequest(`/appmovil/tasksplanner?filter[company_id]=${companyId}&filter[farm_id]=${farmId}`);
+            if (plannersById.ok && Array.isArray(plannersById.data?.data)) {
+                response.data = plannersById.data;
+                response.ok = true;
+            } else {
+                return error(`Error al consultar planeaciones: ${response.error || 'Server Error'}`);
             }
-
-            return error(
-                'Conflicto de Ubicación Detectado',
-                detailedChecks,
-                [
-                    { title: 'Verificar Ubicación en Web', desc: `La planeación encontrada pertenece a "${foundUnitName}", pero usted está en "${myUnitName}".` },
-                    { title: 'Corregir en Web', desc: 'Mueva la planeación a la finca correcta o cambie su finca de trabajo en la web.' }
-                ]
-            );
         }
 
-        // --- DATE & STATUS CHECKS ---
+        // 1. Filter for TODAY's records
         const now = new Date();
         const year = now.getFullYear();
         const month = String(now.getMonth() + 1).padStart(2, '0');
         const day = String(now.getDate()).padStart(2, '0');
         const today = `${year}-${month}-${day}`;
 
-        const validPlanner = plannersForMyUnit.find(planner => {
-            const isToday = planner.transaction_date === today;
+        const plannersToday = response.data.data.filter(p => p.transaction_date === today);
+
+        if (plannersToday.length === 0) {
+            return error(
+                `Sin planeación hoy en ${farmName}`,
+                { ...baseChecks, date: false },
+                [
+                    { title: 'Verificar en Web', desc: `Hoy (${today}) no se ha creado ninguna planeación para esta finca.` },
+                    { title: 'Crear Planeación', desc: 'Asegúrese de guardar y activar la planeación en la plataforma administrativa.' }
+                ]
+            );
+        }
+
+        // 2. Search for the specific task type of THIS Work Center
+        const validPlanner = plannersToday.find(planner => {
+            const isMyTask = planner.tasks_of_type?.id === tasksOfTypedId;
             const statusName = planner.status?.name?.toUpperCase();
-            return isToday && statusName === 'EN PROGRESO';
+            return isMyTask && statusName === 'EN PROGRESO';
         });
 
         if (!validPlanner) {
-            const todayPlanner = plannersForMyUnit.find(p => p.transaction_date === today);
-            if (!todayPlanner) {
-                const dates = plannersForMyUnit.map(p => p.transaction_date).join(', ');
+            const myTaskPlanner = plannersToday.find(p => p.tasks_of_type?.id === tasksOfTypedId);
+
+            if (!myTaskPlanner) {
+                // CROSS-CHECK: Did we find plannings for OTHER tasks?
+                const otherTasks = plannersToday.map(p => p.tasks_of_type?.name).filter(n => n && n !== activeTaskName);
+                const uniqueOthers = [...new Set(otherTasks)];
+
+                if (uniqueOthers.length > 0) {
+                    return error(
+                        `Puesto de Trabajo Equivocado`,
+                        { ...baseChecks, workCenter: false },
+                        [
+                            { title: 'Mismatch de Actividad', desc: `Usted está en "${fetchWorkCenter.value.name}" (${activeTaskName}), pero hoy solo se planeó: [${uniqueOthers.join(', ')}].` },
+                            { title: 'Pasar a otra Área', desc: 'Regrese al menú y elija el Centro de Trabajo que coincida con lo planeado.' }
+                        ]
+                    );
+                }
+
                 return error(
-                    `Fecha Incorrecta (${today})`,
-                    { ...baseChecks, date: false },
+                    `Sin planeación de "${activeTaskName}"`,
+                    { ...baseChecks, workCenter: false },
                     [
-                        { title: 'Verificar Fecha en Web', desc: `Se encontraron planeaciones para: [${dates}], pero ninguna para hoy.` },
-                        { title: 'Actualizar Fecha', desc: 'Cambie la fecha de la planeación en la web al día de hoy.' }
+                        { title: 'Verificar en Web', desc: `No existe planeación de "${activeTaskName}" para hoy.` },
+                        { title: 'Crear Planeación', desc: 'Asegúrese de guardar la planeación en la web.' }
                     ]
                 );
             }
+
+            // If task exists but is not "En progreso"
             return error(
-                `Planeación Inactiva (${todayPlanner.status?.name})`,
+                `Planeación Inactiva (${myTaskPlanner.status?.name})`,
                 baseChecks,
                 [
-                    { title: 'Activar Planeación', desc: 'Vaya a la web y cambie el estado de la planeación a "En progreso".' },
+                    { title: 'Activar Planeación', desc: `Vaya a la web y cambie el estado de "${activeTaskName}" a "En progreso".` },
                     { title: 'Refrescar App', desc: 'Una vez activada, regrese a esta pantalla para continuar.' }
                 ]
             );

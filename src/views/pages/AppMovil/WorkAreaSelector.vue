@@ -315,9 +315,33 @@ const updateData = async () => {
 </script>
 
 <template>
-    <!-- <pre>{{ compareStoredDate() }}</pre> -->
-    <h1 v-if="fetchWorkCenter?.name ">{{ t('appmovil.employeeBelongsTo') }}</h1>
-    <h2 v-if="fetchWorkCenter?.name ">{{ titulo}} {{ t('appmovil.department') }} {{ fetchWorkCenter?.name || t('appmovil.loading') }}</h2>
+    <div v-if="fetchWorkCenter?.name" class="header-premium p-3 mb-4">
+        <div class="flex align-items-center justify-content-between">
+            <div class="context-info">
+                <span class="text-sm font-medium text-400 uppercase tracking-wider block mb-1">
+                    {{ t('appmovil.employeeBelongsTo') }}
+                </span>
+                <div class="flex align-items-center gap-2 mb-2">
+                    <i class="pi pi-building text-primary text-xl" />
+                    <span class="text-xl font-bold line-height-2">{{ fetchCompannyName || '---' }}</span>
+                </div>
+                <div class="flex align-items-center gap-2">
+                    <i class="pi pi-map-marker text-green-500 text-lg" />
+                    <span class="text-lg font-semibold text-700">{{ fetchFarmName || '---' }}</span>
+                </div>
+            </div>
+            <div class="work-area-card p-3 border-round shadow-2 bg-primary-reverse border-1 border-primary-100 flex align-items-center gap-3">
+                <div class="icon-box p-3 border-round bg-primary-100">
+                    <i class="pi pi-briefcase text-primary text-2xl" />
+                </div>
+                <div>
+                    <span class="block text-sm font-semibold opacity-70 uppercase">{{ t('appmovil.department') }}</span>
+                    <span class="block text-xl font-black text-primary">{{ fetchWorkCenter?.name }}</span>
+                    <span class="block text-xs font-medium text-500 mt-1 uppercase">{{ titulo }}</span>
+                </div>
+            </div>
+        </div>
+    </div>
 
     <h3 v-if="!fetchWorkCenter?.name ">
         
@@ -562,5 +586,45 @@ const updateData = async () => {
 
 .maxHeightC {
     height: calc(100vh - 28rem);
+}
+
+.header-premium {
+    background: linear-gradient(135deg, var(--surface-0) 0%, var(--surface-50) 100%);
+    border-bottom: 1px solid var(--surface-200);
+    
+    .context-info {
+        flex: 1;
+    }
+
+    .work-area-card {
+        min-width: 280px;
+        background: var(--primary-color-text);
+        transition: transform 0.2s ease;
+        
+        &:hover {
+            transform: translateY(-2px);
+        }
+
+        .icon-box {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+    }
+}
+
+@media (max-width: 768px) {
+    .header-premium {
+        .flex {
+            flex-direction: column;
+            align-items: flex-start !important;
+            gap: 1.5rem;
+        }
+        
+        .work-area-card {
+            width: 100%;
+            min-width: unset;
+        }
+    }
 }
 </style>
