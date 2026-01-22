@@ -21,7 +21,7 @@ const { getItems, itemsActions, messageDialog, titleDialog, status_id_Action, fl
 const { t } = useI18n();
 
 const dynamicColumns = [
-    { field: 'name', header: 'Farm Name', frozen: false, color: false },
+    { field: 'name', header: 'Farm Name', frozen: true, color: false },
     { field: 'code', header: 'Farm Code', frozen: false, color: false },
     { field: 'company.name', header: 'Company Name', frozen: false, color: false },
     { field: 'company.url_path', header: 'Company Website', frozen: false, color: false },
@@ -159,7 +159,7 @@ const initFilters = () => {
 const globalFilter = computed(() => {
     return dynamicColumns.map((col) => col.field);
 });
-const documentFrozen = ref(false);
+const documentFrozen = ref(true);
 const readAll = async () => {
     loadingData();
 
@@ -496,7 +496,7 @@ v-model:filters="filters"
 :globalFilterFields="['', 'company.name']"
 
 
-const documentFrozen = ref(false); change name field 
+const documentFrozen = ref(true); change name field 
 <DataTable id="tblData"
      -->
 <template>
@@ -599,11 +599,11 @@ const documentFrozen = ref(false); change name field
                 <template #empty> No customers found. </template>
                 <template #loading> Loading customers data. Please wait. </template>
                 <Column selectionMode="multiple" headerStyle="width: 3rem"></Column>
-                <Column v-for="col in dynamicColumns" :key="col.field" :field="col.field" :header="col.header" :frozen="col.frozen || false" sortable>
+                <Column v-for="col in dynamicColumns" :key="col.field" :field="col.field" :header="col.header" :frozen="col.frozen && documentFrozen" sortable>
                     <!-- Header Template -->
                     <template v-if="col.frozen" #header>
-                        <ToggleButton v-model="documentFrozen" onIcon="pi pi-lock" offIcon="pi pi-lock-open" onLabel="" offLabel="" />
-                        <div>&nbsp;</div>
+                        <ToggleButton v-model="documentFrozen" onIcon="pi pi-lock" offIcon="pi pi-lock-open" onLabel="" offLabel="" @click.stop />
+                        <span class="ml-2">{{ col.header }}</span>
                     </template>
 
                     <!-- Body Template -->

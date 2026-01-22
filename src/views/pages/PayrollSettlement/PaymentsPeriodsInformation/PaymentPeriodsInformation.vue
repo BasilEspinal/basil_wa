@@ -100,7 +100,7 @@ const initFilters = () => {
     };
 };
 
-const documentFrozen = ref(false);
+const documentFrozen = ref(true);
 const readAll = async () => {
     loadingData();
     const respFarms = await getRequest('/farms');
@@ -340,7 +340,7 @@ v-model:filters="filters"
 :globalFilterFields="['', 'company.name']"
 
 
-const documentFrozen = ref(false); change name field 
+const documentFrozen = ref(true); change name field 
 <DataTable id="tblData"
      -->
 <template>
@@ -444,8 +444,8 @@ const documentFrozen = ref(false); change name field
                 <Column selectionMode="multiple" headerStyle="width: 3rem"></Column>
                 <!-- <Column field="code" filterField="code" header="Code" sortable :frozen="documentFrozen"> 
             <template #header>
-                    <ToggleButton v-model="documentFrozen" onIcon="pi pi-lock" offIcon="pi pi-lock-open" onLabel="" offLabel="" />
-                    <div>&nbsp;</div>
+                    <ToggleButton v-model="documentFrozen" onIcon="pi pi-lock" offIcon="pi pi-lock-open" onLabel="" offLabel="" @click.stop />
+                    <span class="ml-2">{{ col.header }}</span>
                 </template>
 
                 <template #body="{ data }">
@@ -459,8 +459,8 @@ const documentFrozen = ref(false); change name field
                 <Column field="planner_tasks.transaction_date" filterField="planner_tasks.transaction_date" header="Transaction Date" sortable:frozen="documentFrozen">
                     <!--Replace :frozen with the model-->
                     <template #header>
-                        <ToggleButton v-model="documentFrozen" onIcon="pi pi-lock" offIcon="pi pi-lock-open" onLabel="" offLabel="" />
-                        <div>&nbsp;</div>
+                        <ToggleButton v-model="documentFrozen" onIcon="pi pi-lock" offIcon="pi pi-lock-open" onLabel="" offLabel="" @click.stop />
+                        <span class="ml-2">{{ col.header }}</span>
                     </template>
                     <template #body="{ data }">
                         {{ data.planner_tasks.transaction_date }}

@@ -20,7 +20,7 @@ v-model:filters="filters"
 :globalFilterFields="['', 'company.name']"
 
 
-const documentFrozen = ref(false); change name field 
+const documentFrozen = ref(true); change name field 
 <DataTable id="tblData"
      -->
 <template>

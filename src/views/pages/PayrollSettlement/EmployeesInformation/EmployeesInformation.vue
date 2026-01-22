@@ -137,7 +137,7 @@ const initFilters = () => {
     };
 };
 
-const documentFrozen = ref(false);
+const documentFrozen = ref(true);
 const readAll = async () => {
     loadingData();
     const respFarms = await getRequest('/farms');
@@ -447,7 +447,7 @@ v-model:filters="filters"
 :globalFilterFields="['', 'company.name']"
 
 
-const documentFrozen = ref(false); change name field 
+const documentFrozen = ref(true); change name field 
 <DataTable id="tblData"
      -->
 <template>
@@ -547,8 +547,8 @@ const documentFrozen = ref(false); change name field
                 <Column field="worker_employee.document" filterField="worker_employee.document" header="Document" sortable :frozen="documentFrozen">
                     <!--Replace :frozen with the model-->
                     <template #header>
-                        <ToggleButton v-model="documentFrozen" onIcon="pi pi-lock" offIcon="pi pi-lock-open" onLabel="" offLabel="" />
-                        <div>&nbsp;</div>
+                        <ToggleButton v-model="documentFrozen" onIcon="pi pi-lock" offIcon="pi pi-lock-open" onLabel="" offLabel="" @click.stop />
+                        <span class="ml-2">{{ col.header }}</span>
                     </template>
                     <template #body="{ data }">
                         {{ data.worker_employee.document }}
@@ -561,8 +561,8 @@ const documentFrozen = ref(false); change name field
                 <Column field="worker_employee.first_name" filterField="worker_employee.first_name" header="First Name" sortable :frozen="documentFrozen">
                     <!--Replace :frozen with the model-->
                     <template #header>
-                        <ToggleButton v-model="documentFrozen" onIcon="pi pi-lock" offIcon="pi pi-lock-open" onLabel="" offLabel="" />
-                        <div>&nbsp;</div>
+                        <ToggleButton v-model="documentFrozen" onIcon="pi pi-lock" offIcon="pi pi-lock-open" onLabel="" offLabel="" @click.stop />
+                        <span class="ml-2">{{ col.header }}</span>
                     </template>
                     <template #body="{ data }">
                         {{ data.worker_employee.first_name }}
@@ -575,8 +575,8 @@ const documentFrozen = ref(false); change name field
                 <Column field="worker_employee.last_name" filterField="worker_employee.last_name" header="Last Name" sortable :frozen="documentFrozen">
                     <!--Replace :frozen with the model-->
                     <template #header>
-                        <ToggleButton v-model="documentFrozen" onIcon="pi pi-lock" offIcon="pi pi-lock-open" onLabel="" offLabel="" />
-                        <div>&nbsp;</div>
+                        <ToggleButton v-model="documentFrozen" onIcon="pi pi-lock" offIcon="pi pi-lock-open" onLabel="" offLabel="" @click.stop />
+                        <span class="ml-2">{{ col.header }}</span>
                     </template>
                     <template #body="{ data }">
                         {{ data.worker_employee.last_name }}

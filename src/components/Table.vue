@@ -237,6 +237,8 @@ function exportTableToCSV(name) {
     downloadCSV(csv.join('\n'), name);
 }
 
+const documentFrozen = ref(true);
+
 /**
  * The `onColumnsChange` function is a callback function that is called when the selected columns in
  * the MultiSelect component are changed. It takes the updated `column` array as a parameter.
@@ -277,6 +279,8 @@ const onColumnsChange = (column) => {
             filterDisplay="menu"
             :loading="loading"
             :filters="filters"
+            scrollable
+            scrollHeight="600px"
             responsiveLayout="scroll"
             :globalFilterFields="headerNames"
             @row-select="onRowSelect"
@@ -297,7 +301,13 @@ const onColumnsChange = (column) => {
 
             <Column selectionMode="multiple" headerStyle="width: 3rem"></Column>
 
-            <Column id="col" v-for="col of column" :key="col.field" :field="col.field" :header="col.header" :enable="col.enabled" :filterField="col.field" style="min-width: 1rem">
+            <Column id="col" v-for="(col, index) of column" :key="col.field" :field="col.field" :header="col.header" :enable="col.enabled" :filterField="col.field" style="min-width: 12rem" :frozen="index === 0 && documentFrozen">
+                <template #header>
+                    <div class="flex align-items-center gap-2">
+                        <ToggleButton v-if="index === 0" v-model="documentFrozen" onIcon="pi pi-lock" offIcon="pi pi-lock-open" onLabel="" offLabel="" class="w-2rem h-2rem p-0" @click.stop />
+                        <span>{{ col.header }}</span>
+                    </div>
+                </template>
                 <template #body="{ data }">
                     {{ data[col.field] }}
                 </template>

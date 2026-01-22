@@ -24,7 +24,7 @@ const { getItems, itemsActions, messageDialog, titleDialog, status_id_Action, fl
 const { t } = useI18n();
 
 const dynamicColumns = [
-    { field: 'dispatch_number_lot', header: 'Dispatch Number Lot', frozen: false, color: false },
+    { field: 'dispatch_number_lot', header: 'Dispatch Number Lot', frozen: true, color: false },
     { field: 'order_number_customer', header: 'Order Number Customer', frozen: false, color: false },
     { field: 'invoice_number_customer', header: 'Invoice Number Customer', frozen: false, color: false },
     { field: 'customer_name', header: 'Customer Name', frozen: false, color: false },
@@ -249,7 +249,7 @@ const initFilters = () => {
 const globalFilter = computed(() => {
     return dynamicColumns.map((col) => col.field);
 });
-const documentFrozen = ref(false);
+const documentFrozen = ref(true);
 const readAll = async () => {
     loadingData();
 
@@ -907,7 +907,7 @@ v-model:filters="filters"
 :globalFilterFields="['', 'company.name']"
 
 
-const documentFrozen = ref(false); change name field 
+const documentFrozen = ref(true); change name field 
 <DataTable id="tblData"
      -->
 <template>
@@ -1010,11 +1010,11 @@ const documentFrozen = ref(false); change name field
                 <template #empty> No customers found. </template>
                 <template #loading> Loading customers data. Please wait. </template>
                 <Column selectionMode="multiple" headerStyle="width: 3rem"></Column>
-                <Column v-for="col in dynamicColumns" :key="col.field" :field="col.field" :header="col.header" :frozen="col.frozen || false" sortable>
+                <Column v-for="col in dynamicColumns" :key="col.field" :field="col.field" :header="col.header" :frozen="col.frozen && documentFrozen" sortable>
                     <!-- Header Template -->
                     <template v-if="col.frozen" #header>
-                        <ToggleButton v-model="documentFrozen" onIcon="pi pi-lock" offIcon="pi pi-lock-open" onLabel="" offLabel="" />
-                        <div>&nbsp;</div>
+                        <ToggleButton v-model="documentFrozen" onIcon="pi pi-lock" offIcon="pi pi-lock-open" onLabel="" offLabel="" @click.stop />
+                        <span class="ml-2">{{ col.header }}</span>
                     </template>
 
                     <!-- Body Template -->
