@@ -1,4 +1,7 @@
-// appMovilService.js
+/**
+ * @file appMovilService.js
+ * @description Service for managing mobile application session and data fetching for tasks, holidays, and employees.
+ */
 import { ref, watch } from 'vue';
 import useData from '@/service/FetchData/FetchDataAPI.js';
 
@@ -17,12 +20,21 @@ const tipoActividad = ref([]);
 const counter = ref(0);
 
 // Ensure reactivity is reset properly by nulling before re-assigning
+/**
+ * Sets a reactive variable with a value from sessionStorage.
+ * @param {import('vue').Ref} refVar - The reactive variable to update.
+ * @param {string} sessionKey - The key to look for in sessionStorage.
+ * @param {boolean} [isJSON=false] - Whether the value should be parsed as JSON.
+ */
 const setSessionValue = (refVar, sessionKey, isJSON = false) => {
     refVar.value = null;
     const raw = sessionStorage.getItem(sessionKey);
     refVar.value = isJSON ? (raw ? JSON.parse(raw) : null) : raw;
 };
 
+/**
+ * Initializes the mobile app session by loading values from sessionStorage.
+ */
 const initializeAppMovilSession = () => {
     setSessionValue(fetchWorkCenter, 'accessSessionWorkCenter', true);
     setSessionValue(fetchSupervisorId, 'accesSessionEmployeeUuid');
@@ -32,13 +44,16 @@ const initializeAppMovilSession = () => {
     setSessionValue(fetchCompannyName, 'accessSessionCompanyName');
     setSessionValue(fetchFarmName, 'accessSessionFarmName');
 
-    console.log('[AppMovil] Session Loaded:', {
+    console.log('[AppMovilService] Session Loaded:', {
         workCenter: fetchWorkCenter.value?.name,
         company: fetchCompannyName.value,
         farm: fetchFarmName.value
     });
 };
 
+/**
+ * Resets all reactive variables in the mobile app service to their initial state.
+ */
 const resetAppMovilService = () => {
     fetchWorkCenter.value = null;
     fetchSupervisorId.value = null;
@@ -202,6 +217,10 @@ export function useAppMovilService() {
         return { data: validPlanner, ok: true };
     };
 
+    /**
+     * Fetches holiday information for the current company.
+     * @returns {Promise<Object|void>}
+     */
     const getHoliDay = async () => {
         try {
             const response = await getRequest(`/appmovil/calendars?filter[company_id]=${fetchCompannyId.value}`);
@@ -209,7 +228,7 @@ export function useAppMovilService() {
             holiday.value = response.data.data.length === 0 ? 'Normal' : 'Festivo';
             counter.value++;
         } catch (e) {
-            console.error('Error Get Holiday:', e);
+            console.error('[AppMovilService] Error Get Holiday:', e);
             holiday.value = 'Normal'; // Fallback safe default, but logged
             return error('Error Get Holiday: ' + e.message);
         }
@@ -242,13 +261,16 @@ export function useAppMovilService() {
         }
     };
 
+    /**
+     * Fetches the types of work that have been completed.
+     * @returns {Promise<Object>}
+     */
     const getDonesWork = async () => {
         try {
             const taskoftype_id = fetchWorkCenter?.value.taskoftype?.id;
-            //const taskoftype_id  = TASK_OF_TYPE()
-            console.log('taskoftype_id', taskoftype_id);
+            console.log('[AppMovilService] taskoftype_id:', taskoftype_id);
             const response = await getRequest(`/lists/getDoneTypeTasksType?filter[tasks_of_type_id]=${taskoftype_id}`);
-            console.log('responseGetDonesWork', response);
+            console.log('[AppMovilService] responseGetDonesWork:', response);
             counter.value++;
             return response;
         } catch (e) {
@@ -286,13 +308,16 @@ export function useAppMovilService() {
         }
     };
 
+    /**
+     * Fetches the tariff for completed tasks in the mobile app.
+     */
     const getTarifOfTasksDoneAppMob = async (task_of_type_id, work_type_day, work_type_tarif, done_of_type_id) => {
         try {
             const response = await getRequest(
                 `/appmovil/donetarif?filter[tasks_of_type_id]=${task_of_type_id}&filter[work_type_day]=${work_type_day}&filter[work_type_tarif]=${work_type_tarif}&filter[done_of_type_id]=${done_of_type_id}&filter[farm_id]=${fetchFarmId.value}&filter[company_id]=${fetchCompannyId.value}`
             );
             counter.value++;
-            console.log('responseGetTarifOfTasksDoneAppMob', response);
+            console.log('[AppMovilService] responseGetTarifOfTasksDoneAppMob:', response);
             return response;
         } catch (e) {
             return error('Error Tarif Tasks Done:', e);
@@ -309,16 +334,17 @@ export function useAppMovilService() {
         }
     };
 
+    /**
+     * Fetches the tariff based on task type and session data.
+     * @param {string} tasksType - The type of task (e.g., 'Task', 'HoraExtra').
+     * @returns {Promise<number>}
+     */
     const getTarif = async (tasksType) => {
-        console.log("Debug tarif", tasksType);
-        console.log(typeof tasksType);
-
         if (!tasksType) return 0;
 
         const listFilterType = ['Task', 'HoraExtra'];
         if (!listFilterType.includes(tasksType)) return 0;
 
-        // Extrae con seguridad
         const tasks_of_type_id = fetchWorkCenter.value?.taskoftype?.id ?? '';
         const work_type_day = holiday.value ?? '';
         const farm_id = fetchFarmId.value ?? '';
@@ -336,22 +362,20 @@ export function useAppMovilService() {
             });
 
             const endpoint = `/appmovil/taskstarif?${params}`;
-            console.log('getTarif endpoint', endpoint, {
-                tasks_of_type_id, work_type_day, farm_id, company_id, packing_type_id
-            });
+            console.log('[AppMovilService] getTarif endpoint:', endpoint);
 
             const response = await getRequest(endpoint);
 
             if (!response.ok) {
-                console.error('Error fetching tarif:', response.error);
-                return 0; // Return 0 on error, NOT A RANDOM NUMBER
+                console.error('[AppMovilService] Error fetching tarif:', response.error);
+                return 0;
             }
 
             counter.value++;
             return Number(response.data?.data?.[0]?.price_tarif) || 0;
         } catch (e) {
-            console.error('getTarif unexpected error:', e);
-            return 0; // Return 0 on exception
+            console.error('[AppMovilService] getTarif unexpected error:', e);
+            return 0;
         }
     };
 
@@ -408,8 +432,8 @@ export function useAppMovilService() {
             farm_uuid: fetchCompannyuuid.value ?? ''
         };
 
-        // (opcional) Log para depurar qué se va a enviar
-        console.log('postDailyReport payload', dataPost);
+        // Log payload for debugging
+        console.log('[AppMovilService] postDailyReport payload:', dataPost);
 
         try {
             const resp = await postRequest('/transactions/tasks', dataPost);
