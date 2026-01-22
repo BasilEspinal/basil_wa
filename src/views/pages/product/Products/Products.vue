@@ -22,7 +22,7 @@ const { t } = useI18n();
 
 const dynamicColumns = [
     // { field: 'uuid', header: 'UUID', frozen: true, color: false },
-    { field: 'name', header: 'Name', frozen: false, color: false },
+    { field: 'name', header: 'Name', frozen: true, color: false },
     { field: 'short_name', header: 'Short Name', frozen: false, color: false },
     { field: 'slug', header: 'Slug', frozen: false, color: false },
     { field: 'cultivated', header: 'Cultivated', frozen: false, color: false },
