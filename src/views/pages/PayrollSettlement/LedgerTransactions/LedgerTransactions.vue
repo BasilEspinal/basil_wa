@@ -98,8 +98,8 @@ const onRowSelect = (data) => {
                     'Day of Week': row.day_Of_Week
                 },
                 icon: 'pi pi-calendar',
-                bgColor: 'bg-green-100',
-                iconColor: 'text-green-500'
+                bgColor: 'var(--primary-50)',
+                iconColor: 'var(--primary-color)'
             },
             {
                 title: 'Task Information',
@@ -110,8 +110,8 @@ const onRowSelect = (data) => {
                     'Task Total Pays': row.task_total_pays
                 },
                 icon: 'pi pi-tasks',
-                bgColor: 'bg-blue-100',
-                iconColor: 'text-blue-500'
+                bgColor: 'var(--primary-200)',
+                iconColor: 'var(--primary-color)'
             },
             {
                 title: 'Employee Information',
@@ -121,8 +121,8 @@ const onRowSelect = (data) => {
                     Email: row.worker_employee?.email
                 },
                 icon: 'pi pi-user',
-                bgColor: 'bg-green-100',
-                iconColor: 'text-green-500'
+                bgColor: 'var(--primary-50)',
+                iconColor: 'var(--primary-color)'
             },
             {
                 title: 'Planner Task Info',
@@ -140,8 +140,8 @@ const onRowSelect = (data) => {
                     'Company Code': row.company?.code
                 },
                 icon: 'pi pi-building',
-                bgColor: 'bg-teal-100',
-                iconColor: 'text-teal-500'
+                bgColor: 'var(--primary-100)',
+                iconColor: 'var(--primary-color)'
             },
             {
                 title: 'Farm Information',
@@ -159,8 +159,8 @@ const onRowSelect = (data) => {
                     Status: row.status?.name
                 },
                 icon: 'pi pi-info-circle',
-                bgColor: 'bg-gray-100',
-                iconColor: 'text-gray-500'
+                bgColor: 'var(--surface-100)',
+                iconColor: 'var(--text-color-secondary)'
             }
         ];
     }
@@ -269,8 +269,8 @@ const cardSections = ref([]);
 //             'Week of Year': row.week_Of_Year
 //           },
 //           icon: 'pi pi-calendar',
-//           bgColor: 'bg-green-100',
-//           iconColor: 'text-green-500'
+//           bgColor: 'var(--primary-50)',
+//           iconColor: 'var(--primary-color)'
 //         },
 //         {
 //           title: 'Task Information',
@@ -281,8 +281,8 @@ const cardSections = ref([]);
 //             'Price per Task': row.price_tarif_task
 //           },
 //           icon: 'pi pi-tasks',
-//           bgColor: 'bg-blue-100',
-//           iconColor: 'text-blue-500'
+//           bgColor: 'var(--primary-200)',
+//           iconColor: 'var(--primary-color)'
 //         },
 //         {
 //           title: 'Employee Information',
@@ -292,8 +292,8 @@ const cardSections = ref([]);
 //             'Email': row.worker_employee?.email
 //           },
 //           icon: 'pi pi-user',
-//           bgColor: 'bg-green-100',
-//           iconColor: 'text-green-500'
+//           bgColor: 'var(--primary-50)',
+//           iconColor: 'var(--primary-color)'
 //         },
 //         {
 //           title: 'Packing Information',
@@ -313,8 +313,8 @@ const cardSections = ref([]);
 //             'Description': row.tasks_statuses?.description
 //           },
 //           icon: 'pi pi-info-circle',
-//           bgColor: 'bg-gray-100',
-//           iconColor: 'text-gray-500'
+//           bgColor: 'var(--surface-100)',
+//           iconColor: 'var(--text-color-secondary)'
 //         },
 //         {
 //           title: 'Planner Task Information',
@@ -336,8 +336,8 @@ const cardSections = ref([]);
 //             'Website': row.company?.url_path
 //           },
 //           icon: 'pi pi-building',
-//           bgColor: 'bg-teal-100',
-//           iconColor: 'text-teal-500'
+//           bgColor: 'var(--primary-100)',
+//           iconColor: 'var(--primary-color)'
 //         },
 //         {
 //           title: 'Status',
@@ -346,8 +346,8 @@ const cardSections = ref([]);
 //             'Description': row.status?.description
 //           },
 //           icon: 'pi pi-info-circle',
-//           bgColor: 'bg-gray-100',
-//           iconColor: 'text-gray-500'
+//           bgColor: 'var(--surface-100)',
+//           iconColor: 'var(--text-color-secondary)'
 //         }
 //       ];
 //     }

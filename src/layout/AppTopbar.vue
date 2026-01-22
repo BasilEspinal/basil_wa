@@ -283,12 +283,12 @@ const toggleOverlayPanel2 = (event) => {
 
         <div class="layout-topbar-menu" :class="topbarMenuClasses">
             <div class="flex flex-wrap align-items-center justify-content-center md:justify-content-start">
-                <Button @click="toggleOverlayPanel1" icon="pi pi-user" severity="success" text rounded aria-label="User" />
+                <Button @click="toggleOverlayPanel1" icon="pi pi-user" severity="primary" text rounded aria-label="User" />
                 <p>{{ dataUser }}</p>
             </div>
 
             <OverlayPanel ref="op" :dismissable="true">
-                <span class="font-medium text-900 block mb-2">Edit user</span>
+                <span class="font-medium text-color block mb-2">Edit user</span>
 
                 <div class="mb-3">
                     <div class="flex align-items-center gap-3 mb-1">
@@ -328,11 +328,11 @@ const toggleOverlayPanel2 = (event) => {
             </Button>
 
             <Button @click="toggleOverlayPanel2" rounded outlined class="p-link layout-topbar-button">
-                <i :class="{ 'pi pi-globe': !toggleValue, 'pi pi-sun': toggleValue }"></i>
+                <i class="pi pi-globe"></i>
             </Button>
 
             <OverlayPanel ref="op2" :dismissable="true">
-                <span class="font-medium text-900 block mb-2">Change language</span>
+                <span class="font-medium text-color block mb-2">Change language</span>
 
                 <Dropdown v-model="selectedCountry" :options="countries" optionLabel="name" placeholder="Change language" class="w-full">
                     <template #value="slotProps">

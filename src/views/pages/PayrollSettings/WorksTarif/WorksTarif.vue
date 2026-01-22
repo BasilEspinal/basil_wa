@@ -144,8 +144,8 @@ const onRowSelect = (data) => {
                     'Updated At': row.updated_at
                 },
                 icon: 'pi pi-calendar',
-                bgColor: 'bg-green-100',
-                iconColor: 'text-green-500'
+                bgColor: 'var(--primary-50)',
+                iconColor: 'var(--primary-color)'
             },
             {
                 title: 'Farm Information',
@@ -157,8 +157,8 @@ const onRowSelect = (data) => {
                     'Farm Updated At': row.farm?.updated_at
                 },
                 icon: 'pi pi-map-marker',
-                bgColor: 'bg-teal-100',
-                iconColor: 'text-teal-500'
+                bgColor: 'var(--primary-100)',
+                iconColor: 'var(--primary-color)'
             },
             {
                 title: 'Company Information',
@@ -172,8 +172,8 @@ const onRowSelect = (data) => {
                     'Company Updated At': row.company?.updated_at
                 },
                 icon: 'pi pi-building',
-                bgColor: 'bg-blue-100',
-                iconColor: 'text-blue-500'
+                bgColor: 'var(--primary-200)',
+                iconColor: 'var(--primary-color)'
             }
         ];
     }

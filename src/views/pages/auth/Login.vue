@@ -32,8 +32,12 @@ const { errors, defineField } = useForm({
 });
 
 const logoUrl = computed(() => {
-  return `layout/images/${layoutConfig.darkTheme.value ? 'logo-white' : 'logo-dark'}.png`;
+  const lightLogo = import.meta.env.VITE_APP_LOGO_LIGHT || 'layout/images/logo-dark.png';
+  const darkLogo = import.meta.env.VITE_APP_LOGO_DARK || 'layout/images/logo-white.png';
+  return layoutConfig.darkTheme.value ? darkLogo : lightLogo;
 });
+
+const appName = import.meta.env.VITE_APP_NAME || 'AGRO-ONLINE';
 
 const [email] = defineField('email');
 const [password] = defineField('password');
@@ -64,16 +68,16 @@ const onSubmit = async () => {
 
 <template>
   <div class="surface-ground flex align-items-center justify-content-center min-h-screen min-w-screen overflow-hidden"
-       style="background: linear-gradient(180deg, var(--paleta-400) 5%, var(--paleta-100) 15%)">
+       style="background: linear-gradient(180deg, var(--primary-color) 0%, var(--surface-ground) 100%)">
     <div class="flex flex-column align-items-center justify-content-center" @keyup.enter="onSubmit">
       <FloatingConfigurator />
       <router-link to="/" class="align-items-center mb-5">
         <img :src="logoUrl" alt="Sakai logo" class="w-6rem flex-shrink-0" />
-        <span class="text-700 font-bold">AGRO-ONLINE</span>
+        <span class="text-700 font-bold">{{ appName }}</span>
       </router-link>
 
-      <div style="border-radius: 56px; padding: 0.3rem; background: linear-gradient(160deg, var(--primary-color) 10%, var(--paleta-100) 60%, var(--primary-color) 100%)">
-        <div class="w-full py-7 px-3 sm:px-6" style="border-radius: 153px; background-color: var(--paleta-100)">
+      <div style="border-radius: 56px; padding: 0.3rem; background: linear-gradient(160deg, var(--primary-color) 0%, var(--surface-card) 100%)">
+        <div class="w-full py-7 px-3 sm:px-6" style="border-radius: 153px; background-color: var(--surface-card)">
           <div class="text-center mb-5">
             <div class="text-900 text-4xl font-bold mb-3">Welcome!</div>
             <span class="text-600 font-medium">Sign in to continue</span>
@@ -115,7 +119,7 @@ const onSubmit = async () => {
                 <a class="font-medium no-underline ml-2 text-right cursor-pointer" style="color: var(--primary-color)">Forgot password?</a>
               </div>
 
-              <Button label="Sign In" class="w-full p-3 text-xl" type="submit"></Button>
+              <Button label="Sign In" class="w-full p-3 text-xl" type="submit" style="background-color: var(--primary-color); border-color: var(--primary-color)"></Button>
             </form>
           </div>
         </div>

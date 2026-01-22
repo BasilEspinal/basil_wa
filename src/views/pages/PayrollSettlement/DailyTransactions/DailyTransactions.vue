@@ -180,8 +180,8 @@ const onRowSelect = (data) => {
                     'Task Total Pays': row.task_total_pays
                 },
                 icon: 'pi pi-calendar',
-                bgColor: 'bg-green-100',
-                iconColor: 'text-green-500'
+                bgColor: 'var(--primary-50)',
+                iconColor: 'var(--primary-color)'
             },
             {
                 title: 'Farm Information',
@@ -190,8 +190,8 @@ const onRowSelect = (data) => {
                     'Farm Code': row.farm?.code
                 },
                 icon: 'pi pi-map-marker',
-                bgColor: 'bg-teal-100',
-                iconColor: 'text-teal-500'
+                bgColor: 'var(--primary-100)',
+                iconColor: 'var(--primary-color)'
             },
             {
                 title: 'Company Information',
@@ -201,8 +201,8 @@ const onRowSelect = (data) => {
                     Website: row.company?.url_path
                 },
                 icon: 'pi pi-building',
-                bgColor: 'bg-blue-100',
-                iconColor: 'text-blue-500'
+                bgColor: 'var(--primary-200)',
+                iconColor: 'var(--primary-color)'
             },
             {
                 title: 'Status Information',
@@ -212,8 +212,8 @@ const onRowSelect = (data) => {
                     Color: row.status?.color
                 },
                 icon: 'pi pi-info-circle',
-                bgColor: 'bg-gray-100',
-                iconColor: 'text-gray-500'
+                bgColor: 'var(--surface-100)',
+                iconColor: 'var(--text-color-secondary)'
             },
             {
                 title: 'Product Information',

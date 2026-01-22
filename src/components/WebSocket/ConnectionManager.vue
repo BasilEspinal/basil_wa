@@ -125,27 +125,27 @@ const updateKPICard = (kpiName, data) => {
                             <!-- Display Sent -->
                             <div class="text-900 font-medium text-xl">{{ kpi.data.sent }} Sent</div>
                         </div>
-                        <div class="flex align-items-center justify-content-center bg-green-100 border-round" style="width: 2.5rem; height: 2.5rem">
-                            <i class="pi pi-chart-bar text-green-500 text-xl"></i>
+                        <div class="flex align-items-center justify-content-center border-round" style="width: 2.5rem; height: 2.5rem; background-color: var(--primary-100)">
+                            <i class="pi pi-chart-bar text-xl" style="color: var(--primary-color)"></i>
                         </div>
                     </div>
                     <!-- Display Received -->
                     <div>
-                        <span class="text-blue-500 font-medium">{{ kpi.data.received }}</span>
-                        <span class="text-500">Received</span>
+                        <span class="font-medium" style="color: var(--primary-color)">{{ kpi.data.received }}</span>
+                        <span class="text-500 ml-1">Received</span>
                     </div>
                     <!-- Display Pending -->
                     <div>
                         <span
                             :class="{
-                                'text-red-500': kpi.data.pending < 0,
-                                'text-green-500': kpi.data.pending >= 0
+                                'text-red-500': kpi.data.pending < 0
                             }"
+                            :style="kpi.data.pending >= 0 ? 'color: var(--primary-color)' : ''"
                             class="font-medium"
                         >
                             {{ kpi.data.pending }}
                         </span>
-                        <span class="text-500">Pending</span>
+                        <span class="text-500 ml-1">Pending</span>
                     </div>
                 </div>
             </div>
