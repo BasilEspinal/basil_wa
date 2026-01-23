@@ -1,10 +1,12 @@
 <script setup>
-import { ref, onMounted } from 'vue';
+import { ref, onMounted, computed } from 'vue';
 import FormRols from './FormRols.vue';
 import { useToast } from 'primevue/usetoast';
 import { toTypedSchema } from '@vee-validate/zod';
 import { useForm } from 'vee-validate';
+import { FilterMatchMode } from 'primevue/api';
 import ability from '@/service/ability.js';
+import { InitialDataService } from '@/service/InitialData.js';
 import { z } from 'zod';
 
 //import useData from '@/service/FetchData/FetchDataAPI.js';
@@ -81,8 +83,37 @@ const [password, passwordProps] = defineField('password');
 const [confirmation, confirmProps] = defineField('confirmation');
 
 onMounted(() => {
+    readInitialData();
     loadingData();
+    initFilters();
 });
+
+const size = ref();
+const sizeOptions = ref();
+const filters = ref();
+
+const initFilters = () => {
+    filters.value = {
+        global: { value: null, matchMode: FilterMatchMode.CONTAINS }
+    };
+};
+
+const clearFilter = () => {
+    initFilters();
+};
+
+const globalFilter = computed(() => {
+    return ['name', 'email'];
+});
+
+const readInitialData = async () => {
+    InitialDataService.getSize().then((data) => {
+        size.value = data;
+    });
+    InitialDataService.getSizeOptions().then((data) => {
+        sizeOptions.value = data;
+    });
+};
 
 const loadingData = async () => {
     loading.value = true;
@@ -291,12 +322,24 @@ const patchAction = async () => {
                 @row-select="onRowSelect(selectedRegisters)"
                 @row-unselect="onRowSelect(selectedRegisters)"
                 @select-all-change="onRowSelect(selectedRegisters)"
+                v-model:filters="filters"
+                :class="`p-datatable-${size?.class || 'default-size'}`"
+                :globalFilterFields="globalFilter"
             >
                 <template #header>
                     <div class="flex flex-column md:flex-row md:justify-content-between md:align-items-center gap-3">
                         <div class="flex gap-2 align-items-center">
-                            <h1 class="m-0 text-xl font-semibold">Usuarios de la Plataforma</h1>
+                            <Button type="button" icon="pi pi-filter-slash" label="Limpiar Filtros" class="p-button-outlined p-button-sm" @click="clearFilter()" />
+                            <span class="p-input-icon-left">
+                                <i class="pi pi-search" />
+                                <InputText v-model="filters['global'].value" placeholder="Buscar..." class="w-full md:w-20rem" />
+                            </span>
                         </div>
+
+                        <div class="hidden xl:block">
+                            <SelectButton v-model="size" :options="sizeOptions" optionLabel="label" dataKey="label" />
+                        </div>
+
                         <div class="flex gap-2">
                             <Button icon="pi pi-plus" class="p-button-raised p-button-success p-button-rounded" @click="openNew" v-tooltip.top="'Nuevo Usuario'" />
                             <Button icon="pi pi-file-export" class="p-button-outlined p-button-secondary p-button-rounded" @click="openExport" v-tooltip.top="'Exportar'" />
