@@ -137,18 +137,20 @@ export const getMenuConfig = (t) => [
                         icon: 'pi pi-calendar',
                         gate: 'produccion_programaciondelotes_menu'
                     },
-                    {
-                        label: t('menu.temperatureControl'),
-                        to: '/production/TemperatureControl',
-                        icon: 'pi pi-thermometer',
-                        gate: ''
-                    },
-                    {
-                        label: t('menu.meteoStation'),
-                        to: '/production/MetereologicalStation',
-                        icon: 'pi pi-cloud',
-                        gate: ''
-                    }
+                    /*
+                                        {
+                                            label: t('menu.temperatureControl'),
+                                            to: '/production/TemperatureControl',
+                                            icon: 'pi pi-thermometer',
+                                            gate: ''
+                                        },
+                                        {
+                                            label: t('menu.meteoStation'),
+                                            to: '/production/MetereologicalStation',
+                                            icon: 'pi pi-cloud',
+                                            gate: ''
+                                        }
+                    */
                 ]
             }
         ]

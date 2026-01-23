@@ -27,9 +27,28 @@ export function useActions(endpoint) {
                 // Populate itemsActions with sorted data
                 sortedData.forEach((element) => {
                     if (element.flow_status === true) {
+                        const name = element.workflow_status.name.toLowerCase();
+                        let icon = 'pi pi-refresh';
+                        let severity = 'secondary';
+
+                        if (name.includes('approve') || name.includes('done') || name.includes('finish') || name.includes('complet')) {
+                            icon = 'pi pi-check-circle';
+                            severity = 'success';
+                        } else if (name.includes('cancel') || name.includes('reject') || name.includes('deny') || name.includes('delete')) {
+                            icon = 'pi pi-times-circle';
+                            severity = 'danger';
+                        } else if (name.includes('process') || name.includes('running') || name.includes('start')) {
+                            icon = 'pi pi-play-circle';
+                            severity = 'info';
+                        } else if (name.includes('warn') || name.includes('review') || name.includes('check')) {
+                            icon = 'pi pi-exclamation-circle';
+                            severity = 'warning';
+                        }
+
                         itemsActions.value.push({
                             label: element.workflow_status.name,
-                            icon: 'pi pi-refresh',
+                            icon: icon,
+                            severity: severity,
                             command: () => {
                                 titleDialog.value = `${element.workflow_status.description} Action`;
                                 messageDialog.value = `Are you sure you want to mark this action as ${element.workflow_status.name}?`;
@@ -107,7 +126,7 @@ export function useActions(endpoint) {
     //     }
     // };
 
-    const save = () => {};
+    const save = () => { };
 
     return {
         itemsActions,

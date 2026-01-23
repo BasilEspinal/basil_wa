@@ -11,9 +11,17 @@ const logoUrl = computed(() => {
 </script>
 <template>
     <div>
-        <div class="card">
-            <div>
-                <h1>{{ titlePage }}</h1>
+        <div class="card mb-4 bg-primary-reverse border-round-xl shadow-2">
+            <div class="flex align-items-center justify-content-between p-3">
+                <div class="flex align-items-center gap-3">
+                    <div class="bg-primary-50 p-3 border-round-circle">
+                        <i class="pi pi-calendar text-primary text-3xl"></i>
+                    </div>
+                    <div>
+                        <h1 class="m-0 text-3xl font-bold tracking-tight">{{ $t('menu.production.lotsSchedule') || 'Cronograma de Lotes' }}</h1>
+                        <p class="m-0 text-600 font-medium mt-1">Planificación y seguimiento de actividades por lote</p>
+                    </div>
+                </div>
             </div>
         </div>
         <div class="card">

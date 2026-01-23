@@ -12,6 +12,10 @@ import FormPermissions from './FormPermissions.vue';
 //const { getRequest, postRequest, deleteRequest } = useData();
 
 import { CrudService } from '@/service/CRUD/CrudService';
+import FloatingSelectionBar from '@/components/layout/FloatingSelectionBar.vue';
+import ActionButton from '@/components/ActionButton.vue';
+import { useActions } from '@/composables/ActionButton.js';
+const { getItems, itemsActions, messageDialog, titleDialog, status_id_Action, flagDialog } = useActions(`/processflow/Role`);
 
 let endpoint = ref('/roles');
 
@@ -21,6 +25,7 @@ const loading = ref(false);
 const selectedRegisters = ref([]);
 const expandedRows = ref([]);
 const roles = ref([]);
+const rowUUID = ref(null);
 const headerDialogNew = ref('');
 const headerDialogClone = ref('');
 const headerDialogDelete = ref('');
@@ -60,7 +65,7 @@ const CloneRol = handleSubmit(async (values) => {
     DialogClone.value = false;
     const data = {
         name: values.name,
-        permissions: selectedRegisters.value[0].permissions.map((perm) => ({ id: perm.id }))
+        permissions: roles.value.find(r => r.id === rowUUID.value).permissions.map((perm) => ({ id: perm.id }))
     };
     //const restp = await postRequest(endpoint.value, data);
     const restp = await crudService.create(data);
@@ -95,17 +100,31 @@ const openNew = () => {
     DialogNew.value = true;
 };
 
-const openClone = () => {
+const openClone = (rowData) => {
     resetForm();
     headerDialogClone.value = 'Clone Rol';
-    name.value = selectedRegisters.value[0].name;
-    listPermiss.value = selectedRegisters.value[0].permissions.map((perm) => ({ name: perm.name }));
+    const data = rowData || selectedRegisters.value[0];
+    if (!data) {
+        toast.add({ severity: 'error', summary: 'Error', detail: 'Select a record', life: 3000 });
+        return;
+    }
+    rowUUID.value = data.id;
+    name.value = data.name;
+    listPermiss.value = data.permissions.map((perm) => ({ name: perm.name }));
     DialogClone.value = true;
 };
 
-const openDelete = () => {
-    headerDialogDelete.value = 'Delete Users';
+const openDelete = (rowData) => {
+    if (rowData) {
+        selectedRegisters.value = [rowData];
+    }
+    headerDialogDelete.value = 'Delete Roles';
     DialogDelete.value = true;
+};
+
+const deleteSingleRecord = (rowData) => {
+    selectedRegisters.value = [rowData];
+    openDelete();
 };
 
 const deleteRoles = async () => {
@@ -127,13 +146,66 @@ const deleteRoles = async () => {
         selectedRegisters.value = [];
     }
 };
+
+const onRowSelect = (data) => {
+    if (data && !Array.isArray(data)) {
+        selectedRegisters.value = [data];
+    } else if (data) {
+        selectedRegisters.value = data;
+    }
+    openDialogSettlement('patch_action');
+};
+
+const openDialogSettlement = async (mode) => {
+    if (selectedRegisters.value.length != 0 && selectedRegisters.value[0].status) {
+        await getItems(selectedRegisters.value[0].status.id);
+    }
+};
+
+const patchAction = async () => {
+    try {
+        const patchPromises = [];
+        selectedRegisters.value.forEach(async (item) => {
+            const data = {
+                status_id: status_id_Action.value
+            };
+            const patchPromise = await crudService.patch(item.id, data);
+            patchPromises.push(patchPromise);
+        });
+
+        const responses = await Promise.all(patchPromises);
+        const hasError = responses.some((response) => !response.ok);
+
+        if (!hasError) {
+            toast.add({ severity: 'success', summary: 'Success', detail: 'Records updated successfully', life: 3000 });
+            flagDialog.value = false;
+            loadingData();
+            selectedRegisters.value = [];
+        } else {
+            const errorMsg = responses.find((r) => !r.ok)?.error || 'Unknown error';
+            toast.add({ severity: 'error', summary: 'Error', detail: 'Error updated records: ' + errorMsg, life: 3000 });
+        }
+    } catch (error) {
+        console.error('Error fetching data:', error);
+    }
+};
 </script>
 <template>
     <div>
         <Toast />
-        <div class="card">
-            <div>
-                <h1>Información de roles</h1>
+        <div class="card mb-4 bg-primary-reverse border-round-xl shadow-2">
+            <div class="flex align-items-center justify-content-between p-3">
+                <div class="flex align-items-center gap-3">
+                    <div class="bg-primary-50 p-3 border-round-circle">
+                        <i class="pi pi-lock text-primary text-3xl"></i>
+                    </div>
+                    <div>
+                        <h1 class="m-0 text-3xl font-bold tracking-tight">Roles</h1>
+                        <p class="m-0 text-600 font-medium mt-1">Definición de perfiles y permisos del sistema</p>
+                    </div>
+                </div>
+                <div class="flex gap-2">
+                </div>
             </div>
         </div>
 
@@ -158,38 +230,35 @@ const deleteRoles = async () => {
                 showGridlines
                 :paginator="true"
                 v-model:selection="selectedRegisters"
+                @row-select="onRowSelect(selectedRegisters)"
+                @row-unselect="onRowSelect(selectedRegisters)"
+                @select-all-change="onRowSelect(selectedRegisters)"
             >
                 <template #header>
-                    <Toolbar>
-                        <template v-slot:start>
-                            <div class="grid justify-content-center">
-                                <div class="col-12 lg:col-2 text-center">
-                                    <Button v-if="ability.can('rol_crear')" icon="pi pi-plus" class="p-button-success mr-6" @click="openNew" size="large" />
-                                </div>
-                                <div class="col-12 lg:col-2 text-center">
-                                    <Button v-if="ability.can('rol_editar')" :disabled="selectedRegisters.length != 1" icon="pi pi-copy" class="p-button-secondary mr-6" @click="openClone" size="large" />
-                                </div>
-                                <div class="col-12 lg:col-2 text-center">
-                                    <Button v-if="ability.can('rol_eliminar')" :disabled="!selectedRegisters.length" icon="pi pi-trash" class="p-button-danger mr-6" @click="openDelete" size="large" />
-                                </div>
-                            </div>
-                        </template>
-                    </Toolbar>
+                    <div class="flex flex-column md:flex-row md:justify-content-between md:align-items-center gap-3">
+                        <div class="flex gap-2 align-items-center">
+                            <h1 class="m-0 text-xl font-semibold">Listado de Roles</h1>
+                        </div>
+                        <div class="flex gap-2">
+                            <Button icon="pi pi-plus" class="p-button-raised p-button-success p-button-rounded" @click="openNew" v-tooltip.top="'Nuevo Rol'" />
+                            <Button icon="pi pi-file-export" class="p-button-outlined p-button-secondary p-button-rounded" @click="openExport" v-tooltip.top="'Exportar'" />
+                        </div>
+                    </div>
                 </template>
                 <template #empty> No customers found. </template>
                 <template #loading> Loading customers data. Please wait. </template>
-                <template>
-                    <Column selectionMode="multiple" headerStyle="width: 3rem"></Column>
-                    <Column expander style="width: 5rem" />
-                    <Column field="xxxxxx" filterField="xxxxxx" header="Name" sortable frozen="">
-                        <template #body="{ data }">
-                            {{ data.name }}
-                        </template>
-                        <template #filter="{ filterModel }">
-                            <InputText v-model="filterModel.value" type="text" class="p-column-filter" placeholder="Search by " />
-                        </template>
-                    </Column>
-                </template>
+                <Column selectionMode="multiple" headerStyle="width: 3rem"></Column>
+                <Column expander style="width: 5rem" />
+                <Column field="name" header="Nombre del Rol" sortable />
+
+                <Column header="Acciones" :frozen="true" alignFrozen="right" style="min-width: 10rem">
+                    <template #body="{ data }">
+                        <div class="flex gap-2">
+                            <Button v-if="ability.can('rol_editar')" icon="pi pi-copy" class="p-button-rounded p-button-text p-button-secondary" @click="openClone(data)" v-tooltip.top="'Clonar'" />
+                            <Button v-if="ability.can('rol_eliminar')" icon="pi pi-trash" class="p-button-rounded p-button-text p-button-danger" @click="deleteSingleRecord(data)" v-tooltip.top="'Eliminar'" />
+                        </div>
+                    </template>
+                </Column>
                 <template #expansion="{ data }">
                     <FormPermissions :data="data" @update="loadingData" />
                 </template>
@@ -242,6 +311,18 @@ const deleteRoles = async () => {
             <div class="flex justify-content-end gap-2">
                 <Button type="button" label="Cancel" severity="secondary" @click="DialogDelete = false" />
                 <Button type="button" label="Delete" @click="deleteRoles" />
+            </div>
+        </Dialog>
+        <FloatingSelectionBar :selection="selectedRegisters" :showExport="true" @clear="selectedRegisters = []" @delete="openDelete" @export="openExport">
+            <template #actions>
+                <ActionButton :items="itemsActions" :listRowSelect="selectedRegisters" />
+            </template>
+        </FloatingSelectionBar>
+        <Dialog v-model:visible="flagDialog" :style="{ width: '450px' }" :header="titleDialog" :modal="true">
+            <label for="username" class="text-2xl font-medium w-6rem"> {{ messageDialog }} </label>
+            <div class="flex justify-content-end gap-2">
+                <Button type="button" label="Cancel" severity="secondary" @click="flagDialog = false" />
+                <Button type="button" label="Save" @click="patchAction" />
             </div>
         </Dialog>
     </div>

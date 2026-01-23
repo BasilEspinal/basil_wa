@@ -14,6 +14,8 @@ import { z } from 'zod';
 import ability from '@/service/ability.js';
 import { AbilityBuilder } from '@casl/ability';
 import UnderConstruction from '@/components/UnderConstruction.vue';
+import ActionButton from '@/components/ActionButton.vue';
+import FloatingSelectionBar from '@/components/layout/FloatingSelectionBar.vue';
 const namePage = ' Temperature Control ';
 const titlePage = namePage + 'information';
 const dataFromComponent = ref();
@@ -52,16 +54,15 @@ onBeforeMount(() => {
     initFilters();
 });
 const listRowSelect = ref([]);
+const selectedRegisters = ref([]);
 const loading = ref(false);
+
 const onRowSelect = (data) => {
-    listRowSelect.value = data;
-    //assignValues(mode.value)
+    selectedRegisters.value = listRowSelect.value;
 };
 
-watch(listRowSelect, onRowSelect);
-
-const onSelectAllChange = () => {
-    onRowSelect();
+const onSelectAllChange = (event) => {
+    selectedRegisters.value = listRowSelect.value;
 };
 const filters = ref();
 
@@ -143,7 +144,7 @@ const extenciones = ref([{ name: 'CSV' }, { name: 'XLS' }]);
 const optionsEsport = ref([{ name: 'ALL' }, { name: 'SELECTED' }]);
 const format = ref({ name: 'CSV' });
 const exportAll = ref({ name: 'ALL' });
-const selectedRegisters = ref([]);
+
 const RowSelect = (data) => {
     listRowSelect.value = data;
 };
@@ -181,7 +182,10 @@ const openNew = () => {
     formDialogNew.value = true;
 };
 
-const openEdit = () => {
+const openEdit = (rowData) => {
+    if (rowData) {
+        listRowSelect.value = [rowData];
+    }
     resetForm();
     const { code, company: empresa, farm: farmParameter, name: nombre } = listRowSelect.value[0];
 
@@ -193,7 +197,10 @@ const openEdit = () => {
     formDialogEdit.value = true;
 };
 
-const openClone = () => {
+const openClone = (rowData) => {
+    if (rowData) {
+        listRowSelect.value = [rowData];
+    }
     resetForm();
     const { company: empresa, farm: farmParameter, name: nombre } = listRowSelect.value[0];
 
@@ -203,13 +210,16 @@ const openClone = () => {
     formDialogClone.value = true;
 };
 
-const openExport = () => {
-    format.value = { name: 'CSV' };
-    formDialogExport.value = true;
+const openDelete = (rowData) => {
+    if (rowData) {
+        listRowSelect.value = [rowData];
+    }
+    formDialogDelete.value = true;
 };
 
-const openDelete = () => {
-    formDialogDelete.value = true;
+const deleteSingleRecord = (data) => {
+    listRowSelect.value = [data];
+    openDelete();
 };
 
 const EditRecord = handleSubmitNew(async (values) => {
@@ -324,35 +334,23 @@ const documentFrozen = ref(true); change name field
      -->
 <template>
     <div>
-        <div class="card">
-            <div>
-                <h1>{{ titlePage }}</h1>
+        <div class="card mb-4 bg-primary-reverse border-round-xl shadow-2">
+            <div class="flex align-items-center justify-content-between p-3">
+                <div class="flex align-items-center gap-3">
+                    <div class="bg-primary-50 p-3 border-round-circle">
+                        <i class="pi pi-thermometer text-primary text-3xl"></i>
+                    </div>
+                    <div>
+                        <h1 class="m-0 text-3xl font-bold tracking-tight">{{ $t('menu.production.temperatureControl') || 'Control de Temperatura' }}</h1>
+                        <p class="m-0 text-600 font-medium mt-1">Monitoreo y registro de niveles térmicos</p>
+                </div>
             </div>
-
+        </div>
+    </div>
+        <div class="card">
             <UnderConstruction />
         </div>
         <div class="card">
-            <div class="grid">
-                <div class="col-xs-12 col-sm-6 col-md-4 mb-2 text-center mx-auto">
-                    <!--Uncomment when table is done-->
-
-                    <div class="col-xs-12 col-sm-6 col-md-4 mb-2 text-center mx-auto">
-                        <Toolbar style="margin-bottom: 1rem">
-                            <template #center>
-                                <Button :disabled="headerNames.length > 0" label="New" icon="pi pi-plus" class="p-button-success mb-2 mt-2" @click="openNew" size="large" />
-                                <Divider layout="vertical" />
-                                <Button :disabled="!(listRowSelect.length > 0 && listRowSelect.length < 2)" label="Edit" icon="pi pi-file-edit" class="p-button-help mb-2 mt-2" @click="openEdit" size="large" />
-                                <Divider layout="vertical" />
-                                <Button :disabled="!(listRowSelect.length > 0 && listRowSelect.length < 2)" label="Clone" icon="pi pi-copy" class="p-button-secondary mb-2 mt-2" @click="openClone" size="large" />
-                                <Divider layout="vertical" />
-                                <Button :disabled="headerNames.length > 0" label="Export" icon="pi pi-file-import" class="p-button-warning mb-2 mt-2" @click="openExport" size="large" />
-                                <Divider layout="vertical" />
-                                <Button :disabled="!listRowSelect.length > 0" label="Delete" icon="pi pi-trash" class="p-button-danger mb-2 mt-2" @click="openDelete" size="large" />
-                            </template>
-                        </Toolbar>
-                    </div>
-                </div>
-            </div>
             <!-- <pre>{{ dataResponseAPI }}</pre> -->
             <DataTable
                 :value="dataFromComponent"
@@ -369,36 +367,39 @@ const documentFrozen = ref(true); change name field
                 :rows="50"
                 :rowsPerPageOptions="[5, 10, 20, 50]"
                 :class="`p-datatable-${size.class}`"
-                @row-select="onRowSelect(selectedRegisters)"
-                @row-unselect="onRowSelect(selectedRegisters)"
+                @row-select="onRowSelect"
+                @row-unselect="onRowSelect"
                 @select-all-change="onSelectAllChange"
-                v-model:selection="selectedRegisters"
+                v-model:selection="listRowSelect"
                 filterDisplay="menu"
                 v-model:filters="filters"
                 :globalFilterFields="['name', 'company.name', 'farm.name', 'status.name', 'created_at', 'updated_at']"
             >
                 <template #header>
-                    <!--Uncomment when filters are done-->
-
-                    <Toolbar class="mb-2">
-                        <template v-slot:start>
-                            <Button type="button" icon="pi pi-filter-slash" label="Limpiar" class="p-button-outlined mb-2" @click="clearFilter()" />
-                        </template>
-                        <template v-slot:end>
-                            <span class="p-input-icon-left mb-2">
+                    <div class="flex flex-column md:flex-row md:justify-content-between md:align-items-center gap-3">
+                        <div class="flex gap-2 align-items-center">
+                            <Button type="button" icon="pi pi-filter-slash" label="Limpiar Filtros" class="p-button-outlined p-button-sm" @click="clearFilter()" />
+                            <span class="p-input-icon-left">
                                 <i class="pi pi-search" />
-                                <InputText v-model="filters['global'].value" placeholder="Buscar" style="width: 100%" />
+                                <InputText v-model="filters['global'].value" placeholder="Buscar..." class="w-full md:w-20rem" />
                             </span>
-                        </template>
-                        <template v-slot:center>
-                            <SelectButton v-model="size" :options="sizeOptions" optionLabel="label" dataKey="label"> </SelectButton>
-                        </template>
-                    </Toolbar>
+                        </div>
+
+                        <div class="hidden xl:block">
+                            <SelectButton v-model="size" :options="sizeOptions" optionLabel="label" dataKey="label" />
+                        </div>
+
+                        <div class="flex gap-2">
+                            <Button icon="pi pi-plus" class="p-button-raised p-button-success p-button-rounded" @click="openNew()" v-tooltip.top="'Nuevo'" />
+                            <Button icon="pi pi-file-export" class="p-button-outlined p-button-secondary p-button-rounded" @click="openExport()" :disabled="!dataFromComponent || dataFromComponent.length === 0" v-tooltip.top="'Exportar'" />
+                        </div>
+                    </div>
                 </template>
 
                 <template #empty> No customers found. </template>
                 <template #loading> Loading customers data. Please wait. </template>
                 <Column selectionMode="multiple" headerStyle="width: 3rem"></Column>
+
                 <Column field="code" filterField="code" header="Code" sortable :frozen="documentFrozen">
                     <!--Replace :frozen with the model-->
                     <template #header>
@@ -467,6 +468,15 @@ const documentFrozen = ref(true); change name field
                     </template>
                     <template #filter="{ filterModel }">
                         <InputText v-model="filterModel.value" type="text" class="p-column-filter" placeholder="Search by status" />
+                    </template>
+                </Column>
+                <Column header="Acciones" :frozen="true" alignFrozen="right" style="min-width: 12rem">
+                    <template #body="{ data }">
+                        <div class="flex gap-2">
+                            <Button icon="pi pi-pencil" class="p-button-rounded p-button-text p-button-warning" @click="openEdit(data)" v-tooltip.top="'Editar'" />
+                            <Button icon="pi pi-copy" class="p-button-rounded p-button-text p-button-secondary" @click="openClone(data)" v-tooltip.top="'Clonar'" />
+                            <Button icon="pi pi-trash" class="p-button-rounded p-button-text p-button-danger" @click="deleteSingleRecord(data)" v-tooltip.top="'Eliminar'" />
+                        </div>
                     </template>
                 </Column>
             </DataTable>
@@ -640,6 +650,14 @@ const documentFrozen = ref(true); change name field
             </Dialog>
 
             <Toast />
+
+            <FloatingSelectionBar :selection="listRowSelect" @clear="listRowSelect = []" @delete="openDelete">
+                <template #actions>
+                    <div class="flex gap-2">
+                        <Button icon="pi pi-file-import" class="p-button-outlined p-button-warning" label="Exportar" @click="openExport" />
+                    </div>
+                </template>
+            </FloatingSelectionBar>
         </div>
     </div>
 </template>

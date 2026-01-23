@@ -15,6 +15,7 @@ import * as XLSX from 'xlsx';
 import { z } from 'zod';
 import Summary from '@/components/Summary.vue';
 import ActionButton from '@/components/ActionButton.vue';
+import FloatingSelectionBar from '@/components/layout/FloatingSelectionBar.vue';
 import { useActions } from '@/composables/ActionButton.js';
 const { getItems, itemsActions, messageDialog, titleDialog, status_id_Action, flagDialog } = useActions(`/processflow/CropLot`);
 
@@ -55,14 +56,16 @@ const getNestedValue = (obj, path) => {
     return path.split('.').reduce((value, key) => value && value[key], obj);
 };
 const formProperties = ref({ open: false, title: '', mode: '', data: null });
-const openForm = (mode) => {
-    console.log(mode);
+const openForm = (mode, rowData) => {
+    if (rowData) {
+        onRowSelect([rowData]);
+    }
 
     formProperties.value = {
         open: true,
-        title: mode === 'Ver Detalles',
+        title: mode === 'Ver Detalles' || mode === 'details' ? 'Detalles de Vehículo' : 'Formulario',
         mode: mode,
-        data: mode === 'detalles' ? null : listRowSelect.value[0]
+        data: mode === 'detalles' || mode === 'details' ? null : (rowData || listRowSelect.value[0])
     };
 };
 
@@ -93,14 +96,12 @@ onBeforeMount(() => {
     initFilters();
 });
 const listRowSelect = ref([]);
+const selectedRegisters = ref([]);
 const loading = ref(false);
-const RowSelect = (data) => {
-    listRowSelect.value = data;
-};
-watch(listRowSelect, RowSelect);
 const cardSections = ref([]);
+
 const onRowSelect = (data) => {
-    listRowSelect.value = data;
+    selectedRegisters.value = listRowSelect.value;
     openDialogSettlement('patch_action');
     const row = listRowSelect.value[0];
     if (row) {
@@ -197,8 +198,8 @@ const onRowSelect = (data) => {
 
 watch(listRowSelect, onRowSelect);
 
-const onSelectAllChange = () => {
-    onRowSelect();
+const onSelectAllChange = (event) => {
+    selectedRegisters.value = listRowSelect.value;
 };
 const filters = ref();
 
@@ -291,7 +292,7 @@ const extenciones = ref([{ name: 'CSV' }, { name: 'XLS' }]);
 const optionsEsport = ref([{ name: 'ALL' }, { name: 'SELECTED' }]);
 const format = ref({ name: 'CSV' });
 const exportAll = ref({ name: 'ALL' });
-const selectedRegisters = ref([]);
+
 
 const formDialogTitle = ref('');
 const formDialog = ref(false);
@@ -351,25 +352,23 @@ const actionRecordManager = handleSubmitNew(async (values) => {
         farm_uuid: values.farm ? values.farm.id : farmDefault
     };
     console.log('data:', data);
+    const { uuid } = listRowSelect.value[0] || {};
     if (state.value === 'new') {
         responseCRUD.value = await crudService.create(data);
     } else if (state.value === 'edit') {
-        const { uuid } = listRowSelect.value[0];
         responseCRUD.value = await crudService.update(uuid, data);
     } else if (state.value === 'clone') {
         responseCRUD.value = await crudService.create(data);
     } else if (state.value === 'patch') {
         responseCRUD.value = await crudService.patch(uuid, data);
-    } else {
-        const { uuid } = listRowSelect.value[0];
     }
 
     // Mostrar notificación y cerrar el diálogo si la operación fue exitosa
-    if (responseCRUD.value.ok) {
+    if (responseCRUD.value && responseCRUD.value.ok) {
         toast.add({
-            severity: responseCRUD.value.ok ? 'success' : 'error',
+            severity: 'success',
             summary: state.value,
-            detail: responseCRUD.value.ok ? 'Done' : responseCRUD.value.error,
+            detail: 'Done',
             life: 3000
         });
         await loadingData();
@@ -377,8 +376,14 @@ const actionRecordManager = handleSubmitNew(async (values) => {
         formDialog.value = false;
         listRowSelect.value = [];
         selectedRegisters.value = [];
-    } else {
+    } else if (responseCRUD.value) {
         console.log('Error:', responseCRUD.value.error);
+        toast.add({
+            severity: 'error',
+            summary: 'Error',
+            detail: responseCRUD.value.error || 'Ocurrió un error inesperado',
+            life: 3000
+        });
     }
 });
 
@@ -597,8 +602,20 @@ const documentFrozen = ref(true); change name field
      -->
 <template>
     <div>
+        <div class="card mb-4 bg-primary-reverse border-round-xl shadow-2">
+            <div class="flex align-items-center justify-content-between p-3">
+                <div class="flex align-items-center gap-3">
+                    <div class="bg-primary-50 p-3 border-round-circle">
+                        <i class="pi pi-car text-primary text-3xl"></i>
+                    </div>
+                    <div>
+                        <h1 class="m-0 text-3xl font-bold tracking-tight">{{ $t('menu.production.vehicles') }}</h1>
+                        <p class="m-0 text-600 font-medium mt-1">Gestión y control de flota de vehículos</p>
+                    </div>
+                </div>
+            </div>
+        </div>
         <div class="card">
-            <h1>{{ $t('menu.production.vehicles') }}</h1>
 
             <Dialog v-model:visible="flagDialog" :style="{ width: '450px' }" :header="titleDialog" :modal="true">
                 <label for="username" class="text-2xl font-medium w-6rem"> {{ messageDialog }} </label>
@@ -624,8 +641,8 @@ const documentFrozen = ref(true); change name field
                 :rows="50"
                 :rowsPerPageOptions="[5, 10, 20, 50]"
                 :class="`p-datatable-${size?.class || 'default-size'}`"
-                @row-select="onRowSelect(listRowSelect)"
-                @row-unselect="onRowSelect(listRowSelect)"
+                @row-select="onRowSelect"
+                @row-unselect="onRowSelect"
                 @select-all-change="onSelectAllChange"
                 v-model:selection="listRowSelect"
                 filterDisplay="menu"
@@ -633,68 +650,30 @@ const documentFrozen = ref(true); change name field
                 :globalFilterFields="globalFilter"
             >
                 <template #header>
-                    <!--Uncomment when filters are done-->
-
-                    <Toolbar class="mb-2">
-                        <template v-slot:start>
-                            <Button type="button" icon="pi pi-filter-slash" label="Limpiar" class="p-button-outlined mb-2" @click="clearFilter()" />
-                        </template>
-                        <template v-slot:end>
-                            <span class="p-input-icon-left mb-2">
+                    <div class="flex flex-column md:flex-row md:justify-content-between md:align-items-center gap-3">
+                        <div class="flex gap-2 align-items-center">
+                            <Button type="button" icon="pi pi-filter-slash" label="Limpiar Filtros" class="p-button-outlined p-button-sm" @click="clearFilter()" />
+                            <span class="p-input-icon-left">
                                 <i class="pi pi-search" />
-                                <InputText v-model="filters['global'].value" placeholder="Buscar" style="width: 100%" />
+                                <InputText v-model="filters['global'].value" placeholder="Buscar vehículo..." class="w-full md:w-20rem" />
                             </span>
+                        </div>
 
-                            <!-- Action Button -->
-                        </template>
+                        <div class="hidden xl:block">
+                            <SelectButton v-model="size" :options="sizeOptions" optionLabel="label" dataKey="label" />
+                        </div>
 
-                        <template v-slot:center>
-                            <SelectButton v-model="size" :options="sizeOptions" optionLabel="label" dataKey="label"> </SelectButton>
-                        </template>
-                    </Toolbar>
-
-                    <Toolbar>
-                        <template v-slot:start>
-                            <div class="grid justify-content-center">
-                                <!-- Toolbar -->
-
-                                <!--Uncomment when table is done-->
-
-                                <div class="col-12 lg:col-2 text-center">
-                                    <Button :disabled="!(listRowSelect.length > 0 && listRowSelect.length < 2)" icon="pi pi-bars" class="mr-2" @click="openForm('detalles')" />
-                                </div>
-                                <div class="col-12 lg:col-2 text-center">
-                                    <Button :disabled="!(listRowSelect.length > 0 && listRowSelect.length < 2)" icon="pi pi-file-edit" class="p-button-help mr-2" @click="openDialog('edit')" />
-                                </div>
-
-                                <!-- Second row -->
-                                <div class="col-12 lg:col-2 text-center">
-                                    <Button :disabled="listRowSelect.length > 0" icon="pi pi-plus" class="p-button-success mr-2" @click="openDialog('new')" />
-                                </div>
-                                <div class="col-12 lg:col-2 text-center">
-                                    <Button :disabled="!(listRowSelect.length > 0 && listRowSelect.length < 2)" icon="pi pi-copy" class="p-button-secondary mr-2" @click="openDialog('clone')" />
-                                </div>
-
-                                <!-- Third row -->
-                                <div class="col-12 lg:col-2 text-center">
-                                    <Button :disabled="!listRowSelect.length > 0" icon="pi pi-file-import" class="p-button-warning mr-2" @click="openExport" />
-                                </div>
-                                <div class="col-12 lg:col-2 text-center">
-                                    <Button :disabled="!listRowSelect.length > 0" icon="pi pi-trash" class="p-button-danger mr-2" @click="openDelete" />
-                                </div>
-                            </div>
-                        </template>
-                        <template v-slot:end>
-                            <div class="col-12 lg:col-12 text-center">
-                                <ActionButton :items="itemsActions" :listRowSelect="listRowSelect" class="w-12" />
-                            </div>
-                        </template>
-                    </Toolbar>
+                        <div class="flex gap-2">
+                            <Button icon="pi pi-plus" class="p-button-raised p-button-success p-button-rounded" @click="openDialog('new')" v-tooltip.top="'Nuevo Vehículo'" />
+                            <Button icon="pi pi-file-export" class="p-button-outlined p-button-secondary p-button-rounded" @click="openExport" :disabled="!dataFromComponent || dataFromComponent.length === 0" v-tooltip.top="'Exportar'" />
+                        </div>
+                    </div>
                 </template>
 
                 <template #empty> No customers found. </template>
                 <template #loading> Loading customers data. Please wait. </template>
                 <Column selectionMode="multiple" headerStyle="width: 3rem"></Column>
+
                 <Column v-for="col in dynamicColumns" :key="col.field" :field="col.field" :header="col.header" :frozen="col.frozen && documentFrozen" sortable>
                     <!-- Header Template -->
                     <template v-if="col.frozen" #header>
@@ -716,6 +695,16 @@ const documentFrozen = ref(true); change name field
                     <!-- Filter Template -->
                     <template #filter="{ filterModel }">
                         <InputText v-model="filterModel.value" type="text" class="p-column-filter" :placeholder="'Search by ' + col.header" />
+                    </template>
+                </Column>
+                <Column header="Acciones" :frozen="true" alignFrozen="right" style="min-width: 12rem">
+                    <template #body="{ data }">
+                        <div class="flex gap-2">
+                            <Button icon="pi pi-eye" class="p-button-rounded p-button-text p-button-info" @click="openForm('details', data)" v-tooltip.top="'Detalles'" />
+                            <Button icon="pi pi-pencil" class="p-button-rounded p-button-text p-button-warning" @click="openDialog('edit', data)" v-tooltip.top="'Editar'" />
+                            <Button icon="pi pi-copy" class="p-button-rounded p-button-text p-button-secondary" @click="openDialog('clone', data)" v-tooltip.top="'Clonar'" />
+                            <Button icon="pi pi-trash" class="p-button-rounded p-button-text p-button-danger" @click="deleteSingleRecord(data)" v-tooltip.top="'Eliminar'" />
+                        </div>
                     </template>
                 </Column>
             </DataTable>
@@ -830,6 +819,15 @@ const documentFrozen = ref(true); change name field
             </Dialog>
 
             <Toast />
+
+            <FloatingSelectionBar :selection="listRowSelect" @clear="listRowSelect = []" @delete="openDelete">
+                <template #actions>
+                    <div class="flex gap-2">
+                        <Button icon="pi pi-file-import" class="p-button-outlined p-button-warning" label="Exportar" @click="openExport" />
+                        <ActionButton :items="itemsActions" :listRowSelect="listRowSelect" />
+                    </div>
+                </template>
+            </FloatingSelectionBar>
         </div>
     </div>
 </template>

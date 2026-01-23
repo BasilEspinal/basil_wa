@@ -15,6 +15,10 @@ import { useI18n } from 'vue-i18n';
 import * as XLSX from 'xlsx';
 import { z } from 'zod';
 import DiscrepanciesSummary from './DiscrepanciesSummary.vue';
+import ActionButton from '@/components/ActionButton.vue';
+import FloatingSelectionBar from '@/components/layout/FloatingSelectionBar.vue';
+import { useActions } from '@/composables/ActionButton.js';
+const { itemsActions } = useActions('/transactions/shipment/discrepancies');
 
 const { t } = useI18n();
 
@@ -398,7 +402,6 @@ const documentFrozen = ref(true); change name field
 <DataTable id="tblData"
      -->
 <template>
-    <div>
         <div class="card">
             <DataTable
                 :value="dataFromComponent"
@@ -424,36 +427,23 @@ const documentFrozen = ref(true); change name field
                 :globalFilterFields="globalFilter"
             >
                 <template #header>
-                    <!--Uncomment when filters are done-->
-
-                    <Toolbar class="mb-2">
-                        <template v-slot:start>
-                            <Button type="button" icon="pi pi-filter-slash" label="Limpiar" class="p-button-outlined mb-2" @click="clearFilter()" />
-                        </template>
-                        <template v-slot:end>
-                            <span class="p-input-icon-left mb-2">
+                    <div class="flex flex-column md:flex-row md:justify-content-between md:align-items-center gap-3">
+                        <div class="flex gap-2 align-items-center">
+                            <Button type="button" icon="pi pi-filter-slash" label="Limpiar Filtros" class="p-button-outlined p-button-sm" @click="clearFilter()" />
+                            <span class="p-input-icon-left">
                                 <i class="pi pi-search" />
-                                <InputText v-model="filters['global'].value" placeholder="Buscar" style="width: 100%" />
+                                <InputText v-model="filters['global'].value" placeholder="Buscar discrepancia..." class="w-full md:w-20rem" />
                             </span>
-                        </template>
-                        <template v-slot:center>
-                            <SelectButton v-model="size" :options="sizeOptions" optionLabel="label" dataKey="label"> </SelectButton>
-                        </template>
-                    </Toolbar>
+                        </div>
 
-                    <Toolbar>
-                        <template v-slot:start>
-                            <div class="grid justify-content-center">
-                                <div class="col-12 lg:col-6 text-center">
-                                    <Button :disabled="!(listRowSelect.length > 0 && listRowSelect.length < 2)" icon="pi pi-bars" class="mr-2" @click="openForm('detalles')" size="large" />
-                                </div>
+                        <div class="hidden xl:block">
+                            <SelectButton v-model="size" :options="sizeOptions" optionLabel="label" dataKey="label" />
+                        </div>
 
-                                <div class="col-12 lg:col-6 text-center">
-                                    <Button :disabled="!(listRowSelect.length > 0 && listRowSelect.length < 2)" icon="pi pi-file-edit" class="p-button-help mr-2" @click="openDialog('patch')" size="large" />
-                                </div>
-                            </div>
-                        </template>
-                    </Toolbar>
+                        <div class="flex gap-2">
+                            <Button icon="pi pi-file-export" class="p-button-outlined p-button-secondary p-button-rounded" @click="openExport" :disabled="!dataFromComponent || dataFromComponent.length === 0" v-tooltip.top="'Exportar'" />
+                        </div>
+                    </div>
                 </template>
 
                 <template #empty> No customers found. </template>
@@ -480,6 +470,16 @@ const documentFrozen = ref(true); change name field
                     <!-- Filter Template -->
                     <template #filter="{ filterModel }">
                         <InputText v-model="filterModel.value" type="text" class="p-column-filter" :placeholder="'Search by ' + col.header" />
+                    </template>
+                </Column>
+
+                <Column header="Acciones" :frozen="true" alignFrozen="right" style="min-width: 12rem">
+                    <template #body="{ data }">
+                        <div class="flex gap-2">
+                            <Button icon="pi pi-eye" class="p-button-rounded p-button-text p-button-info" @click="openForm('details', data)" v-tooltip.top="'Detalles'" />
+                            <Button icon="pi pi-check-circle" class="p-button-rounded p-button-text p-button-success" @click="openDialog('patch', data)" v-tooltip.top="'Validar'" />
+                            <Button icon="pi pi-trash" class="p-button-rounded p-button-text p-button-danger" @click="openDelete(data)" v-tooltip.top="'Eliminar'" />
+                        </div>
                     </template>
                 </Column>
             </DataTable>
@@ -563,8 +563,16 @@ const documentFrozen = ref(true); change name field
             </Dialog>
 
             <Toast />
+
+            <FloatingSelectionBar :selection="listRowSelect" @clear="listRowSelect = []" @delete="openDelete">
+                <template #actions>
+                    <div class="flex gap-2">
+                        <Button icon="pi pi-file-import" class="p-button-outlined p-button-warning" label="Exportar" @click="openExport" />
+                        <ActionButton :items="itemsActions" :listRowSelect="listRowSelect" />
+                    </div>
+                </template>
+            </FloatingSelectionBar>
         </div>
-    </div>
 </template>
 
 <style lang="scss" scoped></style>

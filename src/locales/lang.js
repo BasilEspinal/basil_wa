@@ -143,6 +143,7 @@ export const messages = {
             },
 
             dailyPlanning: 'Daily Planning',
+            dailyPlanner: 'Daily Planner',
             dailyTransactions: 'Daily Transactions',
             dailyTransactionsContractor: 'Daily Transactions Contractor',
             shipping: {
@@ -391,6 +392,7 @@ export const messages = {
             },
 
             dailyPlanning: 'Planeación Diaria',
+            dailyPlanner: 'Planeación Diaria',
             dailyTransactions: 'Transacciones del Día',
             dailyTransactionsContractor: 'Transacciones del Día Contratista',
             shipping: {

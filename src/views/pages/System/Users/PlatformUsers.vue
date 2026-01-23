@@ -11,6 +11,10 @@ import { z } from 'zod';
 //const { getRequest, postRequest, putRequest, deleteRequest } = useData();
 
 import { CrudService } from '@/service/CRUD/CrudService';
+import FloatingSelectionBar from '@/components/layout/FloatingSelectionBar.vue';
+import ActionButton from '@/components/ActionButton.vue';
+import { useActions } from '@/composables/ActionButton.js';
+const { getItems, itemsActions, messageDialog, titleDialog, status_id_Action, flagDialog } = useActions(`/processflow/User`);
 
 const prueba = ref({ revisar: 'revisar GET-POST-PUT-DELETE' });
 let endpoint = ref('/users');
@@ -20,6 +24,7 @@ const loading = ref(false);
 const selectedRegisters = ref([]);
 const expandedRows = ref([]);
 const users = ref([]);
+const rowUUID = ref(null);
 
 const farmDefault = sessionStorage.getItem('accessSessionFarm');
 
@@ -95,25 +100,43 @@ const openNew = () => {
     DialogNew.value = true;
 };
 
-const openEdit = () => {
+const openEdit = (rowData) => {
     resetForm();
     headerDialogEdit.value = 'Edit User';
-    const data = selectedRegisters.value[0];
+    const data = rowData || selectedRegisters.value[0];
+    if (!data) {
+        toast.add({ severity: 'error', summary: 'Error', detail: 'Select a record', life: 3000 });
+        return;
+    }
+    rowUUID.value = data.id;
     nameEdit.value = data.name;
     emailEdit.value = data.email;
     DialogEdit.value = true;
 };
 
-const openClone = () => {
+const openClone = (rowData) => {
     resetForm();
     headerDialogClone.value = 'Clone a user';
-    const data = selectedRegisters.value[0];
+    const data = rowData || selectedRegisters.value[0];
+    if (!data) {
+        toast.add({ severity: 'error', summary: 'Error', detail: 'Select a record', life: 3000 });
+        return;
+    }
+    rowUUID.value = data.id;
     name.value = data.name;
     DialogClone.value = true;
 };
-const openDelete = () => {
+const openDelete = (rowData) => {
+    if (rowData) {
+        selectedRegisters.value = [rowData];
+    }
     headerDialogDelete.value = 'Delete Users';
     DialogDelete.value = true;
+};
+
+const deleteSingleRecord = (rowData) => {
+    selectedRegisters.value = [rowData];
+    openDelete();
 };
 
 const openExport = () => {
@@ -149,7 +172,7 @@ const editUser = submitEdit(async (values) => {
         data.password = values.passwordEdit;
     }
     //const restp = await putRequest(endpoint.value, data, id);
-    const restp = await crudService.update(id, data);
+    const restp = await crudService.update(rowUUID.value, data);
     toast.add({ severity: restp.ok ? 'success' : 'error', summary: 'Edit', detail: restp.ok ? 'Editado' : restp.error, life: 3000 });
     DialogEdit.value = false;
     loadingData();
@@ -191,13 +214,66 @@ const expandAll = () => {
 const collapseAll = () => {
     expandedRows.value = null;
 };
+
+const onRowSelect = (data) => {
+    if (data && !Array.isArray(data)) {
+        selectedRegisters.value = [data];
+    } else if (data) {
+        selectedRegisters.value = data;
+    }
+    openDialogSettlement('patch_action');
+};
+
+const openDialogSettlement = async (mode) => {
+    if (selectedRegisters.value.length != 0 && selectedRegisters.value[0].status) {
+        await getItems(selectedRegisters.value[0].status.id);
+    }
+};
+
+const patchAction = async () => {
+    try {
+        const patchPromises = [];
+        selectedRegisters.value.forEach(async (item) => {
+            const data = {
+                status_id: status_id_Action.value
+            };
+            const patchPromise = await crudService.patch(item.uuid, data);
+            patchPromises.push(patchPromise);
+        });
+
+        const responses = await Promise.all(patchPromises);
+        const hasError = responses.some((response) => !response.ok);
+
+        if (!hasError) {
+            toast.add({ severity: 'success', summary: 'Success', detail: 'Records updated successfully', life: 3000 });
+            flagDialog.value = false;
+            loadingData();
+            selectedRegisters.value = [];
+        } else {
+            const errorMsg = responses.find((r) => !r.ok)?.error || 'Unknown error';
+            toast.add({ severity: 'error', summary: 'Error', detail: 'Error updated records: ' + errorMsg, life: 3000 });
+        }
+    } catch (error) {
+        console.error('Error fetching data:', error);
+    }
+};
 </script>
 <template>
     <div>
         <Toast />
-        <div class="card">
-            <div>
-                <h1>Resumen de roles asociados a los usuarios</h1>
+        <div class="card mb-4 bg-primary-reverse border-round-xl shadow-2">
+            <div class="flex align-items-center justify-content-between p-3">
+                <div class="flex align-items-center gap-3">
+                    <div class="bg-primary-50 p-3 border-round-circle">
+                        <i class="pi pi-users text-primary text-3xl"></i>
+                    </div>
+                    <div>
+                        <h1 class="m-0 text-3xl font-bold tracking-tight">Usuarios</h1>
+                        <p class="m-0 text-600 font-medium mt-1">Gestión integral de roles y accesos</p>
+                    </div>
+                </div>
+                <div class="flex gap-2">
+                </div>
             </div>
         </div>
         <div class="card">
@@ -212,50 +288,38 @@ const collapseAll = () => {
                 showGridlines
                 :paginator="true"
                 v-model:selection="selectedRegisters"
+                @row-select="onRowSelect(selectedRegisters)"
+                @row-unselect="onRowSelect(selectedRegisters)"
+                @select-all-change="onRowSelect(selectedRegisters)"
             >
                 <template #header>
-                    <Toolbar>
-                        <template v-slot:start>
-                            <div class="grid justify-content-center">
-                                <div class="col-12 lg:col-2 text-center">
-                                    <Button v-if="ability.can('usuario_crear')" icon="pi pi-plus" class="p-button-success mr-2" @click="openNew" size="large" />
-                                </div>
-                                <div class="col-12 lg:col-2 text-center">
-                                    <Button v-if="ability.can('usuario_editar')" :disabled="selectedRegisters.length != 1" icon="pi pi-file-edit" class="p-button-help mr-2" @click="openEdit" size="large" />
-                                </div>
-                                <div class="col-12 lg:col-2 text-center">
-                                    <Button v-if="ability.can('usuario_crear')" :disabled="selectedRegisters.length != 1" icon="pi pi-copy" class="p-button-secondary mr-2" @click="openClone" size="large" />
-                                </div>
-                                <div class="col-12 lg:col-2 text-center">
-                                    <Button v-if="ability.can('usuario_eliminar')" :disabled="!selectedRegisters.length" icon="pi pi-trash" class="p-button-danger mr-2" @click="openDelete" size="large" />
-                                </div>
-                            </div>
-                        </template>
-                    </Toolbar>
+                    <div class="flex flex-column md:flex-row md:justify-content-between md:align-items-center gap-3">
+                        <div class="flex gap-2 align-items-center">
+                            <h1 class="m-0 text-xl font-semibold">Usuarios de la Plataforma</h1>
+                        </div>
+                        <div class="flex gap-2">
+                            <Button icon="pi pi-plus" class="p-button-raised p-button-success p-button-rounded" @click="openNew" v-tooltip.top="'Nuevo Usuario'" />
+                            <Button icon="pi pi-file-export" class="p-button-outlined p-button-secondary p-button-rounded" @click="openExport" v-tooltip.top="'Exportar'" />
+                        </div>
+                    </div>
                 </template>
                 <template #empty> No customers found. </template>
                 <template #loading> Loading customers data. Please wait. </template>
 
-                <template>
-                    <Column selectionMode="multiple" headerStyle="width: 3rem"></Column>
-                    <Column expander style="width: 5rem" />
-                    <Column field="xxxxxx" filterField="xxxxxx" header="Name" sortable frozen="">
-                        <template #body="{ data }">
-                            {{ data.name }}
-                        </template>
-                        <template #filter="{ filterModel }">
-                            <InputText v-model="filterModel.value" type="text" class="p-column-filter" placeholder="Search by " />
-                        </template>
-                    </Column>
-                    <Column field="" filterField="" header=" Email" sortable>
-                        <template #body="{ data }">
-                            {{ data.email }}
-                        </template>
-                        <template #filter="{ filterModel }">
-                            <InputText v-model="filterModel.value" type="text" class="p-column-filter" placeholder="Search by " />
-                        </template>
-                    </Column>
-                </template>
+                <Column selectionMode="multiple" headerStyle="width: 3rem"></Column>
+                <Column expander style="width: 5rem" />
+                <Column field="name" header="Nombre" sortable />
+                <Column field="email" header="Email" sortable />
+
+                <Column header="Acciones" :frozen="true" alignFrozen="right" style="min-width: 10rem">
+                    <template #body="{ data }">
+                        <div class="flex gap-2">
+                            <Button v-if="ability.can('usuario_editar')" icon="pi pi-pencil" class="p-button-rounded p-button-text p-button-warning" @click="openEdit(data)" v-tooltip.top="'Editar'" />
+                            <Button v-if="ability.can('usuario_crear')" icon="pi pi-copy" class="p-button-rounded p-button-text p-button-secondary" @click="openClone(data)" v-tooltip.top="'Clonar'" />
+                            <Button v-if="ability.can('usuario_eliminar')" icon="pi pi-trash" class="p-button-rounded p-button-text p-button-danger" @click="deleteSingleRecord(data)" v-tooltip.top="'Eliminar'" />
+                        </div>
+                    </template>
+                </Column>
                 <template #expansion="{ data }">
                     <FormRols :data="data" @update="loadingData" />
                 </template>
@@ -395,6 +459,18 @@ const collapseAll = () => {
             <div class="flex justify-content-end gap-2">
                 <Button type="button" label="Cancel" severity="secondary" @click="DialogDelete = false" />
                 <Button type="button" label="Delete" @click="deleteUsers" />
+            </div>
+        </Dialog>
+        <FloatingSelectionBar :selection="selectedRegisters" :showExport="true" @clear="selectedRegisters = []" @delete="openDelete" @export="openExport">
+            <template #actions>
+                <ActionButton :items="itemsActions" :listRowSelect="selectedRegisters" />
+            </template>
+        </FloatingSelectionBar>
+        <Dialog v-model:visible="flagDialog" :style="{ width: '450px' }" :header="titleDialog" :modal="true">
+            <label for="username" class="text-2xl font-medium w-6rem"> {{ messageDialog }} </label>
+            <div class="flex justify-content-end gap-2">
+                <Button type="button" label="Cancel" severity="secondary" @click="flagDialog = false" />
+                <Button type="button" label="Save" @click="patchAction" />
             </div>
         </Dialog>
     </div>

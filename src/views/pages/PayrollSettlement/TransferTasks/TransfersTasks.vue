@@ -14,6 +14,9 @@ import { z } from 'zod';
 import ability from '@/service/ability.js';
 import { AbilityBuilder } from '@casl/ability';
 import UnderConstruction from '@/components/UnderConstruction.vue';
+import ActionButton from '@/components/ActionButton.vue';
+import FloatingSelectionBar from '@/components/layout/FloatingSelectionBar.vue';
+import { useActions } from '@/composables/ActionButton.js';
 const namePage = ' Tareas de Transferencia ';
 const titlePage = namePage + 'information';
 const dataFromComponent = ref();
@@ -22,16 +25,13 @@ const farms = ref([]);
 const Compan = ref([]);
 const compa = ref([]);
 
-const formDialogNew = ref(false);
-const formDialogNewTitle = 'Create new' + namePage;
-const formDialogEditTitle = 'Edit' + namePage;
-const formDialogCloneTitle = 'Clone' + namePage;
-const formDialogExportTitle = 'Export' + namePage;
-const formDialogDeleteTitle = 'Delete' + namePage;
-const formDialogEdit = ref(false);
-const formDialogClone = ref(false);
+const formDialog = ref(false);
+const formDialogTitle = ref('');
+const formDialogExportTitle = 'Exportar Tareas de Transferencia';
+const formDialogDeleteTitle = 'Eliminar Registros';
 const formDialogExport = ref(false);
 const formDialogDelete = ref(false);
+const { itemsActions } = useActions('/endpoint');
 const toast = useToast();
 const filename = ref('table');
 const isChanging = ref(false);
@@ -145,11 +145,15 @@ const format = ref({ name: 'CSV' });
 const exportAll = ref({ name: 'ALL' });
 const selectedRegisters = ref([]);
 const RowSelect = (data) => {
-    listRowSelect.value = data;
+    if (data && !Array.isArray(data)) {
+        selectedRegisters.value = [data];
+    } else if (data) {
+        selectedRegisters.value = data;
+    }
 };
 let headerNames = ref([]);
 provide('isChanging', isChanging);
-watch(listRowSelect, RowSelect);
+watch(selectedRegisters, RowSelect);
 
 const createRecord = handleSubmitNew(async (values) => {
     const data = {
@@ -162,7 +166,7 @@ const createRecord = handleSubmitNew(async (values) => {
 
     toast.add({ severity: restp.ok ? 'success' : 'error', summary: 'Create', detail: restp.ok ? 'Creado' : restp.error, life: 3000 });
     loadingData();
-    formDialogNew.value = false;
+    formDialog.value = false;
 });
 
 const searchCompannies = (event) => {
@@ -176,32 +180,35 @@ const searchCompannies = (event) => {
         }
     }, 200);
 };
-const openNew = () => {
-    resetForm();
-    formDialogNew.value = true;
+const state = ref('');
+
+const openDialog = (mode, rowData) => {
+    state.value = mode;
+    formDialogTitle.value = mode === 'new' ? 'Nueva Tarea de Transferencia' : mode === 'edit' ? 'Editar Tarea' : mode === 'clone' ? 'Clonar Tarea' : '';
+
+    if (mode === 'new') {
+        resetForm();
+    } else {
+        const source = rowData || selectedRegisters.value[0];
+        if (!source) {
+            toast.add({ severity: 'error', summary: 'Error', detail: 'Seleccione un registro', life: 3000 });
+            return;
+        }
+        resetForm();
+        const { code, company: empresa, farm: farmParameter, name: nombre } = source;
+
+        name.value = nombre;
+        codeV.value = code;
+        company.value = { id: empresa?.uuid, name: empresa?.name };
+        farm.value = { id: farmParameter?.uuid, name: farmParameter?.name };
+    }
+
+    formDialog.value = true;
 };
 
-const openEdit = () => {
-    resetForm();
-    const { code, company: empresa, farm: farmParameter, name: nombre } = listRowSelect.value[0];
-
-    name.value = nombre;
-    codeV.value = code;
-    company.value = { id: empresa.uuid, name: empresa.name };
-    farm.value = { id: farmParameter.uuid, name: farmParameter.name };
-
-    formDialogEdit.value = true;
-};
-
-const openClone = () => {
-    resetForm();
-    const { company: empresa, farm: farmParameter, name: nombre } = listRowSelect.value[0];
-
-    name.value = nombre;
-    company.value = { id: empresa.uuid, name: empresa.name };
-    farm.value = { id: farmParameter.uuid, name: farmParameter.name };
-    formDialogClone.value = true;
-};
+const openNew = () => openDialog('new');
+const openEdit = (data) => openDialog('edit', data);
+const openClone = (data) => openDialog('clone', data);
 
 const openExport = () => {
     format.value = { name: 'CSV' };
@@ -224,7 +231,7 @@ const EditRecord = handleSubmitNew(async (values) => {
     const restp = await putRequest(endpoint.value, data, uuid);
     toast.add({ severity: restp.ok ? 'success' : 'error', summary: 'Edit', detail: restp.ok ? 'Editado' : restp.error, life: 3000 });
     loadingData();
-    formDialogEdit.value = false;
+    formDialog.value = false;
 });
 
 const CloneRecord = handleSubmitNew(async (values) => {
@@ -237,7 +244,7 @@ const CloneRecord = handleSubmitNew(async (values) => {
     const restp = await postRequest(endpoint.value, data);
     toast.add({ severity: restp.ok ? 'success' : 'error', summary: 'Clone', detail: restp.ok ? 'Clonado' : restp.error, life: 3000 });
     loadingData();
-    formDialogClone.value = false;
+    formDialog.value = false;
 });
 
 const searchFarms = (event) => {
@@ -285,6 +292,11 @@ function formatXLS(eventos) {
     saveAs(file, filename.value + '.xlsx');
 }
 
+const deleteSingleRecord = (rowData) => {
+    selectedRegisters.value = [rowData];
+    openDelete();
+};
+
 const DeleteRecord = async () => {
     formDialogDelete.value = false;
 
@@ -324,51 +336,20 @@ const documentFrozen = ref(true); change name field
      -->
 <template>
     <div>
-        <div class="card">
-            <div>
-                <h1>{{ titlePage }}</h1>
-            </div>
-            <UnderConstruction />
-        </div>
-        <div class="card">
-            <div class="grid">
-                <div class="col-xs-12 col-sm-6 col-md-4 mb-2 text-center mx-auto">
-                    <!--Uncomment when table is done-->
-
-                    <div class="col-xs-12 col-sm-6 col-md-4 mb-2 text-center mx-auto">
-                        <Toolbar style="margin-bottom: 1rem">
-                            <template #center>
-                                <Button v-if="ability.can('trabajo_prefrio_crear')" :disabled="headerNames.length > 0" label="New" icon="pi pi-plus" class="p-button-success mb-2 mt-2" @click="openNew" size="large" />
-                                <Divider v-if="ability.can('trabajo_prefrio_crear')" layout="vertical" />
-                                <Button
-                                    v-if="ability.can('trabajo_prefrio_editar')"
-                                    :disabled="!(listRowSelect.length > 0 && listRowSelect.length < 2)"
-                                    label="Edit"
-                                    icon="pi pi-file-edit"
-                                    class="p-button-help mb-2 mt-2"
-                                    @click="openEdit"
-                                    size="large"
-                                />
-                                <Divider v-if="ability.can('trabajo_prefrio_editar')" layout="vertical" />
-                                <Button
-                                    v-if="ability.can('trabajo_prefrio_crear')"
-                                    :disabled="!(listRowSelect.length > 0 && listRowSelect.length < 2)"
-                                    label="Clone"
-                                    icon="pi pi-copy"
-                                    class="p-button-secondary mb-2 mt-2"
-                                    @click="openClone"
-                                    size="large"
-                                />
-                                <Divider v-if="ability.can('trabajo_prefrio_crear')" layout="vertical" />
-                                <Button v-if="ability.can('trabajo_prefrio_crear')" :disabled="headerNames.length > 0" label="Export" icon="pi pi-file-import" class="p-button-warning mb-2 mt-2" @click="openExport" size="large" />
-                                <Divider v-if="ability.can('trabajo_prefrio_crear')" layout="vertical" />
-                                <Button v-if="ability.can('trabajo_prefrio_eliminar')" :disabled="!listRowSelect.length > 0" label="Delete" icon="pi pi-trash" class="p-button-danger mb-2 mt-2" @click="openDelete" size="large" />
-                            </template>
-                        </Toolbar>
+        <div class="card mb-4 bg-primary-reverse border-round-xl shadow-2">
+            <div class="flex align-items-center justify-content-between p-3">
+                <div class="flex align-items-center gap-3">
+                    <div class="bg-primary-50 p-3 border-round-circle">
+                        <i class="pi pi-sync text-primary text-3xl"></i>
+                    </div>
+                    <div>
+                        <h1 class="m-0 text-3xl font-bold tracking-tight">Tareas de Transferencia</h1>
+                        <p class="m-0 text-600 font-medium mt-1">Gestión de traslados y movimientos de tareas</p>
                     </div>
                 </div>
             </div>
-            <!-- <pre>{{ dataResponseAPI }}</pre> -->
+        </div>
+        <div class="card">
             <DataTable
                 :value="dataFromComponent"
                 dataKey="uuid"
@@ -391,25 +372,27 @@ const documentFrozen = ref(true); change name field
                 filterDisplay="menu"
                 v-model:filters="filters"
                 :globalFilterFields="['name', 'company.name', 'farm.name', 'status.name', 'created_at', 'updated_at']"
-                v-if="ability.can('trabajo_prefrio_listado')"
+                v-if="ability.can('trabajo_corta_listado')"
             >
                 <template #header>
-                    <!--Uncomment when filters are done-->
-
-                    <Toolbar class="mb-2">
-                        <template v-slot:start>
-                            <Button type="button" icon="pi pi-filter-slash" label="Limpiar" class="p-button-outlined mb-2" @click="clearFilter()" />
-                        </template>
-                        <template v-slot:end>
-                            <span class="p-input-icon-left mb-2">
+                    <div class="flex flex-column md:flex-row md:justify-content-between md:align-items-center gap-3">
+                        <div class="flex gap-2 align-items-center">
+                            <Button type="button" icon="pi pi-filter-slash" label="Limpiar Filtros" class="p-button-outlined p-button-sm" @click="clearFilter()" />
+                            <span class="p-input-icon-left">
                                 <i class="pi pi-search" />
-                                <InputText v-model="filters['global'].value" placeholder="Buscar" style="width: 100%" />
+                                <InputText v-model="filters['global'].value" placeholder="Buscar tarea..." class="w-full md:w-20rem" />
                             </span>
-                        </template>
-                        <template v-slot:center>
-                            <SelectButton v-model="size" :options="sizeOptions" optionLabel="label" dataKey="label"> </SelectButton>
-                        </template>
-                    </Toolbar>
+                        </div>
+
+                        <div class="hidden xl:block">
+                            <SelectButton v-model="size" :options="sizeOptions" optionLabel="label" dataKey="label" />
+                        </div>
+
+                        <div class="flex gap-2">
+                            <Button v-if="ability.can('trabajo_prefrio_crear')" icon="pi pi-plus" class="p-button-raised p-button-success p-button-rounded" @click="openDialog('new')" v-tooltip.top="'Nuevo Registro'" />
+                            <Button v-if="ability.can('trabajo_prefrio_listado')" icon="pi pi-file-export" class="p-button-outlined p-button-secondary p-button-rounded" @click="openExport" :disabled="!dataFromComponent || dataFromComponent.length === 0" v-tooltip.top="'Exportar'" />
+                        </div>
+                    </div>
                 </template>
 
                 <template #empty> No customers found. </template>
@@ -419,7 +402,7 @@ const documentFrozen = ref(true); change name field
                     <!--Replace :frozen with the model-->
                     <template #header>
                         <ToggleButton v-model="documentFrozen" onIcon="pi pi-lock" offIcon="pi pi-lock-open" onLabel="" offLabel="" @click.stop />
-                        <span class="ml-2">{{ col.header }}</span>
+                        <span class="ml-2">Header</span>
                     </template>
 
                     <template #body="{ data }">
@@ -485,8 +468,18 @@ const documentFrozen = ref(true); change name field
                         <InputText v-model="filterModel.value" type="text" class="p-column-filter" placeholder="Search by status" />
                     </template>
                 </Column>
+
+                <Column header="Acciones" :frozen="true" alignFrozen="right" style="min-width: 12rem">
+                    <template #body="{ data }">
+                        <div class="flex gap-2">
+                            <Button v-if="ability.can('trabajo_prefrio_editar')" icon="pi pi-pencil" class="p-button-rounded p-button-text p-button-warning" @click="openDialog('edit', data)" v-tooltip.top="'Editar'" />
+                            <Button v-if="ability.can('trabajo_prefrio_crear')" icon="pi pi-copy" class="p-button-rounded p-button-text p-button-secondary" @click="openDialog('clone', data)" v-tooltip.top="'Clonar'" />
+                            <Button v-if="ability.can('trabajo_prefrio_eliminar')" icon="pi pi-trash" class="p-button-rounded p-button-text p-button-danger" @click="deleteSingleRecord(data)" v-tooltip.top="'Eliminar'" />
+                        </div>
+                    </template>
+                </Column>
             </DataTable>
-            <Dialog v-model:visible="formDialogNew" modal :header="formDialogNewTitle" class="p-fluid text-center mx-auto">
+            <Dialog v-model:visible="formDialog" modal :header="formDialogTitle" class="p-fluid text-center mx-auto">
                 <div class="mb-3">
                     <div class="flex align-items-center gap-3 mb-1">
                         <label for="username" class="font-semibold w-6rem">Name :</label>
@@ -525,96 +518,8 @@ const documentFrozen = ref(true); change name field
                 </div>
 
                 <div class="flex justify-content-end gap-2">
-                    <Button type="button" label="Cancel" severity="secondary" @click="formDialogNew = false" />
-                    <Button type="button" label="Save" @click="createRecord()" />
-                </div>
-            </Dialog>
-
-            <Dialog v-model:visible="formDialogEdit" modal :header="formDialogEditTitle" class="p-fluid text-center mx-auto">
-                <div class="mb-3">
-                    <div class="flex align-items-center gap-3 mb-1">
-                        <label for="username" class="font-semibold w-6rem">Name :</label>
-                        <InputText id="username" v-model="name" class="flex-auto" autocomplete="off" v-bind="nameProps" />
-                    </div>
-                    <small id="username-help" :class="{ 'p-invalid text-red-700': errorsNew['name'] }">
-                        {{ errorsNew.name }}
-                    </small>
-                </div>
-                <div class="mb-3">
-                    <div class="flex align-items-center gap-3 mb-1">
-                        <label for="username" class="font-semibold w-6rem">Code :</label>
-                        <InputText id="username" v-model="codeV" class="flex-auto" autocomplete="off" v-bind="codeVProps" />
-                    </div>
-                    <small id="username-help" :class="{ 'p-invalid text-red-700': errorsNew['codeV'] }">
-                        {{ errorsNew.codeV }}
-                    </small>
-                </div>
-                <div class="mb-3">
-                    <div class="flex align-items-center">
-                        <label for="username" class="font-semibold w-3">Farm :</label>
-                        <AutoComplete v-model="farm" inputId="ac" :suggestions="farms" @complete="searchFarms" field="name" dropdown />
-                    </div>
-                    <small id="username-help" :class="{ 'p-invalid text-red-700': errorsNew['farm'] }">
-                        {{ errorsNew.farm }}
-                    </small>
-                </div>
-                <div class="mb-3">
-                    <div class="flex align-items-center">
-                        <label for="username" class="font-semibold w-3">Companny:</label>
-                        <AutoComplete v-model="company" inputId="ac" :suggestions="compa" @complete="EditRecord" field="name" dropdown />
-                    </div>
-                    <small id="username-help" :class="{ 'p-invalid text-red-700': errorsNew['company'] }">
-                        {{ errorsNew.company }}
-                    </small>
-                </div>
-
-                <div class="flex justify-content-end gap-2">
-                    <Button type="button" label="Cancel" severity="secondary" @click="formDialogEdit = false" />
-                    <Button type="button" label="Save" @click="EditRecord()" />
-                </div>
-            </Dialog>
-
-            <Dialog v-model:visible="formDialogClone" modal :header="formDialogCloneTitle" class="p-fluid text-center mx-auto">
-                <div class="mb-3">
-                    <div class="flex align-items-center gap-3 mb-1">
-                        <label for="username" class="font-semibold w-6rem">Name :</label>
-                        <InputText id="username" v-model="name" class="flex-auto" autocomplete="off" v-bind="nameProps" />
-                    </div>
-                    <small id="username-help" :class="{ 'p-invalid text-red-700': errorsNew['name'] }">
-                        {{ errorsNew.name }}
-                    </small>
-                </div>
-                <div class="mb-3">
-                    <div class="flex align-items-center gap-3 mb-1">
-                        <label for="username" class="font-semibold w-6rem">Code :</label>
-                        <InputText id="username" v-model="codeV" class="flex-auto" autocomplete="off" v-bind="codeVProps" />
-                    </div>
-                    <small id="username-help" :class="{ 'p-invalid text-red-700': errorsNew['codeV'] }">
-                        {{ errorsNew.codeV }}
-                    </small>
-                </div>
-                <div class="mb-3">
-                    <div class="flex align-items-center">
-                        <label for="username" class="font-semibold w-3">Farm :</label>
-                        <AutoComplete v-model="farm" inputId="ac" :suggestions="farms" @complete="searchFarms" field="name" dropdown />
-                    </div>
-                    <small id="username-help" :class="{ 'p-invalid text-red-700': errorsNew['farm'] }">
-                        {{ errorsNew.farm }}
-                    </small>
-                </div>
-                <div class="mb-3">
-                    <div class="flex align-items-center">
-                        <label for="username" class="font-semibold w-3">Companny:</label>
-                        <AutoComplete v-model="company" inputId="ac" :suggestions="compa" @complete="searchCompannies" field="name" dropdown />
-                    </div>
-                    <small id="username-help" :class="{ 'p-invalid text-red-700': errorsNew['company'] }">
-                        {{ errorsNew.company }}
-                    </small>
-                </div>
-
-                <div class="flex justify-content-end gap-2">
-                    <Button type="button" label="Cancel" severity="secondary" @click="formDialogClone = false" />
-                    <Button type="button" label="Save" @click="CloneRecord()" />
+                    <Button type="button" label="Cancel" severity="secondary" @click="formDialog = false" />
+                    <Button type="button" label="Save" @click="state === 'new' ? createRecord() : state === 'edit' ? EditRecord() : CloneRecord()" />
                 </div>
             </Dialog>
 
@@ -656,6 +561,15 @@ const documentFrozen = ref(true); change name field
             </Dialog>
 
             <Toast />
+
+            <FloatingSelectionBar :selection="selectedRegisters" @clear="selectedRegisters = []" @delete="openDelete">
+                <template #actions>
+                    <div class="flex gap-2">
+                        <Button icon="pi pi-file-import" class="p-button-outlined p-button-warning" label="Exportar" @click="openExport" />
+                        <ActionButton :items="itemsActions" :listRowSelect="selectedRegisters" />
+                    </div>
+                </template>
+            </FloatingSelectionBar>
         </div>
     </div>
 </template>

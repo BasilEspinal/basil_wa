@@ -16,7 +16,8 @@ import { z } from 'zod';
 import Summary from '@/components/Summary.vue';
 import ActionButton from '@/components/ActionButton.vue';
 import { useActions } from '@/composables/ActionButton.js';
-const { getItems, itemsActions, messageDialog, titleDialog, status_id_Action, flagDialog } = useActions(`/processflow/CropLot`);
+const { getItems, itemsActions, messageDialog, titleDialog, status_id_Action, flagDialog } = useActions(`/permissions`);
+import ability from '@/service/ability.js';
 
 const { t } = useI18n();
 
@@ -31,14 +32,18 @@ const getNestedValue = (obj, path) => {
     return path.split('.').reduce((value, key) => value && value[key], obj);
 };
 const formProperties = ref({ open: false, title: '', mode: '', data: null });
-const openForm = (mode) => {
+const openForm = (mode, rowData) => {
     console.log(mode);
-
+    const source = rowData || listRowSelect.value[0];
+    if (mode === 'detalles' && !source) {
+        toast.add({ severity: 'error', summary: 'Error', detail: 'Select a record', life: 3000 });
+        return;
+    }
     formProperties.value = {
         open: true,
         title: mode === 'Ver Detalles',
         mode: mode,
-        data: mode === 'detalles' ? null : listRowSelect.value[0]
+        data: source
     };
 };
 
@@ -190,6 +195,7 @@ const optionsEsport = ref([{ name: 'ALL' }, { name: 'SELECTED' }]);
 const format = ref({ name: 'CSV' });
 const exportAll = ref({ name: 'ALL' });
 const selectedRegisters = ref([]);
+const rowUUID = ref(null);
 
 const formDialogTitle = ref('');
 const formDialog = ref(false);
@@ -203,17 +209,22 @@ const openDialogSettlement = async (mode) => {
     state.value = mode;
 };
 
-const openDialog = (mode) => {
+const openDialog = (mode, rowData) => {
+    state.value = mode;
     formDialogTitle.value = mode === 'new' ? 'Create new register' : mode === 'edit' ? 'Edit new register' : mode === 'clone' ? 'Clone new register' : mode === 'patch' ? 'Patch new register' : '';
 
     if (mode === 'new') {
         resetForm();
-    } else if (listRowSelect.value.length < 1) {
-        toast.add({ severity: 'error', summary: 'Error', detail: 'Select a record', life: 3000 });
-        return;
+        rowUUID.value = null;
     } else {
+        const source = rowData || listRowSelect.value[0];
+        if (!source) {
+            toast.add({ severity: 'error', summary: 'Error', detail: 'Select a record', life: 3000 });
+            return;
+        }
+        rowUUID.value = source.uuid;
         resetForm();
-        const { code, company: empresa, farm: farmParameter, name: nombre } = listRowSelect.value[0];
+        const { code, company: empresa, farm: farmParameter, name: nombre } = source;
 
         name.value = nombre;
         codeV.value = code;
@@ -222,7 +233,6 @@ const openDialog = (mode) => {
     }
 
     formDialog.value = true;
-    state.value = mode;
 };
 
 const openExport = () => {
@@ -232,6 +242,11 @@ const openExport = () => {
 
 const openDelete = () => {
     formDialogDelete.value = true;
+};
+
+const deleteSingleRecord = (rowData) => {
+    listRowSelect.value = [rowData];
+    openDelete();
 };
 
 const actionRecordManager = handleSubmitNew(async (values) => {
@@ -247,15 +262,16 @@ const actionRecordManager = handleSubmitNew(async (values) => {
     console.log('data:', data);
     if (state.value === 'new') {
         responseCRUD.value = await crudService.create(data);
-    } else if (state.value === 'edit') {
-        const { uuid } = listRowSelect.value[0];
-        responseCRUD.value = await crudService.update(uuid, data);
-    } else if (state.value === 'clone') {
-        responseCRUD.value = await crudService.create(data);
+    } else if (state.value === 'edit' || state.value === 'clone') {
+        const uuid = rowUUID.value;
+        if (state.value === 'edit') {
+            responseCRUD.value = await crudService.update(uuid, data);
+        } else {
+            responseCRUD.value = await crudService.create(data);
+        }
     } else if (state.value === 'patch') {
+        const uuid = rowUUID.value;
         responseCRUD.value = await crudService.patch(uuid, data);
-    } else {
-        const { uuid } = listRowSelect.value[0];
     }
 
     // Mostrar notificación y cerrar el diálogo si la operación fue exitosa
@@ -491,8 +507,21 @@ const documentFrozen = ref(true); change name field
      -->
 <template>
     <div>
+        <div class="card mb-4 bg-primary-reverse border-round-xl shadow-2">
+            <div class="flex align-items-center justify-content-between p-3">
+                <div class="flex align-items-center gap-3">
+                    <div class="bg-primary-50 p-3 border-round-circle">
+                        <i class="pi pi-eye-slash text-primary text-3xl"></i>
+                    </div>
+                    <div>
+                        <h1 class="m-0 text-3xl font-bold tracking-tight">{{ $t('menu.permissions') }}</h1>
+                        <p class="m-0 text-600 font-medium mt-1">Configuración de niveles de acceso y acciones</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
         <div class="card">
-            <h1>{{ $t('menu.permissions') }}</h1>
 
             <Dialog v-model:visible="flagDialog" :style="{ width: '450px' }" :header="titleDialog" :modal="true">
                 <label for="username" class="text-2xl font-medium w-6rem"> {{ messageDialog }} </label>
@@ -527,90 +556,24 @@ const documentFrozen = ref(true); change name field
                 :globalFilterFields="globalFilter"
             >
                 <template #header>
-                    <!--Uncomment when filters are done-->
-
-                    <Toolbar class="mb-2">
-                        <template v-slot:start>
-                            <Button type="button" icon="pi pi-filter-slash" label="Limpiar" class="p-button-outlined mb-2" @click="clearFilter()" />
-                        </template>
-                        <template v-slot:end>
-                            <span class="p-input-icon-left mb-2">
+                    <div class="flex flex-column md:flex-row md:justify-content-between md:align-items-center gap-3">
+                        <div class="flex gap-2 align-items-center">
+                            <Button type="button" icon="pi pi-filter-slash" label="Limpiar Filtros" class="p-button-outlined p-button-sm" @click="clearFilter()" />
+                            <span class="p-input-icon-left">
                                 <i class="pi pi-search" />
-                                <InputText v-model="filters['global'].value" placeholder="Buscar" style="width: 100%" />
+                                <InputText v-model="filters['global'].value" placeholder="Buscar..." class="w-full md:w-20rem" />
                             </span>
+                        </div>
 
-                            <!-- Action Button -->
-                        </template>
+                        <div class="hidden xl:block">
+                            <SelectButton v-model="size" :options="sizeOptions" optionLabel="label" dataKey="label" />
+                        </div>
 
-                        <template v-slot:center>
-                            <SelectButton v-model="size" :options="sizeOptions" optionLabel="label" dataKey="label"> </SelectButton>
-                        </template>
-                    </Toolbar>
-
-                    <Toolbar>
-                        <template v-slot:start>
-                            <div class="grid justify-content-center">
-                                <!-- Toolbar -->
-
-                                <!--Uncomment when table is done-->
-
-                                <div class="col-12 lg:col-2 text-center">
-                                    <Button :disabled="!(listRowSelect.length > 0 && listRowSelect.length < 2)" icon="pi pi-bars" class="mr-2" @click="openForm('detalles')" />
-                                </div>
-                                <!-- <div class="col-12 lg:col-2 text-center">
-                                        <Button 
-                                            :disabled="!(listRowSelect.length > 0 && listRowSelect.length < 2)" 
-                                            
-                                            icon="pi pi-file-edit" 
-                                            class="p-button-help mr-2" 
-                                            @click="openDialog('edit')" 
-                                        />
-                                    </div>
-
-                                    
-                                    <div class="col-12 lg:col-2 text-center">
-                                        <Button 
-                                            :disabled="listRowSelect.length > 0" 
-                                            
-                                            icon="pi pi-plus" 
-                                            class="p-button-success mr-2" 
-                                            @click="openDialog('new')" 
-                                        />
-                                    </div>
-                                    <div class="col-12 lg:col-2 text-center">
-                                        <Button 
-                                            :disabled="!(listRowSelect.length > 0 && listRowSelect.length < 2)" 
-                                            icon="pi pi-copy" 
-                                            class="p-button-secondary mr-2" 
-                                            @click="openDialog('clone')" 
-                                        />
-                                    </div>
-
-
-                                    <div class="col-12 lg:col-2 text-center">
-                                        <Button 
-                                            :disabled="!listRowSelect.length > 0" 
-                                            icon="pi pi-file-import" 
-                                            class="p-button-warning mr-2" 
-                                            @click="openExport" 
-                                        />
-                                    </div>
-                                    <div class="col-12 lg:col-2 text-center">
-                                        <Button 
-                                            :disabled="!listRowSelect.length > 0" 
-                                            icon="pi pi-trash" 
-                                            class="p-button-danger mr-2" 
-                                            @click="openDelete" 
-                                        />
-                                    </div> -->
-                            </div>
-                        </template>
-                        <template v-slot:end>
-                            <div class="col-12 lg:col-12 text-center">
-                                <ActionButton :items="itemsActions" :listRowSelect="listRowSelect" class="w-12" />
-                            </div>
-                        </template>
-                    </Toolbar>
+                        <div class="flex gap-2">
+                            <Button icon="pi pi-plus" class="p-button-raised p-button-success p-button-rounded" @click="openDialog('new')" v-tooltip.top="'Nuevo Permiso'" />
+                            <Button icon="pi pi-file-export" class="p-button-outlined p-button-secondary p-button-rounded" @click="openExport" :disabled="!dataFromComponent || dataFromComponent.length === 0" v-tooltip.top="'Exportar'" />
+                        </div>
+                    </div>
                 </template>
 
                 <template #empty> No customers found. </template>
@@ -639,7 +602,21 @@ const documentFrozen = ref(true); change name field
                         <InputText v-model="filterModel.value" type="text" class="p-column-filter" :placeholder="'Search by ' + col.header" />
                     </template>
                 </Column>
+
+                <Column header="Acciones" :frozen="true" alignFrozen="right" style="min-width: 10rem">
+                    <template #body="{ data }">
+                        <div class="flex gap-2">
+                            <Button icon="pi pi-eye" class="p-button-rounded p-button-text p-button-info" @click="openForm('detalles', data)" v-tooltip.top="'Ver Detalles'" />
+                        </div>
+                    </template>
+                </Column>
             </DataTable>
+
+            <FloatingSelectionBar :selection="listRowSelect" :showExport="true" @clear="listRowSelect = []" @delete="openDelete" @export="openExport">
+                <template #actions>
+                    <ActionButton :items="itemsActions" :listRowSelect="listRowSelect" />
+                </template>
+            </FloatingSelectionBar>
             <Dialog v-model:visible="formProperties.open" modal :header="formProperties.title" class="p-fluid text-center mx-auto">
                 <div class="grid">
                     <Summary v-for="(cardData, index) in cardSections" :key="index" :title="cardData.title" :fields="cardData.fields" :icon="cardData.icon" :bgColor="cardData.bgColor" :iconColor="cardData.iconColor" />

@@ -145,6 +145,7 @@ const optionsEsport = ref([{ name: 'ALL' }, { name: 'SELECTED' }]);
 const format = ref({ name: 'CSV' });
 const exportAll = ref({ name: 'ALL' });
 const selectedRegisters = ref([]);
+const rowUUID = ref(null);
 const RowSelect = (data) => {
     listRowSelect.value = data;
 };
@@ -182,9 +183,13 @@ const openNew = () => {
     formDialogNew.value = true;
 };
 
-const openEdit = () => {
+const openEdit = (rowData) => {
     resetForm();
-    const { code, company: empresa, farm: farmParameter, name: nombre } = listRowSelect.value[0];
+    const source = rowData || listRowSelect.value[0];
+    if (!source) return;
+
+    rowUUID.value = source.uuid;
+    const { code, company: empresa, farm: farmParameter, name: nombre } = source;
 
     name.value = nombre;
     codeV.value = code;
@@ -194,9 +199,12 @@ const openEdit = () => {
     formDialogEdit.value = true;
 };
 
-const openClone = () => {
+const openClone = (rowData) => {
     resetForm();
-    const { company: empresa, farm: farmParameter, name: nombre } = listRowSelect.value[0];
+    const source = rowData || listRowSelect.value[0];
+    if (!source) return;
+
+    const { company: empresa, farm: farmParameter, name: nombre } = source;
 
     name.value = nombre;
     company.value = { id: empresa.uuid, name: empresa.name };
@@ -214,7 +222,7 @@ const openDelete = () => {
 };
 
 const EditRecord = handleSubmitNew(async (values) => {
-    const { uuid } = listRowSelect.value[0];
+    const uuid = rowUUID.value;
     const data = {
         code: values.codeV,
         name: values.name,

@@ -14,6 +14,10 @@ import { z } from 'zod';
 import ability from '@/service/ability.js';
 import { AbilityBuilder } from '@casl/ability';
 import UnderConstruction from '@/components/UnderConstruction.vue';
+import ActionButton from '@/components/ActionButton.vue';
+import FloatingSelectionBar from '@/components/layout/FloatingSelectionBar.vue';
+import { useActions } from '@/composables/ActionButton.js';
+const { itemsActions } = useActions('/endpoint');
 const namePage = ' Registro de tareas en selección ';
 const titlePage = namePage + 'information';
 const dataFromComponent = ref();
@@ -324,11 +328,20 @@ const documentFrozen = ref(true); change name field
      -->
 <template>
     <div>
-        <div class="card">
-            <div>
-                <h1>{{ titlePage }}</h1>
+        <div class="card mb-4 bg-primary-reverse border-round-xl shadow-2">
+            <div class="flex align-items-center justify-content-between p-3">
+                <div class="flex align-items-center gap-3">
+                    <div class="bg-primary-50 p-3 border-round-circle">
+                        <i class="pi pi-check-square text-primary text-3xl"></i>
+                    </div>
+                    <div>
+                        <h1 class="m-0 text-3xl font-bold tracking-tight">Registro de Labores</h1>
+                        <p class="m-0 text-600 font-medium mt-1">Gestión y registro de tareas en el proceso de selección</p>
+                    </div>
+                </div>
             </div>
-
+        </div>
+        <div class="card">
             <UnderConstruction />
         </div>
         <div class="card">
@@ -395,22 +408,24 @@ const documentFrozen = ref(true); change name field
                 v-if="ability.can('trabajo_clasificacion_listado')"
             >
                 <template #header>
-                    <!--Uncomment when filters are done-->
-
-                    <Toolbar class="mb-2">
-                        <template v-slot:start>
-                            <Button type="button" icon="pi pi-filter-slash" label="Limpiar" class="p-button-outlined mb-2" @click="clearFilter()" />
-                        </template>
-                        <template v-slot:end>
-                            <span class="p-input-icon-left mb-2">
+                    <div class="flex flex-column md:flex-row md:justify-content-between md:align-items-center gap-3">
+                        <div class="flex gap-2 align-items-center">
+                            <Button type="button" icon="pi pi-filter-slash" label="Limpiar Filtros" class="p-button-outlined p-button-sm" @click="clearFilter()" />
+                            <span class="p-input-icon-left">
                                 <i class="pi pi-search" />
-                                <InputText v-model="filters['global'].value" placeholder="Buscar" style="width: 100%" />
+                                <InputText v-model="filters['global'].value" placeholder="Buscar registro..." class="w-full md:w-20rem" />
                             </span>
-                        </template>
-                        <template v-slot:center>
-                            <SelectButton v-model="size" :options="sizeOptions" optionLabel="label" dataKey="label"> </SelectButton>
-                        </template>
-                    </Toolbar>
+                        </div>
+
+                        <div class="hidden xl:block">
+                            <SelectButton v-model="size" :options="sizeOptions" optionLabel="label" dataKey="label" />
+                        </div>
+
+                        <div class="flex gap-2">
+                            <Button v-if="ability.can('trabajo_clasificacion_crear')" icon="pi pi-plus" class="p-button-raised p-button-success p-button-rounded" @click="openNew" v-tooltip.top="'Nuevo Registro'" />
+                            <Button v-if="ability.can('trabajo_clasificacion_crear')" icon="pi pi-file-export" class="p-button-outlined p-button-secondary p-button-rounded" @click="openExport" :disabled="!dataFromComponent || dataFromComponent.length === 0" v-tooltip.top="'Exportar'" />
+                        </div>
+                    </div>
                 </template>
 
                 <template #empty> No customers found. </template>
@@ -420,7 +435,7 @@ const documentFrozen = ref(true); change name field
                     <!--Replace :frozen with the model-->
                     <template #header>
                         <ToggleButton v-model="documentFrozen" onIcon="pi pi-lock" offIcon="pi pi-lock-open" onLabel="" offLabel="" @click.stop />
-                        <span class="ml-2">{{ col.header }}</span>
+                        <span class="ml-2">Header</span>
                     </template>
 
                     <template #body="{ data }">
@@ -484,6 +499,16 @@ const documentFrozen = ref(true); change name field
                     </template>
                     <template #filter="{ filterModel }">
                         <InputText v-model="filterModel.value" type="text" class="p-column-filter" placeholder="Search by status" />
+                    </template>
+                </Column>
+
+                <Column header="Acciones" :frozen="true" alignFrozen="right" style="min-width: 12rem">
+                    <template #body="{ data }">
+                        <div class="flex gap-2">
+                            <Button v-if="ability.can('trabajo_clasificacion_editar')" icon="pi pi-pencil" class="p-button-rounded p-button-text p-button-warning" @click="openEdit" v-tooltip.top="'Editar'" />
+                            <Button v-if="ability.can('trabajo_clasificacion_crear')" icon="pi pi-copy" class="p-button-rounded p-button-text p-button-secondary" @click="openClone" v-tooltip.top="'Clonar'" />
+                            <Button v-if="ability.can('trabajo_clasificacion_eliminar')" icon="pi pi-trash" class="p-button-rounded p-button-text p-button-danger" @click="openDelete" v-tooltip.top="'Eliminar'" />
+                        </div>
                     </template>
                 </Column>
             </DataTable>
@@ -657,6 +682,15 @@ const documentFrozen = ref(true); change name field
             </Dialog>
 
             <Toast />
+
+            <FloatingSelectionBar :selection="selectedRegisters" @clear="selectedRegisters = []" @delete="openDelete">
+                <template #actions>
+                    <div class="flex gap-2">
+                        <Button icon="pi pi-file-import" class="p-button-outlined p-button-warning" label="Exportar" @click="openExport" />
+                        <ActionButton :items="itemsActions" :listRowSelect="selectedRegisters" />
+                    </div>
+                </template>
+            </FloatingSelectionBar>
         </div>
     </div>
 </template>
