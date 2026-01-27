@@ -138,7 +138,7 @@ const readAll = async () => {
     const respVehicles = await InitialDataService.getVehicles();
     if (!respVehicles.ok) toast.add({ severity: 'error', detail: 'Error' + respVehicles.error, life: 3000 });
     Vehicles.value = respVehicles.data.data.map((vehicle) => ({ id: vehicle.id, name: vehicle.vehicle_type }));
-    //console.log(Vehicles.value);
+    //
 };
 
 const loading = ref(false); // Tracks if the process is in progress
@@ -162,8 +162,8 @@ const actionRecordManager = handleSubmitNew(async (values) => {
             notes_small: notes.value // Notes
         };
 
-        console.log('data', data);
-        console.log('JSON.stringify(data)', JSON.stringify(data, null, 2));
+        
+        
 
         if (state.value === 'new') {
             responseCRUD.value = await crudService.create(data);
@@ -183,11 +183,11 @@ const actionRecordManager = handleSubmitNew(async (values) => {
         });
 
         if (responseCRUD.value.ok) {
-            console.log('data', data);
+            
             emit('update-grandparent-data');
         }
     } catch (error) {
-        console.error('An error occurred:', error);
+        
     } finally {
         loading.value = false; // Unblock the button
     }

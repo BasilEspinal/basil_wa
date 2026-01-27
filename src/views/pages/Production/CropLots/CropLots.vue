@@ -88,6 +88,11 @@ const onSelectAllChange = (event) => {
 };
 
 const onRowSelect = (data) => {
+    if (data && !Array.isArray(data)) {
+        listRowSelect.value = [data];
+    } else {
+        listRowSelect.value = data;
+    }
     selectedRegisters.value = listRowSelect.value;
     openDialogSettlement('patch_action');
     const row = listRowSelect.value[0];
@@ -261,32 +266,38 @@ const formDialogTitle = ref('');
 const formDialog = ref(false);
 
 const state = ref('');
+const formMode = ref('');
 
 const openDialogSettlement = async (mode) => {
     if (listRowSelect.value.length != 0) {
         //await getItems(listRowSelect.value[0].status.id);
         await getItems(0);
-        console.log('listRowSelectiddddddd:', listRowSelect.value[0].status.id);
+        
         //await getItems('non-flow')
-        console.log('listRowSelect:', listRowSelect.value[0].status.id);
-        console.log(itemsActions.value);
+        
+        
     }
     state.value = mode;
 };
 
-const openDialog = (mode) => {
+const openDialog = (mode, rowData) => {
+    if (rowData) {
+        listRowSelect.value = [rowData]; // Ensure correct row is selected
+    }
     formDialogTitle.value = mode === 'new' ? 'Create new register' : mode === 'edit' ? 'Edit new register' : mode === 'clone' ? 'Clone new register' : mode === 'patch' ? 'Patch new register' : '';
 
     if (mode === 'new') {
         resetForm();
-    } else if (listRowSelect.value.length < 1) {
-        toast.add({ severity: 'error', summary: 'Error', detail: 'Select a record', life: 3000 });
-        return;
     } else {
+        const source = listRowSelect.value[0];
+        if (!source) {
+            toast.add({ severity: 'error', summary: 'Error', detail: 'Select a record', life: 3000 });
+            return;
+        }
         resetForm();
-        const { code, area_m2, channel_average, zone, latitude, longitude, farm, company } = listRowSelect.value[0];
+        const { code, area_m2, channel_average, zone, latitude, longitude, farm, company } = source;
         codeV.value = code;
-        area_m2V.value = area_m2;
+        area_m2V.value = String(area_m2);
         channel_averageV.value = channel_average;
         zoneV.value = zone;
         latitudeV.value = latitude;
@@ -296,7 +307,7 @@ const openDialog = (mode) => {
     }
 
     formDialog.value = true;
-    state.value = mode;
+    formMode.value = mode;
 };
 
 const openExport = () => {
@@ -309,9 +320,10 @@ const openDelete = () => {
 };
 
 const actionRecordManager = handleSubmitNew(async (values) => {
+    console.log('✅ Action Record Manager (Success)', { values, mode: formMode.value, uuid: listRowSelect.value[0]?.uuid });
     const responseCRUD = ref();
-    console.log('listRowSelect:', listRowSelect.value);
-    console.log(values);
+    
+    
     const data = {
         code: values.codeV,
         area_m2: values.area_m2V,
@@ -322,15 +334,15 @@ const actionRecordManager = handleSubmitNew(async (values) => {
         farm_uuid: values.farmV ? values.farmV.id : farmDefault,
         company_uuid: values.companyV ? values.companyV.id : companyDefault
     };
-    console.log('data:', data);
+    
     const { uuid } = listRowSelect.value[0] || {};
-    if (state.value === 'new') {
+    if (formMode.value === 'new') {
         responseCRUD.value = await crudService.create(data);
-    } else if (state.value === 'edit') {
+    } else if (formMode.value === 'edit') {
         responseCRUD.value = await crudService.update(uuid, data);
-    } else if (state.value === 'clone') {
+    } else if (formMode.value === 'clone') {
         responseCRUD.value = await crudService.create(data);
-    } else if (state.value === 'patch') {
+    } else if (formMode.value === 'patch') {
         responseCRUD.value = await crudService.patch(uuid, data);
     }
 
@@ -338,7 +350,7 @@ const actionRecordManager = handleSubmitNew(async (values) => {
     if (responseCRUD.value && responseCRUD.value.ok) {
         toast.add({
             severity: 'success',
-            summary: state.value,
+            summary: formMode.value,
             detail: 'Done',
             life: 3000
         });
@@ -348,7 +360,7 @@ const actionRecordManager = handleSubmitNew(async (values) => {
         listRowSelect.value = [];
         selectedRegisters.value = [];
     } else if (responseCRUD.value) {
-        console.log('Error:', responseCRUD.value.error);
+        
         toast.add({
             severity: 'error',
             summary: 'Error',
@@ -356,6 +368,14 @@ const actionRecordManager = handleSubmitNew(async (values) => {
             life: 3000
         });
     }
+}, (context) => {
+    console.warn('❌ Action Record Manager (Validation Failed)', context.errors);
+    toast.add({
+        severity: 'warn',
+        summary: 'Validation Failed',
+        detail: 'Please check the form for errors',
+        life: 3000
+    });
 });
 
 const patchAction = async () => {
@@ -366,7 +386,7 @@ const patchAction = async () => {
                 status_id: status_id_Action.value
             };
             const patchPromise = await crudService.patch(item.uuid, data);
-            console.log('patchPromise:', patchPromise);
+            
             patchPromises.push(patchPromise);
         });
 
@@ -400,7 +420,7 @@ const patchAction = async () => {
         await loadingData();
         dataFromComponent.value = [...dataFromComponent.value]; // 🧠 force array reference change
     } catch (error) {
-        console.error('Error updating records:', error);
+        
         toast.add({
             severity: 'error',
             summary: 'Error',
@@ -431,7 +451,7 @@ const DeleteRecord = async () => {
         await loadingData();
         toast.add({ severity: 'success', summary: 'Deleted Record', detail: 'Deleted successfully', life: 3000 });
     } catch (error) {
-        console.error('Error deleting:', error);
+        
         toast.add({ severity: 'error', summary: 'Error', detail: 'Error deleting records', life: 3000 });
     } finally {
         listRowSelect.value = [];
@@ -617,8 +637,6 @@ const documentFrozen = ref(true); change name field
                 :rows="50"
                 :rowsPerPageOptions="[5, 10, 20, 50]"
                 :class="`p-datatable-${size?.class || 'default-size'}`"
-                @row-select="onRowSelect"
-                @row-unselect="onRowSelect"
                 @select-all-change="onSelectAllChange"
                 v-model:selection="listRowSelect"
                 filterDisplay="menu"
@@ -771,7 +789,7 @@ const documentFrozen = ref(true); change name field
 
                 <div class="flex justify-content-end gap-2 flex-auto">
                     <Button class="flex-auto" type="button" label="Cancel" severity="secondary" @click="formDialog = false" />
-                    <Button class="flex-auto" type="button" label="Save" @click="actionRecordManager(state)" />
+                    <Button class="flex-auto" type="button" label="Save" @click="actionRecordManager" />
                 </div>
             </Dialog>
 

@@ -168,11 +168,11 @@ const saveProduct = () => {
         toast.add({ severity: 'error', summary: 'There are some errores', detail: 'Must correct those ones', life: 3000 });
         if (errorUnitTypes) {
             const keys = Object.keys(errorUnitTypes);
-            console.log('Lista de errores');
-            console.log(errorUnitTypes);
+            
+            
             keys.forEach((key) => {
-                console.log('Tengo un error');
-                console.log(`[${key}]:`, errorUnitTypes[key]);
+                
+                
             });
         }
     } else if (mode.value == 'CLONE') {

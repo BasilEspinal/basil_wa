@@ -360,10 +360,10 @@ const readAll = async () => {
     Vehicles.value = respVehicles.data.data.map((vehicle) => ({ id: vehicle.uuid, name: vehicle.vehicle_type }));
 
     const respCropLots = await InitialDataService.getCropLotsForPlannerTasks();
-    console.log('respCropLots:', respCropLots);
+    
     if (!respCropLots.ok) {
         toast.add({ severity: 'error', detail: 'Error: ' + respCropLots.error, life: 3000 });
-        console.log(respCropLots);
+        
     } else {
         CropLots.value = respCropLots.data.data.map((crop) => ({
             code: crop.code
@@ -491,10 +491,12 @@ const formDialogTitle = ref('');
 const formDialog = ref(false);
 
 const state = ref('');
+const formMode = ref('');
+const rowUUID = ref(null);
 
 const openDialogSettlement = async (mode) => {
     if (listRowSelect.value.length != 0) {
-        console.log('listRowSelect.value[0].status.id:', listRowSelect.value[0]);
+        
         await getItems(listRowSelect.value[0].status.id);
     }
     state.value = mode;
@@ -505,12 +507,14 @@ const openDialog = (mode, rowData) => {
 
     if (mode === 'new') {
         resetForm();
+        rowUUID.value = null;
     } else {
         const source = rowData || listRowSelect.value[0];
         if (!source) {
             toast.add({ severity: 'error', summary: 'Error', detail: 'Select a record', life: 3000 });
             return;
         }
+        rowUUID.value = source.uuid;
         resetForm();
         const {
             code,
@@ -543,7 +547,7 @@ const openDialog = (mode, rowData) => {
     }
 
     formDialog.value = true;
-    state.value = mode;
+    formMode.value = mode;
 };
 
 const openExport = () => {
@@ -556,15 +560,16 @@ const openDelete = () => {
 };
 
 const actionRecordManager = handleSubmitNew(async (values) => {
+    console.log('✅ Action Record Manager (Success)', { values, mode: formMode.value, rowUUID: rowUUID.value });
     const responseCRUD = ref();
-    console.log('listRowSelect:', listRowSelect.value);
+    
     const yyyy = values.transaction_dateV.getFullYear();
     const mm = String(values.transaction_dateV.getMonth() + 1).padStart(2, '0');
     const dd = String(values.transaction_dateV.getDate()).padStart(2, '0');
 
     // Formatear la fecha en formato YYYY-MM-DD
     const formattedDate = `${yyyy}-${mm}-${dd}`;
-    console.log(formattedDate);
+    
     const data = {
         tasks_of_type_uuid: values.task_of_typeV ? values.task_of_typeV.id : 'Prueba',
 
@@ -579,29 +584,30 @@ const actionRecordManager = handleSubmitNew(async (values) => {
         company_uuid: values.company && values.company.id ? values.company.id : companyDefault,
         farm_uuid: values.farm && values.farm.id ? values.farm.id : farmDefault
     };
-    console.log(data);
+    
 
     valor.value = data;
-    console.log(data);
-    console.log('data:', data);
-    if (state.value === 'new') {
+    
+    
+    if (formMode.value === 'new') {
         responseCRUD.value = await crudService.create(data);
-    } else if (state.value === 'edit') {
-        const { uuid } = listRowSelect.value[0];
+    } else if (formMode.value === 'edit') {
+        const uuid = rowUUID.value;
         responseCRUD.value = await crudService.update(uuid, data);
-    } else if (state.value === 'clone') {
+    } else if (formMode.value === 'clone') {
         responseCRUD.value = await crudService.create(data);
-    } else if (state.value === 'patch') {
+    } else if (formMode.value === 'patch') {
+        const uuid = rowUUID.value;
         responseCRUD.value = await crudService.patch(uuid, data);
     } else {
-        const { uuid } = listRowSelect.value[0];
+        const uuid = rowUUID.value;
     }
 
     // Mostrar notificación y cerrar el diálogo si la operación fue exitosa
     if (responseCRUD.value.ok) {
         toast.add({
             severity: responseCRUD.value.ok ? 'success' : 'error',
-            summary: state.value,
+            summary: formMode.value,
             detail: responseCRUD.value.ok ? 'Done' : responseCRUD.value.error,
             life: 3000
         });
@@ -611,8 +617,16 @@ const actionRecordManager = handleSubmitNew(async (values) => {
         listRowSelect.value = [];
         selectedRegisters.value = [];
     } else {
-        console.log('Error:', responseCRUD.value.error);
+        
     }
+}, (context) => {
+    console.warn('❌ Action Record Manager (Validation Failed)', context.errors);
+    toast.add({
+        severity: 'warn',
+        summary: 'Validation Failed',
+        detail: 'Please check the form for errors',
+        life: 3000
+    });
 });
 
 const patchAction = async () => {
@@ -623,7 +637,7 @@ const patchAction = async () => {
                 status_id: status_id_Action.value
             };
             const patchPromise = await crudService.patch(item.uuid, data);
-            console.log('patchPromise:', patchPromise);
+            
             patchPromises.push(patchPromise);
         });
 
@@ -655,7 +669,7 @@ const patchAction = async () => {
             });
         }
     } catch (error) {
-        console.error('Error updating records:', error);
+        
         toast.add({
             severity: 'error',
             summary: 'Error',
@@ -689,7 +703,7 @@ const DeleteRecord = async () => {
         await loadingData();
         toast.add({ severity: 'success', summary: 'Deleted Record', detail: 'Deleted successfully', life: 3000 });
     } catch (error) {
-        console.error('Error deleting:', error);
+        
         toast.add({ severity: 'error', summary: 'Error', detail: 'Error deleting records', life: 3000 });
     } finally {
         listRowSelect.value = [];
@@ -957,8 +971,6 @@ const documentFrozen = ref(true); change name field
                 :rows="50"
                 :rowsPerPageOptions="[5, 10, 20, 50]"
                 :class="`p-datatable-${size?.class || 'default-size'}`"
-                @row-select="onRowSelect(listRowSelect)"
-                @row-unselect="onRowSelect(listRowSelect)"
                 @select-all-change="onSelectAllChange"
                 v-model:selection="listRowSelect"
                 filterDisplay="menu"
@@ -1174,7 +1186,7 @@ const documentFrozen = ref(true); change name field
 
                 <div class="flex justify-content-end gap-2 flex-auto">
                     <Button class="flex-auto" type="button" label="Cancel" severity="secondary" @click="formDialog = false" />
-                    <Button class="flex-auto" type="button" label="Save" @click="actionRecordManager(state)" />
+                    <Button class="flex-auto" type="button" label="Save" @click="actionRecordManager" />
                 </div>
             </Dialog>
 

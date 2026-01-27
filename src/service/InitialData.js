@@ -24,7 +24,7 @@ export const InitialDataService = {
             const response = await getRequest('/farms');
             return response;
         } catch (error) {
-            console.error('Error fetching branches:', error);
+
             return response;
         }
     },
@@ -34,7 +34,7 @@ export const InitialDataService = {
             const response = await getRequest('/companies');
             return response;
         } catch (error) {
-            console.error('Error fetching company:', error);
+
             return errorResponseAPI(error);
         }
     },
@@ -44,7 +44,7 @@ export const InitialDataService = {
             const response = await getRequest(`/appmovil/datastart`);
             return response;
         } catch (error) {
-            console.error('Error fetching company:', error);
+
             return errorResponseAPI(error);
         }
     },
@@ -52,8 +52,8 @@ export const InitialDataService = {
     getCustomers(params) {
         const queryParams = params
             ? Object.keys(params)
-                  .map((k) => encodeURIComponent(k) + '=' + encodeURIComponent(params[k]))
-                  .join('&')
+                .map((k) => encodeURIComponent(k) + '=' + encodeURIComponent(params[k]))
+                .join('&')
             : '';
 
         return fetch('https://www.primefaces.org/data/customers?' + queryParams).then((res) => res.json());
@@ -68,7 +68,7 @@ export const InitialDataService = {
             const response = await getRequest(`/appmovil/tasksplanner?filter[tasks_of_type_id]=${employeeId}&filter[company_id]=${companyId}&filter[farm_id]=${farmId}`);
             return response;
         } catch (error) {
-            console.error('Error fetching tasks planner:', error);
+
             return errorResponseAPI(error);
         }
     },
@@ -78,7 +78,7 @@ export const InitialDataService = {
             const response = await getRequest(`/vehicles`);
             return response;
         } catch (error) {
-            console.error('Error fetching vehicles:', error);
+
             return errorResponseAPI(error);
         }
     },
@@ -88,7 +88,7 @@ export const InitialDataService = {
             const response = await getRequest(`/work_centers`);
             return response;
         } catch (error) {
-            console.error('Error fetching work centers:', error);
+
             return errorResponseAPI(error);
         }
     },
@@ -98,7 +98,7 @@ export const InitialDataService = {
             const response = await getRequest(`/job_types`);
             return response;
         } catch (error) {
-            console.error('Error fetching job types:', error);
+
             return errorResponseAPI(error);
         }
     },
@@ -108,7 +108,7 @@ export const InitialDataService = {
             const response = await getRequest(`/payment_types`);
             return response;
         } catch (error) {
-            console.error('Error fetching payment types:', error);
+
             return errorResponseAPI(error);
         }
     },
@@ -118,7 +118,7 @@ export const InitialDataService = {
             const response = await getRequest(`/appmovil/employees?filter[work_center_id]=${value}`);
             return response;
         } catch (error) {
-            console.error('Error fetching vehicles:', error);
+
             return errorResponseAPI(error);
         }
     },
@@ -127,7 +127,7 @@ export const InitialDataService = {
             const response = await getRequest(`/lists/documentType`);
             return response;
         } catch (error) {
-            console.error('Error fetching document types', error);
+
             return errorResponseAPI(error);
         }
     },
@@ -136,7 +136,6 @@ export const InitialDataService = {
             const response = await getRequest(`/lists/genderType`);
             return response;
         } catch (error) {
-            console.error('Error fetching gender)', error);
             return errorResponseAPI(error);
         }
     },
@@ -146,7 +145,7 @@ export const InitialDataService = {
             const response = await getRequest(`/task_of_types`);
             return response;
         } catch (error) {
-            console.error('Error fetching task of types:', error);
+
             return errorResponseAPI(error);
         }
     },
@@ -156,7 +155,7 @@ export const InitialDataService = {
             const response = await getRequest(`/done_types`);
             return response;
         } catch (error) {
-            console.error('Error fetching task of types:', error);
+
             return errorResponseAPI(error);
         }
     },
@@ -167,7 +166,7 @@ export const InitialDataService = {
 
             return response;
         } catch (error) {
-            console.error('Error fetching task type tarif:', error);
+
             return errorResponseAPI(error);
         }
     },
@@ -177,7 +176,7 @@ export const InitialDataService = {
             const response = await getRequest('/packing_types');
             return response;
         } catch (error) {
-            console.error('Error fetching packing types:', error);
+
             return errorResponseAPI(error);
         }
     },
@@ -187,7 +186,7 @@ export const InitialDataService = {
             const response = await getRequest('/lists/workTypeDay');
             return response;
         } catch (error) {
-            console.error('Error fetching work type day:', error);
+
             return errorResponseAPI(error);
         }
     },
@@ -196,7 +195,7 @@ export const InitialDataService = {
             const response = await getRequest('/lists/calculateWorkType');
             return response;
         } catch (error) {
-            console.error('Error fetching calculate work type:', error);
+
             return errorResponseAPI(error);
         }
     },
@@ -206,7 +205,7 @@ export const InitialDataService = {
             const response = await getRequest('/lists/workTypeTarif');
             return response;
         } catch (error) {
-            console.error('Error fetching work type tarif:', error);
+
             return errorResponseAPI(error);
         }
     },
@@ -216,7 +215,7 @@ export const InitialDataService = {
             const response = await getRequest('/customer_requests');
             return response;
         } catch (error) {
-            console.error('Error fetching customer requests:', error);
+
             return errorResponseAPI(error);
         }
     },
@@ -226,38 +225,38 @@ export const InitialDataService = {
             const response = await getRequest('/products');
             return response;
         } catch (error) {
-            console.error('Error fetching products:', error);
+
             return errorResponseAPI(error);
         }
     },
 
-    async getPackingQtyDispatch() { 
+    async getPackingQtyDispatch() {
         try {
             const response = await getRequest('/lists/packingQtyDispatch');
             return response;
         } catch (error) {
-            console.error('Error fetching packing qty dispatch:', error);
+
             return errorResponseAPI(error);
         }
     },
-        
+
     async getPackingTypesDispatch() {
         try {
             const response = await getRequest('/lists/packingTypeDispatch');
             return response;
         } catch (error) {
-            console.error('Error fetching packing types dispatch:', error);
+
             return errorResponseAPI(error);
         }
     }
     ,
-      
-async getPackingWeightDispatch() {
+
+    async getPackingWeightDispatch() {
         try {
             const response = await getRequest('/lists/packingWeightDispatch');
             return response;
         } catch (error) {
-            console.error('Error fetching packing weight dispatch:', error);
+
             return errorResponseAPI(error);
         }
     },
@@ -266,7 +265,7 @@ async getPackingWeightDispatch() {
             const response = await getRequest('/lists/packingUnitDispatch');
             return response;
         } catch (error) {
-            console.error('Error fetching units type dispatch:', error);
+
             return errorResponseAPI(error);
         }
     },
@@ -276,7 +275,7 @@ async getPackingWeightDispatch() {
             const response = await getRequest('/unit_types');
             return response;
         } catch (error) {
-            console.error('Error fetching units type:', error);
+
             return errorResponseAPI(error);
         }
     },
@@ -285,7 +284,7 @@ async getPackingWeightDispatch() {
             const response = await getRequest('/product_types');
             return response;
         } catch (error) {
-            console.error('Error fetching products types:', error);
+
             return errorResponseAPI(error);
         }
     },
@@ -295,7 +294,7 @@ async getPackingWeightDispatch() {
             const response = await getRequest('/variants');
             return response;
         } catch (error) {
-            console.error('Error fetching variants:', error);
+
             return errorResponseAPI(error);
         }
     },
@@ -305,7 +304,7 @@ async getPackingWeightDispatch() {
             const response = await getRequest('/crop_lots');
             return response;
         } catch (error) {
-            console.error('Error fetching crop lots:', error);
+
             return errorResponseAPI(error);
         }
     },
@@ -315,7 +314,7 @@ async getPackingWeightDispatch() {
             const response = await getRequest('/appmovil/crop_lots');
             return response;
         } catch (error) {
-            console.error('Error fetching crop lots:', error);
+
             return errorResponseAPI(error);
         }
     },
@@ -326,7 +325,7 @@ async getPackingWeightDispatch() {
             const response = await postRequest('/transactions/contractor/work', data);
             return response;
         } catch (error) {
-            console.error('Error posting contractor:', error);
+
             return errorResponseAPI(error);
         }
     }

@@ -156,14 +156,14 @@ app.provide('ability', ability);
 import { useAbilityStore } from '@/stores/abilities';
 import { AbilityBuilder } from '@casl/ability';
 const initializeAbilities = async () => {
-    console.log('Initializing abilities');
+    
     const abilityStore = useAbilityStore();
     const { can, rules } = new AbilityBuilder();
     const token = sessionStorage.getItem('accessSessionToken');
     if (!token) {
         return;
     } else {
-        console.log('Fetching abilities');
+        
         await abilityStore.fetchAbilities();
         const abilities = abilityStore.getAbilities;
         const { can, cannot, rules } = new AbilityBuilder();

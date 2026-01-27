@@ -6,7 +6,6 @@ import { InitialDataService } from '@/service/InitialData';
 import { FilterMatchMode, FilterOperator } from 'primevue/api';
 import { toTypedSchema } from '@vee-validate/zod';
 import { computed } from 'vue';
-// import { saveAs } from 'file-saver/dist/FileSaver';
 import { useToast } from 'primevue/usetoast';
 import { useForm } from 'vee-validate';
 import { onBeforeMount, onMounted, ref, watch } from 'vue';
@@ -42,7 +41,7 @@ const getNestedValue = (obj, path) => {
 };
 const formProperties = ref({ open: false, title: '', mode: '', data: null });
 const openForm = (mode) => {
-    console.log(mode);
+    
 
     formProperties.value = {
         open: true,
@@ -88,8 +87,16 @@ const RowSelect = (data) => {
 watch(listRowSelect, RowSelect);
 const cardSections = ref([]);
 
+/**
+ * Handles row selection in the DataTable. Sets the selected record and updates visible summary card sections.
+ * @param {Object} data - The row data being selected.
+ */
 const onRowSelect = (data) => {
-    listRowSelect.value = data;
+    if (data && !Array.isArray(data)) {
+        listRowSelect.value = [data];
+    } else {
+        listRowSelect.value = data;
+    }
     openDialogSettlement('patch_action');
     const row = listRowSelect.value[0];
     if (row) {
@@ -133,11 +140,16 @@ watch(listRowSelect, onRowSelect);
 const onSelectAllChange = () => {
     onRowSelect();
 };
-const filters = ref();
+const filters = ref({
+    global: { value: null, matchMode: FilterMatchMode.CONTAINS }
+});
 
 const clearFilter = () => {
     initFilters();
 };
+/**
+ * Initializes the default filters for the DataTable.
+ */
 const initFilters = () => {
     filters.value = {
         global: { value: null, matchMode: FilterMatchMode.CONTAINS },
@@ -156,6 +168,9 @@ const globalFilter = computed(() => {
     return dynamicColumns.map((col) => col.field);
 });
 const documentFrozen = ref(true);
+/**
+ * Reads all necessary initial data, including sizes and company/farm lists.
+ */
 const readAll = async () => {
     loadingData();
 
@@ -174,16 +189,15 @@ const readAll = async () => {
     if (!respCompan.ok) toast.add({ severity: 'error', detail: 'Error' + respCompan.error, life: 3000 });
     Compan.value = respCompan.data.data.map((comp) => ({ id: comp.uuid, name: comp.name }));
 };
+/**
+ * Fetches company records from the API using CrudService.
+ */
 const loadingData = async () => {
-    //const response = await getRequest(endpoint.value);
     const response = await crudService.getAll();
     if (!response.ok) toast.add({ severity: 'error', detail: 'Error' + response.error, life: 3000 });
     dataFromComponent.value = response.data.data;
 };
-watch(
-    () => dataFromComponent.value,
-    (newValue, oldValue) => {}
-);
+
 
 const {
     handleSubmit: handleSubmitNew,
@@ -226,7 +240,12 @@ const formDialogTitle = ref('');
 const formDialog = ref(false);
 
 const state = ref('');
+const formMode = ref('');
 
+/**
+ * Opens a settlement dialog based on status change.
+ * @param {string} mode - The action mode.
+ */
 const openDialogSettlement = async (mode) => {
     if (listRowSelect.value.length != 0) {
         await getItems(listRowSelect.value[0].status.id);
@@ -234,8 +253,13 @@ const openDialogSettlement = async (mode) => {
     state.value = mode;
 };
 
+/**
+ * Opens the main dialog for Create, Edit, or Clone operations.
+ * @param {string} mode - The operation mode.
+ * @param {Object} [rowData] - Optional data for Edit/Clone actions.
+ */
 const openDialog = (mode, rowData) => {
-    state.value = mode;
+    formMode.value = mode;
     formDialogTitle.value = mode === 'new' ? 'Create new register' : mode === 'edit' ? 'Edit new register' : mode === 'clone' ? 'Clone new register' : mode === 'patch' ? 'Patch new register' : '';
 
     if (mode === 'new') {
@@ -253,6 +277,9 @@ const openDialog = (mode, rowData) => {
 
         name.value = nombre;
         codeV.value = code;
+        if (farmParameter) {
+            farm.value = { name: farmParameter.name, id: farmParameter.uuid };
+        }
     }
 
     formDialog.value = true;
@@ -272,34 +299,40 @@ const deleteSingleRecord = (rowData) => {
     openDelete();
 };
 
+/**
+ * Manages the submission process for creating, editing, cloning, or patching records.
+ * @param {Object} values - The validated form values.
+ */
 const actionRecordManager = handleSubmitNew(async (values) => {
+    console.log('✅ Action Record Manager (Success)', { values, mode: formMode.value, rowUUID: rowUUID.value });
     const responseCRUD = ref();
-    console.log('listRowSelect:', listRowSelect.value);
-    console.log(values);
     const data = {
         code: values.codeV,
-        name: values.name
+        name: values.name,
+        farm_uuid: values.farm ? values.farm.id : farmDefault
     };
-    console.log('data:', data);
-    if (state.value === 'new') {
+    
+    // Add logging for data being sent
+    // console.log('Data to send:', data);
+
+    if (formMode.value === 'new') {
         responseCRUD.value = await crudService.create(data);
-    } else if (state.value === 'edit' || state.value === 'clone') {
+    } else if (formMode.value === 'edit' || formMode.value === 'clone') {
         const uuid = rowUUID.value;
-        if (state.value === 'edit') {
+        if (formMode.value === 'edit') {
             responseCRUD.value = await crudService.update(uuid, data);
         } else {
             responseCRUD.value = await crudService.create(data);
         }
-    } else if (state.value === 'patch') {
+    } else if (formMode.value === 'patch') {
         const uuid = rowUUID.value;
         responseCRUD.value = await crudService.patch(uuid, data);
     }
 
-    // Mostrar notificación y cerrar el diálogo si la operación fue exitosa
     if (responseCRUD.value.ok) {
         toast.add({
             severity: responseCRUD.value.ok ? 'success' : 'error',
-            summary: state.value,
+            summary: formMode.value,
             detail: responseCRUD.value.ok ? 'Done' : responseCRUD.value.error,
             life: 3000
         });
@@ -308,11 +341,20 @@ const actionRecordManager = handleSubmitNew(async (values) => {
         formDialog.value = false;
         listRowSelect.value = [];
         selectedRegisters.value = [];
-    } else {
-        console.log('Error:', responseCRUD.value.error);
     }
+}, (context) => {
+    console.warn('❌ Action Record Manager (Validation Failed)', context.errors);
+    toast.add({
+        severity: 'warn',
+        summary: 'Validation Failed',
+        detail: 'Please check the form for errors',
+        life: 3000
+    });
 });
 
+/**
+ * Handles batch patching of status for selected records.
+ */
 const patchAction = async () => {
     try {
         const patchPromises = [];
@@ -320,13 +362,11 @@ const patchAction = async () => {
             const data = {
                 status_id: status_id_Action.value
             };
-            const patchPromise = await crudService.patch(item.uuid, data);
-            console.log('patchPromise:', patchPromise);
+            const patchPromise = crudService.patch(item.uuid, data);
             patchPromises.push(patchPromise);
         });
 
         const responses = await Promise.all(patchPromises);
-
         const hasError = responses.some((response) => !response.ok);
 
         if (!hasError) {
@@ -350,9 +390,8 @@ const patchAction = async () => {
             });
         }
 
-        await loadingData(); // Refresh data
+        await loadingData();
     } catch (error) {
-        console.error('Error updating records:', error);
         toast.add({
             severity: 'error',
             summary: 'Error',
@@ -364,11 +403,13 @@ const patchAction = async () => {
     }
 };
 
+/**
+ * Deletes selected records after confirmation.
+ */
 const DeleteRecord = async () => {
     formDialogDelete.value = false;
 
     try {
-        // Crear una lista de promesas para eliminar
         const deletePromises = listRowSelect.value.map(async (item) => {
             const response = await crudService.delete(item.uuid);
             if (!response.ok) {
@@ -381,7 +422,6 @@ const DeleteRecord = async () => {
         await loadingData();
         toast.add({ severity: 'success', summary: 'Deleted Record', detail: 'Deleted successfully', life: 3000 });
     } catch (error) {
-        console.error('Error deleting:', error);
         toast.add({ severity: 'error', summary: 'Error', detail: 'Error deleting records', life: 3000 });
     } finally {
         listRowSelect.value = [];
@@ -517,15 +557,7 @@ const searchBranches = (event) => {
 };
 </script>
 
-<!-- 
-filterDisplay="menu"
-v-model:filters="filters"
-:globalFilterFields="['', 'company.name']"
 
-
-const documentFrozen = ref(true); change name field 
-<DataTable id="tblData"
-     -->
 <template>
     <div>
         <div class="card mb-4 bg-primary-reverse border-round-xl shadow-2">
@@ -570,8 +602,6 @@ const documentFrozen = ref(true); change name field
                 :rows="50"
                 :rowsPerPageOptions="[5, 10, 20, 50]"
                 :class="`p-datatable-${size?.class || 'default-size'}`"
-                @row-select="onRowSelect(listRowSelect)"
-                @row-unselect="onRowSelect(listRowSelect)"
                 @select-all-change="onSelectAllChange"
                 v-model:selection="listRowSelect"
                 filterDisplay="menu"
@@ -688,7 +718,7 @@ const documentFrozen = ref(true); change name field
 
                 <div class="flex justify-content-end gap-2 flex-auto">
                     <Button class="flex-auto" type="button" label="Cancel" severity="secondary" @click="formDialog = false" />
-                    <Button class="flex-auto" type="button" label="Save" @click="actionRecordManager(state)" />
+                    <Button class="flex-auto" type="button" label="Save" @click="actionRecordManager" />
                 </div>
             </Dialog>
 

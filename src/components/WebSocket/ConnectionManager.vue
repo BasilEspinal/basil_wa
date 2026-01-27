@@ -21,12 +21,12 @@ onMounted(() => {
 
     // Connection success event
     socket.on('connect', () => {
-        console.log('Socket connected successfully');
+        
 
         isConnected.value = true;
 
         socket.on('active-kpis', (kpisData) => {
-            console.log('Received KPIs data:', kpisData);
+            
             kpis.value = Object.entries(kpisData).map(([name, data]) => ({ name, data }));
             jsonResponse.value = JSON.stringify(kpisData, null, 2);
         });
@@ -34,7 +34,7 @@ onMounted(() => {
 
     // Connection error event
     socket.on('connect_error', (err) => {
-        console.error('Error connecting to WebSocket server:', err);
+        
         isConnected.value = false;
     });
 
@@ -47,7 +47,7 @@ onMounted(() => {
 // Lifecycle: On Component Unmount
 onBeforeUnmount(() => {
     socket.disconnect(); // Clean up WebSocket connection
-    console.log('Socket disconnected');
+    
 });
 
 // Function to update a specific KPI
@@ -65,7 +65,7 @@ const updateKPI = (kpiName) => {
 // Function to reset all KPIs
 const resetKPIs = () => {
     socket.emit('reset-kpi');
-    console.log('Reset KPIs triggered');
+    
 };
 
 // Function to update a KPI card with new data
@@ -74,7 +74,7 @@ const updateKPICard = (kpiName, data) => {
     if (kpiToUpdate) {
         kpiToUpdate.data = data;
         jsonResponse.value = JSON.stringify({ [kpiName]: data }, null, 2);
-        console.log(`KPI ${kpiName} updated:`, data);
+        
     }
 };
 </script>

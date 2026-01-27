@@ -15,12 +15,12 @@ onMounted(() => {
     //   // Mostrar toast si name no está definido o está vacío
     //   toast.add({ severity: 'warn', summary: 'Advertencia', detail: 'El nombre no está definido o está vacío', life: 3000 });
     // } else {
-    //   console.log('Component mounted');
+    //   
     // }
 });
 
 onMounted(() => {
-    console.log('Component mounted');
+    
 });
 </script>
 

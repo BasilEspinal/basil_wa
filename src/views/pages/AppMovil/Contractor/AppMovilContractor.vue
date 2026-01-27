@@ -109,15 +109,15 @@ const readAll = async () => {
     }
 
     try {
-        console.log('Holaaa');
+        
         const responseDonesWork = await getDonesWork();
-        console.log('responseDonesWork', responseDonesWork);
+        
         if (!responseDonesWork.ok) {
             toast.add({ severity: 'error', detail: 'Error: ' + response.error, life: 3000 });
             return;
         }
         Works.value = responseDonesWork.data.data.map((element) => ({ id: element.id, uuid: element.uuid, name: element.name, work_type_tarif: element.work_type_tarif }));
-        console.log('Works', Works.value);
+        
     } catch (error) {
         toast.add({ severity: 'error', detail: 'An error occurred while loading data in catch.', life: 3000 });
     } finally {
@@ -200,8 +200,8 @@ watch(flagIndividual, () => {
 });
 
 watch(work, () => {
-    console.log('work', work);
-    console.log('work.value', work.value);
+    
+    
     if (work.value.work_type_tarif == 'Individual') {
         flagIndividual.value = true;
         quantityEmployees.value = 1;
@@ -316,7 +316,7 @@ const actionRecordManager = handleSubmitNew(async (values) => {
             throw new Error(responseCRUD.value.error);
         }
     } catch (error) {
-        console.error('Error:', error);
+        
         toast.add({
             severity: 'error',
             summary: 'Error',
@@ -446,7 +446,7 @@ const taskOfTypeId = computed(() => fetchWorkCenter.value?.taskoftype?.id ?? nul
 //     );
 //     totalTarif.value = resp?.data?.data?.[0]?.price_tarif ?? 0;
 //   } catch (e) {
-//     console.error('getTarifOfTasksDoneAppMob error:', e);
+//     
 //     totalTarif.value = 0;
 //   }
 // });
@@ -470,7 +470,7 @@ watch([work, taskOfTypeId], async ([w, toId]) => {
         totalTarif.value = 0;
     }
   } catch (e) {
-    console.error('getTarifOfTasksDoneAppMob error:', e);
+    
     totalTarif.value = 0;
   }
 });
@@ -489,13 +489,13 @@ watch(work, () => {
 // Start: Edit Mode Logic (Correct Placement)
 // Start: Edit Mode Logic (Correct Placement)
 watch([() => props.editData, Works, originalAvailablePickList], async ([newDataRaw, currentWorks, currentUsers]) => {
-    console.log('WATCH TRIGGERED');
-    console.log('newDataRaw:', newDataRaw);
-    console.log('Works length:', currentWorks?.length);
-    console.log('Users length:', currentUsers?.length);
+    
+    
+    
+    
 
     if (newDataRaw?.uuid) {
-        console.log('Edit Data & Dependencies Update. Fetching full details for UUID:', newDataRaw.uuid);
+        
         loading.value = true;
 
         try {
@@ -520,16 +520,16 @@ watch([() => props.editData, Works, originalAvailablePickList], async ([newDataR
                 }
             }
 
-            console.log('Final Merged Data (JSON):', JSON.stringify(finalData, null, 2));
+            
 
             // 1. Set simple fields 
             // Note: Verify field names against API response.
             crop_lot_qtyV.value = finalData.crop_lot_qty ?? 1;
-            console.log('Set crop_lot_qtyV:', crop_lot_qtyV.value);
+            
             notesV.value = finalData.notes_small || finalData.notes || '';
-            console.log('Set notesV:', notesV.value);
+            
             quantityEmployees.value = finalData.employee_qty ?? 0;
-            console.log('Set quantityEmployees:', quantityEmployees.value);
+            
             // totalTarif.value = finalData.total_tarif_task; 
 
             // 2. Set Work
@@ -565,7 +565,7 @@ watch([() => props.editData, Works, originalAvailablePickList], async ([newDataR
                     }
                 }
             } else {
-                 console.warn('Skipping Work set: Works list is empty');
+                 
             }
 
             // 3. Set PickList
@@ -598,14 +598,14 @@ watch([() => props.editData, Works, originalAvailablePickList], async ([newDataR
                      processEmployees(finalData.employees_ids, 'id');
                 } else if (finalData.employees_ids) {
                     // It might be a string if comma separated?
-                     console.warn('employees_ids exists but is not an array:', finalData.employees_ids);
+                     
                 } else {
                     // Fallback: if no list found, reset to all available
                     dataPickList.value = [[...currentUsers], []];
                 }
             }
         } catch (error) {
-            console.error(error);
+            
             toast.add({ severity: 'error', detail: 'Failed to fetch details', life: 3000 });
         } finally {
             loading.value = false;
@@ -622,8 +622,22 @@ watch([() => props.editData, Works, originalAvailablePickList], async ([newDataR
 </script>
 
 <template>
+    <div class="card mb-4 bg-primary-reverse border-round-xl shadow-2">
+        <div class="flex align-items-center justify-content-between p-3">
+            <div class="flex align-items-center gap-3">
+                <div class="bg-primary-50 p-3 border-round-circle">
+                    <i class="pi pi-mobile text-primary text-3xl"></i>
+                </div>
+                <div>
+                    <h1 class="m-0 text-3xl font-bold tracking-tight">{{ $t('menu.contractorCapture') }}</h1>
+                    <p class="m-0 text-600 font-medium mt-1">
+                        Titulo: {{ fetchWorkCenter?.taskoftype.name || 'Cargando...' }} | Departamento: {{ fetchWorkCenter?.name || 'Cargando...' }}
+                    </p>
+                </div>
+            </div>
+        </div>
+    </div>
     <div class="card">
-        <h2>Titulo: {{ fetchWorkCenter?.taskoftype.name || 'Cargando...' }} Departamento: {{ fetchWorkCenter?.name || 'Cargando...' }}</h2>
         <div class="p-fluid formgrid grid">
             <div class="field col-12 md:col-6"></div>
         </div>

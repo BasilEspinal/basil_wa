@@ -9,8 +9,6 @@ import ability from '@/service/ability.js';
 import { InitialDataService } from '@/service/InitialData.js';
 import { z } from 'zod';
 
-//import useData from '@/service/FetchData/FetchDataAPI.js';
-//const { getRequest, postRequest, putRequest, deleteRequest } = useData();
 
 import { CrudService } from '@/service/CRUD/CrudService';
 import FloatingSelectionBar from '@/components/layout/FloatingSelectionBar.vue';
@@ -18,7 +16,7 @@ import ActionButton from '@/components/ActionButton.vue';
 import { useActions } from '@/composables/ActionButton.js';
 const { getItems, itemsActions, messageDialog, titleDialog, status_id_Action, flagDialog } = useActions(`/processflow/User`);
 
-const prueba = ref({ revisar: 'revisar GET-POST-PUT-DELETE' });
+
 let endpoint = ref('/users');
 
 const crudService = CrudService(endpoint.value);
@@ -90,8 +88,13 @@ onMounted(() => {
 
 const size = ref();
 const sizeOptions = ref();
-const filters = ref();
+const filters = ref({
+    global: { value: null, matchMode: FilterMatchMode.CONTAINS }
+});
 
+/**
+ * Initializes the default filters for the DataTable.
+ */
 const initFilters = () => {
     filters.value = {
         global: { value: null, matchMode: FilterMatchMode.CONTAINS }
@@ -115,9 +118,11 @@ const readInitialData = async () => {
     });
 };
 
+/**
+ * Fetches user records from the API using CrudService.
+ */
 const loadingData = async () => {
     loading.value = true;
-    //const response = await getRequest(endpoint.value);
     const response = await crudService.getAll();
 
     if (!response.ok) toast.add({ severity: 'error', detail: 'Error' + response.error, life: 3000 });
@@ -125,16 +130,26 @@ const loadingData = async () => {
     loading.value = false;
 };
 
+/**
+ * Opens the dialog for creating a new user.
+ */
 const openNew = () => {
     resetForm();
     headerDialogNew.value = 'New User';
     DialogNew.value = true;
 };
 
+/**
+ * Opens the dialog for editing an existing user.
+ * @param {Object} rowData - The user record to edit.
+ */
 const openEdit = (rowData) => {
     resetForm();
     headerDialogEdit.value = 'Edit User';
     const data = rowData || selectedRegisters.value[0];
+    if (data) {
+        selectedRegisters.value = [data];
+    }
     if (!data) {
         toast.add({ severity: 'error', summary: 'Error', detail: 'Select a record', life: 3000 });
         return;
@@ -175,6 +190,9 @@ const openExport = () => {
     DialogExport.value = true;
 };
 
+/**
+ * Submits the form to create a new user.
+ */
 const newUser = handleSubmit(async (values) => {
     DialogNew.value = false;
     const data = {
@@ -184,13 +202,15 @@ const newUser = handleSubmit(async (values) => {
         farm_uuid: values.farm ? values.farm.uuid : farmDefault,
         roles: [{ id: 1 }]
     };
-    //const restp = await postRequest(endpoint.value, data);
     const restp = await crudService.create(data);
 
     toast.add({ severity: restp.ok ? 'success' : 'error', summary: 'Create', detail: restp.ok ? 'Creado' : restp.error, life: 3000 });
     loadingData();
 });
 
+/**
+ * Submits the form to edit an existing user.
+ */
 const editUser = submitEdit(async (values) => {
     const { farm, roles, id } = selectedRegisters.value[0];
     const data = {
@@ -202,7 +222,6 @@ const editUser = submitEdit(async (values) => {
     if (values.passwordEdit) {
         data.password = values.passwordEdit;
     }
-    //const restp = await putRequest(endpoint.value, data, id);
     const restp = await crudService.update(rowUUID.value, data);
     toast.add({ severity: restp.ok ? 'success' : 'error', summary: 'Edit', detail: restp.ok ? 'Editado' : restp.error, life: 3000 });
     DialogEdit.value = false;
@@ -210,21 +229,21 @@ const editUser = submitEdit(async (values) => {
     selectedRegisters.value = [];
 });
 
+/**
+ * Deletes selected users after confirmation.
+ */
 const deleteUsers = async () => {
     DialogDelete.value = false;
     try {
         const deletePromises = [];
         selectedRegisters.value.forEach(async (item) => {
-            //const deletePromise = await deleteRequest(endpoint.value, item.id);
-            const deletePromise = await await crudService.delete(item.id);
-
+            const deletePromise = crudService.delete(item.id);
             deletePromises.push(deletePromise);
         });
         await Promise.all(deletePromises);
         loadingData();
         toast.add({ severity: 'success', summary: 'Deleted User', detail: 'Deleted', life: 3000 });
     } catch (error) {
-        console.error('Error deleting:', error);
         toast.add({ severity: 'error', summary: 'Error', detail: 'Error deleting', life: 3000 });
     } finally {
         selectedRegisters.value = [];
@@ -261,6 +280,9 @@ const openDialogSettlement = async (mode) => {
     }
 };
 
+/**
+ * Handles batch patching of status for selected users.
+ */
 const patchAction = async () => {
     try {
         const patchPromises = [];
@@ -268,7 +290,7 @@ const patchAction = async () => {
             const data = {
                 status_id: status_id_Action.value
             };
-            const patchPromise = await crudService.patch(item.uuid, data);
+            const patchPromise = crudService.patch(item.uuid, data);
             patchPromises.push(patchPromise);
         });
 
@@ -285,7 +307,7 @@ const patchAction = async () => {
             toast.add({ severity: 'error', summary: 'Error', detail: 'Error updated records: ' + errorMsg, life: 3000 });
         }
     } catch (error) {
-        console.error('Error fetching data:', error);
+        // Error handling
     }
 };
 </script>

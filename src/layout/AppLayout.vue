@@ -28,9 +28,9 @@ onBeforeMount(async () => {
     lengthPermissions.value = dataResponsePermissionsAPI.value.length;
      // Get initial backend data
   const response = await InitialDataService.getDatastart();
-    console.log('dataStart', response);
+    
     const errors = response?.data.errors || {};
-    console.log('errors', errors);
+    
   const filtered = Object.fromEntries(Object.entries(errors).filter(([_, v]) => v !== null));
 
   if (Object.keys(filtered).length > 0) {

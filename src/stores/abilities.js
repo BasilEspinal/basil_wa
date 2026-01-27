@@ -27,7 +27,7 @@ export const useAbilityStore = defineStore('abilities', {
             token.value = sessionStorage.getItem('accessSessionToken');
             try {
                 if (!token.value) {
-                    console.log('No token found');
+                    
                     return;
                 }
                 const response = await getRequest('/abilities');
@@ -41,7 +41,7 @@ export const useAbilityStore = defineStore('abilities', {
 
                 this.setAbilities(abilities);
             } catch (error) {
-                console.error('Error fetching abilities:', error);
+                
             }
         }
     },

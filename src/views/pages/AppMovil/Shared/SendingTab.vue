@@ -27,14 +27,14 @@ onMounted(async () => {
 });
 
 const getDataEmployeesInfo = async (employee_id) => {
-    console.log('Getting data for employee ID:', employee_id);
-    console.log(props.data.id, props.data.tasks_of_type.id, employee_id);
+    
+    
     const response = await getInfoEmployeesById(props.data.id, props.data.tasks_of_type.id, employee_id);
     if (!response.ok) {
         toast.add({ severity: 'error', detail: 'Error' + response.error, life: 3000 });
         errorSummary.value = true;
     }
-    console.log('ResponseTabEmployees:', response);
+    
     summary.value = response.data.data;
 };
 
@@ -100,7 +100,7 @@ const calculations = async () => {
         for (let item of summary.value) {
             total += parseFloat(item.total_journal) || 0;
         }
-        console.log(total);
+        
         return total;
     });
 };

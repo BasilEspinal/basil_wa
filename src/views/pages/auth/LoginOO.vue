@@ -46,7 +46,7 @@ const fetchInfoPostLogin = async (data) => {
     try {
         let response = await postRequest(endpoint.value, { email: email.value, password: password.value });
         response = response.data.data;
-        console.log(response);
+        
         if (response['error']) throw response.error;
         if (!response['user']) throw response.error;
 
@@ -62,14 +62,14 @@ const fetchInfoPostLogin = async (data) => {
         await ensureTokenStored();
 
         if (!token.value) {
-            console.error('No token found in sessionStorage');
+            
         } else {
             await abilityStore.fetchAbilities();
             const abilities = abilityStore.getAbilities;
             const { can, cannot, rules } = new AbilityBuilder();
             abilities.forEach(({ action, subject }) => {
                 can(action, subject);
-                console.log(`Ability: ${action} on ${subject}`);
+                
             });
             ability.update(rules);
         }
@@ -80,7 +80,7 @@ const fetchInfoPostLogin = async (data) => {
         return true;
     } catch (error) {
         toast.add({ severity: 'error', detail: 'Credenciales incorrectas', content: error, id: count.value++ });
-        console.error('Error:', error);
+        
         return false;
     }
 };

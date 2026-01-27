@@ -6,7 +6,6 @@ import { InitialDataService } from '@/service/InitialData';
 import { FilterMatchMode, FilterOperator } from 'primevue/api';
 import { toTypedSchema } from '@vee-validate/zod';
 import { computed } from 'vue';
-// import { saveAs } from 'file-saver/dist/FileSaver';
 import { useToast } from 'primevue/usetoast';
 import { useForm } from 'vee-validate';
 import { onBeforeMount, onMounted, ref, watch } from 'vue';
@@ -43,6 +42,11 @@ const getNestedValue = (obj, path) => {
     return path.split('.').reduce((value, key) => value && value[key], obj);
 };
 const formProperties = ref({ open: false, title: '', mode: '', data: null });
+/**
+ * Opens the form dialog for creating or viewing employee details.
+ * @param {string} mode - The mode in which to open the form ('new', 'detalles', etc.).
+ * @param {Object} [rowData] - Optional employee record.
+ */
 const openForm = (mode, rowData) => {
     if (rowData) {
         onRowSelect(rowData);
@@ -210,7 +214,9 @@ watch(listRowSelect, onRowSelect);
 const onSelectAllChange = () => {
     onRowSelect();
 };
-const filters = ref();
+const filters = ref({
+    global: { value: null, matchMode: FilterMatchMode.CONTAINS }
+});
 
 const clearFilter = () => {
     initFilters();
@@ -257,7 +263,7 @@ const readAll = async () => {
     DocumentTypeList.value = respDocumentTypeList.data.data.map((comp) => ({ id: comp.id, name: comp.label }));
 
     const respWorkCenter = await InitialDataService.getWorkCenters();
-    console.log('respWorkCenter', respWorkCenter);
+    
     if (!respWorkCenter.ok) toast.add({ severity: 'error', detail: 'Error' + respWorkCenter.error, life: 3000 });
     WorkCenterList.value = respWorkCenter.data.data.map((comp) => ({ id: comp.uuid, name: comp.name }));
 
@@ -270,23 +276,22 @@ const readAll = async () => {
     const respJobType = await InitialDataService.getJobTypes();
     if (!respJobType.ok) toast.add({ severity: 'error', detail: 'Error' + respJobType.error, life: 3000 });
     JobTypeList.value = respJobType.data.data.map((comp) => ({ id: comp.uuid, name: comp.name }));
-    console.log('JobTypeList', JobTypeList.value);
+    
 
     //const respPaymentType = await getRequest('/payment_types');
     const respPaymentType = await InitialDataService.getPaymentTypes();
     if (!respPaymentType.ok) toast.add({ severity: 'error', detail: 'Error' + respPaymentType.error, life: 3000 });
     PaymentTypeList.value = respPaymentType.data.data.map((comp) => ({ id: comp.uuid, name: comp.name }));
 };
+/**
+ * Fetches employee records from the API using CrudService.
+ */
 const loadingData = async () => {
-    //const response = await getRequest(endpoint.value);
     const response = await crudService.getAll();
     if (!response.ok) toast.add({ severity: 'error', detail: 'Error' + response.error, life: 3000 });
     dataFromComponent.value = response.data.data;
 };
-watch(
-    () => dataFromComponent.value,
-    (newValue, oldValue) => {}
-);
+
 
 const {
     handleSubmit: handleSubmitNew,
@@ -368,6 +373,8 @@ const formDialogTitle = ref('');
 const formDialog = ref(false);
 
 const state = ref('');
+const formMode = ref('');
+const rowUUID = ref(null);
 
 const openDialogSettlement = async (mode) => {
     if (listRowSelect.value.length != 0) {
@@ -377,16 +384,19 @@ const openDialogSettlement = async (mode) => {
 };
 
 const openDialog = (mode, rowData) => {
+    formMode.value = mode;
     formDialogTitle.value = mode === 'new' ? 'Create new register' : mode === 'edit' ? 'Edit new register' : mode === 'clone' ? 'Clone new register' : mode === 'patch' ? 'Patch new register' : '';
 
     if (mode === 'new') {
         resetForm();
+        rowUUID.value = null;
     } else {
         const source = rowData || listRowSelect.value[0];
         if (!source) {
             toast.add({ severity: 'error', summary: 'Error', detail: 'Select a record', life: 3000 });
             return;
         }
+        rowUUID.value = source.uuid;
         resetForm();
         const {
             document: documentoN,
@@ -409,20 +419,19 @@ const openDialog = (mode, rowData) => {
         first_name.value = firstName;
         last_name.value = lastName;
         last_name_b.value = lastNameB;
-        gender_id.value = { id: Gender.id, name: Gender.name };
+        if (Gender) gender_id.value = { id: Gender.id, name: Gender.name };
         email.value = Email;
-        document_type.value = DocumentTypeList.value.filter((a) => a.id == DocumentType.id)[0];
+        if (DocumentType) document_type.value = DocumentTypeList.value.filter((a) => a.id == DocumentType.id)[0];
         bank_account_number.value = Number(BankAccountNumber);
         bank_account_doc.value = BankAccountDoc;
-        job_typeV.value = { id: JobType.uuid, name: JobType.name };
-        payment_type_uuid.value = { id: PaymentType.uuid, name: PaymentType.name };
-        work_center_uuid.value = { id: WorkC.uuid, name: WorkC.name };
-        farm_uuid.value = { id: Farm.uuid, name: Farm.name };
-        company.value = { id: empresa.uuid, name: empresa.name };
+        if (JobType) job_typeV.value = { id: JobType.uuid, name: JobType.name };
+        if (PaymentType) payment_type_uuid.value = { id: PaymentType.uuid, name: PaymentType.name };
+        if (WorkC) work_center_uuid.value = { id: WorkC.uuid, name: WorkC.name };
+        if (Farm) farm_uuid.value = { id: Farm.uuid, name: Farm.name };
+        if (empresa) company.value = { id: empresa.uuid, name: empresa.name };
     }
 
     formDialog.value = true;
-    state.value = mode;
 };
 
 const openExport = () => {
@@ -440,9 +449,10 @@ const deleteSingleRecord = (rowData) => {
 };
 
 const actionRecordManager = handleSubmitNew(async (values) => {
+    console.log('✅ Action Record Manager (Success)', { values, mode: formMode.value, rowUUID: rowUUID.value });
     const responseCRUD = ref();
-    console.log('listRowSelect:', listRowSelect.value);
-    console.log(values);
+    
+    
     const data = {
         document: values.documento + '',
         first_name: values.first_name,
@@ -460,26 +470,25 @@ const actionRecordManager = handleSubmitNew(async (values) => {
         farm_uuid: values.farm_uuid ? values.farm_uuid.id : farmDefault,
         status_id: 33
     };
-    console.log('data:', data);
-    if (state.value === 'new') {
+    
+    if (formMode.value === 'new') {
         responseCRUD.value = await crudService.create(data);
-    } else if (state.value === 'edit') {
-        const { uuid } = listRowSelect.value[0];
+    } else if (formMode.value === 'edit') {
+        const uuid = rowUUID.value;
         responseCRUD.value = await crudService.update(uuid, data);
-    } else if (state.value === 'clone') {
+    } else if (formMode.value === 'clone') {
         responseCRUD.value = await crudService.create(data);
-    } else if (state.value === 'patch') {
+    } else if (formMode.value === 'patch') {
+        const uuid = rowUUID.value;
         responseCRUD.value = await crudService.patch(uuid, data);
-    } else {
-        const { uuid } = listRowSelect.value[0];
     }
-    console.log('responseCRUD:', responseCRUD.value);
-    console.log('state:', state.value);
+    
+    
     // Mostrar notificación y cerrar el diálogo si la operación fue exitosa
     if (responseCRUD.value.ok) {
         toast.add({
             severity: responseCRUD.value.ok ? 'success' : 'error',
-            summary: state.value,
+            summary: formMode.value,
             detail: responseCRUD.value.ok ? 'Done' : responseCRUD.value.error,
             life: 3000
         });
@@ -488,11 +497,20 @@ const actionRecordManager = handleSubmitNew(async (values) => {
         formDialog.value = false;
         listRowSelect.value = [];
         selectedRegisters.value = [];
-    } else {
-        console.log('Error:', responseCRUD.value.error);
     }
+}, (context) => {
+    console.warn('❌ Action Record Manager (Validation Failed)', context.errors);
+    toast.add({
+        severity: 'warn',
+        summary: 'Validation Failed',
+        detail: 'Please check the form for errors',
+        life: 3000
+    });
 });
 
+/**
+ * Handles batch patching of status for selected employees.
+ */
 const patchAction = async () => {
     try {
         const patchPromises = [];
@@ -500,13 +518,11 @@ const patchAction = async () => {
             const data = {
                 status_id: status_id_Action.value
             };
-            const patchPromise = await crudService.patch(item.uuid, data);
-            console.log('patchPromise:', patchPromise);
+            const patchPromise = crudService.patch(item.uuid, data);
             patchPromises.push(patchPromise);
         });
 
         const responses = await Promise.all(patchPromises);
-
         const hasError = responses.some((response) => !response.ok);
 
         if (!hasError) {
@@ -521,8 +537,7 @@ const patchAction = async () => {
             listRowSelect.value = [];
             selectedRegisters.value = [];
             flagDialog.value = false;
-            await loadingData(); // Refresh data
-            dataFromComponent.value = [...dataFromComponent.value]; // 🧠 force array reference change
+            await loadingData();
         } else {
             toast.add({
                 severity: 'error',
@@ -531,11 +546,7 @@ const patchAction = async () => {
                 life: 3000
             });
         }
-
-        await loadingData(); // Refresh data
-        dataFromComponent.value = [...dataFromComponent.value]; // 🧠 force array reference change
     } catch (error) {
-        console.error('Error updating records:', error);
         toast.add({
             severity: 'error',
             summary: 'Error',
@@ -544,8 +555,7 @@ const patchAction = async () => {
         });
     } finally {
         listRowSelect.value = [];
-        await loadingData(); // Refresh data
-        dataFromComponent.value = [...dataFromComponent.value];
+        await loadingData();
     }
 };
 
@@ -566,7 +576,7 @@ const DeleteRecord = async () => {
         await loadingData();
         toast.add({ severity: 'success', summary: 'Deleted Record', detail: 'Deleted successfully', life: 3000 });
     } catch (error) {
-        console.error('Error deleting:', error);
+        
         toast.add({ severity: 'error', summary: 'Error', detail: 'Error deleting records', life: 3000 });
     } finally {
         listRowSelect.value = [];
@@ -714,15 +724,7 @@ const searchBranches = (event) => {
 };
 </script>
 
-<!-- 
-filterDisplay="menu"
-v-model:filters="filters"
-:globalFilterFields="['', 'company.name']"
 
-
-const documentFrozen = ref(true); change name field 
-<DataTable id="tblData"
-     -->
 <template>
     <div>
         <div class="card mb-4 bg-primary-reverse border-round-xl shadow-2">
@@ -766,8 +768,6 @@ const documentFrozen = ref(true); change name field
                 :rows="50"
                 :rowsPerPageOptions="[5, 10, 20, 50]"
                 :class="`p-datatable-${size?.class || 'default-size'}`"
-                @row-select="onRowSelect(listRowSelect)"
-                @row-unselect="onRowSelect(listRowSelect)"
                 @select-all-change="onSelectAllChange"
                 v-model:selection="listRowSelect"
                 filterDisplay="menu"
@@ -958,7 +958,7 @@ const documentFrozen = ref(true); change name field
                 </div>
                 <div class="flex justify-content-end gap-2 flex-auto">
                     <Button class="flex-auto" type="button" label="Cancel" severity="secondary" @click="formDialog = false" />
-                    <Button class="flex-auto" type="button" label="Save" @click="actionRecordManager(state)" />
+                    <Button class="flex-auto" type="button" label="Save" @click="actionRecordManager" />
                 </div>
             </Dialog>
 

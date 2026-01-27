@@ -42,7 +42,7 @@ const errorResponseAPI = reactive({});
 
 // Method to handle form submission
 function actionRecordManager() {
-    console.log('Form Data:', formData);
+    
     // Handle your API call or other form actions here
 }
 </script>

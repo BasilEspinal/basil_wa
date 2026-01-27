@@ -399,7 +399,7 @@ const actionRecordManager = handleSubmitNew(async (values) => {
         confirmed_qty: values.confirmed_qty_V,
         notes_small: values.notes
     };
-    console.log('data:', data);
+    
     if (state.value === 'new') {
     } else if (state.value === 'edit') {
     } else if (state.value === 'patch') {
@@ -421,7 +421,7 @@ const actionRecordManager = handleSubmitNew(async (values) => {
         listRowSelect.value = [];
         selectedRegisters.value = [];
     } else {
-        console.log('Error:', responseCRUD.value.error);
+        
     }
 
     // Recargar datos
@@ -455,7 +455,7 @@ const DeleteRecord = async () => {
         // Mostrar mensaje de éxito
         toast.add({ severity: 'success', summary: 'Deleted Record', detail: 'Deleted successfully', life: 3000 });
     } catch (error) {
-        console.error('Error deleting:', error);
+        
         toast.add({ severity: 'error', summary: 'Error', detail: 'Error deleting records', life: 3000 });
     } finally {
         // Limpiar las selecciones

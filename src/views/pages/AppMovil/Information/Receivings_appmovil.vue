@@ -45,7 +45,7 @@ const getNestedValue = (obj, path) => {
 };
 const formProperties = ref({ open: false, title: '', mode: '', data: null });
 const openForm = (mode) => {
-    console.log(mode);
+    
 
     formProperties.value = {
         open: true,
@@ -308,7 +308,7 @@ const DeleteRecord = async () => {
         loadingData();
         toast.add({ severity: 'success', summary: 'Deleted Record', detail: 'Deleted', life: 3000 });
     } catch (error) {
-        console.error('Error deleting:', error);
+        
         toast.add({ severity: 'error', summary: 'Error', detail: 'Error deleting', life: 3000 });
     } finally {
         listRowSelect.value = [];
@@ -412,6 +412,19 @@ const documentFrozen = ref(true); change name field
      -->
 <template>
     <div>
+        <div class="card mb-4 bg-primary-reverse border-round-xl shadow-2">
+            <div class="flex align-items-center justify-content-between p-3">
+                <div class="flex align-items-center gap-3">
+                    <div class="bg-primary-50 p-3 border-round-circle">
+                        <i class="pi pi-mobile text-primary text-3xl"></i>
+                    </div>
+                    <div>
+                        <h1 class="m-0 text-3xl font-bold tracking-tight">{{ $t('appmovil.shipping.deliveryProcess') }}</h1>
+                        <p class="m-0 text-600 font-medium mt-1">Gestión de procesos de entrega y recepción</p>
+                    </div>
+                </div>
+            </div>
+        </div>
         <div class="card">
             <!-- <h1 v-if="!ability.can('menux','comercialx')">{{ $t('menux') }}</h1> -->
             <div class="grid">

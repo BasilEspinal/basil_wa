@@ -1,7 +1,7 @@
 // src/utils/tokenUtils.js
 
 export function ensureTokenStored() {
-    console.log('ensureTokenStored');
+    
     return new Promise((resolve) => {
         const checkToken = setInterval(() => {
             const storedToken = localStorage.getItem('accessSessionToken'); // Make sure the key matches

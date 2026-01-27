@@ -75,7 +75,7 @@ const getNestedValue = (obj, path) => {
 };
 const formProperties = ref({ open: false, title: '', mode: '', data: null });
 const openForm = (mode) => {
-    console.log(mode);
+    
 
     formProperties.value = {
         open: true,
@@ -240,7 +240,7 @@ const actionRecordManager = handleSubmitNew(async (values) => {
         confirmed_qty: values.confirmed_qty_V,
         notes_small: values.notes
     };
-    console.log('data:', data);
+    
     if (state.value === 'new') {
     } else if (state.value === 'edit') {
     } else if (state.value === 'patch') {
@@ -262,7 +262,7 @@ const actionRecordManager = handleSubmitNew(async (values) => {
         listRowSelect.value = [];
         selectedRegisters.value = [];
     } else {
-        console.log('Error:', responseCRUD.value.error);
+        
     }
 
     // Recargar datos
@@ -284,7 +284,7 @@ const DeleteRecord = async () => {
         loadingData();
         toast.add({ severity: 'success', summary: 'Deleted Record', detail: 'Deleted', life: 3000 });
     } catch (error) {
-        console.error('Error deleting:', error);
+        
         toast.add({ severity: 'error', summary: 'Error', detail: 'Error deleting', life: 3000 });
     } finally {
         listRowSelect.value = [];

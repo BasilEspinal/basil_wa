@@ -44,7 +44,7 @@ let endpoint = ref('/employees');
 const updateAbility = async (token) => {
     //const bearer = 'Bearer ' + token;
     //   await getAllResponsePermissionsAPI("/abilities");
-    //   console.log('updateAbility')
+    //   
     // fetch('http://164.90.146.196:81/api/v1/abilities', {
     //     headers: {
     //         Authorization: bearer,
@@ -55,9 +55,9 @@ const updateAbility = async (token) => {
     //     .then((permissions) => {
     //         const { can, rules } = new AbilityBuilder();
     //         can(permissions);
-    //         console.log(permissions)
+    //         
     //         ability.update(rules);
-    //         console.log(ability.can('rol_crear'))
+    //         
     //     });
 };
 onMounted(async () => {

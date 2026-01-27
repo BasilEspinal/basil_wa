@@ -10,7 +10,7 @@ const props = defineProps({
 const toast = useToast();
 
 onMounted(() => {
-    console.log('Component mounted');
+    
 });
 </script>
 

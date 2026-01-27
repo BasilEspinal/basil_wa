@@ -10,8 +10,7 @@ import { InitialDataService } from '@/service/InitialData.js';
 import { z } from 'zod';
 import FormPermissions from './FormPermissions.vue';
 
-//import useData from '@/service/FetchData/FetchDataAPI.js';
-//const { getRequest, postRequest, deleteRequest } = useData();
+
 
 import { CrudService } from '@/service/CRUD/CrudService';
 import FloatingSelectionBar from '@/components/layout/FloatingSelectionBar.vue';
@@ -45,7 +44,9 @@ onMounted(() => {
 
 const size = ref();
 const sizeOptions = ref();
-const filters = ref();
+const filters = ref({
+    global: { value: null, matchMode: FilterMatchMode.CONTAINS }
+});
 
 const initFilters = () => {
     filters.value = {
@@ -57,6 +58,9 @@ const clearFilter = () => {
     initFilters();
 };
 
+/**
+ * Formats the global filter fields for the DataTable.
+ */
 const globalFilter = computed(() => {
     return ['name'];
 });
@@ -80,33 +84,39 @@ const { handleSubmit, errors, defineField, resetForm } = useForm({
 
 const [name, nameProps] = defineField('name');
 
+/**
+ * Submits the form to create a new role.
+ */
 const newRol = handleSubmit(async (values) => {
     DialogNew.value = false;
     const data = {
         name: values.name,
         permissions: [{ id: 1 }]
     };
-    //const restp = await postRequest(endpoint.value, data);
     const restp = await crudService.create(data);
     toast.add({ severity: restp.ok ? 'success' : 'error', summary: 'Create', detail: restp.ok ? 'Creado' : restp.error, life: 3000 });
     loadingData();
 });
 
+/**
+ * Clones an existing role with its permissions.
+ */
 const CloneRol = handleSubmit(async (values) => {
     DialogClone.value = false;
     const data = {
         name: values.name,
         permissions: roles.value.find(r => r.id === rowUUID.value).permissions.map((perm) => ({ id: perm.id }))
     };
-    //const restp = await postRequest(endpoint.value, data);
     const restp = await crudService.create(data);
     toast.add({ severity: restp.ok ? 'success' : 'error', summary: 'Clone', detail: restp.ok ? 'Clonado' : restp.error, life: 3000 });
     loadingData();
 });
 
+/**
+ * Loads lazy-loaded records from the API using CrudService.
+ */
 const loadLazyData = async () => {
     loading.value = true;
-    //const response = await getRequest(endpoint.value);
     const response = await crudService.getAll();
 
     if (!response.ok) toast.add({ severity: 'error', detail: 'Error' + response.error, life: 3000 });
@@ -158,20 +168,21 @@ const deleteSingleRecord = (rowData) => {
     openDelete();
 };
 
+/**
+ * Deletes selected roles after confirmation.
+ */
 const deleteRoles = async () => {
     DialogDelete.value = false;
     try {
         const deletePromises = [];
         selectedRegisters.value.forEach(async (item) => {
-            //const deletePromise = await deleteRequest(endpoint.value, item.id);
-            const deletePromise = await await crudService.delete(item.id);
+            const deletePromise = crudService.delete(item.id);
             deletePromises.push(deletePromise);
         });
         await Promise.all(deletePromises);
         loadingData();
         toast.add({ severity: 'success', summary: 'Deleted User', detail: 'Deleted', life: 3000 });
     } catch (error) {
-        console.error('Error deleting:', error);
         toast.add({ severity: 'error', summary: 'Error', detail: 'Error deleting', life: 3000 });
     } finally {
         selectedRegisters.value = [];
@@ -193,6 +204,9 @@ const openDialogSettlement = async (mode) => {
     }
 };
 
+/**
+ * Handles batch patching of status for selected roles.
+ */
 const patchAction = async () => {
     try {
         const patchPromises = [];
@@ -200,7 +214,7 @@ const patchAction = async () => {
             const data = {
                 status_id: status_id_Action.value
             };
-            const patchPromise = await crudService.patch(item.id, data);
+            const patchPromise = crudService.patch(item.id, data);
             patchPromises.push(patchPromise);
         });
 
@@ -217,7 +231,7 @@ const patchAction = async () => {
             toast.add({ severity: 'error', summary: 'Error', detail: 'Error updated records: ' + errorMsg, life: 3000 });
         }
     } catch (error) {
-        console.error('Error fetching data:', error);
+        // Error handling
     }
 };
 </script>

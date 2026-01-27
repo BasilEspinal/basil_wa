@@ -67,7 +67,7 @@ const saveProduct = () => {
 
 const editProduct = (editProduct) => {
     product.value = { ...editProduct };
-    console.log(product);
+    
     productDialog.value = true;
 };
 

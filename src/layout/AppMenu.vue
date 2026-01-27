@@ -19,7 +19,7 @@ async function fetchInfoAndUpdateValue() {
     try {
         await getAllResponsePermissionsAPI('/abilities');
     } catch (error) {
-        console.error('[AppMenu] Error fetching permissions:', error);
+        
     }
 }
 </script>

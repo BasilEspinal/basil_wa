@@ -40,17 +40,17 @@ const employeeCrud = CrudService(config.value.endpoint);
 
 const loadTopPerformers = async () => {
     try {
-        console.log('[DashboardDaily] Fetching top performance data...');
+        
         const response = await employeeCrud.getAll();
         if (response.ok && response.data?.data) {
             // Take first 10 as requested
             dataviewValue.value = response.data.data.slice(0, config.value.limit);
-            console.log(`[DashboardDaily] Loaded ${dataviewValue.value.length} employees.`);
+            
         } else {
-            console.error('[DashboardDaily] Failed to load data:', response.error);
+            
         }
     } catch (e) {
-        console.error('[DashboardDaily] Unexpected error:', e);
+        
     }
 };
 

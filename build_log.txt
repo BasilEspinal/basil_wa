@@ -1,0 +1,97 @@
+
+> AgroOnline_FrondEnd@3.8.0 build
+> vite build
+
+vite v4.5.1 building for production...
+transforming...
+✓ 406 modules transformed.
+rendering chunks...
+[plugin:vite:reporter] 
+(!) /Users/byepesg/Documents/Volga-Innovatrix/basil/basil_waV2/agro_online_wa/src/views/pages/Landing.vue is dynamically imported by /Users/byepesg/Documents/Volga-Innovatrix/basil/basil_waV2/agro_online_wa/src/router/index.js but also statically imported by /Users/byepesg/Documents/Volga-Innovatrix/basil/basil_waV2/agro_online_wa/src/router/index.js, dynamic import will not move module into another chunk.
+
+computing gzip size...
+dist/index.html                                          0.76 kB │ gzip:   0.42 kB
+dist/assets/primeicons-3824be50.woff2                   30.18 kB
+dist/assets/flags_responsive-2d565ac7.png               55.19 kB
+dist/assets/primeicons-131bc3bf.ttf                     72.20 kB
+dist/assets/primeicons-90a58d3a.woff                    72.28 kB
+dist/assets/primeicons-ce852338.eot                     72.38 kB
+dist/assets/primeicons-5e10f102.svg                    291.45 kB │ gzip:  89.84 kB
+dist/assets/ShippingProcess-e3b0c442.css                 0.00 kB │ gzip:   0.02 kB
+dist/assets/Dashboard-40a80742.css                       0.07 kB │ gzip:   0.09 kB
+dist/assets/Dashboard_Daily-509a0a43.css                 0.07 kB │ gzip:   0.08 kB
+dist/assets/Login-9fca562a.css                           0.10 kB │ gzip:   0.10 kB
+dist/assets/WorkAreaSelector-5979fdd2.css                1.14 kB │ gzip:   0.51 kB
+dist/assets/index-183800fd.css                         370.71 kB │ gzip:  40.88 kB
+dist/assets/asset-access-d78f2cfe.js                     0.06 kB │ gzip:   0.08 kB
+dist/assets/ProductService-c3f21ab6.js                   0.33 kB │ gzip:   0.15 kB
+dist/assets/FrontendErrors-b10aaa23.js                   0.37 kB │ gzip:   0.29 kB
+dist/assets/BackendErrors-ae048a9a.js                    0.59 kB │ gzip:   0.34 kB
+dist/assets/UnderConstruction-ceeb9301.js                0.64 kB │ gzip:   0.39 kB
+dist/assets/PlatformRegisteringStatus-4ef0fae5.js        0.77 kB │ gzip:   0.47 kB
+dist/assets/Summary-995eec76.js                          0.87 kB │ gzip:   0.51 kB
+dist/assets/FloatingSelectionBar-3ae1b73b.js             1.40 kB │ gzip:   0.78 kB
+dist/assets/ActionButton-5b7f57f7.js                     1.74 kB │ gzip:   0.97 kB
+dist/assets/Delivery-12de1887.js                         1.79 kB │ gzip:   0.99 kB
+dist/assets/ProductAvailability-2ab062db.js              1.81 kB │ gzip:   1.00 kB
+dist/assets/LotsSchedule-8493639c.js                     2.29 kB │ gzip:   1.21 kB
+dist/assets/FileSaver.min-39bbab7e.js                    2.66 kB │ gzip:   1.25 kB
+dist/assets/Login-31d77731.js                            4.96 kB │ gzip:   2.22 kB
+dist/assets/Dashboard_Daily-395236d4.js                  8.68 kB │ gzip:   2.88 kB
+dist/assets/AppMovilCorta-814002a7.js                    9.48 kB │ gzip:   3.10 kB
+dist/assets/Receivings_appmovil-5b35df9c.js              9.59 kB │ gzip:   3.85 kB
+dist/assets/Roles-6b259081.js                            9.72 kB │ gzip:   3.64 kB
+dist/assets/Crud-17c729c7.js                            10.81 kB │ gzip:   3.42 kB
+dist/assets/Shippings_appmovil-ae9527ea.js              12.47 kB │ gzip:   4.51 kB
+dist/assets/Permissions-49e4a3ab.js                     13.54 kB │ gzip:   5.17 kB
+dist/assets/Access-166bcecc.js                          14.35 kB │ gzip:   3.55 kB
+dist/assets/Agroonline_v3-ef20f679.js                   14.41 kB │ gzip:   5.12 kB
+dist/assets/AppMovilContractor-cf0687fb.js              16.19 kB │ gzip:   5.78 kB
+dist/assets/PlatformUsers-ee1efe4e.js                   16.26 kB │ gzip:   4.69 kB
+dist/assets/DailySettlement-96cfcd1e.js                 16.36 kB │ gzip:   5.09 kB
+dist/assets/DiscountRegistering-9bca198b.js             16.56 kB │ gzip:   5.10 kB
+dist/assets/ProductVarieties-19230423.js                16.63 kB │ gzip:   5.22 kB
+dist/assets/TransfersTasks-cb448001.js                  16.94 kB │ gzip:   5.26 kB
+dist/assets/LedgerTransactions-b55c0364.js              17.52 kB │ gzip:   6.26 kB
+dist/assets/JournalTransactions-0a5b7eda.js             17.96 kB │ gzip:   6.39 kB
+dist/assets/Farms-574d3a5a.js                           18.18 kB │ gzip:   6.33 kB
+dist/assets/Company-e354dd3c.js                         18.35 kB │ gzip:   6.41 kB
+dist/assets/DailyTransactionsContractor-8adeba17.js     18.93 kB │ gzip:   6.55 kB
+dist/assets/Varieties-c503dd75.js                       19.05 kB │ gzip:   6.41 kB
+dist/assets/UnitTypes-4f00d7da.js                       19.11 kB │ gzip:   6.43 kB
+dist/assets/ProductTypes-9b79a234.js                    19.30 kB │ gzip:   6.45 kB
+dist/assets/TasksTypes-448cebd0.js                      19.47 kB │ gzip:   6.60 kB
+dist/assets/JobTypes-1a5195f5.js                        19.57 kB │ gzip:   6.60 kB
+dist/assets/PaymentType-1b09d4a2.js                     19.75 kB │ gzip:   6.64 kB
+dist/assets/PackingTypes-e48d7ef0.js                    20.09 kB │ gzip:   6.60 kB
+dist/assets/Customers-4a5cc94d.js                       20.36 kB │ gzip:   5.12 kB
+dist/assets/Calendars-0710175e.js                       20.59 kB │ gzip:   6.95 kB
+dist/assets/Products-8a49ef2b.js                        20.79 kB │ gzip:   6.71 kB
+dist/assets/WorkCenters-f37c64d2.js                     21.11 kB │ gzip:   6.90 kB
+dist/assets/PaymentPeriods-65324652.js                  21.26 kB │ gzip:   7.13 kB
+dist/assets/DailyTransactions-2cbecd4a.js               21.44 kB │ gzip:   7.13 kB
+dist/assets/PaymentPeriodsInformation-8427ab88.js       21.49 kB │ gzip:   5.56 kB
+dist/assets/DoneTypes-58dd8451.js                       22.14 kB │ gzip:   7.08 kB
+dist/assets/CropLots-d4b9b5d5.js                        22.58 kB │ gzip:   7.26 kB
+dist/assets/Vehicles-3c4da1d2.js                        22.58 kB │ gzip:   7.14 kB
+dist/assets/AreaMovementRegister-23f83842.js            22.70 kB │ gzip:   5.81 kB
+dist/assets/EmployeeDailyWork-7d8c8e66.js               22.80 kB │ gzip:   5.81 kB
+dist/assets/DailyWorkRegistering-b6c900f1.js            22.84 kB │ gzip:   5.81 kB
+dist/assets/TasksTarif-9ad5d1ac.js                      24.28 kB │ gzip:   7.57 kB
+dist/assets/WorksTarif-53f6afcb.js                      24.35 kB │ gzip:   7.52 kB
+dist/assets/EmployeesInformation-9f3d81b1.js            27.42 kB │ gzip:   6.58 kB
+dist/assets/Employees-e431b748.js                       30.34 kB │ gzip:   8.86 kB
+dist/assets/DailyPlanner-b5f2a98d.js                    33.74 kB │ gzip:   9.56 kB
+dist/assets/CustomersRequests-5283c488.js               40.62 kB │ gzip:  10.69 kB
+dist/assets/WorkAreaSelector-5fd869d1.js                46.49 kB │ gzip:  12.32 kB
+dist/assets/Dashboard-fa6be4ef.js                       51.54 kB │ gzip:  15.35 kB
+dist/assets/ShippingProcess-204f37f3.js                 63.69 kB │ gzip:  13.16 kB
+dist/assets/auto.esm-220b764d.js                       182.94 kB │ gzip:  63.84 kB
+dist/assets/xlsx-9de2e086.js                           284.35 kB │ gzip:  95.35 kB
+dist/assets/index-ead899aa.js                        1,681.67 kB │ gzip: 404.79 kB
+
+(!) Some chunks are larger than 500 kBs after minification. Consider:
+- Using dynamic import() to code-split the application
+- Use build.rollupOptions.output.manualChunks to improve chunking: https://rollupjs.org/configuration-options/#output-manualchunks
+- Adjust chunk size limit for this warning via build.chunkSizeWarningLimit.
+✓ built in 39.28s

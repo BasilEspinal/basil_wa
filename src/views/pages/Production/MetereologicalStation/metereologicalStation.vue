@@ -114,12 +114,12 @@ const loadingData = async () => {
     if (!response.ok) toast.add({ severity: 'error', detail: 'Error' + response.error, life: 3000 });
     // dataFromComponent.value = response.data.data;
     dataFromComponent.value = response.data;
-    console.log(dataFromComponent.value[0].atmos_14_port_1__c_air_temperature);
+    
     // atmos_14_port_1__c_air_temperature
 
     // const dataTest = await fetch('demo/data/metereologicalStation.json').then((res) => res.json())
 
-    // console.log(dataTest.data[0].atmos_14.port_1)
+    // 
 };
 watch(
     () => dataFromComponent.value,
@@ -129,8 +129,8 @@ watch(
     () => isChanging.value,
     (newValue, oldValue) => {
         readAll(endpoint.value);
-        console.log(newValue);
-        console.log(oldValue);
+        
+        
     }
 );
 const {
@@ -331,7 +331,7 @@ const DeleteRecord = async () => {
         loadingData();
         toast.add({ severity: 'success', summary: 'Deleted Record', detail: 'Deleted', life: 3000 });
     } catch (error) {
-        console.error('Error deleting:', error);
+        
         toast.add({ severity: 'error', summary: 'Error', detail: 'Error deleting', life: 3000 });
     } finally {
         listRowSelect.value = [];

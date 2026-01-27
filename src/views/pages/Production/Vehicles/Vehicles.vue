@@ -59,6 +59,8 @@ const formProperties = ref({ open: false, title: '', mode: '', data: null });
 const openForm = (mode, rowData) => {
     if (rowData) {
         onRowSelect([rowData]);
+    } else if (listRowSelect.value.length > 0) {
+        onRowSelect(listRowSelect.value);
     }
 
     formProperties.value = {
@@ -101,6 +103,11 @@ const loading = ref(false);
 const cardSections = ref([]);
 
 const onRowSelect = (data) => {
+    if (data && !Array.isArray(data)) {
+        listRowSelect.value = [data];
+    } else {
+        listRowSelect.value = data;
+    }
     selectedRegisters.value = listRowSelect.value;
     openDialogSettlement('patch_action');
     const row = listRowSelect.value[0];
@@ -298,6 +305,7 @@ const formDialogTitle = ref('');
 const formDialog = ref(false);
 
 const state = ref('');
+const formMode = ref('');
 
 const openDialogSettlement = async (mode) => {
     if (listRowSelect.value.length != 0) {
@@ -306,7 +314,10 @@ const openDialogSettlement = async (mode) => {
     state.value = mode;
 };
 
-const openDialog = (mode) => {
+const openDialog = (mode, rowData) => {
+    if (rowData) {
+        listRowSelect.value = [rowData];
+    }
     formDialogTitle.value = mode === 'new' ? 'Create new register' : mode === 'edit' ? 'Edit new register' : mode === 'clone' ? 'Clone new register' : mode === 'patch' ? 'Patch new register' : '';
 
     if (mode === 'new') {
@@ -317,17 +328,16 @@ const openDialog = (mode) => {
     } else {
         resetForm();
         const { code, company: empresa, farm: farmParameter, vehicle_type: vehicle_type, quantity_available: quantity_available, weight_packing_type: weight_packing_type } = listRowSelect.value[0];
-
         codeV.value = code;
         vehicle_typeV.value = vehicle_type;
         quantity_availableV.value = quantity_available;
-        weight_packing_typeV.value = weight_packing_type;
+        weight_packing_typeV.value = String(weight_packing_type);
         company.value = { id: empresa.uuid, name: empresa.name };
         farm.value = { id: farmParameter.uuid, name: farmParameter.name };
     }
 
     formDialog.value = true;
-    state.value = mode;
+    formMode.value = mode;
 };
 
 const openExport = () => {
@@ -340,9 +350,10 @@ const openDelete = () => {
 };
 
 const actionRecordManager = handleSubmitNew(async (values) => {
+    console.log('✅ Action Record Manager (Success)', { values, mode: formMode.value, uuid: listRowSelect.value[0]?.uuid });
     const responseCRUD = ref();
-    console.log('listRowSelect:', listRowSelect.value);
-    console.log(values);
+    
+    
     const data = {
         code: values.codeV,
         vehicle_type: values.vehicle_typeV,
@@ -351,15 +362,15 @@ const actionRecordManager = handleSubmitNew(async (values) => {
         company_uuid: values.company ? values.company.id : companyDefault,
         farm_uuid: values.farm ? values.farm.id : farmDefault
     };
-    console.log('data:', data);
+    
     const { uuid } = listRowSelect.value[0] || {};
-    if (state.value === 'new') {
+    if (formMode.value === 'new') {
         responseCRUD.value = await crudService.create(data);
-    } else if (state.value === 'edit') {
+    } else if (formMode.value === 'edit') {
         responseCRUD.value = await crudService.update(uuid, data);
-    } else if (state.value === 'clone') {
+    } else if (formMode.value === 'clone') {
         responseCRUD.value = await crudService.create(data);
-    } else if (state.value === 'patch') {
+    } else if (formMode.value === 'patch') {
         responseCRUD.value = await crudService.patch(uuid, data);
     }
 
@@ -367,7 +378,7 @@ const actionRecordManager = handleSubmitNew(async (values) => {
     if (responseCRUD.value && responseCRUD.value.ok) {
         toast.add({
             severity: 'success',
-            summary: state.value,
+            summary: formMode.value,
             detail: 'Done',
             life: 3000
         });
@@ -377,7 +388,7 @@ const actionRecordManager = handleSubmitNew(async (values) => {
         listRowSelect.value = [];
         selectedRegisters.value = [];
     } else if (responseCRUD.value) {
-        console.log('Error:', responseCRUD.value.error);
+        
         toast.add({
             severity: 'error',
             summary: 'Error',
@@ -385,6 +396,14 @@ const actionRecordManager = handleSubmitNew(async (values) => {
             life: 3000
         });
     }
+}, (context) => {
+    console.warn('❌ Action Record Manager (Validation Failed)', context.errors);
+    toast.add({
+        severity: 'warn',
+        summary: 'Validation Failed',
+        detail: 'Please check the form for errors',
+        life: 3000
+    });
 });
 
 const patchAction = async () => {
@@ -395,7 +414,7 @@ const patchAction = async () => {
                 status_id: status_id_Action.value
             };
             const patchPromise = await crudService.patch(item.uuid, data);
-            console.log('patchPromise:', patchPromise);
+            
             patchPromises.push(patchPromise);
         });
 
@@ -426,7 +445,7 @@ const patchAction = async () => {
 
         await loadingData(); // Refresh data
     } catch (error) {
-        console.error('Error updating records:', error);
+        
         toast.add({
             severity: 'error',
             summary: 'Error',
@@ -455,7 +474,7 @@ const DeleteRecord = async () => {
         await loadingData();
         toast.add({ severity: 'success', summary: 'Deleted Record', detail: 'Deleted successfully', life: 3000 });
     } catch (error) {
-        console.error('Error deleting:', error);
+        
         toast.add({ severity: 'error', summary: 'Error', detail: 'Error deleting records', life: 3000 });
     } finally {
         listRowSelect.value = [];
@@ -641,8 +660,6 @@ const documentFrozen = ref(true); change name field
                 :rows="50"
                 :rowsPerPageOptions="[5, 10, 20, 50]"
                 :class="`p-datatable-${size?.class || 'default-size'}`"
-                @row-select="onRowSelect"
-                @row-unselect="onRowSelect"
                 @select-all-change="onSelectAllChange"
                 v-model:selection="listRowSelect"
                 filterDisplay="menu"
@@ -777,7 +794,7 @@ const documentFrozen = ref(true); change name field
 
                 <div class="flex justify-content-end gap-2 flex-auto">
                     <Button class="flex-auto" type="button" label="Cancel" severity="secondary" @click="formDialog = false" />
-                    <Button class="flex-auto" type="button" label="Save" @click="actionRecordManager(state)" />
+                    <Button class="flex-auto" type="button" label="Save" @click="actionRecordManager" />
                 </div>
             </Dialog>
 

@@ -16,17 +16,17 @@ export const socket = io(URL, { autoConnect: false });
 // Connection state listeners
 socket.on('connect', () => {
     state.connected = true;
-    console.log('Connected to the server');
+    
 });
 
 socket.on('disconnect', () => {
     state.connected = false;
-    console.log('Disconnected from the server');
+    
 });
 
 // Custom event listeners
 socket.on('active-kpis', (...args) => {
-    console.log('Active KPIs event received:', args);
+    
 });
 
 socket.on('foo', (...args) => {
@@ -39,5 +39,5 @@ socket.on('bar', (...args) => {
 
 // Error handling
 socket.on('connect_error', (err) => {
-    console.error('Connection error:', err.message);
+    
 });

@@ -9,7 +9,7 @@ export const fetchAbilities = async () => {
         const response = await getRequest('/abilities');
         return response;
     } catch (error) {
-        console.error('Error:', error);
+        
         throw error;
     }
 };

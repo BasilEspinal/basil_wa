@@ -223,7 +223,7 @@ const loadingData = async () => {
         for (let item of summary.value) {
             total += parseFloat(item.total_journal) || 0;
         }
-        console.log(total);
+        
         return total;
     });
 };
@@ -236,8 +236,8 @@ watch(
     () => isChanging.value,
     (newValue, oldValue) => {
         readAll(endpoint.value);
-        console.log(newValue);
-        console.log(oldValue);
+        
+        
     }
 );
 const {
@@ -441,7 +441,7 @@ const DeleteRecord = async () => {
         loadingData();
         toast.add({ severity: 'success', summary: 'Deleted Record', detail: 'Deleted', life: 3000 });
     } catch (error) {
-        console.error('Error deleting:', error);
+        
         toast.add({ severity: 'error', summary: 'Error', detail: 'Error deleting', life: 3000 });
     } finally {
         listRowSelect.value = [];

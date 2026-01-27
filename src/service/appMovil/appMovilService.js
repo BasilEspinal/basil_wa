@@ -43,12 +43,6 @@ const initializeAppMovilSession = () => {
     setSessionValue(fetchCompannyuuid, 'accessSessionFarm');
     setSessionValue(fetchCompannyName, 'accessSessionCompanyName');
     setSessionValue(fetchFarmName, 'accessSessionFarmName');
-
-    console.log('[AppMovilService] Session Loaded:', {
-        workCenter: fetchWorkCenter.value?.name,
-        company: fetchCompannyName.value,
-        farm: fetchFarmName.value
-    });
 };
 
 /**
@@ -115,10 +109,17 @@ export function useAppMovilService() {
         }
 
         // --- ROBUST RETRIEVAL ---
-        const endpoints = [
-            `/appmovil/tasksplanner?filter[company_uuid]=${companyUuid}&filter[farm_uuid]=${farmUuid}`,
-            `/appmovil/tasksplanner?filter[company_id]=${companyId}&filter[farm_id]=${farmId}`
-        ];
+        const isUuid = (str) => /^[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{12}$/.test(str);
+
+        const endpoints = [];
+
+        if (isUuid(companyUuid) && isUuid(farmUuid)) {
+            endpoints.push(`/appmovil/tasksplanner?filter[company_uuid]=${companyUuid}&filter[farm_uuid]=${farmUuid}`);
+        }
+
+        if (companyId && farmId) {
+            endpoints.push(`/appmovil/tasksplanner?filter[company_id]=${companyId}&filter[farm_id]=${farmId}`);
+        }
 
         let allFoundPlanners = [];
         for (const endpoint of endpoints) {
@@ -228,7 +229,7 @@ export function useAppMovilService() {
             holiday.value = response.data.data.length === 0 ? 'Normal' : 'Festivo';
             counter.value++;
         } catch (e) {
-            console.error('[AppMovilService] Error Get Holiday:', e);
+
             holiday.value = 'Normal'; // Fallback safe default, but logged
             return error('Error Get Holiday: ' + e.message);
         }
@@ -268,9 +269,9 @@ export function useAppMovilService() {
     const getDonesWork = async () => {
         try {
             const taskoftype_id = fetchWorkCenter?.value.taskoftype?.id;
-            console.log('[AppMovilService] taskoftype_id:', taskoftype_id);
+
             const response = await getRequest(`/lists/getDoneTypeTasksType?filter[tasks_of_type_id]=${taskoftype_id}`);
-            console.log('[AppMovilService] responseGetDonesWork:', response);
+
             counter.value++;
             return response;
         } catch (e) {
@@ -317,7 +318,7 @@ export function useAppMovilService() {
                 `/appmovil/donetarif?filter[tasks_of_type_id]=${task_of_type_id}&filter[work_type_day]=${work_type_day}&filter[work_type_tarif]=${work_type_tarif}&filter[done_of_type_id]=${done_of_type_id}&filter[farm_id]=${fetchFarmId.value}&filter[company_id]=${fetchCompannyId.value}`
             );
             counter.value++;
-            console.log('[AppMovilService] responseGetTarifOfTasksDoneAppMob:', response);
+
             return response;
         } catch (e) {
             return error('Error Tarif Tasks Done:', e);
@@ -362,19 +363,19 @@ export function useAppMovilService() {
             });
 
             const endpoint = `/appmovil/taskstarif?${params}`;
-            console.log('[AppMovilService] getTarif endpoint:', endpoint);
+
 
             const response = await getRequest(endpoint);
 
             if (!response.ok) {
-                console.error('[AppMovilService] Error fetching tarif:', response.error);
+
                 return 0;
             }
 
             counter.value++;
             return Number(response.data?.data?.[0]?.price_tarif) || 0;
         } catch (e) {
-            console.error('[AppMovilService] getTarif unexpected error:', e);
+
             return 0;
         }
     };
@@ -402,7 +403,7 @@ export function useAppMovilService() {
         for (const [key, val] of Object.entries(required)) {
             if (!val) {
                 const msg = `Falta ${key.replace(/_/g, ' ')} en tasksPlaner`;
-                console.error(msg, tp);
+
                 return error(msg);
             }
         }
@@ -433,7 +434,7 @@ export function useAppMovilService() {
         };
 
         // Log payload for debugging
-        console.log('[AppMovilService] postDailyReport payload:', dataPost);
+
 
         try {
             const resp = await postRequest('/transactions/tasks', dataPost);

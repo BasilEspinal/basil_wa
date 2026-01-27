@@ -59,7 +59,7 @@ export default function useData(locale = 'en') {
             }
             responseData.data = await response.json();
         } catch (e) {
-            console.error('[FetchDataAPI] Error en la solicitud GET:', e.message);
+            
             responseData.error += ' ' + e.message;
         }
         return responseData;
@@ -89,7 +89,7 @@ export default function useData(locale = 'en') {
                 const errorBody = await response.text();
                 const errorBodyObject = JSON.parse(errorBody);
 
-                console.error(`[FetchDataAPI] Error ${response.status}: ${errorBody}`);
+                
                 responseData.error += ` ${errorBody}`;
                 errorResponseAPI.value = errorBodyObject;
 
@@ -97,7 +97,7 @@ export default function useData(locale = 'en') {
             }
             responseData.data = await response.json();
         } catch (e) {
-            console.error('[FetchDataAPI] Error en la solicitud POST:', e.message);
+            
             responseData.error += ' ' + e.message;
         }
         return responseData;
@@ -114,8 +114,8 @@ export default function useData(locale = 'en') {
         };
         try {
             const response = await fetch(baseUrl, requestOptions);
-            console.log('Response status:', response.status);
-            console.log('Response headers:', [...response.headers]);
+            
+            
 
             responseData.ok = response.ok;
             if (!response.ok) {
@@ -127,7 +127,7 @@ export default function useData(locale = 'en') {
             }
             responseData.data = await response.json();
         } catch (e) {
-            console.error('Error en la solicitud POST:', e.message);
+            
             responseData.error += ' ' + e.message;
         }
         return responseData;
@@ -160,7 +160,7 @@ export default function useData(locale = 'en') {
                 throw new Error(`Error ${response.status} al enviar datos.`);
             }
         } catch (e) {
-            console.error('Error en la solicitud POST:', e.message);
+            
             responseData.error += ' ' + e.message;
         }
         return responseData;
@@ -182,8 +182,8 @@ export default function useData(locale = 'en') {
                 const errorBody = await response.text();
                 const errorBodyObject = JSON.parse(errorBody);
 
-                console.error(`Error ${response.status}: ${errorBody}`);
-                console.log('response', typeof errorBodyObject, errorBodyObject);
+                
+                
                 responseData.error += ` ${errorBody}`;
                 errorResponseAPI.value = errorBodyObject;
 
@@ -191,9 +191,9 @@ export default function useData(locale = 'en') {
             }
             responseData.data = await response.json();
         } catch (e) {
-            console.error('Error en la solicitud PATCH:', e.message);
+            
             responseData.error += ' ' + e.message;
-            console.log(e);
+            
         }
         return responseData;
     }
@@ -208,7 +208,7 @@ export default function useData(locale = 'en') {
                 ability.update(rules);
                 dataResponsePermissionsAPI.value = response.data;
             } catch (e) {
-                console.error('Error actualizando abilities:', e.message);
+                
                 response.error = 'Error al procesar permisos: ' + e.message;
             }
         }

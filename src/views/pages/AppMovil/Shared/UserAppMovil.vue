@@ -37,7 +37,7 @@ const onTabChange = async (id, event) => {
 };
 
 function handleUserClick(slotProps) {
-    // console.log('User clicked:', slotProps);
+    // 
     onTabChange(slotProps, { index: 1 });
 }
 
@@ -45,7 +45,7 @@ const emit = defineEmits(['update-grandparent-data']);
 
 const refreshSendingTabData = () => {
     emit('update-grandparent-data'); // Emit event to grandparent
-    console.log('Data updated');
+    
 };
 const logoUrl = computed(() => {
     return `layout/images/${layoutConfig.darkTheme.value ? 'logo-white' : 'logo-dark'}.png`;

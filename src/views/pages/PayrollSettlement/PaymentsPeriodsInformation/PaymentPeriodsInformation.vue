@@ -118,8 +118,8 @@ const loadingData = async () => {
     const response = await getRequest(endpoint.value);
     if (!response.ok) toast.add({ severity: 'error', detail: 'Error' + response.error, life: 3000 });
     dataFromComponent.value = response.data.data;
-    console.log(response);
-    console.log(dataFromComponent.value);
+    
+    
 };
 watch(
     () => dataFromComponent.value,
@@ -129,8 +129,8 @@ watch(
     () => isChanging.value,
     (newValue, oldValue) => {
         readAll(endpoint.value);
-        console.log(newValue);
-        console.log(oldValue);
+        
+        
     }
 );
 const {
@@ -334,7 +334,7 @@ const DeleteRecord = async () => {
         loadingData();
         toast.add({ severity: 'success', summary: 'Deleted Record', detail: 'Deleted', life: 3000 });
     } catch (error) {
-        console.error('Error deleting:', error);
+        
         toast.add({ severity: 'error', summary: 'Error', detail: 'Error deleting', life: 3000 });
     } finally {
         listRowSelect.value = [];

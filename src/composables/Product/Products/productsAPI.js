@@ -19,7 +19,7 @@ export default function useProducts(datos) {
      * @param {string} endPoint - API endpoint.
      */
     const postProducts = async (requestData, endPoint) => {
-        console.log('[ProductsAPI] Creating product with data:', requestData);
+        
 
         try {
             const response = await postRequest(endPoint, requestData);
@@ -27,12 +27,12 @@ export default function useProducts(datos) {
 
             if (!response.ok) {
                 errorProducts.value = response.error;
-                console.error('[ProductsAPI] Error in response:', response.error);
+                
             } else {
-                console.log('[ProductsAPI] Product created successfully:', response.data);
+                
             }
         } catch (error) {
-            console.error('[ProductsAPI] Unexpected error:', error);
+            
             errorProducts.value = error;
         }
     };
@@ -50,12 +50,12 @@ export default function useProducts(datos) {
 
             if (!response.ok) {
                 errorProducts.value = response.error;
-                console.error('[ProductsAPI] Error in response:', response.error);
+                
             } else {
-                console.log('[ProductsAPI] Product updated successfully:', response.data);
+                
             }
         } catch (error) {
-            console.error('[ProductsAPI] Unexpected error:', error);
+            
             errorProducts.value = error;
         }
     };
@@ -73,12 +73,12 @@ export default function useProducts(datos) {
 
             if (!response.ok) {
                 errorProducts.value = response.error;
-                console.error('[ProductsAPI] Error in response:', response.error);
+                
             } else {
-                console.log('[ProductsAPI] Product deleted successfully:', response.data);
+                
             }
         } catch (error) {
-            console.error('[ProductsAPI] Unexpected error:', error);
+            
             errorProducts.value = error;
         }
     };

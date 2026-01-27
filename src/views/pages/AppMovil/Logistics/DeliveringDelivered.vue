@@ -177,23 +177,23 @@ const readAll = async () => {
     Vehicles.value = respVehicles.data.data.map((vehicle) => ({ id: vehicle.id, name: vehicle.vehicle_type }));
 
     const respShippingsDelivered = await getShippingsDelivered();
-    console.log('respShippingsDelivered', respShippingsDelivered);
+    
     if (!respShippingsDelivered.ok) toast.add({ severity: 'error', detail: 'Error' + respShippingsDelivered.error, life: 3000 });
     ShippingsDelivered.value = respShippingsDelivered.data.data.map((shipping) => ({ id: shipping.id, name: shipping.voyage_num }));
 
     const respPlanning = await getDataTasksplanner();
-    console.log('respPlanning', respPlanning.data.id);
+    
     if (!respPlanning.ok) toast.add({ severity: 'error', detail: 'Error' + respPlanning.error, life: 3000 });
     dataPlanner.value = respPlanning.data.id;
-    console.log('dataPlanner', dataPlanner.value);
+    
 };
 
 const loading = ref(false);
 
 const actionRecordManager = handleSubmitNew(async (values) => {
     const accessSessionWorkCenter = JSON.parse(sessionStorage.getItem('accessSessionWorkCenter'));
-    console.log('Parsed object:', accessSessionWorkCenter);
-    console.log('Parsed object task:', accessSessionWorkCenter?.taskoftype?.id);
+    
+    
 
     loading.value = true; // Block the button
     try {
@@ -210,7 +210,7 @@ const actionRecordManager = handleSubmitNew(async (values) => {
             voyage_num: values.voyage_num_V.name
         };
 
-        console.log('data', data);
+        
 
         if (state.value === 'new') {
             // Handle 'new' state
@@ -218,7 +218,7 @@ const actionRecordManager = handleSubmitNew(async (values) => {
             // Handle 'edit' state
         } else if (state.value === 'patch') {
             responseCRUD.value = await crudService.patch('', data);
-            console.log('Response from patch:', responseCRUD.value);
+            
             if (responseCRUD.value.ok) {
                 showDialog('Success', 'Record updated successfully!', 'success', 3000);
             } else {
@@ -237,11 +237,11 @@ const actionRecordManager = handleSubmitNew(async (values) => {
         });
 
         if (responseCRUD.value.ok) {
-            console.log('data', data);
+            
             emit('update-grandparent-data');
         }
     } catch (error) {
-        console.error('Error in actionRecordManager:', error);
+        
         showDialog('Error', error.message || 'An unexpected error occurred.', 'error');
     } finally {
         loading.value = false; // Unblock the button

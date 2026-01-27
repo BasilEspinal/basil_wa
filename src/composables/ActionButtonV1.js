@@ -4,7 +4,7 @@ import useData from '@/service/FetchData/FetchDataAPI.js';
 const { getRequest, errorResponseAPI } = useData();
 
 export function useActions(endpoint) {
-    console.log(endpoint);
+    
     const titleDialog = ref('Action');
     const messageDialog = ref('');
     const status_id_Action = ref();
@@ -14,8 +14,8 @@ export function useActions(endpoint) {
     const getItems = async (id) => {
         try {
             const response = await getRequest(`${endpoint}`);
-            console.log(id);
-            console.log(response);
+            
+            
             itemsActions.value = [];
             // Check if response data is valid and contains the expected data structure
             if (response && response.data && Array.isArray(response.data.data) && response.data.data.length > 0) {
@@ -35,9 +35,9 @@ export function useActions(endpoint) {
                     //}
                 });
             } else {
-                console.log('No data returned from API');
+                
             }
-            console.log(itemsActions.value);
+            
 
             return response.data;
         } catch (error) {

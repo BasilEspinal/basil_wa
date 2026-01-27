@@ -133,7 +133,7 @@ onMounted(async () => {
     lotes.value = LOTES;
 
     const respPackingsType = await crudService.getAll();
-    //console.log("respPackingsType", respPackingsType);
+    //
     if (!respPackingsType.ok) toast.add({ severity: 'error', detail: t('appmovil.toasts.error') + ' ' + respPackingsType.error, life: 3000 });
     Packings_type.value = respPackingsType.data.data.map((packing) => ({ uuid: packing.uuid, name: packing.name }));
     const taskName = props.data.tasks_of_type?.name?.toUpperCase() || '';
@@ -182,11 +182,11 @@ const sendDailyReport = handleSubmitNew(async (values) => {
         labor: values.selected_dones_work?.uuid,
         packing_type: values.packing_typeV?.uuid
     };
-    console.log(data);
+    
 
-    console.log('data', data);
+    
     const restp = await postDailyReport(data);
-    console.log(restp);
+    
 
     toast.add({ severity: restp.ok ? 'success' : 'error', summary: t('appmovil.toasts.create'), detail: restp.ok ? t('appmovil.toasts.created') : restp.error, life: 10000 });
     //if (restp.ok) await clearFields();
@@ -201,7 +201,7 @@ const UpdateTotal = () => {
 
 const updateTaskTarif = async () => {
     tarifa.value = await getTarif(select_tasks_type.value.code);
-    // console.log("tarifa", tarifa.value);
+    // 
     tarifa.value === 0 ? toast.add({ severity: 'error', summary: t('appmovil.toasts.rate'), detail: t('appmovil.toasts.noRateDefined'), life: 10000 }) : '';
     laborActive.value = select_tasks_type.value?.label !== 'Task' && select_tasks_type.value?.name !== '' && select_tasks_type.value !== null;
     if (laborActive.value) {

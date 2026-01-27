@@ -7,8 +7,8 @@ const { getRequest } = useData();
 export const fetchInfoDataLogged = async () => {
     try {
         const response = await getRequest('/appmovil/datastart');
-        console.log('response :', response);
-        console.log('Date :', response.data.meta.server_date_answer);
+        
+        
         const meta = response.data.meta;
         const { farm, company, employee, user_email } = response.data.data;
         const employeeName = employee.full_name;
@@ -39,7 +39,7 @@ export const fetchInfoDataLogged = async () => {
 
         return response;
     } catch (error) {
-        console.error('Error:', error);
+        
         throw error;
     }
 };

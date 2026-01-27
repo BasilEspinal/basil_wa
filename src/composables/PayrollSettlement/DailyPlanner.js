@@ -17,7 +17,7 @@ export function useMenuItems() {
             if (response && response.data && Array.isArray(response.data.data) && response.data.data.length > 0) {
                 response.data.data.forEach((element) => {
                     if (element.flow_status === true) {
-                        console.log(element);
+                        
                         items.value.push({
                             label: element.workflow_status.name,
                             icon: 'pi pi-refresh',
@@ -29,12 +29,12 @@ export function useMenuItems() {
                             }
                         });
                     }
-                    console.log('Entro');
+                    
                 });
             } else {
-                console.log('No data returned from API');
+                
             }
-            console.log(items.value);
+            
 
             return response.data;
         } catch (error) {

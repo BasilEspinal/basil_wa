@@ -23,7 +23,7 @@ onMounted(async () => {
     const respRoles = await getRequest('/roles');
     if (!respRoles.ok) toast.add({ severity: 'error', detail: 'Error' + respRoles.error, life: 3000 });
     const rolsList = respRoles.data.data.map((role) => ({ id: role.id, name: role.name })) ?? [];
-    console.log(rolsList);
+    
 
     picklistValue.value = [rolsList, props.data.roles];
 

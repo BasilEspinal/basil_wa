@@ -20,7 +20,7 @@ export const initPermissions = async () => {
         // Actualizar la capacidad de CASL con los permisos obtenidos
         updateAbility();
     } catch (error) {
-        console.error('Error fetching permissions:', error.message);
+        
     }
 };
 

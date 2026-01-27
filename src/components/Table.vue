@@ -122,7 +122,7 @@ function fetchInfoAndUpdateValue() {
 
         tableData.value = dataFromComponent.value['data'];
         let mappedArray1 = [];
-            console.log('[Table] Column data identified:', dataFromComponent.value['data'][0]);
+            
             const types = ['string', 'number', 'boolean'];
             if (dataFromComponent.value['data']) {
                 for (let key in dataFromComponent.value['data'][0]) {
@@ -137,7 +137,7 @@ function fetchInfoAndUpdateValue() {
                         header: item.replaceAll('_', ' ').toUpperCase(),
                         position: index
                     }));
-                console.log('[Table] Configured columns:', columnas.value);
+                
             column.value = columnas.value;
             headerNames.value = column.value.map((col) => col.field);
 
@@ -150,7 +150,7 @@ function fetchInfoAndUpdateValue() {
         tableData.value = ref([]);
         headerNames.value = ref([]);
         loading.value = false;
-        console.error('Error fetching cut data:', error);
+        
     }
 }
 
@@ -166,7 +166,7 @@ watch(
     () => isChanging2.value,
     () => {
         loadingData();
-        console.log('[Table] isChanging triggered:', isChanging2.value);
+        
         isChanging2.value = false;
     }
 );

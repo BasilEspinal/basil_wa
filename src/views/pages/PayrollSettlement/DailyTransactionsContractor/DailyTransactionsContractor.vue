@@ -296,7 +296,7 @@ const state = ref('');
 
 const openDialogSettlement = async (mode) => {
     if (listRowSelect.value.length != 0) {
-        console.log('listRowSelect.value[0].status.id:', listRowSelect.value[0]);
+        
         await getItems(listRowSelect.value[0].status.id);
     }
     state.value = mode;
@@ -337,15 +337,15 @@ const openDelete = () => {
 
 const actionRecordManager = handleSubmitNew(async (values) => {
     const responseCRUD = ref();
-    console.log('listRowSelect:', listRowSelect.value);
-    console.log(values);
+    
+    
     const data = {
         code: values.codeV,
         name: values.name,
         company_uuid: values.company ? values.company.id : companyDefault,
         farm_uuid: values.farm ? values.farm.id : farmDefault
     };
-    console.log('data:', data);
+    
     if (state.value === 'new') {
         responseCRUD.value = await crudService.create(data);
     } else if (state.value === 'edit') {
@@ -373,7 +373,7 @@ const actionRecordManager = handleSubmitNew(async (values) => {
         listRowSelect.value = [];
         selectedRegisters.value = [];
     } else {
-        console.log('Error:', responseCRUD.value.error);
+        
     }
 });
 
@@ -385,7 +385,7 @@ const patchAction = async () => {
                 status_id: status_id_Action.value
             };
             const patchPromise = await crudService.patch(item.uuid, data);
-            console.log('patchPromise:', patchPromise);
+            
             patchPromises.push(patchPromise);
         });
 
@@ -416,7 +416,7 @@ const patchAction = async () => {
 
         await loadingData(); // Refresh data
     } catch (error) {
-        console.error('Error updating records:', error);
+        
         toast.add({
             severity: 'error',
             summary: 'Error',
@@ -450,7 +450,7 @@ const DeleteRecord = async () => {
         await loadingData();
         toast.add({ severity: 'success', summary: 'Deleted Record', detail: 'Deleted successfully', life: 3000 });
     } catch (error) {
-        console.error('Error deleting:', error);
+        
         toast.add({ severity: 'error', summary: 'Error', detail: 'Error deleting records', life: 3000 });
     } finally {
         listRowSelect.value = [];

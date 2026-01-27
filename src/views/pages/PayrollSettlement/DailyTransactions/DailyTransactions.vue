@@ -6,7 +6,6 @@ import { InitialDataService } from '@/service/InitialData';
 import { FilterMatchMode, FilterOperator } from 'primevue/api';
 import { toTypedSchema } from '@vee-validate/zod';
 import { computed } from 'vue';
-// import { saveAs } from 'file-saver/dist/FileSaver';
 import { useToast } from 'primevue/usetoast';
 import { useForm } from 'vee-validate';
 import { onBeforeMount, onMounted, ref, watch } from 'vue';
@@ -117,6 +116,11 @@ const getNestedValue = (obj, path) => {
     return path.split('.').reduce((value, key) => value && value[key], obj);
 };
 const formProperties = ref({ open: false, title: '', mode: '', data: null });
+/**
+ * Opens the form dialog for creating or viewing transaction details.
+ * @param {string} mode - The mode in which to open the form ('new', 'details', etc.).
+ * @param {Object} [rowData] - Optional transaction record.
+ */
 const openForm = (mode, rowData) => {
     if (rowData) {
         onRowSelect(rowData);
@@ -168,7 +172,11 @@ const RowSelect = (data) => {
 watch(listRowSelect, RowSelect);
 const cardSections = ref([]);
 const onRowSelect = (data) => {
-    listRowSelect.value = data;
+    if (data && !Array.isArray(data)) {
+        listRowSelect.value = [data];
+    } else {
+        listRowSelect.value = data;
+    }
     openDialogSettlement('patch_action');
     const row = listRowSelect.value[0];
     if (row) {
@@ -287,7 +295,9 @@ watch(listRowSelect, onRowSelect);
 const onSelectAllChange = () => {
     onRowSelect();
 };
-const filters = ref();
+const filters = ref({
+    global: { value: null, matchMode: FilterMatchMode.CONTAINS }
+});
 
 const clearFilter = () => {
     initFilters();
@@ -328,16 +338,15 @@ const readAll = async () => {
     if (!respCompan.ok) toast.add({ severity: 'error', detail: 'Error' + respCompan.error, life: 3000 });
     Compan.value = respCompan.data.data.map((comp) => ({ id: comp.uuid, name: comp.name }));
 };
+/**
+ * Fetches transaction records from the API using CrudService.
+ */
 const loadingData = async () => {
-    //const response = await getRequest(endpoint.value);
     const response = await crudService.getAll();
     if (!response.ok) toast.add({ severity: 'error', detail: 'Error' + response.error, life: 3000 });
     dataFromComponent.value = response.data.data;
 };
-watch(
-    () => dataFromComponent.value,
-    (newValue, oldValue) => {}
-);
+
 
 const {
     handleSubmit: handleSubmitNew,
@@ -423,15 +432,15 @@ const openDelete = () => {
 
 const actionRecordManager = handleSubmitNew(async (values) => {
     const responseCRUD = ref();
-    console.log('listRowSelect:', listRowSelect.value);
-    console.log(values);
+    
+    
     const data = {
         code: values.codeV,
         name: values.name,
         company_uuid: values.company ? values.company.id : companyDefault,
         farm_uuid: values.farm ? values.farm.id : farmDefault
     };
-    console.log('data:', data);
+    
     if (state.value === 'new') {
         responseCRUD.value = await crudService.create(data);
     } else if (state.value === 'edit') {
@@ -459,10 +468,13 @@ const actionRecordManager = handleSubmitNew(async (values) => {
         listRowSelect.value = [];
         selectedRegisters.value = [];
     } else {
-        console.log('Error:', responseCRUD.value.error);
+        
     }
 });
 
+/**
+ * Handles batch patching of status for selected transactions.
+ */
 const patchAction = async () => {
     try {
         const patchPromises = [];
@@ -470,13 +482,11 @@ const patchAction = async () => {
             const data = {
                 status_id: status_id_Action.value
             };
-            const patchPromise = await crudService.patch(item.uuid, data);
-            console.log('patchPromise:', patchPromise);
+            const patchPromise = crudService.patch(item.uuid, data);
             patchPromises.push(patchPromise);
         });
 
         const responses = await Promise.all(patchPromises);
-
         const hasError = responses.some((response) => !response.ok);
 
         if (!hasError) {
@@ -500,9 +510,8 @@ const patchAction = async () => {
             });
         }
 
-        await loadingData(); // Refresh data
+        await loadingData();
     } catch (error) {
-        console.error('Error updating records:', error);
         toast.add({
             severity: 'error',
             summary: 'Error',
@@ -536,7 +545,7 @@ const DeleteRecord = async () => {
         await loadingData();
         toast.add({ severity: 'success', summary: 'Deleted Record', detail: 'Deleted successfully', life: 3000 });
     } catch (error) {
-        console.error('Error deleting:', error);
+        
         toast.add({ severity: 'error', summary: 'Error', detail: 'Error deleting records', life: 3000 });
     } finally {
         listRowSelect.value = [];
@@ -672,15 +681,7 @@ const searchBranches = (event) => {
 };
 </script>
 
-<!-- 
-filterDisplay="menu"
-v-model:filters="filters"
-:globalFilterFields="['', 'company.name']"
 
-
-const documentFrozen = ref(true); change name field 
-<DataTable id="tblData"
-     -->
 <template>
     <div>
         <div class="card mb-4 bg-primary-reverse border-round-xl shadow-2">

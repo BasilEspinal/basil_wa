@@ -4,7 +4,7 @@ import useData from '@/service/FetchData/FetchDataAPI.js';
 const { getRequest, errorResponseAPI } = useData();
 
 export function useActions(endpoint) {
-    console.log(endpoint);
+    
     const titleDialog = ref('Action');
     const messageDialog = ref('');
     const status_id_Action = ref();
@@ -16,7 +16,7 @@ export function useActions(endpoint) {
             const finalId = id !== undefined ? id : 0; // Use `1` as the default ID if `id` is undefined
 
             const response = await getRequest(`${endpoint}/${finalId}`);
-            console.log(response);
+            
             itemsActions.value = [];
 
             // Check if response data is valid and contains the expected data structure
@@ -60,7 +60,7 @@ export function useActions(endpoint) {
                 });
             } else {
             }
-            console.log(itemsActions.value);
+            
             return response.data;
         } catch (error) {
             errorResponseAPI(error);
@@ -74,7 +74,7 @@ export function useActions(endpoint) {
     //         // Choose the right endpoint
     //         if (id === "non-flow") {
     //             response = await getRequest(`${endpoint}/`);
-    //             console.log("non-flow response:", response);
+    //             
     //         } else {
     //             const finalId = id !== undefined ? id : 1;
     //             response = await getRequest(`${endpoint}/${finalId}`);
@@ -86,7 +86,7 @@ export function useActions(endpoint) {
     //             if (id === "non-flow") {
     //                 // Handle non-flow data
     //                 response.data.forEach(element => {
-    //                     console.log("non-flow element:", element);
+    //                     
     //                     itemsActions.value.push({
     //                         label: element.name,
     //                         icon: 'pi pi-check',
@@ -119,7 +119,7 @@ export function useActions(endpoint) {
     //             }
     //         }
 
-    //         console.log("itemsActions:", itemsActions.value);
+    //         
     //         return response.data;
     //     } catch (error) {
     //         errorResponseAPI(error);

@@ -51,7 +51,7 @@ const compareStoredDate = () => {
 
     // Check if the date exists
     if (!storedDateStr) {
-        console.log('No date found in sessionStorage.');
+        
         return { condition: false, message: 'No date found in sessionStorage.', dateStored: storedDateStr };
     }
 
@@ -64,13 +64,13 @@ const compareStoredDate = () => {
 
     // Compare the dates
     if (storedDate.getTime() === currentDate.getTime()) {
-        console.log('The stored date is today.');
+        
         return { condition: true, message: 'The stored date is today.', dateStored: storedDateStr };
     } else if (storedDate.getTime() < currentDate.getTime()) {
-        console.log('The stored date is in the past.');
+        
         return { condition: false, message: 'The stored date is in the past.', dateStored: storedDateStr, dateGet: currentDate };
     } else {
-        console.log('The stored date is in the future.');
+        
         return { condition: false, message: 'The stored date is in the future.', dateStored: storedDateStr };
     }
 };
@@ -91,7 +91,7 @@ const totalJournalTotal = ref(0);
 
 const getDataEmployeesInfo = async () => {
     if (!dataApp.value || !dataApp.value.tasks_of_type) {
-        console.warn('No se puede ejecutar getDataEmployeesInfo porque dataApp o tasks_of_type es null');
+        
         return;
     }
 
@@ -236,11 +236,11 @@ const functionsData = async () => {
     serverSteps.value = [];
     serverDetails.value = [];
     
-    console.log('response,',response);
+    
 
     dataApp.value = response.data;
     lotes.value = dataApp.value?.crop_lots;
-    console.log('dataApp.value', dataApp.value);
+    
 
     await getUser();
     //titulo.value = t('appmovil.titulo') + ' ' + (TASK_OF_TYPE?.name || 'Sin nombre');
@@ -248,10 +248,10 @@ const functionsData = async () => {
     await getDataEmployeesInfo(); // optional if not on summary tab
     loading.value = false;
 
-    console.log('TASK_OF_TYPE:', TASK_OF_TYPE?.id);
-    console.log('fetchWorkCenter:', fetchWorkCenter.value);
-    console.log('fetchFarmId:', sessionStorage.getItem('accessSessionFarmId'));
-    console.log('fetchCompanyId:', sessionStorage.getItem('accessSessionCompanyId'));
+    
+    
+    
+    
 
     ////////////////////////
 };
@@ -270,7 +270,7 @@ const getUser = async () => {
 const getData = async () => {
     const response = await getDataTasksplanner();
 
-    console.log('response', response);
+    
 
     if (!response.ok || !response.data || response.data.length === 0) {
         // Handle error if response is not OK or if data is empty
@@ -281,7 +281,7 @@ const getData = async () => {
     } else {
         // If valid, handle the data as usual
         dataApp.value = response.data;
-        console.log('dataApp', dataApp.value);
+        
         return true;
     }
 };

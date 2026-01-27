@@ -18,7 +18,7 @@ const props = defineProps({
 });
 
 const newDataRols = () => {
-    console.log('CAMBIAAAA', picklistValue.value[1]);
+    
     emit('SelectDataListB', { list: picklistValue.value[1] });
 };
 </script>

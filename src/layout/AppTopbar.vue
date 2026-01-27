@@ -17,8 +17,8 @@ const { resetAppMovilService } = useAppMovilService();
 
 const { locale } = useI18n();
 // watch(locale, (newLocale) => {
-//     console.log('Language changed to:', newLocale);
-//     console.log('Updated headers:', APISettings.value.headers.get('Accept-Language'));
+//     
+//     
 // });
 
 const countries = ref([
@@ -124,7 +124,7 @@ const checkStorageAndInitialize = async (key, callback, retries = 10, delay = 50
     } else if (retries > 0) {
         setTimeout(() => checkStorageAndInitialize(key, callback, retries - 1, delay), delay);
     } else {
-        console.log(`No hay ${key}`);
+        
     }
 };
 

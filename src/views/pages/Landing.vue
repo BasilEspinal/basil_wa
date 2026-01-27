@@ -45,7 +45,7 @@ const onChangeTheme = (mode) => {
 };
 
 const route = () => {
-    console.log('token', sessionStorage.getItem('accessSessionToken'));
+    
     if (!sessionStorage.getItem('accessSessionToken')) {
         router.push('/auth/login');
     } else {

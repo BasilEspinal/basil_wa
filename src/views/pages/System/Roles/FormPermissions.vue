@@ -56,9 +56,9 @@ const savePermiss = async () => {
         permissions: filterPermiss.value[1].map((item) => ({ id: item.id }))
     };
     const restp = await putResponseAPI(dataJson, endpoint.value, props.data.id);
-    console.log('picklistValue', picklistValue.value[1]);
-    console.log('dataJson', dataJson);
-    console.log('restp', restp);
+    
+    
+    
     toast.add({ severity: restp.ok ? 'success' : 'error', summary: 'Update User ' + props.data.name, detail: restp.ok ? 'Acualizado' : 'Error: ', life: 3000 });
     emit('update', { update: true });
 };

@@ -604,7 +604,7 @@ const patchAction = async () => {
                 status_id: status_id_Action.value
             };
             const patchPromise = await crudService.patch(item.uuid, data);
-            console.log('patchPromise:', patchPromise);
+            
             patchPromises.push(patchPromise);
         });
 
@@ -635,7 +635,7 @@ const patchAction = async () => {
 
         await loadingData(); // Refresh data
     } catch (error) {
-        console.error('Error updating records:', error);
+        
         toast.add({
             severity: 'error',
             summary: 'Error',
@@ -669,7 +669,7 @@ const DeleteRecord = async () => {
         await loadingData();
         toast.add({ severity: 'success', summary: 'Deleted Record', detail: 'Deleted successfully', life: 3000 });
     } catch (error) {
-        console.error('Error deleting:', error);
+        
         toast.add({ severity: 'error', summary: 'Error', detail: 'Error deleting records', life: 3000 });
     } finally {
         listRowSelect.value = [];

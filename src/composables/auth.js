@@ -28,7 +28,7 @@ export default function useAuth() {
         fetch('/api/v1/login', loginForm)
             .then(async (response) => response.json())
             .then(async (data) => {
-                console.log(data);
+                
                 user.value.name = data.data.name;
                 user.value.email = data.data.email;
                 loginUser(data);
