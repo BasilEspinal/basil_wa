@@ -431,7 +431,7 @@ const documentFrozen = ref(true); change name field
                 <template #empty> No customers found. </template>
                 <template #loading> Loading customers data. Please wait. </template>
                 <Column selectionMode="multiple" headerStyle="width: 3rem"></Column>
-                <Column field="code" filterField="code" header="Code" sortable :frozen="documentFrozen">
+                <Column field="code" filterField="code" :header="documentFrozen ? '' : 'Code'" sortable :frozen="documentFrozen">
                     <!--Replace :frozen with the model-->
                     <template #header>
                         <ToggleButton v-model="documentFrozen" onIcon="pi pi-lock" offIcon="pi pi-lock-open" onLabel="" offLabel="" @click.stop />

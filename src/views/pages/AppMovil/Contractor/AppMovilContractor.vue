@@ -157,6 +157,7 @@ const {
                     name: z.string().min(4),
                     uuid: z.string().min(4)
                 })
+                .nullable()
                 .optional(),
             crop_lot_qtyV: z
                 .number()
@@ -195,18 +196,22 @@ const [quantityEmployees] = defineField('quantityEmployees');
 const [crop_lot_qtyV] = defineField('crop_lot_qtyV');
 const [notesV] = defineField('notesV');
 
-watch(flagIndividual, () => {
-    quantityEmployees.value = flagIndividual.value ? 1 : 1; // Ensure default value
+watch(flagIndividual, (newVal) => {
+    if (newVal) {
+        quantityEmployees.value = 1;
+    }
+    // If false (Group), we do NOT force a value, allowing the edit data to persist
 });
 
 watch(work, () => {
-    
-    
-    if (work.value.work_type_tarif == 'Individual') {
-        flagIndividual.value = true;
-        quantityEmployees.value = 1;
-    } else {
-        flagIndividual.value = false;
+    // Only trigger logic if work is actually selected
+    if (work.value && work.value.work_type_tarif) {
+        if (work.value.work_type_tarif == 'Individual') {
+            flagIndividual.value = true;
+            quantityEmployees.value = 1;
+        } else {
+            flagIndividual.value = false;
+        }
     }
 });
 
@@ -530,7 +535,7 @@ watch([() => props.editData, Works, originalAvailablePickList], async ([newDataR
             
             quantityEmployees.value = finalData.employee_qty ?? 0;
             
-            // totalTarif.value = finalData.total_tarif_task; 
+            totalTarif.value = Number(finalData.total_tarif_task) || 0; 
 
             // 2. Set Work
             if (currentWorks.length > 0) {
@@ -569,6 +574,25 @@ watch([() => props.editData, Works, originalAvailablePickList], async ([newDataR
             }
 
             // 3. Set PickList
+            if (finalData.employees_detail && Array.isArray(finalData.employees_detail)) {
+                 // Inject missing employees from detail into currentUsers to ensure they can be selected
+                 const existingIds = new Set(currentUsers.map(u => String(u.id)));
+                 finalData.employees_detail.forEach(emp => {
+                     if (!existingIds.has(String(emp.id))) {
+                         // Add minimum required fields
+                         currentUsers.unshift({
+                             id: emp.id,
+                             uuid: emp.uuid,
+                             full_name: emp.full_name,
+                             document: emp.document,
+                             photo: emp.photo,
+                             workCenter: emp.workCenter // Preserve if available
+                         });
+                         existingIds.add(String(emp.id)); // Prevent duplicates if multiple
+                     }
+                 });
+            }
+
             if (currentUsers.length > 0) {
                 const processEmployees = (ids, fieldType) => {
                      // Normalize target IDs to strings
@@ -591,7 +615,9 @@ watch([() => props.editData, Works, originalAvailablePickList], async ([newDataR
 
                 // Check for 'employees' array (objects) or 'employees_ids' (ids)
                 // Also check inside 'finalData' which includes prop data
-                if (finalData.employees && Array.isArray(finalData.employees)) {
+                if (finalData.employees_detail && Array.isArray(finalData.employees_detail)) {
+                     processEmployees(finalData.employees_detail.map(e => e.id), 'id');
+                } else if (finalData.employees && Array.isArray(finalData.employees)) {
                     // Start by assuming employees have 'id' or 'uuid'
                      processEmployees(finalData.employees.map(e => e.id), 'id');
                 } else if (finalData.employees_ids && Array.isArray(finalData.employees_ids)) {

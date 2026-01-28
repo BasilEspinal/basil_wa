@@ -525,7 +525,7 @@ const documentFrozen = ref(true); change name field
                 <template #loading> Loading customers data. Please wait. </template>
                 <Column selectionMode="multiple" headerStyle="width: 3rem"></Column>
 
-                <Column field="worker_employee.document" filterField="worker_employee.document" header="Document" sortable :frozen="documentFrozen">
+                <Column field="worker_employee.document" filterField="worker_employee.document" :header="documentFrozen ? '' : 'Document'" sortable :frozen="documentFrozen">
                     <!--Replace :frozen with the model-->
                     <template #header>
                         <ToggleButton v-model="documentFrozen" onIcon="pi pi-lock" offIcon="pi pi-lock-open" onLabel="" offLabel="" @click.stop />

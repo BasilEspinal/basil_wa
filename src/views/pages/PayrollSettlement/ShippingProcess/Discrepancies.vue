@@ -449,7 +449,7 @@ const documentFrozen = ref(true); change name field
                 <template #empty> No customers found. </template>
                 <template #loading> Loading customers data. Please wait. </template>
                 <Column selectionMode="multiple" headerStyle="width: 3rem"></Column>
-                <Column v-for="col in dynamicColumns" :key="col.field" :field="col.field" :header="col.header" :frozen="col.frozen && documentFrozen" sortable>
+                <Column v-for="col in dynamicColumns" :key="col.field" :field="col.field" :header="col.frozen ? '' : col.header" :frozen="col.frozen && documentFrozen" sortable>
                     <!-- Header Template -->
                     <template v-if="col.frozen" #header>
                         <ToggleButton v-model="documentFrozen" onIcon="pi pi-lock" offIcon="pi pi-lock-open" onLabel="" offLabel="" @click.stop />

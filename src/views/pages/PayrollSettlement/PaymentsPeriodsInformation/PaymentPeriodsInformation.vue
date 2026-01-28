@@ -431,7 +431,7 @@ const documentFrozen = ref(true); change name field
                 </template>
         </Column> -->
 
-                <Column field="planner_tasks.transaction_date" filterField="planner_tasks.transaction_date" header="Transaction Date" sortable:frozen="documentFrozen">
+                <Column field="planner_tasks.transaction_date" filterField="planner_tasks.transaction_date" :header="documentFrozen ? '' : 'Transaction Date'" sortable :frozen="documentFrozen">
                     <!--Replace :frozen with the model-->
                     <template #header>
                         <ToggleButton v-model="documentFrozen" onIcon="pi pi-lock" offIcon="pi pi-lock-open" onLabel="" offLabel="" @click.stop />
