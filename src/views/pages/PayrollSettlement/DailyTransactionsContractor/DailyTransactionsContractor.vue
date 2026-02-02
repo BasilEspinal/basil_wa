@@ -294,6 +294,8 @@ const formDialog = ref(false);
 
 const state = ref('');
 
+const appMovilContractorRef = ref(null);
+
 const openDialogSettlement = async (mode) => {
     if (listRowSelect.value.length != 0) {
         
@@ -308,6 +310,9 @@ const openDialog = (mode, rowData) => {
     if (mode === 'new') {
         resetForm();
     } else {
+        if (rowData) {
+            listRowSelect.value = [rowData]; // Ensure selection is updated for prop passing
+        }
         const source = rowData || listRowSelect.value[0];
         if (!source) {
             toast.add({ severity: 'error', summary: 'Error', detail: 'Seleccione un registro', life: 3000 });
@@ -335,47 +340,23 @@ const openDelete = () => {
     formDialogDelete.value = true;
 };
 
-const actionRecordManager = handleSubmitNew(async (values) => {
-    const responseCRUD = ref();
-    
-    
-    const data = {
-        code: values.codeV,
-        name: values.name,
-        company_uuid: values.company ? values.company.id : companyDefault,
-        farm_uuid: values.farm ? values.farm.id : farmDefault
-    };
-    
-    if (state.value === 'new') {
-        responseCRUD.value = await crudService.create(data);
-    } else if (state.value === 'edit') {
-        const { uuid } = listRowSelect.value[0];
-        responseCRUD.value = await crudService.update(uuid, data);
-    } else if (state.value === 'clone') {
-        responseCRUD.value = await crudService.create(data);
-    } else if (state.value === 'patch') {
-        responseCRUD.value = await crudService.patch(uuid, data);
-    } else {
-        const { uuid } = listRowSelect.value[0];
+const actionRecordManager = async () => {
+    if (appMovilContractorRef.value) {
+        const response = await appMovilContractorRef.value.actionRecordManager();
+        if (response && response.ok) {
+            toast.add({
+                severity: 'success',
+                summary: state.value,
+                detail: 'Done',
+                life: 3000
+            });
+            await loadingData();
+            formDialog.value = false;
+            listRowSelect.value = [];
+            selectedRegisters.value = [];
+        }
     }
-
-    // Mostrar notificación y cerrar el diálogo si la operación fue exitosa
-    if (responseCRUD.value.ok) {
-        toast.add({
-            severity: responseCRUD.value.ok ? 'success' : 'error',
-            summary: state.value,
-            detail: responseCRUD.value.ok ? 'Done' : responseCRUD.value.error,
-            life: 3000
-        });
-        await loadingData();
-
-        formDialog.value = false;
-        listRowSelect.value = [];
-        selectedRegisters.value = [];
-    } else {
-        
-    }
-});
+};
 
 const patchAction = async () => {
     try {
@@ -712,7 +693,7 @@ const documentFrozen = ref(true); change name field
                 </div>
             </Dialog>
             <Dialog v-model:visible="formDialog" modal :header="formDialogTitle" class="p-fluid text-center mx-auto">
-                <AppMovilContractor :editData="state === 'edit' ? listRowSelect[0] : null" />
+                <AppMovilContractor ref="appMovilContractorRef" :editData="state === 'edit' ? listRowSelect[0] : null" :mode="state" />
 
                 <div class="flex justify-content-end gap-2 flex-auto">
                     <Button class="flex-auto" type="button" label="Cancel" severity="secondary" @click="formDialog = false" />

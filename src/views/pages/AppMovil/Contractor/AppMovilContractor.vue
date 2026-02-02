@@ -26,6 +26,10 @@ const props = defineProps({
     editData: {
         type: Object,
         default: null
+    },
+    mode: {
+        type: String,
+        default: 'new'
     }
 });
 let endpoint = ref('/transactions/contractor/work'); //replace endpoint with your endpoint
@@ -100,8 +104,10 @@ const readAll = async () => {
         originalAvailablePickList.value = response.data.data;
 
         // Update the dataPickList with the new data
-        dataPickList.value[0] = [...originalAvailablePickList.value];
-        dataPickList.value[1] = []; // Clear the target list
+        if (!props.editData?.uuid) {
+            dataPickList.value[0] = [...originalAvailablePickList.value];
+            dataPickList.value[1] = []; // Clear the target list
+        }
     } catch (error) {
         toast.add({ severity: 'error', detail: 'An error occurred while loading data. in try', life: 3000 });
     } finally {
@@ -153,9 +159,10 @@ const {
         z.object({
             work: z
                 .object({
-                    work_type_tarif: z.string().min(4),
-                    name: z.string().min(4),
-                    uuid: z.string().min(4)
+                    work_type_tarif: z.string().optional(),
+                    name: z.string().optional(),
+                    uuid: z.string().optional(),
+                    id: z.union([z.string(), z.number()]).optional()
                 })
                 .nullable()
                 .optional(),
@@ -191,7 +198,7 @@ const {
     )
 });
 
-const [work] = defineField('work');
+const [work, workProps] = defineField('work');
 const [quantityEmployees] = defineField('quantityEmployees');
 const [crop_lot_qtyV] = defineField('crop_lot_qtyV');
 const [notesV] = defineField('notesV');
@@ -242,7 +249,7 @@ const resetAll = async () => {
     }
 };
 
-const state = ref('new');
+// const state = ref('new'); // Use props.mode instead
 const errorsMessage = ref('');
 const errorsMessageFlag = ref(false);
 const actionRecordManager = handleSubmitNew(async (values) => {
@@ -251,7 +258,7 @@ const actionRecordManager = handleSubmitNew(async (values) => {
     const responseCRUD = ref();
     try {
         const today = new Date();
-        if (!values.work?.uuid) {
+        if (!values.work?.uuid && !values.work?.id) {
     toast.add({
         severity: 'error',
         summary: 'Error',
@@ -261,15 +268,18 @@ const actionRecordManager = handleSubmitNew(async (values) => {
     });
     return;
 }
+       const formattedDate = `${today.getFullYear()}-${String(today.getMonth() + 1).padStart(2, '0')}-${String(today.getDate()).padStart(2, '0')}`;
+
         const data = {
             trans_dev: false,
-            transaction_date_send: `${today.getFullYear()}-${String(today.getMonth() + 1).padStart(2, '0')}-${String(today.getDate()).padStart(2, '0')}`,
+            transaction_date_send: formattedDate,
+            transaction_date: formattedDate,
             calendar_uuid: null,
             // tasks_of_type_uuid: TASK_OF_TYPE.uuid,
             tasks_of_type_uuid: taskOfType.value?.uuid,
             supervisory_employee_uuid: supervisoryEmployee,
             type_price_task: 'WorkDone',
-            done_of_type_uuid: values.work?.uuid || null,
+            done_of_type_uuid: values.work?.uuid || values.work?.id || null,
             //done_of_type_uuid: values.work.uuid,
             work_type_tarif: values.work?.work_type_tarif || 'No me llega nada en work type tarif',
             employee_qty: values.quantityEmployees,
@@ -289,16 +299,16 @@ const actionRecordManager = handleSubmitNew(async (values) => {
         return;
         }     
 
-        if (state.value === 'new') {
+        if (props.mode === 'new') {
             responseCRUD.value = await crudService.create(data);
             loadLazyData();
-        } else if (state.value === 'edit') {
+        } else if (props.mode === 'edit') {
             const uuid = props.editData?.uuid;
             if (!uuid) throw new Error('No UUID found for update');
             responseCRUD.value = await crudService.update(uuid, data);
-        } else if (state.value === 'clone') {
+        } else if (props.mode === 'clone') {
             responseCRUD.value = await crudService.create(data);
-        } else if (state.value === 'patch') {
+        } else if (props.mode === 'patch') {
             responseCRUD.value = await crudService.patch(uuid, data);
         }
 
@@ -314,7 +324,10 @@ const actionRecordManager = handleSubmitNew(async (values) => {
             resetForm();
             await initializeComponent();
 
-            formDialog.value = false;
+            // formDialog.value = false; // Managed by parent
+            listRowSelect.value = [];
+            selectedRegisters.value = [];
+            return responseCRUD.value; // Return response so parent knows it succeeded
             listRowSelect.value = [];
             selectedRegisters.value = [];
         } else {
@@ -500,12 +513,13 @@ watch([() => props.editData, Works, originalAvailablePickList], async ([newDataR
     
 
     if (newDataRaw?.uuid) {
-        
+        console.log('DEBUG: Watcher Start. UUID:', newDataRaw.uuid);
         loading.value = true;
 
         try {
             // Fetch full data with 'employees' relation included
             const response = await crudService.getById(newDataRaw.uuid, { include: 'employees' }); // Try standard include
+            console.log('DEBUG: API Response OK:', response.ok);
             if (!response.ok) {
                 toast.add({ severity: 'error', detail: 'Error loading details: ' + response.error, life: 3000 });
                 return;
@@ -521,9 +535,18 @@ watch([() => props.editData, Works, originalAvailablePickList], async ([newDataR
             // Only overwrite if fetched has value
             for (const key in newData) {
                 if (newData[key] !== null && newData[key] !== undefined) {
+                    // Defensive check for array fields to prevent overwriting with empty arrays if we already have data
+                    if ((key === 'employees' || key === 'employees_detail') && Array.isArray(newData[key]) && newData[key].length === 0) {
+                         // Check if we have existing data for this key
+                         if (Array.isArray(finalData[key]) && finalData[key].length > 0) {
+                             console.log('Preserving existing', key, 'because fetched is empty');
+                             continue;
+                         }
+                    }
                     finalData[key] = newData[key];
                 }
             }
+            console.log('DEBUG: finalData employees:', finalData.employees?.length, 'ids:', finalData.employees_ids?.length, 'detail:', finalData.employees_detail?.length);
 
             
 
@@ -595,39 +618,54 @@ watch([() => props.editData, Works, originalAvailablePickList], async ([newDataR
 
             if (currentUsers.length > 0) {
                 const processEmployees = (ids, fieldType) => {
-                     // Normalize target IDs to strings
+                     console.log('DEBUG: processEmployees. IDs:', ids, 'FieldType:', fieldType);
+                     // Normalize target IDs to strings for robust comparison
                      const selectedIds = new Set(ids.map(id => String(id)));
+                     console.log('DEBUG: Looking for IDs:', [...selectedIds]);
+                     if (currentUsers.length > 0) console.log('DEBUG: Available IDs sample:', currentUsers.slice(0, 3).map(u => u.id));
 
                      const available = [];
                      const selected = [];
                      
                      currentUsers.forEach(user => {
                          const userVal = fieldType === 'uuid' ? user.uuid : user.id;
-                         // Normalize candidate ID to string
+                         // Normalize candidate ID to string and check
                          if (selectedIds.has(String(userVal))) {
                              selected.push(user);
                          } else {
                              available.push(user);
                          }
                      });
+                     
+                     if (selected.length === 0 && selectedIds.size > 0) {
+                        console.warn('DEBUG: ZERO matches found despite having target IDs!');
+                     }
+                     
+                     console.log('DEBUG: Result - Available:', available.length, 'Selected:', selected.length);
+                     // Direct assignment to dataPickList (Vue reactivity handles the array content)
                      dataPickList.value = [available, selected];
+                     
+                     // Force quantity update to match selected employees
+                     quantityEmployees.value = selected.length;
                 };
 
                 // Check for 'employees' array (objects) or 'employees_ids' (ids)
-                // Also check inside 'finalData' which includes prop data
-                if (finalData.employees_detail && Array.isArray(finalData.employees_detail)) {
+                // Priority: employees_detail (full objects) > employees (full objects) > employees_ids (ids)
+                if (finalData.employees_detail && Array.isArray(finalData.employees_detail) && finalData.employees_detail.length > 0) {
+                     console.log('DEBUG: Processing employees_detail. Sample Item:', finalData.employees_detail[0]);
                      processEmployees(finalData.employees_detail.map(e => e.id), 'id');
-                } else if (finalData.employees && Array.isArray(finalData.employees)) {
-                    // Start by assuming employees have 'id' or 'uuid'
+                } else if (finalData.employees && Array.isArray(finalData.employees) && finalData.employees.length > 0) {
+                     console.log('DEBUG: Processing employees');
                      processEmployees(finalData.employees.map(e => e.id), 'id');
-                } else if (finalData.employees_ids && Array.isArray(finalData.employees_ids)) {
+                } else if (finalData.employees_ids && Array.isArray(finalData.employees_ids) && finalData.employees_ids.length > 0) {
+                     console.log('DEBUG: Processing employees_ids');
                      processEmployees(finalData.employees_ids, 'id');
-                } else if (finalData.employees_ids) {
-                    // It might be a string if comma separated?
-                     
                 } else {
-                    // Fallback: if no list found, reset to all available
-                    dataPickList.value = [[...currentUsers], []];
+                     console.log('DEBUG: No employees found to process');
+                     // Fallback: if no valid list found, reset to all available
+                     if (props.mode !== 'edit') {
+                         dataPickList.value = [[...currentUsers], []];
+                     } 
                 }
             }
         } catch (error) {
@@ -644,7 +682,9 @@ watch([() => props.editData, Works, originalAvailablePickList], async ([newDataR
 }, { immediate: true });
 
 
-
+defineExpose({
+    actionRecordManager
+});
 </script>
 
 <template>
@@ -688,7 +728,7 @@ watch([() => props.editData, Works, originalAvailablePickList], async ([newDataR
                         <div class="field col-12 md:col-3">
                             <div class="flex align-items-center">
                                 <label for="username" class="font-semibold w-3">Labores:</label>
-                                <AutoComplete v-model="work" inputId="ac" :suggestions="works" @complete="searchBranches" field="name" dropdown />
+                                <AutoComplete v-model="work" v-bind="workProps" inputId="ac" :suggestions="works" @complete="searchBranches" field="name" dropdown />
                             </div>
                             <FrontEndErrors :errorsNew="errorsNew" name="work" />
                             <BackendErrors :name="errorResponseAPI?.errors?.work" />
@@ -745,7 +785,7 @@ watch([() => props.editData, Works, originalAvailablePickList], async ([newDataR
                 <div class="card">
                     <div class="field col-12 md:col-6">
                         <div class="flex align-items-center">
-                            <label for="username" class="font-semibold w-6">Cantidad:</label>
+                            <label for="username" class="font-semibold w-6">Cantidad Lotes:</label>
                             <InputNumber v-model="crop_lot_qtyV" showButtons style="width: 6rem" :min="0" :max="99">
                                 <template #incrementbuttonicon>
                                     <span class="pi pi-plus" />
@@ -811,9 +851,7 @@ watch([() => props.editData, Works, originalAvailablePickList], async ([newDataR
                     <BackendErrors :name="errorResponseAPI?.errors?.notesV" />
                 </div>
 
-                <div class="field col-12">
-                    <Button class="flex-auto" type="button" label="Enviar" :disabled="isSubmitting" @click="actionRecordManager(state)" />
-                </div>
+
             </TabPanel>
 
             <TabPanel>

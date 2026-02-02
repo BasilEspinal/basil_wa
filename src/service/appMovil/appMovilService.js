@@ -123,9 +123,13 @@ export function useAppMovilService() {
 
         let allFoundPlanners = [];
         for (const endpoint of endpoints) {
-            const resp = await getRequest(endpoint);
-            if (resp.ok && Array.isArray(resp.data?.data)) {
-                allFoundPlanners = [...allFoundPlanners, ...resp.data.data];
+            try {
+                const resp = await getRequest(endpoint);
+                if (resp.ok && Array.isArray(resp.data?.data)) {
+                    allFoundPlanners = [...allFoundPlanners, ...resp.data.data];
+                }
+            } catch (error) {
+                console.warn(`Failed to fetch tasks from ${endpoint}:`, error);
             }
         }
 
