@@ -1,6 +1,6 @@
 <script setup>
 import { ref, reactive, computed, onMounted } from 'vue';
-import { defineProps } from 'vue';
+
 import { useToast } from 'primevue/usetoast'; // Si usas PrimeVue
 
 // Definir los props que el componente acepta

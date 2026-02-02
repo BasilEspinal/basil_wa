@@ -1,6 +1,6 @@
 <script setup>
 import { useToast } from 'primevue/usetoast'; // Si usas PrimeVue
-import { defineProps, onMounted } from 'vue';
+import { onMounted } from 'vue';
 
 // Definir los props que el componente acepta
 const props = defineProps({

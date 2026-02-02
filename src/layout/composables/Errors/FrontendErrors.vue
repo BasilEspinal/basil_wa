@@ -1,5 +1,5 @@
 <script setup>
-import { defineProps } from 'vue';
+
 
 // Define the props that the component will accept
 const props = defineProps({
