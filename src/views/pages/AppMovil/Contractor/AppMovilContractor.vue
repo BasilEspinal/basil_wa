@@ -280,7 +280,7 @@ const actionRecordManager = handleSubmitNew(async (values) => {
             tasks_of_type_uuid: taskOfType.value?.uuid,
             supervisory_employee_uuid: supervisoryEmployee,
             type_price_task: 'WorkDone',
-            done_of_type_uuid: values.work?.uuid || values.work?.id || null,
+            done_of_type_uuid: values.work?.uuid || null,
             //done_of_type_uuid: values.work.uuid,
             work_type_tarif: values.work?.work_type_tarif || 'No me llega nada en work type tarif',
             employee_qty: values.quantityEmployees,
@@ -316,7 +316,7 @@ const actionRecordManager = handleSubmitNew(async (values) => {
         if (responseCRUD.value.ok) {
             toast.add({
                 severity: 'success',
-                summary: state.value,
+                summary: props.mode === 'edit' ? 'Updated' : 'Created',
                 detail: 'Done',
                 life: 3000
             });
@@ -457,7 +457,15 @@ const taskOfTypeId = computed(() => fetchWorkCenter.value?.taskoftype?.id ?? nul
 watch([work, taskOfTypeId], async ([w, toId]) => {
   // More robust validation
   if (!w || !w.work_type_tarif || !w.id || !toId || !HOLIDAY.value) {
-    totalTarif.value = 0;
+    // Only reset to 0 if we're NOT in edit mode with existing data
+    if (props.mode !== 'edit' || !totalTarif.value) {
+      totalTarif.value = 0;
+    }
+    return;
+  }
+
+  // Skip fetch if in edit mode and we already have a price loaded from editData
+  if (props.mode === 'edit' && totalTarif.value > 0) {
     return;
   }
 
@@ -472,11 +480,16 @@ watch([work, taskOfTypeId], async ([w, toId]) => {
     if (resp?.ok && Array.isArray(resp?.data?.data) && resp.data.data.length > 0) {
         totalTarif.value = resp.data.data[0].price_tarif;
     } else {
-        totalTarif.value = 0;
+        // Only reset to 0 if not in edit mode
+        if (props.mode !== 'edit') {
+          totalTarif.value = 0;
+        }
     }
   } catch (e) {
-    // Silently handle error - this is not critical for edit mode
-    totalTarif.value = 0;
+    // Silently handle error - don't reset if in edit mode with existing value
+    if (props.mode !== 'edit' || !totalTarif.value) {
+      totalTarif.value = 0;
+    }
   }
 });
 
@@ -565,19 +578,24 @@ watch([() => props.editData, Works, originalAvailablePickList], async ([newDataR
                     work.value = foundWork;
                 } else {
                     // Fallback: Inject the work item from the transaction details if available
-                    // Check if doneType exists. It might lack an ID property but we have done_of_type_id at root.
                     if (finalData.doneType) {
                         const workToInject = { ...finalData.doneType };
-                        // Ensure it has an ID
-                        if (!workToInject.id && !workToInject.uuid) {
-                            workToInject.id = finalData.done_of_type_id;
-                            workToInject.uuid = finalData.done_of_type_uuid; // Might be undefined but that's ok
+                        
+                        // Ensure it has both ID and UUID - prioritize UUID from multiple sources
+                        if (!workToInject.uuid) {
+                            workToInject.uuid = finalData.done_of_type_uuid || finalData.doneType.uuid;
+                        }
+                        if (!workToInject.id) {
+                            workToInject.id = finalData.done_of_type_id || finalData.doneType.id;
                         }
 
-                        if (workToInject.id) {
+                        // Only inject if we have at least a UUID (required by backend)
+                        if (workToInject.uuid) {
                             Works.value.push(workToInject);
                             works.value = [...Works.value]; 
                             work.value = workToInject;
+                        } else {
+                            console.warn('Could not inject work: missing UUID', finalData);
                         }
                     }
                 }
