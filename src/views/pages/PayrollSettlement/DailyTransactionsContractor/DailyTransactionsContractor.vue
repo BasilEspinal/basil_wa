@@ -104,7 +104,7 @@ watch(listRowSelect, RowSelect);
 const cardSections = ref([]);
 const onRowSelect = (data) => {
     listRowSelect.value = data;
-    openDialogSettlement('patch_action');
+    // openDialogSettlement('patch_action'); // REMOVED: This was conflicting with the edit button's mode
     const row = listRowSelect.value[0];
 
     if (row) {
@@ -327,8 +327,8 @@ const openDialog = (mode, rowData) => {
         farm.value = { id: finca.uuid, name: finca.name };
     }
 
-    formDialog.value = true;
     state.value = mode;
+    formDialog.value = true;
 };
 
 const openExport = () => {

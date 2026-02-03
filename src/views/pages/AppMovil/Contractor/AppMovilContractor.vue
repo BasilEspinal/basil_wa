@@ -80,12 +80,12 @@ const initializeComponent = async () => {
 
     flagIndividual.value = false;
     await readAll(); // Also refresh the lists and PickList data
-    toast.add({
-        severity: 'info',
-        summary: 'Contractor register information',
-        detail: 'Please enter the information based on the worker.',
-        life: 3000
-    });
+    // toast.add({
+    //     severity: 'info',
+    //     summary: 'Contractor register information',
+    //     detail: 'Please enter the information based on the worker.',
+    //     life: 3000
+    // });
 };
 
 
@@ -104,9 +104,10 @@ const readAll = async () => {
         originalAvailablePickList.value = response.data.data;
 
         // Update the dataPickList with the new data
+        // Logic moved to watcher to prevent race conditions with Edit mode
         if (!props.editData?.uuid) {
-            dataPickList.value[0] = [...originalAvailablePickList.value];
-            dataPickList.value[1] = []; // Clear the target list
+             // Just ensure original is set, but don't force reset here as watcher handles it
+             // dataPickList.value[0] = [...originalAvailablePickList.value]; 
         }
     } catch (error) {
         toast.add({ severity: 'error', detail: 'An error occurred while loading data. in try', life: 3000 });
@@ -348,27 +349,9 @@ const actionRecordManager = handleSubmitNew(async (values) => {
     }
 });
 
-watch(work, async () => {
-    //const valueTarif = await getTarifOfTasksDoneAppMob(TASK_OF_TYPE.id, HOLIDAY.value, work.value.work_type_tarif, work.value.id);
-    
-    if (work.value && work.value.work_type_tarif && work.value.id) {
-    const valueTarif = await getTarifOfTasksDoneAppMob(
-        TASK_OF_TYPE.id,
-        HOLIDAY.value,
-        work.value.work_type_tarif,
-        work.value.id
-    );
+// Removed duplicate watch - now handled by watch([work, taskOfTypeId]) below
 
-    // Safe access: check if data exists and is an array with items
-    if (valueTarif?.ok && Array.isArray(valueTarif?.data?.data) && valueTarif.data.data.length > 0) {
-        totalTarif.value = valueTarif.data.data[0].price_tarif;
-    } else {
-        totalTarif.value = 0;
-    }
-} else {
-   // totalTarif.value = valueTarif.data.data[0].price_tarif;
-}
-});
+
 
 // watch(totalTarif, (newTotalTarif) => {
 //     // Update the unit price when the total price changes
@@ -472,7 +455,11 @@ const taskOfTypeId = computed(() => fetchWorkCenter.value?.taskoftype?.id ?? nul
 
 
 watch([work, taskOfTypeId], async ([w, toId]) => {
-  if (!w || !w.work_type_tarif || !w.id || !toId) return;
+  // More robust validation
+  if (!w || !w.work_type_tarif || !w.id || !toId || !HOLIDAY.value) {
+    totalTarif.value = 0;
+    return;
+  }
 
   try {
     const resp = await getTarifOfTasksDoneAppMob(
@@ -488,7 +475,7 @@ watch([work, taskOfTypeId], async ([w, toId]) => {
         totalTarif.value = 0;
     }
   } catch (e) {
-    
+    // Silently handle error - this is not critical for edit mode
     totalTarif.value = 0;
   }
 });
@@ -506,28 +493,34 @@ watch(work, () => {
 
 // Start: Edit Mode Logic (Correct Placement)
 // Start: Edit Mode Logic (Correct Placement)
-watch([() => props.editData, Works, originalAvailablePickList], async ([newDataRaw, currentWorks, currentUsers]) => {
-    
-    
-    
-    
+const fetchedDetails = ref(null);
 
+watch([() => props.editData, Works, originalAvailablePickList], async ([newDataRaw, currentWorks, currentUsers]) => {
     if (newDataRaw?.uuid) {
-        console.log('DEBUG: Watcher Start. UUID:', newDataRaw.uuid);
         loading.value = true;
+        
+        // Reset cache if moving to a different record
+        if (fetchedDetails.value?.uuid !== newDataRaw.uuid) {
+             fetchedDetails.value = null;
+        }
 
         try {
-            // Fetch full data with 'employees' relation included
-            const response = await crudService.getById(newDataRaw.uuid, { include: 'employees' }); // Try standard include
-            console.log('DEBUG: API Response OK:', response.ok);
-            if (!response.ok) {
-                toast.add({ severity: 'error', detail: 'Error loading details: ' + response.error, life: 3000 });
-                return;
-            }
+            let newData;
             
-            // Assume the full object is in response.data.data (standard structure) 
-            // adjust if response structure is different (e.g. response.data)
-            const newData = response.data.data || response.data;
+            // Use cached details if available to prevent redundant calls and race conditions
+            if (fetchedDetails.value) {
+                newData = fetchedDetails.value;
+            } else {
+                 // Fetch full data with 'employees' relation included
+                const response = await crudService.getById(newDataRaw.uuid, { include: 'employees' });
+                
+                if (!response.ok) {
+                    toast.add({ severity: 'error', detail: 'Error loading details: ' + response.error, life: 3000 });
+                    return;
+                }
+                newData = response.data.data || response.data;
+                fetchedDetails.value = newData; // Cache the successful response
+            }
             
             // Merge logic: Start with editData (prop), then overwrite with NON-NULL fetched data
             const finalData = { ...newDataRaw }; // Clone prop details
@@ -539,16 +532,12 @@ watch([() => props.editData, Works, originalAvailablePickList], async ([newDataR
                     if ((key === 'employees' || key === 'employees_detail') && Array.isArray(newData[key]) && newData[key].length === 0) {
                          // Check if we have existing data for this key
                          if (Array.isArray(finalData[key]) && finalData[key].length > 0) {
-                             console.log('Preserving existing', key, 'because fetched is empty');
                              continue;
                          }
                     }
                     finalData[key] = newData[key];
                 }
             }
-            console.log('DEBUG: finalData employees:', finalData.employees?.length, 'ids:', finalData.employees_ids?.length, 'detail:', finalData.employees_detail?.length);
-
-            
 
             // 1. Set simple fields 
             // Note: Verify field names against API response.
@@ -592,21 +581,23 @@ watch([() => props.editData, Works, originalAvailablePickList], async ([newDataR
                         }
                     }
                 }
-            } else {
-                 
             }
 
             // 3. Set PickList
-            if (finalData.employees_detail && Array.isArray(finalData.employees_detail)) {
-                 // Inject missing employees from detail into currentUsers to ensure they can be selected
+            const sourceEmployees = finalData.employees_detail && Array.isArray(finalData.employees_detail) && finalData.employees_detail.length > 0 
+                                      ? finalData.employees_detail 
+                                      : (finalData.employees && Array.isArray(finalData.employees) ? finalData.employees : []);
+
+            if (sourceEmployees.length > 0) {
+                 // Inject missing employees from source into currentUsers to ensure they can be selected
                  const existingIds = new Set(currentUsers.map(u => String(u.id)));
-                 finalData.employees_detail.forEach(emp => {
+                 sourceEmployees.forEach(emp => {
                      if (!existingIds.has(String(emp.id))) {
                          // Add minimum required fields
                          currentUsers.unshift({
                              id: emp.id,
                              uuid: emp.uuid,
-                             full_name: emp.full_name,
+                             full_name: emp.full_name || emp.name,
                              document: emp.document,
                              photo: emp.photo,
                              workCenter: emp.workCenter // Preserve if available
@@ -618,12 +609,9 @@ watch([() => props.editData, Works, originalAvailablePickList], async ([newDataR
 
             if (currentUsers.length > 0) {
                 const processEmployees = (ids, fieldType) => {
-                     console.log('DEBUG: processEmployees. IDs:', ids, 'FieldType:', fieldType);
                      // Normalize target IDs to strings for robust comparison
                      const selectedIds = new Set(ids.map(id => String(id)));
-                     console.log('DEBUG: Looking for IDs:', [...selectedIds]);
-                     if (currentUsers.length > 0) console.log('DEBUG: Available IDs sample:', currentUsers.slice(0, 3).map(u => u.id));
-
+                     
                      const available = [];
                      const selected = [];
                      
@@ -637,11 +625,6 @@ watch([() => props.editData, Works, originalAvailablePickList], async ([newDataR
                          }
                      });
                      
-                     if (selected.length === 0 && selectedIds.size > 0) {
-                        console.warn('DEBUG: ZERO matches found despite having target IDs!');
-                     }
-                     
-                     console.log('DEBUG: Result - Available:', available.length, 'Selected:', selected.length);
                      // Direct assignment to dataPickList (Vue reactivity handles the array content)
                      dataPickList.value = [available, selected];
                      
@@ -652,24 +635,19 @@ watch([() => props.editData, Works, originalAvailablePickList], async ([newDataR
                 // Check for 'employees' array (objects) or 'employees_ids' (ids)
                 // Priority: employees_detail (full objects) > employees (full objects) > employees_ids (ids)
                 if (finalData.employees_detail && Array.isArray(finalData.employees_detail) && finalData.employees_detail.length > 0) {
-                     console.log('DEBUG: Processing employees_detail. Sample Item:', finalData.employees_detail[0]);
                      processEmployees(finalData.employees_detail.map(e => e.id), 'id');
                 } else if (finalData.employees && Array.isArray(finalData.employees) && finalData.employees.length > 0) {
-                     console.log('DEBUG: Processing employees');
                      processEmployees(finalData.employees.map(e => e.id), 'id');
                 } else if (finalData.employees_ids && Array.isArray(finalData.employees_ids) && finalData.employees_ids.length > 0) {
-                     console.log('DEBUG: Processing employees_ids');
                      processEmployees(finalData.employees_ids, 'id');
                 } else {
-                     console.log('DEBUG: No employees found to process');
                      // Fallback: if no valid list found, reset to all available
-                     if (props.mode !== 'edit') {
-                         dataPickList.value = [[...currentUsers], []];
-                     } 
+                     // Ensure we show something rather than nothing if in edit mode and fetch failed to find employees
+                     dataPickList.value = [[...currentUsers], []];
+                     quantityEmployees.value = 0;
                 }
             }
         } catch (error) {
-            
             toast.add({ severity: 'error', detail: 'Failed to fetch details', life: 3000 });
         } finally {
             loading.value = false;
@@ -677,7 +655,19 @@ watch([() => props.editData, Works, originalAvailablePickList], async ([newDataR
 
     } else {
        // If no editData, or just clearing
-        // Optional: resetAll();
+        fetchedDetails.value = null; // Clear cache
+        
+        // Ensure "New" mode starts clean
+        if (originalAvailablePickList.value.length > 0) {
+            dataPickList.value = [[...originalAvailablePickList.value], []];
+        } else {
+             dataPickList.value = [[], []];
+        }
+        quantityEmployees.value = 0;
+        work.value = null;
+        totalTarif.value = 0;
+        flagIndividual.value = false;
+        titulo.value = TASK_OF_TYPE?.name ? `Título: ${TASK_OF_TYPE.name}` : 'Título: Sin nombre';
     }
 }, { immediate: true });
 
