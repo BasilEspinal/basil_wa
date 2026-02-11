@@ -102,6 +102,12 @@ export const getMenuConfig = (t) => [
                         gate: 'comercial_clientes_menu'
                     },
                     {
+                        label: t('menu.quotations'),
+                        to: '/Commercial/Quotations/Quotations',
+                        icon: 'pi pi-file-edit',
+                        gate: 'comercial_cotizaciones_menu'
+                    },
+                    {
                         label: t('menu.deliveries'),
                         to: '/Commercial/Delivery/Delivery',
                         icon: 'pi pi-truck',

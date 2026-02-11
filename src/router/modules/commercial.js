@@ -18,5 +18,10 @@ export default [
         path: '/Commercial/Customers/Customers',
         name: 'Customers',
         component: () => import('@/views/pages/Commercial/Customers/Customers.vue')
+    },
+    {
+        path: '/Commercial/Quotations/Quotations',
+        name: 'Quotations',
+        component: () => import('@/views/pages/Commercial/Quotations/Quotations.vue')
     }
 ];

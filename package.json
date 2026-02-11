@@ -6,7 +6,9 @@
         "dev:innovatrix": "vite --mode innovatrix",
         "dev:basil": "vite --mode basil",
         "dev:volgatech": "vite --mode volgatech",
+        "dev:seaboard": "vite --mode seaboard",
         "build": "vite build",
+        "build:seaboard": "vite build --mode seaboard",
         "preview": "vite preview",
         "lint": "eslint . --ext .vue,.js,.jsx,.cjs,.mjs --fix --ignore-path .gitignore",
         "serve": "vue-cli-service serve --host 0.0.0.0"

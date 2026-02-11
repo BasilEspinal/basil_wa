@@ -100,6 +100,7 @@ export const messages = {
                 productOffers: 'Product Offers',
                 clientRequests: 'Client Requests',
                 clients: 'Clients',
+                quotations: 'Quotations',
                 deliveries: 'Deliveries'
             },
             productOffers: 'Product Offers',
@@ -350,6 +351,7 @@ export const messages = {
                 productOffers: 'Ofertas de Producto',
                 clientRequests: 'Solicitudes de Clientes',
                 clients: 'Clientes',
+                quotations: 'Cotizaciones',
                 deliveries: 'Despachos'
             },
             productOffers: 'Ofertas de Producto',
